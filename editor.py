@@ -1,0 +1,76 @@
+import wx
+
+import io
+import node
+import datum
+
+class Editor(wx.Panel):
+    def __init__(self, parent, target):
+        wx.Panel.__init__(self, parent)
+
+        self.target = target
+
+        sizer = wx.FlexGridSizer(rows=len(target.inputs) + 1, cols=4)
+
+        self.add_header(sizer, target)
+
+        for n, d in target.inputs:
+            self.add_row(sizer, n, d)
+
+        self.SetBackgroundColour((200, 200, 200))
+        self.SetSizerAndFit(sizer)
+
+    def add_header(self, sizer, target):
+        sizer.Add(wx.Panel(self))
+        sizer.Add(wx.Panel(self))
+
+        label = type(target).__name__
+        base = type(target).__bases__[0]
+        if base is not node.Node:
+            label += ' (%s)' % (base.__name__)
+        txt = wx.StaticText(self, label=label, size=(-1, 25),
+                            style=wx.ST_NO_AUTORESIZE)
+        txt.SetFont(wx.Font(14, family=wx.FONTFAMILY_DEFAULT,
+                         style=wx.ITALIC, weight=wx.BOLD))
+        sizer.Add(txt, border=5, flag=wx.TOP|wx.RIGHT|wx.EXPAND)
+
+        sizer.Add(io.IO(self, base if base is not node.Node else type(target)),
+                  border=3, flag=wx.BOTTOM|wx.TOP|wx.LEFT|wx.ALIGN_CENTER)
+
+    def add_row(self, sizer, name, dat):
+        sizer.Add(io.IO(self, dat.type),
+                  border=3, flag=wx.BOTTOM|wx.TOP|wx.RIGHT|wx.ALIGN_CENTER)
+
+        sizer.Add(wx.StaticText(self, label=name,
+                                style=wx.ALIGN_RIGHT|wx.ST_NO_AUTORESIZE,
+                                size=(-1, 25)),
+                  border=3, flag=wx.ALL|wx.EXPAND)
+
+        txt = wx.TextCtrl(self, size=(150, 25),
+                          style=wx.NO_BORDER|wx.TE_PROCESS_ENTER)
+        txt.datum = dat
+        if isinstance(dat, datum.NameDatum):
+            txt.SetValue(dat.expr[1:-1])
+        else:
+            txt.SetValue(dat.expr)
+
+        txt.Bind(wx.EVT_TEXT, self.on_change)
+        sizer.Add(txt, border=3, flag=wx.ALL|wx.EXPAND)
+
+        sizer.Add(io.IO(self, dat.type),
+                  border=3, flag=wx.BOTTOM|wx.TOP|wx.LEFT|wx.ALIGN_CENTER)
+
+    @staticmethod
+    def on_change(event):
+        txt = event.GetEventObject()
+
+        # Special case for Name datum
+        if isinstance(txt.datum, datum.NameDatum):
+            txt.datum.expr = "'%s'" % txt.GetValue()
+        else:
+            txt.datum.expr = txt.GetValue()
+
+        if txt.datum.valid():
+            txt.SetForegroundColour(wx.NullColour)
+        else:
+            txt.SetForegroundColour(wx.Colour(255, 0, 0))
