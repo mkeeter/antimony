@@ -14,11 +14,16 @@ class Editor(wx.Panel):
 
         self.add_header(sizer, target)
 
+        self.data = []
         for n, d in target.inputs:
             self.add_row(sizer, n, d)
 
         self.SetBackgroundColour((200, 200, 200))
         self.SetSizerAndFit(sizer)
+
+        # Check that variables are valid before painting.
+        self.Bind(wx.EVT_PAINT, self.check)
+
 
     def add_header(self, sizer, target):
         sizer.Add(wx.Panel(self))
@@ -37,6 +42,7 @@ class Editor(wx.Panel):
         sizer.Add(io.IO(self, base if base is not node.Node else type(target)),
                   border=3, flag=wx.BOTTOM|wx.TOP|wx.LEFT|wx.ALIGN_CENTER)
 
+
     def add_row(self, sizer, name, dat):
         sizer.Add(io.IO(self, dat.type),
                   border=3, flag=wx.BOTTOM|wx.TOP|wx.RIGHT|wx.ALIGN_CENTER)
@@ -49,19 +55,21 @@ class Editor(wx.Panel):
         txt = wx.TextCtrl(self, size=(150, 25),
                           style=wx.NO_BORDER|wx.TE_PROCESS_ENTER)
         txt.datum = dat
-        if isinstance(dat, datum.NameDatum):
-            txt.SetValue(dat.expr[1:-1])
-        else:
-            txt.SetValue(dat.expr)
+        if isinstance(dat, datum.NameDatum):    txt.SetValue(dat.expr[1:-1])
+        else:                                   txt.SetValue(dat.expr)
 
         txt.Bind(wx.EVT_TEXT, self.on_change)
         sizer.Add(txt, border=3, flag=wx.ALL|wx.EXPAND)
+        self.data.append(txt)
 
         sizer.Add(io.IO(self, dat.type),
                   border=3, flag=wx.BOTTOM|wx.TOP|wx.LEFT|wx.ALIGN_CENTER)
 
+
     @staticmethod
     def on_change(event):
+        """ When a text box changes, update the corresponding Datum
+        """
         txt = event.GetEventObject()
 
         # Special case for Name datum
@@ -70,7 +78,12 @@ class Editor(wx.Panel):
         else:
             txt.datum.expr = txt.GetValue()
 
-        if txt.datum.valid():
-            txt.SetForegroundColour(wx.NullColour)
-        else:
-            txt.SetForegroundColour(wx.Colour(255, 0, 0))
+
+    def check(self, event):
+        """ Check all datums for validity and change text color if invalid.
+        """
+        for txt in self.data:
+            if txt.datum.valid():
+                txt.SetForegroundColour(wx.NullColour)
+            else:
+                txt.SetForegroundColour(wx.Colour(255, 0, 0))

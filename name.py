@@ -11,8 +11,4 @@ class Name(object):
             raise TypeError("Variable name is a python keyword")
         self.v = v
 
-    def __eq__(self, other):
-        """ Checks for equality against strings and other Names
-        """
-        if isinstance(other, str):      return self.v == other
-        elif isinstance(other, Name):   return self.v == other.v
+    def __str__(self):  return self.v

@@ -1,3 +1,5 @@
+import node
+
 class Datum(object):
     def __init__(self, expr, type):
         self.type    = type
@@ -18,7 +20,7 @@ class Datum(object):
         """ Attempts to evaluate the expression and return a value.
             Raises an exception if this fails.
         """
-        t = eval(self.expr)
+        t = eval(self.expr, node.dict())
         if not isinstance(t, self.type):    t = self.type(t)
         return t
 
