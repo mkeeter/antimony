@@ -22,7 +22,7 @@ class Editor(wx.Panel):
         self.SetSizerAndFit(sizer)
 
         # Check that variables are valid before painting.
-        self.Bind(wx.EVT_PAINT, self.check)
+        self.Bind(wx.EVT_PAINT, self.predraw)
 
 
     def add_header(self, sizer, target):
@@ -79,7 +79,7 @@ class Editor(wx.Panel):
             txt.datum.expr = txt.GetValue()
 
 
-    def check(self, event):
+    def predraw(self, event):
         """ Check all datums for validity and change text color if invalid.
         """
         for txt in self.data:
