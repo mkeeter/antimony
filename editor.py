@@ -24,12 +24,22 @@ class Editor(wx.Panel):
         # Check that variables are valid before painting.
         self.Bind(wx.EVT_PAINT, self.predraw)
 
+    def hand_cursor(self, event=None):
+        wx.SetCursor(wx.StockCursor(wx.CURSOR_HAND))
+
+    def mouse_cursor(self, event=None):
+        wx.SetCursor(wx.StockCursor(wx.CURSOR_ARROW))
 
     def add_header(self, sizer, target):
         sizer.Add(wx.Panel(self))
 
+        # Add a button to close the window
         txt = wx.StaticText(self, label='[-]')
-        sizer.Add(txt, flag=wx.EXPAND)
+        sizer.Add(txt, border=5, flag=wx.EXPAND|wx.TOP)
+        txt.Bind(wx.EVT_MOTION, self.hand_cursor)
+        txt.Bind(wx.EVT_LEAVE_WINDOW, self.mouse_cursor)
+        txt.Bind(wx.EVT_LEFT_UP, lambda event: (self.mouse_cursor(),
+                                                wx.CallAfter(self.Destroy)))
 
         label = type(target).__name__
         base = type(target).__bases__[0]
