@@ -87,3 +87,9 @@ class Editor(wx.Panel):
                 txt.SetForegroundColour(wx.NullColour)
             else:
                 txt.SetForegroundColour(wx.Colour(255, 0, 0))
+
+    def reposition(self):
+        """ Move this panel to the appropriate position.
+        """
+        x, y = self.Parent.mm_to_pixel(self.target.x, self.target.y)
+        self.MoveXY(x, y)

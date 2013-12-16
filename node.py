@@ -1,5 +1,6 @@
 class Node(object):
-
+    """ Graph node.  Contains one or more Datum objects.
+    """
     def __init__(self):
         """ Node constructor.
             Adds node to master list and sets _deleted to False.
@@ -26,3 +27,28 @@ class Node(object):
 # Master list of nodes
 nodes = []
 def dict():     return {n._name.expr[1:-1]: n for n in nodes}
+
+################################################################################
+
+import wx
+
+class NodeControl(wx.Control):
+    def __init__(self, parent, node, *args, **kwargs):
+        super(NodeControl, self).__init__(parent, *args, **kwargs)
+        self.node = node
+        self.hover = False
+
+        self.Bind(wx.EVT_MOTION, self.on_motion)
+        self.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
+        self.Bind(wx.EVT_PAINT, self.draw)
+
+    def on_motion(self, event):
+        self.hover = True
+
+    def on_leave_window(self, event):
+        self.hover = False
+
+    def draw(self, event):
+        raise NotImplementedError(
+                "NodeControl.draw must be defined in subclass.")
+
