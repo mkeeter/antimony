@@ -43,10 +43,14 @@ class NodeControl(wx.Control):
         self.Bind(wx.EVT_PAINT, self.draw)
 
     def on_motion(self, event):
-        self.hover = True
+        if not self.hover:
+            self.hover = True
+            self.Refresh()
 
     def on_leave_window(self, event):
-        self.hover = False
+        if self.hover:
+            self.hover = False
+            self.Refresh()
 
     def draw(self, event):
         raise NotImplementedError(

@@ -29,6 +29,14 @@ class PointControl(node.NodeControl):
 
     def draw(self, event):
         dc = wx.PaintDC(self)
-        dc.SetBackground(wx.Brush((0, 0, 255, 255)))
-        dc.Clear()
+        #dc.SetBackground(wx.Brush((0, 0, 0, 0)))
+        #dc.Clear()
+
+        x, y = self.Size.x / 2, self.Size.y / 2
+        light = (200, 200, 200)
+        dark  = (100, 100, 100)
+        dc.SetBrush(wx.Brush(light))
+        dc.SetPen(wx.Pen(dark, 2))
+        dc.DrawCircle(x, y, 10 if self.hover else 6)
+
 
