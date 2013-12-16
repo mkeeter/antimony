@@ -27,7 +27,9 @@ class Editor(wx.Panel):
 
     def add_header(self, sizer, target):
         sizer.Add(wx.Panel(self))
-        sizer.Add(wx.Panel(self))
+
+        txt = wx.StaticText(self, label='[-]')
+        sizer.Add(txt, flag=wx.EXPAND)
 
         label = type(target).__name__
         base = type(target).__bases__[0]
