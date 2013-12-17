@@ -25,14 +25,11 @@ class PointControl(node.NodeControl):
     def reposition(self):
         """ Move this control to the appropriate position.
         """
-        x = self.node.x if self.node._x.valid() else 0
-        y = self.node.y if self.node._y.valid() else 0
+        try:    x = self.Parent.mm_to_pixel(x=self.node.x)
+        except: x = self.GetPosition().x + self.Size.x / 2
 
-        x, y = self.Parent.mm_to_pixel(x, y)
-        if not self.node._x.valid():
-            x = self.GetPosition().x + self.Size.x / 2
-        if not self.node._y.valid():
-            y = self.GetPosition().y + self.Size.y / 2
+        try:    y = self.Parent.mm_to_pixel(y=self.node.y)
+        except: y = self.GetPosition().y + self.Size.y / 2
 
         self.MoveXY(x - self.Size.x / 2, y - self.Size.y / 2)
 

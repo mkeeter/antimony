@@ -35,11 +35,17 @@ class Canvas(wx.Panel):
         dc.SetPen(wx.Pen((0, 255, 0), 2))
         dc.DrawLine(x, y, x, y - 50)
 
-    def mm_to_pixel(self, x, y):
+    def mm_to_pixel(self, x=None, y=None):
         """ Converts an x,y position in mm into an i,j coordinate.
         """
-        return (int((x - self.center.x) * self.scale + self.Size.x/2),
-                int((self.Size.y/2) - (y - self.center.y) * self.scale))
+        if x is not None:
+            x = int((x - self.center.x) * self.scale + self.Size.x/2)
+        if y is not None:
+            y = int((self.Size.y/2) - (y - self.center.y) * self.scale)
+
+        if x is not None and y is not None:     return x, y
+        elif x is not None:                     return x
+        elif y is not None:                     return y
 
     def start_drag(self, event):    self.dragging = True
     def stop_drag(self, event):     self.dragging = False
