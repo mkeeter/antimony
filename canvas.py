@@ -28,9 +28,6 @@ class Canvas(wx.Panel):
 
     def update_children(self, event=None):
         for c in self.Children:
-            if isinstance(c, node.NodeControl):
-                if c.editor:    c.editor.Raise()
-                c.Raise()
             c.reposition()
 
     def paint(self, event=None):
