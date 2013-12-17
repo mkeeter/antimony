@@ -96,6 +96,7 @@ class Editor(wx.Panel):
     def predraw(self, event):
         """ Check all datums for validity and change text color if invalid.
         """
+        dc = wx.PaintDC(self)   # required when catching paint event
         for txt in self.data:
 
             if isinstance(txt.datum, datum.NameDatum):
@@ -107,6 +108,7 @@ class Editor(wx.Panel):
                 txt.SetForegroundColour(wx.NullColour)
             else:
                 txt.SetForegroundColour(wx.Colour(255, 0, 0))
+        event.Skip()
 
 
     def update(self):
