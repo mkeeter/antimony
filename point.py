@@ -44,7 +44,7 @@ class PointControl(node.NodeControl):
         dark  = (100, 100, 100)
         dc.SetBrush(wx.Brush(light))
         dc.SetPen(wx.Pen(dark, 2))
-        dc.DrawCircle(x, y, 10 if self.hover else 6)
+        dc.DrawCircle(x, y, 10 if self.hover or self.drag else 6)
 
         self.region = wx.RegionFromBitmapColour(bmp, wx.Colour(0, 0, 0, 0))
 
