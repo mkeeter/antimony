@@ -21,10 +21,43 @@ class Editor(wx.Panel):
         self.SetBackgroundColour((200, 200, 200))
         self.SetSizerAndFit(sizer)
 
+        self.native_size = self.Size
+        self.Size = (0, 0)
+
+        self.animate(self.animate_open)
+
         # Check that variables are valid before painting.
         self.Bind(wx.EVT_PAINT, self.predraw)
         self.update()
 
+    def animate_open(self, event):
+        f = self.timer.tick / 5.0
+        self.timer.tick += 1
+        self.Size = (self.native_size.x * f,
+                     self.native_size.y * f)
+        if f == 1:
+            self.timer.Stop()
+            self.timer = None
+
+    def animate_close(self, event):
+        f = 1 - self.timer.tick / 5.0
+        self.timer.tick += 1
+        self.Size = (self.native_size.x * f,
+                     self.native_size.y * f)
+        if f == 0:
+            self.timer.Stop()
+            self.timer = None
+            self.mouse_cursor()
+            wx.CallAfter(self.Destroy)
+
+    def animate(self, callback):
+        self.timer = wx.Timer()
+        self.timer.Bind(wx.EVT_TIMER, callback)
+        self.timer.Start(10)
+        self.timer.tick = 0
+
+    def start_close(self, event=None):
+        self.animate(self.animate_close)
 
     def hand_cursor(self, event=None):
         wx.SetCursor(wx.StockCursor(wx.CURSOR_HAND))
@@ -40,8 +73,7 @@ class Editor(wx.Panel):
         sizer.Add(txt, border=5, flag=wx.EXPAND|wx.TOP)
         txt.Bind(wx.EVT_MOTION, self.hand_cursor)
         txt.Bind(wx.EVT_LEAVE_WINDOW, self.mouse_cursor)
-        txt.Bind(wx.EVT_LEFT_UP, lambda event:
-                (self.mouse_cursor(), wx.CallAfter(self.Destroy)))
+        txt.Bind(wx.EVT_LEFT_UP, self.start_close)
 
         label = type(target).__name__
         base = type(target).__bases__[0]

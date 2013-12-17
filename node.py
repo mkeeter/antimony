@@ -86,9 +86,13 @@ class NodeControl(wx.Control):
                 "NodeControl.draw must be defined in subclass.")
 
     def open_editor(self, event=None):
+        """ Opens / closes the editor.
+        """
         if self.hover and not self.editor:
             self.editor = editor.MakeEditor(self)
             self.Raise()
+        elif self.hover and self.editor:
+            self.editor.start_close()
 
     def start_drag(self, event):    self.drag = True
     def stop_drag(self, event):     self.drag = False
