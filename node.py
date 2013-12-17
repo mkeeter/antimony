@@ -71,7 +71,7 @@ class NodeControl(wx.Control):
                 self.node._x.expr = str(float(self.node._x.expr) + dx)
             if self.node._y.simple():
                 self.node._y.expr = str(float(self.node._y.expr) + dy)
-            self.Refresh()
+            if dx or dy:    self.Refresh()
         self.mouse_pos = self.GetPosition() + event.GetPosition()
 
     def on_leave_window(self, event):
