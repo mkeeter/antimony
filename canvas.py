@@ -42,10 +42,6 @@ class Canvas(wx.Panel):
         dc.SetPen(wx.Pen((0, 255, 0), 2))
         dc.DrawLine(x, y, x, y - 50)
 
-        # After drawing, update all children
-        # (may trigger redraw)
-        wx.CallAfter(self.update_children)
-
 
     def mm_to_pixel(self, x=None, y=None):
         """ Converts an x,y position in mm into an i,j coordinate.
@@ -67,6 +63,7 @@ class Canvas(wx.Panel):
         if self.dragging:
             self.center += wx.RealPoint(-delta.x / self.scale,
                                         delta.y / self.scale)
+            self.update_children()
             self.Refresh()
         self.mouse_pos = event.GetPosition()
 
