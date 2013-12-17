@@ -21,9 +21,12 @@ class Canvas(wx.Panel):
         self.Bind(wx.EVT_LEFT_DOWN, self.start_drag)
         self.Bind(wx.EVT_LEFT_UP, self.stop_drag)
         self.Bind(wx.EVT_MOTION, self.on_motion)
+        self.Bind(wx.EVT_SIZE, self.update_children)
+
+    def update_children(self, event=None):
+        for c in self.Children: c.reposition()
 
     def paint(self, event=None):
-        for c in self.Children: c.reposition()
 
         dc = wx.PaintDC(self)
         dc.SetBackground(wx.Brush((20, 20, 20)))
@@ -34,6 +37,11 @@ class Canvas(wx.Panel):
         dc.DrawLine(x, y, x + 50, y)
         dc.SetPen(wx.Pen((0, 255, 0), 2))
         dc.DrawLine(x, y, x, y - 50)
+
+        # After drawing, update all children
+        # (may trigger redraw)
+        wx.CallAfter(self.update_children)
+
 
     def mm_to_pixel(self, x=None, y=None):
         """ Converts an x,y position in mm into an i,j coordinate.

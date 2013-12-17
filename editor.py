@@ -27,6 +27,8 @@ class Editor(wx.Panel):
         self.native_size = self.Size
         self.expand = 0
 
+        self.reposition()
+
     def hand_cursor(self, event=None):
         wx.SetCursor(wx.StockCursor(wx.CURSOR_HAND))
 
@@ -69,8 +71,6 @@ class Editor(wx.Panel):
         txt = wx.TextCtrl(self, size=(150, 25),
                           style=wx.NO_BORDER|wx.TE_PROCESS_ENTER)
         txt.datum = dat
-        if isinstance(dat, datum.NameDatum):    txt.SetValue(dat.expr[1:-1])
-        else:                                   txt.SetValue(dat.expr)
 
         txt.Bind(wx.EVT_TEXT, self.on_change)
         sizer.Add(txt, border=3, flag=wx.ALL|wx.EXPAND)
@@ -97,6 +97,12 @@ class Editor(wx.Panel):
         """ Check all datums for validity and change text color if invalid.
         """
         for txt in self.data:
+
+            if isinstance(txt.datum, datum.NameDatum):
+                txt.SetValue(txt.datum.expr[1:-1])
+            else:
+                txt.SetValue(txt.datum.expr)
+
             if txt.datum.valid():
                 txt.SetForegroundColour(wx.NullColour)
             else:
