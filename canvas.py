@@ -4,16 +4,17 @@ import wx
 
 import editor
 import point
+import node
 
 class Canvas(wx.Panel):
     def __init__(self, parent, *args, **kwargs):
         wx.Panel.__init__(self, parent, *args, **kwargs)
         self.Bind(wx.EVT_PAINT, self.paint)
 
-        for i in range(1):
+        for i in range(10):
             pt = point.Point('asdf', random.uniform(-10, 10), random.uniform(-10, 10))
             ctrl = point.PointControl(self, pt)
-            ed = editor.Editor(self, pt)
+            if random.uniform(0, 10) > 9:   ed = editor.Editor(self, pt)
 
         self.center = wx.RealPoint(0, 0)
         self.scale = 10.0 # scale is measured in pixels/mm
@@ -26,7 +27,11 @@ class Canvas(wx.Panel):
         self.Bind(wx.EVT_SIZE, self.update_children)
 
     def update_children(self, event=None):
-        for c in self.Children: c.reposition()
+        for c in self.Children:
+            if isinstance(c, node.NodeControl):
+                if c.editor:    c.editor.Raise()
+                c.Raise()
+            c.reposition()
 
     def paint(self, event=None):
 
