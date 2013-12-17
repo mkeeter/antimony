@@ -31,6 +31,7 @@ def dict():     return {n._name.expr[1:-1]: n for n in nodes}
 ################################################################################
 
 import wx
+import editor
 
 class NodeControl(wx.Control):
     def __init__(self, parent, node, *args, **kwargs):
@@ -42,9 +43,20 @@ class NodeControl(wx.Control):
         self.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
         self.Bind(wx.EVT_PAINT, self.draw)
 
+        self.editor = None
+
     def on_motion(self, event):
-        if not self.hover:
-            self.hover = True
+        """ Sets 'hover' to True if the cursor is over the control.
+
+            Checks against the 'region' attribute if it is defined, otherwise
+            assumes that the control fills the entire region.
+        """
+        if hasattr(self, 'region'):
+            hover = self.region.Contains(*event.GetPosition())
+        else:
+            hover = True
+        if hover != self.hover:
+            self.hover = hover
             self.Refresh()
 
     def on_leave_window(self, event):
@@ -55,4 +67,9 @@ class NodeControl(wx.Control):
     def draw(self, event):
         raise NotImplementedError(
                 "NodeControl.draw must be defined in subclass.")
+
+    def open_editor(self, event=None):
+        if self.hover and not self.editor:
+            self.editor = editor.MakeEditor(self.Parent, self.node)
+
 

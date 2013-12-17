@@ -24,6 +24,9 @@ class Editor(wx.Panel):
         # Check that variables are valid before painting.
         self.Bind(wx.EVT_PAINT, self.predraw)
 
+        self.native_size = self.Size
+        self.expand = 0
+
     def hand_cursor(self, event=None):
         wx.SetCursor(wx.StockCursor(wx.CURSOR_HAND))
 
@@ -38,8 +41,7 @@ class Editor(wx.Panel):
         sizer.Add(txt, border=5, flag=wx.EXPAND|wx.TOP)
         txt.Bind(wx.EVT_MOTION, self.hand_cursor)
         txt.Bind(wx.EVT_LEAVE_WINDOW, self.mouse_cursor)
-        txt.Bind(wx.EVT_LEFT_UP, lambda event: (self.mouse_cursor(),
-                                                wx.CallAfter(self.Destroy)))
+        txt.Bind(wx.EVT_LEFT_UP, self.start_hide)
 
         label = type(target).__name__
         base = type(target).__bases__[0]
@@ -100,8 +102,31 @@ class Editor(wx.Panel):
             else:
                 txt.SetForegroundColour(wx.Colour(255, 0, 0))
 
+    def start_hide(self, event):
+        self.expand = -1
+        wx.CallAfter(self.Refresh)
+
     def reposition(self):
-        """ Move this panel to the appropriate position.
+        """ Move this panel to the appropriate position and zoom as needed.
         """
+        time = 5
         x, y = self.Parent.mm_to_pixel(self.target.x, self.target.y)
         self.MoveXY(x, y)
+        if self.expand >= 0 and self.expand <= time:
+            self.Size = (self.native_size.x * self.expand / time,
+                         self.native_size.y * self.expand / time)
+            self.expand += 1
+            wx.CallAfter(self.Refresh)
+        elif self.expand < 0:
+            self.Size = (self.native_size.x * (self.expand + time) / time,
+                         self.native_size.y * (self.expand + time) / time)
+            self.expand -= 1
+            wx.CallAfter(self.Refresh)
+            if self.expand < -time:
+                wx.CallAfter(self.Destroy)
+                self.mouse_cursor()
+
+_editors = {}
+
+def MakeEditor(parent, target):
+    return _editors.get(type(target), Editor)(parent, target)

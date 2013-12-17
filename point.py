@@ -20,6 +20,7 @@ class Point(node.Node):
 class PointControl(node.NodeControl):
     def __init__(self, parent, target):
         super(PointControl, self).__init__(parent, target, size=(30, 30))
+        self.Bind(wx.EVT_LEFT_DCLICK, self.open_editor)
 
     def reposition(self):
         """ Move this control to the appropriate position.
@@ -28,9 +29,9 @@ class PointControl(node.NodeControl):
         self.MoveXY(x - self.Size.x / 2, y - self.Size.y / 2)
 
     def draw(self, event):
-        dc = wx.PaintDC(self)
-        #dc.SetBackground(wx.Brush((0, 0, 0, 0)))
-        #dc.Clear()
+        bmp = wx.EmptyBitmap(*self.Size)
+        dc = wx.MemoryDC()
+        dc.SelectObject(bmp)
 
         x, y = self.Size.x / 2, self.Size.y / 2
         light = (200, 200, 200)
@@ -38,5 +39,10 @@ class PointControl(node.NodeControl):
         dc.SetBrush(wx.Brush(light))
         dc.SetPen(wx.Pen(dark, 2))
         dc.DrawCircle(x, y, 10 if self.hover else 6)
+
+        self.region = wx.RegionFromBitmapColour(bmp, wx.Colour(0, 0, 0, 0))
+
+
+        wx.PaintDC(self).Blit(0, 0, self.Size.x, self.Size.y, dc, 0, 0)
 
 
