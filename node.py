@@ -63,7 +63,8 @@ class NodeControl(wx.Control):
             self.hover = hover
             self.Refresh()
 
-        delta = self.GetPosition() + event.GetPosition() - self.mouse_pos
+        pos = self.GetPosition() + event.GetPosition()
+        delta = pos - self.mouse_pos
         if self.drag:
             dx =  delta.x / self.Parent.scale
             dy = -delta.y / self.Parent.scale
@@ -71,8 +72,9 @@ class NodeControl(wx.Control):
                 self.node._x.expr = str(float(self.node._x.expr) + dx)
             if self.node._y.simple():
                 self.node._y.expr = str(float(self.node._y.expr) + dy)
-            if dx or dy:    self.Refresh()
-        self.mouse_pos = self.GetPosition() + event.GetPosition()
+            self.update()
+            if self.editor:     self.editor.update()
+        self.mouse_pos = pos
 
     def on_leave_window(self, event):
         if self.hover:

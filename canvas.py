@@ -14,7 +14,7 @@ class Canvas(wx.Panel):
         for i in range(10):
             pt = point.Point('asdf', random.uniform(-10, 10), random.uniform(-10, 10))
             ctrl = point.PointControl(self, pt)
-            if random.uniform(0, 10) > 9:   ed = editor.Editor(self, pt)
+            if random.uniform(0, 10) > 9:   ctrl.open_editor()
 
         self.center = wx.RealPoint(0, 0)
         self.scale = 10.0 # scale is measured in pixels/mm
@@ -28,7 +28,7 @@ class Canvas(wx.Panel):
 
     def update_children(self, event=None):
         for c in self.Children:
-            c.reposition()
+            c.update()
 
     def paint(self, event=None):
 

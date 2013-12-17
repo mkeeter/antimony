@@ -21,9 +21,9 @@ class PointControl(node.NodeControl):
     def __init__(self, parent, target):
         super(PointControl, self).__init__(parent, target, size=(30, 30))
         self.Bind(wx.EVT_LEFT_DCLICK, self.open_editor)
-        self.reposition()
+        self.update()
 
-    def reposition(self):
+    def update(self):
         """ Move this control to the appropriate position.
         """
         px, py = self.GetPosition()

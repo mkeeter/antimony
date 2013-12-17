@@ -22,7 +22,7 @@ class Editor(wx.Panel):
 
         # Check that variables are valid before painting.
         self.Bind(wx.EVT_PAINT, self.predraw)
-        self.reposition()
+        self.update()
 
 
     def hand_cursor(self, event=None):
@@ -106,7 +106,7 @@ class Editor(wx.Panel):
                 txt.SetForegroundColour(wx.Colour(255, 0, 0))
 
 
-    def reposition(self):
+    def update(self):
         """ Move this panel to the appropriate position and zoom as needed.
         """
         time = 5
