@@ -1,3 +1,5 @@
+import random
+
 import wx
 
 import editor
@@ -8,10 +10,10 @@ class Canvas(wx.Panel):
         wx.Panel.__init__(self, parent, *args, **kwargs)
         self.Bind(wx.EVT_PAINT, self.paint)
 
-        pt = point.Point('asdf',0, 0)
-        ctrl = point.PointControl(self, pt)
-        ed = editor.Editor(self, pt)
-        ed.MoveXY(20, 20)
+        for i in range(1):
+            pt = point.Point('asdf', random.uniform(-10, 10), random.uniform(-10, 10))
+            ctrl = point.PointControl(self, pt)
+            ed = editor.Editor(self, pt)
 
         self.center = wx.RealPoint(0, 0)
         self.scale = 10.0 # scale is measured in pixels/mm
