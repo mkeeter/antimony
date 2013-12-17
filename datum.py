@@ -1,9 +1,14 @@
 import node
 
 class Datum(object):
+    stack = []
+
     def __init__(self, expr, type):
         self.type    = type
         self.expr    = repr(expr)
+
+        self.parents = set()
+        self.children = set()
 
         # Check to make sure that the initial expression is valid.
         self.eval()
@@ -20,8 +25,30 @@ class Datum(object):
         """ Attempts to evaluate the expression and return a value.
             Raises an exception if this fails.
         """
-        t = eval(self.expr, node.dict())
-        if not isinstance(t, self.type):    t = self.type(t)
+
+        if self in Datum.stack:
+            raise RuntimeError("Infinite recursion in Datum.")
+
+        # If this was called from another datum, then register it as a
+        # parent and register self as its children
+        if Datum.stack:
+            Datum.stack[-1].parents.add(self)
+            self.children.add(Datum.stack[-1])
+
+        # Clear parents and remove references to self in parents
+        for p in self.parents:
+            p.children.remove(self)
+        self.parents = set()
+
+        # Put oneself down on the stack.
+        Datum.stack.append(self)
+
+        try:
+            t = eval(self.expr, node.dict())
+            if not isinstance(t, self.type):    t = self.type(t)
+        except:     raise
+        finally:    Datum.stack.pop()
+
         return t
 
     def valid(self):
