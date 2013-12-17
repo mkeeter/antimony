@@ -26,13 +26,13 @@ class PointControl(node.NodeControl):
     def reposition(self):
         """ Move this control to the appropriate position.
         """
-        try:    x = self.Parent.mm_to_pixel(x=self.node.x)
-        except: x = self.GetPosition().x + self.Size.x / 2
+        try:    x = self.Parent.mm_to_pixel(x=self.node.x) - self.Size.x/2
+        except: x = self.GetPosition().x
 
-        try:    y = self.Parent.mm_to_pixel(y=self.node.y)
-        except: y = self.GetPosition().y + self.Size.y / 2
+        try:    y = self.Parent.mm_to_pixel(y=self.node.y) - self.Size.y/2
+        except: y = self.GetPosition().y
 
-        self.MoveXY(x - self.Size.x / 2, y - self.Size.y / 2)
+        self.MoveXY(x, y)
 
     def draw(self, event):
         bmp = wx.EmptyBitmap(*self.Size)
