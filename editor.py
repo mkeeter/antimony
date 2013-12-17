@@ -5,16 +5,17 @@ import node
 import datum
 
 class Editor(wx.Panel):
-    def __init__(self, parent, target):
-        wx.Panel.__init__(self, parent)
+    def __init__(self, control):
+        wx.Panel.__init__(self, control.Parent)
 
-        self.target = target
+        self.target = control.node
+        self.control = control
 
-        sizer = wx.FlexGridSizer(rows=len(target.inputs) + 1, cols=4)
+        sizer = wx.FlexGridSizer(rows=len(self.target.inputs) + 1, cols=4)
 
-        self.add_header(sizer, target)
+        self.add_header(sizer, self.target)
         self.data = []
-        for n, d in target.inputs:
+        for n, d in self.target.inputs:
             self.add_row(sizer, n, d)
 
         self.SetBackgroundColour((200, 200, 200))
@@ -77,9 +78,9 @@ class Editor(wx.Panel):
                   border=3, flag=wx.BOTTOM|wx.TOP|wx.LEFT|wx.ALIGN_CENTER)
 
 
-    @staticmethod
-    def on_change(event):
+    def on_change(self, event):
         """ When a text box changes, update the corresponding Datum
+            and trigger an update for self and self.control
         """
         txt = event.GetEventObject()
 
@@ -88,6 +89,8 @@ class Editor(wx.Panel):
             txt.datum.expr = "'%s'" % txt.GetValue()
         else:
             txt.datum.expr = txt.GetValue()
+        self.update()
+        self.control.update()
 
 
     def predraw(self, event):
@@ -122,5 +125,5 @@ class Editor(wx.Panel):
 
 _editors = {}
 
-def MakeEditor(parent, target):
-    return _editors.get(type(target), Editor)(parent, target)
+def MakeEditor(control):
+    return _editors.get(type(control.node), Editor)(control)

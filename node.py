@@ -87,7 +87,7 @@ class NodeControl(wx.Control):
 
     def open_editor(self, event=None):
         if self.hover and not self.editor:
-            self.editor = editor.MakeEditor(self.Parent, self.node)
+            self.editor = editor.MakeEditor(self)
             self.Raise()
 
     def start_drag(self, event):    self.drag = True
