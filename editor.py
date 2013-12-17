@@ -13,7 +13,6 @@ class Editor(wx.Panel):
         sizer = wx.FlexGridSizer(rows=len(target.inputs) + 1, cols=4)
 
         self.add_header(sizer, target)
-
         self.data = []
         for n, d in target.inputs:
             self.add_row(sizer, n, d)
@@ -23,11 +22,8 @@ class Editor(wx.Panel):
 
         # Check that variables are valid before painting.
         self.Bind(wx.EVT_PAINT, self.predraw)
-
-        self.native_size = self.Size
-        self.expand = 0
-
         self.reposition()
+
 
     def hand_cursor(self, event=None):
         wx.SetCursor(wx.StockCursor(wx.CURSOR_HAND))
@@ -43,7 +39,8 @@ class Editor(wx.Panel):
         sizer.Add(txt, border=5, flag=wx.EXPAND|wx.TOP)
         txt.Bind(wx.EVT_MOTION, self.hand_cursor)
         txt.Bind(wx.EVT_LEAVE_WINDOW, self.mouse_cursor)
-        txt.Bind(wx.EVT_LEFT_UP, self.start_hide)
+        txt.Bind(wx.EVT_LEFT_UP, lambda event:
+                (self.mouse_cursor(), wx.CallAfter(self.Destroy)))
 
         label = type(target).__name__
         base = type(target).__bases__[0]
@@ -108,35 +105,20 @@ class Editor(wx.Panel):
             else:
                 txt.SetForegroundColour(wx.Colour(255, 0, 0))
 
-    def start_hide(self, event):
-        self.expand = -1
-        wx.CallAfter(self.Refresh)
 
     def reposition(self):
         """ Move this panel to the appropriate position and zoom as needed.
         """
         time = 5
 
+        px, py = self.GetPosition()
         try:    x = self.Parent.mm_to_pixel(x=self.target.x)
-        except: x = self.GetPosition().x
+        except: x = px
 
         try:    y = self.Parent.mm_to_pixel(y=self.target.y)
-        except: y = self.GetPosition().y
+        except: y = py
 
-        self.MoveXY(x, y)
-        if self.expand >= 0 and self.expand <= time:
-            self.Size = (self.native_size.x * self.expand / time,
-                         self.native_size.y * self.expand / time)
-            self.expand += 1
-            wx.CallAfter(self.Refresh)
-        elif self.expand < 0:
-            self.Size = (self.native_size.x * (self.expand + time) / time,
-                         self.native_size.y * (self.expand + time) / time)
-            self.expand -= 1
-            wx.CallAfter(self.Refresh)
-            if self.expand < -time:
-                wx.CallAfter(self.Destroy)
-                self.mouse_cursor()
+        if x != px or y != py:  self.MoveXY(x, y)
 
 _editors = {}
 
