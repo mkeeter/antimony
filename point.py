@@ -25,7 +25,15 @@ class PointControl(node.NodeControl):
     def reposition(self):
         """ Move this control to the appropriate position.
         """
-        x, y = self.Parent.mm_to_pixel(self.node.x, self.node.y)
+        x = self.node.x if self.node._x.valid() else 0
+        y = self.node.y if self.node._y.valid() else 0
+
+        x, y = self.Parent.mm_to_pixel(x, y)
+        if not self.node._x.valid():
+            x = self.GetPosition().x + self.Size.x / 2
+        if not self.node._y.valid():
+            y = self.GetPosition().y + self.Size.y / 2
+
         self.MoveXY(x - self.Size.x / 2, y - self.Size.y / 2)
 
     def draw(self, event):
@@ -41,7 +49,6 @@ class PointControl(node.NodeControl):
         dc.DrawCircle(x, y, 10 if self.hover else 6)
 
         self.region = wx.RegionFromBitmapColour(bmp, wx.Colour(0, 0, 0, 0))
-
 
         wx.PaintDC(self).Blit(0, 0, self.Size.x, self.Size.y, dc, 0, 0)
 

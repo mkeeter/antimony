@@ -38,10 +38,14 @@ class NodeControl(wx.Control):
         super(NodeControl, self).__init__(parent, *args, **kwargs)
         self.node = node
         self.hover = False
+        self.drag  = False
+        self.mouse_pos = wx.Point(0, 0)
 
         self.Bind(wx.EVT_MOTION, self.on_motion)
         self.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
         self.Bind(wx.EVT_PAINT, self.draw)
+        self.Bind(wx.EVT_LEFT_DOWN, self.start_drag)
+        self.Bind(wx.EVT_LEFT_UP, self.stop_drag)
 
         self.editor = None
 
@@ -59,6 +63,17 @@ class NodeControl(wx.Control):
             self.hover = hover
             self.Refresh()
 
+        delta = self.GetPosition() + event.GetPosition() - self.mouse_pos
+        if self.drag:
+            dx =  delta.x / self.Parent.scale
+            dy = -delta.y / self.Parent.scale
+            if self.node._x.simple():
+                self.node._x.expr = str(float(self.node._x.expr) + dx)
+            if self.node._y.simple():
+                self.node._y.expr = str(float(self.node._y.expr) + dy)
+            self.Refresh()
+        self.mouse_pos = self.GetPosition() + event.GetPosition()
+
     def on_leave_window(self, event):
         if self.hover:
             self.hover = False
@@ -71,5 +86,8 @@ class NodeControl(wx.Control):
     def open_editor(self, event=None):
         if self.hover and not self.editor:
             self.editor = editor.MakeEditor(self.Parent, self.node)
+
+    def start_drag(self, event):    self.drag = True
+    def stop_drag(self, event):     self.drag = False
 
 

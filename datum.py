@@ -36,6 +36,10 @@ class Datum(object):
 class FloatDatum(Datum):
     def __init__(self, value):
         super(FloatDatum, self).__init__(value, float)
+    def simple(self):
+        try:    float(self.expr)
+        except: return False
+        else:   return True
 
 ################################################################################
 

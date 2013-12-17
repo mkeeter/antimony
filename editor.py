@@ -110,7 +110,13 @@ class Editor(wx.Panel):
         """ Move this panel to the appropriate position and zoom as needed.
         """
         time = 5
-        x, y = self.Parent.mm_to_pixel(self.target.x, self.target.y)
+        x = self.target.x if self.target._x.valid() else 0
+        y = self.target.y if self.target._y.valid() else 0
+
+        x, y = self.Parent.mm_to_pixel(x, y)
+        if not self.target._x.valid():  x = self.GetPosition().x
+        if not self.target._y.valid():  y = self.GetPosition().y
+
         self.MoveXY(x, y)
         if self.expand >= 0 and self.expand <= time:
             self.Size = (self.native_size.x * self.expand / time,
