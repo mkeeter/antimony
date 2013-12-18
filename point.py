@@ -21,7 +21,41 @@ class PointControl(node.NodeControl):
     def __init__(self, parent, target):
         super(PointControl, self).__init__(parent, target, size=(30, 30))
         self.Bind(wx.EVT_LEFT_DCLICK, self.open_editor)
+        self.hovering = False
+        self.dragging = False
         self.update()
+
+    def is_mouse_over(self, position):
+        return self.region.Contains(*position)
+
+    def on_motion(self, event):
+        over = self.is_mouse_over(event.GetPosition())
+        if over != self.hovering:
+            self.hovering = over
+            self.Refresh()
+
+        pos = self.GetPosition() + event.GetPosition()
+        if self.dragging:
+            self.mouse_drag(pos - self.mouse_pos)
+        self.mouse_pos = pos
+
+
+    def on_click(self, event):
+        self.dragging = (event.ButtonDown() and
+                         self.is_mouse_over(event.GetPosition()))
+
+
+    def mouse_drag(self, delta):
+        dx =  delta.x / self.Parent.scale
+        dy = -delta.y / self.Parent.scale
+        if self.node._x.simple():
+            self.node._x.expr = str(float(self.node._x.expr) + dx)
+        if self.node._y.simple():
+            self.node._y.expr = str(float(self.node._y.expr) + dy)
+
+        self.update()
+        if self.editor:     self.editor.update()
+
 
     def update(self):
         """ Move this control to the appropriate position.
@@ -46,7 +80,7 @@ class PointControl(node.NodeControl):
         dark  = (100, 100, 100)
         dc.SetBrush(wx.Brush(light))
         dc.SetPen(wx.Pen(dark, 2))
-        dc.DrawCircle(x, y, 10 if self.hover or self.drag else 6)
+        dc.DrawCircle(x, y, 10 if self.hovering or self.dragging else 6)
 
         self.region = wx.RegionFromBitmapColour(bmp, wx.Colour(0, 0, 0, 0))
 
