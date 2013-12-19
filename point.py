@@ -7,9 +7,9 @@ class Point(node.Node):
 
     def __init__(self, name, x, y):
 
-        self._x = datum.FloatDatum(x)
-        self._y = datum.FloatDatum(y)
-        self._name = datum.NameDatum(name)
+        self._x = datum.FloatDatum(self, x)
+        self._y = datum.FloatDatum(self, y)
+        self._name = datum.NameDatum(self, name)
 
         self.inputs = [(i, getattr(self, '_'+i)) for i in ('name','x','y')]
 
@@ -50,8 +50,10 @@ class PointControl(node.NodeControl):
         dy = -delta.y / self.Parent.scale
         if self.node._x.simple():
             self.node._x.expr = str(float(self.node._x.expr) + dx)
+            self.node._x.update_children()
         if self.node._y.simple():
             self.node._y.expr = str(float(self.node._y.expr) + dy)
+            self.node._y.update_children()
 
         self.update()
         if self.editor:     self.editor.update()

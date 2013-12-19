@@ -6,6 +6,7 @@ class Node(object):
             Adds node to master list and sets _deleted to False.
         """
         self._deleted = False
+        self.control  = None
         nodes.append(self)
         pass
 
@@ -37,6 +38,7 @@ class NodeControl(wx.Control):
     def __init__(self, parent, node, *args, **kwargs):
         super(NodeControl, self).__init__(parent, *args, **kwargs)
         self.node = node
+        node.control = self
 
         self.Bind(wx.EVT_MOTION, self.on_motion)
         self.Bind(wx.EVT_LEAVE_WINDOW, self.on_motion)
@@ -44,7 +46,7 @@ class NodeControl(wx.Control):
         self.Bind(wx.EVT_LEFT_UP, self.on_click)
         self.Bind(wx.EVT_PAINT, self.draw)
 
-        self.editor = None
+        self.editor  = None
 
     def on_motion(self, event):
         raise NotImplementedError(

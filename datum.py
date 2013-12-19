@@ -3,15 +3,24 @@ import node
 class Datum(object):
     stack = []
 
-    def __init__(self, expr, type):
-        self.type    = type
+    def __init__(self, node, expr, type):
+        self.node    = node
         self.expr    = repr(expr)
+        self.type    = type
 
         self.parents = set()
         self.children = set()
 
         # Check to make sure that the initial expression is valid.
         self.eval()
+
+    def update_children(self):
+        """ Update the node control and editor for all children of this Datum
+        """
+        for c in self.children:
+            c.node.control.update()
+            if c.node.control.editor:
+                c.node.control.editor.update()
 
     def value(self):
         """ Gets the value from this datum,
@@ -31,9 +40,9 @@ class Datum(object):
 
         # If this was called from another datum, then register it as a
         # parent and register self as its children
-        if Datum.stack:
-            Datum.stack[-1].parents.add(self)
-            self.children.add(Datum.stack[-1])
+        for d in Datum.stack:
+            d.parents.add(self)
+            self.children.add(d)
 
         # Clear parents and remove references to self in parents
         for p in self.parents:
@@ -61,8 +70,8 @@ class Datum(object):
 ################################################################################
 
 class FloatDatum(Datum):
-    def __init__(self, value):
-        super(FloatDatum, self).__init__(value, float)
+    def __init__(self, node, value):
+        super(FloatDatum, self).__init__(node, value, float)
     def simple(self):
         try:    float(self.expr)
         except: return False
@@ -72,6 +81,6 @@ class FloatDatum(Datum):
 
 import name
 class NameDatum(Datum):
-    def __init__(self, value):
-        super(NameDatum, self).__init__(value, name.Name)
+    def __init__(self, node, value):
+        super(NameDatum, self).__init__(node, value, name.Name)
 

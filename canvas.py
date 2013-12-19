@@ -12,7 +12,7 @@ class Canvas(wx.Panel):
         self.Bind(wx.EVT_PAINT, self.paint)
 
         for i in range(10):
-            pt = point.Point('asdf', random.uniform(-10, 10), random.uniform(-10, 10))
+            pt = point.Point('p%i' % i, random.uniform(-10, 10), random.uniform(-10, 10))
             ctrl = point.PointControl(self, pt)
             if random.uniform(0, 10) > 9:   ctrl.open_editor()
 

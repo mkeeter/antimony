@@ -121,6 +121,10 @@ class Editor(wx.Panel):
             txt.datum.expr = "'%s'" % txt.GetValue()
         else:
             txt.datum.expr = txt.GetValue()
+
+        # Recursively update node and children.
+        txt.datum.update_children()
+
         self.update()
         self.control.update()
 
