@@ -56,7 +56,9 @@ class PointControl(node.NodeControl):
             self.node._y.update_children()
 
         self.update()
-        if self.editor:     self.editor.update()
+        if self.editor:
+            self.editor.sync_text()
+            self.editor.update()
 
 
     def update(self):

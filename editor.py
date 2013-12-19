@@ -26,9 +26,9 @@ class Editor(wx.Panel):
 
         self.animate(self.animate_open)
 
-        # Check that variables are valid before painting.
-        self.Bind(wx.EVT_PAINT, self.predraw)
         self.update()
+        self.sync_text()
+        self.check_datums()
 
     def animate_open(self, event):
         f = self.timer.tick / 5.0
@@ -128,23 +128,24 @@ class Editor(wx.Panel):
         self.update()
         self.control.update()
 
-
-    def predraw(self, event):
+    def check_datums(self):
         """ Check all datums for validity and change text color if invalid.
         """
-        dc = wx.PaintDC(self)   # required when catching paint event
         for txt in self.data:
-
-            if isinstance(txt.datum, datum.NameDatum):
-                txt.SetValue(txt.datum.expr[1:-1])
-            else:
-                txt.SetValue(txt.datum.expr)
-
             if txt.datum.valid():
                 txt.SetForegroundColour(wx.NullColour)
             else:
                 txt.SetForegroundColour(wx.Colour(255, 0, 0))
-        event.Skip()
+
+
+    def sync_text(self):
+        """ Update the text fields to reflect the underlying datums.
+        """
+        for txt in self.data:
+            if isinstance(txt.datum, datum.NameDatum):
+                txt.SetValue(txt.datum.expr[1:-1])
+            else:
+                txt.SetValue(txt.datum.expr)
 
 
     def update(self):
@@ -160,6 +161,9 @@ class Editor(wx.Panel):
         except: y = py
 
         if x != px or y != py:  self.MoveXY(x, y)
+
+        self.check_datums()
+
 
 _editors = {}
 
