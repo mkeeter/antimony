@@ -35,14 +35,15 @@ class Datum(object):
             Raises an exception if this fails.
         """
 
-        if self in Datum.stack:
-            raise RuntimeError("Infinite recursion in Datum.")
-
         # If this was called from another datum, then register it as a
         # parent and register self as its children
         for d in Datum.stack:
-            d.parents.add(self)
-            self.children.add(d)
+            if d is not self:
+                d.parents.add(self)
+                self.children.add(d)
+
+        if self in Datum.stack:
+            raise RuntimeError("Infinite recursion in Datum.")
 
         # Clear parents and remove references to self in parents
         for p in self.parents:
