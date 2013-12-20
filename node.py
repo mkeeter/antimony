@@ -46,7 +46,7 @@ class NodeControl(object):
     def GetDragTarget(self, index):
         return self
 
-    def drag(self, dx, dy):
+    def drag(self, x, y, dx, dy):
         raise NotImplementedError(
                 "NodeControl.drag must be defined in subclass.")
 

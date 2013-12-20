@@ -27,7 +27,7 @@ class PointControl(node.NodeControl):
         self.update()
 
 
-    def drag(self, dx, dy):
+    def drag(self, x, y, dx, dy):
         """ Drag this node by attempting to change its x and y coordinates
             dx and dy should be floating-point values.
         """

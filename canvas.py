@@ -21,7 +21,7 @@ class Canvas(wx.Panel):
 
         self.Bind(wx.EVT_LEFT_DOWN, self.on_left_down)
         self.Bind(wx.EVT_LEFT_UP, self.on_left_up)
-        #self.Bind(wx.EVT_LEFT_DCLICK, self.on_dclick)
+        self.Bind(wx.EVT_LEFT_DCLICK, self.on_dclick)
         self.Bind(wx.EVT_MOTION, self.on_motion)
 
         self.Bind(wx.EVT_SIZE, self.update_children)
@@ -84,11 +84,23 @@ class Canvas(wx.Panel):
         if x is not None:
             x = int((x - self.center.x) * self.scale + self.Size.x/2)
         if y is not None:
-            y = int((self.Size.y/2) - (y - self.center.y) * self.scale)
+            y = int((self.center.y - y) * self.scale + self.Size.y/2)
 
         if x is not None and y is not None:     return x, y
         elif x is not None:                     return x
         elif y is not None:                     return y
+
+    def pixel_to_mm(self, x=None, y=None):
+        """ Converts a pixel location into an x,y coordinate.
+        """
+        if x is not None:
+            x =  (x - self.Size.x/2) / self.scale + self.center.x
+        if y is not None:
+            y = -((y - self.Size.y/2) / self.scale - self.center.y)
+        if x is not None and y is not None:     return x, y
+        elif x is not None:                     return x
+        elif y is not None:                     return y
+
 
     def on_left_down(self, event):
         """ Assigns a target to self.drag_target.
@@ -102,6 +114,14 @@ class Canvas(wx.Panel):
         else:
             self.drag_target = self
 
+    def on_dclick(self, event):
+        i = (self.pick.GetRed(*event.GetPosition()) +
+             self.pick.GetGreen(*event.GetPosition()) * 255) - 1
+        j = self.pick.GetBlue(*event.GetPosition())
+
+        if i >= 0 and i < len(self.controls):
+            self.controls[i].open_editor()
+
     def on_left_up(self, event):
         """ Releases the current drag target by calling release()
         """
@@ -112,18 +132,18 @@ class Canvas(wx.Panel):
         """ Drags the current drag target (if one exists).
         """
         delta = event.GetPosition() - self.mouse_pos
+        x, y = self.pixel_to_mm(*event.GetPosition())
         if self.drag_target:
-            self.drag_target.drag(delta.x / self.scale,
-                                  -delta.y / self.scale)
+            self.drag_target.drag(
+                    x, y,delta.x / self.scale, -delta.y / self.scale)
         self.mouse_pos = event.GetPosition()
 
 
-    def drag(self, dx, dy):
+    def drag(self, x, y, dx, dy):
         """ Drags the canvas around.
         """
         self.center -= wx.RealPoint(dx, dy)
         self.update_children()
-
 
     def release(self):  pass
 
