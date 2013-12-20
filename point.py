@@ -18,38 +18,44 @@ class Point(node.Node):
 ################################################################################
 
 class PointControl(node.NodeControl):
-    def __init__(self, parent, target):
-        super(PointControl, self).__init__(parent, target, size=(30, 30))
-        self.Bind(wx.EVT_LEFT_DCLICK, self.open_editor)
+    def __init__(self, canvas, target):
+        super(PointControl, self).__init__(canvas, target, size=(30, 30))
         self.hovering = False
         self.dragging = False
 
-    def is_mouse_over(self, position):
-        return self.region.Contains(*position)
+        self.position = (0, 0)
+        self.size = (10, 10)
+        canvas.controls.append(self)
+        self.update()
 
-    def on_motion(self, event):
+    def mouse_over(self, over):
+        """ Handles mouse motion.
+        """
         over = self.is_mouse_over(event.GetPosition())
         if over != self.hovering:
             self.hovering = over
             self.Refresh()
 
-        pos = self.GetPosition() + event.GetPosition()
+        pos = event.GetPosition()
         if self.dragging:
             self.mouse_drag(pos - self.mouse_pos)
         self.mouse_pos = pos
 
         # Release the event if we're not using it.
-        if not over and not self.dragging:  event.Skip()
+        return over or self.dragging
 
 
     def on_click(self, event):
-        self.dragging = (event.ButtonDown() and
-                         self.is_mouse_over(event.GetPosition()))
+        if self.is_mouse_over(event.GetPosition()):
+            self.dragging = event.ButtonDown()
+            return True
+        else:
+            return False
 
 
     def mouse_drag(self, delta):
-        dx =  delta.x / self.Parent.scale
-        dy = -delta.y / self.Parent.scale
+        dx =  delta.x / self.canvas.scale
+        dy = -delta.y / self.canvas.scale
         if self.node._x.simple():
             self.node._x.set_expr(str(float(self.node._x.get_expr()) + dx))
         if self.node._y.simple():
@@ -59,30 +65,25 @@ class PointControl(node.NodeControl):
     def update(self):
         """ Move this control to the appropriate position.
         """
-        px, py = self.GetPosition()
-        try:    x = self.Parent.mm_to_pixel(x=self.node.x) - self.Size.x/2
+        px, py = self.position
+        try:    x = self.canvas.mm_to_pixel(x=self.node.x) - self.size[0]/2
         except: x = px
 
-        try:    y = self.Parent.mm_to_pixel(y=self.node.y) - self.Size.y/2
+        try:    y = self.canvas.mm_to_pixel(y=self.node.y) - self.size[1]/2
         except: y = py
 
         if x != px or y != py:
-            self.MoveXY(x, y)
+            self.position = (x, y)
+            self.canvas.Refresh()
 
-    def draw(self, event):
-        bmp = wx.EmptyBitmap(*self.Size)
-        dc = wx.MemoryDC()
-        dc.SelectObject(bmp)
-
-        x, y = self.Size.x / 2, self.Size.y / 2
+    def draw(self, dc, pick=False):
+        x, y = self.size[0] / 2, self.size[0] / 2
         light = (200, 200, 200)
         dark  = (100, 100, 100)
-        dc.SetBrush(wx.Brush(light))
-        dc.SetPen(wx.Pen(dark, 2))
-        dc.DrawCircle(x, y, 10 if self.hovering or self.dragging else 6)
 
-        self.region = wx.RegionFromBitmapColour(bmp, wx.Colour(0, 0, 0, 0))
+        dc.SetBrush(wx.Brush(pick if pick else light))
+        dc.SetPen(wx.Pen(pick if pick else dark, 2))
 
-        wx.PaintDC(self).Blit(0, 0, self.Size.x, self.Size.y, dc, 0, 0)
-
-
+        dc.DrawCircle(self.position[0] + self.size[0]/2,
+                      self.position[1] + self.size[1]/2,
+                      10 if self.hovering or self.dragging else 6)

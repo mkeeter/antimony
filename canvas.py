@@ -11,27 +11,41 @@ class Canvas(wx.Panel):
         super(Canvas, self).__init__(parent, *args, **kwargs)
         self.Bind(wx.EVT_PAINT, self.paint)
 
-        for i in range(10):
-            pt = point.Point('p%i' % i, random.uniform(-10, 10), random.uniform(-10, 10))
-            ctrl = point.PointControl(self, pt)
-            if random.uniform(0, 10) > 9:   ctrl.open_editor()
-
         self.center = wx.RealPoint(0, 0)
         self.scale = 10.0 # scale is measured in pixels/mm
         self.mouse_pos = wx.Point(0, 0)
         self.dragging = False
 
+        self.controls = []
+
+        for i in range(1):
+            pt = point.Point('p%i' % i, random.uniform(-10, 10), random.uniform(-10, 10))
+            ctrl = point.PointControl(self, pt)
+            if random.uniform(0, 10) > 9:   ctrl.open_editor()
+
         self.Bind(wx.EVT_LEFT_DOWN, self.start_drag)
         self.Bind(wx.EVT_LEFT_UP, self.stop_drag)
         self.Bind(wx.EVT_MOTION, self.on_motion)
+
         self.Bind(wx.EVT_SIZE, self.update_children)
 
     def update_children(self, event=None):
         for c in self.Children:
             c.update()
+        for c in self.controls:
+            c.update()
+
+    def make_pick_buffer(self):
+        self.pick = wx.EmptyBitmap(*self.Size)
+        dc = wx.MemoryDC()
+        dc.SelectObject(self.pick)
+
+        # Draw each control in a unique color
+        for c, i in enumerate(self.controls):
+            color = ((i+1) / 255**2, ((i+1) / 255) % 255**2, (i+1) % 255)
+            c.draw(dc, pick=color)
 
     def paint(self, event=None):
-
         dc = wx.PaintDC(self)
         dc.SetBackground(wx.Brush((20, 20, 20)))
         dc.Clear()
@@ -41,6 +55,8 @@ class Canvas(wx.Panel):
         dc.DrawLine(x, y, x + 50, y)
         dc.SetPen(wx.Pen((0, 255, 0), 2))
         dc.DrawLine(x, y, x, y - 50)
+
+        for c in self.controls:     c.draw(dc)
 
 
     def mm_to_pixel(self, x=None, y=None):
