@@ -125,7 +125,8 @@ class Canvas(wx.Panel):
     def on_left_up(self, event):
         """ Releases the current drag target by calling release()
         """
-        self.drag_target.release()
+        if self.drag_target:
+            self.drag_target.release()
         self.drag_target = None
 
     def on_motion(self, event):
