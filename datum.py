@@ -8,6 +8,9 @@ class Datum(object):
         self._expr    = repr(expr)
         self.type    = type
 
+        self.outputs = []
+        self.inputs  = []
+
         self.parents = set()
         self.children = set()
 

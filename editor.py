@@ -14,7 +14,12 @@ class Editor(wx.Panel):
         sizer = wx.FlexGridSizer(rows=len(self.target.inputs) + 1, cols=4)
 
         self.add_header(sizer, self.target)
-        self.data = []
+
+        # Store datum editors and connections
+        self.txtctrls = []
+        self.io_inputs = []
+        self.io_outputs = []
+
         for n, d in self.target.inputs:
             self.add_row(sizer, n, d)
 
@@ -105,8 +110,9 @@ class Editor(wx.Panel):
     def add_row(self, sizer, name, dat):
         """ Adds a row with a particular datum.
         """
-        sizer.Add(io.Input(self, dat),
-                  border=3, flag=wx.BOTTOM|wx.TOP|wx.RIGHT|wx.ALIGN_CENTER)
+        i = io.Input(self, dat)
+        self.io_inputs.append(i)
+        sizer.Add(i, border=3, flag=wx.BOTTOM|wx.TOP|wx.RIGHT|wx.ALIGN_CENTER)
 
         sizer.Add(wx.StaticText(self, label=name,
                                 style=wx.ALIGN_RIGHT|wx.ST_NO_AUTORESIZE,
@@ -119,10 +125,11 @@ class Editor(wx.Panel):
 
         txt.Bind(wx.EVT_TEXT, self.on_change)
         sizer.Add(txt, border=3, flag=wx.ALL|wx.EXPAND)
-        self.data.append(txt)
+        self.txtctrls.append(txt)
 
-        sizer.Add(io.Output(self, dat),
-                  border=3, flag=wx.BOTTOM|wx.TOP|wx.LEFT|wx.ALIGN_CENTER)
+        o = io.Output(self, dat)
+        self.io_outputs.append(o)
+        sizer.Add(o, border=3, flag=wx.BOTTOM|wx.TOP|wx.LEFT|wx.ALIGN_CENTER)
 
 
     def on_change(self, event):
@@ -138,7 +145,7 @@ class Editor(wx.Panel):
     def check_datums(self):
         """ Check all datums for validity and change text color if invalid.
         """
-        for txt in self.data:
+        for txt in self.txtctrls:
             if txt.datum.valid():
                 txt.SetForegroundColour(wx.NullColour)
             else:
@@ -148,9 +155,18 @@ class Editor(wx.Panel):
     def sync_text(self):
         """ Update the text fields to reflect the underlying datums.
         """
-        for txt in self.data:
+        for txt in self.txtctrls:
             txt.SetValue(txt.datum.get_expr())
 
+    def get_datum_output(self, datum):
+        """ For a given datum, returns the io.Output object.
+        """
+        return [io for io in self.io_outputs if io.datum == datum][0]
+
+    def get_datum_input(self, datum):
+        """ For a given datum, returns the io.Input object.
+        """
+        return [io for io in self.io_inputs if io.datum == datum][0]
 
     def update(self):
         """ Move this panel to the appropriate position and zoom as needed.

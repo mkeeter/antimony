@@ -19,6 +19,12 @@ class IO(wx.Control):
 
         self.SetBackgroundColour(self.color)
 
+    def center(self):
+        """ Returns a canvas coordinate representing the
+            center of this IO control.
+        """
+        return self.GetPosition() + self.Parent.GetPosition() + wx.Point(5, 5)
+
 
 class Input(IO):
     def __init__(self, parent, datum):
@@ -43,17 +49,15 @@ class Output(IO):
 
 
     def on_click(self, event):
-        self.connection = connection.Connection(self.canvas, self)
+        c = connection.Connection(self.datum)
+        self.connection = connection.ConnectionControl(self.canvas, c)
         self.canvas.connections.append(self.connection)
 
 
     def on_motion(self, event):
         if self.connection:
-            if self.connection.destination is None:
-                self.connection.on_motion(event)
-            else:
-                self.connection = None
-        if self.region.Contains(*event.GetPosition()):
+            self.connection.on_motion(event)
+        elif self.region.Contains(*event.GetPosition()):
             self.SetBackgroundColour(
                     [min(255, c + 75) for c in self.color])
             self.Refresh()
@@ -63,7 +67,6 @@ class Output(IO):
 
     def on_release(self, event):
         if self.connection:
-            if self.connection.destination is None:
-                self.connection.on_release(event)
-            else:
-                self.connection = None
+            self.connection.on_release(event)
+            self.connection = None
+            self.on_motion(event)
