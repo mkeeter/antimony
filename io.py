@@ -15,7 +15,7 @@ class IO(wx.Control):
 
         self.datum = datum
         self.color = _colors.get(self.datum.type, colors.red)
-        self.region = wx.Region(0, 0, 10, 10)
+        self.region = wx.Region(1, 1, 9, 9)
 
         self.SetBackgroundColour(self.color)
 
@@ -30,6 +30,7 @@ class Input(IO):
         return self.region.Contains(
             *(pos - self.GetPosition() - self.Parent.GetPosition()))
 
+
 class Output(IO):
     def __init__(self, parent, datum):
         super(Output, self).__init__(parent, datum)
@@ -37,30 +38,32 @@ class Output(IO):
         self.Bind(wx.EVT_LEFT_UP,      self.on_release)
         self.Bind(wx.EVT_MOTION,       self.on_motion)
         self.Bind(wx.EVT_LEAVE_WINDOW, self.on_motion)
+        self.canvas = self.Parent.Parent
         self.connection = None
 
-    def on_click(self, event):
-        print self.Parent.Parent
-        self.connection = connection.Connection(self.Parent.Parent, self)
-        wx.PostEvent(self.connection, event)
 
-    def on_release(self, event):
-        if self.connection and self.connection.destination is None:
-            wx.PostEvent(self.connection, event)
-        else:
-            event.Skip()
+    def on_click(self, event):
+        self.connection = connection.Connection(self.canvas, self)
+        self.canvas.connections.append(self.connection)
+
 
     def on_motion(self, event):
-
-        # First, check to see if we should be forwarding events to a
-        # connection object that's being created.
-        if self.connection and self.connection.destination is None:
-            wx.PostEvent(self.connection, event)
-        elif self.region.Contains(*event.GetPosition()):
+        if self.connection:
+            if self.connection.destination is None:
+                self.connection.on_motion(event)
+            else:
+                self.connection = None
+        if self.region.Contains(*event.GetPosition()):
             self.SetBackgroundColour(
                     [min(255, c + 75) for c in self.color])
             self.Refresh()
         else:
             self.SetBackgroundColour(self.color)
             self.Refresh()
-            event.Skip()
+
+    def on_release(self, event):
+        if self.connection:
+            if self.connection.destination is None:
+                self.connection.on_release(event)
+            else:
+                self.connection = None

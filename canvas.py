@@ -18,6 +18,7 @@ class Canvas(wx.Panel):
         self.drag_target = None
 
         self.controls = []
+        self.connections = []
 
         self.Bind(wx.EVT_LEFT_DOWN, self.on_left_down)
         self.Bind(wx.EVT_LEFT_UP, self.on_left_up)
@@ -56,7 +57,7 @@ class Canvas(wx.Panel):
         dc.SelectObject(bmp)
 
         # Draw each control in a unique color
-        for i, c in enumerate(self.controls):
+        for i, c in enumerate(self.controls + self.connections):
             color = ((i+1) % 255, (i+1) / 255)
             c.draw(dc, pick=color)
 
@@ -78,7 +79,8 @@ class Canvas(wx.Panel):
         dc.SetPen(wx.Pen((0, 255, 0), 2))
         dc.DrawLine(x, y, x, y - 50)
 
-        for c in self.controls:     c.draw(dc)
+        for c in self.controls + self.connections:
+            c.draw(dc)
 
 
     def mm_to_pixel(self, x=None, y=None):
@@ -100,7 +102,7 @@ class Canvas(wx.Panel):
             x =  (x - self.Size.x/2) / self.scale + self.center.x
         if y is not None:
             y = -((y - self.Size.y/2) / self.scale - self.center.y)
-        if x is not None and y is not None:     return x, y
+        if x is not None and y is not None:     return wx.RealPoint(x, y)
         elif x is not None:                     return x
         elif y is not None:                     return y
 

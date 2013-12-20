@@ -23,7 +23,6 @@ class Editor(wx.Panel):
 
         self.native_size = self.Size
         self.Size = (0, 0)
-
         self.animate(self.animate_open)
 
         # Run through these functions once to put the editor in

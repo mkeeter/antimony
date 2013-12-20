@@ -1,63 +1,57 @@
 import wx
 
-class Connection(wx.Control):
-    def __init__(self, parent, origin):
-        super(Connection, self).__init__(parent, size=(10, 10))
+class Connection(object):
+    def __init__(self, canvas, origin):
+        """ Constructor for an floating connection.
+            origin should be a io.Output object.
+        """
+        self.canvas = canvas
         self.origin = origin
         self.destination = None
 
         # Get mouse position within the canvas object.
-        self.mouse_pos = self.origin_pos = (
-            origin.GetPosition() +
-            origin.Parent.GetPosition() + wx.Point(5, 5))
-
-        self.Bind(wx.EVT_PAINT, self.draw)
-        self.Bind(wx.EVT_MOTION, self.on_motion)
-        self.Bind(wx.EVT_LEFT_UP, self.on_release)
-
-        self.update()
+        self.mouse_pos = self.origin_pos = self.canvas.pixel_to_mm(*(
+            self.origin.GetPosition() +
+            self.origin.Parent.GetPosition() + wx.Point(5, 5)))
 
     def on_motion(self, event):
-        self.mouse_pos = (
-                event.GetPosition() +
-                self.origin.GetPosition() +
-                self.origin.Parent.GetPosition())
-        self.update()
+        """ Update mouse position and redraws the canvas.
+            The event should be triggered from an io.Output control.
+        """
+        self.mouse_pos = self.canvas.pixel_to_mm(*(
+            event.GetPosition() +
+            self.origin.GetPosition() + self.origin.Parent.GetPosition()))
+        self.canvas.Refresh()
 
-    def draw(self, event):
-        dc = wx.PaintDC(self)
-        dc.SetPen(wx.Pen(self.origin.color, 4))
+
+    def draw(self, dc, pick=False):
+        dc.SetPen(wx.Pen(pick + (0,) if pick else self.origin.color, 4))
         if ((self.mouse_pos.x > self.origin_pos.x) ^
             (self.mouse_pos.y > self.origin_pos.y)):
-            dc.DrawLine(5, self.Size.y - 5, self.Size.x - 5, 5)
+            dc.DrawLinePoint(self.canvas.mm_to_pixel(self.origin_pos.x,
+                                                     self.origin_pos.y),
+                             self.canvas.mm_to_pixel(self.mouse_pos.x,
+                                                     self.mouse_pos.y))
+
         else:
-            dc.DrawLine(5, 5, self.Size.x - 5, self.Size.y - 5)
+            dc.DrawLinePoint(self.canvas.mm_to_pixel(self.mouse_pos.x,
+                                                     self.mouse_pos.y),
+                             self.canvas.mm_to_pixel(self.origin_pos.x,
+                                                     self.origin_pos.y))
 
-    def get_bounds(self):
-        xmin = min(self.mouse_pos.x - 5, self.origin_pos.x - 5)
-        ymin = min(self.mouse_pos.y - 5, self.origin_pos.y - 5)
-        xmax = max(self.mouse_pos.x + 5, self.origin_pos.x + 5)
-        ymax = max(self.mouse_pos.y + 5, self.origin_pos.y + 5)
-        return xmin, ymin, xmax, ymax
-
-    def update(self, event=None):
-        if not self.destination:
-            xmin, ymin, xmax, ymax = self.get_bounds()
-            self.Size = (xmax - xmin, ymax - ymin)
-            self.MoveXY(xmin, ymin)
 
     def on_release(self, event):
+        return
         self.mouse_pos = (
             event.GetPosition() +
             self.origin.GetPosition() +
             self.origin.Parent.GetPosition())
         d = self.Parent.find_input(self.mouse_pos)
         if d is None:
-            wx.CallAfter(self.Destroy)
+            self.canvas.connections.remove(self)
+            self.destination = False
         else:
             self.destination = d
-            self.Unbind(wx.EVT_MOTION)
-            self.Unbind(wx.EVT_LEFT_UP)
 
 
 
