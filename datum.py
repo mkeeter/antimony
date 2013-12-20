@@ -15,11 +15,14 @@ class Datum(object):
         self.eval()
 
     def get_expr(self):
+        """ Returns the expression string.
+        """
         return self._expr
 
     def set_expr(self, e):
         """ Sets the expression string.
-            Updates node, editor, and children as needed.
+            Updates node, editor, and children as needed
+            (which may trigger a canvas Refresh)
         """
         if e == self._expr:     return
 
@@ -33,6 +36,7 @@ class Datum(object):
 
     def update_children(self):
         """ Update the node control and editor for all children of this Datum
+            This may trigger a canvas refresh operation.
         """
         for c in self.children:
             c.node.control.update()
@@ -91,6 +95,9 @@ class FloatDatum(Datum):
     def __init__(self, node, value):
         super(FloatDatum, self).__init__(node, value, float)
     def simple(self):
+        """ Returns True if the expression can be directly converted into
+            a floating-point value; false otherwise.
+        """
         try:    float(self._expr)
         except: return False
         else:   return True

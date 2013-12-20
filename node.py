@@ -43,6 +43,15 @@ class NodeControl(object):
 
         self.editor  = None
 
+    def GetDragTarget(self, index):
+        return self
+
+    def drag(self, dx, dy):
+        raise NotImplementedError(
+                "NodeControl.drag must be defined in subclass.")
+
+    def release(self):  pass
+
     def on_motion(self, event):
         raise NotImplementedError(
                 "NodeControl.on_motion must be defined in subclass.")
