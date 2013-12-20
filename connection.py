@@ -12,20 +12,17 @@ class Connection(wx.Control):
             origin.Parent.GetPosition() + wx.Point(5, 5))
 
         self.Bind(wx.EVT_PAINT, self.draw)
-        self.Bind(wx.EVT_LEFT_UP, self.release)
         self.Bind(wx.EVT_MOTION, self.on_motion)
+        self.Bind(wx.EVT_LEFT_UP, self.on_release)
 
         self.update()
 
     def on_motion(self, event):
-        if not self.destination:
-            self.mouse_pos = (
-                    event.GetPosition() +
-                    self.origin.GetPosition() +
-                    self.origin.Parent.GetPosition())
-            self.update()
-        else:
-            event.Skip()
+        self.mouse_pos = (
+                event.GetPosition() +
+                self.origin.GetPosition() +
+                self.origin.Parent.GetPosition())
+        self.update()
 
     def draw(self, event):
         dc = wx.PaintDC(self)
@@ -49,15 +46,18 @@ class Connection(wx.Control):
             self.Size = (xmax - xmin, ymax - ymin)
             self.MoveXY(xmin, ymin)
 
-    def release(self, event):
-        if self.destination:
-            event.Skip()
+    def on_release(self, event):
+        self.mouse_pos = (
+            event.GetPosition() +
+            self.origin.GetPosition() +
+            self.origin.Parent.GetPosition())
+        d = self.Parent.find_input(self.mouse_pos)
+        if d is None:
+            wx.CallAfter(self.Destroy)
         else:
-            self.mouse_pos = (
-                event.GetPosition() +
-                self.origin.GetPosition() +
-                self.origin.Parent.GetPosition())
-            print self.Parent.find_input(self.mouse_pos)
+            self.destination = d
+            self.Unbind(wx.EVT_MOTION)
+            self.Unbind(wx.EVT_LEFT_UP)
 
 
 
