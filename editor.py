@@ -33,6 +33,9 @@ class Editor(wx.Panel):
         self.check_datums()
 
     def animate_open(self, event):
+        """ Animates the panel sliding open (takes 5 frames)
+            Halts the timer when the panel is completely open.
+        """
         f = self.timer.tick / 5.0
         self.timer.tick += 1
         self.Size = (self.native_size.x * f,
@@ -42,6 +45,9 @@ class Editor(wx.Panel):
             self.timer = None
 
     def animate_close(self, event):
+        """ Animates the panel sliding closed.
+            Calls self.Destroy when the panel is completely closed.
+        """
         f = 1 - self.timer.tick / 5.0
         self.timer.tick += 1
         self.Size = (self.native_size.x * f,
@@ -53,21 +59,31 @@ class Editor(wx.Panel):
             wx.CallAfter(self.Destroy)
 
     def animate(self, callback):
+        """ Starts a timer that calls the given callback every 10 ms.
+        """
         self.timer = wx.Timer()
         self.timer.Bind(wx.EVT_TIMER, callback)
         self.timer.Start(10)
         self.timer.tick = 0
 
     def start_close(self, event=None):
+        """ Starts the closing animation.
+        """
         self.animate(self.animate_close)
 
     def hand_cursor(self, event=None):
+        """ Sets the mouse cursor to a hand.
+        """
         wx.SetCursor(wx.StockCursor(wx.CURSOR_HAND))
 
     def mouse_cursor(self, event=None):
+        """ Sets the mouse cursor to the standard cursor.
+        """
         wx.SetCursor(wx.StockCursor(wx.CURSOR_ARROW))
 
     def add_header(self, sizer, target):
+        """ Adds a title header.
+        """
         sizer.Add(wx.Panel(self))
 
         # Add a button to close the window
@@ -88,6 +104,8 @@ class Editor(wx.Panel):
 
 
     def add_row(self, sizer, name, dat):
+        """ Adds a row with a particular datum.
+        """
         sizer.Add(io.Input(self, dat),
                   border=3, flag=wx.BOTTOM|wx.TOP|wx.RIGHT|wx.ALIGN_CENTER)
 
@@ -152,6 +170,9 @@ class Editor(wx.Panel):
         self.check_datums()
 
     def find_input(self, pos):
+        """ Searches among children for io.Input controls that
+            the mouse cursor hits.  Returns None if none are found.
+        """
         for c in self.Children:
             if isinstance(c, io.Input) and c.mouse_hit(pos):
                 return c
