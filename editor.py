@@ -26,6 +26,8 @@ class Editor(wx.Panel):
 
         self.animate(self.animate_open)
 
+        # Run through these functions once to put the editor in
+        # the right place and make text correct.
         self.update()
         self.sync_text()
         self.check_datums()
@@ -116,17 +118,9 @@ class Editor(wx.Panel):
         """
         txt = event.GetEventObject()
 
-        # Special case for Name datum
-        if isinstance(txt.datum, datum.NameDatum):
-            txt.datum.expr = "'%s'" % txt.GetValue()
-        else:
-            txt.datum.expr = txt.GetValue()
-
-        # Recursively update node and children.
-        txt.datum.update_children()
-
-        self.update()
-        self.control.update()
+        # Set datum expression to text value
+        # (this automatically updates children)
+        txt.datum.set_expr(txt.GetValue())
 
     def check_datums(self):
         """ Check all datums for validity and change text color if invalid.
@@ -142,10 +136,7 @@ class Editor(wx.Panel):
         """ Update the text fields to reflect the underlying datums.
         """
         for txt in self.data:
-            if isinstance(txt.datum, datum.NameDatum):
-                txt.SetValue(txt.datum.expr[1:-1])
-            else:
-                txt.SetValue(txt.datum.expr)
+            txt.SetValue(txt.datum.get_expr())
 
 
     def update(self):

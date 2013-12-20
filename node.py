@@ -27,7 +27,7 @@ class Node(object):
 
 # Master list of nodes
 nodes = []
-def dict():     return {n._name.expr[1:-1]: n for n in nodes}
+def dict():     return {n._name.get_expr(): n for n in nodes}
 
 ################################################################################
 

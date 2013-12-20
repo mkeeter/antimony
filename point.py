@@ -23,7 +23,6 @@ class PointControl(node.NodeControl):
         self.Bind(wx.EVT_LEFT_DCLICK, self.open_editor)
         self.hovering = False
         self.dragging = False
-        self.update()
 
     def is_mouse_over(self, position):
         return self.region.Contains(*position)
@@ -39,6 +38,9 @@ class PointControl(node.NodeControl):
             self.mouse_drag(pos - self.mouse_pos)
         self.mouse_pos = pos
 
+        # Release the event if we're not using it.
+        if not over and not self.dragging:  event.Skip()
+
 
     def on_click(self, event):
         self.dragging = (event.ButtonDown() and
@@ -49,16 +51,9 @@ class PointControl(node.NodeControl):
         dx =  delta.x / self.Parent.scale
         dy = -delta.y / self.Parent.scale
         if self.node._x.simple():
-            self.node._x.expr = str(float(self.node._x.expr) + dx)
-            self.node._x.update_children()
+            self.node._x.set_expr(str(float(self.node._x.get_expr()) + dx))
         if self.node._y.simple():
-            self.node._y.expr = str(float(self.node._y.expr) + dy)
-            self.node._y.update_children()
-
-        self.update()
-        if self.editor:
-            self.editor.sync_text()
-            self.editor.update()
+            self.node._y.set_expr(str(float(self.node._y.get_expr()) + dy))
 
 
     def update(self):

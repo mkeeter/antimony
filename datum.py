@@ -5,7 +5,7 @@ class Datum(object):
 
     def __init__(self, node, expr, type):
         self.node    = node
-        self.expr    = repr(expr)
+        self._expr    = repr(expr)
         self.type    = type
 
         self.parents = set()
@@ -13,6 +13,23 @@ class Datum(object):
 
         # Check to make sure that the initial expression is valid.
         self.eval()
+
+    def get_expr(self):
+        return self._expr
+
+    def set_expr(self, e):
+        """ Sets the expression string.
+            Updates node, editor, and children as needed.
+        """
+        if e == self._expr:     return
+
+        self._expr = e
+        self.update_children()
+        self.node.control.update()
+        if self.node.control.editor:
+            self.node.control.editor.update()
+            self.node.control.editor.sync_text()
+
 
     def update_children(self):
         """ Update the node control and editor for all children of this Datum
@@ -54,7 +71,7 @@ class Datum(object):
         Datum.stack.append(self)
 
         try:
-            t = eval(self.expr, node.dict())
+            t = eval(self._expr, node.dict())
             if not isinstance(t, self.type):    t = self.type(t)
         except:     raise
         finally:    Datum.stack.pop()
@@ -74,7 +91,7 @@ class FloatDatum(Datum):
     def __init__(self, node, value):
         super(FloatDatum, self).__init__(node, value, float)
     def simple(self):
-        try:    float(self.expr)
+        try:    float(self._expr)
         except: return False
         else:   return True
 
@@ -84,4 +101,15 @@ import name
 class NameDatum(Datum):
     def __init__(self, node, value):
         super(NameDatum, self).__init__(node, value, name.Name)
+
+    def get_expr(self):
+        return self._expr[1:-1]
+
+    def set_expr(self, e):
+        """ Sets the expression string and updates children as needed.
+        """
+        e = "'%s'" % e
+        if e != self._expr:
+            self._expr = e
+            self.update_children()
 
