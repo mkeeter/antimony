@@ -25,33 +25,34 @@ class Connection(object):
 
 
     def draw(self, dc, pick=False):
-        dc.SetPen(wx.Pen(pick + (0,) if pick else self.origin.color, 4))
-        if ((self.mouse_pos.x > self.origin_pos.x) ^
-            (self.mouse_pos.y > self.origin_pos.y)):
-            dc.DrawLinePoint(self.canvas.mm_to_pixel(self.origin_pos.x,
-                                                     self.origin_pos.y),
-                             self.canvas.mm_to_pixel(self.mouse_pos.x,
-                                                     self.mouse_pos.y))
+        if self.destination is None:
+            dc.SetPen(wx.Pen(pick + (0,) if pick else self.origin.color, 4))
+            if ((self.mouse_pos.x > self.origin_pos.x) ^
+                (self.mouse_pos.y > self.origin_pos.y)):
+                dc.DrawLinePoint(self.canvas.mm_to_pixel(self.origin_pos.x,
+                                                         self.origin_pos.y),
+                                 self.canvas.mm_to_pixel(self.mouse_pos.x,
+                                                         self.mouse_pos.y))
 
-        else:
-            dc.DrawLinePoint(self.canvas.mm_to_pixel(self.mouse_pos.x,
-                                                     self.mouse_pos.y),
-                             self.canvas.mm_to_pixel(self.origin_pos.x,
-                                                     self.origin_pos.y))
+            else:
+                dc.DrawLinePoint(self.canvas.mm_to_pixel(self.mouse_pos.x,
+                                                         self.mouse_pos.y),
+                                 self.canvas.mm_to_pixel(self.origin_pos.x,
+                                                         self.origin_pos.y))
 
 
     def on_release(self, event):
-        return
         self.mouse_pos = (
             event.GetPosition() +
             self.origin.GetPosition() +
             self.origin.Parent.GetPosition())
-        d = self.Parent.find_input(self.mouse_pos)
+        d = self.canvas.find_input(self.mouse_pos)
         if d is None:
             self.canvas.connections.remove(self)
             self.destination = False
         else:
             self.destination = d
+        self.canvas.Refresh()
 
 
 
