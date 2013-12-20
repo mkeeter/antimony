@@ -78,21 +78,17 @@ class Editor(wx.Panel):
         txt.Bind(wx.EVT_LEFT_UP, self.start_close)
 
         label = type(target).__name__
-        base = type(target).__bases__[0]
-        if base is not node.Node:
-            label += ' (%s)' % (base.__name__)
         txt = wx.StaticText(self, label=label, size=(-1, 25),
                             style=wx.ST_NO_AUTORESIZE)
         txt.SetFont(wx.Font(14, family=wx.FONTFAMILY_DEFAULT,
                          style=wx.ITALIC, weight=wx.BOLD))
         sizer.Add(txt, border=5, flag=wx.TOP|wx.RIGHT|wx.EXPAND)
 
-        sizer.Add(io.IO(self, base if base is not node.Node else type(target)),
-                  border=3, flag=wx.BOTTOM|wx.TOP|wx.LEFT|wx.ALIGN_CENTER)
+        sizer.Add(wx.Panel(self))
 
 
     def add_row(self, sizer, name, dat):
-        sizer.Add(io.IO(self, dat.type),
+        sizer.Add(io.Input(self, dat),
                   border=3, flag=wx.BOTTOM|wx.TOP|wx.RIGHT|wx.ALIGN_CENTER)
 
         sizer.Add(wx.StaticText(self, label=name,
@@ -108,7 +104,7 @@ class Editor(wx.Panel):
         sizer.Add(txt, border=3, flag=wx.ALL|wx.EXPAND)
         self.data.append(txt)
 
-        sizer.Add(io.IO(self, dat.type),
+        sizer.Add(io.Output(self, dat),
                   border=3, flag=wx.BOTTOM|wx.TOP|wx.LEFT|wx.ALIGN_CENTER)
 
 
