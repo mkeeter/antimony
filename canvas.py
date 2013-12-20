@@ -8,7 +8,7 @@ import node
 
 class Canvas(wx.Panel):
     def __init__(self, parent, *args, **kwargs):
-        wx.Panel.__init__(self, parent, *args, **kwargs)
+        super(Canvas, self).__init__(parent, *args, **kwargs)
         self.Bind(wx.EVT_PAINT, self.paint)
 
         for i in range(10):

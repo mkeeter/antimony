@@ -6,7 +6,7 @@ import datum
 
 class Editor(wx.Panel):
     def __init__(self, control):
-        wx.Panel.__init__(self, control.Parent)
+        super(Editor, self).__init__(control.Parent)
 
         self.target = control.node
         self.control = control

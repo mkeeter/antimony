@@ -4,7 +4,7 @@ import canvas
 
 class Frame(wx.Frame):
     def __init__(self, app):
-        wx.Frame.__init__(self, parent=None)
+        super(Frame, self).__init__(parent=None)
 
         self.canvas = canvas.Canvas(self, size=(200,200))
         sizer = wx.BoxSizer()
