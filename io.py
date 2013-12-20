@@ -24,6 +24,12 @@ class Input(IO):
     def __init__(self, parent, datum):
         super(Input, self).__init__(parent, datum)
 
+    def mouse_hit(self, pos):
+        """ Checks if this input contains a (canvas) coordinate.
+        """
+        return self.region.Contains(
+            *(pos - self.GetPosition() - self.Parent.GetPosition()))
+
 class Output(IO):
     def __init__(self, parent, datum):
         super(Output, self).__init__(parent, datum)
@@ -39,24 +45,18 @@ class Output(IO):
         wx.PostEvent(self.connection, event)
 
     def on_release(self, event):
-        if self.connection.destination is None:
+        if self.connection and self.connection.destination is None:
             wx.PostEvent(self.connection, event)
-            return
-        self.connection = None
-        event.Skip()
+        else:
+            event.Skip()
 
     def on_motion(self, event):
 
         # First, check to see if we should be forwarding events to a
         # connection object that's being created.
-        if self.connection:
-            if self.connection.destination is None:
-                wx.PostEvent(self.connection, event)
-                return
-            else:
-                self.connection = None
-
-        if self.region.Contains(*event.GetPosition()):
+        if self.connection and self.connection.destination is None:
+            wx.PostEvent(self.connection, event)
+        elif self.region.Contains(*event.GetPosition()):
             self.SetBackgroundColour(
                     [min(255, c + 75) for c in self.color])
             self.Refresh()

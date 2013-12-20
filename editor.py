@@ -151,6 +151,12 @@ class Editor(wx.Panel):
 
         self.check_datums()
 
+    def find_input(self, pos):
+        for c in self.Children:
+            if isinstance(c, io.Input) and c.mouse_hit(pos):
+                return c
+        return None
+
 
 _editors = {}
 

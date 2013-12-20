@@ -24,6 +24,8 @@ class Connection(wx.Control):
                     self.origin.GetPosition() +
                     self.origin.Parent.GetPosition())
             self.update()
+        else:
+            event.Skip()
 
     def draw(self, event):
         dc = wx.PaintDC(self)
@@ -41,15 +43,21 @@ class Connection(wx.Control):
         ymax = max(self.mouse_pos.y + 5, self.origin_pos.y + 5)
         return xmin, ymin, xmax, ymax
 
-    def update(self):
+    def update(self, event=None):
         if not self.destination:
             xmin, ymin, xmax, ymax = self.get_bounds()
             self.Size = (xmax - xmin, ymax - ymin)
             self.MoveXY(xmin, ymin)
 
     def release(self, event):
-        if not self.destination:
-            wx.CallAfter(self.Destroy)
+        if self.destination:
+            event.Skip()
+        else:
+            self.mouse_pos = (
+                event.GetPosition() +
+                self.origin.GetPosition() +
+                self.origin.Parent.GetPosition())
+            print self.Parent.find_input(self.mouse_pos)
 
 
 

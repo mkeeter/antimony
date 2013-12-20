@@ -67,5 +67,13 @@ class Canvas(wx.Panel):
             self.Refresh()
         self.mouse_pos = event.GetPosition()
 
+    def find_input(self, pos):
+        for c in self.Children:
+            if isinstance(c, editor.Editor):
+                i = c.find_input(pos)
+                if i is not None:
+                    return i
+        return None
+
 
 
