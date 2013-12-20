@@ -26,7 +26,7 @@ class Canvas(wx.Panel):
 
         self.Bind(wx.EVT_SIZE, self.update_children)
 
-        self.scatter_points(1)
+        self.scatter_points(4)
 
     def scatter_points(self, n):
         for i in range(n):
@@ -36,6 +36,9 @@ class Canvas(wx.Panel):
 
 
     def update_children(self, event=None):
+        """ Update Editor panels and NodeControl objects so that they
+            are in the correct places in the canvas pixel panel.
+        """
         # Update any Editor windows that may be active
         for c in self.Children:     c.update()
 
@@ -115,6 +118,9 @@ class Canvas(wx.Panel):
             self.drag_target = self
 
     def on_dclick(self, event):
+        """ On double-click, attempt to open an editor if
+            a NodeControl is active.
+        """
         i = (self.pick.GetRed(*event.GetPosition()) +
              self.pick.GetGreen(*event.GetPosition()) * 255) - 1
         j = self.pick.GetBlue(*event.GetPosition())
