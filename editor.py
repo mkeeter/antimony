@@ -1,6 +1,6 @@
 import wx
 
-import io
+import connector
 import node
 import datum
 

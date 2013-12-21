@@ -1,4 +1,4 @@
-from PySide import QtGui
+from PySide import QtCore, QtGui
 
 import node
 import datum
@@ -19,8 +19,8 @@ class Point(node.Node):
 
 class PointControl(node.NodeControl):
     def __init__(self, canvas, target):
-        super(PointControl, self).__init__(canvas, target, size=(30, 30))
-        self.setFixedSize(10, 10)
+        super(PointControl, self).__init__(canvas, target)
+        self.setFixedSize(20, 20)
         self.update()
 
     def mousePressEvent(self, event):
@@ -39,11 +39,8 @@ class PointControl(node.NodeControl):
     def update(self):
         """ Move this control to the appropriate position.
         """
-        pos = self.pos()
-        px, py = pos.x(), pos.y()
-
-        size = self.size()
-        width, height = size.width(), size.height()
+        px, py = self.x(), self.y()
+        width, height = self.width(), self.height()
 
         try:    x = self.canvas.mm_to_pixel(x=self.node.x) - width/2
         except: x = px
@@ -57,11 +54,12 @@ class PointControl(node.NodeControl):
 
     def paintEvent(self, paintEvent):
         painter = QtGui.QPainter(self)
-        painter.setBackground(QtGui.QColor(100, 100, 100))
+        painter.setBackground(QtGui.QColor(200, 100, 100))
         painter.eraseRect(self.rect())
+        self.paint(painter)
 
-    def paint(self, qp, pick=False):
-        x, y = self.size[0] / 2, self.size[0] / 2
+    def paint(self, qp):
+        width, height = self.width(), self.height()
         light = (200, 200, 200)
         dark  = (100, 100, 100)
 
@@ -70,5 +68,4 @@ class PointControl(node.NodeControl):
         qp.setPen(QtGui.QPen(
             QtGui.QColor(*dark), 2))
 
-        qp.drawEllipse(self.position[0] + self.size[0]/2,
-                       self.position[1] + self.size[1]/2, 8, 8)
+        qp.drawEllipse((width - 16) / 2, (height - 16) / 2, 16, 16)

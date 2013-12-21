@@ -7,7 +7,7 @@ import point
 class Canvas(QtGui.QWidget):
     def __init__(self):
         super(Canvas, self).__init__()
-        self.setGeometry(100, 100, 500, 400)
+        self.setGeometry(1440/4, 900/4, 1440/2, 900/2)
         self.setWindowTitle("kokopuffs")
 
         self.center = QtCore.QPointF(0, 0)
