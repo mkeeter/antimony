@@ -67,7 +67,8 @@ class Canvas(wx.Panel):
     def paint(self, event=None):
         """ Update the pick buffer and rendered scene.
         """
-        self.make_pick_buffer()
+
+        if not self.drag_target:    self.make_pick_buffer()
 
         dc = wx.PaintDC(self)
         dc.SetBackground(wx.Brush((20, 20, 20)))
@@ -136,6 +137,7 @@ class Canvas(wx.Panel):
         if self.drag_target:
             self.drag_target.release()
         self.drag_target = None
+        self.make_pick_buffer()
 
     def on_motion(self, event):
         """ Drags the current drag target (if one exists).
