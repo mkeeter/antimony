@@ -14,7 +14,7 @@ class Canvas(QtGui.QWidget):
         self.scale = 10.0 # scale is measured in pixels/mm
 
         self.controls = []
-        self.scatter_points(10)
+        self.scatter_points(1)
         self.show()
 
     def paintEvent(self, paintEvent):

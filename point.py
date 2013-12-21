@@ -18,9 +18,11 @@ class Point(node.Node):
 ################################################################################
 
 class PointControl(node.NodeControl):
+
     def __init__(self, canvas, target):
         super(PointControl, self).__init__(canvas, target)
-        self.setFixedSize(20, 20)
+        self.setFixedSize(30, 30)
+        self.make_mask()
         self.update()
 
     def mousePressEvent(self, event):
@@ -54,18 +56,32 @@ class PointControl(node.NodeControl):
 
     def paintEvent(self, paintEvent):
         painter = QtGui.QPainter(self)
-        painter.setBackground(QtGui.QColor(200, 100, 100))
-        painter.eraseRect(self.rect())
         self.paint(painter)
 
-    def paint(self, qp):
+    def paint(self, qp, mask=False):
         width, height = self.width(), self.height()
         light = (200, 200, 200)
         dark  = (100, 100, 100)
 
-        qp.setBrush(QtGui.QBrush(
-            QtGui.QColor(*light)))
-        qp.setPen(QtGui.QPen(
-            QtGui.QColor(*dark), 2))
+        if mask:
+            qp.setBrush(QtGui.QBrush(QtCore.Qt.color1))
+            qp.setPen(QtGui.QPen(QtCore.Qt.color1, 2))
+        else:
+            qp.setBrush(QtGui.QBrush(QtGui.QColor(*light)))
+            qp.setPen(QtGui.QPen(QtGui.QColor(*dark), 2))
 
-        qp.drawEllipse((width - 16) / 2, (height - 16) / 2, 16, 16)
+
+        qp.drawEllipse((width - 16) / 2, (height - 16) / 2,
+                       16, 16)
+
+    def make_mask(self):
+        painter = QtGui.QPainter()
+        bitmap = QtGui.QPixmap(self.size())
+
+        painter.begin(bitmap)
+        painter.setBackground(QtCore.Qt.color0)
+        painter.eraseRect(self.rect())
+        self.paint(painter, True)
+        painter.end()
+
+        self.setMask(bitmap)
