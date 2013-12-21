@@ -4,7 +4,7 @@ import io
 import node
 import datum
 
-class Editor(wx.Panel):
+class Editor(wx.Window):
     def __init__(self, control):
         super(Editor, self).__init__(control.canvas)
 
