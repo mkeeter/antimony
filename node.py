@@ -31,7 +31,6 @@ def dict():     return {n._name.get_expr(): n for n in nodes}
 
 ################################################################################
 
-import wx
 import editor
 
 class NodeControl(object):
