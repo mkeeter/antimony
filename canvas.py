@@ -1,12 +1,20 @@
 import random
 
-from PySide import QtGui
+from PySide import QtCore, QtGui
+
+import point
 
 class Canvas(QtGui.QWidget):
     def __init__(self):
         super(Canvas, self).__init__()
         self.setGeometry(100, 100, 500, 400)
         self.setWindowTitle("kokopuffs")
+
+        self.center = QtCore.QPointF(0, 0)
+        self.scale = 10.0 # scale is measured in pixels/mm
+
+        self.controls = []
+        self.scatter_points(10)
         self.show()
 
     def paintEvent(self, paintEvent):
@@ -16,13 +24,18 @@ class Canvas(QtGui.QWidget):
         painter.setPen(QtGui.QColor(255, 255, 0))
         painter.drawLine(0, 0, 100, 100)
 
+    def scatter_points(self, n):
+        for i in range(n):
+            pt = point.Point('p%i' % i, random.uniform(-10, 10), random.uniform(-10, 10))
+            ctrl = point.PointControl(self, pt)
+
     def mm_to_pixel(self, x=None, y=None):
         """ Converts an x,y position in mm into a pixel coordinate.
         """
         if x is not None:
-            x = int((x - self.center.x) * self.scale + self.Size.x/2)
+            x = int((x - self.center.x()) * self.scale + self.size().width()/2)
         if y is not None:
-            y = int((self.center.y - y) * self.scale + self.Size.y/2)
+            y = int((self.center.y() - y) * self.scale + self.size().height()/2)
 
         if x is not None and y is not None:     return x, y
         elif x is not None:                     return x

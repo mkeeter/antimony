@@ -32,36 +32,17 @@ def dict():     return {n._name.get_expr(): n for n in nodes}
 ################################################################################
 
 import editor
+from PySide import QtGui
 
-class NodeControl(object):
+class NodeControl(QtGui.QWidget):
     def __init__(self, canvas, node, *args, **kwargs):
+        super(NodeControl, self).__init__(canvas)
         self.canvas = canvas
 
         self.node = node
         node.control = self
 
         self.editor  = None
-
-    def GetDragTarget(self, index):
-        return self
-
-    def drag(self, x, y, dx, dy):
-        raise NotImplementedError(
-                "NodeControl.drag must be defined in subclass.")
-
-    def release(self):  pass
-
-    def on_motion(self, event):
-        raise NotImplementedError(
-                "NodeControl.on_motion must be defined in subclass.")
-
-    def on_click(self, event):
-        raise NotImplementedError(
-                "NodeControl.on_motion must be defined in subclass.")
-
-    def draw(self, event):
-        raise NotImplementedError(
-                "NodeControl.draw must be defined in subclass.")
 
     def open_editor(self, event=None):
         """ Opens / closes the editor.
