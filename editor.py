@@ -84,23 +84,33 @@ class Editor(QtGui.QGroupBox):
         """
         datum.set_expr(value)
 
+    def set_mask(self, frac):
+        """ Mask a certain percentage of the widget.
+        """
+        full = self.sizeHint()
+        self.setMask(QtGui.QRegion(0, 0, full.width()*frac  + 1,
+                                         full.height()*frac + 1))
+    mask_size = QtCore.Property(float, lambda self: 0, set_mask)
+
     def animate_open(self):
         """ Animates the panel sliding open.
         """
-        a = QtCore.QPropertyAnimation(self, "size", self)
-        a.setDuration(50)
-        a.setStartValue(QtCore.QSize(1,1))
-        a.setEndValue(self.sizeHint())
+        a = QtCore.QPropertyAnimation(self, "mask_size", self)
+        a.setDuration(100)
+        a.setStartValue(0)
+        a.setEndValue(1)
         a.start(QtCore.QPropertyAnimation.DeleteWhenStopped)
 
     def animate_close(self):
         """ Animates the panel sliding closed.
             Calls self.Destroy when the panel is completely closed.
         """
-        a = QtCore.QPropertyAnimation(self, "size", self)
-        a.setDuration(50)
-        a.setStartValue(self.sizeHint())
-        a.setEndValue(QtCore.QSize(1,1))
+        self.setFocus() # Take focus away from text entry box
+                        # to prevent certain graphics artifacts
+        a = QtCore.QPropertyAnimation(self, "mask_size", self)
+        a.setDuration(100)
+        a.setStartValue(1)
+        a.setEndValue(0)
         a.finished.connect(self.close)
         a.start(QtCore.QPropertyAnimation.DeleteWhenStopped)
 
@@ -113,7 +123,9 @@ class Editor(QtGui.QGroupBox):
 _editors = {}
 
 def MakeEditor(control):
-    return _editors.get(type(control.node), Editor)(control)
+    ed = _editors.get(type(control.node), Editor)(control)
+    control.raise_()
+    return ed
 
 '''
         # Add a button to close the window
