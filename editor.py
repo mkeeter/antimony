@@ -52,6 +52,16 @@ class Editor(QtGui.QGroupBox):
                 t.setStyleSheet("QLineEdit { background-color: #faa; }")
             t.setText(d.get_expr())
 
+        canvas = self.parentWidget()
+        px, py = self.x(), self.y()
+        try:    x = canvas.mm_to_pixel(x=self.node.x)
+        except: x = px
+        try:    y = canvas.mm_to_pixel(y=self.node.y)
+        except: y = px
+
+        if x != px or y != py:
+            self.move(x, y)
+
     def on_change(self, value, datum):
         """ When a text box changes, update the corresponding Datum
             (which triggers a sync for self and self.control)
