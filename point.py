@@ -26,15 +26,15 @@ class PointControl(node.NodeControl):
         self.dragging = False
         self.hovering = False
         self.make_mask()
-        self.update()
+        self.sync()
 
     def mousePressEvent(self, event):
-        if event.buttons() == QtCore.Qt.LeftButton:
+        if event.button() == QtCore.Qt.LeftButton:
             self.mouse_pos = self.mapToParent(event.pos())
             self.dragging = True
 
     def mouseReleaseEvent(self, event):
-        if event.buttons() == QtCore.Qt.LeftButton:
+        if event.button() == QtCore.Qt.LeftButton:
             self.dragging = False
 
     def mouseMoveEvent(self, event):
@@ -47,11 +47,11 @@ class PointControl(node.NodeControl):
 
     def enterEvent(self, event):
         self.hovering = True
-        self.repaint()
+        self.update()
 
     def leaveEvent(self, event):
         self.hovering = False
-        self.repaint()
+        self.update()
 
     def drag(self, dx, dy):
         """ Drag this node by attempting to change its x and y coordinates
@@ -63,7 +63,7 @@ class PointControl(node.NodeControl):
             self.node._y.set_expr(str(float(self.node._y.get_expr()) + dy))
 
 
-    def update(self):
+    def sync(self):
         """ Move this control to the appropriate position.
         """
         px, py = self.x(), self.y()
@@ -95,12 +95,11 @@ class PointControl(node.NodeControl):
             qp.setBrush(QtGui.QBrush(QtGui.QColor(*light)))
             qp.setPen(QtGui.QPen(QtGui.QColor(*dark), 2))
 
-        if not mask and (self.hovering or self.dragging):
-            r = 20
-        else:
-            r = 14
+        if mask:                                d = 22
+        elif self.hovering or self.dragging:    d = 20
+        else:                                   d = 14
 
-        qp.drawEllipse((width - r) / 2, (height - r) / 2, r, r)
+        qp.drawEllipse((width - d) / 2, (height - d) / 2, d, d)
 
     def make_mask(self):
         painter = QtGui.QPainter()
