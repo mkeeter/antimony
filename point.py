@@ -22,13 +22,38 @@ class PointControl(node.NodeControl):
     def __init__(self, canvas, target):
         super(PointControl, self).__init__(canvas, target)
         self.setFixedSize(30, 30)
+
+        self.dragging = False
+        self.hovering = False
         self.make_mask()
         self.update()
 
     def mousePressEvent(self, event):
-        print "Mouse press at", event.x(), event.y()
+        if event.buttons() == QtCore.Qt.LeftButton:
+            self.mouse_pos = self.mapToParent(event.pos())
+            self.dragging = True
 
-    def drag(self, x, y, dx, dy):
+    def mouseReleaseEvent(self, event):
+        if event.buttons() == QtCore.Qt.LeftButton:
+            self.dragging = False
+
+    def mouseMoveEvent(self, event):
+        p = self.mapToParent(event.pos())
+        if self.dragging:
+            delta = p - self.mouse_pos
+            scale = self.parentWidget().scale
+            self.drag(delta.x() / scale, -delta.y() / scale)
+        self.mouse_pos = p
+
+    def enterEvent(self, event):
+        self.hovering = True
+        self.repaint()
+
+    def leaveEvent(self, event):
+        self.hovering = False
+        self.repaint()
+
+    def drag(self, dx, dy):
         """ Drag this node by attempting to change its x and y coordinates
             dx and dy should be floating-point values.
         """
@@ -70,9 +95,12 @@ class PointControl(node.NodeControl):
             qp.setBrush(QtGui.QBrush(QtGui.QColor(*light)))
             qp.setPen(QtGui.QPen(QtGui.QColor(*dark), 2))
 
+        if not mask and (self.hovering or self.dragging):
+            r = 20
+        else:
+            r = 14
 
-        qp.drawEllipse((width - 16) / 2, (height - 16) / 2,
-                       16, 16)
+        qp.drawEllipse((width - r) / 2, (height - r) / 2, r, r)
 
     def make_mask(self):
         painter = QtGui.QPainter()
