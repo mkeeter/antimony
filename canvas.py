@@ -3,6 +3,7 @@ import random
 from PySide import QtCore, QtGui
 
 import point
+import editor
 
 class Canvas(QtGui.QWidget):
     def __init__(self):
@@ -13,7 +14,6 @@ class Canvas(QtGui.QWidget):
         self.center = QtCore.QPointF(0, 0)
         self.scale = 10.0 # scale is measured in pixels/mm
 
-        self.controls = []
         self.scatter_points(1)
         self.show()
 
@@ -28,6 +28,7 @@ class Canvas(QtGui.QWidget):
         for i in range(n):
             pt = point.Point('p%i' % i, random.uniform(-10, 10), random.uniform(-10, 10))
             ctrl = point.PointControl(self, pt)
+            e = editor.Editor(ctrl)
 
     def mm_to_pixel(self, x=None, y=None):
         """ Converts an x,y position in mm into a pixel coordinate.

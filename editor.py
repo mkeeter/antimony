@@ -1,9 +1,76 @@
-import wx
+from PySide import QtCore, QtGui
 
 import connector
 import node
-import datum
 
+class Editor(QtGui.QGroupBox):
+    def __init__(self, control):
+        super(Editor, self).__init__(control.canvas)
+
+        self.node    = control.node
+        self.control = control
+
+        grid = QtGui.QGridLayout(self)
+        grid.setSpacing(5)
+        grid.setContentsMargins(2, 2, 2, 2)
+
+        self.add_header(grid)
+        for name, datum in self.node.inputs:
+            self.add_row(grid, name, datum)
+
+        self.setLayout(grid)
+
+        self.show()
+
+    def add_header(self, grid):
+        button = QtGui.QPushButton('[ - ]', self)
+        button.setFlat(True)
+        button.clicked.connect(self.deleteLater)
+        grid.addWidget(button, 0, 1)
+
+        label = type(self.node).__name__
+        grid.addWidget(QtGui.QLabel("<b>%s</b>" % label, self), 0, 2)
+
+    def add_row(self, grid, name, datum):
+        row = grid.rowCount()
+        grid.addWidget(QtGui.QLabel(name, self), row, 1, QtCore.Qt.AlignRight)
+
+        txt = QtGui.QLineEdit(self)
+        grid.addWidget(txt, row, 2)
+
+        return
+        sizer.Add(wx.StaticText(self, label=name,
+                                style=wx.ALIGN_RIGHT|wx.ST_NO_AUTORESIZE,
+                                size=(-1, 25)),
+                  border=3, flag=wx.ALL|wx.EXPAND)
+
+        txt = wx.TextCtrl(self, size=(150, 25),
+                          style=wx.NO_BORDER|wx.TE_PROCESS_ENTER)
+        txt.datum = dat
+
+        txt.Bind(wx.EVT_TEXT, self.on_change)
+        sizer.Add(txt, border=3, flag=wx.ALL|wx.EXPAND)
+        self.txtctrls.append(txt)
+
+'''
+        # Add a button to close the window
+        txt = wx.StaticText(self, label='[-]')
+        sizer.Add(txt, border=5, flag=wx.EXPAND|wx.TOP)
+        txt.Bind(wx.EVT_MOTION, self.hand_cursor)
+        txt.Bind(wx.EVT_LEAVE_WINDOW, self.mouse_cursor)
+        txt.Bind(wx.EVT_LEFT_UP, self.start_close)
+
+        label = type(target).__name__
+        txt = wx.StaticText(self, label=label, size=(-1, 25),
+                            style=wx.ST_NO_AUTORESIZE)
+        txt.SetFont(wx.Font(14, family=wx.FONTFAMILY_DEFAULT,
+                         style=wx.ITALIC, weight=wx.BOLD))
+        sizer.Add(txt, border=5, flag=wx.TOP|wx.RIGHT|wx.EXPAND)
+
+        sizer.Add(wx.Panel(self))'''
+
+
+'''
 class Editor(wx.Window):
     def __init__(self, control):
         super(Editor, self).__init__(control.canvas)
@@ -197,4 +264,4 @@ class Editor(wx.Window):
 _editors = {}
 
 def MakeEditor(control):
-    return _editors.get(type(control.node), Editor)(control)
+    return _editors.get(type(control.node), Editor)(control)'''
