@@ -26,6 +26,9 @@ class Editor(QtGui.QGroupBox):
         self.show()
 
     def add_header(self, grid):
+        """ Adds a header to the UI, including a push button to close
+            and this node's type.
+        """
         button = QtGui.QPushButton('[ - ]', self)
         button.setFlat(True)
         button.clicked.connect(self.animate_close)
@@ -35,6 +38,9 @@ class Editor(QtGui.QGroupBox):
         grid.addWidget(QtGui.QLabel("<b>%s</b>" % label, self), 0, 2)
 
     def add_row(self, grid, name, datum):
+        """ Adds a datum row to the UI, appending a (text input box, datum)
+            tuple to self.lines.
+        """
         row = grid.rowCount()
         grid.addWidget(QtGui.QLabel(name, self), row, 1, QtCore.Qt.AlignRight)
 
@@ -74,24 +80,24 @@ class Editor(QtGui.QGroupBox):
         datum.set_expr(value)
 
     def animate_open(self):
-        """ Animates the panel sliding open (takes 50 ms)
+        """ Animates the panel sliding open.
         """
         a = QtCore.QPropertyAnimation(self, "size", self)
-        a.setDuration(500)
-        a.setStartValue(QtCore.QSize(0,0))
+        a.setDuration(50)
+        a.setStartValue(QtCore.QSize(1,1))
         a.setEndValue(self.sizeHint())
-        a.start()
+        a.start(QtCore.QPropertyAnimation.DeleteWhenStopped)
 
     def animate_close(self):
         """ Animates the panel sliding closed.
             Calls self.Destroy when the panel is completely closed.
         """
         a = QtCore.QPropertyAnimation(self, "size", self)
-        a.setDuration(500)
+        a.setDuration(50)
         a.setStartValue(self.sizeHint())
-        a.setEndValue(QtCore.QSize(0,0))
-        a.start()
+        a.setEndValue(QtCore.QSize(1,1))
         a.finished.connect(self.close)
+        a.start(QtCore.QPropertyAnimation.DeleteWhenStopped)
 
     def close(self):
         self.control.editor = None
