@@ -29,6 +29,7 @@ class Canvas(QtGui.QWidget):
             pt = point.Point('p%i' % i, random.uniform(-10, 10), random.uniform(-10, 10))
             ctrl = point.PointControl(self, pt)
             e = editor.Editor(ctrl)
+            ctrl.editor = e
 
     def mm_to_pixel(self, x=None, y=None):
         """ Converts an x,y position in mm into a pixel coordinate.

@@ -34,7 +34,6 @@ class Datum(object):
         self.node.control.sync()
         if self.node.control.editor:
             self.node.control.editor.sync()
-            self.node.control.editor.sync_text()
 
 
     def sync_children(self):

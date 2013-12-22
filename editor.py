@@ -15,11 +15,12 @@ class Editor(QtGui.QGroupBox):
         grid.setContentsMargins(2, 2, 2, 2)
 
         self.add_header(grid)
+        self.lines = []
         for name, datum in self.node.inputs:
             self.add_row(grid, name, datum)
 
         self.setLayout(grid)
-
+        self.sync()
         self.show()
 
     def add_header(self, grid):
@@ -36,21 +37,26 @@ class Editor(QtGui.QGroupBox):
         grid.addWidget(QtGui.QLabel(name, self), row, 1, QtCore.Qt.AlignRight)
 
         txt = QtGui.QLineEdit(self)
+        txt.textChanged.connect(lambda t: self.on_change(t, datum))
         grid.addWidget(txt, row, 2)
 
-        return
-        sizer.Add(wx.StaticText(self, label=name,
-                                style=wx.ALIGN_RIGHT|wx.ST_NO_AUTORESIZE,
-                                size=(-1, 25)),
-                  border=3, flag=wx.ALL|wx.EXPAND)
+        self.lines.append((txt, datum))
 
-        txt = wx.TextCtrl(self, size=(150, 25),
-                          style=wx.NO_BORDER|wx.TE_PROCESS_ENTER)
-        txt.datum = dat
+    def sync(self):
+        """ Updates position, text, and text box highlighting.
+        """
+        for t, d in self.lines:
+            if d.valid():
+                t.setStyleSheet("")
+            else:
+                t.setStyleSheet("QLineEdit { background-color: #faa; }")
+            t.setText(d.get_expr())
 
-        txt.Bind(wx.EVT_TEXT, self.on_change)
-        sizer.Add(txt, border=3, flag=wx.ALL|wx.EXPAND)
-        self.txtctrls.append(txt)
+    def on_change(self, value, datum):
+        """ When a text box changes, update the corresponding Datum
+            (which triggers a sync for self and self.control)
+        """
+        datum.set_expr(value)
 
 '''
         # Add a button to close the window
