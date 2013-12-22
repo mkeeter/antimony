@@ -33,6 +33,10 @@ class PointControl(node.NodeControl):
             self.mouse_pos = self.mapToParent(event.pos())
             self.dragging = True
 
+    def mouseDoubleClickEvent(self, event):
+        if event.button() == QtCore.Qt.LeftButton:
+            self.open_editor()
+
     def mouseReleaseEvent(self, event):
         if event.button() == QtCore.Qt.LeftButton:
             self.dragging = False
@@ -103,7 +107,7 @@ class PointControl(node.NodeControl):
 
     def make_mask(self):
         painter = QtGui.QPainter()
-        bitmap = QtGui.QPixmap(self.size())
+        bitmap = QtGui.QBitmap(self.size())
 
         painter.begin(bitmap)
         painter.setBackground(QtCore.Qt.color0)

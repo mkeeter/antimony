@@ -44,11 +44,11 @@ class NodeControl(QtGui.QWidget):
 
         self.editor  = None
 
-    def open_editor(self, event=None):
+    def open_editor(self):
         """ Opens / closes the editor.
         """
         if not self.editor:
             self.editor = editor.MakeEditor(self)
         elif self.editor:
-            self.editor.start_close()
+            self.editor.animate_close()
 

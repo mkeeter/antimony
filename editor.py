@@ -21,12 +21,14 @@ class Editor(QtGui.QGroupBox):
 
         self.setLayout(grid)
         self.sync()
+
+        self.animate_open()
         self.show()
 
     def add_header(self, grid):
         button = QtGui.QPushButton('[ - ]', self)
         button.setFlat(True)
-        button.clicked.connect(self.deleteLater)
+        button.clicked.connect(self.animate_close)
         grid.addWidget(button, 0, 1)
 
         label = type(self.node).__name__
@@ -50,7 +52,10 @@ class Editor(QtGui.QGroupBox):
                 t.setStyleSheet("")
             else:
                 t.setStyleSheet("QLineEdit { background-color: #faa; }")
-            t.setText(d.get_expr())
+            e = d.get_expr()
+            if e != t.text():
+                t.setText(d.get_expr())
+                t.setCursorPosition(0)
 
         canvas = self.parentWidget()
         px, py = self.x(), self.y()
@@ -67,6 +72,35 @@ class Editor(QtGui.QGroupBox):
             (which triggers a sync for self and self.control)
         """
         datum.set_expr(value)
+
+    def animate_open(self):
+        """ Animates the panel sliding open (takes 50 ms)
+        """
+        a = QtCore.QPropertyAnimation(self, "size", self)
+        a.setDuration(500)
+        a.setStartValue(QtCore.QSize(0,0))
+        a.setEndValue(self.sizeHint())
+        a.start()
+
+    def animate_close(self):
+        """ Animates the panel sliding closed.
+            Calls self.Destroy when the panel is completely closed.
+        """
+        a = QtCore.QPropertyAnimation(self, "size", self)
+        a.setDuration(500)
+        a.setStartValue(self.sizeHint())
+        a.setEndValue(QtCore.QSize(0,0))
+        a.start()
+        a.finished.connect(self.close)
+
+    def close(self):
+        self.control.editor = None
+        self.deleteLater()
+
+_editors = {}
+
+def MakeEditor(control):
+    return _editors.get(type(control.node), Editor)(control)
 
 '''
         # Add a button to close the window
