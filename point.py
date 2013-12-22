@@ -108,10 +108,9 @@ class PointControl(node.NodeControl):
     def make_mask(self):
         painter = QtGui.QPainter()
         bitmap = QtGui.QBitmap(self.size())
+        bitmap.clear()
 
         painter.begin(bitmap)
-        painter.setBackground(QtCore.Qt.color0)
-        painter.eraseRect(self.rect())
         self.paint(painter, True)
         painter.end()
 

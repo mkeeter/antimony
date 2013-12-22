@@ -23,7 +23,23 @@ class Connection(object):
 class ConnectionControl(QtGui.QWidget):
     """ GUI wrapper around a connection.
     """
-    pass
+    def __init__(self, connection, parent):
+        super(ConnectionControl, self).__init__(parent)
+        self.resize(self.parentWidget().size())
+        self.connection = connection
+        self.showMaximized()
+
+        bmp = QtGui.QBitmap(self.size())
+        bmp.save("test.bmp")
+        bmp.clear()
+        self.setMask(bmp)
+        self.show()
+
+    def paintEvent(self, paintEvent):
+        painter = QtGui.QPainter(self)
+        color = (255, 0, 0)
+        painter.setBackground(QtGui.QColor(*color))
+        painter.eraseRect(self.rect())
 
 ################################################################################
 
@@ -58,6 +74,11 @@ class Input(IO):
 class Output(IO):
     def __init__(self, datum, parent):
         super(Output, self).__init__(datum, parent)
+
+    def mousePressEvent(self, event):
+        print "Making a connection!"
+        ConnectionControl(Connection(self.datum),
+                          self.parentWidget().parentWidget())
 
 '''
 class ConnectionControl(object):
