@@ -1,6 +1,6 @@
 from PySide import QtCore, QtGui
 
-import connector
+import connection
 import node
 
 class Editor(QtGui.QGroupBox):
@@ -12,7 +12,7 @@ class Editor(QtGui.QGroupBox):
 
         grid = QtGui.QGridLayout(self)
         grid.setSpacing(5)
-        grid.setContentsMargins(2, 2, 2, 2)
+        grid.setContentsMargins(0, 2, 0, 2)
 
         self.add_header(grid)
         self.lines = []
@@ -42,11 +42,16 @@ class Editor(QtGui.QGroupBox):
             tuple to self.lines.
         """
         row = grid.rowCount()
+
+        grid.addWidget(connection.Input(datum, self), row, 0)
+
         grid.addWidget(QtGui.QLabel(name, self), row, 1, QtCore.Qt.AlignRight)
 
         txt = QtGui.QLineEdit(self)
         txt.textChanged.connect(lambda t: self.on_change(t, datum))
         grid.addWidget(txt, row, 2)
+
+        grid.addWidget(connection.Output(datum, self), row, 3)
 
         self.lines.append((txt, datum))
 
@@ -100,6 +105,8 @@ class Editor(QtGui.QGroupBox):
         a.start(QtCore.QPropertyAnimation.DeleteWhenStopped)
 
     def close(self):
+        """ Disconnects this widget from the editor and deletes it.
+        """
         self.control.editor = None
         self.deleteLater()
 

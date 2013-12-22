@@ -1,4 +1,12 @@
-import wx
+from PySide import QtCore, QtGui
+
+import name
+import colors
+
+_colors = {
+        name.Name:  colors.yellow,
+        float:      colors.blue
+}
 
 class Connection(object):
     """ Represents a connection between two datums.
@@ -12,7 +20,46 @@ class Connection(object):
     def connect_to(self, target):
         self.target = target
 
+class ConnectionControl(QtGui.QWidget):
+    """ GUI wrapper around a connection.
+    """
+    pass
 
+################################################################################
+
+class IO(QtGui.QWidget):
+    def __init__(self, datum, parent):
+        super(IO, self).__init__(parent)
+        self.setFixedSize(10, 10)
+
+        self.datum = datum
+        self.color = _colors.get(self.datum.type, colors.red)
+        self.hovering = False
+
+    def enterEvent(self, event):
+        self.hovering = True
+        self.update()
+
+    def leaveEvent(self, event):
+        self.hovering = False
+        self.update()
+
+    def paintEvent(self, paintEvent):
+        painter = QtGui.QPainter(self)
+        if self.hovering:   color = (min(255, c + 60) for c in self.color)
+        else:               color = self.color
+        painter.setBackground(QtGui.QColor(*color))
+        painter.eraseRect(self.rect())
+
+class Input(IO):
+    def __init__(self, datum, parent):
+        super(Input, self).__init__(datum, parent)
+
+class Output(IO):
+    def __init__(self, datum, parent):
+        super(Output, self).__init__(datum, parent)
+
+'''
 class ConnectionControl(object):
     """ UI Wrapper around a Connection object.
     """
@@ -95,5 +142,4 @@ class ConnectionControl(object):
         else:
             self.connection.connect_to(d.datum)
         self.canvas.Refresh()
-
-current = None
+'''
