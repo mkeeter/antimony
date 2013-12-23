@@ -24,6 +24,10 @@ class Canvas(QtGui.QWidget):
         painter.setPen(QtGui.QColor(255, 255, 0))
         painter.drawLine(0, 0, 100, 100)
 
+    def resizeEvent(self, event):
+        for c in self.findChildren(QtGui.QWidget):
+            if hasattr(c, 'sync'):  c.sync()
+
     def scatter_points(self, n):
         for i in range(n):
             pt = point.Point('p%i' % i, random.uniform(-10, 10), random.uniform(-10, 10))
