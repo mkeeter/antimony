@@ -42,7 +42,6 @@ class Editor(QtGui.QGroupBox):
             tuple to self.lines.
         """
         row = grid.rowCount()
-
         grid.addWidget(connection.Input(datum, self), row, 0)
 
         grid.addWidget(QtGui.QLabel(name, self), row, 1, QtCore.Qt.AlignRight)
@@ -119,6 +118,18 @@ class Editor(QtGui.QGroupBox):
         """
         self.control.editor = None
         self.deleteLater()
+
+    def get_datum_output(self, datum):
+        """ For a given datum, returns the connection.Output object.
+        """
+        return [io for io in self.findChildren(connection.Output)
+                          if io.datum == datum][0]
+
+    def get_datum_input(self, datum):
+        """ For a given datum, returns the connection.Input object.
+        """
+        return [io for io in self.findChildren(connection.Input)
+                          if io.datum == datum][0]
 
 _editors = {}
 

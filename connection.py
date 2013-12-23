@@ -77,8 +77,8 @@ class Output(IO):
 
     def mousePressEvent(self, event):
         print "Making a connection!"
-        ConnectionControl(Connection(self.datum),
-                          self.parentWidget().parentWidget())
+        #ConnectionControl(Connection(self.datum),
+        #                  self.parentWidget().parentWidget())
 
 '''
 class ConnectionControl(object):
