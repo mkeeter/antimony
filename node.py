@@ -48,7 +48,7 @@ class NodeControl(QtGui.QWidget):
         """ Opens / closes the editor.
         """
         if not self.editor:
-            self.editor = editor.MakeEditor(self)
+            editor.MakeEditor(self)
         elif self.editor:
             self.editor.animate_close()
 

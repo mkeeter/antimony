@@ -45,6 +45,7 @@ class Datum(object):
             if c.node.control.editor:
                 c.node.control.editor.sync()
 
+
     def value(self):
         """ Gets the value from this datum,
             or evaluated from the expression.

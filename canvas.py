@@ -14,7 +14,7 @@ class Canvas(QtGui.QWidget):
         self.center = QtCore.QPointF(0, 0)
         self.scale = 10.0 # scale is measured in pixels/mm
 
-        self.scatter_points(1)
+        self.scatter_points(2)
         self.show()
 
     def paintEvent(self, paintEvent):
@@ -54,6 +54,16 @@ class Canvas(QtGui.QWidget):
         if x is not None and y is not None:     return wx.RealPoint(x, y)
         elif x is not None:                     return x
         elif y is not None:                     return y
+
+    def find_input(self, pos):
+        """ Hunts through all Editor panels to find one with
+            a connection.Input control at the given position, returning
+            None otherwise.
+        """
+        for c in self.findChildren(editor.Editor):
+            i = c.find_input(pos)
+            if i is not None:   return i
+        return None
 
 '''
 import editor

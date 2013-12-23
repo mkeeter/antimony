@@ -16,9 +16,11 @@ class Connection(object):
         self.source = datum
         self.source.outputs.append(self)
         self.target = None
+        self.control = None
 
     def connect_to(self, target):
         self.target = target
+
 
 class ConnectionControl(QtGui.QWidget):
     """ GUI wrapper around a connection.
@@ -26,6 +28,8 @@ class ConnectionControl(QtGui.QWidget):
     def __init__(self, connection, parent):
         super(ConnectionControl, self).__init__(parent)
         self.connection = connection
+        connection.control = self
+
         self.resize(10, 10)
 
         origin = self.get_origin()
@@ -33,22 +37,62 @@ class ConnectionControl(QtGui.QWidget):
                 origin.geometry().center() + origin.parentWidget().pos())
         self.sync()
 
+        self.active = True
         self.show()
 
     def sync(self):
-        xmin = min(self.drag_pos.x(), self.mouse_pos.x()) - 5
-        ymin = min(self.drag_pos.y(), self.mouse_pos.y()) - 5
+        """ Positions this connection appropriately and update
+            self.active based on whether we should draw this connection.
+        """
+
+        if self.connection.target:
+            origin, target = self.get_origin(), self.get_target()
+            # If we don't have a node to which we should connect,
+            # then hide this widget.
+            if not origin or not target:
+                self.hide()
+                return
+            # Otherwise, show and raise the widget.
+            elif self.isHidden():
+                self.show()
+                self.raise_()
+            a = origin.geometry().center() + origin.parentWidget().pos()
+            b = target.geometry().center() + target.parentWidget().pos()
+        else:
+            a = self.drag_pos
+            b = self.mouse_pos
+
+        xmin = min(a.x(), b.x()) - 5
+        ymin = min(a.y(), b.y()) - 5
 
         self.setGeometry(QtCore.QRect(xmin, ymin,
-                max(self.drag_pos.x(), self.mouse_pos.x()) + 5 - xmin,
-                max(self.drag_pos.y(), self.mouse_pos.y()) + 5 - ymin))
+                max(a.x(), b.x()) + 5 - xmin,
+                max(a.y(), b.y()) + 5 - ymin))
 
-    def drag(self, pos):
+
+    def dragTo(self, pos):
+        """ Sets the drag endpoint to the given position
+            (in canvas coordinates).
+        """
         self.drag_pos = pos
         self.sync()
 
+    def release(self):
+        """ Attempts to connect this widget to an Input widget.
+            Calls deleteLater if not successful.
+        """
+        hit = self.parentWidget().find_input(self.drag_pos)
+        if hit is None:
+            self.connection.source.outputs.remove(self.connection)
+            self.deleteLater()
+        else:
+            self.connection.target = hit.datum
+            self.connection.target.inputs.append(self.connection)
+            self.sync()
+
     def paintEvent(self, paintEvent):
         painter = QtGui.QPainter(self)
+        if not self.active:     return
         color = (255, 0, 0)
         painter.setBackground(QtGui.QColor(*color))
         painter.eraseRect(self.rect())
@@ -63,7 +107,7 @@ class ConnectionControl(QtGui.QWidget):
         else:
             return None
 
-    def get_endpoint(self):
+    def get_target(self):
         """ Returns an io.Input object associated with the target datum
             If no such object exists, returns None.
         """
@@ -99,9 +143,17 @@ class IO(QtGui.QWidget):
         painter.setBackground(QtGui.QColor(*color))
         painter.eraseRect(self.rect())
 
+
 class Input(IO):
     def __init__(self, datum, parent):
         super(Input, self).__init__(datum, parent)
+
+    def mouse_hit(self, pos):
+        """ Returns true if the given position (in canvas coordinates)
+            is within this widget.
+        """
+        return self.geometry().contains(pos - self.parentWidget().pos())
+
 
 class Output(IO):
     def __init__(self, datum, parent):
@@ -109,11 +161,15 @@ class Output(IO):
 
     def mouseMoveEvent(self, event):
         if self.connection:
-            self.connection.drag(
+            self.connection.dragTo(
                     event.pos() + self.pos() + self.parentWidget().pos())
 
     def mouseReleaseEvent(self, event):
-        self.connection = None
+        if self.connection:
+            self.connection.dragTo(
+                    event.pos() + self.pos() + self.parentWidget().pos())
+            self.connection.release()
+            self.connection = None
 
     def mousePressEvent(self, event):
         self.connection = ConnectionControl(

@@ -57,6 +57,7 @@ class Editor(QtGui.QGroupBox):
     def sync(self):
         """ Updates position, text, and text box highlighting.
         """
+
         for t, d in self.lines:
             if d.valid():
                 t.setStyleSheet("")
@@ -74,8 +75,11 @@ class Editor(QtGui.QGroupBox):
         try:    y = canvas.mm_to_pixel(y=self.node.y)
         except: y = px
 
-        if x != px or y != py:
-            self.move(x, y)
+        self.move(x, y)
+
+        for t, d in self.lines:
+            for c in d.inputs + d.outputs:
+                c.control.sync()
 
     def on_change(self, value, datum):
         """ When a text box changes, update the corresponding Datum
@@ -98,7 +102,12 @@ class Editor(QtGui.QGroupBox):
         a.setDuration(100)
         a.setStartValue(0)
         a.setEndValue(1)
+        a.finished.connect(self.finished_open)
         a.start(QtCore.QPropertyAnimation.DeleteWhenStopped)
+
+    def finished_open(self):
+        self.control.editor = self
+        self.sync()
 
     def animate_close(self):
         """ Animates the panel sliding closed.
@@ -113,10 +122,12 @@ class Editor(QtGui.QGroupBox):
         a.finished.connect(self.close)
         a.start(QtCore.QPropertyAnimation.DeleteWhenStopped)
 
+        self.control.editor = None
+        self.sync() # This will cause connections not to be drawn.
+
     def close(self):
         """ Disconnects this widget from the editor and deletes it.
         """
-        self.control.editor = None
         self.deleteLater()
 
     def get_datum_output(self, datum):
@@ -130,6 +141,14 @@ class Editor(QtGui.QGroupBox):
         """
         return [io for io in self.findChildren(connection.Input)
                           if io.datum == datum][0]
+
+    def find_input(self, pos):
+        """ Searches among children for io.Input controls that
+            the mouse cursor hits.  Returns None if none are found.
+        """
+        for c in self.findChildren(connection.Input):
+            if c.mouse_hit(pos):    return c
+        return None
 
 _editors = {}
 
