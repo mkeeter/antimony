@@ -25,21 +25,53 @@ class ConnectionControl(QtGui.QWidget):
     """
     def __init__(self, connection, parent):
         super(ConnectionControl, self).__init__(parent)
-        self.resize(self.parentWidget().size())
         self.connection = connection
-        self.showMaximized()
+        self.resize(10, 10)
 
-        bmp = QtGui.QBitmap(self.size())
-        bmp.save("test.bmp")
-        bmp.clear()
-        self.setMask(bmp)
+        origin = self.get_origin()
+        self.drag_pos = self.mouse_pos = (
+                origin.geometry().center() + origin.parentWidget().pos())
+        self.sync()
+
         self.show()
+
+    def sync(self):
+        xmin = min(self.drag_pos.x(), self.mouse_pos.x()) - 5
+        ymin = min(self.drag_pos.y(), self.mouse_pos.y()) - 5
+
+        self.setGeometry(QtCore.QRect(xmin, ymin,
+                max(self.drag_pos.x(), self.mouse_pos.x()) + 5 - xmin,
+                max(self.drag_pos.y(), self.mouse_pos.y()) + 5 - ymin))
+
+    def drag(self, pos):
+        self.drag_pos = pos
+        self.sync()
 
     def paintEvent(self, paintEvent):
         painter = QtGui.QPainter(self)
         color = (255, 0, 0)
         painter.setBackground(QtGui.QColor(*color))
         painter.eraseRect(self.rect())
+
+    def get_origin(self):
+        """ Returns an io.Output object associated with the target datum
+            If no such object exists, returns None.
+        """
+        editor = self.connection.source.node.control.editor
+        if editor:
+            return editor.get_datum_output(self.connection.source)
+        else:
+            return None
+
+    def get_endpoint(self):
+        """ Returns an io.Input object associated with the target datum
+            If no such object exists, returns None.
+        """
+        editor = self.connection.target.node.control.editor
+        if editor:
+            return editor.get_datum_input(self.connection.target)
+        else:
+            return None
 
 ################################################################################
 
@@ -75,10 +107,18 @@ class Output(IO):
     def __init__(self, datum, parent):
         super(Output, self).__init__(datum, parent)
 
+    def mouseMoveEvent(self, event):
+        if self.connection:
+            self.connection.drag(
+                    event.pos() + self.pos() + self.parentWidget().pos())
+
+    def mouseReleaseEvent(self, event):
+        self.connection = None
+
     def mousePressEvent(self, event):
-        print "Making a connection!"
-        #ConnectionControl(Connection(self.datum),
-        #                  self.parentWidget().parentWidget())
+        self.connection = ConnectionControl(
+                Connection(self.datum),
+                self.parentWidget().parentWidget())
 
 '''
 class ConnectionControl(object):
