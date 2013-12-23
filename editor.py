@@ -73,7 +73,7 @@ class Editor(QtGui.QGroupBox):
         try:    x = canvas.mm_to_pixel(x=self.node.x)
         except: x = px
         try:    y = canvas.mm_to_pixel(y=self.node.y)
-        except: y = px
+        except: y = py
 
         self.move(x, y)
 

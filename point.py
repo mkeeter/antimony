@@ -79,8 +79,7 @@ class PointControl(node.NodeControl):
         try:    y = self.canvas.mm_to_pixel(y=self.node.y) - height/2
         except: y = py
 
-        if x != px or y != py:
-            self.move(x, y)
+        self.move(x, y)
 
 
     def paintEvent(self, paintEvent):
