@@ -16,8 +16,10 @@ class Expression(object):
 
     def __init__(self, math):
 
-        if type(math) in [int, float]:  self.math = 'f%s' % math
-        elif type(math) is str:         self.math = math
+        if type(math) in [int, float]:
+            self.math = 'f%s' % math
+        elif type(math) is str:
+            self.math = math
         else:
             raise TypeError("Cannot construct a Expression from '%s'" % math)
 
@@ -26,6 +28,9 @@ class Expression(object):
 
     def __repr__(self):
         return self.math
+
+    def to_tree(self):
+        return tree.MathTree.from_expression(self)
 
     # Numerical addition
     @wrapped
@@ -98,3 +103,5 @@ class Expression(object):
         e.ymin = min(lhs.ymin, self.ymin)
         e.ymax = max(lhs.ymax, self.ymax)
         return e
+
+import tree

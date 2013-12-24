@@ -33,7 +33,8 @@ class MathTree(object):
 
         # Start the print function running in a separate thread
         # (so that we can eat the output and avoid filling the pipe)
-        t = threading.Thread(target=libfab.fdprint_tree, args=(self.ptr, write))
+        t = threading.Thread(target=libfab.fdprint_tree,
+                             args=(self.ptr, write))
         t.daemon = True
         t.start()
 
