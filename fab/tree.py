@@ -1,4 +1,5 @@
 import os
+import math
 import threading
 
 class MathTree(object):
@@ -52,6 +53,31 @@ class MathTree(object):
 
         return s
 
+    def render(self, region_or_resolution):
+        """ Renders a math tree, returning an Image.
+        """
+
+        # If we're given a region, set it as our render region.
+        # Otherwise, get a render region from our expression bounds
+        # (raising an exception if that isn't possible)
+        if isinstance(region_or_resolution, region.Region):
+            region = region_or_resolution
+        else:
+            if self.expr.has_xy_bounds():
+                region = self.expr.get_xy_region()
+            else:
+                raise Exception('Unknown render region!')
+
+        image = image.Image.from_region(region)
+        halt = ctypes.c_int(0)
+        libfab.render16(self.ptr, region, image.pixels(), halt)
+
+
+
+
+
 
 import expression
 from libfab import libfab
+import region
+import image

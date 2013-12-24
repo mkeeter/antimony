@@ -1,3 +1,5 @@
+import math
+
 def wrapped(f):
     """ Function decorator that (for convenience) attempts to convert
         all arguments into Expression objects.
@@ -104,4 +106,28 @@ class Expression(object):
         e.ymax = max(lhs.ymax, self.ymax)
         return e
 
+    def has_xy_bounds(self):
+        """ Returns True if this expression has valid XY bounds.
+        """
+        return (not math.isinf(self.expr.xmax - self.expr.xmin) and
+                not math.isinf(self.expr.ymax - self.expr.ymin))
+
+    def has_xyz_bounds(self):
+        """ Returns True if this expression has valid XYZ bounds.
+        """
+        return (not math.isinf(self.expr.xmax - self.expr.xmin) and
+                not math.isinf(self.expr.ymax - self.expr.ymin) and
+                not math.isinf(self.expr.zmax - self.expr.zmin))
+
+    def get_xy_region(self, voxels_per_unit):
+        """ Returns a region appropriate for 2D or height-map rendering.
+        """
+        zmin = 0 if math.isinf(self.zmin) else self.zmin
+        zmax = 0 if math.isinf(self.zmin) else self.zmax
+
+        return region.Region((self.xmin, self.ymin, zmin),
+                             (self.xmax, self.ymax, zmax), resolution)
+
+
 import tree
+import region
