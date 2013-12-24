@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "tree/packed.h"
+#include "tree/tree.h"
 #include "tree/node/node.h"
 #include "tree/node/opcodes.h"
 
@@ -184,7 +184,7 @@ uint8_t octsect(const Region R, Region* const out)
     return bits;
 }
 
-int octsect_active(const Region R, const PackedTree* tree, Region* const out)
+int octsect_active(const Region R, const MathTree* tree, Region* const out)
 {
     out[0] = R;
     uint8_t bits = 1;

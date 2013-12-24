@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "tree/packed.h"
+#include "tree/tree.h"
 #include "tree/eval.h"
 
 #include "tree/node/node.h"
@@ -9,7 +9,7 @@
 #include "tree/math/math_i.h"
 #include "tree/math/math_r.h"
 
-float eval_f(PackedTree* tree, const float x, const float y, const float z)
+float eval_f(MathTree* tree, const float x, const float y, const float z)
 {
     Node* node = NULL;
 
@@ -56,9 +56,9 @@ float eval_f(PackedTree* tree, const float x, const float y, const float z)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Interval eval_i(PackedTree* tree, const Interval X,
-                                  const Interval Y,
-                                  const Interval Z)
+Interval eval_i(MathTree* tree, const Interval X,
+                                const Interval Y,
+                                const Interval Z)
 {
     Node* node = NULL;
 
@@ -107,7 +107,7 @@ Interval eval_i(PackedTree* tree, const Interval X,
 
 ////////////////////////////////////////////////////////////////////////////////
 
-float* eval_r(PackedTree* tree, const Region r)
+float* eval_r(MathTree* tree, const Region r)
 {
     Node* node = NULL;
     int c = r.voxels;

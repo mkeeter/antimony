@@ -17,7 +17,7 @@ include_directories(.)
 add_library(fab SHARED
 
     tree/eval.c tree/render.c
-    tree/tree.c tree/packed.c
+    tree/tree.c
     tree/parser.c
 
     tree/math/math_f.c tree/math/math_i.c tree/math/math_r.c

@@ -5,7 +5,7 @@
 #include <math.h>
 
 #include "tree/eval.h"
-#include "tree/packed.h"
+#include "tree/tree.h"
 #include "tree/render.h"
 
 #include "util/switches.h"
@@ -18,7 +18,7 @@
  *
  */
 _STATIC_
-void region8(PackedTree* tree, Region region, uint8_t** img);
+void region8(MathTree* tree, Region region, uint8_t** img);
 
 /*  region16
  *
@@ -28,10 +28,10 @@ void region8(PackedTree* tree, Region region, uint8_t** img);
  *
  */
 _STATIC_
-void region16(PackedTree* tree, Region region, uint16_t** img);
+void region16(MathTree* tree, Region region, uint16_t** img);
 
 ////////////////////////////////////////////////////////////////////////////////
-void render8(PackedTree* tree, Region region,
+void render8(MathTree* tree, Region region,
              uint8_t** img, volatile int* halt)
 {
     // Special interrupt system, set asynchronously by on high
@@ -100,7 +100,7 @@ void render8(PackedTree* tree, Region region,
 ////////////////////////////////////////////////////////////////////////////////
 
 _STATIC_
-void region8(PackedTree* tree, Region region, uint8_t** img)
+void region8(MathTree* tree, Region region, uint8_t** img)
 {
     float *X = malloc(region.voxels*sizeof(float)),
           *Y = malloc(region.voxels*sizeof(float)),
@@ -150,7 +150,7 @@ void region8(PackedTree* tree, Region region, uint8_t** img)
 
 
 ////////////////////////////////////////////////////////////////////////////////
-void render16(PackedTree* tree, Region region,
+void render16(MathTree* tree, Region region,
               uint16_t** img, volatile int* halt)
 {
     if (tree == NULL)  return;
@@ -219,7 +219,7 @@ void render16(PackedTree* tree, Region region,
 ////////////////////////////////////////////////////////////////////////////////
 
 _STATIC_
-void region16(PackedTree* tree, Region region, uint16_t** img)
+void region16(MathTree* tree, Region region, uint16_t** img)
 {
     float *X = malloc(region.voxels*sizeof(float)),
           *Y = malloc(region.voxels*sizeof(float)),

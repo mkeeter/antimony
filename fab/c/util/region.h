@@ -5,7 +5,7 @@
 
 #include "util/vec3f.h"
 
-struct PackedTree_;
+struct MathTree_;
 
 typedef struct Region_ {
     uint32_t imin, jmin, kmin;
@@ -56,7 +56,7 @@ uint8_t octsect(const Region R, Region* const out);
 /** @brief Splits a region along each active axis of the given MathTree
     @returns Bit mask of newly populated regions.
 */
-int octsect_active(const Region r, const struct PackedTree_* tree,
+int octsect_active(const Region r, const struct MathTree_* tree,
        Region* const out);
 
 

@@ -5,7 +5,7 @@
 
 #include "util/region.h"
 
-struct PackedTree_;
+struct MathTree_;
 
 /** @brief Recursively renders a tree
     @param tree Target tree
@@ -13,7 +13,7 @@ struct PackedTree_;
     @param img Target image to populate
     @param halt Flag to abort (if *halt becomes true)
 */
-void render8(struct PackedTree_* tree, Region region,
+void render8(struct MathTree_* tree, Region region,
              uint8_t** img, volatile int* halt);
 
 
@@ -24,7 +24,7 @@ void render8(struct PackedTree_* tree, Region region,
     @param img Target image to populate
     @param halt Flag to abort (if *halt becomes true)
 */
-void render16(struct PackedTree_* tree, Region region,
+void render16(struct MathTree_* tree, Region region,
              uint16_t** img, volatile int* halt);
 
 

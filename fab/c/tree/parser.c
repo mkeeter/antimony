@@ -50,7 +50,7 @@ typedef struct NodeList_
 typedef struct NodeCache_
 {
     int levels;
-    NodeList* (*nodes)[LAST_OP];
+    NodeList* (*nodes)[LAST_OP]; // indexed by [level][opcode]
     NodeList* constants;
 } NodeCache;
 
@@ -92,9 +92,19 @@ Node* get_float(const char** input, _Bool* const failed);
 _STATIC_
 Node* get_cached_node(NodeCache* const cache, Node* const n);
 
+/*  Counts the number of nodes in this list with NODE_IN_TREE in their flags
+ */
+_STATIC_
+unsigned count_nodes(NodeList* list);
+
+/* Destructively converts a list into an array of nodes, only copying nodes
+ * with NODE_IN_TREE set in their flags.
+ */
+_STATIC_
+unsigned flatten_list(NodeList* list, Node** array);
 
 /*  Destructively loads the cache into a tree,
-    freeing linked lists as we go.
+    freeing linked lists as we go.  Returns number of nodes copied.
 */
 _STATIC_
 struct MathTree_* cache_to_tree(NodeCache* c);
@@ -337,7 +347,9 @@ Node* get_cached_node(NodeCache* const cache, Node* const n)
 
     // Expand the cache if we don't have enough slots
     if (n->rank >= cache->levels) {
-        cache->nodes = realloc(cache->nodes, (n->rank+1)*sizeof(NodeList*)*LAST_OP);
+        cache->nodes = realloc(cache->nodes,
+                                (n->rank+1)*sizeof(NodeList*)*LAST_OP);
+        // And NULL out any cache levels that are empty.
         for (int i=cache->levels; i <= n->rank; ++i) {
             for (int o=0; o < LAST_OP; ++o) {
                 cache->nodes[i][o] = NULL;
@@ -366,72 +378,79 @@ Node* get_cached_node(NodeCache* const cache, Node* const n)
     return n;
 }
 
+_STATIC_
+unsigned count_nodes(NodeList* list)
+{
+    unsigned count = 0;
+    while (list) {
+        if (list->node->flags & NODE_IN_TREE) {
+            ++count;
+        }
+        list = list->next;
+    }
+    return count;
+}
+
+_STATIC_
+unsigned flatten_list(NodeList* list, Node** array)
+{
+    unsigned count = 0;
+    while (list) {
+        if (list->node->flags & NODE_IN_TREE) {
+            ++count;
+            *(array++) = list->node;
+        } else {
+            free(list->node);
+        }
+        NodeList* prev = list;
+        list = list->next;
+        free(prev);
+    }
+    return count;
+}
+
+_STATIC_
+void free_list(NodeList* list)
+{
+    while (list)
+    {
+        free(list->node);
+        NodeList* prev = list;
+        list = list->next;
+        free(prev);
+    }
+}
 
 _STATIC_
 MathTree* cache_to_tree(NodeCache* c)
 {
     // Count the number of constants in the tree
-    unsigned num_constants = 0;
-    NodeList* next = c->constants;
-    NodeList* prev;
-    while (next) {
-        if (next->node->flags & NODE_IN_TREE) {
-            ++num_constants;
-        }
-        next = next->next;
-    }
+    const unsigned num_constants = count_nodes(c->constants);
 
     // Create the tree
     MathTree* const tree = new_tree(c->levels, num_constants);
 
     // Copy over the constant nodes
-    next = c->constants;
-    num_constants = 0;
-    while (next) {
-        if (next->node->flags & NODE_IN_TREE) {
-            tree->constants[num_constants++] = next->node;
-        } else {
-            free(next->node);
-        }
-        prev = next;
-        next = next->next;
-        free(prev);
-    }
+    flatten_list(c->constants, tree->constants);
     c->constants = NULL;
 
     for (int level=0; level < c->levels; level++) {
+
+        // Count up all of the nodes at this level
+        unsigned count = 0;
         for (int op=0; op < LAST_OP; ++op) {
+            count += count_nodes(c->nodes[level][op]);
+        }
 
-            if (!c->nodes[level][op]) continue;
+        // Allocate space in the tree for these nodes
+        tree->nodes[level] = malloc(count*sizeof(Node*));
 
-            // Count the number of nodes in this row
-            unsigned count = 0;
-            next = c->nodes[level][op];
-            while (next) {
-                if (next->node->flags & NODE_IN_TREE) {
-                    ++count;
-                }
-                next = next->next;
-            }
-
-            // Allocate space in the tree for these nodes
-            tree->nodes[level][op] = malloc(count*sizeof(Node*));
-
-            // Iterate and copy node pointers over, freeing the
-            // linked list behind us as we go
-            next = c->nodes[level][op];
-            while (next) {
-                if (next->node->flags & NODE_IN_TREE) {
-                    int index = tree->active[level][op]++;
-                    tree->nodes[level][op][index] = next->node;
-                } else {
-                    free(next->node);
-                }
-
-                prev = next;
-                next = next->next;
-                free(prev);
-            }
+        Node** index = tree->nodes[level];
+        for (int op=0; op < LAST_OP; ++op) {
+            const unsigned count = flatten_list(
+                    c->nodes[level][op], tree->nodes[level]);
+            index += count;
+            tree->active[level] += count;
             c->nodes[level][op] = NULL;
         }
     }
@@ -444,25 +463,12 @@ _STATIC_
 void free_node_cache(NodeCache* const c)
 {
     // Free the linked list of constants
-    NodeList* next = c->constants;
-    NodeList* prev;
-    while (next) {
-        free(next->node);
-        prev = next;
-        next = next->next;
-        free(prev);
-    }
+    free_list(c->constants);
 
     // Free the linked lists of nodes
     for (int level=0; level < c->levels; level++) {
         for (int op=0; op < LAST_OP; ++op) {
-            next = c->nodes[level][op];
-            while (next) {
-                free(next->node);
-                prev = next;
-                next = next->next;
-                free(prev);
-            }
+            free_list(c->nodes[level][op]);
         }
     }
 
