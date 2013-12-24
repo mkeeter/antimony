@@ -45,4 +45,4 @@ class Interval(ctypes.Structure):
     def copy(self):
         return Interval(self.lower, self.upper)
 
-from koko.c.libfab import libfab
+from libfab import libfab

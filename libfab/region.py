@@ -120,16 +120,13 @@ class Region(ctypes.Structure):
 
         return L[:count]
 
-    def octsect(self, all=False, overlap=False):
+    def octsect(self, all=False):
         """ @brief Splits the region into eight subregions
             @param all If true, returns an 8-item array with None in the place of missing subregions.  Otherwise, the output array is culled to only include valid subregions.
             @returns An array of containing regions (and Nones if all is True and the region was indivisible along some axis)
         """
         L = (Region*8)()
-        if overlap:
-            bits = libfab.octsect_overlap(self, L)
-        else:
-            bits = libfab.octsect(self, L)
+        bits = libfab.octsect(self, L)
 
         if all:
             return [L[i] if (bits & (1 << i)) else None for i in range(8)]
@@ -137,5 +134,6 @@ class Region(ctypes.Structure):
             return [L[i] for i in range(8) if (bits & (1 << i))]
 
 
-from koko.c.libfab import libfab
-from koko.c.vec3f import Vec3f
+from libfab import libfab
+print libfab
+from vec3f import Vec3f
