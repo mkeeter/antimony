@@ -25,21 +25,6 @@ void load_png_stats(const char* filename, int* const ni, int* const nj,
                     float* const dx, float* const dy, float* const dz);
 
 
-/** @brief Counts image pixels by color
-    @details A index (R<<16) + (G<<8) + B is calculated for each RGB pixel,
-    the corresponding item in the array 'count' is incremented.
-
-    @param image Image as list of pixel values
-    (in r,g,b,r,g,b,r,g,b... order)
-    @param w Image width (pixels)
-    @param h Image height (pixels)
-    @param maxindex Maximum index in count
-    @param count Zero-initialized array to fill with counts
-*/
-void count_by_color(const char* const image, const int w, const int h,
-                    const uint32_t maxindex, uint32_t* const count);
-
-
 /** @brief Copies src onto dst, applying the color (R,G,B)
     and filtering by height.
     @details If src is brighter than depth at a given pixel, then we modify depth and save a colored version of the src pixel into rgb.

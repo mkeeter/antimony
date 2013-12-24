@@ -11,17 +11,17 @@ void save_png16L(const char *output_file_name, const int ni, const int nj,
 {
 
     // Open up a file for writing
-	FILE* output = fopen(output_file_name, "wb");
-	
-	// Create a png pointer without any special callbacks
-	png_structp png_ptr = png_create_write_struct(
-	    PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-	
-	// Create an info pointer
-	png_infop info_ptr = png_create_info_struct(png_ptr);
-		
+    FILE* output = fopen(output_file_name, "wb");
+
+    // Create a png pointer without any special callbacks
+    png_structp png_ptr = png_create_write_struct(
+        PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+
+    // Create an info pointer
+    png_infop info_ptr = png_create_info_struct(png_ptr);
+
     // Set physical vars
-	png_set_IHDR(png_ptr, info_ptr, ni, nj, 16, PNG_COLOR_TYPE_GRAY,
+    png_set_IHDR(png_ptr, info_ptr, ni, nj, 16, PNG_COLOR_TYPE_GRAY,
                  PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE,
                  PNG_FILTER_TYPE_BASE);
 
@@ -50,37 +50,14 @@ void save_png16L(const char *output_file_name, const int ni, const int nj,
                  PNG_RESOLUTION_METER);
 
     // Write the PNG to file
-	png_init_io(png_ptr, output);
-	png_set_rows(png_ptr, info_ptr, (png_bytepp)pixels);
-	png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_SWAP_ENDIAN, NULL);
+    png_init_io(png_ptr, output);
+    png_set_rows(png_ptr, info_ptr, (png_bytepp)pixels);
+    png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_SWAP_ENDIAN, NULL);
     fclose(output);
 
     png_destroy_write_struct(&png_ptr, &info_ptr);
 }
 
-
-void count_by_color(const char* const image, const int w, const int h,
-                    const uint32_t maxindex, uint32_t* const count)
-{
-    uint32_t a=0;
-    for (int j=0; j < h; ++j) {
-        for (int i=0; i < w; ++i) {
-            uint8_t r = image[a++];
-            uint8_t g = image[a++];
-            uint8_t b = image[a++];
-
-            uint32_t d = (r << 16) | (g << 8) | b;
-
-            if (d > 0) {
-                if (d - 1 >= maxindex) {
-                    //printf("UHOH! %i %i %i %u\n", r,g,b,d - 1);
-                } else {
-                    count[d-1]++;
-                }
-            }
-        }
-    }
-}
 
 
 /*  depth_blit
