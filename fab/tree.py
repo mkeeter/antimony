@@ -6,6 +6,10 @@ class MathTree(object):
         self.ptr  = ptr
         self.expr = expr
 
+    def __del__(self):
+        if libfab:
+            libfab.free_tree(self.ptr)
+
     @classmethod
     def from_expression(cls, expr):
         if not isinstance(expr, expression.Expression):
