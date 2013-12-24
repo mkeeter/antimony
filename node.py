@@ -52,3 +52,17 @@ class NodeControl(QtGui.QWidget):
         elif self.editor:
             self.editor.animate_close()
 
+    def get_datum_output(self, d):
+        """ Returns a canvas pixel location for the given datum's output.
+        """
+        if self.editor: return self.editor.get_datum_output(d)
+        else:           return None
+
+    def get_datum_input(self, d):
+        """ Returns a canvas pixel location for the given datum's input.
+        """
+        if self.editor: return self.editor.get_datum_input(d)
+        else:           return None
+
+
+

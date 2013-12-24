@@ -12,7 +12,7 @@ class Editor(QtGui.QGroupBox):
 
         grid = QtGui.QGridLayout(self)
         grid.setSpacing(5)
-        grid.setContentsMargins(0, 2, 0, 2)
+        grid.setContentsMargins(0, 3, 0, 3)
 
         self.add_header(grid)
         self.lines = []
@@ -131,16 +131,22 @@ class Editor(QtGui.QGroupBox):
         self.deleteLater()
 
     def get_datum_output(self, datum):
-        """ For a given datum, returns the connection.Output object.
+        """ For a given datum, returns its output connector position
+            (in canvas pixels)
         """
-        return [io for io in self.findChildren(connection.Output)
-                          if io.datum == datum][0]
+        o = [io for io in self.findChildren(connection.Output)
+                       if io.datum == datum][0]
+        return o.geometry().center() + o.parentWidget().pos()
+
 
     def get_datum_input(self, datum):
-        """ For a given datum, returns the connection.Input object.
+        """ For a given datum, returns its input connector position
+            (in canvas pixels)
         """
-        return [io for io in self.findChildren(connection.Input)
-                          if io.datum == datum][0]
+        i = [io for io in self.findChildren(connection.Input)
+                       if io.datum == datum][0]
+        return i.geometry().center() + i.parentWidget().pos()
+
 
     def find_input(self, pos):
         """ Searches among children for io.Input controls that

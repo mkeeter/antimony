@@ -69,24 +69,28 @@ class PointControl(node.NodeControl):
 
     def sync(self):
         """ Move this control to the appropriate position.
+            Use self.position (cached) if eval fails.
         """
-        px, py = self.x(), self.y()
-        width, height = self.width(), self.height()
+        try:    x = self.node.x
+        except: x = self.position.x()
 
-        try:    x = self.canvas.mm_to_pixel(x=self.node.x) - width/2
-        except: x = px
+        try:    y = self.node.y
+        except: y = self.position.y()
 
-        try:    y = self.canvas.mm_to_pixel(y=self.node.y) - height/2
-        except: y = py
+        self.move(self.canvas.mm_to_pixel(x=x) - self.width()/2,
+                  self.canvas.mm_to_pixel(y=y) - self.height()/2)
 
-        self.move(x, y)
+        self.position = QtCore.QPointF(x, y)
 
 
     def paintEvent(self, paintEvent):
-        painter = QtGui.QPainter(self)
-        self.paint(painter)
+        """ On paint event, paint oneself.
+        """
+        self.paint(QtGui.QPainter(self))
 
     def paint(self, qp, mask=False):
+        """ Paint either the point or a mask for the point.
+        """
         width, height = self.width(), self.height()
         light = (200, 200, 200)
         dark  = (100, 100, 100)
@@ -105,6 +109,8 @@ class PointControl(node.NodeControl):
         qp.drawEllipse((width - d) / 2, (height - d) / 2, d, d)
 
     def make_mask(self):
+        """ Render a mask and set it to this widget's mask.
+        """
         painter = QtGui.QPainter()
         bitmap = QtGui.QBitmap(self.size())
         bitmap.clear()

@@ -20,6 +20,16 @@ class Connection(object):
 
     def connect_to(self, target):
         self.target = target
+        self.target.inputs.append(self)
+
+    def disconnect_from_target(self):
+        self.target.inputs.remove(self)
+        self.target = None
+
+    def disconnect_from_source(self):
+        self.source.outputs.remove(self)
+        self.source = None
+
 
 
 class ConnectionControl(QtGui.QWidget):
@@ -33,41 +43,51 @@ class ConnectionControl(QtGui.QWidget):
         self.resize(10, 10)
 
         origin = self.get_origin()
-        self.drag_pos = self.mouse_pos = (
-                origin.geometry().center() + origin.parentWidget().pos())
+        self.drag_pos = self.get_origin()
         self.sync()
 
-        self.active = True
         self.show()
 
     def sync(self):
-        """ Positions this connection appropriately and update
-            self.active based on whether we should draw this connection.
+        """ Positions this connection appropriately and hides based on
+            whether we should draw this connection.
         """
+        origin, target = self.get_origin(), self.get_target()
 
-        if self.connection.target:
-            origin, target = self.get_origin(), self.get_target()
-            # If we don't have a node to which we should connect,
-            # then hide this widget.
-            if not origin or not target:
-                self.hide()
-                return
-            # Otherwise, show and raise the widget.
-            elif self.isHidden():
-                self.show()
-                self.raise_()
-            a = origin.geometry().center() + origin.parentWidget().pos()
-            b = target.geometry().center() + target.parentWidget().pos()
-        else:
-            a = self.drag_pos
-            b = self.mouse_pos
+        # If we don't have a node to which we should connect,
+        # then hide this widget and return.
+        if origin is None or target is None:
+            self.hide()
+            return
+        # Otherwise, show and raise the widget.
+        elif self.isHidden():
+            self.show()
+            self.raise_()
 
-        xmin = min(a.x(), b.x()) - 5
-        ymin = min(a.y(), b.y()) - 5
+        xmin = min(origin.x(), target.x()) - 5
+        ymin = min(origin.y(), target.y()) - 5
 
-        self.setGeometry(QtCore.QRect(xmin, ymin,
-                max(a.x(), b.x()) + 5 - xmin,
-                max(a.y(), b.y()) + 5 - ymin))
+        newGeom = QtCore.QRect(xmin, ymin,
+                max(origin.x(), target.x()) + 5 - xmin,
+                max(origin.y(), target.y()) + 5 - ymin)
+
+        if newGeom != self.geometry():
+            self.setGeometry(newGeom)
+            self.make_mask()
+
+
+    def make_mask(self):
+        """ Updates the widget mask.
+        """
+        painter = QtGui.QPainter()
+        bitmap = QtGui.QBitmap(self.size())
+        bitmap.clear()
+
+        painter.begin(bitmap)
+        self.paint(painter, mask=True)
+        painter.end()
+
+        self.setMask(bitmap)
 
 
     def dragTo(self, pos):
@@ -83,39 +103,43 @@ class ConnectionControl(QtGui.QWidget):
         """
         hit = self.parentWidget().find_input(self.drag_pos)
         if hit is None:
-            self.connection.source.outputs.remove(self.connection)
+            self.connection.disconnect_from_source()
+            self.hide()
             self.deleteLater()
         else:
-            self.connection.target = hit.datum
-            self.connection.target.inputs.append(self.connection)
+            self.connection.connect_to(hit.datum)
             self.sync()
 
+
     def paintEvent(self, paintEvent):
-        painter = QtGui.QPainter(self)
-        if not self.active:     return
-        color = (255, 0, 0)
-        painter.setBackground(QtGui.QColor(*color))
-        painter.eraseRect(self.rect())
+        if self.isHidden():     return
+        self.paint(QtGui.QPainter(self))
+
+    def paint(self, painter, mask=False):
+        origin, target = self.get_origin(), self.get_target()
+
+        if mask:    color = QtCore.Qt.color1
+        else:       color = QtGui.QColor(255, 0, 0)
+
+        painter.setPen(QtGui.QPen(color, 4))
+        painter.drawLine(origin - self.pos(), target - self.pos())
 
     def get_origin(self):
-        """ Returns an io.Output object associated with the target datum
+        """ Returns a canvas pixel location for the connected io.Output object.
             If no such object exists, returns None.
         """
-        editor = self.connection.source.node.control.editor
-        if editor:
-            return editor.get_datum_output(self.connection.source)
-        else:
-            return None
+        control = self.connection.source.node.control
+        return control.get_datum_output(self.connection.source)
+
 
     def get_target(self):
-        """ Returns an io.Input object associated with the target datum
-            If no such object exists, returns None.
+        """ Returns a canvas pixel location for the connected io.Input object.
+            If we aren't yet connected, return the mouse drag position.
+            If we are connected but no target position exists, return None
         """
-        editor = self.connection.target.node.control.editor
-        if editor:
-            return editor.get_datum_input(self.connection.target)
-        else:
-            return None
+        if not self.connection.target:  return self.drag_pos
+        control = self.connection.target.node.control
+        return control.get_datum_input(self.connection.target)
 
 ################################################################################
 
@@ -158,6 +182,7 @@ class Input(IO):
 class Output(IO):
     def __init__(self, datum, parent):
         super(Output, self).__init__(datum, parent)
+        self.connection = None
 
     def mouseMoveEvent(self, event):
         if self.connection:
