@@ -5,7 +5,6 @@
 
 #include "util/vec3f.h"
 
-struct ASDF_;
 struct PackedTree_;
 
 typedef struct Region_ {
@@ -53,19 +52,13 @@ int bisect(const Region r, Region* const A, Region* const B);
  */
 uint8_t octsect(const Region R, Region* const out);
 
+
 /** @brief Splits a region along each active axis of the given MathTree
     @returns Bit mask of newly populated regions.
 */
 int octsect_active(const Region r, const struct PackedTree_* tree,
        Region* const out);
 
-/*  octsect_merged
- *
- *  Splits a region in two along each axis if the provided ASDF
- *  splits along that axis.
- */
-uint8_t octsect_merged(const Region R, const struct ASDF_* const asdf,
-                       Region* const out);
 
 /*  split
  *
@@ -91,21 +84,5 @@ void bisect_x(const Region r, Region* const A, Region* const B);
 void bisect_y(const Region r, Region* const A, Region* const B);
 void bisect_z(const Region r, Region* const A, Region* const B);
 
-
-/*  bound_region
- *
- *  Return a new region that is bounded by both the original region
- *  and the size of the top-level ASDF cell.
- */
-Region bound_region(const struct ASDF_* const asdf, const Region r);
-
-
-/*  rot_bound_region
- *
- *  Return a new region that is bounded by both the original region
- *  and the size of the top-level ASDF cell, rotated to a new position.
- */
-Region rot_bound_region(const struct ASDF_* const asdf, const Region r,
-                        const float M[4]);
 
 #endif
