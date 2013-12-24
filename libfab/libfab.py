@@ -225,35 +225,6 @@ libfab.asdf_offset.restype  =  p(ASDF)
 
 ################################################################################
 
-# cam/slices.h
-libfab.find_support.argtypes = [
-    ctypes.c_int, ctypes.c_int, pp(ctypes.c_uint8), pp(ctypes.c_uint8)
-]
-libfab.colorize_slice.argtypes = [
-    ctypes.c_int, ctypes.c_int, pp(ctypes.c_uint8), pp(ctypes.c_uint8*3)
-]
-libfab.next_slice.argtypes = [
-    ctypes.c_int, ctypes.c_int, ctypes.c_float, ctypes.c_float,
-    pp(ctypes.c_uint8), pp(ctypes.c_uint8)
-]
-
-
-# cam/distance.h
-libfab.distance_transform1.argtypes = (
-    [ctypes.c_int]*4 +
-    [pp(ctypes.c_uint8), pp(ctypes.c_uint32)]
-)
-
-libfab.distance_transform2.argtypes = (
-    [ctypes.c_int]*3 +
-    [ctypes.c_float, pp(ctypes.c_uint32), pp(ctypes.c_float)]
-)
-
-libfab.distance_transform.argtypes = [
-    ctypes.c_int, ctypes.c_int, ctypes.c_float,
-    pp(ctypes.c_uint8), pp(ctypes.c_float)
-]
-
 # formats/png.c
 libfab.save_png16L.argtypes = [p(ctypes.c_char), ctypes.c_int,
                                 ctypes.c_int, ctypes.c_float*6,
@@ -293,24 +264,5 @@ libfab.save_stl.argtypes = [p(Mesh), p(ctypes.c_char)]
 
 libfab.load_stl.argtypes = [p(ctypes.c_char)]
 libfab.load_stl.restype = p(Mesh)
-
-
-# cam/toolpath.c
-from koko.c.path import Path
-
-libfab.find_paths.argtypes = [
-    ctypes.c_int, ctypes.c_int, pp(ctypes.c_float),
-    ctypes.c_float, ctypes.c_int, p(ctypes.c_float), p(pp(Path))
-]
-libfab.find_paths.restype = ctypes.c_int
-
-libfab.free_paths.argtypes = [pp(Path), ctypes.c_int]
-
-libfab.sort_paths.argtypes = [pp(Path), ctypes.c_int, p(ctypes.c_int)]
-
-libfab.finish_cut.argtypes = (
-    [ctypes.c_int]*2+[pp(ctypes.c_uint16)]+[ctypes.c_float]*4+
-    [ctypes.c_int, p(pp(Path))]
-)
 
 del p, pp
