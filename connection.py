@@ -21,18 +21,17 @@ class Connection(object):
     def can_connect_to(self, datum):
         """ Returns True if we can connect to the given datum.
         """
-        return (datum != self.source and
-                self.source.type == datum.type and
-                datum.inputs == [])
-
+        return datum.can_connect(self)
 
     def connect_to(self, target):
-        self.target = target
-        self.target.inputs.append(self)
+        """ Connects to the target, which sets self.target to itself
+        """
+        target.connect_from(self)
 
     def disconnect_from_target(self):
-        self.target.inputs.remove(self)
-        self.target = None
+        """ Disconnects from the target, which sets self.target to None
+        """
+        self.target.disconnect_input(self)
 
     def disconnect_from_source(self):
         self.source.outputs.remove(self)

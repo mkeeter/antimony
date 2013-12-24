@@ -9,13 +9,32 @@ class Datum(object):
         self.type    = type
 
         self.outputs = []
-        self.inputs  = []
+        self.input   = None
 
         self.parents = set()
         self.children = set()
 
         # Check to make sure that the initial expression is valid.
         self.eval()
+
+    def can_connect_from(self, conn):
+        """ Returns True if we can accept the given connection (as an input)
+        """
+        return (self != connection.source and
+                self.type == connection.source.type and
+                self.input is None)
+
+    def connect_from(self, connection):
+        """ Links an input connection to this node.
+        """
+        self.input = connection
+        connection.target = self
+
+    def disconnect_input(self, connection):
+        """ Disconnects an input connection.
+        """
+        self.input = None
+        connection.target = None
 
     def get_expr(self):
         """ Returns the expression string.
