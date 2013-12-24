@@ -89,5 +89,4 @@ class Region(ctypes.Structure):
 
 
 from libfab import libfab
-print libfab
 from vec3f import Vec3f

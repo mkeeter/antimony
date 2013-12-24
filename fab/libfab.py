@@ -52,14 +52,13 @@ libfab.free_arrays.argtypes  = [p(Region)]
 ################################################################################
 
 class MathTreeP(ctypes.c_void_p):   pass
-class PackedTreeP(ctypes.c_void_p): pass
 
 # tree/solver.h
 libfab.render8.argtypes  = [
-    PackedTreeP, Region, pp(ctypes.c_uint8), p(ctypes.c_int)
+    MathTreeP, Region, pp(ctypes.c_uint8), p(ctypes.c_int)
 ]
 libfab.render16.argtypes = [
-    PackedTreeP, Region, pp(ctypes.c_uint16), p(ctypes.c_int)
+    MathTreeP, Region, pp(ctypes.c_uint16), p(ctypes.c_int)
 ]
 
 # tree/tree.h
@@ -67,7 +66,6 @@ libfab.free_tree.argtypes = [MathTreeP]
 
 libfab.print_tree.argtypes = [MathTreeP]
 libfab.fdprint_tree.argtypes = [MathTreeP, ctypes.c_int]
-libfab.fdprint_tree_verbose.argtypes = [MathTreeP, ctypes.c_int]
 
 libfab.clone_tree.argtypes = [MathTreeP]
 libfab.clone_tree.restype  =  MathTreeP
@@ -75,19 +73,10 @@ libfab.clone_tree.restype  =  MathTreeP
 libfab.count_nodes.argtypes = [MathTreeP]
 libfab.count_nodes.restype  = ctypes.c_uint
 
-libfab.dot_arrays.argtypes = [MathTreeP, p(ctypes.c_char)]
-libfab.dot_tree.argtypes = [MathTreeP, p(ctypes.c_char)]
-
-# tree/packed.h
-libfab.make_packed.argtypes = [MathTreeP]
-libfab.make_packed.restype  =  PackedTreeP
-
-libfab.free_packed.argtypes = [PackedTreeP]
-
 # tree/eval.h
 from interval import Interval
 
-libfab.eval_i.argtypes = [PackedTreeP, Interval, Interval, Interval]
+libfab.eval_i.argtypes = [MathTreeP, Interval, Interval, Interval]
 libfab.eval_i.restype  =  Interval
 
 # tree/parser.h
