@@ -32,7 +32,6 @@ void build_arrays(Region* const R,
 
 void free_arrays(Region* const R)
 {
-//    printf("Freeing arrays!\n");
     free(R->X);
     free(R->Y);
     free(R->Z);
@@ -107,78 +106,6 @@ void bisect_z(const Region r, Region* const A, Region* const B)
         r.Y ? r.Y : NULL,
         r.Z ? r.Z + r.nk/2 : NULL,
         r.L ? r.L + r.nk/2 : NULL};
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void bisect_x_overlap(const Region r, Region* const A, Region* const B)
-{
-    const int o = r.ni/32;
-
-    *A = (Region) {
-        r.imin, r.jmin, r.kmin,
-        r.ni/2+o, r.nj,   r.nk,
-        (r.ni/2+o)*r.nj*r.nk,
-        r.X ? r.X : NULL,
-        r.Y ? r.Y : NULL,
-        r.Z ? r.Z : NULL,
-        r.L ? r.L : NULL};
-    *B = (Region) {
-        r.imin + r.ni/2 - o, r.jmin, r.kmin,
-        r.ni - r.ni/2 + o, r.nj, r.nk,
-        (r.ni - r.ni/2 + o) * r.nj * r.nk,
-        r.X ? r.X + r.ni/2 - o : NULL,
-        r.Y ? r.Y : NULL,
-        r.Z ? r.Z : NULL,
-        r.L ? r.L : NULL};
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void bisect_y_overlap(const Region r, Region* const A, Region* const B)
-{
-    const int o = r.nj/32;
-
-    *A = (Region) {
-        r.imin, r.jmin, r.kmin,
-        r.ni,   r.nj/2+o, r.nk,
-        r.ni*(r.nj/2+o)*r.nk,
-        r.X ? r.X : NULL,
-        r.Y ? r.Y : NULL,
-        r.Z ? r.Z : NULL,
-        r.L ? r.L : NULL};
-    *B = (Region) {
-        r.imin, r.jmin+r.nj/2-o, r.kmin,
-        r.ni,   r.nj - r.nj/2+o, r.nk,
-        r.ni*(r.nj - r.nj/2+o)*r.nk,
-        r.X ? r.X : NULL,
-        r.Y ? r.Y + r.nj/2-o: NULL,
-        r.Z ? r.Z : NULL,
-        r.L ? r.L : NULL};
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void bisect_z_overlap(const Region r, Region* const A, Region* const B)
-{
-    const int o = r.nk/32;
-
-    *A = (Region) {
-        r.imin, r.jmin, r.kmin,
-        r.ni,   r.nj,   r.nk/2+o,
-        r.ni*r.nj*(r.nk/2+o),
-        r.X ? r.X : NULL,
-        r.Y ? r.Y : NULL,
-        r.Z ? r.Z : NULL,
-        r.L ? r.L : NULL};
-    *B = (Region) {
-        r.imin, r.jmin, r.kmin+r.nk/2-o,
-        r.ni,   r.nj,   r.nk - r.nk/2+o,
-        r.ni*r.nj*(r.nk - r.nk/2+o),
-        r.X ? r.X : NULL,
-        r.Y ? r.Y : NULL,
-        r.Z ? r.Z + r.nk/2-o : NULL,
-        r.L ? r.L + r.nk/2-o : NULL};
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -292,45 +219,6 @@ int octsect_active(const Region R, const PackedTree* tree, Region* const out)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-
-// Splits a region into up to 8 sections, returning
-// a bitfield with bits set where a region was stored.
-uint8_t octsect_overlap(const Region R, Region* const out)
-{
-    out[0] = R;
-    uint8_t bits = 1;
-
-    if (R.nk > 1) {
-        bisect_z_overlap(out[0], out, out+1);
-        bits |= (bits << 1);
-    }
-
-    if (R.nj > 1) {
-        if (bits & (1 << 0))
-            bisect_y_overlap(out[0], out,   out+2);
-        if (bits & (1 << 1))
-            bisect_y_overlap(out[1], out+1, out+3);
-        bits |= (bits << 2);
-    }
-
-    if (R.ni > 1) {
-        if (bits & (1 << 0))
-            bisect_x_overlap(out[0], out,   out+4);
-        if (bits & (1 << 1))
-            bisect_x_overlap(out[1], out+1, out+5);
-        if (bits & (1 << 2))
-            bisect_x_overlap(out[2], out+2, out+6);
-        if (bits & (1 << 3))
-            bisect_x_overlap(out[3], out+3, out+7);
-        bits |= (bits << 4);
-    }
-
-    return bits;
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-
 
 int split(const Region R, Region* const out, const int count)
 {
