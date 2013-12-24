@@ -17,7 +17,9 @@ class Expression(object):
     def __init__(self, math):
 
         if type(math) in [int, float]:  self.math = 'f%s' % math
-        else:                           self.math = math
+        elif type(math) is str:         self.math = math
+        else:
+            raise TypeError("Cannot construct a Expression from '%s'" % math)
 
         self.xmin = self.ymin = self.zmin = float('-infinity')
         self.xmax = self.ymax = self.zmax = float('+infinity')
