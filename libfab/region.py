@@ -19,79 +19,33 @@ class Region(ctypes.Structure):
 
     def __init__(self, (xmin, ymin, zmin)=(0.,0.,0.),
                        (xmax, ymax, zmax)=(0.,0.,0.),
-                       scale=100., dummy=False, depth=None):
-        """ @brief Creates an array.
+                       pixels_per_unit=100.):
+        """ Constructs a top-level region.
         """
 
         dx = float(xmax - xmin)
         dy = float(ymax - ymin)
         dz = float(zmax - zmin)
 
-        if depth is not None:
-            scale = 3*(2**6)* 2**(depth/3.) / (dx+dy+dz)
+        ni = max(int(round(dx*pixels_per_unit)), 1)
+        nj = max(int(round(dy*pixels_per_unit)), 1)
+        nk = max(int(round(dz*pixels_per_unit)), 1)
 
-        ni = max(int(round(dx*scale)), 1)
-        nj = max(int(round(dy*scale)), 1)
-        nk = max(int(round(dz*scale)), 1)
+        ctypes.Structure.__init__(
+                self, 0, 0, 0, ni, nj, nk, ni*nj*nk,
+                None, None, None, None)
 
-        # Dummy assignments so that Doxygen recognizes these instance variables
-        self.ni = self.nj = self.nk = 0
-        self.imin = self.jmin = self.kmin = 0
-        self.voxels = 0
-        self.X = self.Y = self.Z = self.L = None
+        libfab.build_arrays(ctypes.byref(self),
+                             xmin, ymin, zmin,
+                             xmax, ymax, zmax)
+        self.free_arrays = True
 
-        ## @var ni
-        # Number of ticks along x axis
-        ## @var nj
-        #Number of points along y axis
-        ## @var nk
-        # Number of points along z axis
-
-        ## @var imin
-        # Minimum i coordinate in global lattice space
-        ## @var jmin
-        # Minimum j coordinate in global lattice space
-        ## @var kmin
-        # Minimum k coordinate in global lattice space
-
-        ## @var voxels
-        # Voxel count in this section of the lattice
-
-        ## @var X
-        # Array of ni+1 X coordinates as floating-point values
-        ## @var Y
-        # Array of nj+1 Y coordinates as floating-point values
-        ## @var Z
-        # Array of nk+1 Z coordinates as floating-point values
-        ## @var L
-        # Array of nk+1 luminosity values as 16-bit integers
-
-        ## @var free_arrays
-        # Boolean indicating whether this region dynamically allocated
-        # the X, Y, Z, and L arrays.
-        #
-        # Determines whether these arrays are
-        # freed when the structure is deleted.
-
-        ctypes.Structure.__init__(self,
-                                  0, 0, 0,
-                                  ni, nj, nk,
-                                  ni*nj*nk,
-                                  None, None, None, None)
-
-        if dummy is False:
-            libfab.build_arrays(ctypes.byref(self),
-                                 xmin, ymin, zmin,
-                                 xmax, ymax, zmax)
-            self.free_arrays = True
-        else:
-            self.free_arrays = False
 
     def __del__(self):
         """ @brief Destructor for Region
             @details Frees allocated arrays if free_arrays is True
         """
-        if hasattr(self, 'free_arrays') and self.free_arrays and libfab is not None:
+        if hasattr(self, 'free_arrays') and libfab is not None:
             libfab.free_arrays(self)
 
     def __repr__(self):
