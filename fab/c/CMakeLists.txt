@@ -31,4 +31,4 @@ add_library(fab SHARED
 )
 
 target_link_libraries(fab ${PNG_LIBRARY} ${M_LIB})
-install(TARGETS fab DESTINATION ${PROJECT_SOURCE_DIR})
+install(TARGETS fab DESTINATION ${PROJECT_SOURCE_DIR}/..)
