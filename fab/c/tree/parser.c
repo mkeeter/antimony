@@ -69,8 +69,7 @@ void flag_in_tree(Node* n);
 */
 _STATIC_
 Node* get_token(const char** input, _Bool* const failed,
-                        Node* X, Node* Y, Node* Z,
-                        NodeCache* const cache);
+                Node* X, Node* Y, Node* Z, NodeCache* const cache);
 
 /** @brief Gets a float from the input stream
     @param input Input stream (incremented as we go)
