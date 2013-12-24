@@ -11,7 +11,7 @@ class Point(node.Node):
         self._x = datum.FloatDatum(self, x)
         self._y = datum.FloatDatum(self, y)
 
-        self.inputs = [(i, getattr(self, '_'+i)) for i in ('name','x','y')]
+        self.datums = [(i, getattr(self, '_'+i)) for i in ('name','x','y')]
 
 ################################################################################
 
@@ -79,6 +79,8 @@ class PointControl(node.NodeControl):
                   self.canvas.mm_to_pixel(y=y) - self.height()/2)
 
         self.position = QtCore.QPointF(x, y)
+
+        if self.editor:     self.editor.sync()
 
 
     def paintEvent(self, paintEvent):

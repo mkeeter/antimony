@@ -1,3 +1,5 @@
+import operator
+
 import datum
 
 class Node(object):
@@ -15,6 +17,12 @@ class Node(object):
         """ Removes node from master list and sets _deleted to True.
         """
         if nodes is not None:   nodes.remove(self)
+
+    def connections(self):
+        """ Returns a list of connections attached to this node.
+        """
+        return reduce(operator.add,
+                      [d[1].connections() for d in self.datums], [])
 
     def __getattr__(self, v):
         return self.__getattribute__('_'+v).value()

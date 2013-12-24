@@ -17,7 +17,7 @@ class Editor(QtGui.QGroupBox):
 
         self.add_header(grid)
         self.lines = []
-        for name, dat in self.node.inputs:
+        for name, dat in self.node.datums:
             self.add_row(grid, name, dat)
 
         self.setLayout(grid)
@@ -80,9 +80,9 @@ class Editor(QtGui.QGroupBox):
 
         self.move(x, y)
 
-        for t, d in self.lines:
-            for c in d.inputs + d.outputs:
-                c.control.sync()
+        for c in self.node.connections():
+            c.control.sync()
+
 
     def on_change(self, value, dat):
         """ When a text box changes, update the corresponding Datum

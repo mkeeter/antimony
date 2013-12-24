@@ -17,24 +17,30 @@ class Datum(object):
         # Check to make sure that the initial expression is valid.
         self.eval()
 
-    def can_connect_from(self, conn):
+    def connections(self):
+        """ Returns a list of connections attached to this datum.
+        """
+        return self.outputs + ([self.input] if self.input else [])
+
+    def can_connect(self, conn):
         """ Returns True if we can accept the given connection (as an input)
         """
-        return (self != connection.source and
-                self.type == connection.source.type and
+        return (self != conn.source and
+                self.type == conn.source.type and
                 self.input is None)
 
-    def connect_from(self, connection):
+    def connect_from(self, conn):
         """ Links an input connection to this node.
         """
-        self.input = connection
-        connection.target = self
+        self.input = conn
+        conn.target = self
+        self.node.control.sync()
 
-    def disconnect_input(self, connection):
+    def disconnect_input(self, conn):
         """ Disconnects an input connection.
         """
         self.input = None
-        connection.target = None
+        conn.target = None
 
     def get_expr(self):
         """ Returns the expression string.
@@ -51,8 +57,6 @@ class Datum(object):
         self._expr = e
         self.sync_children()
         self.node.control.sync()
-        if self.node.control.editor:
-            self.node.control.editor.sync()
 
 
     def sync_children(self):
@@ -61,8 +65,6 @@ class Datum(object):
         """
         for c in self.children:
             c.node.control.sync()
-            if c.node.control.editor:
-                c.node.control.editor.sync()
 
 
     def value(self):
@@ -97,8 +99,11 @@ class Datum(object):
         Datum.stack.append(self)
 
         try:
-            t = eval(self._expr, node.dict())
-            if not isinstance(t, self.type):    t = self.type(t)
+            if self.input:
+                t = self.input.source.value()
+            else:
+                t = eval(self._expr, node.dict())
+                if not isinstance(t, self.type):    t = self.type(t)
         except:     raise
         finally:    Datum.stack.pop()
 
