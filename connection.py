@@ -121,7 +121,6 @@ class ConnectionControl(QtGui.QWidget):
                 hit.update()
 
         self.hovering_over = hit
-        print self.hovering_over
 
         self.sync()
 
