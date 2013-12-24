@@ -15,10 +15,6 @@ find_library(M_LIB m)
 include_directories(.)
 
 add_library(fab SHARED
-    asdf/asdf.c asdf/render.c asdf/file_io.c
-    asdf/triangulate.c  asdf/import.c asdf/cache.c
-    asdf/neighbors.c asdf/contour.c asdf/distance.c
-    asdf/cms.c
 
     tree/eval.c tree/render.c
     tree/tree.c tree/packed.c
@@ -29,11 +25,9 @@ add_library(fab SHARED
     tree/node/node.c tree/node/opcodes.c
     tree/node/printers.c tree/node/results.c
 
-    cam/toolpath.c cam/distance.c cam/slices.c
+    formats/png.c
 
-    formats/png.c formats/stl.c formats/mesh.c
-
-    util/region.c util/vec3f.c util/path.c
+    util/region.c util/vec3f.c
 )
 
 target_link_libraries(fab ${PNG_LIBRARY} ${M_LIB})
