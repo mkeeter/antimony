@@ -1,5 +1,5 @@
-#ifndef REGION_H
-#define REGION_H
+#ifndef UTIL_REGION_H
+#define UTIL_REGION_H
 
 #include <stdint.h>
 

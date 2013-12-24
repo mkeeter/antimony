@@ -1,5 +1,5 @@
-#ifndef INTERVAL_H
-#define INTERVAL_H
+#ifndef UTIL_INTERVAL_H
+#define UTIL_INTERVAL_H
 
 /*  Interval (struct)
  *

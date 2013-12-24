@@ -216,13 +216,6 @@ libfab.contour.argtypes = [
 ]
 libfab.contour.restype  = ctypes.c_int
 
-
-# asdf/distance.c
-libfab.asdf_offset.argtypes = [
-    p(ASDF), ctypes.c_float, ctypes.c_float
-]
-libfab.asdf_offset.restype  =  p(ASDF)
-
 ################################################################################
 
 # formats/png.c

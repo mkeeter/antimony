@@ -1,5 +1,5 @@
-#ifndef VEC3F_H
-#define VEC3F_H
+#ifndef UTIL_VEC3F_H
+#define UTIL_VEC3F_H
 
 #include "util/interval.h"
 
