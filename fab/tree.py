@@ -1,3 +1,4 @@
+import ctypes
 import os
 import math
 import threading
@@ -13,7 +14,7 @@ class MathTree(object):
 
     @classmethod
     def from_expression(cls, expr):
-        if not isinstance(expr, expression.Expression):
+        if not isinstance(expr, Expression):
             raise TypeError("Input expression is of wrong type.")
         ptr = libfab.parse(expr.math)
         if ptr.value is None:
@@ -53,6 +54,7 @@ class MathTree(object):
 
         return s
 
+
     def render(self, region_or_resolution):
         """ Renders a math tree, returning an Image.
         """
@@ -60,7 +62,7 @@ class MathTree(object):
         # If we're given a region, set it as our render region.
         # Otherwise, get a render region from our expression bounds
         # (raising an exception if that isn't possible)
-        if isinstance(region_or_resolution, region.Region):
+        if isinstance(region_or_resolution, Region):
             region = region_or_resolution
         else:
             if self.expr.has_xy_bounds():
@@ -68,16 +70,15 @@ class MathTree(object):
             else:
                 raise Exception('Unknown render region!')
 
-        image = image.Image.from_region(region)
+        image = Image.from_region(region)
         halt = ctypes.c_int(0)
         libfab.render16(self.ptr, region, image.pixels(), halt)
 
+        return image
 
 
 
-
-
-import expression
+from expression import Expression
 from libfab import libfab
-import region
-import image
+from region import Region
+from image import Image
