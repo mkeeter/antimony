@@ -118,8 +118,5 @@ class NameDatum(Datum):
     def set_expr(self, e):
         """ Sets the expression string and syncs children as needed.
         """
-        e = "'%s'" % e
-        if e != self._expr:
-            self._expr = e
-            self.sync_children()
+        super(NameDatum, self).set_expr("'%s'" % e)
 
