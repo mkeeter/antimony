@@ -27,7 +27,7 @@ add_library(fab SHARED
 
     formats/png.c
 
-    util/region.c util/vec3f.c
+    util/region.c
 )
 
 target_link_libraries(fab ${PNG_LIBRARY} ${M_LIB})

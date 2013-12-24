@@ -46,19 +46,8 @@ libfab.split_xy.restype  = ctypes.c_int
 libfab.octsect.argtypes = [Region, Region*8]
 libfab.octsect.restype  = ctypes.c_uint8
 
-libfab.octsect_overlap.argtypes = [Region, Region*8]
-libfab.octsect_overlap.restype  = ctypes.c_uint8
-
 libfab.build_arrays.argtypes = [p(Region)] + [ctypes.c_float]*6
 libfab.free_arrays.argtypes  = [p(Region)]
-
-# util/vec3f.h
-from vec3f import Vec3f
-libfab.deproject.argtypes = [Vec3f, ctypes.c_float*4]
-libfab.deproject.restype  =  Vec3f
-
-libfab.project.argtypes = [Vec3f, ctypes.c_float*4]
-libfab.project.restype  =  Vec3f
 
 ################################################################################
 
@@ -108,116 +97,6 @@ libfab.parse.restype  =  MathTreeP
 
 ################################################################################
 
-# asdf/asdf.h
-from koko.c.asdf import ASDF
-
-libfab.build_asdf.argtypes = [
-    PackedTreeP, Region, ctypes.c_bool, p(ctypes.c_int)
-]
-libfab.build_asdf.restype  =  p(ASDF)
-
-libfab.free_asdf.argtypes = [p(ASDF)]
-
-libfab.asdf_root.argtypes = [PackedTreeP, Region]
-libfab.asdf_root.restype  =  p(ASDF)
-
-libfab.count_leafs.argtypes = [p(ASDF)]
-libfab.count_leafs.restype  = ctypes.c_int
-
-libfab.count_cells.argtypes = [p(ASDF)]
-libfab.count_cells.restype = ctypes.c_int
-
-libfab.asdf_scale.argtypes = [p(ASDF), ctypes.c_float]
-
-libfab.asdf_slice.argtypes = [p(ASDF), ctypes.c_float]
-libfab.asdf_slice.restype  =  p(ASDF)
-
-libfab.find_dimensions.argtypes = [p(ASDF)] + [p(ctypes.c_int)]*3
-libfab.get_d_from_children.argtypes = [p(ASDF)]
-
-libfab.interpolate.argtypes = [p(ctypes.c_float)] + [ctypes.c_float]*9
-libfab.interpolate.restype  = ctypes.c_float
-
-libfab.get_depth.argtypes = [p(ASDF)]
-libfab.get_depth.restype  = ctypes.c_int
-
-libfab.asdf_get_max.argtypes = [p(ASDF)]
-libfab.asdf_get_max.restype  = ctypes.c_float
-
-libfab.asdf_get_min.argtypes = [p(ASDF)]
-libfab.asdf_get_min.restype  = ctypes.c_float
-
-libfab.asdf_histogram.argtypes = [
-    p(ASDF), p(ctypes.c_int*4), ctypes.c_int
-]
-
-libfab.simplify.argtypes = [p(ASDF), ctypes.c_bool]
-
-
-# asdf/import.h
-libfab.import_vol_region.argtypes = (
-    [p(ctypes.c_char)] + [ctypes.c_int]*3 +
-    [Region, ctypes.c_int, ctypes.c_float,
-     ctypes.c_bool, ctypes.c_bool]
-)
-libfab.import_vol_region.restype  = p(ASDF)
-
-libfab.import_vol.argtypes = [
-    p(ctypes.c_char), ctypes.c_int, ctypes.c_int, ctypes.c_int,
-    ctypes.c_float, ctypes.c_float, ctypes.c_bool, ctypes.c_bool
-]
-libfab.import_vol.restype  = p(ASDF)
-
-libfab.import_lattice.argtypes = [
-    pp(ctypes.c_float), ctypes.c_int, ctypes.c_int,
-    ctypes.c_float, ctypes.c_float, ctypes.c_bool
-]
-libfab.import_lattice.restype = p(ASDF)
-
-
-# asdf/render.h
-libfab.render_asdf.argtypes = [
-    p(ASDF), Region, ctypes.c_float*4, pp(ctypes.c_uint16)
-]
-libfab.render_asdf_shaded.argtypes = [
-    p(ASDF), Region, ctypes.c_float*4,
-    pp(ctypes.c_uint16), pp(ctypes.c_uint16), pp(ctypes.c_uint8*3)
-]
-libfab.draw_asdf_cells.argtypes = [p(ASDF), Region, pp(ctypes.c_uint8*3)]
-
-libfab.draw_asdf_distance.argtypes = [
-    p(ASDF), Region, ctypes.c_float, ctypes.c_float, pp(ctypes.c_uint16)
-]
-
-
-# asdf/file_io.h
-libfab.asdf_write.argtypes = [p(ASDF), p(ctypes.c_char)]
-
-libfab.asdf_read.argtypes = [p(ctypes.c_char)]
-libfab.asdf_read.restype  =  p(ASDF)
-
-
-# asdf/triangulate.h
-from koko.c.mesh import Mesh
-libfab.triangulate.argtypes = [
-    p(ASDF), p(ctypes.c_int)
-]
-libfab.triangulate.restype = p(Mesh)
-
-# asdf/cms.c
-libfab.triangulate_cms.argtypes = [p(ASDF)]
-libfab.triangulate_cms.restype = p(Mesh)
-
-# asdf/contour.h
-from koko.c.path import Path
-
-libfab.contour.argtypes = [
-    p(ASDF), p(pp(Path)), p(ctypes.c_int)
-]
-libfab.contour.restype  = ctypes.c_int
-
-################################################################################
-
 # formats/png.c
 libfab.save_png16L.argtypes = [p(ctypes.c_char), ctypes.c_int,
                                 ctypes.c_int, ctypes.c_float*6,
@@ -238,24 +117,5 @@ libfab.load_png_stats.argtypes = (
 )
 
 libfab.load_png.argtypes = [p(ctypes.c_char), pp(ctypes.c_uint16)]
-
-# formats/mesh.h
-libfab.free_mesh.argtypes = [p(Mesh)]
-
-libfab.increase_indices.argtypes = [p(Mesh), ctypes.c_uint32]
-
-libfab.save_mesh.argtypes = [p(ctypes.c_char), p(Mesh)]
-
-libfab.load_mesh.argtypes = [p(ctypes.c_char)]
-libfab.load_mesh.restype = p(Mesh)
-
-libfab.merge_meshes.argtypes = [ctypes.c_uint32, pp(Mesh)]
-libfab.merge_meshes.restype = p(Mesh)
-
-# formats/stl.c
-libfab.save_stl.argtypes = [p(Mesh), p(ctypes.c_char)]
-
-libfab.load_stl.argtypes = [p(ctypes.c_char)]
-libfab.load_stl.restype = p(Mesh)
 
 del p, pp
