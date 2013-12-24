@@ -437,18 +437,20 @@ MathTree* cache_to_tree(NodeCache* c)
     for (int level=0; level < c->levels; level++) {
 
         // Count up all of the nodes at this level
-        unsigned count = 0;
-        for (int op=0; op < LAST_OP; ++op) {
-            count += count_nodes(c->nodes[level][op]);
-        }
+        {
+            unsigned count = 0;
+            for (int op=0; op < LAST_OP; ++op) {
+                count += count_nodes(c->nodes[level][op]);
+            }
 
-        // Allocate space in the tree for these nodes
-        tree->nodes[level] = malloc(count*sizeof(Node*));
+            // Allocate space in the tree for these nodes
+            tree->nodes[level] = malloc(count*sizeof(Node*));
+        }
 
         Node** index = tree->nodes[level];
         for (int op=0; op < LAST_OP; ++op) {
             const unsigned count = flatten_list(
-                    c->nodes[level][op], tree->nodes[level]);
+                    c->nodes[level][op], index);
             index += count;
             tree->active[level] += count;
             c->nodes[level][op] = NULL;
