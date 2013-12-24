@@ -1,6 +1,7 @@
 from PySide import QtCore, QtGui
 
 import connection
+import datum
 import node
 
 class Editor(QtGui.QGroupBox):
@@ -16,8 +17,8 @@ class Editor(QtGui.QGroupBox):
 
         self.add_header(grid)
         self.lines = []
-        for name, datum in self.node.inputs:
-            self.add_row(grid, name, datum)
+        for name, dat in self.node.inputs:
+            self.add_row(grid, name, dat)
 
         self.setLayout(grid)
         self.sync()
@@ -37,22 +38,24 @@ class Editor(QtGui.QGroupBox):
         label = type(self.node).__name__
         grid.addWidget(QtGui.QLabel("<b>%s</b>" % label, self), 0, 2)
 
-    def add_row(self, grid, name, datum):
+    def add_row(self, grid, name, dat):
         """ Adds a datum row to the UI, appending a (text input box, datum)
             tuple to self.lines.
         """
         row = grid.rowCount()
-        grid.addWidget(connection.Input(datum, self), row, 0)
+        if not isinstance(dat, datum.NameDatum):
+            grid.addWidget(connection.Input(dat, self), row, 0)
 
         grid.addWidget(QtGui.QLabel(name, self), row, 1, QtCore.Qt.AlignRight)
 
         txt = QtGui.QLineEdit(self)
-        txt.textChanged.connect(lambda t: self.on_change(t, datum))
+        txt.textChanged.connect(lambda t: self.on_change(t, dat))
         grid.addWidget(txt, row, 2)
 
-        grid.addWidget(connection.Output(datum, self), row, 3)
+        if not isinstance(dat, datum.NameDatum):
+            grid.addWidget(connection.Output(dat, self), row, 3)
 
-        self.lines.append((txt, datum))
+        self.lines.append((txt, dat))
 
     def sync(self):
         """ Updates position, text, and text box highlighting.
@@ -81,11 +84,11 @@ class Editor(QtGui.QGroupBox):
             for c in d.inputs + d.outputs:
                 c.control.sync()
 
-    def on_change(self, value, datum):
+    def on_change(self, value, dat):
         """ When a text box changes, update the corresponding Datum
             (which triggers a sync for self and self.control)
         """
-        datum.set_expr(value)
+        dat.set_expr(value)
 
     def set_mask(self, frac):
         """ Mask a certain percentage of the widget.
@@ -130,21 +133,21 @@ class Editor(QtGui.QGroupBox):
         """
         self.deleteLater()
 
-    def get_datum_output(self, datum):
+    def get_datum_output(self, dat):
         """ For a given datum, returns its output connector position
             (in canvas pixels)
         """
         o = [io for io in self.findChildren(connection.Output)
-                       if io.datum == datum][0]
+                       if io.datum == dat][0]
         return o.geometry().center() + o.parentWidget().pos()
 
 
-    def get_datum_input(self, datum):
+    def get_datum_input(self, dat):
         """ For a given datum, returns its input connector position
             (in canvas pixels)
         """
         i = [io for io in self.findChildren(connection.Input)
-                       if io.datum == datum][0]
+                       if io.datum == dat][0]
         return i.geometry().center() + i.parentWidget().pos()
 
 

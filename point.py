@@ -7,13 +7,11 @@ class Point(node.Node):
 
     def __init__(self, name, x, y):
 
+        super(Point, self).__init__(name)
         self._x = datum.FloatDatum(self, x)
         self._y = datum.FloatDatum(self, y)
-        self._name = datum.NameDatum(self, name)
 
         self.inputs = [(i, getattr(self, '_'+i)) for i in ('name','x','y')]
-
-        super(Point, self).__init__()
 
 ################################################################################
 
