@@ -31,11 +31,12 @@ def dict():     return {n._name.get_expr(): n for n in nodes}
 
 ################################################################################
 
-import wx
 import editor
+from PySide import QtGui
 
-class NodeControl(object):
+class NodeControl(QtGui.QWidget):
     def __init__(self, canvas, node, *args, **kwargs):
+        super(NodeControl, self).__init__(canvas)
         self.canvas = canvas
 
         self.node = node
@@ -43,32 +44,25 @@ class NodeControl(object):
 
         self.editor  = None
 
-    def GetDragTarget(self, index):
-        return self
-
-    def drag(self, x, y, dx, dy):
-        raise NotImplementedError(
-                "NodeControl.drag must be defined in subclass.")
-
-    def release(self):  pass
-
-    def on_motion(self, event):
-        raise NotImplementedError(
-                "NodeControl.on_motion must be defined in subclass.")
-
-    def on_click(self, event):
-        raise NotImplementedError(
-                "NodeControl.on_motion must be defined in subclass.")
-
-    def draw(self, event):
-        raise NotImplementedError(
-                "NodeControl.draw must be defined in subclass.")
-
-    def open_editor(self, event=None):
+    def open_editor(self):
         """ Opens / closes the editor.
         """
         if not self.editor:
-            self.editor = editor.MakeEditor(self)
+            editor.MakeEditor(self)
         elif self.editor:
-            self.editor.start_close()
+            self.editor.animate_close()
+
+    def get_datum_output(self, d):
+        """ Returns a canvas pixel location for the given datum's output.
+        """
+        if self.editor: return self.editor.get_datum_output(d)
+        else:           return None
+
+    def get_datum_input(self, d):
+        """ Returns a canvas pixel location for the given datum's input.
+        """
+        if self.editor: return self.editor.get_datum_input(d)
+        else:           return None
+
+
 

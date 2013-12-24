@@ -30,21 +30,21 @@ class Datum(object):
         if e == self._expr:     return
 
         self._expr = e
-        self.update_children()
-        self.node.control.update()
+        self.sync_children()
+        self.node.control.sync()
         if self.node.control.editor:
-            self.node.control.editor.update()
-            self.node.control.editor.sync_text()
+            self.node.control.editor.sync()
 
 
-    def update_children(self):
+    def sync_children(self):
         """ Update the node control and editor for all children of this Datum
             This may trigger a canvas refresh operation.
         """
         for c in self.children:
-            c.node.control.update()
+            c.node.control.sync()
             if c.node.control.editor:
-                c.node.control.editor.update()
+                c.node.control.editor.sync()
+
 
     def value(self):
         """ Gets the value from this datum,
@@ -116,10 +116,10 @@ class NameDatum(Datum):
         return self._expr[1:-1]
 
     def set_expr(self, e):
-        """ Sets the expression string and updates children as needed.
+        """ Sets the expression string and syncs children as needed.
         """
         e = "'%s'" % e
         if e != self._expr:
             self._expr = e
-            self.update_children()
+            self.sync_children()
 

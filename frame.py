@@ -1,17 +1,8 @@
-import wx
+from PySide import QtGui
 
-import canvas
-
-class Frame(wx.Frame):
-    def __init__(self, app):
-        super(Frame, self).__init__(parent=None)
-
-        self.canvas = canvas.Canvas(self, size=(200,200))
-        sizer = wx.BoxSizer()
-        sizer.Add(self.canvas, proportion=1, flag=wx.EXPAND)
-
-        self.SetSizerAndFit(sizer)
-        self.Show()
-        self.Maximize()
-
-
+class Frame(QtGui.QWidget):
+    def __init__(self):
+        super(Frame, self).__init__()
+        self.setGeometry(100, 100, 500, 400)
+        self.setWindowTitle("kokopuffs")
+        self.show()
