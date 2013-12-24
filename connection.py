@@ -18,6 +18,14 @@ class Connection(object):
         self.target = None
         self.control = None
 
+    def can_connect_to(self, datum):
+        """ Returns True if we can connect to the given datum.
+        """
+        return (datum != self.source and
+                self.source.type == datum.type and
+                datum.inputs == [])
+
+
     def connect_to(self, target):
         self.target = target
         self.target.inputs.append(self)
@@ -44,13 +52,15 @@ class ConnectionControl(QtGui.QWidget):
 
         origin = self.get_origin()
         self.drag_pos = self.get_origin()
+        self.hovering_over = None
         self.sync()
 
         self.show()
 
     def sync(self):
-        """ Positions this connection appropriately and hides based on
-            whether we should draw this connection.
+        """ Positions this connection appropriately, hides based on
+            whether we should draw this connection, and re-renders
+            mask if geometry has changed.
         """
         origin, target = self.get_origin(), self.get_target()
 
@@ -95,19 +105,37 @@ class ConnectionControl(QtGui.QWidget):
             (in canvas coordinates).
         """
         self.drag_pos = pos
+        hit = self.parentWidget().find_input(self.drag_pos)
+        if hit is not None and not self.connection.can_connect_to(hit.datum):
+            hit = False
+
+        if self.hovering_over:
+            # Turn off hover highlight if we've moved off this point
+            if not hit:
+                self.hovering_over.hovering = False
+                self.hovering_over.update()
+        else:
+            # Turn on hover highlight if we've moved onto this point.
+            if hit:
+                hit.hovering = True
+                hit.update()
+
+        self.hovering_over = hit
+        print self.hovering_over
+
         self.sync()
 
     def release(self):
         """ Attempts to connect this widget to an Input widget.
             Calls deleteLater if not successful.
         """
-        hit = self.parentWidget().find_input(self.drag_pos)
-        if hit is None:
+        if not self.hovering_over:
             self.connection.disconnect_from_source()
             self.hide()
             self.deleteLater()
         else:
-            self.connection.connect_to(hit.datum)
+            self.connection.connect_to(self.hovering_over.datum)
+            self.hovering_over.hovering = False
             self.sync()
 
 
@@ -118,8 +146,13 @@ class ConnectionControl(QtGui.QWidget):
     def paint(self, painter, mask=False):
         origin, target = self.get_origin(), self.get_target()
 
-        if mask:    color = QtCore.Qt.color1
-        else:       color = QtGui.QColor(255, 0, 0)
+        if mask:
+            color = QtCore.Qt.color1
+        elif self.hovering_over is not False:
+            color = QtGui.QColor(
+                    *_colors.get(self.connection.source.type, colors.red))
+        else:
+            color = QtGui.QColor(*colors.red)
 
         painter.setPen(QtGui.QPen(color, 4))
         painter.drawLine(origin - self.pos(), target - self.pos())
@@ -152,14 +185,6 @@ class IO(QtGui.QWidget):
         self.color = _colors.get(self.datum.type, colors.red)
         self.hovering = False
 
-    def enterEvent(self, event):
-        self.hovering = True
-        self.update()
-
-    def leaveEvent(self, event):
-        self.hovering = False
-        self.update()
-
     def paintEvent(self, paintEvent):
         painter = QtGui.QPainter(self)
         if self.hovering:   color = (min(255, c + 60) for c in self.color)
@@ -183,6 +208,14 @@ class Output(IO):
     def __init__(self, datum, parent):
         super(Output, self).__init__(datum, parent)
         self.connection = None
+
+    def enterEvent(self, event):
+        self.hovering = True
+        self.update()
+
+    def leaveEvent(self, event):
+        self.hovering = False
+        self.update()
 
     def mouseMoveEvent(self, event):
         if self.connection:
