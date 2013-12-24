@@ -62,14 +62,16 @@ class Editor(QtGui.QGroupBox):
         """
 
         for t, d in self.lines:
+            ss = "QLineEdit:disabled { color: #bbb; }"
             if d.valid():
-                t.setStyleSheet("")
+                t.setStyleSheet(ss)
             else:
                 t.setStyleSheet("QLineEdit { background-color: #faa; }")
             e = d.get_expr()
             if e != t.text():
                 t.setText(d.get_expr())
                 t.setCursorPosition(0)
+            t.setEnabled(d.can_edit())
 
         canvas = self.parentWidget()
         px, py = self.x(), self.y()

@@ -45,7 +45,14 @@ class Datum(object):
     def get_expr(self):
         """ Returns the expression string.
         """
-        return self._expr
+        if self.input:  return self.input.source._expr
+        else:           return self._expr
+
+    def can_edit(self):
+        """ Returns True if we can edit this datum
+            (false if it's tied to an input)
+        """
+        return self.input is None
 
     def set_expr(self, e):
         """ Sets the expression string.
