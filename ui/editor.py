@@ -1,9 +1,5 @@
 from PySide import QtCore, QtGui
 
-import connection
-import datum
-import node
-
 class Editor(QtGui.QGroupBox):
     def __init__(self, control):
         super(Editor, self).__init__(control.canvas)
@@ -43,8 +39,8 @@ class Editor(QtGui.QGroupBox):
             tuple to self.lines.
         """
         row = grid.rowCount()
-        if not isinstance(dat, datum.NameDatum):
-            grid.addWidget(connection.Input(dat, self), row, 0)
+        if not isinstance(dat, NameDatum):
+            grid.addWidget(Input(dat, self), row, 0)
 
         grid.addWidget(QtGui.QLabel(name, self), row, 1, QtCore.Qt.AlignRight)
 
@@ -52,8 +48,8 @@ class Editor(QtGui.QGroupBox):
         txt.textChanged.connect(lambda t: self.on_change(t, dat))
         grid.addWidget(txt, row, 2)
 
-        if not isinstance(dat, datum.NameDatum):
-            grid.addWidget(connection.Output(dat, self), row, 3)
+        if not isinstance(dat, NameDatum):
+            grid.addWidget(Output(dat, self), row, 3)
 
         self.lines.append((txt, dat))
 
@@ -167,3 +163,7 @@ def MakeEditor(control):
     ed = _editors.get(type(control.node), Editor)(control)
     control.raise_()
     return ed
+
+
+from control.connection import Input, Output
+from node.datum import NameDatum

@@ -1,43 +1,6 @@
 from PySide import QtCore, QtGui
 
-import name
 import colors
-
-_colors = {
-        name.Name:  colors.yellow,
-        float:      colors.blue
-}
-
-class Connection(object):
-    """ Represents a connection between two datums.
-        The target datum tracks the source datum's value.
-    """
-    def __init__(self, datum):
-        self.source = datum
-        self.source.outputs.append(self)
-        self.target = None
-        self.control = None
-
-    def can_connect_to(self, datum):
-        """ Returns True if we can connect to the given datum.
-        """
-        return datum.can_connect(self)
-
-    def connect_to(self, target):
-        """ Connects to the target, which sets self.target to itself
-        """
-        target.connect_from(self)
-
-    def disconnect_from_target(self):
-        """ Disconnects from the target, which sets self.target to None
-        """
-        self.target.disconnect_input(self)
-
-    def disconnect_from_source(self):
-        self.source.outputs.remove(self)
-        self.source = None
-
-
 
 class ConnectionControl(QtGui.QWidget):
     """ GUI wrapper around a connection.
@@ -49,9 +12,10 @@ class ConnectionControl(QtGui.QWidget):
 
         self.resize(10, 10)
 
-        origin = self.get_origin()
         self.drag_pos = self.get_origin()
         self.hovering_over = None
+        self.color = colors.get_color(self.connection.source.type)
+
         self.sync()
 
         self.show()
@@ -146,11 +110,10 @@ class ConnectionControl(QtGui.QWidget):
 
         if mask:
             color = QtCore.Qt.color1
-        elif self.hovering_over is not False:
-            color = QtGui.QColor(
-                    *_colors.get(self.connection.source.type, colors.red))
-        else:
+        elif self.hovering_over is False:
             color = QtGui.QColor(*colors.red)
+        else:
+            color = QtGui.QColor(*self.color)
 
         painter.setPen(QtGui.QPen(color, 4))
         painter.drawLine(origin - self.pos(), target - self.pos())
@@ -172,24 +135,29 @@ class ConnectionControl(QtGui.QWidget):
         control = self.connection.target.node.control
         return control.get_datum_input(self.connection.target)
 
+
 ################################################################################
 
+
 class IO(QtGui.QWidget):
+    """ A small colored square used to make input/output connections.
+    """
     def __init__(self, datum, parent):
         super(IO, self).__init__(parent)
         self.setFixedSize(10, 10)
 
         self.datum = datum
-        self.color = _colors.get(self.datum.type, colors.red)
+        self.color = colors.get_color(self.datum.type)
         self.hovering = False
 
     def paintEvent(self, paintEvent):
         painter = QtGui.QPainter(self)
-        if self.hovering:   color = (min(255, c + 60) for c in self.color)
+        if self.hovering:   color = colors.highlight(self.color)
         else:               color = self.color
         painter.setBackground(QtGui.QColor(*color))
         painter.eraseRect(self.rect())
 
+################################################################################
 
 class Input(IO):
     def __init__(self, datum, parent):
@@ -201,6 +169,7 @@ class Input(IO):
         """
         return self.geometry().contains(pos - self.parentWidget().pos())
 
+################################################################################
 
 class Output(IO):
     def __init__(self, datum, parent):
@@ -232,3 +201,7 @@ class Output(IO):
                 Connection(self.datum),
                 self.parentWidget().parentWidget())
 
+################################################################################
+import node
+from node import connection
+from node.connection import Connection

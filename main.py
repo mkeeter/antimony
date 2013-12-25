@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import sys
-import app
+from ui.app import App
 
 try:
     from PySide import QtGui
@@ -9,5 +9,5 @@ except ImportError:
     sys.exit(1)
 
 if __name__ == '__main__':
-    app = app.App()
+    app = App()
     sys.exit(app.exec_())

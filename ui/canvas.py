@@ -2,9 +2,6 @@ import random
 
 from PySide import QtCore, QtGui
 
-import point
-import editor
-
 class Canvas(QtGui.QWidget):
     def __init__(self):
         super(Canvas, self).__init__()
@@ -30,9 +27,9 @@ class Canvas(QtGui.QWidget):
 
     def scatter_points(self, n):
         for i in range(n):
-            pt = point.Point('p%i' % i, random.uniform(-10, 10), random.uniform(-10, 10))
-            ctrl = point.PointControl(self, pt)
-            e = editor.Editor(ctrl)
+            pt = Point('p%i' % i, random.uniform(-10, 10), random.uniform(-10, 10))
+            ctrl = PointControl(self, pt)
+            e = Editor(ctrl)
             ctrl.editor = e
             ctrl.raise_()
 
@@ -64,8 +61,13 @@ class Canvas(QtGui.QWidget):
             a connection.Input control at the given position, returning
             None otherwise.
         """
-        for c in self.findChildren(editor.Editor):
+        for c in self.findChildren(Editor):
             i = c.find_input(pos)
             if i is not None:   return i
         return None
 
+################################################################################
+
+from node.point import Point
+from control.point import PointControl
+from ui.editor import Editor
