@@ -16,8 +16,11 @@ class Image(object):
         self.xmin = self.ymin = self.zmin = None
         self.xmax = self.ymax = self.zmax = None
 
+
     @classmethod
     def from_region(cls, region, mm_per_unit=1):
+        """ Constructs an image and initializes bounds from a Region object.
+        """
         i = cls(region.ni, region.nj)
         i.xmin = region.X[0] * mm_per_unit
         i.xmax = region.X[region.ni] * mm_per_unit
@@ -50,15 +53,16 @@ class Image(object):
 
 
     def save(self, filename):
-        """ Saves this image as a 16-bit greyscale png.
+        """ Saves this image as a 16-bit greyscale png with appropriate metadata.
         """
         bounds = (ctypes.c_float*6)(
-            self.xmin, self.ymin, self.zmin if self.zmin else float('nan'),
-            self.xmax, self.ymax, self.zmax if self.zmax else float('nan')
+            self.xmin, self.ymin, self.zmin,
+            self.xmax, self.ymax, self.zmax
         )
         libfab.save_png16L(
                 filename, self.width, self.height,
                 bounds, self.pixels(flip_y=True))
+
 
 from libfab import libfab
 
