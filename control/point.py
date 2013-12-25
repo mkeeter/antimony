@@ -1,8 +1,8 @@
 from PySide import QtCore, QtGui
 
-from control.node import NodeControl
+import base
 
-class PointControl(NodeControl):
+class PointControl(base.NodeControl):
 
     def __init__(self, canvas, target):
         super(PointControl, self).__init__(canvas, target)

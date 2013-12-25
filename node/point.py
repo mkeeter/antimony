@@ -1,7 +1,7 @@
-import node
+import base
 import datum
 
-class Point(node.Node):
+class Point(base.Node):
 
     def __init__(self, name, x, y):
 

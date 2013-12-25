@@ -135,7 +135,7 @@ class Editor(QtGui.QGroupBox):
         """ For a given datum, returns its output connector position
             (in canvas pixels)
         """
-        o = [io for io in self.findChildren(connection.Output)
+        o = [io for io in self.findChildren(Output)
                        if io.datum == dat][0]
         return o.geometry().center() + o.parentWidget().pos()
 
@@ -144,7 +144,7 @@ class Editor(QtGui.QGroupBox):
         """ For a given datum, returns its input connector position
             (in canvas pixels)
         """
-        i = [io for io in self.findChildren(connection.Input)
+        i = [io for io in self.findChildren(Input)
                        if io.datum == dat][0]
         return i.geometry().center() + i.parentWidget().pos()
 
@@ -153,7 +153,7 @@ class Editor(QtGui.QGroupBox):
         """ Searches among children for io.Input controls that
             the mouse cursor hits.  Returns None if none are found.
         """
-        for c in self.findChildren(connection.Input):
+        for c in self.findChildren(Input):
             if c.mouse_hit(pos):    return c
         return None
 

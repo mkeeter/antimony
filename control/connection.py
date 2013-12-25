@@ -202,6 +202,5 @@ class Output(IO):
                 self.parentWidget().parentWidget())
 
 ################################################################################
-import node
-from node import connection
+
 from node.connection import Connection

@@ -1,4 +1,4 @@
-import node
+import base
 
 class Datum(object):
     stack = []
@@ -109,7 +109,7 @@ class Datum(object):
             if self.input:
                 t = self.input.source.value()
             else:
-                t = eval(self._expr, node.dict())
+                t = eval(self._expr, base.dict())
                 if not isinstance(t, self.type):    t = self.type(t)
         except:     raise
         finally:    Datum.stack.pop()
