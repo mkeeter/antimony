@@ -3,10 +3,10 @@ import base
 class Datum(object):
     stack = []
 
-    def __init__(self, node, expr, type):
+    def __init__(self, node, expr, T):
         self.node    = node
         self._expr    = repr(expr)
-        self.type    = type
+        self.type    = T
 
         self.outputs = []
         self.input   = None
@@ -34,7 +34,7 @@ class Datum(object):
         """
         self.input = conn
         conn.target = self
-        self.node.control.sync()
+        if self.node.control:   self.node.control.sync()
 
     def disconnect_input(self, conn):
         """ Disconnects an input connection.
@@ -63,7 +63,7 @@ class Datum(object):
 
         self._expr = e
         self.sync_children()
-        self.node.control.sync()
+        if self.node.control:   self.node.control.sync()
 
 
     def sync_children(self):
@@ -71,7 +71,7 @@ class Datum(object):
             This may trigger a canvas refresh operation.
         """
         for c in self.children:
-            c.node.control.sync()
+            if c.node.control:  c.node.control.sync()
 
 
     def value(self):
@@ -82,11 +82,10 @@ class Datum(object):
         """
         return self.eval()
 
-    def eval(self):
-        """ Attempts to evaluate the expression and return a value.
-            Raises an exception if this fails.
+    def push_stack(self):
+        """ Pushes oneself onto the evaluation stack, tracking children
+            and parents that are already there.
         """
-
         # If this was called from another datum, then register it as a
         # parent and register self as its children
         for d in Datum.stack:
@@ -105,6 +104,18 @@ class Datum(object):
         # Put oneself down on the stack.
         Datum.stack.append(self)
 
+
+    def pop_stack(self):
+        """ Pops oneself from the top of the evaluation stack.
+        """
+        Datum.stack.pop()
+
+
+    def eval(self):
+        """ Attempts to evaluate the expression and return a value.
+            Raises an exception if this fails.
+        """
+        self.push_stack()
         try:
             if self.input:
                 t = self.input.source.value()
@@ -112,7 +123,7 @@ class Datum(object):
                 t = eval(self._expr, base.dict())
                 if not isinstance(t, self.type):    t = self.type(t)
         except:     raise
-        finally:    Datum.stack.pop()
+        finally:    self.pop_stack()
 
         return t
 
@@ -151,3 +162,35 @@ class NameDatum(Datum):
         """
         super(NameDatum, self).set_expr("'%s'" % e)
 
+################################################################################
+
+class FunctionDatum(Datum):
+    """ Represents a value calculated from a function.
+        Usually used for a node output value.
+    """
+
+    def __init__(self, node, function, T):
+        self.function = function
+        super(FunctionDatum, self).__init__(node, None, T)
+
+    def invalid(self):
+        raise TypeError("Invalid operation for output datum")
+    def can_connect(self, conn):        self.invalid()
+    def connect_from(self, conn):       self.invalid()
+    def disconnect_input(self, conn):   self.invalid()
+    def get_expr(self):                 self.invalid()
+    def can_edit(self):                 self.invalid()
+    def set_expr(self):                 self.invalid()
+
+    def eval(self):
+        """ Attempts to evaluate the given function and return a value.
+            Raises an exception if this fails.
+        """
+        self.push_stack()
+        try:
+            t = self.function()
+            if not isinstance(t, self.type):    t = self.type(t)
+        except: raise
+        finally:    self.pop_stack()
+
+        return t
