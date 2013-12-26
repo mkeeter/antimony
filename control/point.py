@@ -32,11 +32,10 @@ class PointControl(base.NodeControl):
             delta = p - self.mouse_pos
             scale = self.parentWidget().scale
             self.drag(delta.x() / scale, -delta.y() / scale)
+        elif not self.hovering:
+            self.hovering = True
+            self.update()
         self.mouse_pos = p
-
-    def enterEvent(self, event):
-        self.hovering = True
-        self.update()
 
     def leaveEvent(self, event):
         self.hovering = False

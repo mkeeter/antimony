@@ -10,7 +10,7 @@ if sys.argv[0]: base = os.path.dirname(base)
 
 libname = 'libfab' + ('.dylib' if 'Darwin' in os.uname() else '.so')
 filenames =[
-    os.path.join(base, 'libfab/', libname),
+    os.path.join(base, 'fab/', libname),
     os.path.join(base, '../lib/', libname),
     os.path.join(base, '../Frameworks/', libname),
     libname
@@ -24,8 +24,7 @@ for filename in filenames:
     else:
         break
 else:
-    print 'Error: libfab not found'
-    sys.exit(1)
+    raise OSError('libfab not found')
 
 
 # Helper functions for pointer and pointer to pointer

@@ -12,6 +12,7 @@ class Canvas(QtGui.QWidget):
         self.scale = 10.0 # scale is measured in pixels/mm
 
         self.scatter_points(2)
+        self.make_circle()
         self.show()
 
     def paintEvent(self, paintEvent):
@@ -33,6 +34,13 @@ class Canvas(QtGui.QWidget):
             ctrl.editor = e
             ctrl.raise_()
 
+    def make_circle(self):
+        c = Circle('c', 1, 1, 4)
+        ctrl = CircleControl(self, c)
+        e = Editor(ctrl)
+        ctrl.editor = e
+        ctrl.raise_()
+
     def mm_to_pixel(self, x=None, y=None):
         """ Converts an x,y position in mm into a pixel coordinate.
         """
@@ -49,10 +57,10 @@ class Canvas(QtGui.QWidget):
         """ Converts a pixel location into an x,y coordinate.
         """
         if x is not None:
-            x =  (x - self.Size.x/2) / self.scale + self.center.x
+            x =  (x - self.width()/2) / self.scale + self.center.x()
         if y is not None:
-            y = -((y - self.Size.y/2) / self.scale - self.center.y)
-        if x is not None and y is not None:     return wx.RealPoint(x, y)
+            y = -((y - self.height()/2) / self.scale - self.center.y())
+        if x is not None and y is not None:     return x, y
         elif x is not None:                     return x
         elif y is not None:                     return y
 
@@ -70,4 +78,8 @@ class Canvas(QtGui.QWidget):
 
 from node.point import Point
 from control.point import PointControl
+
+from node.circle import Circle
+from control.circle import CircleControl
+
 from ui.editor import Editor

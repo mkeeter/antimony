@@ -3,6 +3,8 @@ from PySide import QtGui
 class NodeControl(QtGui.QWidget):
     def __init__(self, canvas, node, *args, **kwargs):
         super(NodeControl, self).__init__(canvas)
+        self.setMouseTracking(True)
+
         self.canvas = canvas
 
         self.node = node
