@@ -6,8 +6,11 @@ violet = (108, 113, 196)
 blue = (38, 139, 210)
 green = (133, 153, 0)
 
+from fab.expression import Expression
+
 def get_color(T):
-    if T is float:  return blue
+    if T is float:          return blue
+    elif T is Expression:   return yellow
     raise TypeError("No color assigned for type %s" % T)
 
 def highlight(C):

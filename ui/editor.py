@@ -39,19 +39,22 @@ class Editor(QtGui.QGroupBox):
             tuple to self.lines.
         """
         row = grid.rowCount()
-        if not isinstance(dat, NameDatum):
+        if (not isinstance(dat, NameDatum) and
+            not isinstance(dat, FunctionDatum)):
             grid.addWidget(Input(dat, self), row, 0)
 
-        grid.addWidget(QtGui.QLabel(name, self), row, 1, QtCore.Qt.AlignRight)
-
-        txt = QtGui.QLineEdit(self)
-        txt.textChanged.connect(lambda t: self.on_change(t, dat))
-        grid.addWidget(txt, row, 2)
+        if isinstance(dat, FunctionDatum):
+            grid.addWidget(QtGui.QLabel(name, self), row, 2, QtCore.Qt.AlignRight)
+        else:
+            grid.addWidget(QtGui.QLabel(name, self), row, 1, QtCore.Qt.AlignRight)
+            txt = QtGui.QLineEdit(self)
+            txt.textChanged.connect(lambda t: self.on_change(t, dat))
+            grid.addWidget(txt, row, 2)
+            self.lines.append((txt, dat))
 
         if not isinstance(dat, NameDatum):
             grid.addWidget(Output(dat, self), row, 3)
 
-        self.lines.append((txt, dat))
 
     def sync(self):
         """ Updates position, text, and text box highlighting.
@@ -166,4 +169,4 @@ def MakeEditor(control):
 
 
 from control.connection import Input, Output
-from node.datum import NameDatum
+from node.datum import NameDatum, FunctionDatum

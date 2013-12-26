@@ -11,6 +11,7 @@ class Node(object):
         """
         self._name = datum.NameDatum(self, name)
         self.control  = None
+        self.datums = []
         nodes.append(self)
 
     def delete(self):

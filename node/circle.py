@@ -12,8 +12,13 @@ class Circle(base.Node):
 
         self._shape = datum.FunctionDatum(self, self.make_shape, Expression)
 
-        self.datums = [(i, getattr(self, '_'+i)) for i in ('name','x','y','r')]
-        self.outputs = [('shape', self._shape)]
+        self.datums = [(i, getattr(self, '_'+i)) for i in
+                       ('name','x','y','r','shape')]
 
     def make_shape(self):
-        return '+f%ff%f' % (self.x, self.y)
+        """ Return a math expression representing this circle.
+        """
+        e = Expression('-r+q-Xf%gq-Yf%gf%g' % (self.x, self.y, self.r))
+        e.xmin, e.xmax = self.x - self.r, self.x + self.r
+        e.ymin, e.ymax = self.y - self.r, self.y + self.r
+        return e
