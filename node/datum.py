@@ -29,24 +29,30 @@ class Datum(object):
                 self.type == conn.source.type and
                 self.input is None)
 
-    def connect_from(self, conn):
+    def connect_input(self, conn):
         """ Links an input connection to this node.
         """
         self.input = conn
         conn.target = self
-        if self.node.control:   self.node.control.sync()
+        self.sync()
 
     def disconnect_input(self, conn):
         """ Disconnects an input connection.
         """
         self.input = None
         conn.target = None
+        self.sync()
+
+    def disconnect_output(self, conn):
+        """ Disconnects an output connection.
+        """
+        self.outputs.remove(conn)
+        conn.source = None
 
     def get_expr(self):
         """ Returns the expression string.
         """
-        if self.input:  return self.input.source._expr
-        else:           return self._expr
+        return self._expr
 
     def can_edit(self):
         """ Returns True if we can edit this datum
@@ -62,15 +68,14 @@ class Datum(object):
         if e == self._expr:     return
 
         self._expr = e
-        self.sync_children()
-        if self.node.control:   self.node.control.sync()
+        self.sync()
 
 
-    def sync_children(self):
+    def sync(self):
         """ Update the node control and editor for all children of this Datum
             This may trigger a canvas refresh operation.
         """
-        for c in self.children:
+        for c in [self] + list(self.children):
             if c.node.control:  c.node.control.sync()
 
 
@@ -118,6 +123,7 @@ class Datum(object):
         self.push_stack()
         try:
             if self.input:
+                self._expr = self.input.source._expr
                 t = self.input.source.value()
             else:
                 t = eval(self._expr, base.dict())
@@ -176,7 +182,7 @@ class FunctionDatum(Datum):
     def invalid(self):
         raise TypeError("Invalid operation for output datum")
     def can_connect(self, conn):        self.invalid()
-    def connect_from(self, conn):       self.invalid()
+    def connect_input(self, conn):       self.invalid()
     def disconnect_input(self, conn):   self.invalid()
     def get_expr(self):                 self.invalid()
     def can_edit(self):                 self.invalid()
