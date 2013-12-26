@@ -44,13 +44,15 @@ class Editor(QtGui.QGroupBox):
             grid.addWidget(Input(dat, self), row, 0)
 
         if isinstance(dat, FunctionDatum):
-            grid.addWidget(QtGui.QLabel(name, self), row, 2, QtCore.Qt.AlignRight)
+            label = QtGui.QLabel(name, self)
+            grid.addWidget(label, row, 2, QtCore.Qt.AlignRight)
+            txt = label
         else:
             grid.addWidget(QtGui.QLabel(name, self), row, 1, QtCore.Qt.AlignRight)
             txt = QtGui.QLineEdit(self)
             txt.textChanged.connect(lambda t: self.on_change(t, dat))
             grid.addWidget(txt, row, 2)
-            self.lines.append((txt, dat))
+        self.lines.append((txt, dat))
 
         if not isinstance(dat, NameDatum):
             grid.addWidget(Output(dat, self), row, 3)
@@ -60,17 +62,23 @@ class Editor(QtGui.QGroupBox):
         """ Updates position, text, and text box highlighting.
         """
 
+        ss_valid = """
+                QLineEdit:disabled { color: #bbb; }"""
+        ss_invalid  = """
+                QLineEdit { background-color: #faa; }
+                QLineEdit:disabled { color: #fcc; }
+                QLabel { background-color: #faa; }"""
+
         for t, d in self.lines:
-            ss = "QLineEdit:disabled { color: #bbb; }"
-            if d.valid():
-                t.setStyleSheet(ss)
-            else:
-                t.setStyleSheet("QLineEdit { background-color: #faa; }")
-            e = d.get_expr()
-            if e != t.text():
-                t.setText(d.get_expr())
-                t.setCursorPosition(0)
-            t.setEnabled(d.can_edit())
+            if d.valid():   t.setStyleSheet(ss_valid)
+            else:           t.setStyleSheet(ss_invalid)
+
+            if isinstance(t, QtGui.QLineEdit):
+                e = d.get_expr()
+                if e != t.text():
+                    t.setText(d.get_expr())
+                    t.setCursorPosition(0)
+                t.setEnabled(d.can_edit())
 
         canvas = self.parentWidget()
         px, py = self.x(), self.y()

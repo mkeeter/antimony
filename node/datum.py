@@ -194,3 +194,12 @@ class FunctionDatum(Datum):
         finally:    self.pop_stack()
 
         return t
+
+from fab.expression import Expression
+
+class ExpressionDatum(FunctionDatum):
+    """ Represents a math expression.
+    """
+
+    def __init__(self, node, function):
+        super(ExpressionDatum, self).__init__(node, function, Expression)
