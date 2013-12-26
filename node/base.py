@@ -14,10 +14,15 @@ class Node(object):
         self.datums = []
         nodes.append(self)
 
+
     def delete(self):
-        """ Removes node from master list and sets _deleted to True.
+        """ Removes node from master list, deleting all connections as well.
         """
         if nodes is not None:   nodes.remove(self)
+        for t, d in self.datums:
+            for c in d.connections():
+                c.delete()
+
 
     def connections(self):
         """ Returns a list of connections attached to this node.

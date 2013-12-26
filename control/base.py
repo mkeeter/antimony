@@ -1,4 +1,4 @@
-from PySide import QtGui
+from PySide import QtCore, QtGui
 
 class NodeControl(QtGui.QWidget):
     def __init__(self, canvas, node, *args, **kwargs):
@@ -11,6 +11,18 @@ class NodeControl(QtGui.QWidget):
         node.control = self
 
         self.editor  = None
+
+    def delete(self):
+        """ Cleanly deletes both abstract and UI representations.
+        """
+        # Delete connection widgets
+        for t, d in self.node.datums:
+            for c in d.connections():
+                if c:
+                    c.control.deleteLater()
+        self.node.delete()
+        if self.editor: self.editor.deleteLater()
+        self.deleteLater()
 
     def open_editor(self):
         """ Opens / closes the editor.

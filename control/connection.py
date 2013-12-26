@@ -20,6 +20,11 @@ class ConnectionControl(QtGui.QWidget):
 
         self.show()
 
+    def mousePressEvent(self, event):
+        if event.button() == QtCore.Qt.RightButton:
+            self.connection.delete()
+            self.deleteLater()
+
     def sync(self):
         """ Positions this connection appropriately, hides based on
             whether we should draw this connection, and re-renders

@@ -14,7 +14,9 @@ class PointControl(base.NodeControl):
         self.sync()
 
     def mousePressEvent(self, event):
-        if event.button() == QtCore.Qt.LeftButton:
+        if event.button() == QtCore.Qt.RightButton:
+            self.delete()
+        elif event.button() == QtCore.Qt.LeftButton:
             self.mouse_pos = self.mapToParent(event.pos())
             self.dragging = True
 

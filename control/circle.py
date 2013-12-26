@@ -20,12 +20,14 @@ class CircleControl(base.NodeControl):
         self.make_masks()
 
     def mousePressEvent(self, event):
-        if event.button() != QtCore.Qt.LeftButton:  return
-        self.mouse_pos = self.mapToParent(event.pos())
-        if self.center_mask.contains(event.pos()):
-            self.drag_pt = True
-        else:
-            self.drag_r = True
+        if event.button() == QtCore.Qt.RightButton:
+            self.delete()
+        elif event.button() == QtCore.Qt.LeftButton:
+            self.mouse_pos = self.mapToParent(event.pos())
+            if self.center_mask.contains(event.pos()):
+                self.drag_pt = True
+            else:
+                self.drag_r = True
 
     def mouseMoveEvent(self, event):
         p = self.mapToParent(event.pos())
