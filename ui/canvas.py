@@ -6,14 +6,43 @@ class Canvas(QtGui.QWidget):
     def __init__(self):
         super(Canvas, self).__init__()
         self.setGeometry(0, 900/4, 1440/2, 900/2)
-        self.setWindowTitle("kokopuffs")
+        self.setWindowTitle("Antimony")
 
         self.center = QtCore.QPointF(0, 0)
         self.scale = 10.0 # scale is measured in pixels/mm
 
+        self.dragging = False
+        self.mouse_pos = None
+
         self.scatter_points(2)
         self.make_circle()
         self.show()
+
+    def mousePressEvent(self, event):
+        if event.button() == QtCore.Qt.LeftButton:
+            self.mouse_pos = event.pos()
+            self.dragging = True
+
+    def mouseMoveEvent(self, event):
+        p = event.pos()
+        if self.dragging:
+            delta = p - self.mouse_pos
+            self.drag(-delta.x() / self.scale, delta.y() / self.scale)
+        self.mouse_pos = p
+
+    def wheelEvent(self, event):
+        factor = 1.001 if event.delta() > 0 else 1/1.001
+        for d in range(abs(event.delta())):
+            self.scale *= factor
+        self.sync_all_children()
+
+    def mouseReleaseEvent(self, event):
+        if event.button() == QtCore.Qt.LeftButton:
+            self.dragging = False
+
+    def drag(self, dx, dy):
+        self.center += QtCore.QPointF(dx, dy)
+        self.sync_all_children()
 
     def paintEvent(self, paintEvent):
         painter = QtGui.QPainter(self)
@@ -22,9 +51,12 @@ class Canvas(QtGui.QWidget):
         painter.setPen(QtGui.QColor(255, 255, 0))
         painter.drawLine(0, 0, 100, 100)
 
-    def resizeEvent(self, event):
+    def sync_all_children(self):
         for c in self.findChildren(QtGui.QWidget):
             if hasattr(c, 'sync'):  c.sync()
+
+    def resizeEvent(self, event):
+        self.sync_all_children()
 
     def scatter_points(self, n):
         for i in range(n):

@@ -119,7 +119,8 @@ class CircleControl(base.NodeControl):
                      self.canvas.mm_to_pixel(y=y+r) + 4)
 
         # Decide whether anything has changed.
-        changed = self.position != QtCore.QPointF(x, y) or self.r != r
+        changed = (self.position != QtCore.QPointF(x, y) or self.r != r or
+                   di != self.width() or dj != self.height())
 
         self.move(i - di/2, j - dj/2)
         self.resize(di, dj)
