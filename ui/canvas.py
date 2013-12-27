@@ -5,6 +5,7 @@ from PySide import QtCore, QtGui
 class Canvas(QtGui.QWidget):
     def __init__(self):
         super(Canvas, self).__init__()
+        self.setMouseTracking(True)
         self.setGeometry(0, 900/4, 1440/2, 900/2)
         self.setWindowTitle("Antimony")
 
@@ -12,7 +13,7 @@ class Canvas(QtGui.QWidget):
         self.scale = 10.0 # scale is measured in pixels/mm
 
         self.dragging = False
-        self.mouse_pos = None
+        self.mouse_pos = QtCore.QPointF(self.width()/2, self.height()/2)
 
         self.scatter_points(2)
         self.make_circle()
@@ -31,10 +32,14 @@ class Canvas(QtGui.QWidget):
         self.mouse_pos = p
 
     def wheelEvent(self, event):
+        pos = self.pixel_to_mm(self.mouse_pos.x(), self.mouse_pos.y())
         factor = 1.001 if event.delta() > 0 else 1/1.001
         for d in range(abs(event.delta())):
             self.scale *= factor
+        new_pos = self.pixel_to_mm(self.mouse_pos.x(), self.mouse_pos.y())
+        self.center += QtCore.QPointF(*pos) - QtCore.QPointF(*new_pos)
         self.sync_all_children()
+        self.update()
 
     def mouseReleaseEvent(self, event):
         if event.button() == QtCore.Qt.LeftButton:
@@ -42,20 +47,26 @@ class Canvas(QtGui.QWidget):
 
     def drag(self, dx, dy):
         self.center += QtCore.QPointF(dx, dy)
+        self.update()
         self.sync_all_children()
 
     def paintEvent(self, paintEvent):
         painter = QtGui.QPainter(self)
         painter.setBackground(QtGui.QColor(20, 20, 20))
         painter.eraseRect(self.rect())
-        painter.setPen(QtGui.QColor(255, 255, 0))
-        painter.drawLine(0, 0, 100, 100)
+
+        center = self.mm_to_pixel(0, 0)
+        painter.setPen(QtGui.QPen(QtGui.QColor(255, 0, 0), 2))
+        painter.drawLine(center[0], center[1], center[0] + 80, center[1])
+        painter.setPen(QtGui.QPen(QtGui.QColor(0, 255, 0), 2))
+        painter.drawLine(center[0], center[1], center[0], center[1] - 80)
 
     def sync_all_children(self):
         for c in self.findChildren(QtGui.QWidget):
             if hasattr(c, 'sync'):  c.sync()
 
     def resizeEvent(self, event):
+        self.update()
         self.sync_all_children()
 
     def scatter_points(self, n):
