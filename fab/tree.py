@@ -66,7 +66,7 @@ class MathTree(object):
             region = region_or_resolution
         else:
             if self.expr.has_xy_bounds():
-                region = self.expr.get_xy_region()
+                region = self.expr.get_xy_region(region_or_resolution)
             else:
                 raise Exception('Unknown render region!')
 

@@ -15,6 +15,8 @@ class Canvas(QtGui.QWidget):
         self.dragging = False
         self.mouse_pos = QtCore.QPointF(self.width()/2, self.height()/2)
 
+        self.render_tasks = []
+
         self.scatter_points(2)
         self.make_circle()
         self.show()
@@ -51,6 +53,7 @@ class Canvas(QtGui.QWidget):
         self.sync_all_children()
 
     def paintEvent(self, paintEvent):
+        self.render_expressions(10, self.update)
         painter = QtGui.QPainter(self)
         painter.setBackground(QtGui.QColor(20, 20, 20))
         painter.eraseRect(self.rect())
@@ -117,7 +120,54 @@ class Canvas(QtGui.QWidget):
             if i is not None:   return i
         return None
 
+
+    def render_expressions(self, pix_per_unit, callback):
+        """ Starts render tasks for all new expressions that don't already
+            have render tasks.
+        """
+        new_tasks = []
+        old_expressions = [r.expression for r in self.render_tasks]
+        for e in self.find_expressions():
+            try:
+                i = old_expressions.index(e)
+            except ValueError:
+                new_tasks.append(RenderTask(e, pix_per_unit, callback))
+            else:
+                # Attempt to join this task
+                self.render_tasks[i].join()
+                # We want to keep it around, because it has made more
+                # progress rendering this expression than a new task.
+                new_tasks.append(self.render_tasks[i])
+                # Remove the useful tasks from the list of old tasks
+                self.render_tasks = (
+                        self.render_tasks[:i] + self.render_tasks[i+1:])
+
+        # Attempt to halt all remaining (non-useful) threads.
+        # If we can't join the thread, then keep it around to avoid
+        # leaking threads.
+        for t in self.render_tasks:
+            if not t.join():    new_tasks.append(t)
+        self.render_tasks = new_tasks
+        print self.render_tasks
+
+
+    def find_expressions(self):
+        """ Searches for expressions to render (i.e. expressions
+            which are valid and have xy bounds).
+        """
+        expressions = []
+        for c in self.findChildren(NodeControl):
+            for t, d in c.node.datums:
+                if d.type == Expression and d.valid():
+                    e = d.value()
+                    if e.has_xy_bounds():
+                        expressions.append(e)
+        return expressions
+
 ################################################################################
+
+from control.base import NodeControl
+from fab.expression import Expression
 
 from node.point import Point
 from control.point import PointControl
@@ -126,3 +176,4 @@ from node.circle import Circle
 from control.circle import CircleControl
 
 from ui.editor import Editor
+from ui.render import RenderTask

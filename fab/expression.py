@@ -28,6 +28,10 @@ class Expression(object):
         self.xmin = self.ymin = self.zmin = float('-infinity')
         self.xmax = self.ymax = self.zmax = float('+infinity')
 
+    def __eq__(self, other):
+        return all(getattr(self, a) == getattr(other, a) for a in
+                ['math','xmin','ymin','zmin','xmax','ymax','zmax'])
+
     def __repr__(self):
         return self.math
 
@@ -109,15 +113,15 @@ class Expression(object):
     def has_xy_bounds(self):
         """ Returns True if this expression has valid XY bounds.
         """
-        return (not math.isinf(self.expr.xmax - self.expr.xmin) and
-                not math.isinf(self.expr.ymax - self.expr.ymin))
+        return (not math.isinf(self.xmax - self.xmin) and
+                not math.isinf(self.ymax - self.ymin))
 
     def has_xyz_bounds(self):
         """ Returns True if this expression has valid XYZ bounds.
         """
-        return (not math.isinf(self.expr.xmax - self.expr.xmin) and
-                not math.isinf(self.expr.ymax - self.expr.ymin) and
-                not math.isinf(self.expr.zmax - self.expr.zmin))
+        return (not math.isinf(self.xmax - self.xmin) and
+                not math.isinf(self.ymax - self.ymin) and
+                not math.isinf(self.zmax - self.zmin))
 
     def get_xy_region(self, voxels_per_unit):
         """ Returns a region appropriate for 2D or height-map rendering.
@@ -126,7 +130,7 @@ class Expression(object):
         zmax = 0 if math.isinf(self.zmin) else self.zmax
 
         return region.Region((self.xmin, self.ymin, zmin),
-                             (self.xmax, self.ymax, zmax), resolution)
+                             (self.xmax, self.ymax, zmax), voxels_per_unit)
 
 
 import tree
