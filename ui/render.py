@@ -26,7 +26,6 @@ class RenderTask(object):
         self.qimage = QtGui.QImage(
                 self.pixels, scaled.shape[0], scaled.shape[1],
                 QtGui.QImage.Format_ARGB32)
-        print "Calling callback"
         self.callback()
 
     def join(self):
