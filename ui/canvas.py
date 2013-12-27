@@ -17,10 +17,34 @@ class Canvas(QtGui.QWidget):
 
         self.render_tasks = {}
 
-        self.scatter_points(2)
-        self.make_circle()
+        #self.scatter_points(2)
+        #self.make_circle()
+        self.make_triangle()
         self.show()
 
+
+    def scatter_points(self, n):
+        for i in range(n):
+            pt = Point('p%i' % i, random.uniform(-10, 10), random.uniform(-10, 10))
+            ctrl = PointControl(self, pt)
+            e = Editor(ctrl)
+            ctrl.editor = e
+            ctrl.raise_()
+
+
+    def make_circle(self):
+        c = Circle('c', 1, 1, 4)
+        ctrl = CircleControl(self, c)
+        e = Editor(ctrl)
+        ctrl.editor = e
+        ctrl.raise_()
+
+    def make_triangle(self):
+        a = Point('a', 0, 0)
+        b = Point('b', 4, 0)
+        c = Point('c', 0, 4)
+        tri = Triangle('tri', a, b, c)
+        ctrl = TriangleControl(self, tri)
 
     def mousePressEvent(self, event):
         """ Starts dragging if the left button is pressed.
@@ -106,22 +130,6 @@ class Canvas(QtGui.QWidget):
         self.sync_all_children()
 
 
-    def scatter_points(self, n):
-        for i in range(n):
-            pt = Point('p%i' % i, random.uniform(-10, 10), random.uniform(-10, 10))
-            ctrl = PointControl(self, pt)
-            e = Editor(ctrl)
-            ctrl.editor = e
-            ctrl.raise_()
-
-
-    def make_circle(self):
-        c = Circle('c', 1, 1, 4)
-        ctrl = CircleControl(self, c)
-        e = Editor(ctrl)
-        ctrl.editor = e
-        ctrl.raise_()
-
 
     def mm_to_pixel(self, x=None, y=None):
         """ Converts an x,y position in mm into a pixel coordinate.
@@ -172,8 +180,12 @@ class Canvas(QtGui.QWidget):
         """ Starts render tasks for all new expressions that don't already
             have render tasks.
         """
-        # Find datums and expressions that need rendering.
-        datums, expressions = zip(*self.find_expressions())
+        found = self.find_expressions()
+        if found:
+            # Find datums and expressions that need rendering.
+            datums, expressions = zip(*found)
+        else:
+            datums, expressions = [], []
 
         # Remove all but the most recent image for render tasks
         # with datums that are present, or all images for render
@@ -235,6 +247,9 @@ from control.point import PointControl
 
 from node.circle import Circle
 from control.circle import CircleControl
+
+from node.triangle import Triangle
+from control.triangle import TriangleControl
 
 from ui.editor import Editor
 from ui.render import RenderTask

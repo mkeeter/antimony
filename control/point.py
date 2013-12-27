@@ -108,3 +108,20 @@ class PointControl(base.NodeControl):
         painter.end()
 
         self.setMask(bitmap)
+
+################################################################################
+
+class ChildPointControl(PointControl):
+    """ Represents a point that is part of another shape
+        (so it deletes its parent along with itself)
+    """
+    def __init__(self, canvas, target, parent):
+        super(ChildPointControl, self).__init__(canvas, target)
+        self.parent = parent
+
+    def mousePressEvent(self, event):
+        """ Delete the parent as well on a right-click event.
+        """
+        if event.button() == QtCore.Qt.RightButton:
+            self.parent.delete(self)
+        super(ChildPointControl, self).mousePressEvent(event)
