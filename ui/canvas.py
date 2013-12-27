@@ -15,7 +15,7 @@ class Canvas(QtGui.QWidget):
         self.dragging = False
         self.mouse_pos = QtCore.QPointF(self.width()/2, self.height()/2)
 
-        self.render_tasks = []
+        self.render_tasks = {}
 
         self.scatter_points(2)
         self.make_circle()
@@ -53,7 +53,6 @@ class Canvas(QtGui.QWidget):
         self.sync_all_children()
 
     def paintEvent(self, paintEvent):
-
         # Start expressions rendering (asynchronously)
         # (not strictly part of the paint process, but I'm putting it here
         #  so that it gets called whenever anything changes)
@@ -144,42 +143,48 @@ class Canvas(QtGui.QWidget):
         """ Starts render tasks for all new expressions that don't already
             have render tasks.
         """
-        new_tasks = []
-        old_expressions = [r.expression for r in self.render_tasks]
-        for e in self.find_expressions():
-            try:
-                i = old_expressions.index(e)
-            except ValueError:
-                new_tasks.append(RenderTask(e, pix_per_unit, self.update))
-            else:
-                # Attempt to join this task
-                self.render_tasks[i].join()
-                # We want to keep it around, because it has made more
-                # progress rendering this expression than a new task.
-                new_tasks.append(self.render_tasks[i])
-                # Remove the useful tasks from the list of old tasks
-                self.render_tasks = (
-                        self.render_tasks[:i] + self.render_tasks[i+1:])
+        # Find datums and expressions that need rendering.
+        datums, expressions = zip(*self.find_expressions())
 
-        # Attempt to halt all remaining (non-useful) threads.
-        # If we can't join the thread, then keep it around to avoid
-        # leaking threads.
-        for t in self.render_tasks:
-            if not t.join():    new_tasks.append(t)
-        self.render_tasks = new_tasks
-        print self.render_tasks
+        # Remove all but the most recent image for render tasks
+        # with datums that are present, or all images for render
+        # tasks without a currently active datum
+        to_delete = []
+        for k in self.render_tasks:
+            delete = k not in datums
+            while (len(self.render_tasks[k]) > (0 if delete else 1) and
+                   self.render_tasks[k][0].join()):
+                self.render_tasks[k] = self.render_tasks[k][1:]
+            if not self.render_tasks[k]:
+                to_delete.append(k)
+        for k in to_delete:
+            del(self.render_tasks[k])
+
+        # Check if the last render task is useful; otherwise
+        # start a new one at the back of the list
+        for d, e in zip(datums, expressions):
+            if (d in self.render_tasks and
+                self.render_tasks[d][-1].expression == e):
+                continue
+            else:
+                self.render_tasks[d] = (
+                        self.render_tasks.get(d, []) +
+                        [RenderTask(e, pix_per_unit, self.update)])
 
 
     def draw_expressions(self, painter):
-        for p in self.render_tasks:
-            if not p.qimage:    continue
-            painter.drawImage(self.get_bounding_rect(p.expression),
-                              p.qimage, p.qimage.rect())
+        for tasks in self.render_tasks.itervalues():
+            for t in tasks[::-1]:
+                if t.qimage:
+                    painter.drawImage(self.get_bounding_rect(t.expression),
+                                      t.qimage, t.qimage.rect())
+                    break
 
 
     def find_expressions(self):
         """ Searches for expressions to render (i.e. expressions
             which are valid and have xy bounds).
+            Returns a list of (datum, expression) tuples.
         """
         expressions = []
         for c in self.findChildren(NodeControl):
@@ -187,7 +192,7 @@ class Canvas(QtGui.QWidget):
                 if d.type == Expression and d.valid():
                     e = d.value()
                     if e.has_xy_bounds():
-                        expressions.append(e)
+                        expressions.append((d,e))
         return expressions
 
 ################################################################################
