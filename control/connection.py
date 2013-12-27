@@ -112,6 +112,7 @@ class ConnectionControl(QtGui.QWidget):
 
     def paint(self, painter, mask=False):
         origin, target = self.get_origin(), self.get_target()
+        if not origin or not target:    return
 
         if mask:
             color = QtCore.Qt.color1
@@ -127,6 +128,7 @@ class ConnectionControl(QtGui.QWidget):
         """ Returns a canvas pixel location for the connected io.Output object.
             If no such object exists, returns None.
         """
+        if not self.connection.source:  return None
         control = self.connection.source.node.control
         return control.get_datum_output(self.connection.source)
 
