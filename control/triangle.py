@@ -9,6 +9,7 @@ class TriangleControl(base.NodeControl):
             ChildPointControl(canvas, t, self) for t in
             [target.a, target.b, target.c]]
         super(TriangleControl, self).__init__(canvas, target)
+        self.raise_()
 
 
     def raise_(self):
