@@ -6,8 +6,6 @@ class Canvas(QtGui.QWidget):
     def __init__(self):
         super(Canvas, self).__init__()
         self.setMouseTracking(True)
-        self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.customContextMenuRequested.connect(self.showContextMenu)
         self.setGeometry(0, 900/4, 1440/2, 900/2)
         self.setWindowTitle("Antimony")
 
@@ -19,43 +17,28 @@ class Canvas(QtGui.QWidget):
 
         self.render_tasks = {}
 
-        #self.scatter_points(2)
-        #self.make_circle()
-        self.make_triangle()
-        self.make_triangle()
         self.show()
 
 
-    def showContextMenu(self, point):
-        point = self.mapToGlobal(point)
+    def contextMenuEvent(self, event):
+        point = event.pos()
+        x, y = self.pixel_to_mm(point.x(), point.y())
+        scale = 50/self.scale
+
         menu = QtGui.QMenu()
-        menu.addAction("omg")
-        menu.addAction("wtf")
+        tri = menu.addAction("Triangle")
+        cir = menu.addAction("Circle")
+        pt  = menu.addAction("Point")
+
+        point = self.mapToGlobal(point)
         selected = menu.exec_(point)
-        print selected
+        if selected == tri:
+            TriangleControl.new(self, x, y, scale)
+        elif selected == cir:
+            CircleControl.new(self, x, y, scale)
+        elif selected == pt:
+            PointControl.new(self, x, y, scale)
 
-    def scatter_points(self, n):
-        for i in range(n):
-            pt = Point('p%i' % i, random.uniform(-10, 10), random.uniform(-10, 10))
-            ctrl = PointControl(self, pt)
-            e = Editor(ctrl)
-            ctrl.editor = e
-            ctrl.raise_()
-
-
-    def make_circle(self):
-        c = Circle('c', 1, 1, 4)
-        ctrl = CircleControl(self, c)
-        e = Editor(ctrl)
-        ctrl.editor = e
-        ctrl.raise_()
-
-    def make_triangle(self):
-        a = Point('a', 0, 0)
-        b = Point('b', 4, 0)
-        c = Point('c', 0, 4)
-        tri = Triangle('tri', a, b, c)
-        ctrl = TriangleControl(self, tri)
 
     def mousePressEvent(self, event):
         """ Starts dragging if the left button is pressed.

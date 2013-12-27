@@ -4,6 +4,14 @@ import base
 
 class PointControl(base.NodeControl):
 
+    @classmethod
+    def new(cls, canvas, x, y, scale):
+        """ Construct a new point at the given location
+            Location should be specified in units.
+        """
+        p = Point(get_name('p'), x, y)
+        cls(canvas, p)
+
     def __init__(self, canvas, target):
         super(PointControl, self).__init__(canvas, target)
         self.setFixedSize(30, 30)
@@ -12,6 +20,8 @@ class PointControl(base.NodeControl):
         self.hovering = False
         self.make_mask()
         self.sync()
+        self.show()
+        self.raise_()
 
     def mousePressEvent(self, event):
         if event.button() == QtCore.Qt.RightButton:
@@ -125,3 +135,6 @@ class ChildPointControl(PointControl):
         if event.button() == QtCore.Qt.RightButton:
             self.parent.delete(self)
         super(ChildPointControl, self).mousePressEvent(event)
+
+from node.base import get_name
+from node.point import Point

@@ -12,6 +12,9 @@ class NodeControl(QtGui.QWidget):
 
         self.editor  = None
 
+    def contextMenuEvent(self, event):
+        pass
+
     def delete(self):
         """ Cleanly deletes both abstract and UI representations.
         """

@@ -2,7 +2,6 @@ import base
 import datum
 
 class Point(base.Node):
-
     def __init__(self, name, x, y):
 
         super(Point, self).__init__(name)

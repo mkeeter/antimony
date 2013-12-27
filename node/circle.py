@@ -4,6 +4,7 @@ import datum
 from fab.expression import Expression
 
 class Circle(base.Node):
+
     def __init__(self, name, x, y, r):
         super(Circle, self).__init__(name)
         self._x = datum.FloatDatum(self, x)

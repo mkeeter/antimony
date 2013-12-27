@@ -3,12 +3,33 @@ from PySide import QtCore, QtGui
 import base
 
 class TriangleControl(base.NodeControl):
+
+    @classmethod
+    def new(cls, canvas, x, y, scale):
+        """ Construct a new triangle at the given location.
+            Location should be specified in units.
+        """
+        a = Point(get_name('a'), x - scale, y - scale)
+        b = Point(get_name('b'), x, y + scale)
+        c = Point(get_name('c'), x + scale, y - scale)
+        tri = Triangle('t', a, b, c)
+        cls(canvas, tri)
+
     def __init__(self, canvas, target):
+        """ Construct the triangle control widget, creating
+            helper ChildPointControl widgets for each of the triangle's
+            vertices.
+        """
         self.position = QtCore.QPointF()
         self.points = [
             ChildPointControl(canvas, t, self) for t in
             [target.a, target.b, target.c]]
         super(TriangleControl, self).__init__(canvas, target)
+
+        self.sync()
+        self.make_mask()
+
+        self.show()
         self.raise_()
 
 
@@ -97,5 +118,9 @@ class TriangleControl(base.NodeControl):
         else:
             painter.setPen(QtGui.QPen(QtGui.QColor(200, 200, 200), 4))
         painter.drawLines(lines)
+
+from node.point import Point
+from node.triangle import Triangle
+from node.base import get_name
 
 from point import ChildPointControl

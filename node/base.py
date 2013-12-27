@@ -36,3 +36,10 @@ class Node(object):
 # Master list of nodes
 nodes = []
 def dict():     return {n._name.get_expr(): n for n in nodes}
+
+def get_name(prefix):
+    names = [n._name.get_expr() for n in nodes]
+    i = 0
+    while '%s%i' % (prefix, i) in names:
+        i += 1
+    return '%s%i' % (prefix, i)

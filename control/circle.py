@@ -4,7 +4,17 @@ import base
 
 class CircleControl(base.NodeControl):
 
+    @classmethod
+    def new(cls, canvas, x, y, scale):
+        """ Constructs a new circle at the given point.
+            position and scale should be given in units.
+        """
+        c = Circle(get_name('c'), x, y, scale)
+        ctrl = cls(canvas, c)
+
     def __init__(self, canvas, target):
+        """ Construct a circle control widget.
+        """
         super(CircleControl, self).__init__(canvas, target)
 
         self.drag_pt = False
@@ -18,6 +28,9 @@ class CircleControl(base.NodeControl):
 
         self.sync()
         self.make_masks()
+
+        self.show()
+        self.raise_()
 
     def mousePressEvent(self, event):
         if event.button() == QtCore.Qt.RightButton:
@@ -186,3 +199,6 @@ class CircleControl(base.NodeControl):
         painter = QtGui.QPainter(self)
         self.draw_center(painter)
         self.draw_ring(painter)
+
+from node.base import get_name
+from node.circle import Circle
