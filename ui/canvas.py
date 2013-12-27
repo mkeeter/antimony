@@ -21,19 +21,28 @@ class Canvas(QtGui.QWidget):
         self.make_circle()
         self.show()
 
+
     def mousePressEvent(self, event):
+        """ Starts dragging if the left button is pressed.
+        """
         if event.button() == QtCore.Qt.LeftButton:
             self.mouse_pos = event.pos()
             self.dragging = True
 
+
     def mouseMoveEvent(self, event):
+        """ Tracks mouse position and drags the canvas center around.
+        """
         p = event.pos()
         if self.dragging:
             delta = p - self.mouse_pos
             self.drag(-delta.x() / self.scale, delta.y() / self.scale)
         self.mouse_pos = p
 
+
     def wheelEvent(self, event):
+        """ Zooms in or out based on mouse wheel spinning.
+        """
         pos = self.pixel_to_mm(self.mouse_pos.x(), self.mouse_pos.y())
         factor = 1.001 if event.delta() > 0 else 1/1.001
         for d in range(abs(event.delta())):
@@ -43,20 +52,30 @@ class Canvas(QtGui.QWidget):
         self.sync_all_children()
         self.update()
 
+
     def mouseReleaseEvent(self, event):
+        """ Stops dragging if the left button is released.
+        """
         if event.button() == QtCore.Qt.LeftButton:
             self.dragging = False
 
+
     def drag(self, dx, dy):
+        """ Drags the center of canvas around by the given delta
+            (in unit coordinates)
+        """
         self.center += QtCore.QPointF(dx, dy)
         self.update()
         self.sync_all_children()
 
+
     def paintEvent(self, paintEvent):
+        """ Paints rendered expressions and the canvas axes.
+        """
         # Start expressions rendering (asynchronously)
         # (not strictly part of the paint process, but I'm putting it here
         #  so that it gets called whenever anything changes)
-        self.render_expressions(10)
+        self.render_expressions(self.scale)
 
         painter = QtGui.QPainter(self)
         painter.setBackground(QtGui.QColor(20, 20, 20))
@@ -72,13 +91,20 @@ class Canvas(QtGui.QWidget):
         painter.setPen(QtGui.QPen(QtGui.QColor(0, 255, 0), 2))
         painter.drawLine(center[0], center[1], center[0], center[1] - 80)
 
+
     def sync_all_children(self):
+        """ Calls sync on all children that have that function.
+        """
         for c in self.findChildren(QtGui.QWidget):
             if hasattr(c, 'sync'):  c.sync()
 
+
     def resizeEvent(self, event):
+        """ On resize, refresh oneself and sync children positions.
+        """
         self.update()
         self.sync_all_children()
+
 
     def scatter_points(self, n):
         for i in range(n):
@@ -88,12 +114,14 @@ class Canvas(QtGui.QWidget):
             ctrl.editor = e
             ctrl.raise_()
 
+
     def make_circle(self):
         c = Circle('c', 1, 1, 4)
         ctrl = CircleControl(self, c)
         e = Editor(ctrl)
         ctrl.editor = e
         ctrl.raise_()
+
 
     def mm_to_pixel(self, x=None, y=None):
         """ Converts an x,y position in mm into a pixel coordinate.
@@ -106,6 +134,7 @@ class Canvas(QtGui.QWidget):
         if x is not None and y is not None:     return x, y
         elif x is not None:                     return x
         elif y is not None:                     return y
+
 
     def pixel_to_mm(self, x=None, y=None):
         """ Converts a pixel location into an x,y coordinate.
@@ -164,7 +193,8 @@ class Canvas(QtGui.QWidget):
         # start a new one at the back of the list
         for d, e in zip(datums, expressions):
             if (d in self.render_tasks and
-                self.render_tasks[d][-1].expression == e):
+                self.render_tasks[d][-1].expression == e and
+                self.render_tasks[d][-1].resolution == pix_per_unit):
                 continue
             else:
                 self.render_tasks[d] = (
