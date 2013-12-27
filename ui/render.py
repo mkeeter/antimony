@@ -8,7 +8,8 @@ class RenderTask(object):
         self.expression = expression
         self.resolution = pix_per_unit
         self.callback = callback
-        self.event = threading.Event()
+
+        self.qimage = None
 
         self.thread = threading.Thread(target=self.run)
         self.thread.daemon = True
@@ -25,7 +26,6 @@ class RenderTask(object):
         self.qimage = QtGui.QImage(
                 self.pixels, scaled.shape[0], scaled.shape[1],
                 QtGui.QImage.Format_ARGB32)
-        self.qimage.save("wat.png")
         self.callback()
 
     def join(self):

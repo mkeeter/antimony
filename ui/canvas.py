@@ -53,11 +53,20 @@ class Canvas(QtGui.QWidget):
         self.sync_all_children()
 
     def paintEvent(self, paintEvent):
-        self.render_expressions(10, self.update)
+
+        # Start expressions rendering (asynchronously)
+        # (not strictly part of the paint process, but I'm putting it here
+        #  so that it gets called whenever anything changes)
+        self.render_expressions(10)
+
         painter = QtGui.QPainter(self)
         painter.setBackground(QtGui.QColor(20, 20, 20))
         painter.eraseRect(self.rect())
 
+        # Draw expression images
+        self.draw_expressions(painter)
+
+        # Draw a pair of axes
         center = self.mm_to_pixel(0, 0)
         painter.setPen(QtGui.QPen(QtGui.QColor(255, 0, 0), 2))
         painter.drawLine(center[0], center[1], center[0] + 80, center[1])
@@ -110,6 +119,16 @@ class Canvas(QtGui.QWidget):
         elif x is not None:                     return x
         elif y is not None:                     return y
 
+
+    def get_bounding_rect(self, expression):
+        """ For a given expression, finds a bounding rectangle
+            (to draw that expression's image).
+        """
+        xmin, ymax = self.mm_to_pixel(expression.xmin, expression.ymin)
+        xmax, ymin = self.mm_to_pixel(expression.xmax, expression.ymax)
+        return QtCore.QRect(xmin, ymin, xmax-xmin, ymax-ymin)
+
+
     def find_input(self, pos):
         """ Hunts through all Editor panels to find one with
             a connection.Input control at the given position, returning
@@ -121,7 +140,7 @@ class Canvas(QtGui.QWidget):
         return None
 
 
-    def render_expressions(self, pix_per_unit, callback):
+    def render_expressions(self, pix_per_unit):
         """ Starts render tasks for all new expressions that don't already
             have render tasks.
         """
@@ -131,7 +150,7 @@ class Canvas(QtGui.QWidget):
             try:
                 i = old_expressions.index(e)
             except ValueError:
-                new_tasks.append(RenderTask(e, pix_per_unit, callback))
+                new_tasks.append(RenderTask(e, pix_per_unit, self.update))
             else:
                 # Attempt to join this task
                 self.render_tasks[i].join()
@@ -149,6 +168,13 @@ class Canvas(QtGui.QWidget):
             if not t.join():    new_tasks.append(t)
         self.render_tasks = new_tasks
         print self.render_tasks
+
+
+    def draw_expressions(self, painter):
+        for p in self.render_tasks:
+            if not p.qimage:    continue
+            painter.drawImage(self.get_bounding_rect(p.expression),
+                              p.qimage, p.qimage.rect())
 
 
     def find_expressions(self):
