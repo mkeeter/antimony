@@ -6,6 +6,8 @@ class Canvas(QtGui.QWidget):
     def __init__(self):
         super(Canvas, self).__init__()
         self.setMouseTracking(True)
+        self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.showContextMenu)
         self.setGeometry(0, 900/4, 1440/2, 900/2)
         self.setWindowTitle("Antimony")
 
@@ -20,8 +22,17 @@ class Canvas(QtGui.QWidget):
         #self.scatter_points(2)
         #self.make_circle()
         self.make_triangle()
+        self.make_triangle()
         self.show()
 
+
+    def showContextMenu(self, point):
+        point = self.mapToGlobal(point)
+        menu = QtGui.QMenu()
+        menu.addAction("omg")
+        menu.addAction("wtf")
+        selected = menu.exec_(point)
+        print selected
 
     def scatter_points(self, n):
         for i in range(n):
@@ -215,6 +226,7 @@ class Canvas(QtGui.QWidget):
 
 
     def draw_expressions(self, painter):
+        painter.setCompositionMode(QtGui.QPainter.CompositionMode_Lighten)
         for tasks in self.render_tasks.itervalues():
             for t in tasks[::-1]:
                 if t.qimage:

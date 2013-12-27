@@ -21,6 +21,8 @@ class ConnectionControl(QtGui.QWidget):
         self.show()
 
     def mousePressEvent(self, event):
+        """ On right-click, delete the connection primitive and this widget.
+        """
         if event.button() == QtCore.Qt.RightButton:
             self.connection.delete()
             self.deleteLater()
@@ -107,10 +109,13 @@ class ConnectionControl(QtGui.QWidget):
 
 
     def paintEvent(self, paintEvent):
-        if self.isHidden():     return
+        """ Paints this connection.
+        """
         self.paint(QtGui.QPainter(self))
 
     def paint(self, painter, mask=False):
+        """ Paints this connection between origin and target.
+        """
         origin, target = self.get_origin(), self.get_target()
         if not origin or not target:    return
 
