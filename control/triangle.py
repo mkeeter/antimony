@@ -13,6 +13,7 @@ class TriangleControl(base.NodeControl):
         b = Point(get_name('b'), x, y + scale)
         c = Point(get_name('c'), x + scale, y - scale)
         tri = Triangle('t', a, b, c)
+
         cls(canvas, tri)
 
     def __init__(self, canvas, target):
@@ -26,12 +27,43 @@ class TriangleControl(base.NodeControl):
             [target.a, target.b, target.c]]
         super(TriangleControl, self).__init__(canvas, target)
 
+        self.hovering = False
+        self.dragging = False
+        self.mouse_pos = QtCore.QPoint()
+
         self.sync()
         self.make_mask()
 
         self.show()
         self.raise_()
 
+    def mousePressEvent(self, event):
+        if event.button() == QtCore.Qt.RightButton:
+            self.delete()
+        elif event.button() == QtCore.Qt.LeftButton:
+            self.mouse_pos = self.mapToParent(event.pos())
+            self.dragging = True
+
+    def mouseMoveEvent(self, event):
+        hit = self.mask.contains(event.pos())
+        p = self.mapToParent(event.pos())
+        if self.dragging:
+            delta = p - self.mouse_pos
+            scale = self.canvas.scale
+            self.drag(delta.x() / scale, -delta.y() / scale)
+        elif self.hovering != hit:
+            self.hovering = hit
+            self.update()
+        self.mouse_pos = p
+
+    def mouseReleaseEvent(self, event):
+        if event.button() == QtCore.Qt.LeftButton:
+            self.dragging = False
+
+    def leaveEvent(self, event):
+        if self.hovering:
+            self.hovering = False
+            self.update()
 
     def raise_(self):
         """ Overload raise_ so that points stay above triangle lines.
@@ -48,10 +80,16 @@ class TriangleControl(base.NodeControl):
         bitmap.clear()
 
         painter.begin(bitmap)
-        self.draw(painter, mask=True)
+        self.draw_center(painter, mask=True)
+        self.mask = QtGui.QRegion(bitmap)
+        self.draw_lines(painter, mask=True)
         painter.end()
 
         self.setMask(bitmap)
+
+
+    def drag(self, dx, dy):
+        for pt in self.points:  pt.drag(dx, dy)
 
 
     def mouseDoubleClickEvent(self, event):
@@ -102,7 +140,7 @@ class TriangleControl(base.NodeControl):
         painter = QtGui.QPainter(self)
         self.draw(painter)
 
-    def draw(self, painter, mask=False):
+    def draw_lines(self, painter, mask=False):
         coords = [
                 QtCore.QPoint(
                     *self.canvas.mm_to_pixel(pt.position.x(),
@@ -118,6 +156,41 @@ class TriangleControl(base.NodeControl):
         else:
             painter.setPen(QtGui.QPen(QtGui.QColor(200, 200, 200), 4))
         painter.drawLines(lines)
+
+
+    def draw_center(self, painter, mask=False):
+        x, y = self.canvas.mm_to_pixel(self.position.x(), self.position.y())
+        x -= self.pos().x()
+        y -= self.pos().y()
+
+        light = (200, 200, 200)
+        dark  = (100, 100, 100)
+
+        if mask:
+            painter.setBrush(QtGui.QBrush(QtCore.Qt.color1))
+            painter.setPen(QtGui.QPen(QtCore.Qt.color1, 2))
+        else:
+            painter.setBrush(QtGui.QBrush(QtGui.QColor(*light)))
+            painter.setPen(QtGui.QPen(QtGui.QColor(*dark), 2))
+
+        if mask:            d = 22
+        elif self.hovering: d = 20
+        else:               d = 16
+
+        painter.drawEllipse(x - d/2, y - d/2, d, d)
+        if mask:    return
+
+        painter.setPen(QtGui.QPen(QtGui.QColor(*dark), 0))
+        lines = [QtCore.QLine(x-4, y+2, x, y-4),
+                 QtCore.QLine(x, y-4, x+4, y+2),
+                 QtCore.QLine(x+4, y+2, x-4, y+2)]
+        painter.drawLines(lines)
+
+
+    def draw(self, painter, mask=False):
+        self.draw_lines(painter, mask)
+        self.draw_center(painter, mask)
+
 
 from node.point import Point
 from node.triangle import Triangle

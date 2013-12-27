@@ -209,6 +209,7 @@ class Canvas(QtGui.QWidget):
 
 
     def draw_expressions(self, painter):
+        comp = painter.compositionMode()
         painter.setCompositionMode(QtGui.QPainter.CompositionMode_Lighten)
         for tasks in self.render_tasks.itervalues():
             for t in tasks[::-1]:
@@ -216,6 +217,7 @@ class Canvas(QtGui.QWidget):
                     painter.drawImage(self.get_bounding_rect(t.expression),
                                       t.qimage, t.qimage.rect())
                     break
+        painter.setCompositionMode(comp)
 
 
     def find_expressions(self):
