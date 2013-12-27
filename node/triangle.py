@@ -11,25 +11,10 @@ class Triangle(base.Node):
         super(Triangle, self).__init__(name)
         self.a, self.b, self.c  = a, b, c
 
-        self._x = datum.FunctionDatum(self, self.get_x, float)
-        self._y = datum.FunctionDatum(self, self.get_y, float)
         self._shape = datum.ExpressionDatum(self, self.make_shape)
 
         self.datums = [(i, getattr(self, '_'+i)) for i in
                        ('name','shape')]
-
-
-    def get_x(self):
-        """ Calculate x as the arithmetic mean of points x coordinates.
-        """
-        return (self.a.x + self.b.x + self.c.x) / 3.0
-
-
-    def get_y(self):
-        """ Calculate y as the arithmetic mean of points y coordinates.
-        """
-        return (self.a.y + self.b.y + self.c.y) / 3.0
-
 
     def make_shape(self):
         x0, y0 = self.a.x, self.a.y

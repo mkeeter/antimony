@@ -116,12 +116,15 @@ class TriangleControl(base.NodeControl):
         ymin = min(pt.position.y() for pt in self.points)
         ymax = max(pt.position.y() for pt in self.points)
 
+        x = sum(pt.position.x() for pt in self.points) / 3.0
+        y = sum(pt.position.y() for pt in self.points) / 3.0
+
         i = self.canvas.mm_to_pixel(x=xmin) - 5
         j = self.canvas.mm_to_pixel(y=ymax) - 5
         di = self.canvas.mm_to_pixel(x=xmax) - i + 10
         dj = self.canvas.mm_to_pixel(y=ymin) - j + 10
 
-        changed = (self.position != QtCore.QPointF(self.node.x, self.node.y) or
+        changed = (self.position != QtCore.QPointF(x, y) or
                    di != self.width() or dj != self.height() or
                    self.pos() != QtCore.QPoint(i, j))
 
@@ -129,7 +132,7 @@ class TriangleControl(base.NodeControl):
         self.resize(di, dj)
 
         # Cache position here
-        self.position = QtCore.QPointF(self.node.x, self.node.y)
+        self.position = QtCore.QPointF(x, y)
 
         if changed:
             self.make_mask()
