@@ -24,7 +24,7 @@ class RenderTask(object):
             np.ones(scaled.shape, dtype=np.uint8)*255])
         self.pixels = rgb.flatten()
         self.qimage = QtGui.QImage(
-                self.pixels, scaled.shape[0], scaled.shape[1],
+                self.pixels, scaled.shape[1], scaled.shape[0],
                 QtGui.QImage.Format_ARGB32)
         self.callback()
 
