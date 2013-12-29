@@ -159,6 +159,13 @@ class Expression(object):
 
         return a.lower, a.upper, b.lower, b.upper, c.lower, c.upper
 
+    def set_bounds(self, *args):
+        """ Sets the bounds of this expression (this function should be
+            used in conjunction with remap_bounds above).
+        """
+        (self.xmin, self.xmax,
+         self.ymin, self.ymax,
+         self.zmin, self.zmax) = args
 
     def has_xy_bounds(self):
         """ Returns True if this expression has valid XY bounds.
