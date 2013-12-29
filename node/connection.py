@@ -31,4 +31,6 @@ class Connection(object):
         self.target.disconnect_input(self)
 
     def disconnect_from_source(self):
+        """ Disconnects from source, which sets self.source to None.
+        """
         self.source.disconnect_output(self)

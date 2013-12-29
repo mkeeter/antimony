@@ -94,7 +94,7 @@ class Expression(object):
 
     # Logical union
     @wrapped
-    def __and__(self, rhs):
+    def __or__(self, rhs):
         e = Expression('i' + self.math + rhs.math)
         e.xmin = min(self.xmin, rhs.xmin)
         e.xmax = max(self.xmax, rhs.xmax)
@@ -102,7 +102,7 @@ class Expression(object):
         e.ymax = max(self.ymax, rhs.ymax)
         return e
     @wrapped
-    def __rand__(self, rhs):
+    def __ror__(self, rhs):
         e = Expression('i' + lhs.math + self.math)
         e.xmin = min(lhs.xmin, self.xmin)
         e.xmax = max(lhs.xmax, self.xmax)
