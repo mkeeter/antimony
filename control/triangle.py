@@ -1,6 +1,7 @@
 from PySide import QtCore, QtGui
 
 import base
+import colors
 
 class TriangleControl(base.NodeControl):
 
@@ -166,15 +167,12 @@ class TriangleControl(base.NodeControl):
         x -= self.pos().x()
         y -= self.pos().y()
 
-        light = (200, 200, 200)
-        dark  = (100, 100, 100)
-
         if mask:
             painter.setBrush(QtGui.QBrush(QtCore.Qt.color1))
             painter.setPen(QtGui.QPen(QtCore.Qt.color1, 2))
         else:
-            painter.setBrush(QtGui.QBrush(QtGui.QColor(*light)))
-            painter.setPen(QtGui.QPen(QtGui.QColor(*dark), 2))
+            painter.setBrush(QtGui.QBrush(QtGui.QColor(*colors.light_grey)))
+            painter.setPen(QtGui.QPen(QtGui.QColor(*colors.dark_grey), 2))
 
         if mask:            d = 22
         elif self.hovering: d = 20
@@ -183,7 +181,7 @@ class TriangleControl(base.NodeControl):
         painter.drawEllipse(x - d/2, y - d/2, d, d)
         if mask:    return
 
-        painter.setPen(QtGui.QPen(QtGui.QColor(*dark), 0))
+        painter.setPen(QtGui.QPen(QtGui.QColor(*colors.dark_grey), 0))
         lines = [QtCore.QLine(x-4, y+2, x, y-4),
                  QtCore.QLine(x, y-4, x+4, y+2),
                  QtCore.QLine(x+4, y+2, x-4, y+2)]

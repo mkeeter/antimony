@@ -6,6 +6,11 @@ violet = (108, 113, 196)
 blue = (38, 139, 210)
 green = (133, 153, 0)
 
+dark_grey = (100, 100, 100)
+light_grey = (200, 200, 200)
+white = (255, 255, 255)
+
+
 from fab.expression import Expression
 
 def get_color(T):

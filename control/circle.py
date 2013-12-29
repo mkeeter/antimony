@@ -1,5 +1,6 @@
 from PySide import QtCore, QtGui
 
+import colors
 import base
 
 class CircleControl(base.NodeControl):
@@ -152,15 +153,13 @@ class CircleControl(base.NodeControl):
         """ Draws a circle at the center of the widget.
         """
         width, height = self.width(), self.height()
-        light = (200, 200, 200)
-        dark  = (100, 100, 100)
 
         if mask:
             painter.setBrush(QtGui.QBrush(QtCore.Qt.color1))
             painter.setPen(QtGui.QPen(QtCore.Qt.color1, 2))
         else:
-            painter.setBrush(QtGui.QBrush(QtGui.QColor(*light)))
-            painter.setPen(QtGui.QPen(QtGui.QColor(*dark), 2))
+            painter.setBrush(QtGui.QBrush(QtGui.QColor(*colors.light_grey)))
+            painter.setPen(QtGui.QPen(QtGui.QColor(*colors.dark_grey), 2))
 
         if mask:                                d = 22
         elif self.hover_pt or self.drag_pt:     d = 20

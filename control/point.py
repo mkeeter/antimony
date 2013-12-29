@@ -1,6 +1,7 @@
 from PySide import QtCore, QtGui
 
 import base
+import colors
 
 class PointControl(base.NodeControl):
 
@@ -91,15 +92,13 @@ class PointControl(base.NodeControl):
         """ Paint either the point or a mask for the point.
         """
         width, height = self.width(), self.height()
-        light = (200, 200, 200)
-        dark  = (100, 100, 100)
 
         if mask:
             painter.setBrush(QtGui.QBrush(QtCore.Qt.color1))
             painter.setPen(QtGui.QPen(QtCore.Qt.color1, 2))
         else:
-            painter.setBrush(QtGui.QBrush(QtGui.QColor(*light)))
-            painter.setPen(QtGui.QPen(QtGui.QColor(*dark), 2))
+            painter.setBrush(QtGui.QBrush(QtGui.QColor(*colors.light_grey)))
+            painter.setPen(QtGui.QPen(QtGui.QColor(*colors.dark_grey), 2))
 
         if mask:                                d = 22
         elif self.hovering or self.dragging:    d = 20
