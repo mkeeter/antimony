@@ -3,7 +3,7 @@ from PySide import QtCore, QtGui
 import base
 import colors
 
-class TriangleControl(base.NodeControl):
+class TriangleControl(base.DraggableNodeControl):
 
     @classmethod
     def new(cls, canvas, x, y, scale):
@@ -28,43 +28,16 @@ class TriangleControl(base.NodeControl):
             [target.a, target.b, target.c]]
         super(TriangleControl, self).__init__(canvas, target)
 
-        self.hovering = False
-        self.dragging = False
-        self.mouse_pos = QtCore.QPoint()
-
         self.sync()
         self.make_mask()
 
         self.show()
         self.raise_()
 
-    def mousePressEvent(self, event):
-        if event.button() == QtCore.Qt.RightButton:
-            self.delete()
-        elif event.button() == QtCore.Qt.LeftButton:
-            self.mouse_pos = self.mapToParent(event.pos())
-            self.dragging = True
 
-    def mouseMoveEvent(self, event):
-        hit = self.mask.contains(event.pos())
-        p = self.mapToParent(event.pos())
-        if self.dragging:
-            delta = p - self.mouse_pos
-            scale = self.canvas.scale
-            self.drag(delta.x() / scale, -delta.y() / scale)
-        elif self.hovering != hit:
-            self.hovering = hit
-            self.update()
-        self.mouse_pos = p
+    def hit(self, pos):
+        return self.mask.contains(pos)
 
-    def mouseReleaseEvent(self, event):
-        if event.button() == QtCore.Qt.LeftButton:
-            self.dragging = False
-
-    def leaveEvent(self, event):
-        if self.hovering:
-            self.hovering = False
-            self.update()
 
     def raise_(self):
         """ Overload raise_ so that points stay above triangle lines.

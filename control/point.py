@@ -3,7 +3,7 @@ from PySide import QtCore, QtGui
 import base
 import colors
 
-class PointControl(base.NodeControl):
+class PointControl(base.DraggableNodeControl):
 
     @classmethod
     def new(cls, canvas, x, y, scale):
@@ -17,43 +17,11 @@ class PointControl(base.NodeControl):
         super(PointControl, self).__init__(canvas, target)
         self.setFixedSize(30, 30)
 
-        self.dragging = False
-        self.hovering = False
         self.make_mask()
         self.sync()
         self.show()
         self.raise_()
 
-    def mousePressEvent(self, event):
-        if event.button() == QtCore.Qt.RightButton:
-            self.delete()
-        elif event.button() == QtCore.Qt.LeftButton:
-            self.mouse_pos = self.mapToParent(event.pos())
-            self.dragging = True
-
-    def mouseDoubleClickEvent(self, event):
-        if event.button() == QtCore.Qt.LeftButton:
-            self.open_editor()
-
-    def mouseReleaseEvent(self, event):
-        if event.button() == QtCore.Qt.LeftButton:
-            self.dragging = False
-
-    def mouseMoveEvent(self, event):
-        p = self.mapToParent(event.pos())
-        if self.dragging:
-            delta = p - self.mouse_pos
-            scale = self.parentWidget().scale
-            self.drag(delta.x() / scale, -delta.y() / scale)
-        elif not self.hovering:
-            self.hovering = True
-            self.update()
-        self.mouse_pos = p
-
-    def leaveEvent(self, event):
-        if self.hovering:
-            self.hovering = False
-            self.update()
 
     def drag(self, dx, dy):
         """ Drag this node by attempting to change its x and y coordinates
