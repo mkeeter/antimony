@@ -1,5 +1,7 @@
 from PySide import QtCore, QtGui
 
+import colors
+
 class NodeControl(QtGui.QWidget):
     def __init__(self, canvas, node):
         super(NodeControl, self).__init__(canvas)
@@ -118,6 +120,79 @@ class DraggableNodeControl(NodeControl):
         if self.hovering:
             self.hovering = False
             self.update()
+
+################################################################################
+
+class TextLabelControl(DraggableNodeControl):
+    """ Represents a draggable label floating in space.
+        Must be attached to a node with x and y (float) datums.
+    """
+    def __init__(self, canvas, target, text):
+        super(TextLabelControl, self).__init__(canvas, target)
+
+        self.text = text
+        self.font = QtGui.QFont()
+
+        fm = QtGui.QFontMetrics(self.font)
+        rect = fm.boundingRect(self.text)
+        self.setFixedSize(rect.width() + 20, rect.height() + 20)
+
+        self.sync()
+        self.show()
+        self.raise_()
+
+
+    def editor_position(self):
+        """ Place the editor to the bottom-right of the widget.
+        """
+        return (super(TextLabelControl, self).editor_position() +
+                QtCore.QPoint(self.width(), self.height()))
+
+
+    def sync(self):
+        """ Move this control to the appropriate position.
+            Use self.position (cached) if eval fails.
+        """
+        try:    x = self.node.x
+        except: x = self.position.x()
+
+        try:    y = self.node.y
+        except: y = self.position.y()
+
+        self.move(self.canvas.mm_to_pixel(x=x),
+                  self.canvas.mm_to_pixel(y=y))
+
+        self.position = QtCore.QPointF(x, y)
+
+        if self.editor:     self.editor.sync()
+
+    def paintEvent(self, paintEvent):
+        """ On paint event, paint oneself.
+        """
+        self.paint(QtGui.QPainter(self))
+
+    def paint(self, painter):
+        painter = QtGui.QPainter(self)
+        painter.setPen(QtGui.QColor(*colors.blue))
+        if self.dragging or self.hovering:
+            painter.setBrush(QtGui.QColor(*(colors.blue + (150,))))
+        else:
+            painter.setBrush(QtGui.QColor(*(colors.blue + (100,))))
+        painter.drawRect(self.rect())
+        painter.setPen(QtGui.QColor(255, 255, 255))
+        painter.setFont(self.font)
+        painter.drawText(10, self.height() - 10, self.text)
+
+    def drag(self, dx, dy):
+        """ Drag this node by attempting to change its x and y coordinates
+            dx and dy should be floating-point values.
+        """
+        if self.node._x.simple():
+            self.node._x.set_expr(str(float(self.node._x.get_expr()) + dx))
+        if self.node._y.simple():
+            self.node._y.set_expr(str(float(self.node._y.get_expr()) + dy))
+
+
 
 from ui.editor import MakeEditor
 
