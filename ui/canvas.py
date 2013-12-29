@@ -229,7 +229,9 @@ class Canvas(QtGui.QWidget):
         expressions = []
         for c in self.findChildren(NodeControl):
             for t, d in c.node.datums:
-                if d.type == Expression and d.valid():
+                if (d.type == Expression and d.valid() and not d.outputs
+                        and not getattr(d, 'inputs', None)):
+                    print "Adding datum with outputs", d.outputs
                     e = d.value()
                     if e.has_xy_bounds():
                         expressions.append((d,e))
