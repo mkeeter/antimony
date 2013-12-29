@@ -71,7 +71,7 @@ class Cutout(base.Node):
     def make_shape(self):
         """ Computes A & ~B
         """
-        shape = self.A & -self.B
+        shape = self.A & ~self.B
         if not shape.check():
             raise RuntimeError("Constructed invalid shape!")
         return shape

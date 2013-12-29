@@ -81,7 +81,7 @@ def tab(x, y, width, height, angle=0, chamfer=0.2):
     cutout = triangle(width/2 - chamfer*height, height,
                       width/2, height,
                       width/2, height - chamfer*height)
-    tab &= -(cutout | reflect_x(cutout))
+    tab &= ~(cutout | reflect_x(cutout))
 
     return move(rotate(tab, angle), x, y)
 

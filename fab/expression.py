@@ -80,6 +80,8 @@ class Expression(object):
     # Negation
     def __neg__(self):
         return Expression('n' + self.math)
+    def __invert__(self):
+        return Expression('n' + self.math)
 
     # Logical intersection
     @wrapped
