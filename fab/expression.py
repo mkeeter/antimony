@@ -35,6 +35,13 @@ class Expression(object):
     def __repr__(self):
         return self.math
 
+    def check(self):
+        """ Returns True if this is a valid math string.
+        """
+        try:                    self.to_tree()
+        except RuntimeError:    return False
+        else:                   return True
+
     def to_tree(self):
         return tree.MathTree.from_expression(self)
 

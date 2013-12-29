@@ -13,7 +13,7 @@ class UnionControl(base.TextLabelControl):
 
     def __init__(self, canvas, target):
         super(UnionControl, self).__init__(
-                canvas, target, u"A ∪ B ∪ C...")
+                canvas, target, u"A ∪ B")
 
 class IntersectionControl(base.TextLabelControl):
     @classmethod

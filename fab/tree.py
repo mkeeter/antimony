@@ -14,11 +14,9 @@ class MathTree(object):
 
     @classmethod
     def from_expression(cls, expr):
-        if not isinstance(expr, Expression):
-            raise TypeError("Input expression is of wrong type.")
         ptr = libfab.parse(expr.math)
         if ptr.value is None:
-            raise TypeError("Math expression parsing failed.")
+            raise RuntimeError("Math expression parsing failed.")
         return cls(expr, ptr)
 
     def __str__(self):
