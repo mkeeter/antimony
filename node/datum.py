@@ -235,7 +235,7 @@ class ExpressionDatum(MultiInputDatum):
         self.push_stack()
         try:
             if self.inputs:
-                t = reduce(operator.add, [i.source.value()
+                t = reduce(operator.or_, [i.source.value()
                                           for i in self.inputs])
             else:
                 t = eval(self._expr, base.dict())
