@@ -20,6 +20,12 @@ class ConnectionControl(QtGui.QWidget):
 
         self.show()
 
+    def contextMenuEvent(self, event):
+        """ Ignore context menu events so that these widgets
+            can accept right-click events.
+        """
+        pass
+
     def mousePressEvent(self, event):
         """ On right-click, delete the connection primitive and this widget.
         """

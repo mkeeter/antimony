@@ -12,8 +12,8 @@ class GetBounds(base.Node):
 
         self.datums = [(i, getattr(self, '_'+i)) for i in ('name','input')]
         for i in 'xmin','ymin','zmin','xmax','ymax','zmax':
-            setattr(self, '_'+i, datum.FunctionDatum(
-                self, lambda s=i: getattr(self.input, s), float))
+            setattr(self, '_'+i, datum.FloatFunctionDatum(
+                self, lambda s=i: getattr(self.input, s)))
             self.datums.append((i, getattr(self, '_'+i)))
 
 

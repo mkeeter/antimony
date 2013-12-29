@@ -31,7 +31,9 @@ class Canvas(QtGui.QWidget):
                  ("Point", PointControl), None,
                  ("Union", UnionControl),
                  ("Intersection", IntersectionControl),
-                 ("Cutout", CutoutControl)]
+                 ("Cutout", CutoutControl), None,
+                 ("Get bounds", GetBoundsControl),
+                 ("Set bounds", SetBoundsControl)]
 
         actions = {}
         for i in items:
@@ -249,6 +251,7 @@ from control.point import PointControl
 from control.circle import CircleControl
 from control.triangle import TriangleControl
 from control.csg import UnionControl, IntersectionControl, CutoutControl
+from control.bounds import GetBoundsControl, SetBoundsControl
 
 from ui.editor import Editor
 from ui.render import RenderTask

@@ -259,11 +259,14 @@ class FunctionDatum(Datum):
     def invalid(self):
         raise TypeError("Invalid operation for output datum")
     def can_connect(self, conn):        self.invalid()
-    def connect_input(self, conn):       self.invalid()
+    def connect_input(self, conn):      self.invalid()
     def disconnect_input(self, conn):   self.invalid()
-    def get_expr(self):                 self.invalid()
-    def can_edit(self):                 self.invalid()
-    def set_expr(self):                 self.invalid()
+    def set_expr(self, value):          self.invalid()
+
+    def get_expr(self):
+        if self.valid():    return 'Function'
+        else:               return 'Function (invalid)'
+    def can_edit(self): return False
 
     def eval(self):
         """ Attempts to evaluate the given function and return a value.
@@ -285,6 +288,19 @@ class ExpressionFunctionDatum(FunctionDatum):
     """
 
     def __init__(self, node, function):
+        """ Pass in a parent node and a function to generate
+            an output Expression.
+        """
         super(ExpressionFunctionDatum, self).__init__(
                 node, function, Expression)
+
+class FloatFunctionDatum(FunctionDatum):
+    """ Represents a calculated float value.
+    """
+    def __init__(self, node, function):
+        super(FloatFunctionDatum, self).__init__(node, function, float)
+
+    def get_expr(self):
+        if self.valid():    return str(self.value())
+        else:               return 'Invalid'
 

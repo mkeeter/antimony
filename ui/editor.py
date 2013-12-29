@@ -43,15 +43,10 @@ class Editor(QtGui.QGroupBox):
             not isinstance(dat, FunctionDatum)):
             grid.addWidget(Input(dat, self), row, 0)
 
-        if isinstance(dat, FunctionDatum):
-            label = QtGui.QLabel(name, self)
-            grid.addWidget(label, row, 2, QtCore.Qt.AlignRight)
-            txt = label
-        else:
-            grid.addWidget(QtGui.QLabel(name, self), row, 1, QtCore.Qt.AlignRight)
-            txt = QtGui.QLineEdit(self)
-            txt.textChanged.connect(lambda t: self.on_change(t, dat))
-            grid.addWidget(txt, row, 2)
+        grid.addWidget(QtGui.QLabel(name, self), row, 1, QtCore.Qt.AlignRight)
+        txt = QtGui.QLineEdit(self)
+        txt.textChanged.connect(lambda t: self.on_change(t, dat))
+        grid.addWidget(txt, row, 2)
         self.lines.append((txt, dat))
 
         if not isinstance(dat, NameDatum):
@@ -90,7 +85,7 @@ class Editor(QtGui.QGroupBox):
         """ When a text box changes, update the corresponding Datum
             (which triggers a sync for self and self.control)
         """
-        dat.set_expr(value)
+        if dat.can_edit():  dat.set_expr(value)
 
     def set_mask(self, frac):
         """ Mask a certain percentage of the widget.
