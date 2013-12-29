@@ -22,7 +22,7 @@ class IntersectionControl(base.TextLabelControl):
         cls(canvas, i)
 
     def __init__(self, canvas, target):
-        super(UnionControl, self).__init__(
+        super(IntersectionControl, self).__init__(
                 canvas, target, u"A ∩ B")
 
 from node.base import get_name

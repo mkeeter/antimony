@@ -26,21 +26,19 @@ class Canvas(QtGui.QWidget):
         scale = 50/self.scale
 
         menu = QtGui.QMenu()
-        tri = menu.addAction("Triangle")
-        cir = menu.addAction("Circle")
-        pt  = menu.addAction("Point")
-        union  = menu.addAction("Union")
+        items = [("Triangle", TriangleControl),
+                 ("Circle", CircleControl),
+                 ("Point", PointControl), None,
+                 ("Union", UnionControl),
+                 ("Intersection", IntersectionControl)]
+
+        actions = {}
+        for i in items:
+            if i is None:   menu.addSeparator()
+            else:           actions[menu.addAction(i[0])] = i[1].new
 
         point = self.mapToGlobal(point)
-        selected = menu.exec_(point)
-        if selected == tri:
-            TriangleControl.new(self, x, y, scale)
-        elif selected == cir:
-            CircleControl.new(self, x, y, scale)
-        elif selected == pt:
-            PointControl.new(self, x, y, scale)
-        elif selected == union:
-            UnionControl.new(self, x, y, scale)
+        actions.get(menu.exec_(point), lambda *args: None)(self, x, y, scale)
 
 
     def mousePressEvent(self, event):
@@ -245,7 +243,7 @@ from fab.expression import Expression
 from control.point import PointControl
 from control.circle import CircleControl
 from control.triangle import TriangleControl
-from control.union import UnionControl
+from control.csg import UnionControl, IntersectionControl
 
 from ui.editor import Editor
 from ui.render import RenderTask
