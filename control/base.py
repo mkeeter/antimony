@@ -35,6 +35,13 @@ class NodeControl(QtGui.QWidget):
         elif self.editor:
             self.editor.animate_close()
 
+    def editor_position(self):
+        """ Returns a canvas pixel location at which the editor
+            should be placed.
+        """
+        p = self.position
+        return QtCore.QPoint(*self.canvas.mm_to_pixel(p.x(), p.y()))
+
     def get_datum_output(self, d):
         """ Returns a canvas pixel location for the given datum's output.
         """

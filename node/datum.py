@@ -170,6 +170,83 @@ class NameDatum(Datum):
 
 ################################################################################
 
+class MultiInputDatum(Datum):
+    """ Represents a node that can take in multiple inputs.
+    """
+    def __init__(self, node, value, T):
+        self.inputs = []
+        super(MultiInputDatum, self).__init__(node, value, T)
+        del self.input
+
+    def connections(self):
+        """ Returns a list of connections attached to this datum.
+        """
+        return self.outputs + self.inputs
+
+    def can_connect(self, conn):
+        """ Returns true if we can accept the given connection as an input
+        """
+        return (self != conn.source and self.type == conn.source.type
+                and not conn.source in [c.source for c in self.inputs])
+
+    def connect_input(self, conn):
+        """ Links an input connection to this node.
+        """
+        self.inputs.append(conn)
+        conn.target = self
+        self.sync()
+
+    def disconnect_input(self, conn):
+        """ Disconnects an input connection.
+        """
+        self.inputs.remove(conn)
+        conn.target = None
+        self.sync()
+
+    def get_expr(self):
+        """ Returns the expression string, or a placeholder if we have
+            multiple inputs.
+        """
+        if len(self.inputs) > 1:
+            return "%i inputs" % len(self.inputs)
+        elif len(self.inputs) == 1:
+            return "1 input"
+        else:
+            return self._expr
+
+    def can_edit(self):
+        """ Returns True if we can edit this datum
+            (false if it's tied to an input)
+        """
+        return self.inputs == []
+
+################################################################################
+
+import operator
+
+class ExpressionDatum(MultiInputDatum):
+    def __init__(self, node, value):
+        super(ExpressionDatum, self).__init__(node, value, Expression)
+
+    def eval(self):
+        """ Attempts to evaluate the expression and return a value.
+            Raises an exception if this fails.
+        """
+        self.push_stack()
+        try:
+            if self.inputs:
+                t = reduce(operator.add, [i.source.value()
+                                          for i in self.inputs])
+            else:
+                t = eval(self._expr, base.dict())
+                if not isinstance(t, self.type):    t = self.type(t)
+        except:     raise
+        finally:    self.pop_stack()
+
+        return t
+
+################################################################################
+
 class FunctionDatum(Datum):
     """ Represents a value calculated from a function.
         Usually used for a node output value.
@@ -203,9 +280,11 @@ class FunctionDatum(Datum):
 
 from fab.expression import Expression
 
-class ExpressionDatum(FunctionDatum):
+class ExpressionFunctionDatum(FunctionDatum):
     """ Represents a math expression.
     """
 
     def __init__(self, node, function):
-        super(ExpressionDatum, self).__init__(node, function, Expression)
+        super(ExpressionFunctionDatum, self).__init__(
+                node, function, Expression)
+

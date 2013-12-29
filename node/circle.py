@@ -11,7 +11,7 @@ class Circle(base.Node):
         self._y = datum.FloatDatum(self, y)
         self._r = datum.FloatDatum(self, r)
 
-        self._shape = datum.ExpressionDatum(self, self.make_shape)
+        self._shape = datum.ExpressionFunctionDatum(self, self.make_shape)
 
         self.datums = [(i, getattr(self, '_'+i)) for i in
                        ('name','x','y','r','shape')]

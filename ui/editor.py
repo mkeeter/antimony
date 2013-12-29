@@ -80,14 +80,7 @@ class Editor(QtGui.QGroupBox):
                     t.setCursorPosition(0)
                 t.setEnabled(d.can_edit())
 
-        canvas = self.parentWidget()
-        px, py = self.x(), self.y()
-        try:    x = canvas.mm_to_pixel(x=self.node.x)
-        except: x = px
-        try:    y = canvas.mm_to_pixel(y=self.node.y)
-        except: y = py
-
-        self.move(x, y)
+        self.move(self.control.editor_position())
 
         for c in self.node.connections():
             c.control.sync()
