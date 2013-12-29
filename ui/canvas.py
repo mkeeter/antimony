@@ -210,6 +210,9 @@ class Canvas(QtGui.QWidget):
 
 
     def draw_expressions(self, painter):
+        """ Paints all rendered expressions (i.e. RenderTasks with a qimage
+            member variable.
+        """
         comp = painter.compositionMode()
         painter.setCompositionMode(QtGui.QPainter.CompositionMode_Lighten)
         for tasks in self.render_tasks.itervalues():
@@ -223,7 +226,7 @@ class Canvas(QtGui.QWidget):
 
     def find_expressions(self):
         """ Searches for expressions to render (i.e. expressions
-            which are valid and have xy bounds).
+            which are valid, have xy bounds, and don't have connections)
             Returns a list of (datum, expression) tuples.
         """
         expressions = []
