@@ -117,6 +117,49 @@ class Expression(object):
         e.ymax = max(lhs.ymax, self.ymax)
         return e
 
+    @wrapped
+    def map(self, X=None, Y=None, Z=None):
+        """ Applies a map operator to an expression.
+            Produces a new expression with unknown bounds.
+        """
+        return Expression(
+                'm' +
+                (X.math if X else ' ')+
+                (Y.math if Y else ' ')+
+                (Z.math if Z else ' ')+
+                self.math)
+
+
+    @wrapped
+    def remap_bounds(self, X=None, Y=None, Z=None):
+        """ Remaps the bounds of this expression.
+
+            X, Y, and Z should be the inverse of a coordinate mapping
+            i.e. if our coordinate transform is x' = f(x), we want
+            X to be f' such that x = f'(x')
+
+            Returns xmin, xmax, ymin, ymax, zmin, zmax
+        """
+        x = interval.Interval(self.xmin, self.xmax)
+        y = interval.Interval(self.xmin, self.xmax)
+        z = interval.Interval(self.xmin, self.xmax)
+
+        if X:   a = X.to_tree().eval_i(x, y, z)
+        else:   a = interval.Interval(float('-inf'), float('+inf'))
+
+        if Y:   b = Y.to_tree().eval_i(x, y, z)
+        else:   b = interval.Interval(float('-inf'), float('+inf'))
+
+        if Z:   c = Z.to_tree().eval_i(x, y, z)
+        else:   c = interval.Interval(float('-inf'), float('+inf'))
+
+        for i in [a, b, c]:
+            if math.isnan(a.lower):  a.lower = float('-inf')
+            if math.isnan(a.upper):  a.upper = float('+inf')
+
+        return a.lower, a.upper, b.lower, b.upper, c.lower, c.upper
+
+
     def has_xy_bounds(self):
         """ Returns True if this expression has valid XY bounds.
         """
@@ -142,3 +185,4 @@ class Expression(object):
 
 import tree
 import region
+import interval

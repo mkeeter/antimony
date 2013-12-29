@@ -74,6 +74,11 @@ class MathTree(object):
 
         return image
 
+    def eval_i(self, X, Y, Z):
+        """ Evaluates this tree on the given interval.
+            (used in remapping bounds).
+        """
+        return libfab.eval_i(self.ptr, X, Y, Z)
 
 
 from expression import Expression
