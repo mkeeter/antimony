@@ -50,3 +50,28 @@ class Intersection(base.Node):
         if not shape.check():
             raise RuntimeError("Constructed invalid shape!")
         return shape
+
+################################################################################
+
+class Cutout(base.Node):
+    def __init__(self, name, x, y):
+        super(Cutout, self).__init__(name)
+
+        self._x = datum.FloatDatum(self, x)
+        self._y = datum.FloatDatum(self, y)
+
+        self._A = datum.ExpressionDatum(self, 'f1')
+        self._B = datum.ExpressionDatum(self, 'f1')
+
+        self._shape = datum.ExpressionFunctionDatum(self, self.make_shape)
+
+        self.datums = [(i, getattr(self, '_'+i)) for i in
+                ('name', 'A', 'B', 'shape')]
+
+    def make_shape(self):
+        """ Computes A & ~B
+        """
+        shape = self.A & -self.B
+        if not shape.check():
+            raise RuntimeError("Constructed invalid shape!")
+        return shape

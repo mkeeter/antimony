@@ -30,7 +30,8 @@ class Canvas(QtGui.QWidget):
                  ("Circle", CircleControl),
                  ("Point", PointControl), None,
                  ("Union", UnionControl),
-                 ("Intersection", IntersectionControl)]
+                 ("Intersection", IntersectionControl),
+                 ("Cutout", CutoutControl)]
 
         actions = {}
         for i in items:
@@ -247,7 +248,7 @@ from fab.expression import Expression
 from control.point import PointControl
 from control.circle import CircleControl
 from control.triangle import TriangleControl
-from control.csg import UnionControl, IntersectionControl
+from control.csg import UnionControl, IntersectionControl, CutoutControl
 
 from ui.editor import Editor
 from ui.render import RenderTask

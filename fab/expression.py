@@ -79,7 +79,7 @@ class Expression(object):
 
     # Negation
     def __neg__(self):
-        return Expression('n' + self.math, shape=self.shape)
+        return Expression('n' + self.math)
 
     # Logical intersection
     @wrapped

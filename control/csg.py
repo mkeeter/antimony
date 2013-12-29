@@ -25,5 +25,16 @@ class IntersectionControl(base.TextLabelControl):
         super(IntersectionControl, self).__init__(
                 canvas, target, u"A ∩ B")
 
+
+class CutoutControl(base.TextLabelControl):
+    @classmethod
+    def new(cls, canvas, x, y, scale):
+        c = Cutout(get_name('c'), x, y)
+        cls(canvas, c)
+
+    def __init__(self, canvas, target):
+        super(CutoutControl, self).__init__(
+                canvas, target, u"A ∩ ~B")
+
 from node.base import get_name
-from node.csg import Union, Intersection
+from node.csg import Union, Intersection, Cutout
