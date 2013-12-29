@@ -281,6 +281,20 @@ class FunctionDatum(Datum):
 
         return t
 
+################################################################################
+
+class FloatFunctionDatum(FunctionDatum):
+    """ Represents a calculated float value.
+    """
+    def __init__(self, node, function):
+        super(FloatFunctionDatum, self).__init__(node, function, float)
+
+    def get_expr(self):
+        if self.valid():    return str(self.value())
+        else:               return 'Invalid'
+
+################################################################################
+
 from fab.expression import Expression
 
 class ExpressionFunctionDatum(FunctionDatum):
@@ -294,13 +308,5 @@ class ExpressionFunctionDatum(FunctionDatum):
         super(ExpressionFunctionDatum, self).__init__(
                 node, function, Expression)
 
-class FloatFunctionDatum(FunctionDatum):
-    """ Represents a calculated float value.
-    """
-    def __init__(self, node, function):
-        super(FloatFunctionDatum, self).__init__(node, function, float)
 
-    def get_expr(self):
-        if self.valid():    return str(self.value())
-        else:               return 'Invalid'
 
