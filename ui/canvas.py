@@ -234,12 +234,13 @@ class Canvas(QtGui.QWidget):
         """
         expressions = []
         for c in self.findChildren(NodeControl):
-            for t, d in c.node.datums:
-                if (d.type == Expression and d.valid() and not d.outputs
-                        and not getattr(d, 'inputs', None)):
-                    e = d.value()
+            for datum_name, datum in c.node.datums:
+                if (datum.type == Expression and datum.valid() and
+                        not datum.outputs and
+                        not getattr(datum, 'inputs', None)):
+                    e = datum.value()
                     if e.has_xy_bounds():
-                        expressions.append((d,e))
+                        expressions.append((datum,e))
         return expressions
 
 ################################################################################

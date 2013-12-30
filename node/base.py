@@ -9,10 +9,19 @@ class Node(object):
         """ Node constructor.
             Adds node to master list and sets _deleted to False.
         """
-        self._name = datum.NameDatum(self, name)
-        self.control  = None
+
+        # Save a master list of datums to serialize nodes for saving.
         self.datums = []
+        self.control  = None
+        self.add_datum('name', datum.NameDatum(self, name))
         nodes.append(self)
+
+    def add_datum(self, n, d):
+        """ Adds a name + datum pair to the master list and sets
+            an attribute storing this datum object.
+        """
+        self.datums.append((n,d))
+        setattr(self, '_'+n, d)
 
 
     def delete(self):
@@ -31,7 +40,10 @@ class Node(object):
                       [d[1].connections() for d in self.datums], [])
 
     def __getattr__(self, v):
+        """ Overload getattr to evaluate datum's value.
+        """
         return self.__getattribute__('_'+v).value()
+
 
 # Master list of nodes
 nodes = []

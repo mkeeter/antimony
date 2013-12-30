@@ -17,6 +17,8 @@ class PointControl(base.DraggableNodeControl):
         super(PointControl, self).__init__(canvas, target)
         self.setFixedSize(30, 30)
 
+        self.editor_datums = ['name','x','y']
+
         self.make_mask()
         self.sync()
         self.show()

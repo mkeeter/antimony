@@ -5,8 +5,6 @@ class Point(base.Node):
     def __init__(self, name, x, y):
 
         super(Point, self).__init__(name)
-        self._x = datum.FloatDatum(self, x)
-        self._y = datum.FloatDatum(self, y)
-
-        self.datums = [(i, getattr(self, '_'+i)) for i in ('name','x','y')]
+        self.add_datum('x', datum.FloatDatum(self, x))
+        self.add_datum('y', datum.FloatDatum(self, y))
 

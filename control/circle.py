@@ -30,6 +30,8 @@ class CircleControl(base.NodeControl):
         self.sync()
         self.make_masks()
 
+        self.editor_datums = ['name','x','y','r','shape']
+
         self.show()
         self.raise_()
 

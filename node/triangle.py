@@ -11,10 +11,7 @@ class Triangle(base.Node):
         super(Triangle, self).__init__(name)
         self.a, self.b, self.c  = a, b, c
 
-        self._shape = datum.ExpressionFunctionDatum(self, self.make_shape)
-
-        self.datums = [(i, getattr(self, '_'+i)) for i in
-                       ('name','shape')]
+        self.add_datum('shape', datum.ExpressionFunctionDatum(self, self.make_shape))
 
     def make_shape(self):
         return fab.shapes.triangle(self.a.x, self.a.y,

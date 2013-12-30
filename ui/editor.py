@@ -13,8 +13,8 @@ class Editor(QtGui.QGroupBox):
 
         self.add_header(grid)
         self.lines = []
-        for name, dat in self.node.datums:
-            self.add_row(grid, name, dat)
+        for name in self.control.editor_datums:
+            self.add_row(grid, name, getattr(self.node, '_'+name))
 
         self.setLayout(grid)
         self.sync()

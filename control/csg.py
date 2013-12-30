@@ -14,6 +14,7 @@ class UnionControl(base.TextLabelControl):
     def __init__(self, canvas, target):
         super(UnionControl, self).__init__(
                 canvas, target, u"A ∪ B")
+        self.editor_datums = ['name','A','B','shape']
 
 class IntersectionControl(base.TextLabelControl):
     @classmethod
@@ -24,6 +25,7 @@ class IntersectionControl(base.TextLabelControl):
     def __init__(self, canvas, target):
         super(IntersectionControl, self).__init__(
                 canvas, target, u"A ∩ B")
+        self.editor_datums = ['name','A','B','shape']
 
 
 class CutoutControl(base.TextLabelControl):
@@ -35,6 +37,7 @@ class CutoutControl(base.TextLabelControl):
     def __init__(self, canvas, target):
         super(CutoutControl, self).__init__(
                 canvas, target, u"A ∩ ~B")
+        self.editor_datums = ['name','A','B','shape']
 
 from node.base import get_name
 from node.csg import Union, Intersection, Cutout

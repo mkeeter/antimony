@@ -28,6 +28,8 @@ class TriangleControl(base.DraggableNodeControl):
             [target.a, target.b, target.c]]
         super(TriangleControl, self).__init__(canvas, target)
 
+        self.editor_datums = ['name','shape']
+
         self.sync()
         self.make_mask()
 
