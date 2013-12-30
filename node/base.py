@@ -24,6 +24,29 @@ class Node(object):
         setattr(self, '_'+n, d)
 
 
+    def deflate(self):
+        """ Returns a flattened version of this node suitable for saving.
+        """
+        return [self.__class__,
+                [(n, d.__class__, d._expr) for n, d in self.datums
+                 if not isinstance(d, datum.FunctionDatum)]]
+
+    @classmethod
+    def inflate(cls, deflated):
+        """ Inflates a deflated node back into a proper object.
+        """
+        datums = deflated[1]
+        # Get this datum's name
+        name = [d[2] for d in datums if d[0] == 'name'][0]
+        n = cls(name[1:-1])
+        for datum_name, datum_type, datum_expr in datums:
+            if datum_name == 'name':    continue
+            n.add_datum(datum_name, datum_type(n, datum_expr))
+
+        # Swap in the appropriate class
+        n.__class__ = deflated[0]
+        return n
+
     def delete(self):
         """ Removes node from master list, deleting all connections as well.
         """
@@ -55,3 +78,6 @@ def get_name(prefix):
     while '%s%i' % (prefix, i) in names:
         i += 1
     return '%s%i' % (prefix, i)
+
+def serialize_nodes():
+    return [n.deflate() for n in nodes]

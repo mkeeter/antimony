@@ -8,6 +8,29 @@ class Connection(object):
         self.target = None
         self.control = None
 
+    def deflate(self, nodes):
+        """ Returns a set of connection indices
+            (source node, datum; target node, datum)
+        """
+        if not self.target:     return None
+        source_node = nodes.index(self.source.node)
+        source_datum = [
+                d[1] for d in nodes[source_node].datums].index(self.source)
+        target_node = nodes.index(self.target.node)
+        target_datum = [
+                d[1] for d in nodes[target_node].datums].index(self.target)
+        return (source_node, source_datum, target_node, target_datum)
+
+    @classmethod
+    def inflate(cls, deflated, nodes):
+        """ Inflates a given connection, attaching it to the correct nodes
+            and returning the new object.
+        """
+        source_node, source_datum, target_node, target_datum = deflated
+        c = cls(nodes[source_node].datums[source_datum])
+        c.connect_to(nodes[target_node].datums[target_datum])
+        return c
+
     def delete(self):
         """ Upon deletion, disconnect this connection from source
             and target nodes.
@@ -34,3 +57,13 @@ class Connection(object):
         """ Disconnects from source, which sets self.source to None.
         """
         self.source.disconnect_output(self)
+
+import operator
+
+def serialize_connections(nodes):
+    """ Return a list of deflated connections
+        (which is simply a set of connection index values).
+    """
+    connections = reduce(operator.add, [n.connections() for n in nodes], [])
+    deflated = [c.deflate(nodes) for c in set(connections)]
+    return [d for d in deflated if d is not None]
