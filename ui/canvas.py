@@ -6,8 +6,6 @@ class Canvas(QtGui.QWidget):
     def __init__(self):
         super(Canvas, self).__init__()
         self.setMouseTracking(True)
-        self.setGeometry(0, 900/4, 1440/2, 900/2)
-        self.setWindowTitle("Antimony")
 
         self.center = QtCore.QPointF(0, 0)
         self.scale = 10.0 # scale is measured in pixels/mm
