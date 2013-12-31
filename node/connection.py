@@ -27,8 +27,8 @@ class Connection(object):
             and returning the new object.
         """
         source_node, source_datum, target_node, target_datum = deflated
-        c = cls(nodes[source_node].datums[source_datum])
-        c.connect_to(nodes[target_node].datums[target_datum])
+        c = cls(nodes[source_node].datums[source_datum][1])
+        c.connect_to(nodes[target_node].datums[target_datum][1])
         return c
 
     def delete(self):
