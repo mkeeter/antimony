@@ -233,9 +233,7 @@ class Canvas(QtGui.QWidget):
         expressions = []
         for c in self.findChildren(NodeControl):
             for datum_name, datum in c.node.datums:
-                if (datum.type == Expression and datum.valid() and
-                        not datum.outputs and
-                        not getattr(datum, 'inputs', None)):
+                if isinstance(datum, ExpressionFunctionDatum):
                     e = datum.value()
                     if e.has_xy_bounds():
                         expressions.append((datum,e))
@@ -245,6 +243,8 @@ class Canvas(QtGui.QWidget):
 
 from control.base import NodeControl
 from fab.expression import Expression
+
+from node.datum import ExpressionFunctionDatum
 
 from control.point import PointControl
 from control.circle import CircleControl
