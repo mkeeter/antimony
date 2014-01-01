@@ -23,13 +23,19 @@ class Node(object):
         self.datums.append((n,d))
         setattr(self, '_'+n, d)
 
+    def children(self, nodes):
+        """ Returns a list of all children nodes in this node.
+        """
+        return [(c, nodes.index(getattr(self, c))) for c in self.__dict__
+                if isinstance(getattr(self, c), Node)]
 
-    def deflate(self):
+    def deflate(self, nodes):
         """ Returns a flattened version of this node suitable for saving.
         """
         return [self.__class__,
                 [(n, d.__class__, d._expr) for n, d in self.datums
-                 if not isinstance(d, datum.FunctionDatum)]]
+                 if not isinstance(d, datum.FunctionDatum)],
+                self.children(nodes)]
 
     @classmethod
     def inflate(cls, deflated):
@@ -40,12 +46,21 @@ class Node(object):
         name = [d[2] for d in datums if d[0] == 'name'][0]
         n = cls(name[1:-1])
         for datum_name, datum_type, datum_expr in datums:
+            # Skip the name datum, because that was set in the constructor
             if datum_name == 'name':    continue
             n.add_datum(datum_name, datum_type(n, datum_expr))
 
         # Swap in the appropriate class
         n.__class__ = deflated[0]
         return n
+
+    def add_children(self, children, nodes):
+        """ Re-links children
+            (this is the second stage of reconstructing a node, done
+             after we've created all of the Node objects)
+        """
+        for child, index in children:
+            setattr(self, child, nodes[index])
 
     def delete(self):
         """ Removes node from master list, deleting all connections as well.
@@ -80,4 +95,10 @@ def get_name(prefix):
     return '%s%i' % (prefix, i)
 
 def serialize_nodes():
-    return [n.deflate() for n in nodes]
+    return [n.deflate(nodes) for n in nodes]
+
+def load_nodes(data):
+    nodes = [Node.inflate(n) for n in data]
+    for n, d in zip(nodes, data):
+        n.add_children(d[2], nodes)
+

@@ -67,3 +67,9 @@ def serialize_connections(nodes):
     connections = reduce(operator.add, [n.connections() for n in nodes], [])
     deflated = [c.deflate(nodes) for c in set(connections)]
     return [d for d in deflated if d is not None]
+
+def load_connections(data, nodes):
+    """ Load a bunch of connection objects
+    """
+    for c in data:
+        Connection.inflate(c, nodes)

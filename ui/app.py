@@ -66,6 +66,8 @@ class App(QtGui.QApplication):
         for n in node.base.nodes:
             n.delete()
         node.base.nodes = []
+
+        # Delete all UI controls
         for n in self.canvas.findChildren(control.base.NodeControl):
             n.deleteLater()
         for c in self.canvas.findChildren(
@@ -96,17 +98,28 @@ class App(QtGui.QApplication):
         filename, filetype = QtGui.QFileDialog.getOpenFileName(
                 self.window, "Open", '', "*.sb")
         if not filename:    return
+
+        with open(filename, 'rb') as f:
+            state = pickle.load(f)
+
+            # Reconstruct all nodes
+            node.base.load_nodes(state[0])
+
+            # Then reconnect all of their connections
+            node.connection.load_connections(state[1], node.base.nodes)
         try:
             with open(filename, 'rb') as f:
                 state = pickle.load(f)
-                nodes = [node.base.Node.inflate(n) for n in state[0]]
-                connections = [node.connection.Connection.inflate(c, nodes)
-                               for c in state[1]]
+
+                # Reconstruct all nodes
+                node.base.load_nodes(state[0])
+
+                # Then reconnect all of their connections
+                node.connection.load_connections(state[1], node.base.nodes)
         except:
             print "Failed to load file"
         else:
-            print "I need to make UI controls for all of these:"
-            print nodes, connections
+            print "I need to make UI controls now"
 
     def on_save(self):
         """ Saves a pickled representation of our current state.
@@ -133,4 +146,4 @@ class App(QtGui.QApplication):
 
 import control.base, control.connection
 import ui.editor
-import node.base
+import node.base, node.connection
