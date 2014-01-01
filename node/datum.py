@@ -5,7 +5,7 @@ class Datum(object):
 
     def __init__(self, node, expr, T):
         self.node    = node
-        self._expr    = repr(expr)
+        self._expr   = str(expr)
         self.type    = T
 
         self.outputs = []
@@ -158,7 +158,7 @@ class FloatDatum(Datum):
 import name
 class NameDatum(Datum):
     def __init__(self, node, value):
-        super(NameDatum, self).__init__(node, value, name.Name)
+        super(NameDatum, self).__init__(node, "'%s'" % value, name.Name)
 
     def get_expr(self):
         return self._expr[1:-1]
