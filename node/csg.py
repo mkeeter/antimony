@@ -14,6 +14,10 @@ class Union(base.Node):
         self.add_datum('shape',
                         datum.ExpressionFunctionDatum(self, self.make_shape))
 
+    def get_control(self, is_child):
+        import control.csg
+        return control.csg.UnionControl
+
     def make_shape(self):
         """ Computes the union of A and B
             (which are already auto-summing ExpressionDatum objects)
@@ -38,6 +42,10 @@ class Intersection(base.Node):
         self.add_datum('shape',
                         datum.ExpressionFunctionDatum(self, self.make_shape))
 
+    def get_control(self, is_child):
+        import control.csg
+        return control.csg.Intersection
+
     def make_shape(self):
         """ Computes the intersection of A and B
             (which are lovely auto-summing ExpressionDatum objects)
@@ -61,6 +69,10 @@ class Cutout(base.Node):
 
         self.add_datum('shape',
                         datum.ExpressionFunctionDatum(self, self.make_shape))
+
+    def get_control(self, is_child):
+        import control.csg
+        return control.csg.Cutout
 
     def make_shape(self):
         """ Computes A & ~B

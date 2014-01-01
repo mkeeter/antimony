@@ -13,6 +13,10 @@ class Triangle(base.Node):
 
         self.add_datum('shape', datum.ExpressionFunctionDatum(self, self.make_shape))
 
+    def get_control(self, is_child):
+        import control.triangle
+        return control.triangle.TriangleControl
+
     def make_shape(self):
         return fab.shapes.triangle(self.a.x, self.a.y,
                                    self.b.x, self.b.y,

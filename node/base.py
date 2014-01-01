@@ -16,6 +16,11 @@ class Node(object):
         self.add_datum('name', datum.NameDatum(self, name))
         nodes.append(self)
 
+    def get_control(self, is_child):
+        """ Used to get a UI control widget for this node.
+        """
+        raise NotImplementedError("Derived class must implement get_control")
+
     def add_datum(self, n, d):
         """ Adds a name + datum pair to the master list and sets
             an attribute storing this datum object.
@@ -98,6 +103,7 @@ def serialize_nodes():
     return [n.deflate(nodes) for n in nodes]
 
 def load_nodes(data):
+    global nodes
     nodes = [Node.inflate(n) for n in data]
     for n, d in zip(nodes, data):
         n.add_children(d[2], nodes)

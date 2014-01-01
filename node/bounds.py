@@ -14,6 +14,10 @@ class GetBounds(base.Node):
             self.add_datum(i, datum.FloatFunctionDatum(
                 self, lambda s=i: getattr(self.input, s)))
 
+    def get_control(self, is_child):
+        import control.bounds
+        return control.bounds.GetBoundsControl
+
 
 class SetBounds(base.Node):
     def __init__(self, name, x, y):
@@ -35,5 +39,9 @@ class SetBounds(base.Node):
         for i in 'xmin','ymin','zmin','xmax','ymax','zmax':
             setattr(s, i, getattr(self, i))
         return s
+
+    def get_control(self, is_child):
+        import control.bounds
+        return control.bounds.SetBoundsControl
 
 
