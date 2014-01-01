@@ -221,4 +221,10 @@ class Output(IO):
 
 ################################################################################
 
+def make_connection_widgets(nodes, canvas):
+    for n in nodes:
+        for c in n.connections():
+            if c.control is None:
+                ConnectionControl(c, canvas)
+
 from node.connection import Connection

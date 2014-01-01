@@ -118,8 +118,12 @@ class App(QtGui.QApplication):
                 node.connection.load_connections(state[1], node.base.nodes)
         except:
             print "Failed to load file"
-        else:
-            print "I need to make UI controls now"
+            return
+
+        # Make widgets for nodes and connections
+        control.base.make_node_widgets(self.canvas)
+        control.connection.make_connection_widgets(node.base.nodes, self.canvas)
+
 
     def on_save(self):
         """ Saves a pickled representation of our current state.
