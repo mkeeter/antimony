@@ -11,7 +11,8 @@ class Triangle(base.Node):
         super(Triangle, self).__init__(name)
         self.a, self.b, self.c  = a, b, c
 
-        self.add_datum('shape', datum.ExpressionFunctionDatum(self, self.make_shape))
+        self.add_datum('shape',
+                       datum.ExpressionFunctionDatum(self, 'make_shape'))
 
     def get_control(self, is_child):
         import control.triangle

@@ -95,15 +95,15 @@ class ChildPointControl(PointControl):
     """ Represents a point that is part of another shape
         (so it deletes its parent along with itself)
     """
-    def __init__(self, canvas, target, parent):
+    def __init__(self, canvas, target, parent_node):
         super(ChildPointControl, self).__init__(canvas, target)
-        self.parent = parent
+        self.parent_node = parent_node
 
     def mousePressEvent(self, event):
         """ Delete the parent as well on a right-click event.
         """
         if event.button() == QtCore.Qt.RightButton:
-            self.parent.delete(self)
+            self.parent_node.control.delete(self)
         super(ChildPointControl, self).mousePressEvent(event)
 
 from node.base import get_name

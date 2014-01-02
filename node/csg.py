@@ -8,11 +8,11 @@ class Union(base.Node):
         self.add_datum('x', datum.FloatDatum(self, x))
         self.add_datum('y', datum.FloatDatum(self, y))
 
-        self.add_datum('A', datum.ExpressionDatum(self, 'f1'))
-        self.add_datum('B', datum.ExpressionDatum(self, 'f1'))
+        self.add_datum('A', datum.ExpressionDatum(self, "'f1'"))
+        self.add_datum('B', datum.ExpressionDatum(self, "'f1'"))
 
         self.add_datum('shape',
-                        datum.ExpressionFunctionDatum(self, self.make_shape))
+                        datum.ExpressionFunctionDatum(self, 'make_shape'))
 
     def get_control(self, is_child):
         import control.csg
@@ -36,11 +36,11 @@ class Intersection(base.Node):
         self.add_datum('x', datum.FloatDatum(self, x))
         self.add_datum('y', datum.FloatDatum(self, y))
 
-        self.add_datum('A', datum.ExpressionDatum(self, 'f1'))
-        self.add_datum('B', datum.ExpressionDatum(self, 'f1'))
+        self.add_datum('A', datum.ExpressionDatum(self, "'f1'"))
+        self.add_datum('B', datum.ExpressionDatum(self, "'f1'"))
 
         self.add_datum('shape',
-                        datum.ExpressionFunctionDatum(self, self.make_shape))
+                        datum.ExpressionFunctionDatum(self, 'make_shape'))
 
     def get_control(self, is_child):
         import control.csg
@@ -64,11 +64,11 @@ class Cutout(base.Node):
         self.add_datum('x', datum.FloatDatum(self, x))
         self.add_datum('y', datum.FloatDatum(self, y))
 
-        self.add_datum('A', datum.ExpressionDatum(self, 'f1'))
-        self.add_datum('B', datum.ExpressionDatum(self, 'f1'))
+        self.add_datum('A', datum.ExpressionDatum(self, "'f1'"))
+        self.add_datum('B', datum.ExpressionDatum(self, "'f1'"))
 
         self.add_datum('shape',
-                        datum.ExpressionFunctionDatum(self, self.make_shape))
+                        datum.ExpressionFunctionDatum(self, 'make_shape'))
 
     def get_control(self, is_child):
         import control.csg
