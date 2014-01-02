@@ -197,13 +197,13 @@ class TextLabelControl(DraggableNodeControl):
 def make_node_widgets(canvas):
     import node.base
 
-    children = []
+    children = {}
     for n in node.base.nodes:
-        children += [c for name, c in n.children(node.base.nodes)]
+        children.update({c:n for name, c in n.children(node.base.nodes)})
 
     for i, n in enumerate(node.base.nodes):
         if i in children:
-            n.get_control(is_child=True)(canvas, n, node.base.nodes[i])
+            n.get_control(is_child=True)(canvas, n, children[i])
         else:
             n.get_control(is_child=False)(canvas, n)
 
