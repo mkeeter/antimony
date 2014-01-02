@@ -50,15 +50,15 @@ class ConnectionControl(QtGui.QWidget):
             self.show()
             self.raise_()
 
-        xmin = min(origin.x(), target.x()) - 5
-        ymin = min(origin.y(), target.y()) - 5
+        path = self.get_path(origin, target, QtCore.QPoint())
+        rect = path.boundingRect().toRect()
+        rect.setTop(rect.top() - 5)
+        rect.setBottom(rect.bottom() + 5)
+        rect.setLeft(rect.left() - 5)
+        rect.setRight(rect.right() + 5)
 
-        newGeom = QtCore.QRect(xmin, ymin,
-                max(origin.x(), target.x()) + 5 - xmin,
-                max(origin.y(), target.y()) + 5 - ymin)
-
-        if newGeom != self.geometry():
-            self.setGeometry(newGeom)
+        if rect != self.geometry():
+            self.setGeometry(rect)
             self.make_mask()
 
 
@@ -113,6 +113,16 @@ class ConnectionControl(QtGui.QWidget):
             self.hovering_over.hovering = False
             self.sync()
 
+    def get_path(self, origin, target, offset):
+        """ Creates a painter path from the origin to the target
+            with the given offset.
+        """
+        path = QtGui.QPainterPath()
+        path.moveTo(origin - offset)
+        path.cubicTo(origin - offset + QtCore.QPoint(50, 0),
+                     target - offset - QtCore.QPoint(50, 0),
+                     target - offset)
+        return path
 
     def paintEvent(self, paintEvent):
         """ Paints this connection.
@@ -133,7 +143,7 @@ class ConnectionControl(QtGui.QWidget):
             color = QtGui.QColor(*self.color)
 
         painter.setPen(QtGui.QPen(color, 4))
-        painter.drawLine(origin - self.pos(), target - self.pos())
+        painter.drawPath(self.get_path(origin, target, self.pos()))
 
     def get_origin(self):
         """ Returns a canvas pixel location for the connected io.Output object.
