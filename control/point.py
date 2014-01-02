@@ -50,7 +50,7 @@ class PointControl(base.DraggableNodeControl):
 
         self.position = QtCore.QPointF(x, y)
 
-        if self.editor:     self.editor.sync()
+        super(PointControl, self).sync()
 
 
     def paintEvent(self, paintEvent):

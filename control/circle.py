@@ -148,7 +148,8 @@ class CircleControl(base.NodeControl):
         if changed:
             self.make_masks()
             self.update()
-        if self.editor:     self.editor.sync()
+
+        super(CircleControl, self).sync()
 
 
     def draw_center(self, painter, mask=False):

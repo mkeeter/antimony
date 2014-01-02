@@ -113,7 +113,9 @@ class TriangleControl(base.DraggableNodeControl):
         if changed:
             self.make_mask()
             self.update()
-        if self.editor:     self.editor.sync()
+
+        super(TriangleControl, self).sync()
+
 
     def paintEvent(self, paintEvent):
         painter = QtGui.QPainter(self)

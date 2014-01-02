@@ -16,6 +16,13 @@ class NodeControl(QtGui.QWidget):
 
         self.editor  = None
 
+    def sync(self):
+        """ Synchs the editor and all node connections.
+        """
+        if self.editor:
+            self.editor.sync()
+        for c in self.node.connections():
+            c.control.sync()
 
     def contextMenuEvent(self, event):
         """ Ignore context menu events so that these widgets
@@ -180,7 +187,7 @@ class TextLabelControl(DraggableNodeControl):
 
         self.position = QtCore.QPointF(x, y)
 
-        if self.editor:     self.editor.sync()
+        super(TextLabelControl, self).sync()
 
     def paintEvent(self, paintEvent):
         """ On paint event, paint oneself.

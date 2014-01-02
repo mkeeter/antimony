@@ -78,9 +78,6 @@ class Editor(QtGui.QGroupBox):
 
         self.move(self.control.editor_position())
 
-        for c in self.node.connections():
-            c.control.sync()
-
 
     def on_change(self, value, dat):
         """ When a text box changes, update the corresponding Datum
@@ -126,7 +123,7 @@ class Editor(QtGui.QGroupBox):
         """ Disconnects this widget from the editor and deletes it.
         """
         self.control.editor = None
-        self.sync() # This will cause connections not to be drawn.
+        self.sync()
         self.deleteLater()
 
     def get_datum_output(self, dat):
