@@ -15,7 +15,9 @@ class TriangleControl(base.DraggableNodeControl):
         c = Point(get_name('c'), x + scale, y - scale)
         tri = Triangle('t', a, b, c)
 
-        cls(canvas, tri)
+        for p in [a, b, c]:     ChildPointControl(canvas, p, tri)
+        tri_ctrl = cls(canvas, tri)
+
 
     def __init__(self, canvas, target):
         """ Construct the triangle control widget, creating
@@ -23,9 +25,7 @@ class TriangleControl(base.DraggableNodeControl):
             vertices.
         """
         self.position = QtCore.QPointF()
-        self.points = [
-            ChildPointControl(canvas, t, self) for t in
-            [target.a, target.b, target.c]]
+        self.point_nodes = [target.a, target.b, target.c]
         super(TriangleControl, self).__init__(canvas, target)
 
         self.editor_datums = ['name','shape']
@@ -45,7 +45,7 @@ class TriangleControl(base.DraggableNodeControl):
         """ Overload raise_ so that points stay above triangle lines.
         """
         super(TriangleControl, self).raise_()
-        for p in self.points:   p.raise_()
+        for p in self.point_nodes:   p.control.raise_()
 
 
     def make_mask(self):
@@ -65,7 +65,7 @@ class TriangleControl(base.DraggableNodeControl):
 
 
     def drag(self, dx, dy):
-        for pt in self.points:  pt.drag(dx, dy)
+        for pt in self.point_nodes:  pt.control.drag(dx, dy)
 
 
     def mouseDoubleClickEvent(self, event):
@@ -78,22 +78,22 @@ class TriangleControl(base.DraggableNodeControl):
         """ Overloaded delete (that can be invoked from a child)
             Deletes self and all ChildPointControl objects.
         """
-        for p in self.points:
-            if p != trigger:
-                p.delete()
+        for p in self.point_nodes:
+            if p.control != trigger:
+                p.control.delete()
         super(TriangleControl, self).delete()
 
     def sync(self):
-        for pt in self.points:   pt.sync()
+        for pt in self.point_nodes:   pt.control.sync()
 
-        xmin = min(pt.position.x() for pt in self.points)
-        xmax = max(pt.position.x() for pt in self.points)
+        xmin = min(pt.control.position.x() for pt in self.point_nodes)
+        xmax = max(pt.control.position.x() for pt in self.point_nodes)
 
-        ymin = min(pt.position.y() for pt in self.points)
-        ymax = max(pt.position.y() for pt in self.points)
+        ymin = min(pt.control.position.y() for pt in self.point_nodes)
+        ymax = max(pt.control.position.y() for pt in self.point_nodes)
 
-        x = sum(pt.position.x() for pt in self.points) / 3.0
-        y = sum(pt.position.y() for pt in self.points) / 3.0
+        x = sum(pt.control.position.x() for pt in self.point_nodes) / 3.0
+        y = sum(pt.control.position.y() for pt in self.point_nodes) / 3.0
 
         i = self.canvas.mm_to_pixel(x=xmin) - 5
         j = self.canvas.mm_to_pixel(y=ymax) - 5
@@ -122,9 +122,9 @@ class TriangleControl(base.DraggableNodeControl):
     def draw_lines(self, painter, mask=False):
         coords = [
                 QtCore.QPoint(
-                    *self.canvas.mm_to_pixel(pt.position.x(),
-                                             pt.position.y())) - self.pos()
-                for pt in self.points]
+                    *self.canvas.mm_to_pixel(pt.control.position.x(),
+                                             pt.control.position.y())) - self.pos()
+                for pt in self.point_nodes]
 
         lines = [QtCore.QLine(coords[0], coords[1]),
                  QtCore.QLine(coords[1], coords[2]),
