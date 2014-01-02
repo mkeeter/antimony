@@ -233,7 +233,8 @@ class Canvas(QtGui.QWidget):
         expressions = []
         for c in self.findChildren(NodeControl):
             for datum_name, datum in c.node.datums:
-                if isinstance(datum, ExpressionFunctionDatum):
+                if (isinstance(datum, ExpressionFunctionDatum) and
+                        not datum.connections()):
                     e = datum.value()
                     if e.has_xy_bounds():
                         expressions.append((datum,e))

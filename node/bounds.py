@@ -11,8 +11,7 @@ class GetBounds(base.Node):
         self.add_datum('input', datum.ExpressionDatum(self, 'f1'))
 
         for i in 'xmin','ymin','zmin','xmax','ymax','zmax':
-            self.add_datum(i, datum.FloatFunctionDatum(
-                self, lambda s=i: getattr(self.input, s)))
+            self.add_datum(i, datum.FloatFunctionDatum(self, i))
 
     def get_control(self, is_child):
         import control.bounds
@@ -31,8 +30,7 @@ class SetBounds(base.Node):
         for i in 'xmin','ymin','zmin','xmax','ymax','zmax':
             self.add_datum(i, datum.FloatDatum(self, 0))
 
-        self.add_datum('output',
-                       datum.ExpressionFunctionDatum(self, self.make_shape))
+        self.add_datum('output', datum.ExpressionFunctionDatum(self, 'make_shape'))
 
     def make_shape(self):
         s = self.input

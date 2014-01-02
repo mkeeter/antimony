@@ -60,11 +60,10 @@ class MultiInput(object):
         self.op = op
     def __nonzero__(self):  return self.i != []
     def size(self):         return len(i)
+    def __iter__(self):     return self.i.__iter__()
     def value(self):
         if self.i:  return reduce(self.op, [i.source.value() for i in self.i])
         else:       return None
-    def __iter__(self):
-        return self.i.__iter__()
     def accepts(self, conn):
         return (conn.source != self.parent and
                 conn.source.type == self.parent.type and
@@ -87,9 +86,8 @@ class MultiInput(object):
 class Datum(object):
     stack = []
 
-    def __init__(self, node, expr, T, inputType=SingleInput):
+    def __init__(self, node, T, inputType):
         self.node    = node
-        self._expr   = str(expr)
         self.type    = T
 
         self.outputs = []
@@ -97,9 +95,6 @@ class Datum(object):
 
         self.parents = set()
         self.children = set()
-
-        # Check to make sure that the initial expression is valid.
-        self.eval()
 
     def connections(self):
         """ Returns a list of connections attached to this datum.
@@ -139,16 +134,6 @@ class Datum(object):
         """
         return self.input.value() is None
 
-    def set_expr(self, e):
-        """ Sets the expression string.
-            Updates node, editor, and children as needed
-            (which may trigger a canvas Refresh)
-        """
-        if e == self._expr:     return
-
-        self._expr = e
-        self.sync()
-
 
     def sync(self):
         """ Update the node control and editor for all children of this Datum
@@ -157,14 +142,6 @@ class Datum(object):
         for c in [self] + list(self.children):
             if c.node.control:  c.node.control.sync()
 
-
-    def value(self):
-        """ Gets the value from this datum,
-            or evaluated from the expression.
-
-            Raises an exception if expression evaluation fails.
-        """
-        return self.eval()
 
     def push_stack(self):
         """ Pushes oneself onto the evaluation stack, tracking children
@@ -194,8 +171,34 @@ class Datum(object):
         """
         Datum.stack.pop()
 
+    def valid(self):
+        """ Returns True if this datum's expression is valid, false otherwise.
+        """
+        try:    self.value()
+        except: return False
+        else:   return True
 
-    def eval(self):
+################################################################################
+
+class EvalDatum(Datum):
+    """ Datum where a value is calculated by running 'eval' on a user-provided
+        string (or a user-provided input connection).
+    """
+    def __init__(self, node, T, expr, inputType=SingleInput):
+        self._expr = str(expr)
+        super(EvalDatum, self).__init__(node, T, inputType)
+
+    def set_expr(self, e):
+        """ Sets the expression string.
+            Updates node, editor, and children as needed
+            (which may trigger a canvas Refresh)
+        """
+        if e == self._expr:     return
+
+        self._expr = e
+        self.sync()
+
+    def value(self):
         """ Attempts to evaluate the expression and return a value.
             Raises an exception if this fails.
         """
@@ -211,18 +214,12 @@ class Datum(object):
 
         return t
 
-    def valid(self):
-        """ Returns True if this datum's expression is valid, false otherwise.
-        """
-        try:    self.eval()
-        except: return False
-        else:   return True
-
 ################################################################################
 
-class FloatDatum(Datum):
+class FloatDatum(EvalDatum):
     def __init__(self, node, value):
-        super(FloatDatum, self).__init__(node, value, float)
+        super(FloatDatum, self).__init__(node, float, value)
+
     def simple(self):
         """ Returns True if the expression can be directly converted into
             a floating-point value; false otherwise.
@@ -234,9 +231,9 @@ class FloatDatum(Datum):
 ################################################################################
 
 import name
-class NameDatum(Datum):
+class NameDatum(EvalDatum):
     def __init__(self, node, value):
-        super(NameDatum, self).__init__(node, "'%s'" % value, name.Name)
+        super(NameDatum, self).__init__(node, name.Name, "'%s'" % value)
 
     def get_expr(self):
         return self._expr[1:-1]
@@ -251,22 +248,22 @@ class NameDatum(Datum):
 
 import operator
 
-class ExpressionDatum(Datum):
+class ExpressionDatum(EvalDatum):
     def __init__(self, node, value):
         super(ExpressionDatum, self).__init__(
-                node, value, Expression, inputType=MultiInput)
+                node, Expression, value, inputType=MultiInput)
 
 ################################################################################
 
 class FunctionDatum(Datum):
-    """ Represents a value calculated from a function.
+    """ Represents a value calculated from a function of the parent node.
         Usually used for a node output value.
     """
 
-    def __init__(self, node, function, T):
-        self.function = function
+    def __init__(self, node, function_name, T):
+        self.function_name = function_name
         super(FunctionDatum, self).__init__(
-                node, None, T, inputType=NoInput)
+                node, T, inputType=NoInput)
 
     def set_expr(self, value):
         raise TypeError("set_expr is an invalid operation for a FunctionDatum")
@@ -276,13 +273,13 @@ class FunctionDatum(Datum):
         else:               return 'Function (invalid)'
     def can_edit(self): return False
 
-    def eval(self):
+    def value(self):
         """ Attempts to evaluate the given function and return a value.
             Raises an exception if this fails.
         """
         self.push_stack()
         try:
-            t = self.function()
+            t = getattr(self.node, self.function_name)()
             if not isinstance(t, self.type):    t = self.type(t)
         except: raise
         finally:    self.pop_stack()
