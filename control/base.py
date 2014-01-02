@@ -199,7 +199,10 @@ def make_node_widgets(canvas):
 
     children = {}
     for n in node.base.nodes:
-        children.update({c:n for name, c in n.children(node.base.nodes)})
+        for key in n.__dict__:
+            attr = getattr(n, key)
+            if isinstance(attr, node.base.Node):
+                children[node.base.nodes.index(attr)] = attr
 
     for i, n in enumerate(node.base.nodes):
         if i in children:

@@ -28,23 +28,26 @@ class Node(object):
         self.datums.append((n,d))
         setattr(self, '_'+n, d)
 
-    def children(self, nodes):
-        """ Returns a list of all children nodes in this node.
-        """
-        return [(c, nodes.index(getattr(self, c))) for c in self.__dict__
-                if isinstance(getattr(self, c), Node)]
 
     def deflate(self, nodes):
         """ Returns a flattened version of this node suitable for saving.
+            The flattened node is a three item list:
+                This node's class
+                A list of datum tuples (name, datum class, datum argument)
+                A list of children tuples (name, index in node list)
         """
         # Flatten each datum
         datums = []
-        for n, d in self.datums:
-            if isinstance(d, datum.FunctionDatum):
-                datums.append((n, d.__class__, d.function_name))
-            elif isinstance(d, datum.EvalDatum):
-                datums.append((n, d.__class__, d._expr))
-        return [self.__class__, datums, self.children(nodes)]
+        children = []
+        for key in self.__dict__:
+            attr = getattr(self, key)
+            if isinstance(attr, datum.FunctionDatum):
+                datums.append((key[1:], attr.__class__, attr.function_name))
+            elif isinstance(attr, datum.EvalDatum):
+                datums.append((key[1:], attr.__class__, attr._expr))
+            elif isinstance(attr, Node):
+                children.append((key, nodes.index(attr)))
+        return [self.__class__, datums, children]
 
     @classmethod
     def inflate(cls, deflated):
