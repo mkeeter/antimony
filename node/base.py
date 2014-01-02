@@ -37,10 +37,14 @@ class Node(object):
     def deflate(self, nodes):
         """ Returns a flattened version of this node suitable for saving.
         """
-        return [self.__class__,
-                [(n, d.__class__, d._expr) for n, d in self.datums
-                 if not isinstance(d, datum.FunctionDatum)],
-                self.children(nodes)]
+        # Flatten each datum
+        datums = []
+        for n, d in self.datums:
+            if isinstance(d, datum.FunctionDatum):
+                datums.append((n, d.__class__, d.function_name))
+            elif isinstance(d, datum.EvalDatum):
+                datums.append((n, d.__class__, d._expr))
+        return [self.__class__, datums, self.children(nodes)]
 
     @classmethod
     def inflate(cls, deflated):
