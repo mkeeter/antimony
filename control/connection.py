@@ -117,10 +117,15 @@ class ConnectionControl(QtGui.QWidget):
         """ Creates a painter path from the origin to the target
             with the given offset.
         """
+        if target.x() > origin.x():
+            length = 50
+        else:
+            length = (origin.x() - target.x())/2 + 50
+
         path = QtGui.QPainterPath()
         path.moveTo(origin - offset)
-        path.cubicTo(origin - offset + QtCore.QPoint(50, 0),
-                     target - offset - QtCore.QPoint(50, 0),
+        path.cubicTo(origin - offset + QtCore.QPoint(length, 0),
+                     target - offset - QtCore.QPoint(length, 0),
                      target - offset)
         return path
 
