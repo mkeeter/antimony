@@ -99,14 +99,6 @@ class App(QtGui.QApplication):
                 self.window, "Open", '', "*.sb")
         if not filename:    return
 
-        with open(filename, 'rb') as f:
-            state = pickle.load(f)
-
-            # Reconstruct all nodes
-            node.base.load_nodes(state[0])
-
-            # Then reconnect all of their connections
-            node.connection.load_connections(state[1], node.base.nodes)
         try:
             with open(filename, 'rb') as f:
                 state = pickle.load(f)
