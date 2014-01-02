@@ -19,6 +19,7 @@ class Editor(QtGui.QGroupBox):
         self.setLayout(grid)
         self.sync()
 
+        self._mask_size = 0
         self.animate_open()
         self.show()
 
@@ -90,10 +91,13 @@ class Editor(QtGui.QGroupBox):
     def set_mask(self, frac):
         """ Mask a certain percentage of the widget.
         """
+        self._mask_size = frac
         full = self.sizeHint()
         self.setMask(QtGui.QRegion(0, 0, full.width()*frac  + 1,
                                          full.height()*frac + 1))
-    mask_size = QtCore.Property(float, lambda self: 0, set_mask)
+        self.sync()
+    def get_mask(self): return self._mask_size
+    mask_size = QtCore.Property(float, get_mask, set_mask)
 
     def animate_open(self):
         """ Animates the panel sliding open.
@@ -102,12 +106,8 @@ class Editor(QtGui.QGroupBox):
         a.setDuration(100)
         a.setStartValue(0)
         a.setEndValue(1)
-        a.finished.connect(self.finished_open)
-        a.start(QtCore.QPropertyAnimation.DeleteWhenStopped)
-
-    def finished_open(self):
         self.control.editor = self
-        self.sync()
+        a.start(QtCore.QPropertyAnimation.DeleteWhenStopped)
 
     def animate_close(self):
         """ Animates the panel sliding closed.
@@ -122,12 +122,11 @@ class Editor(QtGui.QGroupBox):
         a.finished.connect(self.close)
         a.start(QtCore.QPropertyAnimation.DeleteWhenStopped)
 
-        self.control.editor = None
-        self.sync() # This will cause connections not to be drawn.
-
     def close(self):
         """ Disconnects this widget from the editor and deletes it.
         """
+        self.control.editor = None
+        self.sync() # This will cause connections not to be drawn.
         self.deleteLater()
 
     def get_datum_output(self, dat):

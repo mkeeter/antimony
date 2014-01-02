@@ -72,7 +72,6 @@ class ConnectionControl(QtGui.QWidget):
         painter.begin(bitmap)
         self.paint(painter, mask=True)
         painter.end()
-
         self.setMask(bitmap)
 
 

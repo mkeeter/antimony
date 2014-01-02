@@ -50,17 +50,31 @@ class NodeControl(QtGui.QWidget):
         p = self.position
         return QtCore.QPoint(*self.canvas.mm_to_pixel(p.x(), p.y()))
 
+    def get_input_pos(self):
+        return self.pos() + QtCore.QPoint(0, self.height()/2)
+    def get_output_pos(self):
+        return self.pos() + QtCore.QPoint(self.width(), self.height()/2)
+
     def get_datum_output(self, d):
         """ Returns a canvas pixel location for the given datum's output.
         """
-        if self.editor: return self.editor.get_datum_output(d)
-        else:           return None
+        if self.editor:
+            frac = self.editor._mask_size
+            return (self.get_output_pos() * (1 - frac) +
+                    self.editor.get_datum_output(d) * frac)
+        else:
+            return self.get_output_pos()
+
 
     def get_datum_input(self, d):
         """ Returns a canvas pixel location for the given datum's input.
         """
-        if self.editor: return self.editor.get_datum_input(d)
-        else:           return None
+        if self.editor:
+            frac = self.editor._mask_size
+            return (self.get_input_pos() * (1 - frac) +
+                    self.editor.get_datum_input(d) * frac)
+        else:
+            return self.get_input_pos()
 
 ################################################################################
 
@@ -193,6 +207,14 @@ class TextLabelControl(DraggableNodeControl):
             self.node._x.set_expr(str(float(self.node._x.get_expr()) + dx))
         if self.node._y.simple():
             self.node._y.set_expr(str(float(self.node._y.get_expr()) + dy))
+
+    def get_input_pos(self):
+        return self.pos() + QtCore.QPoint(0, self.height()/2)
+
+    def get_output_pos(self):
+        return self.pos() + QtCore.QPoint(self.width(), self.height()/2)
+
+################################################################################
 
 def make_node_widgets(canvas):
     import node.base
