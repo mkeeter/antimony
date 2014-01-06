@@ -95,10 +95,10 @@ class TriangleControl(base.DraggableNodeControl):
         x = sum(pt.control.position.x() for pt in self.point_nodes) / 3.0
         y = sum(pt.control.position.y() for pt in self.point_nodes) / 3.0
 
-        i = self.canvas.mm_to_pixel(x=xmin) - 5
-        j = self.canvas.mm_to_pixel(y=ymax) - 5
-        di = self.canvas.mm_to_pixel(x=xmax) - i + 10
-        dj = self.canvas.mm_to_pixel(y=ymin) - j + 10
+        i = self.canvas.unit_to_pixel(x=xmin) - 5
+        j = self.canvas.unit_to_pixel(y=ymax) - 5
+        di = self.canvas.unit_to_pixel(x=xmax) - i + 10
+        dj = self.canvas.unit_to_pixel(y=ymin) - j + 10
 
         changed = (self.position != QtCore.QPointF(x, y) or
                    di != self.width() or dj != self.height() or
@@ -123,9 +123,7 @@ class TriangleControl(base.DraggableNodeControl):
 
     def draw_lines(self, painter, mask=False):
         coords = [
-                QtCore.QPoint(
-                    *self.canvas.mm_to_pixel(pt.control.position.x(),
-                                             pt.control.position.y())) - self.pos()
+                self.canvas.unit_to_pixel(pt.control.position) - self.pos()
                 for pt in self.point_nodes]
 
         lines = [QtCore.QLine(coords[0], coords[1]),
@@ -140,7 +138,7 @@ class TriangleControl(base.DraggableNodeControl):
 
 
     def draw_center(self, painter, mask=False):
-        x, y = self.canvas.mm_to_pixel(self.position.x(), self.position.y())
+        x, y = self.canvas.unit_to_pixel(self.position)
         x -= self.pos().x()
         y -= self.pos().y()
 

@@ -45,8 +45,8 @@ class PointControl(base.DraggableNodeControl):
         try:    y = self.node.y
         except: y = self.position.y()
 
-        self.move(self.canvas.mm_to_pixel(x=x) - self.width()/2,
-                  self.canvas.mm_to_pixel(y=y) - self.height()/2)
+        pos = self.canvas.unit_to_pixel(x, y)
+        self.move(pos.x() - self.width()/2, pos.y() - self.height()/2)
 
         self.position = QtCore.QPointF(x, y)
 

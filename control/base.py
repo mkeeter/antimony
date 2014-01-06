@@ -55,7 +55,7 @@ class NodeControl(QtGui.QWidget):
             should be placed.
         """
         p = self.position
-        return QtCore.QPoint(*self.canvas.mm_to_pixel(p.x(), p.y()))
+        return self.canvas.unit_to_pixel(p)
 
     def get_input_pos(self):
         return self.pos() + QtCore.QPoint(0, self.height()/2)
@@ -129,9 +129,9 @@ class DraggableNodeControl(NodeControl):
         """
         p = self.mapToParent(event.pos())
         if self.dragging:
-            delta = p - self.mouse_pos
-            scale = self.parentWidget().scale
-            self.drag(delta.x() / scale, -delta.y() / scale)
+            delta = (self.canvas.pixel_to_unit(p) -
+                     self.canvas.pixel_to_unit(self.mouse_pos))
+            self.drag(delta.x(), delta.y())
         elif self.hovering != self.hit(event.pos()):
             self.hovering = self.hit(event.pos())
             self.update()
@@ -182,8 +182,8 @@ class TextLabelControl(DraggableNodeControl):
         try:    y = self.node.y
         except: y = self.position.y()
 
-        self.move(self.canvas.mm_to_pixel(x=x),
-                  self.canvas.mm_to_pixel(y=y))
+        pos = self.canvas.unit_to_pixel(x, y)
+        self.move(pos.x(), pos.y())
 
         self.position = QtCore.QPointF(x, y)
 
