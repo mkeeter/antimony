@@ -89,6 +89,16 @@ class PointControl(base.DraggableNodeControl):
 
         self.setMask(bitmap)
 
+    def get_input_pos(self):
+        """ Returns a position to which we should attach input wires.
+        """
+        return self.geometry().center() - QtCore.QPoint(12, 0)
+
+    def get_output_pos(self):
+        """ Returns a position to which we should attach input wires.
+        """
+        return self.geometry().center() + QtCore.QPoint(12, 0)
+
 ################################################################################
 
 class ChildPointControl(PointControl):
