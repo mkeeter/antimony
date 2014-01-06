@@ -87,13 +87,22 @@ class Editor(QtGui.QGroupBox):
 
     def set_mask(self, frac):
         """ Mask a certain percentage of the widget.
+            (used in open/close animations).
         """
         self._mask_size = frac
         full = self.sizeHint()
         self.setMask(QtGui.QRegion(0, 0, full.width()*frac  + 1,
                                          full.height()*frac + 1))
-        self.sync()
-    def get_mask(self): return self._mask_size
+        # Sync the control (used to adjust connections)
+        self.control.sync()
+
+    def get_mask(self):
+        """ Find what fraction of the widget is masked
+            (used in open/close animations).
+        """
+        return self._mask_size
+
+    # Store this as a QProperty so that we can animate it automatically.
     mask_size = QtCore.Property(float, get_mask, set_mask)
 
     def animate_open(self):
