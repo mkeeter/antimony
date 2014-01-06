@@ -48,15 +48,14 @@ class CircleControl(base.NodeControl):
     def mouseMoveEvent(self, event):
         p = self.mapToParent(event.pos())
         if self.drag_pt or self.drag_r:
-            delta = p - self.mouse_pos
-            scale = self.canvas.scale
-            dx, dy = delta.x() / scale, -delta.y() / scale
+            delta = (self.canvas.pixel_to_unit(p) -
+                     self.canvas.pixel_to_unit(self.mouse_pos))
+            dx, dy = delta.x(), delta.y()
             if self.drag_pt:
                 self.drag_center(dx, dy)
             elif self.drag_r:
-                x, y = self.canvas.pixel_to_mm(p.x(), p.y())
-                self.drag_ring(x, y, dx, dy)
-
+                pos = self.canvas.pixel_to_unit(p)
+                self.drag_ring(pos.x(), pos.y(), dx, dy)
         elif not self.hover_pt and self.center_mask.contains(event.pos()):
             self.hover_pt = True
             self.update()
@@ -127,12 +126,12 @@ class CircleControl(base.NodeControl):
         try:    r = self.node.r
         except: r = self.r
 
-        i = self.canvas.mm_to_pixel(x=x)
-        j = self.canvas.mm_to_pixel(y=y)
-        di = max(30, self.canvas.mm_to_pixel(x=x+r) -
-                     self.canvas.mm_to_pixel(x=x-r) + 4)
-        dj = max(30, self.canvas.mm_to_pixel(y=y-r) -
-                     self.canvas.mm_to_pixel(y=y+r) + 4)
+        i = self.canvas.unit_to_pixel(x=x)
+        j = self.canvas.unit_to_pixel(y=y)
+        di = max(30, self.canvas.unit_to_pixel(x=x+r) -
+                     self.canvas.unit_to_pixel(x=x-r) + 4)
+        dj = max(30, self.canvas.unit_to_pixel(y=y-r) -
+                     self.canvas.unit_to_pixel(y=y+r) + 4)
 
         # Decide whether anything has changed.
         changed = (self.position != QtCore.QPointF(x, y) or self.r != r or
@@ -178,8 +177,8 @@ class CircleControl(base.NodeControl):
 
         light = (200, 200, 200)
 
-        i = self.canvas.mm_to_pixel(x=self.position.x())
-        d = (self.canvas.mm_to_pixel(x=self.position.x()+self.r) - i) * 2
+        i = self.canvas.unit_to_pixel(x=self.position.x())
+        d = (self.canvas.unit_to_pixel(x=self.position.x()+self.r) - i) * 2
 
         if d <= 0:  return
 

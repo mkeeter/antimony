@@ -7,8 +7,8 @@ class Canvas(QtGui.QWidget):
         super(Canvas, self).__init__()
         self.setMouseTracking(True)
 
-        self.center = QtCore.QPointF(0, 0)
-        self.scale = 10.0 # scale is measured in pixels/mm
+        self.center = QtGui.QVector3D(0, 0, 0)
+        self.scale = 0.01
 
         self.dragging = False
         self.mouse_pos = QtCore.QPointF(self.width()/2, self.height()/2)
@@ -20,8 +20,9 @@ class Canvas(QtGui.QWidget):
 
     def contextMenuEvent(self, event):
         point = event.pos()
-        x, y = self.pixel_to_mm(point.x(), point.y())
-        scale = 50/self.scale
+        pos = self.pixel_to_unit(point)
+        x, y = pos.x(), pos.y()
+        scale = self.pixel_to_unit(x=point.x() + 50) - x
 
         menu = QtGui.QMenu()
         items = [("Triangle", TriangleControl),
@@ -55,20 +56,20 @@ class Canvas(QtGui.QWidget):
         """
         p = event.pos()
         if self.dragging:
-            delta = p - self.mouse_pos
-            self.drag(-delta.x() / self.scale, delta.y() / self.scale)
+            delta = self.pixel_to_unit(p) - self.pixel_to_unit(self.mouse_pos)
+            self.drag(-delta.x(), -delta.y(), -delta.z())
         self.mouse_pos = p
 
 
     def wheelEvent(self, event):
         """ Zooms in or out based on mouse wheel spinning.
         """
-        pos = self.pixel_to_mm(self.mouse_pos.x(), self.mouse_pos.y())
+        pos = self.pixel_to_unit(self.mouse_pos)
         factor = 1.001 if event.delta() > 0 else 1/1.001
         for d in range(abs(event.delta())):
             self.scale *= factor
-        new_pos = self.pixel_to_mm(self.mouse_pos.x(), self.mouse_pos.y())
-        self.center += QtCore.QPointF(*pos) - QtCore.QPointF(*new_pos)
+        new_pos = self.pixel_to_unit(self.mouse_pos)
+        self.center += pos - new_pos
         self.sync_all_children()
         self.update()
 
@@ -80,11 +81,11 @@ class Canvas(QtGui.QWidget):
             self.dragging = False
 
 
-    def drag(self, dx, dy):
+    def drag(self, dx, dy, dz):
         """ Drags the center of canvas around by the given delta
             (in unit coordinates)
         """
-        self.center += QtCore.QPointF(dx, dy)
+        self.center += QtGui.QVector3D(dx, dy, dz)
         self.update()
         self.sync_all_children()
 
@@ -95,21 +96,24 @@ class Canvas(QtGui.QWidget):
         # Start expressions rendering (asynchronously)
         # (not strictly part of the paint process, but I'm putting it here
         #  so that it gets called whenever anything changes)
-        self.render_expressions(self.scale)
+        pix_per_unit = self.unit_to_pixel(1) - self.unit_to_pixel(0)
+        self.render_expressions(pix_per_unit)
 
         painter = QtGui.QPainter(self)
-        painter.setBackground(QtGui.QColor(20, 20, 20))
+        painter.setBackground(QtGui.QColor(0, 0, 0))
         painter.eraseRect(self.rect())
 
         # Draw expression images
         self.draw_expressions(painter)
 
         # Draw a pair of axes
-        center = self.mm_to_pixel(0, 0)
+        center = self.unit_to_pixel(0, 0, 0)
+        x = self.unit_to_pixel(0.2/self.scale, 0, 0)
+        y = self.unit_to_pixel(0, 0.2/self.scale, 0)
         painter.setPen(QtGui.QPen(QtGui.QColor(255, 0, 0), 2))
-        painter.drawLine(center[0], center[1], center[0] + 80, center[1])
+        painter.drawLine(center, x)
         painter.setPen(QtGui.QPen(QtGui.QColor(0, 255, 0), 2))
-        painter.drawLine(center[0], center[1], center[0], center[1] - 80)
+        painter.drawLine(center, y)
 
 
     def sync_all_children(self):
@@ -126,38 +130,76 @@ class Canvas(QtGui.QWidget):
         self.sync_all_children()
 
 
-
-    def mm_to_pixel(self, x=None, y=None):
-        """ Converts an x,y position in mm into a pixel coordinate.
+    def pixel_matrix(self):
+        """ Defines a matrix that maps the OpenGL standard cube
+            (-1, -1, -1), (1, 1, 1) into the screen's coordinates.
         """
-        if x is not None:
-            x = int((x - self.center.x()) * self.scale + self.size().width()/2)
-        if y is not None:
-            y = int((self.center.y() - y) * self.scale + self.size().height()/2)
-
-        if x is not None and y is not None:     return x, y
-        elif x is not None:                     return x
-        elif y is not None:                     return y
+        M = QtGui.QMatrix4x4()
+        M.translate(self.width()/2, self.height()/2)
+        M.scale(min(self.width(), self.height()) / 2)
+        M.scale(1, -1)
+        return M
 
 
-    def pixel_to_mm(self, x=None, y=None):
+    def transform_matrix(self):
+        """ Returns a matrix that converts coordinates into the OpenGL
+            bounding box.
+        """
+        M = QtGui.QMatrix4x4()
+        M.scale(self.scale)
+        M.translate(-self.center)
+        return M
+
+    def projection_matrix(self):
+        """ Convert the OpenGL bounding box into screen coordinates.
+        """
+        pass
+
+    def unit_to_pixel(self, x=None, y=None, z=None):
+        """ Converts an x,y position in mm into a pixel coordinate.
+            Takes in either a three-argument coordinate, a QVector3D,
+            or a QPointF; returns a QPoint.
+        """
+        if isinstance(x, QtGui.QVector3D): x, y, z = x.x(), x.y(), x.z()
+        elif isinstance(x, QtCore.QPointF): x, y, z = x.x(), x.y(), 0
+
+        v = QtGui.QVector3D(x if x else 0, y if y else 0, z if z else 0)
+        M = self.pixel_matrix() * self.transform_matrix()
+        v_ = M * v
+
+        out = []
+        if x is not None:   out.append(v_.x())
+        if y is not None:   out.append(v_.y())
+        if z is not None:   out.append(v_.z())
+
+        if len(out) == 1:   return out[0]
+        else:               return QtCore.QPoint(v_.x(), v_.y())
+
+
+    def pixel_to_unit(self, x=None, y=None):
         """ Converts a pixel location into an x,y coordinate.
         """
-        if x is not None:
-            x =  (x - self.width()/2) / self.scale + self.center.x()
-        if y is not None:
-            y = -((y - self.height()/2) / self.scale - self.center.y())
-        if x is not None and y is not None:     return x, y
-        elif x is not None:                     return x
-        elif y is not None:                     return y
+        if isinstance(x, QtCore.QPoint):    x, y = x.x(), x.y()
+
+        v = QtGui.QVector3D(x if x else 0, y if y else 0, 0)
+        M = (self.transform_matrix().inverted()[0] *
+             self.pixel_matrix().inverted()[0])
+        v_ = M * v
+
+        out = []
+        if x is not None and y is not None: return v_
+        elif x is not None: return v_.x()
+        elif y is not None: return v_.y()
 
 
     def get_bounding_rect(self, expression):
         """ For a given expression, finds a bounding rectangle
             (to draw that expression's image).
         """
-        xmin, ymax = self.mm_to_pixel(expression.xmin, expression.ymin)
-        xmax, ymin = self.mm_to_pixel(expression.xmax, expression.ymax)
+        c1 = self.unit_to_pixel(expression.xmin, expression.ymin)
+        xmin, ymax = c1.x(), c1.y()
+        c2 = self.unit_to_pixel(expression.xmax, expression.ymax)
+        xmax, ymin = c2.x(), c2.y()
         return QtCore.QRect(xmin, ymin, xmax-xmin, ymax-ymin)
 
 
@@ -219,6 +261,7 @@ class Canvas(QtGui.QWidget):
         for tasks in self.render_tasks.itervalues():
             for t in tasks[::-1]:
                 if t.qimage:
+                    t.qimage.save("image.png")
                     painter.drawImage(self.get_bounding_rect(t.expression),
                                       t.qimage, t.qimage.rect())
                     break
