@@ -96,10 +96,11 @@ class Canvas(QtGui.QWidget):
         # Start expressions rendering (asynchronously)
         # (not strictly part of the paint process, but I'm putting it here
         #  so that it gets called whenever anything changes)
-        self.render_expressions(self.scale)
+        pix_per_unit = self.unit_to_pixel(1) - self.unit_to_pixel(0)
+        self.render_expressions(pix_per_unit)
 
         painter = QtGui.QPainter(self)
-        painter.setBackground(QtGui.QColor(20, 20, 20))
+        painter.setBackground(QtGui.QColor(0, 0, 0))
         painter.eraseRect(self.rect())
 
         # Draw expression images
@@ -260,6 +261,7 @@ class Canvas(QtGui.QWidget):
         for tasks in self.render_tasks.itervalues():
             for t in tasks[::-1]:
                 if t.qimage:
+                    t.qimage.save("image.png")
                     painter.drawImage(self.get_bounding_rect(t.expression),
                                       t.qimage, t.qimage.rect())
                     break
