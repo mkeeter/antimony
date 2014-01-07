@@ -1,13 +1,18 @@
-import random
+import math
 
 from PySide import QtCore, QtGui
+
+from control import colors
 
 class Canvas(QtGui.QWidget):
     def __init__(self):
         super(Canvas, self).__init__()
+        self.setFocusPolicy(QtCore.Qt.ClickFocus)
         self.setMouseTracking(True)
 
         self.center = QtGui.QVector3D(0, 0, 0)
+        self.yaw   = 0
+        self.pitch = 0
         self.scale = 0.01
 
         self.dragging = False
@@ -17,6 +22,17 @@ class Canvas(QtGui.QWidget):
 
         self.show()
 
+    def keyPressEvent(self, event):
+        if event.key() == QtCore.Qt.Key_Up:
+            self.pitch = max(-math.pi, self.pitch - math.pi/32)
+        elif event.key() == QtCore.Qt.Key_Down:
+            self.pitch = min(0, self.pitch + math.pi/32)
+        elif event.key() == QtCore.Qt.Key_Left:
+            self.yaw += math.pi/32
+        elif event.key() == QtCore.Qt.Key_Right:
+            self.yaw -= math.pi/32
+        self.sync_all_children()
+        self.update()
 
     def contextMenuEvent(self, event):
         point = event.pos()
@@ -110,10 +126,13 @@ class Canvas(QtGui.QWidget):
         center = self.unit_to_pixel(0, 0, 0)
         x = self.unit_to_pixel(0.2/self.scale, 0, 0)
         y = self.unit_to_pixel(0, 0.2/self.scale, 0)
-        painter.setPen(QtGui.QPen(QtGui.QColor(255, 0, 0), 2))
+        z = self.unit_to_pixel(0, 0, 0.2/self.scale)
+        painter.setPen(QtGui.QPen(QtGui.QColor(*colors.red), 2))
         painter.drawLine(center, x)
-        painter.setPen(QtGui.QPen(QtGui.QColor(0, 255, 0), 2))
+        painter.setPen(QtGui.QPen(QtGui.QColor(*colors.green), 2))
         painter.drawLine(center, y)
+        painter.setPen(QtGui.QPen(QtGui.QColor(*colors.blue), 2))
+        painter.drawLine(center, z)
 
 
     def sync_all_children(self):
@@ -145,8 +164,12 @@ class Canvas(QtGui.QWidget):
         """ Returns a matrix that converts coordinates into the OpenGL
             bounding box.
         """
+
+        # Remember that these operations are applied back-asswards.
         M = QtGui.QMatrix4x4()
         M.scale(self.scale)
+        M.rotate(math.degrees(self.pitch), QtGui.QVector3D(1, 0, 0))
+        M.rotate(math.degrees(self.yaw), QtGui.QVector3D(0, 0, 1))
         M.translate(-self.center)
         return M
 
