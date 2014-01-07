@@ -155,6 +155,15 @@ class DraggableNodeControl(NodeControl):
             self.hovering = False
             self.update()
 
+    def drag(self, v):
+        """ Drag this node by attempting to change its x and y coordinates
+            dx and dy should be floating-point values.
+        """
+        if self.node._x.simple():
+            self.node._x.set_expr(str(float(self.node._x.get_expr()) + v.x()))
+        if self.node._y.simple():
+            self.node._y.set_expr(str(float(self.node._y.get_expr()) + v.y()))
+
 ################################################################################
 
 class TextLabelControl(DraggableNodeControl):
@@ -216,15 +225,6 @@ class TextLabelControl(DraggableNodeControl):
         painter.setPen(QtGui.QColor(255, 255, 255))
         painter.setFont(self.font)
         painter.drawText(10, self.height() - 10, self.text)
-
-    def drag(self, v):
-        """ Drag this node by attempting to change its x and y coordinates
-            dx and dy should be floating-point values.
-        """
-        if self.node._x.simple():
-            self.node._x.set_expr(str(float(self.node._x.get_expr()) + v.x()))
-        if self.node._y.simple():
-            self.node._y.set_expr(str(float(self.node._y.get_expr()) + v.y()))
 
     def get_input_pos(self):
         return self.pos() + QtCore.QPoint(0, self.height()/2)
