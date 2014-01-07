@@ -1,3 +1,5 @@
+import math
+
 from PySide import QtCore, QtGui
 
 import colors
@@ -24,6 +26,7 @@ class CircleControl(base.NodeControl):
         self.hover_pt = False
         self.hover_r  = False
 
+        # Cached values (used if the node's values are invalid)
         self.position = QtCore.QPointF()
         self.r = 0
 
@@ -70,6 +73,16 @@ class CircleControl(base.NodeControl):
             self.node._x.set_expr(str(float(self.node._x.get_expr()) + v.x()))
         if self.node._y.simple():
             self.node._y.set_expr(str(float(self.node._y.get_expr()) + v.y()))
+
+    def ring_path(self, offset=QtCore.QPoint()):
+        """ Returns a painter path that draws the ring
+            (properly projected and transformed).
+        """
+        center = QtGui.QVector3D(self.position)
+        points = [center + QtGui.QVector3D(math.cos(i/32.*math.pi*2)*self.r,
+                                           math.sin(i/32.*math.pi*2)*self.r, 0)
+                  for i in range(33)]
+        return self.draw_lines([points], offset)
 
 
     def drag_ring(self, p, v):
@@ -131,23 +144,23 @@ class CircleControl(base.NodeControl):
         try:    r = self.node.r
         except: r = self.r
 
-        i = self.canvas.unit_to_pixel(x=x)
-        j = self.canvas.unit_to_pixel(y=y)
-        di = max(30, self.canvas.unit_to_pixel(x=x+r) -
-                     self.canvas.unit_to_pixel(x=x-r) + 4)
-        dj = max(30, self.canvas.unit_to_pixel(y=y-r) -
-                     self.canvas.unit_to_pixel(y=y+r) + 4)
-
-        # Decide whether anything has changed.
-        changed = (self.position != QtCore.QPointF(x, y) or self.r != r or
-                   di != self.width() or dj != self.height())
-
-        self.move(i - di/2, j - dj/2)
-        self.resize(di, dj)
+        # Figure out if these fundamental values have changed
+        changed = self.position != QtCore.QPointF(x, y) or self.r != r
 
         # Cache these values
         self.position = QtCore.QPointF(x, y)
         self.r = r
+
+        # Get bounding box from painter path
+        rect = self.ring_path().boundingRect().toRect()
+        rect.setTop(rect.top() - 5)
+        rect.setBottom(rect.bottom() + 5)
+        rect.setLeft(rect.left() - 5)
+        rect.setRight(rect.right() + 5)
+
+        # Check whether any render information has changed.
+        changed |= self.geometry() != rect
+        self.setGeometry(rect)
 
         if changed:
             self.make_masks()
@@ -178,14 +191,8 @@ class CircleControl(base.NodeControl):
     def draw_ring(self, painter, mask=False):
         """ Draws the ring around the widget.
         """
-        width, height = self.width(), self.height()
-
-        light = (200, 200, 200)
-
-        i = self.canvas.unit_to_pixel(x=self.position.x())
-        d = (self.canvas.unit_to_pixel(x=self.position.x()+self.r) - i) * 2
-
-        if d <= 0:  return
+        if self.r <= 0:     return
+        path = self.ring_path(self.pos())
 
         if mask:                            r = 6
         elif self.hover_r or self.drag_r:   r = 4
@@ -196,9 +203,9 @@ class CircleControl(base.NodeControl):
             painter.setPen(QtGui.QPen(QtCore.Qt.color1, r))
         else:
             painter.setBrush(QtGui.QBrush())
-            painter.setPen(QtGui.QPen(QtGui.QColor(*light), r))
+            painter.setPen(QtGui.QPen(QtGui.QColor(*colors.light_grey), r))
 
-        painter.drawEllipse((width - d) / 2, (height - d) / 2, d, d)
+        painter.drawPath(path)
 
 
     def paintEvent(self, painter):
