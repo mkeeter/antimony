@@ -83,6 +83,19 @@ class NodeControl(QtGui.QWidget):
         else:
             return self.get_input_pos()
 
+    def draw_lines(self, lines, offset):
+        """ Draws a set of lines (given by QVector3D coordinates).
+            Lines should be a list of lists of QVector3Ds.
+            Returns a painter path with those lines drawn.
+        """
+        path = QtGui.QPainterPath()
+        for L in lines:
+            path.moveTo(self.canvas.unit_to_pixel(L[0]) - offset)
+            for p in L[1:]:
+                path.lineTo(self.canvas.unit_to_pixel(p) - offset)
+        return path
+
+
 ################################################################################
 
 class DraggableNodeControl(NodeControl):
