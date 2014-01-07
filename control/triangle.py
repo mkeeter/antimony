@@ -64,8 +64,8 @@ class TriangleControl(base.DraggableNodeControl):
         self.setMask(bitmap)
 
 
-    def drag(self, dx, dy):
-        for pt in self.point_nodes:  pt.control.drag(dx, dy)
+    def drag(self, v):
+        for pt in self.point_nodes:  pt.control.drag(v)
 
 
     def mouseDoubleClickEvent(self, event):

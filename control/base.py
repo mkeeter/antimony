@@ -142,9 +142,7 @@ class DraggableNodeControl(NodeControl):
         """
         p = self.mapToParent(event.pos())
         if self.dragging:
-            delta = (self.canvas.pixel_to_unit(p) -
-                     self.canvas.pixel_to_unit(self.mouse_pos))
-            self.drag(delta.x(), delta.y())
+            self.drag(self.canvas.drag_vector(self.mouse_pos, p))
         elif self.hovering != self.hit(event.pos()):
             self.hovering = self.hit(event.pos())
             self.update()
@@ -219,14 +217,14 @@ class TextLabelControl(DraggableNodeControl):
         painter.setFont(self.font)
         painter.drawText(10, self.height() - 10, self.text)
 
-    def drag(self, dx, dy):
+    def drag(self, v):
         """ Drag this node by attempting to change its x and y coordinates
             dx and dy should be floating-point values.
         """
         if self.node._x.simple():
-            self.node._x.set_expr(str(float(self.node._x.get_expr()) + dx))
+            self.node._x.set_expr(str(float(self.node._x.get_expr()) + v.x()))
         if self.node._y.simple():
-            self.node._y.set_expr(str(float(self.node._y.get_expr()) + dy))
+            self.node._y.set_expr(str(float(self.node._y.get_expr()) + v.y()))
 
     def get_input_pos(self):
         return self.pos() + QtCore.QPoint(0, self.height()/2)

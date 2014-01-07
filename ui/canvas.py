@@ -22,7 +22,15 @@ class Canvas(QtGui.QWidget):
 
         self.show()
 
+    def drag_vector(self, start, end):
+        """ Returns the drag vector from start to end (as a QVector3D)
+            Input arguments should be in pixel coordinates.
+        """
+        return self.pixel_to_unit(end) - self.pixel_to_unit(start)
+
     def keyPressEvent(self, event):
+        """ Rotates the camera around with arrow keys.
+        """
         if event.key() == QtCore.Qt.Key_Up:
             self.pitch = max(-math.pi, self.pitch - math.pi/32)
         elif event.key() == QtCore.Qt.Key_Down:

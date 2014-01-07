@@ -25,14 +25,14 @@ class PointControl(base.DraggableNodeControl):
         self.raise_()
 
 
-    def drag(self, dx, dy):
+    def drag(self, v):
         """ Drag this node by attempting to change its x and y coordinates
             dx and dy should be floating-point values.
         """
         if self.node._x.simple():
-            self.node._x.set_expr(str(float(self.node._x.get_expr()) + dx))
+            self.node._x.set_expr(str(float(self.node._x.get_expr()) + v.x()))
         if self.node._y.simple():
-            self.node._y.set_expr(str(float(self.node._y.get_expr()) + dy))
+            self.node._y.set_expr(str(float(self.node._y.get_expr()) + v.y()))
 
 
     def sync(self):
