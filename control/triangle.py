@@ -58,7 +58,7 @@ class TriangleControl(base.DraggableNodeControl):
         painter.begin(bitmap)
         self.draw_center(painter, mask=True)
         self.mask = QtGui.QRegion(bitmap)
-        self.draw_lines(painter, mask=True)
+        self.draw_triangle(painter, mask=True)
         painter.end()
 
         self.setMask(bitmap)
@@ -86,26 +86,21 @@ class TriangleControl(base.DraggableNodeControl):
     def sync(self):
         for pt in self.point_nodes:   pt.control.sync()
 
-        xmin = min(pt.control.position.x() for pt in self.point_nodes)
-        xmax = max(pt.control.position.x() for pt in self.point_nodes)
+        # Get bounding box from painter path
+        rect = self.triangle_path().boundingRect().toRect()
+        rect.setTop(rect.top() - 5)
+        rect.setBottom(rect.bottom() + 5)
+        rect.setLeft(rect.left() - 5)
+        rect.setRight(rect.right() + 5)
 
-        ymin = min(pt.control.position.y() for pt in self.point_nodes)
-        ymax = max(pt.control.position.y() for pt in self.point_nodes)
-
+        # Place x and y coordinates at center of triangle
         x = sum(pt.control.position.x() for pt in self.point_nodes) / 3.0
         y = sum(pt.control.position.y() for pt in self.point_nodes) / 3.0
 
-        i = self.canvas.unit_to_pixel(x=xmin) - 5
-        j = self.canvas.unit_to_pixel(y=ymax) - 5
-        di = self.canvas.unit_to_pixel(x=xmax) - i + 10
-        dj = self.canvas.unit_to_pixel(y=ymin) - j + 10
-
         changed = (self.position != QtCore.QPointF(x, y) or
-                   di != self.width() or dj != self.height() or
-                   self.pos() != QtCore.QPoint(i, j))
+                   self.geometry() != rect)
 
-        self.move(i, j)
-        self.resize(di, dj)
+        self.setGeometry(rect)
 
         # Cache position here
         self.position = QtCore.QPointF(x, y)
@@ -121,26 +116,30 @@ class TriangleControl(base.DraggableNodeControl):
         painter = QtGui.QPainter(self)
         self.draw(painter)
 
-    def draw_lines(self, painter, mask=False):
-        coords = [
-                self.canvas.unit_to_pixel(pt.control.position) - self.pos()
-                for pt in self.point_nodes]
 
-        lines = [QtCore.QLine(coords[0], coords[1]),
-                 QtCore.QLine(coords[1], coords[2]),
-                 QtCore.QLine(coords[2], coords[0])]
+    def triangle_path(self, offset=QtCore.QPoint()):
+        """ Returns a QPainterPath that draws the triangle.
+        """
+        coords = [QtGui.QVector3D(pt.control.position)
+                  for pt in self.point_nodes]
+        coords.append(coords[0])
+        return self.draw_lines([coords], offset)
 
+
+    def draw_triangle(self, painter, mask=False):
+        """ Draws the triangle on the given painter.
+        """
         if mask:
             painter.setPen(QtGui.QPen(QtCore.Qt.color1, 4))
+            painter.setBrush(QtGui.QBrush())
         else:
             painter.setPen(QtGui.QPen(QtGui.QColor(200, 200, 200), 4))
-        painter.drawLines(lines)
+        painter.drawPath(self.triangle_path(self.pos()))
 
 
     def draw_center(self, painter, mask=False):
-        x, y = self.canvas.unit_to_pixel(self.position)
-        x -= self.pos().x()
-        y -= self.pos().y()
+        pos = self.canvas.unit_to_pixel(self.position) - self.pos()
+        x, y = pos.x(), pos.y()
 
         if mask:
             painter.setBrush(QtGui.QBrush(QtCore.Qt.color1))
@@ -164,7 +163,7 @@ class TriangleControl(base.DraggableNodeControl):
 
 
     def draw(self, painter, mask=False):
-        self.draw_lines(painter, mask)
+        self.draw_triangle(painter, mask)
         self.draw_center(painter, mask)
 
 
