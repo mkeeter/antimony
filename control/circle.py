@@ -48,14 +48,12 @@ class CircleControl(base.NodeControl):
     def mouseMoveEvent(self, event):
         p = self.mapToParent(event.pos())
         if self.drag_pt or self.drag_r:
-            delta = (self.canvas.pixel_to_unit(p) -
-                     self.canvas.pixel_to_unit(self.mouse_pos))
-            dx, dy = delta.x(), delta.y()
+            v = self.canvas.drag_vector(self.mouse_pos, p)
             if self.drag_pt:
-                self.drag_center(dx, dy)
+                self.drag_center(v)
             elif self.drag_r:
                 pos = self.canvas.pixel_to_unit(p)
-                self.drag_ring(pos.x(), pos.y(), dx, dy)
+                self.drag_ring(pos, v)
         elif not self.hover_pt and self.center_mask.contains(event.pos()):
             self.hover_pt = True
             self.update()
@@ -64,23 +62,30 @@ class CircleControl(base.NodeControl):
             self.update()
         self.mouse_pos = p
 
-    def drag_center(self, dx, dy):
+    def drag_center(self, v):
         """ Drag this node by attempting to change its x and y coordinates
             dx and dy should be floating-point values.
         """
         if self.node._x.simple():
-            self.node._x.set_expr(str(float(self.node._x.get_expr()) + dx))
+            self.node._x.set_expr(str(float(self.node._x.get_expr()) + v.x()))
         if self.node._y.simple():
-            self.node._y.set_expr(str(float(self.node._y.get_expr()) + dy))
+            self.node._y.set_expr(str(float(self.node._y.get_expr()) + v.y()))
 
 
-    def drag_ring(self, x, y, dx, dy):
-        x -= self.position.x()
-        y -= self.position.y()
-        norm = (x**2 + y**2)**0.5
-        dr = dx * x/norm + dy * y/norm
-        if self.node._r.simple():
-            self.node._r.set_expr(str(float(self.node._r.get_expr()) + dr))
+    def drag_ring(self, p, v):
+        """ Drags the ring to expand or contract it.
+            p is the drag position.
+            v is the drag vector.
+        """
+        if not self.node._r.simple():   return
+
+        p -= QtGui.QVector3D(self.position)
+        p.setZ(0)
+        p = p.normalized()
+
+        v.setZ(0)
+        dr = QtGui.QVector3D.dotProduct(p, v)
+        self.node._r.set_expr(str(float(self.node._r.get_expr()) + dr))
 
 
     def mouseDoubleClickEvent(self, event):
