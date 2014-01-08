@@ -196,7 +196,7 @@ class DragManager(QtCore.QObject):
 
 class DragXY(DragManager):
     def __init__(self, parent, mask=None):
-        super(DragManagerXY, self).__init__(parent, self.dragXY, mask)
+        super(DragXY, self).__init__(parent, self.dragXY, mask)
 
     def dragXY(self, v, p):
         """ Drag this node by attempting to change its x and y coordinates
@@ -210,7 +210,7 @@ class DragXY(DragManager):
 
 class DragXYZ(DragManager):
     def __init__(self, parent, mask=None):
-        super(DragManagerXYZ, self).__init__(parent, self.dragXYZ, mask)
+        super(DragXYZ, self).__init__(parent, self.dragXYZ, mask)
 
     def dragXYZ(self, v, p):
         """ Drag this node by attempting to change its x, y, and z coordinates
