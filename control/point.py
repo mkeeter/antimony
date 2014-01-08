@@ -106,5 +106,66 @@ class ChildPointControl(PointControl):
             self.parent_node.control.delete(self)
         super(ChildPointControl, self).mousePressEvent(event)
 
+################################################################################
+
+class Point3DControl(PointControl):
+
+    @classmethod
+    def new(cls, canvas, x, y, z, scale):
+        """ Construct a new point at the given location
+            Location should be specified in units.
+        """
+        p = Point3D(get_name('p'), x, y, z)
+        cls(canvas, p)
+
+    def __init__(self, canvas, target):
+        super(PointControl, self).__init__(canvas, target)
+        self.setFixedSize(30, 30)
+
+        self.editor_datums = ['name','x','y','z']
+
+        self.make_mask()
+        self.sync()
+        self.show()
+        self.raise_()
+
+
+    def sync(self):
+        """ Move this control to the appropriate position.
+            Use self.position (cached) if eval fails.
+        """
+        try:    x = self.node.x
+        except: x = self.position.x()
+
+        try:    y = self.node.y
+        except: y = self.position.y()
+
+        try:    z = self.node.z
+        except: z = self.position.z()
+
+        pos = self.canvas.unit_to_pixel(x, y, z)
+        self.move(pos.x() - self.width()/2, pos.y() - self.height()/2)
+
+        self.position = QtGui.QVector3D(x, y, z)
+
+        super(PointControl, self).sync()
+
+################################################################################
+
+class ChildPoint3DControl(Point3DControl):
+    """ Represents a point that is part of another shape
+        (so it deletes its parent along with itself)
+    """
+    def __init__(self, canvas, target, parent_node):
+        super(ChildPointControl, self).__init__(canvas, target)
+        self.parent_node = parent_node
+
+    def mousePressEvent(self, event):
+        """ Delete the parent as well on a right-click event.
+        """
+        if event.button() == QtCore.Qt.RightButton:
+            self.parent_node.control.delete(self)
+        super(ChildPointControl, self).mousePressEvent(event)
+
 from node.base import get_name
-from node.point import Point
+from node.point import Point, Point3D

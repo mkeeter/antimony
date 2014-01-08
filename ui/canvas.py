@@ -51,7 +51,8 @@ class Canvas(QtGui.QWidget):
         menu = QtGui.QMenu()
         items = [("Triangle", TriangleControl),
                  ("Circle", CircleControl),
-                 ("Point", PointControl), None,
+                 ("Point (2D)", PointControl),
+                 ("Point (3D)", Point3DControl), None,
                  ("Union", UnionControl),
                  ("Intersection", IntersectionControl),
                  ("Cutout", CutoutControl), None,
@@ -321,7 +322,7 @@ from fab.expression import Expression
 
 from node.datum import ExpressionFunctionDatum
 
-from control.point import PointControl
+from control.point import PointControl, Point3DControl
 from control.circle import CircleControl
 from control.triangle import TriangleControl
 from control.csg import UnionControl, IntersectionControl, CutoutControl
