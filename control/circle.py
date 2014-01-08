@@ -20,7 +20,7 @@ class CircleControl(base.NodeControl):
         """
         super(CircleControl, self).__init__(canvas, target)
 
-        self.drag_pt = False
+        self.dragging = False
         self.drag_r  = False
 
         self.hover_pt = False
@@ -44,15 +44,15 @@ class CircleControl(base.NodeControl):
         elif event.button() == QtCore.Qt.LeftButton:
             self.mouse_pos = self.mapToParent(event.pos())
             if self.center_mask.contains(event.pos()):
-                self.drag_pt = True
+                self.dragging = True
             else:
                 self.drag_r = True
 
     def mouseMoveEvent(self, event):
         p = self.mapToParent(event.pos())
-        if self.drag_pt or self.drag_r:
+        if self.dragging or self.drag_r:
             v = self.canvas.drag_vector(self.mouse_pos, p)
-            if self.drag_pt:
+            if self.dragging:
                 self.drag_center(v)
             elif self.drag_r:
                 pos = self.canvas.pixel_to_unit(p)
@@ -107,7 +107,7 @@ class CircleControl(base.NodeControl):
 
     def mouseReleaseEvent(self, event):
         if event.button() == QtCore.Qt.LeftButton:
-            self.drag_pt = False
+            self.dragging = False
             self.drag_r = False
 
     def leaveEvent(self, event):
@@ -182,7 +182,7 @@ class CircleControl(base.NodeControl):
             painter.setPen(QtGui.QPen(QtGui.QColor(*colors.dark_grey), 2))
 
         if mask:                                d = 22
-        elif self.hover_pt or self.drag_pt:     d = 20
+        elif self.hover_pt or self.dragging:    d = 20
         else:                                   d = 14
 
         painter.drawEllipse((width - d) / 2, (height - d) / 2, d, d)
