@@ -3,7 +3,7 @@ from PySide import QtCore, QtGui
 import base
 import colors
 
-class TriangleControl(base.DraggableNodeControl):
+class TriangleControl(base.NodeControl):
 
     @classmethod
     def new(cls, canvas, x, y, z, scale):
@@ -28,6 +28,7 @@ class TriangleControl(base.DraggableNodeControl):
         self.point_nodes = [target.a, target.b, target.c]
         super(TriangleControl, self).__init__(canvas, target)
 
+        self.drag_control = base.DragManager(self, self.drag)
         self.editor_datums = ['name','shape']
 
         self.sync()
@@ -36,9 +37,6 @@ class TriangleControl(base.DraggableNodeControl):
         self.show()
         self.raise_()
 
-
-    def hit(self, pos):
-        return self.mask.contains(pos)
 
 
     def raise_(self):
@@ -59,15 +57,16 @@ class TriangleControl(base.DraggableNodeControl):
         # also include the triangle in the mask (so that it gets drawn)
         painter.begin(bitmap)
         self.draw_center(painter, mask=True)
-        self.mask = QtGui.QRegion(bitmap)
+        self.drag_control.mask = QtGui.QRegion(bitmap)
         self.draw_triangle(painter, mask=True)
         painter.end()
 
         self.setMask(bitmap)
 
 
-    def drag(self, v):
-        for pt in self.point_nodes:  pt.control.drag(v)
+    def drag(self, v, p):
+        for pt in self.point_nodes:
+            pt.control.drag_control.dragXY(v, None)
 
 
     def mouseDoubleClickEvent(self, event):
@@ -150,9 +149,12 @@ class TriangleControl(base.DraggableNodeControl):
             painter.setBrush(QtGui.QBrush(QtGui.QColor(*colors.light_grey)))
             painter.setPen(QtGui.QPen(QtGui.QColor(*colors.dark_grey), 2))
 
-        if mask:            d = 22
-        elif self.hovering: d = 20
-        else:               d = 16
+        if mask:
+            d = 22
+        elif self.drag_control.hover or self.drag_control.drag:
+            d = 20
+        else:
+            d = 16
 
         painter.drawEllipse(x - d/2, y - d/2, d, d)
         if mask:    return
