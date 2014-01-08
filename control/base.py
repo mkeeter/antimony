@@ -99,6 +99,58 @@ class NodeControl(QtGui.QWidget):
 
 ################################################################################
 
+class DragManager(object):
+    def __init__(self, parent, callback, mask=None):
+        self.parent = parent
+        self.callback  = callback
+        self.mask = mask
+
+        self.mouse_pos = QtCore.QPoint()
+        self.drag = False
+        self.hover = False
+
+    def mouse_move(self, pos):
+        """ When the mouse moves, store the updated mouse position
+            (in canvas pixel coordinates) and update drag / hover as needed.
+
+            Returns True if something changed, False otherwise.
+        """
+        changed = False
+        pos_global = self.parent.mapToParent(pos)
+
+        # If we're dragging, then do so
+        if self.drag:
+            v = self.parent.canvas.drag_vector(self.mouse_pos, pos_global)
+            p = self.parent.canvas.pixel_to_unit(pos_global)
+            self.callback(v, p)
+            changed = True
+
+        # If the mouse is above this object, then hover on
+        elif self.mask is None or self.mask.contains(pos):
+            if not self.hover:
+                self.hover = True
+                changed = True
+
+        # Otherwise hover off
+        else:
+            if self.hover:
+                self.hover = False
+                changed = True
+
+        # Store mouse position (for dragging calculations)
+        self.mouse_pos = pos_global
+        return changed
+
+
+    def mouse_press(self, pos):
+        """ On mouse press, start dragging.
+            (this should only be called on left-click).
+        """
+        if self.mask.contains(pos):
+            self.drag = True
+
+################################################################################
+
 class DraggableNodeControl(NodeControl):
     def __init__(self, canvas, node):
         super(DraggableNodeControl, self).__init__(canvas, node)
