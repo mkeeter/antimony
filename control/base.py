@@ -136,6 +136,7 @@ class DraggableNodeControl(NodeControl):
         """
         if event.button() == QtCore.Qt.LeftButton:
             self.dragging = False
+            self.releaseMouse()
 
     def mouseMoveEvent(self, event):
         """ When the mouse is moved, update self.mouse_pos and drag the

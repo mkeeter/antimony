@@ -47,11 +47,6 @@ class Canvas(QtGui.QWidget):
         self.openMenuAt(event.pos())
 
     def openMenuAt(self, point):
-        print "Opening menu at",point
-        pos = self.pixel_to_unit(point)
-        x, y, z  = pos.x(), pos.y(), pos.z()
-        scale = self.pixel_to_unit(x=point.x() + 50) - x
-
         menu = QtGui.QMenu()
         items = [("Triangle", TriangleControl),
                  ("Circle", CircleControl),
@@ -68,8 +63,24 @@ class Canvas(QtGui.QWidget):
             if i is None:   menu.addSeparator()
             else:           actions[menu.addAction(i[0])] = i[1].new
 
-        point = self.mapToGlobal(point)
-        actions.get(menu.exec_(point), lambda *args: None)(self, x, y, z, scale)
+        # Open up the menu at the given point and get a constructor back.
+        constructor = actions.get(menu.exec_(self.mapToGlobal(point)),
+                                  lambda *args: None)
+
+        # Figure out constructor parameters (from cursor position)
+        point = self.mapFromGlobal(QtGui.QCursor.pos())
+        pos = self.pixel_to_unit(point)
+        x, y, z  = pos.x(), pos.y(), pos.z()
+        scale = self.pixel_to_unit(x=point.x() + 50) - x
+
+        # Call the constructor, making a control
+        ctrl = constructor(self, x, y, z, scale)
+
+        # Start dragging this control if possible.
+        if hasattr(ctrl, 'dragging') and hasattr(ctrl, 'mouse_pos'):
+            ctrl.dragging = True
+            ctrl.mouse_pos = point
+            ctrl.grabMouse()
 
 
     def mousePressEvent(self, event):
