@@ -99,8 +99,9 @@ class NodeControl(QtGui.QWidget):
 
 ################################################################################
 
-class DragManager(object):
+class DragManager(QtCore.QObject):
     def __init__(self, parent, callback, mask=None):
+        super(DragManager, self).__init__()
         self.parent = parent
         self.callback  = callback
         self.mask = mask
@@ -118,6 +119,10 @@ class DragManager(object):
                 return self.mouse_press(event)
             elif event.type() == QtCore.QEvent.MouseMove:
                 return self.mouse_move(event)
+            elif event.type() == QtCore.QEvent.Leave:
+                return self.mouse_leave(event)
+            elif event.type() == QtCore.QEvent.MouseButtonRelease:
+                return self.mouse_release(event)
         return False
 
 
@@ -127,7 +132,7 @@ class DragManager(object):
 
             Returns True if something changed, False otherwise.
         """
-        pos = self.parent.mapToParent(event.pos())
+        pos = event.pos()
         changed = False
         pos_global = self.parent.mapToParent(pos)
 
@@ -160,12 +165,32 @@ class DragManager(object):
 
 
     def mouse_press(self, event):
-        """ On mouse press, start dragging.
+        """ On left mouse press, start dragging if it hits the mask.
         """
-        if self.mask.contains(event.pos()):
-            if event.button() == QtCore.Qt.LeftButton:
+        if (self.mask.contains(event.pos()) and
+            event.button() == QtCore.Qt.LeftButton):
                 self.drag = True
+                self.parent.update()
                 return True
+        return False
+
+    def mouse_release(self, event):
+        """ On left mouse release, stop dragging and eat the event
+            if we were previous dragging.
+        """
+        if self.drag and event.button() == QtCore.Qt.LeftButton:
+            self.drag = False
+            self.parent.update()
+            return True
+        return False
+
+    def mouse_leave(self, event):
+        """ On mouse leave, stop hovering
+            (but don't eat the event).
+        """
+        if self.hover:
+            self.hover = False
+            self.parent.update()
         return False
 
 
