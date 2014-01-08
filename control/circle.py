@@ -67,11 +67,6 @@ class CircleControl(base.NodeControl):
         self.node._r.set_expr(str(float(self.node._r.get_expr()) + dr))
 
 
-    def mouseDoubleClickEvent(self, event):
-        if event.button() == QtCore.Qt.LeftButton:
-            self.open_editor()
-
-
     def make_masks(self):
         for n in ['center','ring']:
             func = getattr(self, 'draw_' + n)

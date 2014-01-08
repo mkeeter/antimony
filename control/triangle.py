@@ -69,12 +69,6 @@ class TriangleControl(base.NodeControl):
             pt.control.drag_control.dragXY(v, None)
 
 
-    def mouseDoubleClickEvent(self, event):
-        """ On double click, open the central editor
-        """
-        if event.button() == QtCore.Qt.LeftButton:
-            self.open_editor()
-
     def delete(self, trigger=None):
         """ Overloaded delete (that can be invoked from a child)
             Deletes self and all ChildPointControl objects.

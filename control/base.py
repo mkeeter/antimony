@@ -123,6 +123,8 @@ class DragManager(QtCore.QObject):
                 return self.mouse_leave(event)
             elif event.type() == QtCore.QEvent.MouseButtonRelease:
                 return self.mouse_release(event)
+            elif event.type() == QtCore.QEvent.MouseButtonDblClick:
+                return self.mouse_doubleClick(event)
         return False
 
 
@@ -191,6 +193,13 @@ class DragManager(QtCore.QObject):
         if self.hover:
             self.hover = False
             self.parent.update()
+        return False
+
+    def mouse_doubleClick(self, event):
+        if event.button() == QtCore.Qt.LeftButton and (
+                self.mask is None or self.mask.contains(event.pos())):
+            self.parent.open_editor()
+            return True
         return False
 
 
