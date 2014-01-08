@@ -1,10 +1,10 @@
 import sys
 import cPickle as pickle
 
-from PySide import QtGui
+from PySide import QtCore, QtGui
 
 import canvas
-
+import button
 ################################################################################
 
 class Window(QtGui.QMainWindow):
@@ -41,9 +41,39 @@ class App(QtGui.QApplication):
         self.make_actions()
 
         self.canvas = canvas.Canvas()
+
+        button.AddButton(
+                self.canvas, self.add_object, lambda y: y/2 - 55)
+        button.MoveButton(
+                self.canvas, lambda b: self.set_mode(b, 'move'),
+                lambda y: y/2 - 15).selected = True
+        button.DelButton(
+                self.canvas, lambda b: self.set_mode(b, 'delete'),
+                lambda y: y/2 + 25)
+        self.mode = 'move'
+
         self.window = Window(self, self.canvas)
 
+    def add_object(self, button):
+        """ Opens up a menu to add objects
+            (centered on the given button).
+        """
+        self.canvas.openMenuAt(button.geometry().center())
+
+    def set_mode(self, hit, mode):
+        """ Sets self.mode to the given value
+            and selects / deselects all buttons.
+        """
+        self.mode = mode
+        for b in self.canvas.findChildren(button.Button):
+            if b.selected != (b == hit):
+                b.selected = (b == hit)
+                b.update()
+
+
     def make_actions(self):
+        """ Create a bunch of Qt actions with associated shortcuts.
+        """
         self.new_action = QtGui.QAction("New", self)
         self.new_action.setShortcuts(QtGui.QKeySequence.New)
         self.new_action.triggered.connect(self.on_new)

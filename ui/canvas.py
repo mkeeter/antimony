@@ -3,6 +3,7 @@ import math
 from PySide import QtCore, QtGui
 
 from control import colors
+import button
 
 class Canvas(QtGui.QWidget):
     def __init__(self):
@@ -43,7 +44,10 @@ class Canvas(QtGui.QWidget):
         self.update()
 
     def contextMenuEvent(self, event):
-        point = event.pos()
+        self.openMenuAt(event.pos())
+
+    def openMenuAt(self, point):
+        print "Opening menu at",point
         pos = self.pixel_to_unit(point)
         x, y, z  = pos.x(), pos.y(), pos.z()
         scale = self.pixel_to_unit(x=point.x() + 50) - x
@@ -156,6 +160,8 @@ class Canvas(QtGui.QWidget):
         """
         self.update()
         self.sync_all_children()
+        for b in self.findChildren(button.Button):
+            b.position(self.height())
 
 
     def pixel_matrix(self):
