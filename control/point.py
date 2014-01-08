@@ -11,7 +11,7 @@ class PointControl(base.DraggableNodeControl):
             Location should be specified in units.
         """
         p = Point(get_name('p'), x, y)
-        cls(canvas, p)
+        return cls(canvas, p)
 
     def __init__(self, canvas, target):
         super(PointControl, self).__init__(canvas, target)
@@ -116,7 +116,7 @@ class Point3DControl(PointControl):
             Location should be specified in units.
         """
         p = Point3D(get_name('p'), x, y, z)
-        cls(canvas, p)
+        return cls(canvas, p)
 
     def __init__(self, canvas, target):
         super(PointControl, self).__init__(canvas, target)

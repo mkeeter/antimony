@@ -13,7 +13,7 @@ class CircleControl(base.NodeControl):
             position and scale should be given in units.
         """
         c = Circle(get_name('c'), x, y, scale)
-        ctrl = cls(canvas, c)
+        return cls(canvas, c)
 
     def __init__(self, canvas, target):
         """ Construct a circle control widget.

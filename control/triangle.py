@@ -16,7 +16,7 @@ class TriangleControl(base.DraggableNodeControl):
         tri = Triangle('t', a, b, c)
 
         for p in [a, b, c]:     ChildPointControl(canvas, p, tri)
-        tri_ctrl = cls(canvas, tri)
+        return cls(canvas, tri)
 
 
     def __init__(self, canvas, target):
