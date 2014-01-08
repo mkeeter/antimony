@@ -2,11 +2,12 @@ import base
 import datum
 
 class GetBounds(base.Node):
-    def __init__(self, name, x, y):
+    def __init__(self, name, x, y, z):
         super(GetBounds, self).__init__(name)
 
         self.add_datum('x', datum.FloatDatum(self, x))
         self.add_datum('y', datum.FloatDatum(self, y))
+        self.add_datum('z', datum.FloatDatum(self, z))
 
         self.add_datum('input', datum.ExpressionDatum(self, 'f1'))
 
@@ -19,11 +20,12 @@ class GetBounds(base.Node):
 
 
 class SetBounds(base.Node):
-    def __init__(self, name, x, y):
+    def __init__(self, name, x, y, z):
         super(SetBounds, self).__init__(name)
 
         self.add_datum('x', datum.FloatDatum(self, x))
         self.add_datum('y', datum.FloatDatum(self, y))
+        self.add_datum('z', datum.FloatDatum(self, z))
 
         self.add_datum('input', datum.ExpressionDatum(self, 'f1'))
 

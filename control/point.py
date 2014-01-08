@@ -6,7 +6,7 @@ import colors
 class PointControl(base.DraggableNodeControl):
 
     @classmethod
-    def new(cls, canvas, x, y, scale):
+    def new(cls, canvas, x, y, z, scale):
         """ Construct a new point at the given location
             Location should be specified in units.
         """

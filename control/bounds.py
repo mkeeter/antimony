@@ -5,8 +5,8 @@ import colors
 
 class GetBoundsControl(base.TextLabelControl):
     @classmethod
-    def new(cls, canvas, x, y, scale):
-        b = GetBounds(get_name('b'), x, y)
+    def new(cls, canvas, x, y, z, scale):
+        b = GetBounds(get_name('b'), x, y, z)
         cls(canvas, b)
 
     def __init__(self, canvas, target):
@@ -17,8 +17,8 @@ class GetBoundsControl(base.TextLabelControl):
 
 class SetBoundsControl(base.TextLabelControl):
     @classmethod
-    def new(cls, canvas, x, y, scale):
-        b = SetBounds(get_name('b'), x, y)
+    def new(cls, canvas, x, y, z, scale):
+        b = SetBounds(get_name('b'), x, y, z)
         cls(canvas, b)
 
     def __init__(self, canvas, target):

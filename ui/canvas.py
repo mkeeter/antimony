@@ -45,7 +45,7 @@ class Canvas(QtGui.QWidget):
     def contextMenuEvent(self, event):
         point = event.pos()
         pos = self.pixel_to_unit(point)
-        x, y = pos.x(), pos.y()
+        x, y, z  = pos.x(), pos.y(), pos.z()
         scale = self.pixel_to_unit(x=point.x() + 50) - x
 
         menu = QtGui.QMenu()
@@ -64,7 +64,7 @@ class Canvas(QtGui.QWidget):
             else:           actions[menu.addAction(i[0])] = i[1].new
 
         point = self.mapToGlobal(point)
-        actions.get(menu.exec_(point), lambda *args: None)(self, x, y, scale)
+        actions.get(menu.exec_(point), lambda *args: None)(self, x, y, z, scale)
 
 
     def mousePressEvent(self, event):

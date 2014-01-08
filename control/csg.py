@@ -7,8 +7,8 @@ import colors
 
 class UnionControl(base.TextLabelControl):
     @classmethod
-    def new(cls, canvas, x, y, scale):
-        u = Union(get_name('u'), x, y)
+    def new(cls, canvas, x, y, z, scale):
+        u = Union(get_name('u'), x, y, z)
         cls(canvas, u)
 
     def __init__(self, canvas, target):
@@ -18,8 +18,8 @@ class UnionControl(base.TextLabelControl):
 
 class IntersectionControl(base.TextLabelControl):
     @classmethod
-    def new(cls, canvas, x, y, scale):
-        i = Intersection(get_name('i'), x, y)
+    def new(cls, canvas, x, y, z, scale):
+        i = Intersection(get_name('i'), x, y, z)
         cls(canvas, i)
 
     def __init__(self, canvas, target):
@@ -30,8 +30,8 @@ class IntersectionControl(base.TextLabelControl):
 
 class CutoutControl(base.TextLabelControl):
     @classmethod
-    def new(cls, canvas, x, y, scale):
-        c = Cutout(get_name('c'), x, y)
+    def new(cls, canvas, x, y, z, scale):
+        c = Cutout(get_name('c'), x, y, z)
         cls(canvas, c)
 
     def __init__(self, canvas, target):

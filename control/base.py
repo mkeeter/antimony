@@ -164,6 +164,8 @@ class DraggableNodeControl(NodeControl):
             self.node._x.set_expr(str(float(self.node._x.get_expr()) + v.x()))
         if self.node._y.simple():
             self.node._y.set_expr(str(float(self.node._y.get_expr()) + v.y()))
+        if hasattr(self.node, '_z') and self.node._z.simple():
+            self.node._z.set_expr(str(float(self.node._z.get_expr()) + v.z()))
 
 ################################################################################
 
@@ -203,10 +205,13 @@ class TextLabelControl(DraggableNodeControl):
         try:    y = self.node.y
         except: y = self.position.y()
 
-        pos = self.canvas.unit_to_pixel(x, y)
+        try:    z = self.node.z
+        except: z = self.position.z()
+
+        pos = self.canvas.unit_to_pixel(x, y, z)
         self.move(pos.x(), pos.y())
 
-        self.position = QtCore.QPointF(x, y)
+        self.position = QtGui.QVector3D(x, y, z)
 
         super(TextLabelControl, self).sync()
 

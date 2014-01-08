@@ -8,7 +8,7 @@ import base
 class CircleControl(base.NodeControl):
 
     @classmethod
-    def new(cls, canvas, x, y, scale):
+    def new(cls, canvas, x, y, z, scale):
         """ Constructs a new circle at the given point.
             position and scale should be given in units.
         """
