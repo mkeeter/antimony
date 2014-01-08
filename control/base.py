@@ -149,6 +149,37 @@ class DragManager(object):
         if self.mask.contains(pos):
             self.drag = True
 
+class DragManagerXY(DragManager):
+    def __init__(self, parent, mask=None):
+        super(DragManagerXY, self).__init__(parent, self.dragXY, mask)
+
+    def dragXY(self, v, p):
+        """ Drag this node by attempting to change its x and y coordinates
+        """
+        if self.parent.node._x.simple():
+            self.parent.node._x.set_expr(
+                    str(float(self.parent.node._x.get_expr()) + v.x()))
+        if self.parent.node._y.simple():
+            self.parent.node._y.set_expr(
+                    str(float(self.parent.node._y.get_expr()) + v.y()))
+
+class DragXYZ(DragManager):
+    def __init__(self, parent, mask=None):
+        super(DragManagerXYZ, self).__init__(parent, self.dragXYZ, mask)
+
+    def dragXYZ(self, v, p):
+        """ Drag this node by attempting to change its x, y, and z coordinates
+        """
+        if self.parent.node._x.simple():
+            self.parent.node._x.set_expr(
+                    str(float(self.parent.node._x.get_expr()) + v.x()))
+        if self.parent.node._y.simple():
+            self.parent.node._y.set_expr(
+                    str(float(self.parent.node._y.get_expr()) + v.y()))
+        if self.parent.node._z.simple():
+            self.parent.node._z.set_expr(
+                    str(float(self.parent.node._z.get_expr()) + v.z()))
+
 ################################################################################
 
 class DraggableNodeControl(NodeControl):
