@@ -40,6 +40,7 @@ class NodeControl(QtGui.QWidget):
                     c.control.deleteLater()
         self.node.delete()
         if self.editor: self.editor.deleteLater()
+        self.canvas.setFocus()
         self.deleteLater()
 
     def open_editor(self):
