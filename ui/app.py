@@ -42,15 +42,16 @@ class App(QtGui.QApplication):
 
         self.canvas = canvas.Canvas()
 
-        button.AddButton(
+        self.add_button = button.AddButton(
                 self.canvas, self.add_object, lambda y: y/2 - 55)
-        button.MoveButton(
+        self.move_button = button.MoveButton(
                 self.canvas, lambda b: self.set_mode(b, 'move'),
-                lambda y: y/2 - 15).selected = True
-        button.DelButton(
+                lambda y: y/2 - 15)
+        self.del_button = button.DelButton(
                 self.canvas, lambda b: self.set_mode(b, 'delete'),
                 lambda y: y/2 + 25)
         self.mode = 'move'
+        self.move_button.selected = True
 
         self.window = Window(self, self.canvas)
 
@@ -59,6 +60,13 @@ class App(QtGui.QApplication):
             (centered on the given button).
         """
         self.canvas.openMenuAt(button.geometry().center())
+        self.mode = 'move'
+        if not self.move_button.selected:
+            self.move_button.selected = True
+            self.move_button.update()
+        if self.del_button.selected:
+            self.del_button.selected = False
+            self.del_button.update()
 
     def set_mode(self, hit, mode):
         """ Sets self.mode to the given value
