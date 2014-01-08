@@ -109,12 +109,25 @@ class DragManager(object):
         self.drag = False
         self.hover = False
 
-    def mouse_move(self, pos):
+        self.parent.installEventFilter(self)
+
+
+    def eventFilter(self, object, event):
+        if object == self.parent:
+            if event.type() == QtCore.QEvent.MouseButtonPress:
+                return self.mouse_press(event)
+            elif event.type() == QtCore.QEvent.MouseMove:
+                return self.mouse_move(event)
+        return False
+
+
+    def mouse_move(self, event):
         """ When the mouse moves, store the updated mouse position
             (in canvas pixel coordinates) and update drag / hover as needed.
 
             Returns True if something changed, False otherwise.
         """
+        pos = self.parent.mapToParent(event.pos())
         changed = False
         pos_global = self.parent.mapToParent(pos)
 
@@ -139,17 +152,24 @@ class DragManager(object):
 
         # Store mouse position (for dragging calculations)
         self.mouse_pos = pos_global
+        if changed:     self.parent.update()
+
+        # Return True if this event caused something to change;
+        # false otherwise
         return changed
 
 
-    def mouse_press(self, pos):
+    def mouse_press(self, event):
         """ On mouse press, start dragging.
-            (this should only be called on left-click).
         """
-        if self.mask.contains(pos):
-            self.drag = True
+        if self.mask.contains(event.pos()):
+            if event.button() == QtCore.Qt.LeftButton:
+                self.drag = True
+                return True
+        return False
 
-class DragManagerXY(DragManager):
+
+class DragXY(DragManager):
     def __init__(self, parent, mask=None):
         super(DragManagerXY, self).__init__(parent, self.dragXY, mask)
 
