@@ -339,10 +339,7 @@ def make_node_widgets(canvas):
                 children[node.base.nodes.index(attr)] = attr
 
     for i, n in enumerate(node.base.nodes):
-        if i in children:
-            n.get_control(is_child=True)(canvas, n, children[i])
-        else:
-            n.get_control(is_child=False)(canvas, n)
+        n.get_control()(canvas, n)
 
 
 from ui.editor import MakeEditor

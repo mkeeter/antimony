@@ -15,7 +15,7 @@ class Union(base.Node):
         self.add_datum('shape',
                         datum.ExpressionFunctionDatum(self, 'make_shape'))
 
-    def get_control(self, is_child):
+    def get_control(self):
         import control.csg
         return control.csg.UnionControl
 
@@ -44,7 +44,7 @@ class Intersection(base.Node):
         self.add_datum('shape',
                         datum.ExpressionFunctionDatum(self, 'make_shape'))
 
-    def get_control(self, is_child):
+    def get_control(self):
         import control.csg
         return control.csg.Intersection
 
@@ -73,7 +73,7 @@ class Cutout(base.Node):
         self.add_datum('shape',
                         datum.ExpressionFunctionDatum(self, 'make_shape'))
 
-    def get_control(self, is_child):
+    def get_control(self):
         import control.csg
         return control.csg.Cutout
 

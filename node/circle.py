@@ -12,7 +12,7 @@ class Circle(base.Node):
         self.add_datum('shape',
                 datum.ExpressionFunctionDatum(self, 'make_shape'))
 
-    def get_control(self, is_child):
+    def get_control(self):
         import control.circle
         return control.circle.CircleControl
 

@@ -15,7 +15,7 @@ class Triangle(base.Node):
         self.add_datum('shape',
                        datum.ExpressionFunctionDatum(self, 'make_shape'))
 
-    def get_control(self, is_child):
+    def get_control(self):
         import control.triangle
         return control.triangle.TriangleControl
 

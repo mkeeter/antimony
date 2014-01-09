@@ -17,7 +17,7 @@ class Node(object):
         self.add_datum('name', datum.NameDatum(self, name))
         nodes.append(self)
 
-    def get_control(self, is_child):
+    def get_control(self):
         """ Used to get a UI control widget for this node.
         """
         raise NotImplementedError("Derived class must implement get_control")

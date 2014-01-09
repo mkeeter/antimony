@@ -8,10 +8,9 @@ class Point(base.Node):
         self.add_datum('x', datum.FloatDatum(self, x))
         self.add_datum('y', datum.FloatDatum(self, y))
 
-    def get_control(self, is_child):
+    def get_control(self):
         import control.point
-        if is_child:    return control.point.ChildPointControl
-        else:           return control.point.PointControl
+        return control.point.PointControl
 
 class Point3D(base.Node):
     def __init__(self, name, x, y, z):
@@ -20,8 +19,7 @@ class Point3D(base.Node):
         self.add_datum('y', datum.FloatDatum(self, y))
         self.add_datum('z', datum.FloatDatum(self, z))
 
-    def get_control(self, is_child):
+    def get_control(self):
         import control.point
-        if is_child:    return control.point.ChildPoint3DControl
-        else:           return control.point.Point3DControl
+        return control.point.Point3DControl
 
