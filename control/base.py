@@ -194,7 +194,7 @@ class DragManager(QtCore.QObject):
             elif mode == 'delete':
                 self.parent.delete()
             return True
-        return False
+        return self.drag
 
     def mouse_release(self, event):
         """ On left mouse release, stop dragging and eat the event
