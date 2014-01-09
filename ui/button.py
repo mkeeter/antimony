@@ -12,6 +12,12 @@ class Button(QtGui.QWidget):
 
         self.position(parent.height())
         self.show()
+        parent.installEventFilter(self)
+
+    def eventFilter(self, obj, event):
+        if obj == self.parentWidget() and event.type() == QtCore.QEvent.Resize:
+            self.position(event.size().height())
+        return False
 
     def mousePressEvent(self, event):
         """ On left-click, call the callback.

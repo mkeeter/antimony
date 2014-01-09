@@ -3,7 +3,6 @@ import math
 from PySide import QtCore, QtGui
 
 from control import colors
-import button
 
 class Canvas(QtGui.QWidget):
     def __init__(self):
@@ -181,8 +180,6 @@ class Canvas(QtGui.QWidget):
         """
         self.update()
         self.sync_all_children()
-        for b in self.findChildren(button.Button):
-            b.position(self.height())
 
 
     def pixel_matrix(self):
