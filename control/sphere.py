@@ -33,7 +33,19 @@ class SphereControl(base.NodeControl):
         self.raise_()
 
     def drag_radius(self, v, p):
-        pass
+        """ Drags the ring to expand or contract it.
+            p is the drag position.
+            v is the drag vector.
+        """
+        if not self.node._r.simple():   return
+
+        p -= self.position
+        p.setZ(0)
+        p = p.normalized()
+
+        v.setZ(0)
+        dr = QtGui.QVector3D.dotProduct(p, v)
+        self.node._r.set_expr(str(float(self.node._r.get_expr()) + dr))
 
     def make_masks(self):
         for n in ['center', 'wireframe']:
