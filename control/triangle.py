@@ -61,8 +61,6 @@ class TriangleControl(base.NodeControl):
         self.draw_triangle(painter, mask=True)
         painter.end()
 
-        self.setMask(bitmap)
-
 
     def drag(self, v, p):
         for pt in self.point_nodes:

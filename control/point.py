@@ -83,7 +83,6 @@ class PointControl(base.NodeControl):
         painter.end()
 
         self.drag_control.mask = QtGui.QRegion(bitmap)
-        self.setMask(bitmap)
 
     def get_input_pos(self):
         """ Returns a position to which we should attach input wires.

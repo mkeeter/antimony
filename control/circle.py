@@ -76,8 +76,6 @@ class CircleControl(base.NodeControl):
 
             setattr(self, n + '_mask', QtGui.QRegion(bitmap))
 
-        self.setMask(self.center_mask.united(self.ring_mask))
-
         self.drag_control.mask = self.center_mask
         self.ring_drag_control.mask = self.ring_mask
 
