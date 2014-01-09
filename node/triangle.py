@@ -10,6 +10,7 @@ class Triangle(base.Node):
         """
         super(Triangle, self).__init__(name)
         self.a, self.b, self.c  = a, b, c
+        for i in a, b, c:   i.parent = self
 
         self.add_datum('shape',
                        datum.ExpressionFunctionDatum(self, 'make_shape'))

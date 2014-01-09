@@ -15,7 +15,7 @@ class TriangleControl(base.NodeControl):
         c = Point(get_name('c'), x + scale, y - scale)
         tri = Triangle('t', a, b, c)
 
-        for p in [a, b, c]:     ChildPointControl(canvas, p, tri)
+        for p in [a, b, c]:     PointControl(canvas, p)
         return cls(canvas, tri)
 
 
@@ -68,15 +68,6 @@ class TriangleControl(base.NodeControl):
         for pt in self.point_nodes:
             pt.control.drag_control.dragXY(v, None)
 
-
-    def delete(self, trigger=None):
-        """ Overloaded delete (that can be invoked from a child)
-            Deletes self and all ChildPointControl objects.
-        """
-        for p in self.point_nodes:
-            if p.control != trigger:
-                p.control.delete()
-        super(TriangleControl, self).delete()
 
     def sync(self):
         for pt in self.point_nodes:   pt.control.sync()
@@ -169,4 +160,4 @@ from node.point import Point
 from node.triangle import Triangle
 from node.base import get_name
 
-from point import ChildPointControl
+from point import PointControl

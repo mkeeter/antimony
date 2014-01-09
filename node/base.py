@@ -13,6 +13,7 @@ class Node(object):
         # Save a master list of datums to serialize nodes for saving.
         self.datums = []
         self.control  = None
+        self.parent   = None
         self.add_datum('name', datum.NameDatum(self, name))
         nodes.append(self)
 
@@ -67,17 +68,21 @@ class Node(object):
         return n
 
     def add_children(self, children, nodes):
-        """ Re-links children
+        """ Re-links children (when called on parent node)
             (this is the second stage of reconstructing a node, done
              after we've created all of the Node objects)
         """
         for child, index in children:
             setattr(self, child, nodes[index])
+            nodes[index].parent = self
 
-    def delete(self):
+    def delete(self, child=None):
         """ Removes node from master list, deleting all connections as well.
         """
+        # Remove from master list
         if nodes is not None:   nodes.remove(self)
+
+        # Delete connections from datums
         for t, d in self.datums:
             for c in d.connections():
                 c.delete()

@@ -33,13 +33,26 @@ class NodeControl(QtGui.QWidget):
     def delete(self):
         """ Cleanly deletes both abstract and UI representations.
         """
+        # If this is a child node, then delete from the parent instead
+        if self.node.parent:
+            self.node.parent.control.delete()
+            return
+
         # Release the mouse (just in case)
         self.releaseMouse()
+
         # Delete connection widgets
         for t, d in self.node.datums:
             for c in d.connections():
-                if c:
-                    c.control.deleteLater()
+                if c:   c.control.deleteLater()
+
+        # Delete any children nodes
+        for key in self.node.__dict__:
+            attr = getattr(self.node, key)
+            if isinstance(attr, node.base.Node):
+                attr.parent = None  # clear parent first to prevent recursion
+                attr.control.delete()
+
         self.node.delete()
         if self.editor: self.editor.deleteLater()
         self.canvas.setFocus()
@@ -317,7 +330,6 @@ class TextLabelControl(NodeControl):
 ################################################################################
 
 def make_node_widgets(canvas):
-    import node.base
 
     children = {}
     for n in node.base.nodes:
@@ -334,5 +346,5 @@ def make_node_widgets(canvas):
 
 
 from ui.editor import MakeEditor
-
+import node.base
 
