@@ -105,12 +105,13 @@ class ChildPointControl(PointControl):
         super(ChildPointControl, self).__init__(canvas, target)
         self.parent_node = parent_node
 
-    def mousePressEvent(self, event):
-        """ Delete the parent as well on a right-click event.
+    def delete(self):
+        """ Deletes the parent, then itself.
+            (passes itself to parent's delete call to avoid
+             double-deleting itself)
         """
-        if event.button() == QtCore.Qt.RightButton:
-            self.parent_node.control.delete(self)
-        super(ChildPointControl, self).mousePressEvent(event)
+        self.parent_node.control.delete(self)
+        super(ChildPointControl, self).delete()
 
 ################################################################################
 

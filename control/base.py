@@ -33,6 +33,8 @@ class NodeControl(QtGui.QWidget):
     def delete(self):
         """ Cleanly deletes both abstract and UI representations.
         """
+        # Release the mouse (just in case)
+        self.releaseMouse()
         # Delete connection widgets
         for t, d in self.node.datums:
             for c in d.connections():
@@ -169,11 +171,16 @@ class DragManager(QtCore.QObject):
     def mouse_press(self, event):
         """ On left mouse press, start dragging if it hits the mask.
         """
+        mode = QtGui.QApplication.instance().mode
         if ((self.mask is None or self.mask.contains(event.pos())) and
             event.button() == QtCore.Qt.LeftButton):
+
+            if mode == 'move':
                 self.drag = True
                 self.parent.update()
-                return True
+            elif mode == 'delete':
+                self.parent.delete()
+            return True
         return False
 
     def mouse_release(self, event):

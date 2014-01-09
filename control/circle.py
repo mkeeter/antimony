@@ -35,10 +35,6 @@ class CircleControl(base.NodeControl):
         self.show()
         self.raise_()
 
-    def mousePressEvent(self, event):
-        if event.button() == QtCore.Qt.RightButton:
-            self.delete()
-
 
     def ring_path(self, offset=QtCore.QPoint()):
         """ Returns a painter path that draws the ring
