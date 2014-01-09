@@ -46,9 +46,9 @@ class Button(QtGui.QWidget):
         else:
             painter.setBrush(QtGui.QBrush(QtGui.QColor(255, 255, 255, 50)))
         if self.selected:
-            painter.setPen(QtGui.QPen(QtGui.QColor(255, 255, 255, 200), 4))
+            painter.setPen(QtGui.QPen(QtGui.QColor(255, 255, 255, 200), 5))
         else:
-            painter.setPen(QtGui.QPen(QtGui.QColor(255, 255, 255, 150), 4))
+            painter.setPen(QtGui.QPen(QtGui.QColor(255, 255, 255, 100), 4))
         painter.drawRect(self.rect())
 
 class AddButton(Button):
