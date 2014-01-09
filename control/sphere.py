@@ -50,12 +50,18 @@ class SphereControl(base.NodeControl):
         self.drag_control.mask = self.center_mask
         self.radius_drag.mask = self.wireframe_mask
 
+
     def wireframe_path(self, offset=QtCore.QPoint()):
-        center = QtGui.QVector3D(self.position)
-        points = [center + QtGui.QVector3D(math.cos(i/32.*math.pi*2)*self.r,
-                                           math.sin(i/32.*math.pi*2)*self.r, 0)
-                  for i in range(33)]
-        return self.draw_lines([points], offset)
+        """ Draws a circle, projected to be facing the camera.
+        """
+        m = QtGui.QMatrix4x4()
+        m.rotate(-math.degrees(self.canvas.yaw), QtGui.QVector3D(0, 0, 1))
+        m.rotate(-math.degrees(self.canvas.pitch), QtGui.QVector3D(1, 0, 0))
+        lines = [m * QtGui.QVector3D(math.cos(i/32.*math.pi*2)*self.r,
+                                     math.sin(i/32.*math.pi*2)*self.r, 0)
+                + self.position
+                 for i in range(33)]
+        return self.draw_lines([lines], offset)
 
     def sync(self):
 
