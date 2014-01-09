@@ -20,11 +20,8 @@ class CircleControl(base.NodeControl):
         """
         super(CircleControl, self).__init__(canvas, target)
 
-        self.dragging = False
-        self.drag_r  = False
-
-        self.hover_pt = False
-        self.hover_r  = False
+        self.drag_control = base.DragXY(self)
+        self.ring_drag_control = base.DragManager(self, self.drag_ring)
 
         # Cached values (used if the node's values are invalid)
         self.position = QtCore.QPointF()
@@ -38,41 +35,6 @@ class CircleControl(base.NodeControl):
         self.show()
         self.raise_()
 
-    def mousePressEvent(self, event):
-        if event.button() == QtCore.Qt.RightButton:
-            self.delete()
-        elif event.button() == QtCore.Qt.LeftButton:
-            self.mouse_pos = self.mapToParent(event.pos())
-            if self.center_mask.contains(event.pos()):
-                self.dragging = True
-            else:
-                self.drag_r = True
-
-    def mouseMoveEvent(self, event):
-        p = self.mapToParent(event.pos())
-        if self.dragging or self.drag_r:
-            v = self.canvas.drag_vector(self.mouse_pos, p)
-            if self.dragging:
-                self.drag_center(v)
-            elif self.drag_r:
-                pos = self.canvas.pixel_to_unit(p)
-                self.drag_ring(pos, v)
-        elif not self.hover_pt and self.center_mask.contains(event.pos()):
-            self.hover_pt = True
-            self.update()
-        elif not self.hover_r and self.ring_mask.contains(event.pos()):
-            self.hover_r = True
-            self.update()
-        self.mouse_pos = p
-
-    def drag_center(self, v):
-        """ Drag this node by attempting to change its x and y coordinates
-            dx and dy should be floating-point values.
-        """
-        if self.node._x.simple():
-            self.node._x.set_expr(str(float(self.node._x.get_expr()) + v.x()))
-        if self.node._y.simple():
-            self.node._y.set_expr(str(float(self.node._y.get_expr()) + v.y()))
 
     def ring_path(self, offset=QtCore.QPoint()):
         """ Returns a painter path that draws the ring
@@ -85,7 +47,7 @@ class CircleControl(base.NodeControl):
         return self.draw_lines([points], offset)
 
 
-    def drag_ring(self, p, v):
+    def drag_ring(self, v, p):
         """ Drags the ring to expand or contract it.
             p is the drag position.
             v is the drag vector.
@@ -101,20 +63,6 @@ class CircleControl(base.NodeControl):
         self.node._r.set_expr(str(float(self.node._r.get_expr()) + dr))
 
 
-    def mouseDoubleClickEvent(self, event):
-        if event.button() == QtCore.Qt.LeftButton:
-            self.open_editor()
-
-    def mouseReleaseEvent(self, event):
-        if event.button() == QtCore.Qt.LeftButton:
-            self.dragging = False
-            self.drag_r = False
-
-    def leaveEvent(self, event):
-        self.hover_pt = False
-        self.hover_r = False
-        self.update()
-
     def make_masks(self):
         for n in ['center','ring']:
             func = getattr(self, 'draw_' + n)
@@ -129,6 +77,9 @@ class CircleControl(base.NodeControl):
             setattr(self, n + '_mask', QtGui.QRegion(bitmap))
 
         self.setMask(self.center_mask.united(self.ring_mask))
+
+        self.drag_control.mask = self.center_mask
+        self.ring_drag_control.mask = self.ring_mask
 
 
     def sync(self):
@@ -181,9 +132,9 @@ class CircleControl(base.NodeControl):
             painter.setBrush(QtGui.QBrush(QtGui.QColor(*colors.light_grey)))
             painter.setPen(QtGui.QPen(QtGui.QColor(*colors.dark_grey), 2))
 
-        if mask:                                d = 22
-        elif self.hover_pt or self.dragging:    d = 20
-        else:                                   d = 14
+        if mask:                                                    d = 22
+        elif self.drag_control.hover or self.drag_control.drag:     d = 20
+        else:                                                       d = 14
 
         painter.drawEllipse((width - d) / 2, (height - d) / 2, d, d)
 
@@ -194,9 +145,12 @@ class CircleControl(base.NodeControl):
         if self.r <= 0:     return
         path = self.ring_path(self.pos())
 
-        if mask:                            r = 6
-        elif self.hover_r or self.drag_r:   r = 4
-        else:                               r = 2
+        if mask:
+            r = 6
+        elif self.ring_drag_control.hover or self.ring_drag_control.drag:
+            r = 4
+        else:
+            r = 2
 
         if mask:
             painter.setBrush(QtGui.QBrush())

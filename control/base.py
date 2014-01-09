@@ -33,6 +33,8 @@ class NodeControl(QtGui.QWidget):
     def delete(self):
         """ Cleanly deletes both abstract and UI representations.
         """
+        # Release the mouse (just in case)
+        self.releaseMouse()
         # Delete connection widgets
         for t, d in self.node.datums:
             for c in d.connections():
@@ -99,78 +101,150 @@ class NodeControl(QtGui.QWidget):
 
 ################################################################################
 
-class DraggableNodeControl(NodeControl):
-    def __init__(self, canvas, node):
-        super(DraggableNodeControl, self).__init__(canvas, node)
+class DragManager(QtCore.QObject):
+    def __init__(self, parent, callback, mask=None):
+        super(DragManager, self).__init__()
+        self.parent = parent
+        self.callback  = callback
+        self.mask = mask
 
         self.mouse_pos = QtCore.QPoint()
-        self.dragging = False
-        self.hovering = False
+        self.drag = False
+        self.hover = False
 
-    def hit(self, pos):
-        """ Checks to see if the given position is a hit that should
-            drag or delete the widget.  Overload in child classes.
+        self.parent.installEventFilter(self)
+
+
+    def eventFilter(self, object, event):
+        if object == self.parent:
+            if event.type() == QtCore.QEvent.MouseButtonPress:
+                return self.mouse_press(event)
+            elif event.type() == QtCore.QEvent.MouseMove:
+                return self.mouse_move(event)
+            elif event.type() == QtCore.QEvent.Leave:
+                return self.mouse_leave(event)
+            elif event.type() == QtCore.QEvent.MouseButtonRelease:
+                return self.mouse_release(event)
+            elif event.type() == QtCore.QEvent.MouseButtonDblClick:
+                return self.mouse_doubleClick(event)
+        return False
+
+
+    def mouse_move(self, event):
+        """ When the mouse moves, store the updated mouse position
+            (in canvas pixel coordinates) and update drag / hover as needed.
+
+            Returns True if something changed, False otherwise.
         """
-        return True
+        pos = event.pos()
+        changed = False
+        pos_global = self.parent.mapToParent(pos)
 
-    def mousePressEvent(self, event):
-        """ On a mouse press that hits the node's core, delete or drag
-            the node (for right and left click respectively).
+        # If we're dragging, then do so
+        if self.drag:
+            v = self.parent.canvas.drag_vector(self.mouse_pos, pos_global)
+            p = self.parent.canvas.pixel_to_unit(pos_global)
+            self.callback(v, p)
+            changed = True
+
+        # If the mouse is above this object, then hover on
+        elif self.mask is None or self.mask.contains(pos):
+            if not self.hover:
+                self.hover = True
+                changed = True
+
+        # Otherwise hover off
+        else:
+            if self.hover:
+                self.hover = False
+                changed = True
+
+        # Store mouse position (for dragging calculations)
+        self.mouse_pos = pos_global
+        if changed:     self.parent.update()
+
+        # Return True if this event caused something to change;
+        # false otherwise
+        return changed
+
+
+    def mouse_press(self, event):
+        """ On left mouse press, start dragging if it hits the mask.
         """
-        if not self.hit(event.pos()):
-            return
-        elif event.button() == QtCore.Qt.RightButton:
-            self.delete()
-        elif event.button() == QtCore.Qt.LeftButton:
-            self.mouse_pos = self.mapToParent(event.pos())
-            self.dragging = True
+        mode = QtGui.QApplication.instance().mode
+        if ((self.mask is None or self.mask.contains(event.pos())) and
+            event.button() == QtCore.Qt.LeftButton):
 
-    def mouseDoubleClickEvent(self, event):
-        """ On a double-click that hits the node's core, open an editor.
+            if mode == 'move':
+                self.drag = True
+                self.parent.update()
+            elif mode == 'delete':
+                self.parent.delete()
+            return True
+        return False
+
+    def mouse_release(self, event):
+        """ On left mouse release, stop dragging and eat the event
+            if we were previous dragging.
         """
-        if self.hit(event.pos()) and event.button() == QtCore.Qt.LeftButton:
-            self.open_editor()
+        self.parent.releaseMouse()
+        if self.drag and event.button() == QtCore.Qt.LeftButton:
+            self.drag = False
+            self.parent.update()
+            return True
+        return False
 
-    def mouseReleaseEvent(self, event):
-        """ On a left-button release event, stop dragging.
+    def mouse_leave(self, event):
+        """ On mouse leave, stop hovering
+            (but don't eat the event).
         """
-        if event.button() == QtCore.Qt.LeftButton:
-            self.dragging = False
-            self.releaseMouse()
+        if self.hover:
+            self.hover = False
+            self.parent.update()
+        return False
 
-    def mouseMoveEvent(self, event):
-        """ When the mouse is moved, update self.mouse_pos and drag the
-            widget using self.drag (which must be defined in child classes).
-        """
-        p = self.mapToParent(event.pos())
-        if self.dragging:
-            self.drag(self.canvas.drag_vector(self.mouse_pos, p))
-        elif self.hovering != self.hit(event.pos()):
-            self.hovering = self.hit(event.pos())
-            self.update()
-        self.mouse_pos = p
+    def mouse_doubleClick(self, event):
+        if event.button() == QtCore.Qt.LeftButton and (
+                self.mask is None or self.mask.contains(event.pos())):
+            self.parent.open_editor()
+            return True
+        return False
 
-    def leaveEvent(self, event):
-        """ When the mouse leaves the widget, set hovering to False.
-        """
-        if self.hovering:
-            self.hovering = False
-            self.update()
 
-    def drag(self, v):
+class DragXY(DragManager):
+    def __init__(self, parent, mask=None):
+        super(DragXY, self).__init__(parent, self.dragXY, mask)
+
+    def dragXY(self, v, p):
         """ Drag this node by attempting to change its x and y coordinates
-            dx and dy should be floating-point values.
         """
-        if self.node._x.simple():
-            self.node._x.set_expr(str(float(self.node._x.get_expr()) + v.x()))
-        if self.node._y.simple():
-            self.node._y.set_expr(str(float(self.node._y.get_expr()) + v.y()))
-        if hasattr(self.node, '_z') and self.node._z.simple():
-            self.node._z.set_expr(str(float(self.node._z.get_expr()) + v.z()))
+        if self.parent.node._x.simple():
+            self.parent.node._x.set_expr(
+                    str(float(self.parent.node._x.get_expr()) + v.x()))
+        if self.parent.node._y.simple():
+            self.parent.node._y.set_expr(
+                    str(float(self.parent.node._y.get_expr()) + v.y()))
+
+class DragXYZ(DragManager):
+    def __init__(self, parent, mask=None):
+        super(DragXYZ, self).__init__(parent, self.dragXYZ, mask)
+
+    def dragXYZ(self, v, p):
+        """ Drag this node by attempting to change its x, y, and z coordinates
+        """
+        if self.parent.node._x.simple():
+            self.parent.node._x.set_expr(
+                    str(float(self.parent.node._x.get_expr()) + v.x()))
+        if self.parent.node._y.simple():
+            self.parent.node._y.set_expr(
+                    str(float(self.parent.node._y.get_expr()) + v.y()))
+        if self.parent.node._z.simple():
+            self.parent.node._z.set_expr(
+                    str(float(self.parent.node._z.get_expr()) + v.z()))
 
 ################################################################################
 
-class TextLabelControl(DraggableNodeControl):
+class TextLabelControl(NodeControl):
     """ Represents a draggable label floating in space.
         Must be attached to a node with x and y (float) datums.
     """
@@ -179,6 +253,7 @@ class TextLabelControl(DraggableNodeControl):
 
         self.text = text
         self.font = QtGui.QFont()
+        self.drag_control = DragXYZ(self)
 
         fm = QtGui.QFontMetrics(self.font)
         rect = fm.boundingRect(self.text)
@@ -224,7 +299,7 @@ class TextLabelControl(DraggableNodeControl):
     def paint(self, painter):
         painter = QtGui.QPainter(self)
         painter.setPen(QtGui.QColor(*colors.blue))
-        if self.dragging or self.hovering:
+        if self.drag_control.drag or self.drag_control.hover:
             painter.setBrush(QtGui.QColor(*(colors.blue + (150,))))
         else:
             painter.setBrush(QtGui.QColor(*(colors.blue + (100,))))

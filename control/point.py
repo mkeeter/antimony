@@ -3,7 +3,7 @@ from PySide import QtCore, QtGui
 import base
 import colors
 
-class PointControl(base.DraggableNodeControl):
+class PointControl(base.NodeControl):
 
     @classmethod
     def new(cls, canvas, x, y, z, scale):
@@ -16,6 +16,8 @@ class PointControl(base.DraggableNodeControl):
     def __init__(self, canvas, target):
         super(PointControl, self).__init__(canvas, target)
         self.setFixedSize(30, 30)
+
+        self.drag_control = base.DragXY(self)
 
         self.editor_datums = ['name','x','y']
 
@@ -60,9 +62,12 @@ class PointControl(base.DraggableNodeControl):
             painter.setBrush(QtGui.QBrush(QtGui.QColor(*colors.light_grey)))
             painter.setPen(QtGui.QPen(QtGui.QColor(*colors.dark_grey), 2))
 
-        if mask:                                d = 22
-        elif self.hovering or self.dragging:    d = 20
-        else:                                   d = 14
+        if mask:
+            d = 22
+        elif self.drag_control.hover or self.drag_control.drag:
+            d = 20
+        else:
+            d = 14
 
         painter.drawEllipse((width - d) / 2, (height - d) / 2, d, d)
 
@@ -77,6 +82,7 @@ class PointControl(base.DraggableNodeControl):
         self.paint(painter, True)
         painter.end()
 
+        self.drag_control.mask = QtGui.QRegion(bitmap)
         self.setMask(bitmap)
 
     def get_input_pos(self):
@@ -99,12 +105,13 @@ class ChildPointControl(PointControl):
         super(ChildPointControl, self).__init__(canvas, target)
         self.parent_node = parent_node
 
-    def mousePressEvent(self, event):
-        """ Delete the parent as well on a right-click event.
+    def delete(self):
+        """ Deletes the parent, then itself.
+            (passes itself to parent's delete call to avoid
+             double-deleting itself)
         """
-        if event.button() == QtCore.Qt.RightButton:
-            self.parent_node.control.delete(self)
-        super(ChildPointControl, self).mousePressEvent(event)
+        self.parent_node.control.delete(self)
+        super(ChildPointControl, self).delete()
 
 ################################################################################
 
@@ -121,6 +128,8 @@ class Point3DControl(PointControl):
     def __init__(self, canvas, target):
         super(PointControl, self).__init__(canvas, target)
         self.setFixedSize(30, 30)
+
+        self.drag_control = base.DragXYZ(self)
 
         self.editor_datums = ['name','x','y','z']
 

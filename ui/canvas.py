@@ -77,10 +77,13 @@ class Canvas(QtGui.QWidget):
         ctrl = constructor(self, x, y, z, scale)
 
         # Start dragging this control if possible.
-        if hasattr(ctrl, 'dragging') and hasattr(ctrl, 'mouse_pos'):
-            ctrl.dragging = True
-            ctrl.mouse_pos = point
-            ctrl.grabMouse()
+        for d in dir(ctrl):
+            d = getattr(ctrl, d)
+            if isinstance(d, DragXY) or isinstance(d, DragXYZ):
+                d.drag = True
+                d.mouse_pos = point
+                ctrl.grabMouse()
+                break
 
 
     def mousePressEvent(self, event):
@@ -334,7 +337,7 @@ class Canvas(QtGui.QWidget):
 
 ################################################################################
 
-from control.base import NodeControl
+from control.base import NodeControl, DragXY, DragXYZ
 from fab.expression import Expression
 
 from node.datum import ExpressionFunctionDatum

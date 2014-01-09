@@ -29,7 +29,8 @@ class ConnectionControl(QtGui.QWidget):
     def mousePressEvent(self, event):
         """ On right-click, delete the connection primitive and this widget.
         """
-        if event.button() == QtCore.Qt.RightButton:
+        mode = QtGui.QApplication.instance().mode
+        if event.button() == QtCore.Qt.LeftButton and mode == 'delete':
             self.connection.delete()
             self.deleteLater()
 
