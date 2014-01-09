@@ -180,6 +180,7 @@ class DragManager(QtCore.QObject):
         """ On left mouse release, stop dragging and eat the event
             if we were previous dragging.
         """
+        self.parent.releaseMouse()
         if self.drag and event.button() == QtCore.Qt.LeftButton:
             self.drag = False
             self.parent.update()
