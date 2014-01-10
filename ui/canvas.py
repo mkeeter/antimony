@@ -52,7 +52,7 @@ class Canvas(QtGui.QWidget):
                  ("Point (2D)", PointControl),
                  ("Point (3D)", Point3DControl),
                  ("Sphere", SphereControl),
-                 ("Cube", CubeControl), None,
+                 ("Rectangular prism", CubeControl), None,
                  ("Union", UnionControl),
                  ("Intersection", IntersectionControl),
                  ("Cutout", CutoutControl), None,
