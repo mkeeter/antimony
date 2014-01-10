@@ -81,7 +81,6 @@ class CubeControl(base.NodeControl):
                        self.node.b.control.sync()])
 
         rect = self.wireframe_path().boundingRect().toRect()
-        print rect
         rect.setTop(rect.top() - 5)
         rect.setBottom(rect.bottom() + 5)
         rect.setLeft(rect.left() - 5)
@@ -119,7 +118,6 @@ class CubeControl(base.NodeControl):
                      self.node.b.control.position)/2)
                 - self.pos())
         x, y = pos.x(), pos.y()
-        print pos
         if mask:
             painter.setBrush(QtGui.QBrush(QtCore.Qt.color1))
             painter.setPen(QtGui.QPen(QtCore.Qt.color1, 2))
