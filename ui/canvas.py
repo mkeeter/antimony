@@ -51,7 +51,8 @@ class Canvas(QtGui.QWidget):
                  ("Circle", CircleControl),
                  ("Point (2D)", PointControl),
                  ("Point (3D)", Point3DControl),
-                 ("Sphere", SphereControl), None,
+                 ("Sphere", SphereControl),
+                 ("Cube", CubeControl), None,
                  ("Union", UnionControl),
                  ("Intersection", IntersectionControl),
                  ("Cutout", CutoutControl), None,
@@ -348,6 +349,7 @@ from fab.expression import Expression
 from node.datum import ExpressionFunctionDatum
 
 from control.point import PointControl, Point3DControl
+from control.cube import CubeControl
 from control.sphere import SphereControl
 from control.circle import CircleControl
 from control.triangle import TriangleControl

@@ -37,12 +37,15 @@ class PointControl(base.NodeControl):
         try:    y = self.node.y
         except: y = self.position.y()
 
+        changed = self.position != QtCore.QPointF(x, y)
+
         pos = self.canvas.unit_to_pixel(x, y)
         self.move(pos.x() - self.width()/2, pos.y() - self.height()/2)
 
         self.position = QtCore.QPointF(x, y)
 
         super(PointControl, self).sync()
+        return changed
 
 
     def paintEvent(self, paintEvent):
@@ -108,12 +111,14 @@ class Point3DControl(PointControl):
         return cls(canvas, p)
 
     def __init__(self, canvas, target):
+        self.position = QtGui.QVector3D()
+
         super(PointControl, self).__init__(canvas, target)
         self.setFixedSize(30, 30)
 
         self.drag_control = base.DragXYZ(self)
-
         self.editor_datums = ['name','x','y','z']
+
 
         self.make_mask()
         self.sync()
@@ -134,12 +139,15 @@ class Point3DControl(PointControl):
         try:    z = self.node.z
         except: z = self.position.z()
 
+        changed = self.position != QtGui.QVector3D(x, y, z)
+
         pos = self.canvas.unit_to_pixel(x, y, z)
         self.move(pos.x() - self.width()/2, pos.y() - self.height()/2)
 
         self.position = QtGui.QVector3D(x, y, z)
 
         super(PointControl, self).sync()
+        return changed
 
 
 from node.base import get_name
