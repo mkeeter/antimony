@@ -20,9 +20,7 @@ class TriangleControl(base.NodeControl):
 
 
     def __init__(self, canvas, target):
-        """ Construct the triangle control widget, creating
-            helper ChildPointControl widgets for each of the triangle's
-            vertices.
+        """ Construct the triangle control widget
         """
         self.position = QtCore.QPointF()
         self.point_nodes = [target.a, target.b, target.c]
@@ -53,13 +51,11 @@ class TriangleControl(base.NodeControl):
         bitmap = QtGui.QBitmap(self.size())
         bitmap.clear()
 
-        # We'll store the center as the clickable mask region, but
-        # also include the triangle in the mask (so that it gets drawn)
+        # We'll store the center as the clickable mask region
         painter.begin(bitmap)
         self.draw_center(painter, mask=True)
-        self.drag_control.mask = QtGui.QRegion(bitmap)
-        self.draw_triangle(painter, mask=True)
         painter.end()
+        self.drag_control.mask = QtGui.QRegion(bitmap)
 
 
     def drag(self, v, p):
