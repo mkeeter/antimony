@@ -88,6 +88,7 @@ class TriangleControl(base.NodeControl):
         if changed:
             self.make_mask()
             self.update()
+        return changed
 
 
     def paintEvent(self, paintEvent):

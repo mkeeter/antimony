@@ -37,12 +37,13 @@ class PointControl(base.NodeControl):
         try:    y = self.node.y
         except: y = self.position.y()
 
-        changed = self.position != QtCore.QPointF(x, y)
+        p = QtCore.QPointF(x, y)
+        changed = (self.position != p)
 
         pos = self.canvas.unit_to_pixel(x, y)
         self.move(pos.x() - self.width()/2, pos.y() - self.height()/2)
 
-        self.position = QtCore.QPointF(x, y)
+        self.position = p
 
         return changed
 
@@ -138,12 +139,13 @@ class Point3DControl(PointControl):
         try:    z = self.node.z
         except: z = self.position.z()
 
-        changed = self.position != QtGui.QVector3D(x, y, z)
+        v = QtGui.QVector3D(x, y, z)
+        changed = (self.position != v)
 
         pos = self.canvas.unit_to_pixel(x, y, z)
         self.move(pos.x() - self.width()/2, pos.y() - self.height()/2)
 
-        self.position = QtGui.QVector3D(x, y, z)
+        self.position = v
 
         return changed
 

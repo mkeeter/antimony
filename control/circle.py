@@ -93,11 +93,12 @@ class CircleControl(base.NodeControl):
         try:    r = self.node.r
         except: r = self.r
 
+        p = QtCore.QPointF(x, y)
         # Figure out if these fundamental values have changed
-        changed = self.position != QtCore.QPointF(x, y) or self.r != r
+        changed = (self.position != p) or (self.r != r)
 
         # Cache these values
-        self.position = QtCore.QPointF(x, y)
+        self.position = p
         self.r = r
 
         # Get bounding box from painter path
@@ -114,6 +115,8 @@ class CircleControl(base.NodeControl):
         if changed:
             self.make_masks()
             self.update()
+
+        return changed
 
 
     def draw_center(self, painter, mask=False):

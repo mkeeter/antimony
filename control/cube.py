@@ -74,8 +74,7 @@ class CubeControl(base.NodeControl):
             [v(x0, y1, z1), v(x1, y1, z1)]], offset)
 
     def _sync(self):
-        """ Updates self.corner{1,2} from nodes and calls update if
-            anything has changed requiring a refresh.
+        """ Updates children nodes, then updates self.
         """
         changed = any([self.node.a.control.sync(),
                        self.node.b.control.sync()])

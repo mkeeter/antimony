@@ -109,6 +109,7 @@ class SphereControl(base.NodeControl):
         if changed:
             self.make_masks()
             self.update()
+        return changed
 
     def draw_center(self, painter, mask=False):
         """ Draws a circle at the center of the widget.

@@ -296,10 +296,14 @@ class TextLabelControl(NodeControl):
         try:    z = self.node.z
         except: z = self.position.z()
 
-        pos = self.canvas.unit_to_pixel(x, y, z)
+        v = QtGui.QVector3D(x, y, z)
+        changed = (v != self.position)
+
+        pos = self.canvas.unit_to_pixel(v)
         self.move(pos.x(), pos.y())
 
-        self.position = QtGui.QVector3D(x, y, z)
+        self.position = v
+        return changed
 
     def paintEvent(self, paintEvent):
         """ On paint event, paint oneself.
