@@ -76,9 +76,13 @@ class CubeControl(base.NodeControl):
     def _sync(self):
         """ Updates children nodes, then updates self.
         """
-        changed = any([self.node.a.control.sync(),
-                       self.node.b.control.sync()])
+        return any([self.node.a.control.sync(),
+                    self.node.b.control.sync()])
 
+
+    def reposition(self):
+        """ Repositions this node and calls self.update
+        """
         rect = self.wireframe_path().boundingRect().toRect()
         rect.setTop(rect.top() - 5)
         rect.setBottom(rect.bottom() + 5)
@@ -89,8 +93,6 @@ class CubeControl(base.NodeControl):
 
         self.make_mask()
         self.update()
-
-        return changed
 
     def paintEvent(self, paintEvent):
         """ Paints this widget when necessary.

@@ -84,16 +84,12 @@ class CircleControl(base.NodeControl):
         """ Move and scale this control to the appropriate position.
             Use self.position and self.r if eval fails.
         """
-        try:    x = self.node.x
-        except: x = self.position.x()
+        p = QtCore.QPointF(
+                self.node.x if self.node._x.valid() else self.position.x(),
+                self.node.y if self.node._y.valid() else self.position.y())
 
-        try:    y = self.node.y
-        except: y = self.position.y()
+        r = self.node.r if self.node._r.valid() else self.r
 
-        try:    r = self.node.r
-        except: r = self.r
-
-        p = QtCore.QPointF(x, y)
         # Figure out if these fundamental values have changed
         changed = (self.position != p) or (self.r != r)
 
@@ -101,6 +97,11 @@ class CircleControl(base.NodeControl):
         self.position = p
         self.r = r
 
+        return changed
+
+    def reposition(self):
+        """ Repositions the node and calls self.update
+        """
         # Get bounding box from painter path
         rect = self.ring_path().boundingRect().toRect()
         rect.setTop(rect.top() - 5)
@@ -108,16 +109,9 @@ class CircleControl(base.NodeControl):
         rect.setLeft(rect.left() - 5)
         rect.setRight(rect.right() + 5)
 
-        # Check whether any render information has changed.
-        changed |= self.geometry() != rect
         self.setGeometry(rect)
-
-        if changed:
-            self.make_masks()
-            self.update()
-
-        return changed
-
+        self.make_masks()
+        self.update()
 
     def draw_center(self, painter, mask=False):
         """ Draws a circle at the center of the widget.

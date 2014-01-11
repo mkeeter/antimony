@@ -20,6 +20,7 @@ class PointControl(base.NodeControl):
         self.drag_control = base.DragXY(self)
 
         self.editor_datums = ['name','x','y']
+        self.position = QtCore.QPointF()
 
         self.make_mask()
         self.sync()
@@ -31,22 +32,18 @@ class PointControl(base.NodeControl):
         """ Move this control to the appropriate position.
             Use self.position (cached) if eval fails.
         """
-        try:    x = self.node.x
-        except: x = self.position.x()
+        p = QtCore.QPointF(
+                self.node.x if self.node._x.valid() else self.position.x(),
+                self.node.y if self.node._y.valid() else self.position.y())
 
-        try:    y = self.node.y
-        except: y = self.position.y()
-
-        p = QtCore.QPointF(x, y)
         changed = (self.position != p)
-
-        pos = self.canvas.unit_to_pixel(x, y)
-        self.move(pos.x() - self.width()/2, pos.y() - self.height()/2)
-
         self.position = p
 
         return changed
 
+    def reposition(self):
+        self.move(self.canvas.unit_to_pixel(self.position) -
+                  QtCore.QPoint(self.width(), self.height())/2)
 
     def paintEvent(self, paintEvent):
         """ On paint event, paint oneself.
@@ -118,6 +115,7 @@ class Point3DControl(PointControl):
 
         self.drag_control = base.DragXYZ(self)
         self.editor_datums = ['name','x','y','z']
+        self.position = QtGui.QVector3D()
 
 
         self.make_mask()
@@ -130,24 +128,19 @@ class Point3DControl(PointControl):
         """ Move this control to the appropriate position.
             Use self.position (cached) if eval fails.
         """
-        try:    x = self.node.x
-        except: x = self.position.x()
+        v = QtGui.QVector3D(
+                self.node.x if self.node._x.valid() else self.position.x(),
+                self.node.y if self.node._y.valid() else self.position.y(),
+                self.node.z if self.node._z.valid() else self.position.z())
 
-        try:    y = self.node.y
-        except: y = self.position.y()
-
-        try:    z = self.node.z
-        except: z = self.position.z()
-
-        v = QtGui.QVector3D(x, y, z)
         changed = (self.position != v)
-
-        pos = self.canvas.unit_to_pixel(x, y, z)
-        self.move(pos.x() - self.width()/2, pos.y() - self.height()/2)
-
         self.position = v
 
         return changed
+
+    def reposition(self):
+        self.move(self.canvas.unit_to_pixel(self.position) -
+                  QtCore.QPoint(self.width(), self.height())/2)
 
 
 from node.base import get_name

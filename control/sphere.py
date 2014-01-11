@@ -76,26 +76,19 @@ class SphereControl(base.NodeControl):
         return self.draw_lines([lines], offset)
 
     def _sync(self):
+        v = QtGui.QVector3D(
+                self.node.x if self.node._x.valid() else self.position.x(),
+                self.node.y if self.node._y.valid() else self.position.y(),
+                self.node.z if self.node._z.valid() else self.position.z())
 
-        try:    x = self.node.x
-        except: x = self.position.x()
+        r = self.node.r if self.node._r.valid() else self.r
 
-        try:    y = self.node.y
-        except: y = self.position.y()
-
-        try:    z = self.node.z
-        except: z = self.position.z()
-
-        try:    r = self.node.r
-        except: r = self.r
-
-        # Figure out if these fundamental values have changed
-        changed = self.position != QtGui.QVector3D(x, y, z) or self.r != r
-
-        # Cache these values
-        self.position = QtGui.QVector3D(x, y, z)
+        changed = (self.position != v) or (self.r != r)
+        self.position = v
         self.r = r
+        return changed
 
+    def reposition(self):
         rect = self.wireframe_path().boundingRect().toRect()
         rect.setTop(rect.top() - 5)
         rect.setBottom(rect.bottom() + 5)
@@ -103,13 +96,10 @@ class SphereControl(base.NodeControl):
         rect.setRight(rect.right() + 5)
 
         # Check whether any render information has changed.
-        changed |= self.geometry() != rect
         self.setGeometry(rect)
 
-        if changed:
-            self.make_masks()
-            self.update()
-        return changed
+        self.make_masks()
+        self.update()
 
     def draw_center(self, painter, mask=False):
         """ Draws a circle at the center of the widget.

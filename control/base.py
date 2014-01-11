@@ -19,7 +19,8 @@ class NodeControl(QtGui.QWidget):
     def sync(self):
         """ Synchs the editor and all node connections.
         """
-        self._sync()    # defined in subclasses
+        if self._sync():    # defined in subclasses
+            self.reposition()
         if self.editor:                     self.editor.sync()
         for c in self.node.connections():   c.control.sync()
 
@@ -287,23 +288,17 @@ class TextLabelControl(NodeControl):
         """ Move this control to the appropriate position.
             Use self.position (cached) if eval fails.
         """
-        try:    x = self.node.x
-        except: x = self.position.x()
-
-        try:    y = self.node.y
-        except: y = self.position.y()
-
-        try:    z = self.node.z
-        except: z = self.position.z()
-
-        v = QtGui.QVector3D(x, y, z)
+        v = QtGui.QVector3D(
+                self.node.x if self.node._x.valid() else self.position.x(),
+                self.node.y if self.node._y.valid() else self.position.y(),
+                self.node.z if self.node._z.valid() else self.position.z())
         changed = (v != self.position)
-
-        pos = self.canvas.unit_to_pixel(v)
-        self.move(pos.x(), pos.y())
-
         self.position = v
+
         return changed
+
+    def reposition(self):
+        self.move(self.canvas.unit_to_pixel(self.position))
 
     def paintEvent(self, paintEvent):
         """ On paint event, paint oneself.
