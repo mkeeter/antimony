@@ -19,10 +19,9 @@ class NodeControl(QtGui.QWidget):
     def sync(self):
         """ Synchs the editor and all node connections.
         """
-        if self.editor:
-            self.editor.sync()
-        for c in self.node.connections():
-            c.control.sync()
+        self._sync()    # defined in subclasses
+        if self.editor:                     self.editor.sync()
+        for c in self.node.connections():   c.control.sync()
 
     def contextMenuEvent(self, event):
         """ Ignore context menu events so that these widgets
@@ -284,7 +283,7 @@ class TextLabelControl(NodeControl):
                 QtCore.QPoint(self.width(), self.height()))
 
 
-    def sync(self):
+    def _sync(self):
         """ Move this control to the appropriate position.
             Use self.position (cached) if eval fails.
         """
@@ -301,8 +300,6 @@ class TextLabelControl(NodeControl):
         self.move(pos.x(), pos.y())
 
         self.position = QtGui.QVector3D(x, y, z)
-
-        super(TextLabelControl, self).sync()
 
     def paintEvent(self, paintEvent):
         """ On paint event, paint oneself.

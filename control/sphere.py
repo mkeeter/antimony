@@ -75,7 +75,7 @@ class SphereControl(base.NodeControl):
                  for i in range(33)]
         return self.draw_lines([lines], offset)
 
-    def sync(self):
+    def _sync(self):
 
         try:    x = self.node.x
         except: x = self.position.x()
@@ -109,8 +109,6 @@ class SphereControl(base.NodeControl):
         if changed:
             self.make_masks()
             self.update()
-
-        super(SphereControl, self).sync()
 
     def draw_center(self, painter, mask=False):
         """ Draws a circle at the center of the widget.

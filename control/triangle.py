@@ -63,7 +63,7 @@ class TriangleControl(base.NodeControl):
             pt.control.drag_control.dragXY(v, None)
 
 
-    def sync(self):
+    def _sync(self):
         for pt in self.point_nodes:   pt.control.sync()
 
         # Get bounding box from painter path
@@ -88,8 +88,6 @@ class TriangleControl(base.NodeControl):
         if changed:
             self.make_mask()
             self.update()
-
-        super(TriangleControl, self).sync()
 
 
     def paintEvent(self, paintEvent):

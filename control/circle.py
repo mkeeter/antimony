@@ -80,7 +80,7 @@ class CircleControl(base.NodeControl):
         self.ring_drag_control.mask = self.ring_mask
 
 
-    def sync(self):
+    def _sync(self):
         """ Move and scale this control to the appropriate position.
             Use self.position and self.r if eval fails.
         """
@@ -114,8 +114,6 @@ class CircleControl(base.NodeControl):
         if changed:
             self.make_masks()
             self.update()
-
-        super(CircleControl, self).sync()
 
 
     def draw_center(self, painter, mask=False):

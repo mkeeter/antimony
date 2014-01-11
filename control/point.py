@@ -27,7 +27,7 @@ class PointControl(base.NodeControl):
         self.raise_()
 
 
-    def sync(self):
+    def _sync(self):
         """ Move this control to the appropriate position.
             Use self.position (cached) if eval fails.
         """
@@ -44,7 +44,6 @@ class PointControl(base.NodeControl):
 
         self.position = QtCore.QPointF(x, y)
 
-        super(PointControl, self).sync()
         return changed
 
 
@@ -126,7 +125,7 @@ class Point3DControl(PointControl):
         self.raise_()
 
 
-    def sync(self):
+    def _sync(self):
         """ Move this control to the appropriate position.
             Use self.position (cached) if eval fails.
         """
@@ -146,7 +145,6 @@ class Point3DControl(PointControl):
 
         self.position = QtGui.QVector3D(x, y, z)
 
-        super(PointControl, self).sync()
         return changed
 
 

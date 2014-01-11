@@ -73,7 +73,7 @@ class CubeControl(base.NodeControl):
             [v(x0, y0, z1), v(x1, y0, z1)],
             [v(x0, y1, z1), v(x1, y1, z1)]], offset)
 
-    def sync(self):
+    def _sync(self):
         """ Updates self.corner{1,2} from nodes and calls update if
             anything has changed requiring a refresh.
         """
@@ -91,7 +91,6 @@ class CubeControl(base.NodeControl):
         self.make_mask()
         self.update()
 
-        super(CubeControl, self).sync()
         return changed
 
     def paintEvent(self, paintEvent):
