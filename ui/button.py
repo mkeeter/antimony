@@ -1,12 +1,12 @@
 from PySide import QtCore, QtGui
 
 class Button(QtGui.QWidget):
-    def __init__(self, parent, callback, y_func):
+    def __init__(self, parent, callback, offset):
         super(Button, self).__init__(parent)
         self.setFixedSize(30, 30)
 
         self.callback = callback
-        self.y_func = y_func
+        self.offset = offset
         self.hover = False
         self.selected = False
 
@@ -44,7 +44,7 @@ class Button(QtGui.QWidget):
     def position(self, height):
         """ Moves the button to an appropriate y position.
         """
-        self.move(20, self.y_func(height))
+        self.move(20, (height / 2) + self.offset * (self.height() + 10))
 
     def fill(self, painter):
         if self.hover:

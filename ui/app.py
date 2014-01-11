@@ -43,13 +43,11 @@ class App(QtGui.QApplication):
         self.canvas = canvas.Canvas()
 
         self.add_button = button.AddButton(
-                self.canvas, self.add_object, lambda y: y/2 - 55)
+                self.canvas, self.add_object, -1)
         self.move_button = button.MoveButton(
-                self.canvas, lambda b: self.set_mode(b, 'move'),
-                lambda y: y/2 - 15)
+                self.canvas, lambda b: self.set_mode(b, 'move'), 0)
         self.del_button = button.DelButton(
-                self.canvas, lambda b: self.set_mode(b, 'delete'),
-                lambda y: y/2 + 25)
+                self.canvas, lambda b: self.set_mode(b, 'delete'), 1)
         self.mode = 'move'
         self.move_button.selected = True
 
