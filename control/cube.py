@@ -98,8 +98,8 @@ class CubeControl(base.NodeControl):
         """ Paints this widget when necessary.
         """
         painter = QtGui.QPainter(self)
-        self.draw_center(painter)
         self.draw_wireframe(painter)
+        self.draw_center(painter)
 
     def draw_wireframe(self, painter):
         """ Draws the wireframe for this cube.
@@ -130,6 +130,11 @@ class CubeControl(base.NodeControl):
         else:                                                       d = 16
 
         painter.drawEllipse(x - d/2, y - d/2, d, d)
+        lines = [QtCore.QLine(x-3, y-3, x+3, y-3),
+                 QtCore.QLine(x+3, y-3, x+3, y+3),
+                 QtCore.QLine(x+3, y+3, x-3, y+3),
+                 QtCore.QLine(x-3, y+3, x-3, y-3)]
+        painter.drawLines(lines)
 
 
 from node.point import Point3D
