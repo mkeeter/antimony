@@ -174,7 +174,9 @@ class Canvas(QtGui.QWidget):
         """ Calls sync on all children that have that function.
         """
         for c in self.findChildren(QtGui.QWidget):
-            if hasattr(c, 'sync'):  c.sync()
+            if hasattr(c, 'reposition'):    c.reposition()
+            elif hasattr(c, 'sync'):        c.sync()
+
 
 
     def resizeEvent(self, event):

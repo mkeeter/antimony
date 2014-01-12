@@ -138,6 +138,14 @@ class TriangleControl(base.NodeControl):
                  QtCore.QLine(x+4, y+2, x-4, y+2)]
         painter.drawLines(lines)
 
+    def editor_position(self):
+        """ Returns a QPoint defining the position at which we should
+            open up the editor.
+        """
+        return self.canvas.unit_to_pixel(QtCore.QPointF(
+                sum(pt.control.position.x() for pt in self.point_nodes) / 3.0,
+                sum(pt.control.position.y() for pt in self.point_nodes) / 3.0))
+
 
     def draw(self, painter, mask=False):
         self.draw_triangle(painter, mask)
