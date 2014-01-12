@@ -19,10 +19,10 @@ class NodeControl(QtGui.QWidget):
     def sync(self):
         """ Synchs the editor and all node connections.
         """
-        if self.editor:
-            self.editor.sync()
-        for c in self.node.connections():
-            c.control.sync()
+        if self._sync():    # defined in subclasses
+            self.reposition()
+        if self.editor:                     self.editor.sync()
+        for c in self.node.connections():   c.control.sync()
 
     def contextMenuEvent(self, event):
         """ Ignore context menu events so that these widgets
@@ -284,25 +284,21 @@ class TextLabelControl(NodeControl):
                 QtCore.QPoint(self.width(), self.height()))
 
 
-    def sync(self):
+    def _sync(self):
         """ Move this control to the appropriate position.
             Use self.position (cached) if eval fails.
         """
-        try:    x = self.node.x
-        except: x = self.position.x()
+        v = QtGui.QVector3D(
+                self.node.x if self.node._x.valid() else self.position.x(),
+                self.node.y if self.node._y.valid() else self.position.y(),
+                self.node.z if self.node._z.valid() else self.position.z())
+        changed = (v != self.position)
+        self.position = v
 
-        try:    y = self.node.y
-        except: y = self.position.y()
+        return changed
 
-        try:    z = self.node.z
-        except: z = self.position.z()
-
-        pos = self.canvas.unit_to_pixel(x, y, z)
-        self.move(pos.x(), pos.y())
-
-        self.position = QtGui.QVector3D(x, y, z)
-
-        super(TextLabelControl, self).sync()
+    def reposition(self):
+        self.move(self.canvas.unit_to_pixel(self.position))
 
     def paintEvent(self, paintEvent):
         """ On paint event, paint oneself.

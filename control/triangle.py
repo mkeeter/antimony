@@ -22,8 +22,9 @@ class TriangleControl(base.NodeControl):
     def __init__(self, canvas, target):
         """ Construct the triangle control widget
         """
-        self.position = QtCore.QPointF()
         self.point_nodes = [target.a, target.b, target.c]
+        self.point_positions = [None for pt in self.point_nodes]
+
         super(TriangleControl, self).__init__(canvas, target)
 
         self.drag_control = base.DragManager(self, self.drag)
@@ -63,9 +64,13 @@ class TriangleControl(base.NodeControl):
             pt.control.drag_control.dragXY(v, None)
 
 
-    def sync(self):
-        for pt in self.point_nodes:   pt.control.sync()
+    def _sync(self):
+        changed = any(pt.control.sync() for pt in self.point_nodes)
+        positions = [pt.control.position for pt in self.point_nodes]
+        changed |= (positions != self.point_positions)
+        return changed
 
+    def reposition(self):
         # Get bounding box from painter path
         rect = self.triangle_path().boundingRect().toRect()
         rect.setTop(rect.top() - 5)
@@ -73,23 +78,9 @@ class TriangleControl(base.NodeControl):
         rect.setLeft(rect.left() - 5)
         rect.setRight(rect.right() + 5)
 
-        # Place x and y coordinates at center of triangle
-        x = sum(pt.control.position.x() for pt in self.point_nodes) / 3.0
-        y = sum(pt.control.position.y() for pt in self.point_nodes) / 3.0
-
-        changed = (self.position != QtCore.QPointF(x, y) or
-                   self.geometry() != rect)
-
         self.setGeometry(rect)
-
-        # Cache position here
-        self.position = QtCore.QPointF(x, y)
-
-        if changed:
-            self.make_mask()
-            self.update()
-
-        super(TriangleControl, self).sync()
+        self.make_mask()
+        self.update()
 
 
     def paintEvent(self, paintEvent):
@@ -118,7 +109,10 @@ class TriangleControl(base.NodeControl):
 
 
     def draw_center(self, painter, mask=False):
-        pos = self.canvas.unit_to_pixel(self.position) - self.pos()
+        position = QtCore.QPointF(
+                sum(pt.control.position.x() for pt in self.point_nodes) / 3.0,
+                sum(pt.control.position.y() for pt in self.point_nodes) / 3.0)
+        pos = self.canvas.unit_to_pixel(position) - self.pos()
         x, y = pos.x(), pos.y()
 
         if mask:

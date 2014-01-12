@@ -24,6 +24,8 @@ class CubeControl(base.NodeControl):
         self.drag_control = base.DragManager(self, self.drag)
         self.editor_datums = ['name', 'shape']
 
+        self.corners = [None, None]
+
         self.sync()
         self.make_mask()
 
@@ -73,13 +75,18 @@ class CubeControl(base.NodeControl):
             [v(x0, y0, z1), v(x1, y0, z1)],
             [v(x0, y1, z1), v(x1, y1, z1)]], offset)
 
-    def sync(self):
-        """ Updates self.corner{1,2} from nodes and calls update if
-            anything has changed requiring a refresh.
+    def _sync(self):
+        """ Updates children nodes, then updates self.
         """
-        changed = any([self.node.a.control.sync(),
-                       self.node.b.control.sync()])
+        changed = self.node.a.control.sync() or self.node.b.control.sync()
+        corners = [self.node.a.control.position, self.node.b.control.position]
+        changed |= (corners != self.corners)
+        return changed
 
+
+    def reposition(self):
+        """ Repositions this node and calls self.update
+        """
         rect = self.wireframe_path().boundingRect().toRect()
         rect.setTop(rect.top() - 5)
         rect.setBottom(rect.bottom() + 5)
@@ -90,9 +97,6 @@ class CubeControl(base.NodeControl):
 
         self.make_mask()
         self.update()
-
-        super(CubeControl, self).sync()
-        return changed
 
     def paintEvent(self, paintEvent):
         """ Paints this widget when necessary.
