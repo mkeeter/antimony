@@ -143,6 +143,14 @@ class CubeControl(base.NodeControl):
         painter.drawLines(lines)
 
 
+    def editor_position(self):
+        """ Returns a QPoint defining the position at which we should
+            open up the editor.
+        """
+        return self.canvas.unit_to_pixel(
+                    (self.node.a.control.position +
+                     self.node.b.control.position)/2)
+
 from node.point import Point3D
 from control.point import Point3DControl
 from node.base import get_name
