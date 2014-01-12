@@ -268,6 +268,8 @@ class TextLabelControl(NodeControl):
         self.font = QtGui.QFont()
         self.drag_control = DragXYZ(self)
 
+        self.position = QtGui.QVector3D()
+
         fm = QtGui.QFontMetrics(self.font)
         rect = fm.boundingRect(self.text)
         self.setFixedSize(rect.width() + 20, rect.height() + 20)
