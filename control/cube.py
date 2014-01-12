@@ -24,6 +24,8 @@ class CubeControl(base.NodeControl):
         self.drag_control = base.DragManager(self, self.drag)
         self.editor_datums = ['name', 'shape']
 
+        self.corners = [None, None]
+
         self.sync()
         self.make_mask()
 
@@ -76,8 +78,10 @@ class CubeControl(base.NodeControl):
     def _sync(self):
         """ Updates children nodes, then updates self.
         """
-        return any([self.node.a.control.sync(),
-                    self.node.b.control.sync()])
+        changed = self.node.a.control.sync() or self.node.b.control.sync()
+        corners = [self.node.a.control.position, self.node.b.control.position]
+        changed |= (corners != self.corners)
+        return changed
 
 
     def reposition(self):
