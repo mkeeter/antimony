@@ -26,12 +26,6 @@ class RenderTask(object):
                 self.transform == other[1] and
                 self.resolution == other[2])
 
-    def flatten_matrix(self):
-        """ Flatten out the transform matrix, removing z values.
-        """
-        self.transform.setColumn(2, QtGui.QVector4D(0, 0, 1, 0))
-        self.transform.setRow(2, QtGui.QVector4D(0, 0, 1, 0))
-
     def run(self):
 
         # Transform this image based on our matrix

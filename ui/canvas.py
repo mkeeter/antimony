@@ -208,6 +208,12 @@ class Canvas(QtGui.QWidget):
         M.translate(-self.center)
         return M
 
+    def transform_matrix_2d(self):
+        M = QtGui.QMatrix4x4()
+        M.rotate(math.degrees(self.yaw), QtGui.QVector3D(0, 0, 1))
+        M.translate(-self.center.x(), -self.center.y())
+        return M
+
     def projection_matrix(self):
         """ Convert the OpenGL bounding box into screen coordinates.
         """
@@ -301,11 +307,15 @@ class Canvas(QtGui.QWidget):
         # Check if the last render task is useful; otherwise
         # start a new one at the back of the list
         for d, e in zip(datums, expressions):
+
             # These are the arguments that we'll feed to the constructor.
             # We'll also use them to check whether the render task is the same.
             scale = int((self.pixel_matrix()*QtGui.QVector3D(1, 0, 0)).x() -
                         (self.pixel_matrix()*QtGui.QVector3D(0, 0, 0)).x())
-            args = (e, self.transform_matrix(), scale, self.update)
+            args = (e,
+                    self.transform_matrix() if e.has_xyz_bounds()
+                    else self.transform_matrix_2d(),
+                    scale, self.update)
 
             if d in self.render_tasks and self.render_tasks[d][-1] == args:
                 continue
@@ -325,7 +335,7 @@ class Canvas(QtGui.QWidget):
         for tasks in self.render_tasks.itervalues():
             for t in tasks[::-1]:
                 if t.qimage:
-                    #t.qimage.save("image.png")
+                    t.qimage.save("image.png")
                     painter.drawImage(self.get_bounding_rect(t.transformed),
                                       t.qimage, t.qimage.rect())
                     break
