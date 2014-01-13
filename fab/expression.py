@@ -158,8 +158,8 @@ class Expression(object):
             Returns xmin, xmax, ymin, ymax, zmin, zmax
         """
         x = interval.Interval(self.xmin, self.xmax)
-        y = interval.Interval(self.xmin, self.xmax)
-        z = interval.Interval(self.xmin, self.xmax)
+        y = interval.Interval(self.ymin, self.ymax)
+        z = interval.Interval(self.zmin, self.zmax)
 
         if X:   a = X.to_tree().eval_i(x, y, z)
         else:   a = interval.Interval(float('-inf'), float('+inf'))
@@ -171,8 +171,8 @@ class Expression(object):
         else:   c = interval.Interval(float('-inf'), float('+inf'))
 
         for i in [a, b, c]:
-            if math.isnan(a.lower):  a.lower = float('-inf')
-            if math.isnan(a.upper):  a.upper = float('+inf')
+            if math.isnan(i.lower):  i.lower = float('-inf')
+            if math.isnan(i.upper):  i.upper = float('+inf')
 
         return a.lower, a.upper, b.lower, b.upper, c.lower, c.upper
 
