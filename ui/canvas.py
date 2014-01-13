@@ -302,15 +302,17 @@ class Canvas(QtGui.QWidget):
         # Check if the last render task is useful; otherwise
         # start a new one at the back of the list
         for d, e in zip(datums, expressions):
-            if d in self.render_tasks and self.render_tasks[d][-1] == e:
+            # These are the arguments that we'll feed to the constructor.
+            # We'll also use them to check whether the render task is the same.
+            args = (e, QtGui.QMatrix4x4(),
+                    self.pixel_matrix(), self.update)
+            if d in self.render_tasks and self.render_tasks[d][-1] == args:
                 continue
             else:
                 # Make a new empty list
                 if not d in self.render_tasks:  self.render_tasks[d] = []
                 # Then append a new task to the end of it
-                self.render_tasks[d].append(
-                        RenderTask(e, self.transform_matrix(),
-                                   self.pixel_matrix(), self.update))
+                self.render_tasks[d].append(RenderTask(*args))
 
 
     def draw_expressions(self, painter):
@@ -323,7 +325,7 @@ class Canvas(QtGui.QWidget):
             for t in tasks[::-1]:
                 if t.qimage:
                     t.qimage.save("image.png")
-                    painter.drawImage(self.get_bounding_rect(t.expression),
+                    painter.drawImage(self.get_bounding_rect(t.transformed),
                                       t.qimage, t.qimage.rect())
                     break
         painter.setCompositionMode(comp)
@@ -340,7 +342,7 @@ class Canvas(QtGui.QWidget):
                 if (isinstance(datum, ExpressionFunctionDatum) and
                         not datum.connections() and datum.valid()):
                     e = datum.value()
-                    if e.has_xy_bounds():
+                    if e.has_xyz_bounds():
                         expressions.append((datum,e))
         return expressions
 

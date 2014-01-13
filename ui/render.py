@@ -22,16 +22,16 @@ class RenderTask(object):
         self.thread.start()
 
     def __eq__(self, other):
-        return (self.expression == other.expression and
-                self.transform == other.transform and
-                self.screen == other.screen)
+        return (self.expression == other[0] and
+                self.transform == other[1] and
+                self.screen == other[2])
 
     def run(self):
 
         # Transform this image based on our matrix
-        transformed = self.expression.transform(self.transform.inverted()[0],
-                                                self.transform)
-        tree = transformed.to_tree()
+        self.transformed = self.expression.transform(self.transform.inverted()[0],
+                                                     self.transform)
+        tree = self.transformed.to_tree()
         self.image = tree.render(10)
 
         # Translate to 8-bit greyscale
