@@ -71,7 +71,7 @@ class Canvas(QtGui.QWidget):
         point = self.mapFromGlobal(QtGui.QCursor.pos())
         pos = self.pixel_to_unit(point)
         x, y, z  = pos.x(), pos.y(), pos.z()
-        scale = self.pixel_to_unit(x=point.x() + 50) - x
+        scale = (self.pixel_to_unit(point.x() + 50, point.y()) - pos).length()
 
         # Call the constructor, making a control
         ctrl = constructor(self, x, y, z, scale)
