@@ -5,7 +5,7 @@ import numpy as np
 
 class RenderTask(object):
 
-    MAX_ITERATION = 10
+    MAX_ITERATION = 4
 
     def __init__(self, expression, transform, resolution, callback):
         """ Creates a render task.
