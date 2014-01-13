@@ -131,6 +131,34 @@ class Expression(object):
                 (Z.math if Z else ' ')+
                 self.math)
 
+    def transform(self, M, M_i):
+        """ Applies a matrix transformation to our coordinates.
+            M and M_inverse should be a matrix and its inverse which support
+            M[0,0]-style indexing.
+        """
+        x, y, z = Expression('X'), Expression('Y'), Expression('Z')
+        e = self.map(X=M[0,0]*x + M[0,1]*y + M[0,2]*z + M[0,3],
+                     Y=M[1,0]*x + M[1,1]*y + M[1,2]*z + M[1,3],
+                     Z=M[2,0]*x + M[2,1]*y + M[2,2]*z + M[2,3])
+        e.set_bounds(*self.remap_bounds(
+                X=M_i[0,0]*x + M_i[0,1]*y + M_i[0,2]*z + M_i[0,3],
+                Y=M_i[1,0]*x + M_i[1,1]*y + M_i[1,2]*z + M_i[1,3],
+                Z=M_i[2,0]*x + M_i[2,1]*y + M_i[2,2]*z + M_i[2,3]))
+        return e
+
+    def transformXY(self, M, M_i):
+        """ Applies a matrix transformation to our coordinates,
+            ignoring all z transformations.
+            M and M_inverse should be a matrix and its inverse which support
+            M[0,0]-style indexing.
+        """
+        x, y, z = Expression('X'), Expression('Y'), Expression('Z')
+        e = self.map(X=M[0,0]*x + M[0,1]*y + M[0,3],
+                     Y=M[1,0]*x + M[1,1]*y + M[1,3])
+        e.set_bounds(*self.remap_bounds(
+                X=M_i[0,0]*x + M_i[0,1]*y + M_i[0,3],
+                Y=M_i[1,0]*x + M_i[1,1]*y + M_i[1,3]))
+        return e
 
     @wrapped
     def remap_bounds(self, X=None, Y=None, Z=None):
@@ -143,8 +171,8 @@ class Expression(object):
             Returns xmin, xmax, ymin, ymax, zmin, zmax
         """
         x = interval.Interval(self.xmin, self.xmax)
-        y = interval.Interval(self.xmin, self.xmax)
-        z = interval.Interval(self.xmin, self.xmax)
+        y = interval.Interval(self.ymin, self.ymax)
+        z = interval.Interval(self.zmin, self.zmax)
 
         if X:   a = X.to_tree().eval_i(x, y, z)
         else:   a = interval.Interval(float('-inf'), float('+inf'))
@@ -156,8 +184,8 @@ class Expression(object):
         else:   c = interval.Interval(float('-inf'), float('+inf'))
 
         for i in [a, b, c]:
-            if math.isnan(a.lower):  a.lower = float('-inf')
-            if math.isnan(a.upper):  a.upper = float('+inf')
+            if math.isnan(i.lower):  i.lower = float('-inf')
+            if math.isnan(i.upper):  i.upper = float('+inf')
 
         return a.lower, a.upper, b.lower, b.upper, c.lower, c.upper
 

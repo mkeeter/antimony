@@ -147,8 +147,7 @@ class Canvas(QtGui.QWidget):
         # Start expressions rendering (asynchronously)
         # (not strictly part of the paint process, but I'm putting it here
         #  so that it gets called whenever anything changes)
-        pix_per_unit = self.unit_to_pixel(1) - self.unit_to_pixel(0)
-        self.render_expressions(pix_per_unit)
+        self.render_expressions()
 
         painter = QtGui.QPainter(self)
         painter.setBackground(QtGui.QColor(0, 0, 0))
@@ -193,7 +192,7 @@ class Canvas(QtGui.QWidget):
         M = QtGui.QMatrix4x4()
         M.translate(self.width()/2, self.height()/2)
         M.scale(min(self.width(), self.height()) / 2)
-        M.scale(1, -1)
+        M.scale(self.scale, -self.scale)
         return M
 
 
@@ -204,10 +203,23 @@ class Canvas(QtGui.QWidget):
 
         # Remember that these operations are applied back-asswards.
         M = QtGui.QMatrix4x4()
-        M.scale(self.scale)
         M.rotate(math.degrees(self.pitch), QtGui.QVector3D(1, 0, 0))
         M.rotate(math.degrees(self.yaw), QtGui.QVector3D(0, 0, 1))
         M.translate(-self.center)
+        return M
+
+    def transform_matrix_2d(self):
+        M = QtGui.QMatrix4x4()
+        M.rotate(math.degrees(self.yaw), QtGui.QVector3D(0, 0, 1))
+        M.translate(-self.center.x(), -self.center.y())
+        return M
+
+    def transform_matrix_tilt(self):
+        """ Returns the component of the transform matrix that
+            causes shapes to be tilted.
+        """
+        M = QtGui.QMatrix4x4()
+        M.rotate(math.degrees(self.pitch), QtGui.QVector3D(1, 0, 0))
         return M
 
     def projection_matrix(self):
@@ -256,11 +268,16 @@ class Canvas(QtGui.QWidget):
         """ For a given expression, finds a bounding rectangle
             (to draw that expression's image).
         """
-        c1 = self.unit_to_pixel(expression.xmin, expression.ymin)
-        xmin, ymax = c1.x(), c1.y()
-        c2 = self.unit_to_pixel(expression.xmax, expression.ymax)
-        xmax, ymin = c2.x(), c2.y()
-        return QtCore.QRect(xmin, ymin, xmax-xmin, ymax-ymin)
+        if expression.has_xyz_bounds(): M = QtGui.QMatrix4x4()
+        else:                           M = self.transform_matrix_tilt()
+
+        c1 = self.pixel_matrix() * M * QtGui.QVector3D(
+                expression.xmin, expression.ymin,
+                expression.zmin if not math.isinf(expression.zmin) else 0)
+        c2 = self.pixel_matrix() * M * QtGui.QVector3D(
+                expression.xmax, expression.ymax,
+                expression.zmax if not math.isinf(expression.zmax) else 0)
+        return QtCore.QRect(c1.x(), c2.y(), c2.x() - c1.x(), c1.y() - c2.y())
 
 
     def find_input(self, pos):
@@ -274,7 +291,7 @@ class Canvas(QtGui.QWidget):
         return None
 
 
-    def render_expressions(self, pix_per_unit):
+    def render_expressions(self):
         """ Starts render tasks for all new expressions that don't already
             have render tasks.
         """
@@ -288,28 +305,38 @@ class Canvas(QtGui.QWidget):
         # Remove all but the most recent image for render tasks
         # with datums that are present, or all images for render
         # tasks without a currently active datum
-        to_delete = []
         for k in self.render_tasks:
-            delete = k not in datums
-            while (len(self.render_tasks[k]) > (0 if delete else 1) and
+            # Attempt to join each thread, saving 1 render task if the
+            # datum is still present (since we'll be drawing that image).
+            while (len(self.render_tasks[k]) > (1 if k in datums else 0) and
                    self.render_tasks[k][0].join()):
                 self.render_tasks[k] = self.render_tasks[k][1:]
-            if not self.render_tasks[k]:
-                to_delete.append(k)
-        for k in to_delete:
-            del(self.render_tasks[k])
+
+        # Delete any dictionary entries with empty lists
+        self.render_tasks = {
+                k:self.render_tasks[k] for k in self.render_tasks
+                if self.render_tasks[k]}
 
         # Check if the last render task is useful; otherwise
         # start a new one at the back of the list
         for d, e in zip(datums, expressions):
-            if (d in self.render_tasks and
-                self.render_tasks[d][-1].expression == e and
-                self.render_tasks[d][-1].resolution == pix_per_unit):
+
+            # These are the arguments that we'll feed to the constructor.
+            # We'll also use them to check whether the render task is the same.
+            scale = int((self.pixel_matrix()*QtGui.QVector3D(1, 0, 0)).x() -
+                        (self.pixel_matrix()*QtGui.QVector3D(0, 0, 0)).x())
+            args = (e,
+                    self.transform_matrix() if e.has_xyz_bounds()
+                    else self.transform_matrix_2d(),
+                    scale, self.update)
+
+            if d in self.render_tasks and self.render_tasks[d][-1] == args:
                 continue
             else:
-                self.render_tasks[d] = (
-                        self.render_tasks.get(d, []) +
-                        [RenderTask(e, pix_per_unit, self.update)])
+                # Make a new empty list
+                if not d in self.render_tasks:  self.render_tasks[d] = []
+                # Then append a new task to the end of it
+                self.render_tasks[d].append(RenderTask(*args))
 
 
     def draw_expressions(self, painter):
@@ -322,7 +349,7 @@ class Canvas(QtGui.QWidget):
             for t in tasks[::-1]:
                 if t.qimage:
                     t.qimage.save("image.png")
-                    painter.drawImage(self.get_bounding_rect(t.expression),
+                    painter.drawImage(self.get_bounding_rect(t.transformed),
                                       t.qimage, t.qimage.rect())
                     break
         painter.setCompositionMode(comp)
