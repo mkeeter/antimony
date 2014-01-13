@@ -159,7 +159,7 @@ def scale_x(part, x0, sx):
                     if x0 else '/Xf%g' % sx)
 
     # X  = (X'-x0)*sx + x0
-    p.set_bounds(*part.remap_bounds(X='+f%(x0))g*f%(sx)g-Xf%(x0)g' % locals()
+    p.set_bounds(*part.remap_bounds(X='+f%(x0)g*f%(sx)g-Xf%(x0)g' % locals()
                                     if x0 else '*Xf%g' % sx))
     return p
 
@@ -169,7 +169,7 @@ def scale_y(part, y0, sy):
                     if y0 else '/Yf%g' % sy)
 
     # Y  = (Y'-y0)*sy + y0
-    p.set_bounds(*part.remap_bounds(Y='+f%(y0))g*f%(sy)g-Yf%(y0)g' % locals()
+    p.set_bounds(*part.remap_bounds(Y='+f%(y0)g*f%(sy)g-Yf%(y0)g' % locals()
                                     if y0 else '*Yf%g' % sy))
     return p
 
