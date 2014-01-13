@@ -16,6 +16,7 @@ class Canvas(QtGui.QWidget):
         self.scale = 0.01
 
         self.dragging = False
+        self.spinning = False
         self.mouse_pos = QtCore.QPointF(self.width()/2, self.height()/2)
 
         self.render_tasks = {}
@@ -41,9 +42,6 @@ class Canvas(QtGui.QWidget):
             self.yaw -= math.pi/32
         self.sync_all_children()
         self.update()
-
-    def contextMenuEvent(self, event):
-        self.openMenuAt(event.pos())
 
     def openMenuAt(self, point):
         menu = QtGui.QMenu()
@@ -99,9 +97,11 @@ class Canvas(QtGui.QWidget):
     def mousePressEvent(self, event):
         """ Starts dragging if the left button is pressed.
         """
+        self.mouse_pos = event.pos()
         if event.button() == QtCore.Qt.LeftButton:
-            self.mouse_pos = event.pos()
             self.dragging = True
+        elif event.button() == QtCore.Qt.RightButton:
+            self.spinning = True
 
 
     def mouseMoveEvent(self, event):
@@ -111,6 +111,9 @@ class Canvas(QtGui.QWidget):
         if self.dragging:
             delta = self.pixel_to_unit(p) - self.pixel_to_unit(self.mouse_pos)
             self.drag(-delta.x(), -delta.y(), -delta.z())
+        elif self.spinning:
+            self.spin(0.01 * (p.x() - self.mouse_pos.x()),
+                      0.01 * (p.y() - self.mouse_pos.y()))
         self.mouse_pos = p
 
 
@@ -132,6 +135,8 @@ class Canvas(QtGui.QWidget):
         """
         if event.button() == QtCore.Qt.LeftButton:
             self.dragging = False
+        elif event.button() == QtCore.Qt.RightButton:
+            self.spinning = False
 
 
     def drag(self, dx, dy, dz):
@@ -142,6 +147,13 @@ class Canvas(QtGui.QWidget):
         self.update()
         self.sync_all_children()
 
+    def spin(self, dyaw, dpitch):
+        """ Spins us around in 3D.
+        """
+        self.pitch = min(math.pi, max(-math.pi, self.pitch + dpitch))
+        self.yaw   += dyaw
+        self.update()
+        self.sync_all_children()
 
     def paintEvent(self, paintEvent):
         """ Paints rendered expressions and the canvas axes.
