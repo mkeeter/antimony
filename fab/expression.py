@@ -96,6 +96,8 @@ class Expression(object):
         e.xmax = min(self.xmax, rhs.xmax)
         e.ymin = max(self.ymin, rhs.ymin)
         e.ymax = min(self.ymax, rhs.ymax)
+        e.zmin = max(self.zmin, rhs.zmin)
+        e.zmax = min(self.zmax, rhs.zmax)
         return e
     @wrapped
     def __rand__(self, rhs):
@@ -104,6 +106,8 @@ class Expression(object):
         e.xmax = min(lhs.xmax, self.xmax)
         e.ymin = max(lhs.ymin, self.ymin)
         e.ymax = min(lhs.ymax, self.ymax)
+        e.zmin = max(lhs.zmin, self.zmin)
+        e.zmax = min(lhs.zmax, self.zmax)
         return e
 
     # Logical union
@@ -114,6 +118,8 @@ class Expression(object):
         e.xmax = max(self.xmax, rhs.xmax)
         e.ymin = min(self.ymin, rhs.ymin)
         e.ymax = max(self.ymax, rhs.ymax)
+        e.zmin = min(self.zmin, rhs.zmin)
+        e.zmax = max(self.zmax, rhs.zmax)
         return e
     @wrapped
     def __ror__(self, rhs):
@@ -122,6 +128,8 @@ class Expression(object):
         e.xmax = max(lhs.xmax, self.xmax)
         e.ymin = min(lhs.ymin, self.ymin)
         e.ymax = max(lhs.ymax, self.ymax)
+        e.zmin = min(lhs.zmin, self.zmin)
+        e.zmax = max(lhs.zmax, self.zmax)
         return e
 
     @wrapped
