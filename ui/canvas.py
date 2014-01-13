@@ -326,6 +326,9 @@ class Canvas(QtGui.QWidget):
                    self.render_tasks[k][0].join()):
                 self.render_tasks[k] = self.render_tasks[k][1:]
 
+            # Attempt to join the last thread if we're keeping it.
+            if k in datums:     self.render_tasks[k][-1].join()
+
         # Delete any dictionary entries with empty lists
         self.render_tasks = {
                 k:self.render_tasks[k] for k in self.render_tasks
@@ -345,6 +348,8 @@ class Canvas(QtGui.QWidget):
                     scale, self.update)
 
             if d in self.render_tasks and self.render_tasks[d][-1] == args:
+                if self.render_tasks[d][-1].can_refine():
+                    self.render_tasks[d][-1].refine()
                 continue
             else:
                 # Make a new empty list

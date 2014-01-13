@@ -4,6 +4,9 @@ from PySide import QtGui
 import numpy as np
 
 class RenderTask(object):
+
+    MAX_ITERATION = 10
+
     def __init__(self, expression, transform, resolution, callback):
         """ Creates a render task.
             'expression' is an Expression object.
@@ -14,6 +17,8 @@ class RenderTask(object):
         self.transform = transform
         self.resolution = resolution
         self.callback = callback
+
+        self.iteration = 0
 
         self.qimage = None
 
@@ -36,8 +41,28 @@ class RenderTask(object):
             self.transformed = self.expression.transformXY(
                     self.transform.inverted()[0], self.transform)
 
-        tree = self.transformed.to_tree()
-        self.image = tree.render(self.resolution)
+        self.tree = self.transformed.to_tree()
+
+        self._refine()
+
+    def refine(self):
+        self.thread = threading.Thread(target=self._refine)
+        self.thread.daemon = True
+        self.thread.start()
+
+    def get_resolution(self):
+        dx = self.transformed.xmax - self.transformed.xmin
+        dy = self.transformed.ymax - self.transformed.ymin
+        dz = self.transformed.zmax - self.transformed.zmin
+        # Linear interpolation between these two resolutions
+        bottom = 16 / min(dx, dy, dz)
+        top = self.resolution
+        i = self.iteration / float(self.MAX_ITERATION+1)
+        return top*i + bottom*(1-i)
+
+
+    def _refine(self):
+        self.image = self.tree.render(self.get_resolution())
 
         # Translate to 8-bit greyscale
         scaled = np.array(self.image.array >> 8, dtype=np.uint8)
@@ -56,13 +81,22 @@ class RenderTask(object):
         # Then call the callback (which updates rendering)
         self.callback()
 
+        if self.iteration < self.MAX_ITERATION:     self.iteration += 1
+
+    def can_refine(self):
+        return self.thread is None and self.iteration < self.MAX_ITERATION
+
     def join(self):
         """ Attempts to join the thread.
             Has no effect if the thread is already done running.
         """
         if self.thread:
             self.thread.join(0)
-            return not self.thread.isAlive()
+            if not self.thread.isAlive():
+                self.thread = None
+                return True
+            else:
+                return False
         return True
 
 
