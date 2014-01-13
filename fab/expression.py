@@ -17,16 +17,21 @@ class Expression(object):
     """
 
     def __init__(self, math):
-
-        if type(math) in [int, float]:
+        if math is None:
+            self.math = 'f1.0'
+        elif type(math) in [int, float]:
             self.math = 'f%s' % math
         elif type(math) is str:
             self.math = math
         else:
             raise TypeError("Cannot construct a Expression from '%s'" % math)
 
-        self.xmin = self.ymin = self.zmin = float('-infinity')
-        self.xmax = self.ymax = self.zmax = float('+infinity')
+        if self.math is None:
+            self.xmin = self.ymin = self.zmin = -1
+            self.xmax = self.ymax = self.zmax = 1
+        else:
+            self.xmin = self.ymin = self.zmin = float('-infinity')
+            self.xmax = self.ymax = self.zmax = float('+infinity')
 
     def __eq__(self, other):
         return all(getattr(self, a) == getattr(other, a) for a in

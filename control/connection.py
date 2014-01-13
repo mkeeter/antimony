@@ -15,10 +15,21 @@ class ConnectionControl(QtGui.QWidget):
         self.drag_pos = self.get_origin()
         self.hovering_over = None
         self.color = colors.get_color(self.connection.source.type)
+        self.hover = True
 
         self.sync()
 
         self.show()
+
+    def enterEvent(self, event):
+        if not self.hover:
+            self.hover = True
+            self.update()
+
+    def leaveEvent(self, event):
+        if self.hover:
+            self.hover = False
+            self.update()
 
     def contextMenuEvent(self, event):
         """ Ignore context menu events so that these widgets
@@ -144,6 +155,8 @@ class ConnectionControl(QtGui.QWidget):
             color = QtCore.Qt.color1
         elif self.hovering_over is False:
             color = QtGui.QColor(*colors.red)
+        elif self.hover:
+            color = QtGui.QColor(*colors.highlight(self.color))
         else:
             color = QtGui.QColor(*self.color)
 

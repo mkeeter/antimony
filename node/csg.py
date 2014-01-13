@@ -9,8 +9,8 @@ class Union(base.Node):
         self.add_datum('y', datum.FloatDatum(self, y))
         self.add_datum('z', datum.FloatDatum(self, z))
 
-        self.add_datum('A', datum.ExpressionDatum(self, "'f1'"))
-        self.add_datum('B', datum.ExpressionDatum(self, "'f1'"))
+        self.add_datum('A', datum.ExpressionDatum(self, "None"))
+        self.add_datum('B', datum.ExpressionDatum(self, "None"))
 
         self.add_datum('shape',
                         datum.ExpressionFunctionDatum(self, 'make_shape'))
@@ -38,8 +38,8 @@ class Intersection(base.Node):
         self.add_datum('y', datum.FloatDatum(self, y))
         self.add_datum('z', datum.FloatDatum(self, z))
 
-        self.add_datum('A', datum.ExpressionDatum(self, "'f1'"))
-        self.add_datum('B', datum.ExpressionDatum(self, "'f1'"))
+        self.add_datum('A', datum.ExpressionDatum(self, "None"))
+        self.add_datum('B', datum.ExpressionDatum(self, "None"))
 
         self.add_datum('shape',
                         datum.ExpressionFunctionDatum(self, 'make_shape'))
@@ -67,8 +67,8 @@ class Cutout(base.Node):
         self.add_datum('y', datum.FloatDatum(self, y))
         self.add_datum('z', datum.FloatDatum(self, z))
 
-        self.add_datum('A', datum.ExpressionDatum(self, "'f1'"))
-        self.add_datum('B', datum.ExpressionDatum(self, "'f1'"))
+        self.add_datum('A', datum.ExpressionDatum(self, "None"))
+        self.add_datum('B', datum.ExpressionDatum(self, "None"))
 
         self.add_datum('shape',
                         datum.ExpressionFunctionDatum(self, 'make_shape'))

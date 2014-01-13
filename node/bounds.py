@@ -9,7 +9,7 @@ class GetBounds(base.Node):
         self.add_datum('y', datum.FloatDatum(self, y))
         self.add_datum('z', datum.FloatDatum(self, z))
 
-        self.add_datum('input', datum.ExpressionDatum(self, 'f1'))
+        self.add_datum('input', datum.ExpressionDatum(self, "None"))
 
         for i in 'xmin','ymin','zmin','xmax','ymax','zmax':
             self.add_datum(i, datum.FloatFunctionDatum(self, i))
@@ -27,7 +27,7 @@ class SetBounds(base.Node):
         self.add_datum('y', datum.FloatDatum(self, y))
         self.add_datum('z', datum.FloatDatum(self, z))
 
-        self.add_datum('input', datum.ExpressionDatum(self, 'f1'))
+        self.add_datum('input', datum.ExpressionDatum(self, "None"))
 
         for i in 'xmin','ymin','zmin','xmax','ymax','zmax':
             self.add_datum(i, datum.FloatDatum(self, 0))
