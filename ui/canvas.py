@@ -303,8 +303,9 @@ class Canvas(QtGui.QWidget):
         for d, e in zip(datums, expressions):
             # These are the arguments that we'll feed to the constructor.
             # We'll also use them to check whether the render task is the same.
-            args = (e, self.transform_matrix(),
-                    self.unit_to_pixel(1) - self.unit_to_pixel(0), self.update)
+            scale = int((self.pixel_matrix()*QtGui.QVector3D(1, 0, 0)).x() -
+                        (self.pixel_matrix()*QtGui.QVector3D(0, 0, 0)).x())
+            args = (e, self.transform_matrix(), scale, self.update)
 
             if d in self.render_tasks and self.render_tasks[d][-1] == args:
                 continue
