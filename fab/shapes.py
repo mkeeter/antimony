@@ -179,8 +179,8 @@ def scale_z(part, z0, sz):
                     if z0 else '/Zf%g' % sz)
 
     # Z  = (Z'-z0)*sz + z0
-    p.set_bounds(*part.map_bounds(Z='+f%(z0)g*f%(sz)g-Zf%(z0)g' % locals()
-                                  if z0 else '*Zf%g' % sz))
+    p.set_bounds(*part.remap_bounds(Z='+f%(z0)g*f%(sz)g-Zf%(z0)g' % locals()
+                                    if z0 else '*Zf%g' % sz))
     return p
 
 def scale_xy(part, x0, y0, sxy):
@@ -332,15 +332,6 @@ def reflect_xz(part):
 def reflect_yz(part):
     p = part.map(Y='Z', Z='Y')
     p.set_bounds(*part.remap_bounds(Y='Z', Z='Y'))
-    return p
-
-################################################################################
-
-def scale_z(part, z0, sz):
-    p = part.map(Z='+f%(z0)g/-Zf%(z0)gf%(sz)g' % locals()
-                    if z0 else '/Zf%g' % sz)
-    p.set_bounds(*part.remap_bounds(Z='+f%(z0))g*f%(sz)g-Zf%(z0)g' % locals()
-                                    if z0 else '*Zf%g' % sz))
     return p
 
 ################################################################################
