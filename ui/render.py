@@ -36,9 +36,6 @@ class RenderTask(object):
             self.transformed = self.expression.transformXY(
                     self.transform.inverted()[0], self.transform)
 
-        print self.transformed.xmin, self.transformed.xmax
-        print self.transformed.ymin, self.transformed.ymax
-        print self.transformed.zmin, self.transformed.zmax
         tree = self.transformed.to_tree()
         self.image = tree.render(self.resolution)
 

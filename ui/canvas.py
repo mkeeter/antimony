@@ -214,6 +214,14 @@ class Canvas(QtGui.QWidget):
         M.translate(-self.center.x(), -self.center.y())
         return M
 
+    def transform_matrix_tilt(self):
+        """ Returns the component of the transform matrix that
+            causes shapes to be tilted.
+        """
+        M = QtGui.QMatrix4x4()
+        M.rotate(math.degrees(self.pitch), QtGui.QVector3D(1, 0, 0))
+        return M
+
     def projection_matrix(self):
         """ Convert the OpenGL bounding box into screen coordinates.
         """
@@ -260,10 +268,15 @@ class Canvas(QtGui.QWidget):
         """ For a given expression, finds a bounding rectangle
             (to draw that expression's image).
         """
-        c1 = self.pixel_matrix() * QtGui.QVector3D(
-                expression.xmin, expression.ymin, expression.zmin)
-        c2 = self.pixel_matrix() * QtGui.QVector3D(
-                expression.xmax, expression.ymax, expression.zmax)
+        if expression.has_xyz_bounds(): M = QtGui.QMatrix4x4()
+        else:                           M = self.transform_matrix_tilt()
+
+        c1 = self.pixel_matrix() * M * QtGui.QVector3D(
+                expression.xmin, expression.ymin,
+                expression.zmin if not math.isinf(expression.zmin) else 0)
+        c2 = self.pixel_matrix() * M * QtGui.QVector3D(
+                expression.xmax, expression.ymax,
+                expression.zmax if not math.isinf(expression.zmax) else 0)
         return QtCore.QRect(c1.x(), c2.y(), c2.x() - c1.x(), c1.y() - c2.y())
 
 
