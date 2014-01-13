@@ -192,7 +192,7 @@ class Canvas(QtGui.QWidget):
         M = QtGui.QMatrix4x4()
         M.translate(self.width()/2, self.height()/2)
         M.scale(min(self.width(), self.height()) / 2)
-        M.scale(1, -1)
+        M.scale(self.scale, -self.scale)
         return M
 
 
@@ -203,7 +203,6 @@ class Canvas(QtGui.QWidget):
 
         # Remember that these operations are applied back-asswards.
         M = QtGui.QMatrix4x4()
-        M.scale(self.scale)
         M.rotate(math.degrees(self.pitch), QtGui.QVector3D(1, 0, 0))
         M.rotate(math.degrees(self.yaw), QtGui.QVector3D(0, 0, 1))
         M.translate(-self.center)
@@ -255,11 +254,11 @@ class Canvas(QtGui.QWidget):
         """ For a given expression, finds a bounding rectangle
             (to draw that expression's image).
         """
-        c1 = self.unit_to_pixel(expression.xmin, expression.ymin)
-        xmin, ymax = c1.x(), c1.y()
-        c2 = self.unit_to_pixel(expression.xmax, expression.ymax)
-        xmax, ymin = c2.x(), c2.y()
-        return QtCore.QRect(xmin, ymin, xmax-xmin, ymax-ymin)
+        c1 = self.pixel_matrix() * QtGui.QVector3D(
+                expression.xmin, expression.ymin, expression.zmin)
+        c2 = self.pixel_matrix() * QtGui.QVector3D(
+                expression.xmax, expression.ymax, expression.zmax)
+        return QtCore.QRect(c1.x(), c2.y(), c2.x() - c1.x(), c1.y() - c2.y())
 
 
     def find_input(self, pos):
@@ -304,7 +303,7 @@ class Canvas(QtGui.QWidget):
         for d, e in zip(datums, expressions):
             # These are the arguments that we'll feed to the constructor.
             # We'll also use them to check whether the render task is the same.
-            args = (e, QtGui.QMatrix4x4(),
+            args = (e, self.transform_matrix(),
                     self.pixel_matrix(), self.update)
             if d in self.render_tasks and self.render_tasks[d][-1] == args:
                 continue
@@ -324,7 +323,7 @@ class Canvas(QtGui.QWidget):
         for tasks in self.render_tasks.itervalues():
             for t in tasks[::-1]:
                 if t.qimage:
-                    t.qimage.save("image.png")
+                    #t.qimage.save("image.png")
                     painter.drawImage(self.get_bounding_rect(t.transformed),
                                       t.qimage, t.qimage.rect())
                     break

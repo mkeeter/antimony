@@ -32,7 +32,7 @@ class RenderTask(object):
         self.transformed = self.expression.transform(self.transform.inverted()[0],
                                                      self.transform)
         tree = self.transformed.to_tree()
-        self.image = tree.render(10)
+        self.image = tree.render(1)
 
         # Translate to 8-bit greyscale
         scaled = np.array(self.image.array >> 8, dtype=np.uint8)
