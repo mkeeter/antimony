@@ -65,8 +65,9 @@ class Canvas(QtGui.QWidget):
             else:           actions[menu.addAction(i[0])] = i[1].new
 
         # Open up the menu at the given point and get a constructor back.
-        constructor = actions.get(menu.exec_(self.mapToGlobal(point)),
-                                  lambda *args: None)
+        result = menu.exec_(self.mapToGlobal(point))
+        if result is None:  return False
+        constructor = actions[result]
 
         # Figure out constructor parameters (from cursor position)
         point = self.mapFromGlobal(QtGui.QCursor.pos())
@@ -92,6 +93,7 @@ class Canvas(QtGui.QWidget):
             dm.drag = True
             dm.mouse_pos = point
             ctrl.grabMouse()
+        return True
 
 
     def mousePressEvent(self, event):

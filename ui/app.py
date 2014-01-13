@@ -57,7 +57,8 @@ class App(QtGui.QApplication):
         """ Opens up a menu to add objects
             (centered on the given button).
         """
-        self.canvas.openMenuAt(button.geometry().center())
+        if not self.canvas.openMenuAt(button.geometry().center()):
+            return
         self.mode = 'move'
         if not self.move_button.selected:
             self.move_button.selected = True
