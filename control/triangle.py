@@ -55,8 +55,11 @@ class TriangleControl(base.NodeControl):
         # We'll store the center as the clickable mask region
         painter.begin(bitmap)
         self.draw_center(painter, mask=True)
-        painter.end()
         self.drag_control.mask = QtGui.QRegion(bitmap)
+        self.draw_triangle(painter, mask=True)
+        painter.end()
+
+        self.setMask(bitmap)
 
 
     def drag(self, v, p):

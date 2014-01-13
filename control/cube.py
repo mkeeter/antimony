@@ -48,8 +48,11 @@ class CubeControl(base.NodeControl):
 
         painter.begin(bitmap)
         self.draw_center(painter, mask=True)
-        painter.end()
         self.drag_control.mask = QtGui.QRegion(bitmap)
+        self.draw_wireframe(painter, mask=True)
+        painter.end()
+
+        self.setMask(bitmap)
 
     def drag(self, v, p):
         """ Call the drag methods of all child points.
@@ -107,11 +110,14 @@ class CubeControl(base.NodeControl):
         self.draw_wireframe(painter)
         self.draw_center(painter)
 
-    def draw_wireframe(self, painter):
+    def draw_wireframe(self, painter, mask=False):
         """ Draws the wireframe for this cube.
         """
         painter.setBrush(QtGui.QBrush())
-        painter.setPen(QtGui.QPen(QtGui.QColor(*colors.light_grey), 2))
+        if mask:
+            painter.setPen(QtGui.QPen(QtCore.Qt.color1, 2))
+        else:
+            painter.setPen(QtGui.QPen(QtGui.QColor(*colors.light_grey), 2))
         p = self.wireframe_path(self.pos())
         painter.drawPath(p)
 

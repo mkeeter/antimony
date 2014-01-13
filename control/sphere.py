@@ -61,6 +61,7 @@ class SphereControl(base.NodeControl):
             setattr(self, n+'_mask', QtGui.QRegion(bitmap))
         self.drag_control.mask = self.center_mask
         self.radius_drag.mask = self.wireframe_mask
+        self.setMask(self.center_mask | self.wireframe_mask)
 
 
     def wireframe_path(self, offset=QtCore.QPoint()):

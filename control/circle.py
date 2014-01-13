@@ -78,6 +78,7 @@ class CircleControl(base.NodeControl):
 
         self.drag_control.mask = self.center_mask
         self.ring_drag_control.mask = self.ring_mask
+        self.setMask(self.center_mask | self.ring_mask)
 
 
     def _sync(self):
