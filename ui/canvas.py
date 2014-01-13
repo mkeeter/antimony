@@ -235,6 +235,7 @@ class Canvas(QtGui.QWidget):
         """
         M = QtGui.QMatrix4x4()
         M.rotate(math.degrees(self.pitch), QtGui.QVector3D(1, 0, 0))
+        M.translate(0, 0, -self.center.z())
         return M
 
     def projection_matrix(self):
