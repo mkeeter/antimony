@@ -58,6 +58,13 @@ class NodeControl(QtGui.QWidget):
         self.canvas.setFocus()
         self.deleteLater()
 
+    def release(self):
+        self.releaseMouse()
+        for d in dir(self):
+            if isinstance(getattr(self,d), DragManager):
+                getattr(self, d).drag = False
+        self.update()
+
     def open_editor(self):
         """ Opens / closes the editor.
         """
@@ -200,10 +207,8 @@ class DragManager(QtCore.QObject):
         """ On left mouse release, stop dragging and eat the event
             if we were previous dragging.
         """
-        self.parent.releaseMouse()
-        if self.drag and event.button() == QtCore.Qt.LeftButton:
-            self.drag = False
-            self.parent.update()
+        if event.button() == QtCore.Qt.LeftButton:
+            self.parent.release()
             return True
         return False
 
