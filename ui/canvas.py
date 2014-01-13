@@ -147,8 +147,7 @@ class Canvas(QtGui.QWidget):
         # Start expressions rendering (asynchronously)
         # (not strictly part of the paint process, but I'm putting it here
         #  so that it gets called whenever anything changes)
-        pix_per_unit = self.unit_to_pixel(1) - self.unit_to_pixel(0)
-        self.render_expressions(pix_per_unit)
+        self.render_expressions()
 
         painter = QtGui.QPainter(self)
         painter.setBackground(QtGui.QColor(0, 0, 0))
@@ -274,7 +273,7 @@ class Canvas(QtGui.QWidget):
         return None
 
 
-    def render_expressions(self, pix_per_unit):
+    def render_expressions(self):
         """ Starts render tasks for all new expressions that don't already
             have render tasks.
         """
@@ -288,28 +287,30 @@ class Canvas(QtGui.QWidget):
         # Remove all but the most recent image for render tasks
         # with datums that are present, or all images for render
         # tasks without a currently active datum
-        to_delete = []
         for k in self.render_tasks:
-            delete = k not in datums
-            while (len(self.render_tasks[k]) > (0 if delete else 1) and
+            # Attempt to join each thread, saving 1 render task if the
+            # datum is still present (since we'll be drawing that image).
+            while (len(self.render_tasks[k]) > (1 if k in datums else 0) and
                    self.render_tasks[k][0].join()):
                 self.render_tasks[k] = self.render_tasks[k][1:]
-            if not self.render_tasks[k]:
-                to_delete.append(k)
-        for k in to_delete:
-            del(self.render_tasks[k])
+
+        # Delete any dictionary entries with empty lists
+        self.render_tasks = {
+                k:self.render_tasks[k] for k in self.render_tasks
+                if self.render_tasks[k]}
 
         # Check if the last render task is useful; otherwise
         # start a new one at the back of the list
         for d, e in zip(datums, expressions):
-            if (d in self.render_tasks and
-                self.render_tasks[d][-1].expression == e and
-                self.render_tasks[d][-1].resolution == pix_per_unit):
+            if d in self.render_tasks and self.render_tasks[d][-1] == e:
                 continue
             else:
-                self.render_tasks[d] = (
-                        self.render_tasks.get(d, []) +
-                        [RenderTask(e, pix_per_unit, self.update)])
+                # Make a new empty list
+                if not d in self.render_tasks:  self.render_tasks[d] = []
+                # Then append a new task to the end of it
+                self.render_tasks[d].append(
+                        RenderTask(e, self.transform_matrix(),
+                                   self.pixel_matrix(), self.update))
 
 
     def draw_expressions(self, painter):
