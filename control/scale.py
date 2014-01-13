@@ -72,10 +72,12 @@ class ScaleControl(base.NodeControl):
         self.scale_y.mask = self.y_handle_mask
         self.scale_z.mask = self.z_handle_mask
         self.drag_control.mask = self.center_mask
+
         self.setMask(self.x_handle_mask |
                      self.y_handle_mask |
                      self.z_handle_mask |
-                     self.center_mask)
+                     self.center_mask   |
+                     self.axes_mask)
 
     def _sync(self):
         v = QtGui.QVector3D(
@@ -159,43 +161,43 @@ class ScaleControl(base.NodeControl):
     def draw_x_handle(self, painter, mask=False):
         painter.setBrush(QtGui.QBrush())
         if mask:
-            painter.setPen(QtGui.QPen(QtCore.Qt.color1, 2))
+            painter.setPen(QtGui.QPen(QtCore.Qt.color1, 8))
+        elif self.scale_x.hover or self.scale_x.drag:
+            painter.setPen(QtGui.QPen(QtGui.QColor(
+                *colors.highlight(colors.orange)), 4))
         else:
-            painter.setPen(QtGui.QPen(QtGui.QColor(*colors.orange), 2))
+            painter.setPen(QtGui.QPen(QtGui.QColor(*colors.orange), 4))
         painter.drawPath(self.x_handle_path(self.pos()))
 
     def draw_y_handle(self, painter, mask=False):
         painter.setBrush(QtGui.QBrush())
         if mask:
-            painter.setPen(QtGui.QPen(QtCore.Qt.color1, 2))
+            painter.setPen(QtGui.QPen(QtCore.Qt.color1, 8))
+        elif self.scale_y.hover or self.scale_y.drag:
+            painter.setPen(QtGui.QPen(QtGui.QColor(
+                *colors.highlight(colors.orange)), 4))
         else:
-            painter.setPen(QtGui.QPen(QtGui.QColor(*colors.orange), 2))
+            painter.setPen(QtGui.QPen(QtGui.QColor(*colors.orange), 4))
         painter.drawPath(self.y_handle_path(self.pos()))
 
     def draw_z_handle(self, painter, mask=False):
         painter.setBrush(QtGui.QBrush())
         if mask:
-            painter.setPen(QtGui.QPen(QtCore.Qt.color1, 2))
+            painter.setPen(QtGui.QPen(QtCore.Qt.color1, 8))
+        elif self.scale_z.hover or self.scale_z.drag:
+            painter.setPen(QtGui.QPen(QtGui.QColor(
+                *colors.highlight(colors.orange)), 4))
         else:
-            painter.setPen(QtGui.QPen(QtGui.QColor(*colors.orange), 2))
+            painter.setPen(QtGui.QPen(QtGui.QColor(*colors.orange), 4))
         painter.drawPath(self.z_handle_path(self.pos()))
 
 
     def draw_axes(self, painter, mask=False):
         painter.setBrush(QtGui.QBrush())
         if mask:
-            painter.setPen(QtGui.QPen(QtCore.Qt.color1, 2))
+            painter.setPen(QtGui.QPen(QtCore.Qt.color1, 4))
         else:
-            painter.setPen(QtGui.QPen(QtGui.QColor(*colors.orange), 2))
-        painter.drawPath(self.axes_path(self.pos()))
-
-
-    def draw_axes(self, painter, mask=False):
-        painter.setBrush(QtGui.QBrush())
-        if mask:
-            painter.setPen(QtGui.QPen(QtCore.Qt.color1, 2))
-        else:
-            painter.setPen(QtGui.QPen(QtGui.QColor(*colors.orange), 2))
+            painter.setPen(QtGui.QPen(QtGui.QColor(*colors.orange), 4))
         painter.drawPath(self.axes_path(self.pos()))
 
 
@@ -224,11 +226,11 @@ class ScaleControl(base.NodeControl):
         """ Paints this widget's lines.
         """
         painter = QtGui.QPainter(self)
+        self.draw_axes(painter)
+        self.draw_center(painter)
         self.draw_x_handle(painter)
         self.draw_y_handle(painter)
         self.draw_z_handle(painter)
-        self.draw_axes(painter)
-        self.draw_center(painter)
 
 from node.scale import Scale
 from node.base import get_name
