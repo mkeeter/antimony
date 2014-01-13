@@ -51,6 +51,7 @@ class Canvas(QtGui.QWidget):
                  ("Point (3D)", Point3DControl),
                  ("Sphere", SphereControl),
                  ("Rectangular prism", CubeControl), None,
+                 ("Scale", ScaleControl), None,
                  ("Union", UnionControl),
                  ("Intersection", IntersectionControl),
                  ("Cutout", CutoutControl), None,
@@ -399,6 +400,7 @@ from node.datum import ExpressionFunctionDatum
 from control.point import PointControl, Point3DControl
 from control.cube import CubeControl
 from control.sphere import SphereControl
+from control.scale import ScaleControl
 from control.circle import CircleControl
 from control.triangle import TriangleControl
 from control.csg import UnionControl, IntersectionControl, CutoutControl
