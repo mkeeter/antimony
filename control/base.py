@@ -81,9 +81,9 @@ class NodeControl(QtGui.QWidget):
         return self.canvas.unit_to_pixel(p)
 
     def get_input_pos(self):
-        return self.pos() + QtCore.QPoint(0, self.height()/2)
+        return self.editor_position() - QtCore.QPoint(8, 0)
     def get_output_pos(self):
-        return self.pos() + QtCore.QPoint(self.width(), self.height()/2)
+        return self.editor_position() + QtCore.QPoint(8, 0)
 
     def get_datum_output(self, d):
         """ Returns a canvas pixel location for the given datum's output.

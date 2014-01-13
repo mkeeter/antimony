@@ -47,6 +47,11 @@ class CircleControl(base.NodeControl):
         return self.draw_lines([points], offset)
 
 
+    def get_input_pos(self):
+        return self.pos() + QtCore.QPoint(3, self.height()/2)
+    def get_output_pos(self):
+        return self.pos() + QtCore.QPoint(self.width() - 3, self.height()/2)
+
     def drag_ring(self, v, p):
         """ Drags the ring to expand or contract it.
             p is the drag position.
