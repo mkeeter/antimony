@@ -26,9 +26,13 @@ class Scale(base.Node):
         shape = self.input
         if not shape.check():
             raise RuntimeError("Constructed invalid shape!")
-        return shape.scale_x(self.x, self.sx).\
-                     scale_y(self.y, self.sy).\
-                     scale_z(self.z, self.sz)
+
+        # Apply x, y, and z scale factors.
+        sx = fab.shapes.scale_x(shape, self.x, self.sx)
+        sxy = fab.shapes.scale_y(sx,   self.y, self.sy)
+        sxyz = fab.shapes.scale_z(sxy, self.z, self.sz)
+
+        return sxyz
 
 
 import fab.shapes
