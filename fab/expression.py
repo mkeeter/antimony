@@ -188,13 +188,13 @@ class Expression(object):
         z = interval.Interval(self.zmin, self.zmax)
 
         if X:   a = X.to_tree().eval_i(x, y, z)
-        else:   a = interval.Interval(float('-inf'), float('+inf'))
+        else:   a = x
 
         if Y:   b = Y.to_tree().eval_i(x, y, z)
-        else:   b = interval.Interval(float('-inf'), float('+inf'))
+        else:   b = y
 
         if Z:   c = Z.to_tree().eval_i(x, y, z)
-        else:   c = interval.Interval(float('-inf'), float('+inf'))
+        else:   c = z
 
         for i in [a, b, c]:
             if math.isnan(i.lower):  i.lower = float('-inf')
