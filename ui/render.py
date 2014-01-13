@@ -4,7 +4,7 @@ from PySide import QtGui
 import numpy as np
 
 class RenderTask(object):
-    def __init__(self, expression, transform, screen, callback):
+    def __init__(self, expression, transform, resolution, callback):
         """ Creates a render task.
             'expression' is an Expression object.
             'transform' and 'screen' are transform and pixel matrices.
@@ -12,7 +12,7 @@ class RenderTask(object):
         """
         self.expression = expression
         self.transform = transform
-        self.screen = screen
+        self.resolution = resolution
         self.callback = callback
 
         self.qimage = None
@@ -24,7 +24,7 @@ class RenderTask(object):
     def __eq__(self, other):
         return (self.expression == other[0] and
                 self.transform == other[1] and
-                self.screen == other[2])
+                self.resolution == other[2])
 
     def run(self):
 
@@ -32,7 +32,7 @@ class RenderTask(object):
         self.transformed = self.expression.transform(self.transform.inverted()[0],
                                                      self.transform)
         tree = self.transformed.to_tree()
-        self.image = tree.render(1)
+        self.image = tree.render(self.resolution)
 
         # Translate to 8-bit greyscale
         scaled = np.array(self.image.array >> 8, dtype=np.uint8)
