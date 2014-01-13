@@ -146,6 +146,19 @@ class Expression(object):
                 Z=M_i[2,0]*x + M_i[2,1]*y + M_i[2,2]*z + M_i[2,3]))
         return e
 
+    def transformXY(self, M, M_i):
+        """ Applies a matrix transformation to our coordinates,
+            ignoring all z transformations.
+            M and M_inverse should be a matrix and its inverse which support
+            M[0,0]-style indexing.
+        """
+        x, y, z = Expression('X'), Expression('Y'), Expression('Z')
+        e = self.map(X=M[0,0]*x + M[0,1]*y + M[0,3],
+                     Y=M[1,0]*x + M[1,1]*y + M[1,3])
+        e.set_bounds(*self.remap_bounds(
+                X=M_i[0,0]*x + M_i[0,1]*y + M_i[0,3],
+                Y=M_i[1,0]*x + M_i[1,1]*y + M_i[1,3]))
+        return e
 
     @wrapped
     def remap_bounds(self, X=None, Y=None, Z=None):

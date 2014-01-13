@@ -26,11 +26,25 @@ class RenderTask(object):
                 self.transform == other[1] and
                 self.resolution == other[2])
 
+    def flatten_matrix(self):
+        """ Flatten out the transform matrix, removing z values.
+        """
+        self.transform.setColumn(2, QtGui.QVector4D(0, 0, 1, 0))
+        self.transform.setRow(2, QtGui.QVector4D(0, 0, 1, 0))
+
     def run(self):
 
         # Transform this image based on our matrix
-        self.transformed = self.expression.transform(self.transform.inverted()[0],
-                                                     self.transform)
+        if self.expression.has_xyz_bounds():
+            self.transformed = self.expression.transform(
+                    self.transform.inverted()[0], self.transform)
+        else:
+            self.transformed = self.expression.transformXY(
+                    self.transform.inverted()[0], self.transform)
+
+        print self.transformed.xmin, self.transformed.xmax
+        print self.transformed.ymin, self.transformed.ymax
+        print self.transformed.zmin, self.transformed.zmax
         tree = self.transformed.to_tree()
         self.image = tree.render(self.resolution)
 
