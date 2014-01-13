@@ -150,8 +150,8 @@ class Canvas(QtGui.QWidget):
     def spin(self, dyaw, dpitch):
         """ Spins us around in 3D.
         """
-        self.pitch = min(math.pi, max(-math.pi, self.pitch + dpitch))
         self.yaw   += dyaw
+        self.pitch = min(0, max(-math.pi, self.pitch + dpitch))
         self.update()
         self.sync_all_children()
 
