@@ -64,7 +64,6 @@ class ScaleControl(base.NodeControl):
 
             painter.begin(bitmap)
             func(painter, True)
-            bitmap.save(n+'.png')
             painter.end()
 
             setattr(self, n + '_mask', QtGui.QRegion(bitmap))
