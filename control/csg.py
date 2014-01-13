@@ -9,7 +9,7 @@ class UnionControl(base.TextLabelControl):
     @classmethod
     def new(cls, canvas, x, y, z, scale):
         u = Union(get_name('u'), x, y, z)
-        cls(canvas, u)
+        return cls(canvas, u)
 
     def __init__(self, canvas, target):
         super(UnionControl, self).__init__(
@@ -20,7 +20,7 @@ class IntersectionControl(base.TextLabelControl):
     @classmethod
     def new(cls, canvas, x, y, z, scale):
         i = Intersection(get_name('i'), x, y, z)
-        cls(canvas, i)
+        return cls(canvas, i)
 
     def __init__(self, canvas, target):
         super(IntersectionControl, self).__init__(
@@ -32,7 +32,7 @@ class CutoutControl(base.TextLabelControl):
     @classmethod
     def new(cls, canvas, x, y, z, scale):
         c = Cutout(get_name('c'), x, y, z)
-        cls(canvas, c)
+        return cls(canvas, c)
 
     def __init__(self, canvas, target):
         super(CutoutControl, self).__init__(
