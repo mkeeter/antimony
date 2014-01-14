@@ -347,4 +347,4 @@ def make_node_widgets(canvas):
 
 from ui.editor import MakeEditor
 import node.base
-
+import fab.expression

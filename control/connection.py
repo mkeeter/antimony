@@ -123,6 +123,12 @@ class ConnectionControl(QtGui.QWidget):
             self.connection.connect_to(self.hovering_over.datum)
             self.hovering_over.hovering = False
             self.sync()
+            # If this connection is for an expression, then
+            # trigger a re-render (which will in turn trigger a
+            # redraw of expressions)
+            if issubclass(self.connection.source.type, fab.expression.Expression):
+                self.parentWidget().update()
+
 
     def get_path(self, origin, target, offset):
         """ Creates a painter path from the origin to the target
@@ -256,3 +262,4 @@ def make_connection_widgets(nodes, canvas):
                 ConnectionControl(c, canvas)
 
 from node.connection import Connection
+import fab.expression
