@@ -58,9 +58,10 @@ class Image(object):
         return qimage
 
 
-    def copy(self):
+    def copy(self, deep=False):
         i = Image(self.width, self.height)
-        np.copyto(i.array, self.array)
+        if deep:    np.copyto(i.array, self.array)
+        else:       i.array = self.array
         for v in ['xmin','ymin','zmin','xmax','ymax','zmax']:
             setattr(i, v, getattr(self, v))
         return i
@@ -71,16 +72,19 @@ class Image(object):
             overlapping images of different z heights.
         """
 
+        # Update width and height
         # Scale height-map values
         z_scale = ((source.zmax - target.zmin) /
                  (target.zmax - target.zmin))
 
+        pixel_scale = ((target.width / (target.xmax - target.xmin)) /
+                       (source.width / (source.xmax - source.xmin)))
+
         # Resample the image to be at the same scale as screen pixels
+        source = source.copy()
         source.array = scipy.ndimage.interpolation.zoom(
                 source.array[::-1, :] * z_scale, # weird y flip makes me sad
-                (target.width / (target.xmax - target.xmin)) /
-                    (source.width / (source.xmax - source.xmin)),
-                output=np.uint16, order=0)
+                pixel_scale, output=np.uint16, order=3)
 
         # Update width and height
         source.height, source.width = source.array.shape
