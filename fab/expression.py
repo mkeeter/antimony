@@ -214,7 +214,9 @@ class Expression(object):
         """ Returns True if this expression has valid XY bounds.
         """
         return (not math.isinf(self.xmax - self.xmin) and
-                not math.isinf(self.ymax - self.ymin))
+                not math.isinf(self.ymax - self.ymin) and
+                (self.xmax > self.xmin) and
+                (self.ymax > self.ymin))
 
     def has_xyz_bounds(self):
         """ Returns True if this expression has valid XYZ bounds.
