@@ -379,17 +379,15 @@ class Canvas(QtGui.QWidget):
         upper_right = pix_i * QtGui.QVector3D(self.width(), 0, 0)
 
         background = fab.image.Image(self.width(), self.height())
-        background.array += 32000
 
         background.xmin = lower_left.x()
         background.xmax = upper_right.x()
         background.ymin = lower_left.y()
         background.ymax = upper_right.y()
-        background.zmin = min([i.zmin for i in images])
-        background.zmax = min([i.zmax for i in images])
+        background.zmin = min(i.zmin for i in images)
+        background.zmax = max(i.zmax for i in images)
 
-        for i in images:
-            fab.image.Image.blit_onto(i, background)
+        for i in images:    fab.image.Image.blit_onto(i, background)
 
         qimg = background.to_QImage()
         painter.drawImage(qimg.rect(), qimg, qimg.rect())

@@ -59,7 +59,6 @@ class RenderTask(object):
         top = self.resolution
         if (top < bottom):  top = bottom
         i = self.iteration / float(self.MAX_ITERATION-1)
-        print i, top, bottom
         return top*i + bottom*(1-i)
 
 

@@ -77,7 +77,7 @@ class Image(object):
                 source.array,
                 (target.width / (target.xmax - target.xmin)) /
                     (source.width / (source.xmax - source.xmin)),
-                output=np.uint16)
+                output=np.uint16, order=0)
 
         if target.xmin > source.xmin:
             imin = int(source.width * (target.xmin - source.xmin) /
