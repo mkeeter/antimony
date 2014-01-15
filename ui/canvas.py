@@ -380,6 +380,7 @@ class Canvas(QtGui.QWidget):
 
         background = fab.image.Image(self.width(), self.height())
         background.array += 32000
+
         background.xmin = lower_left.x()
         background.xmax = upper_right.x()
         background.ymin = lower_left.y()
@@ -391,7 +392,6 @@ class Canvas(QtGui.QWidget):
             fab.image.Image.blit_onto(i, background)
 
         qimg = background.to_QImage()
-        print qimg.rect()
         painter.drawImage(qimg.rect(), qimg, qimg.rect())
 
 

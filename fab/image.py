@@ -1,6 +1,7 @@
 import ctypes
 
 import numpy as np
+import scipy.ndimage.interpolation
 
 class Image(object):
     """ Wraps a 16-bit 1-channel numpy array.
@@ -38,7 +39,7 @@ class Image(object):
         from PySide import QtGui
 
         # Translate to 8-bit greyscale
-        scaled = np.array(self.array >> 8, dtype=np.uint8)
+        scaled = np.array(self.array[::-1,:] >> 8, dtype=np.uint8)
 
         # Then make into an RGB image
         rgb = np.dstack([
@@ -71,28 +72,34 @@ class Image(object):
         """
         # Don't modify the original image
         source = source.copy()
+        source.array = source.array[::-1, :] # :(
+        source.array = scipy.ndimage.interpolation.zoom(
+                source.array,
+                (target.width / (target.xmax - target.xmin)) /
+                    (source.width / (source.xmax - source.xmin)),
+                output=np.uint16)
 
         if target.xmin > source.xmin:
-            imin = int(source.width * (target.xmin - source.xmax) /
-                                      (source.xmin - source.xmax))
+            imin = int(source.width * (target.xmin - source.xmin) /
+                                      (source.xmax - source.xmin))
             source.xmin = target.xmin
             source.array = source.array[:,imin:]
 
         if target.xmax < source.xmax:
             imax = int(source.width * (target.xmax - source.xmax) /
-                                      (source.xmin - source.xmax))
+                                      (source.xmax - source.xmin))
             source.xmax = target.xmax
             source.array = source.array[:,:imax]
 
         if target.ymin > source.ymin:
-            jmin = int(source.width * (target.ymin - source.ymax) /
-                                      (source.ymin - source.ymax))
+            jmin = int(source.width * (target.ymin - source.ymin) /
+                                      (source.ymax - source.ymin))
             source.ymin = target.ymin
             source.array = source.array[jmin:,:]
 
         if target.ymax < source.ymax:
             jmax = int(source.width * (target.ymax - source.ymax) /
-                                      (source.ymin - source.ymax))
+                                      (source.ymax - source.ymin))
             source.ymax = target.ymax
             source.array = source.array[:jmax,:]
 
@@ -103,11 +110,16 @@ class Image(object):
 
         imin = int(target.width * (source.xmin - target.xmin) /
                                   (target.xmax - target.xmin))
+
         jmin = int(target.height * (source.ymin - target.ymin) /
                                    (target.ymax - target.ymin))
 
         subtarget = target.array[jmin : jmin+source.height,
                                  imin : imin+source.width]
+        # Clip to fix pixel precision errors on the edges
+        if subtarget.shape != source.array.shape:
+            source.array = source.array[:subtarget.shape[0],
+                                        :subtarget.shape[1]]
 
         np.copyto(subtarget, source.array, where=source.array > subtarget)
 
