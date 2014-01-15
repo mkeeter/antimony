@@ -187,9 +187,12 @@ class Canvas(QtGui.QWidget):
     def sync_all_children(self):
         """ Calls sync on all children that have that function.
         """
-        for c in self.findChildren(QtGui.QWidget):
-            if hasattr(c, 'reposition'):    c.reposition()
-            elif hasattr(c, 'sync'):        c.sync()
+        for n in self.findChildren(NodeControl):
+            n.reposition()
+        for e in self.findChildren(Editor):
+            e.sync()
+        for c in self.findChildren(ConnectionControl):
+            c.sync()
 
 
 
@@ -342,12 +345,15 @@ class Canvas(QtGui.QWidget):
 
             # These are the arguments that we'll feed to the constructor.
             # We'll also use them to check whether the render task is the same.
-            scale = int((self.pixel_matrix()*QtGui.QVector3D(1, 0, 0)).x() -
-                        (self.pixel_matrix()*QtGui.QVector3D(0, 0, 0)).x())
+            scale = ((self.pixel_matrix()*QtGui.QVector3D(1, 0, 0)).x() -
+                     (self.pixel_matrix()*QtGui.QVector3D(0, 0, 0)).x())
             args = (e,
                     self.transform_matrix() if e.has_xyz_bounds()
-                    else self.transform_matrix_2d(),
-                    scale, self.update)
+                        else self.transform_matrix_2d(),
+                    scale,
+                    self.transform_matrix_tilt() if not e.has_xyz_bounds()
+                        else QtGui.QMatrix4x4(),
+                    self.update)
 
             if d in self.render_tasks and self.render_tasks[d][-1] == args:
                 if self.render_tasks[d][-1].can_refine():
@@ -361,19 +367,36 @@ class Canvas(QtGui.QWidget):
 
 
     def draw_expressions(self, painter):
-        """ Paints all rendered expressions (i.e. RenderTasks with a qimage
+        """ Paints all rendered expressions (i.e. RenderTasks with a image
             member variable.
         """
-        comp = painter.compositionMode()
-        painter.setCompositionMode(QtGui.QPainter.CompositionMode_Lighten)
+        images = []
         for tasks in self.render_tasks.itervalues():
             for t in tasks[::-1]:
-                if t.qimage:
-                    t.qimage.save("image.png")
-                    painter.drawImage(self.get_bounding_rect(t.transformed),
-                                      t.qimage, t.qimage.rect())
+                if t.image is not None:
+                    images.append(t.image)
                     break
-        painter.setCompositionMode(comp)
+
+        if not images:  return
+
+        pix_i = self.pixel_matrix().inverted()[0]
+
+        lower_left = pix_i * QtGui.QVector3D(0, self.height(), 0)
+        upper_right = pix_i * QtGui.QVector3D(self.width(), 0, 0)
+
+        background = fab.image.Image(self.width(), self.height())
+
+        background.xmin = lower_left.x()
+        background.xmax = upper_right.x()
+        background.ymin = lower_left.y()
+        background.ymax = upper_right.y()
+        background.zmin = min(i.zmin for i in images)
+        background.zmax = max(i.zmax for i in images)
+
+        for i in images:    fab.image.Image.blit_onto(i, background)
+
+        qimg = background.to_QImage()
+        painter.drawImage(qimg.rect(), qimg, qimg.rect())
 
 
     def find_expressions(self):
@@ -393,7 +416,10 @@ class Canvas(QtGui.QWidget):
 
 ################################################################################
 
+import fab.image
+
 from control.base import NodeControl, DragManager, DragXY, DragXYZ
+from control.connection import ConnectionControl
 from fab.expression import Expression
 
 from node.datum import ExpressionFunctionDatum
