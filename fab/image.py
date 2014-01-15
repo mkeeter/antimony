@@ -85,11 +85,13 @@ class Image(object):
                 ((target.width / (target.xmax - target.xmin)) /
                        (source.width / (source.xmax - source.xmin))))
 
+        if pixel_scale[0] == 0 or pixel_scale[1] == 0:  return
+
         # Resample the image to be at the same scale as screen pixels
         source = source.copy()
         source.array = scipy.ndimage.interpolation.zoom(
                 source.array[::-1, :] * z_scale, # weird y flip makes me sad
-                pixel_scale, output=np.uint16, order=3)
+                pixel_scale, output=np.uint16, order=0)
 
         # Update width and height
         source.height, source.width = source.array.shape
