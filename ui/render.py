@@ -57,7 +57,7 @@ class RenderTask(object):
         # Linear interpolation between these two resolutions
         bottom = 16 / min(dx, dy, dz)
         top = self.resolution
-        i = self.iteration / float(self.MAX_ITERATION+1)
+        i = self.iteration / float(self.MAX_ITERATION-1)
         return top*i + bottom*(1-i)
 
 
