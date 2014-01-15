@@ -342,8 +342,8 @@ class Canvas(QtGui.QWidget):
 
             # These are the arguments that we'll feed to the constructor.
             # We'll also use them to check whether the render task is the same.
-            scale = int((self.pixel_matrix()*QtGui.QVector3D(1, 0, 0)).x() -
-                        (self.pixel_matrix()*QtGui.QVector3D(0, 0, 0)).x())
+            scale = ((self.pixel_matrix()*QtGui.QVector3D(1, 0, 0)).x() -
+                     (self.pixel_matrix()*QtGui.QVector3D(0, 0, 0)).x())
             args = (e,
                     self.transform_matrix() if e.has_xyz_bounds()
                     else self.transform_matrix_2d(),
