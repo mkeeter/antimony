@@ -187,9 +187,12 @@ class Canvas(QtGui.QWidget):
     def sync_all_children(self):
         """ Calls sync on all children that have that function.
         """
-        for c in self.findChildren(QtGui.QWidget):
-            if hasattr(c, 'reposition'):    c.reposition()
-            elif hasattr(c, 'sync'):        c.sync()
+        for n in self.findChildren(NodeControl):
+            n.reposition()
+        for e in self.findChildren(Editor):
+            e.sync()
+        for c in self.findChildren(ConnectionControl):
+            c.sync()
 
 
 
@@ -413,6 +416,7 @@ class Canvas(QtGui.QWidget):
 import fab.image
 
 from control.base import NodeControl, DragManager, DragXY, DragXYZ
+from control.connection import ConnectionControl
 from fab.expression import Expression
 
 from node.datum import ExpressionFunctionDatum
