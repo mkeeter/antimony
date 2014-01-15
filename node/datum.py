@@ -47,7 +47,7 @@ class SingleInput(object):
         conn.target = None
         self.parent.sync()
     def expr(self):
-        if self.i:  return self.i.source._expr
+        if self.i:  return self.i.source.get_expr()
         else:       return None
 
 class MultiInput(object):
