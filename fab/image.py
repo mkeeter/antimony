@@ -22,6 +22,7 @@ class Image(object):
         """ Constructs an image and initializes bounds from a Region object.
         """
         i = cls(region.ni, region.nj)
+
         i.xmin = region.X[0] * mm_per_unit
         i.xmax = region.X[region.ni] * mm_per_unit
         i.ymin = region.Y[0] * mm_per_unit
@@ -30,6 +31,63 @@ class Image(object):
         i.zmax = region.Z[region.nk] * mm_per_unit
 
         return i
+
+    def copy(self):
+        i = Image(self.width, self.height)
+        np.copyto(i.array, self.array)
+        for v in ['xmin','ymin','zmin','xmax','ymax','zmax']:
+            setattr(i, v, getattr(self, v))
+        return i
+
+    @staticmethod
+    def blit_onto(source, target):
+        """ Blits a source image onto a target image, scaling and properly
+            overlapping images of different z heights.
+        """
+        # Don't modify the original image
+        source = source.copy()
+
+        if target.xmin > source.xmin:
+            imin = int(source.width * (target.xmin - source.xmax) /
+                                      (source.xmin - source.xmax))
+            source.xmin = target.xmin
+            source.array = source.array[:,imin:]
+
+        if target.xmax < source.xmax:
+            imax = int(source.width * (target.xmax - source.xmax) /
+                                      (source.xmin - source.xmax))
+            source.xmax = target.xmax
+            source.array = source.array[:,:imax]
+
+        if target.ymin > source.ymin:
+            jmin = int(source.width * (target.ymin - source.ymax) /
+                                      (source.ymin - source.ymax))
+            source.ymin = target.ymin
+            source.array = source.array[jmin:,:]
+
+        if target.ymax < source.ymax:
+            jmax = int(source.width * (target.ymax - source.ymax) /
+                                      (source.ymin - source.ymax))
+            source.ymax = target.ymax
+            source.array = source.array[:jmax,:]
+
+        source.height, source.width = source.array.shape
+        source.array = (source.array * ((source.zmax - target.zmin) /
+                                        (target.zmax - target.zmin))).astype(
+                                               np.uint16)
+
+        imin = int(target.width * (source.xmin - target.xmin) /
+                                  (target.xmax - target.xmin))
+        jmin = int(target.height * (source.ymin - target.ymin) /
+                                   (target.ymax - target.ymin))
+
+        subtarget = target.array[jmin : jmin+source.height,
+                                 imin : imin+source.width]
+
+        np.copyto(subtarget, source.array, where=source.array > subtarget)
+
+        return target
+
 
 
     def pixels(self, flip_y=False):
