@@ -70,15 +70,22 @@ class Image(object):
         """ Blits a source image onto a target image, scaling and properly
             overlapping images of different z heights.
         """
-        # Don't modify the original image
-        source = source.copy()
-        source.array = source.array[::-1, :] # :(
+
+        # Scale height-map values
+        z_scale = ((source.zmax - target.zmin) /
+                 (target.zmax - target.zmin))
+
+        # Resample the image to be at the same scale as screen pixels
         source.array = scipy.ndimage.interpolation.zoom(
-                source.array,
+                source.array[::-1, :] * z_scale, # weird y flip makes me sad
                 (target.width / (target.xmax - target.xmin)) /
                     (source.width / (source.xmax - source.xmin)),
                 output=np.uint16, order=0)
 
+        # Update width and height
+        source.height, source.width = source.array.shape
+
+        # Trim the array in x and y
         if target.xmin > source.xmin:
             imin = int(source.width * (target.xmin - source.xmin) /
                                       (source.xmax - source.xmin))
@@ -103,10 +110,8 @@ class Image(object):
             source.ymax = target.ymax
             source.array = source.array[:jmax,:]
 
+        # Update width and height
         source.height, source.width = source.array.shape
-        source.array = (source.array * ((source.zmax - target.zmin) /
-                                        (target.zmax - target.zmin))).astype(
-                                               np.uint16)
 
         imin = int(target.width * (source.xmin - target.xmin) /
                                   (target.xmax - target.xmin))
@@ -116,6 +121,7 @@ class Image(object):
 
         subtarget = target.array[jmin : jmin+source.height,
                                  imin : imin+source.width]
+
         # Clip to fix pixel precision errors on the edges
         if subtarget.shape != source.array.shape:
             source.array = source.array[:subtarget.shape[0],
