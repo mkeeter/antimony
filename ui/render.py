@@ -20,7 +20,7 @@ class RenderTask(object):
 
         self.iteration = 0
 
-        self.qimage = None
+        self.image = None
 
         self.thread = threading.Thread(target=self.run)
         self.thread.daemon = True
@@ -57,26 +57,14 @@ class RenderTask(object):
         # Linear interpolation between these two resolutions
         bottom = 16 / min(dx, dy, dz)
         top = self.resolution
+        if (top < bottom):  top = bottom
         i = self.iteration / float(self.MAX_ITERATION-1)
+        print i, top, bottom
         return top*i + bottom*(1-i)
 
 
     def _refine(self):
         self.image = self.tree.render(self.get_resolution())
-
-        # Translate to 8-bit greyscale
-        scaled = np.array(self.image.array >> 8, dtype=np.uint8)
-
-        # Then make into an RGB image
-        rgb = np.dstack([
-            scaled, scaled, scaled,
-            np.ones(scaled.shape, dtype=np.uint8)*255])
-
-        # Finally, convert into a QImage
-        self.pixels = rgb.flatten()
-        self.qimage = QtGui.QImage(
-                self.pixels, scaled.shape[1], scaled.shape[0],
-                QtGui.QImage.Format_ARGB32)
 
         # Then call the callback (which updates rendering)
         self.callback()

@@ -361,19 +361,38 @@ class Canvas(QtGui.QWidget):
 
 
     def draw_expressions(self, painter):
-        """ Paints all rendered expressions (i.e. RenderTasks with a qimage
+        """ Paints all rendered expressions (i.e. RenderTasks with a image
             member variable.
         """
-        comp = painter.compositionMode()
-        painter.setCompositionMode(QtGui.QPainter.CompositionMode_Lighten)
+        images = []
         for tasks in self.render_tasks.itervalues():
             for t in tasks[::-1]:
-                if t.qimage:
-                    t.qimage.save("image.png")
-                    painter.drawImage(self.get_bounding_rect(t.transformed),
-                                      t.qimage, t.qimage.rect())
+                if t.image is not None:
+                    images.append(t.image)
                     break
-        painter.setCompositionMode(comp)
+
+        if not images:  return
+
+        pix_i = self.pixel_matrix().inverted()[0]
+
+        lower_left = pix_i * QtGui.QVector3D(0, self.height(), 0)
+        upper_right = pix_i * QtGui.QVector3D(self.width(), 0, 0)
+
+        background = fab.image.Image(self.width(), self.height())
+        background.array += 32000
+        background.xmin = lower_left.x()
+        background.xmax = upper_right.x()
+        background.ymin = lower_left.y()
+        background.ymax = upper_right.y()
+        background.zmin = min([i.zmin for i in images])
+        background.zmax = min([i.zmax for i in images])
+
+        for i in images:
+            fab.image.Image.blit_onto(i, background)
+
+        qimg = background.to_QImage()
+        print qimg.rect()
+        painter.drawImage(qimg.rect(), qimg, qimg.rect())
 
 
     def find_expressions(self):
@@ -392,6 +411,8 @@ class Canvas(QtGui.QWidget):
         return expressions
 
 ################################################################################
+
+import fab.image
 
 from control.base import NodeControl, DragManager, DragXY, DragXYZ
 from fab.expression import Expression
