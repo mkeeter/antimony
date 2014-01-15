@@ -32,6 +32,31 @@ class Image(object):
 
         return i
 
+    def to_QImage(self):
+        """ Converts this image into a QImage.
+        """
+        from PySide import QtGui
+
+        # Translate to 8-bit greyscale
+        scaled = np.array(self.array >> 8, dtype=np.uint8)
+
+        # Then make into an RGB image
+        rgb = np.dstack([
+            scaled, scaled, scaled,
+            np.ones(scaled.shape, dtype=np.uint8)*255])
+
+        # Finally, convert into a QImage
+        pixels = rgb.flatten()
+        qimage = QtGui.QImage(
+                pixels, scaled.shape[1], scaled.shape[0],
+                QtGui.QImage.Format_ARGB32)
+
+        # Put this here to keep it a reference alive
+        qimage.pixels = pixels
+
+        return qimage
+
+
     def copy(self):
         i = Image(self.width, self.height)
         np.copyto(i.array, self.array)
