@@ -58,10 +58,11 @@ class Image(object):
         return qimage
 
 
-    def copy(self, deep=False):
+    def copy(self):
+        """ Makes a shallow copy of the provided images.
+        """
         i = Image(self.width, self.height)
-        if deep:    np.copyto(i.array, self.array)
-        else:       i.array = self.array
+        i.array = self.array
         for v in ['xmin','ymin','zmin','xmax','ymax','zmax']:
             setattr(i, v, getattr(self, v))
         return i
@@ -138,7 +139,10 @@ class Image(object):
             source.array = source.array[:subtarget.shape[0],
                                         :subtarget.shape[1]]
 
-        np.copyto(subtarget, source.array, where=source.array > subtarget)
+        try:
+            np.copyto(subtarget, source.array, where=source.array > subtarget)
+        except AttributeError:
+            np.putmask(subtarget, source.array > subtarget, source.array)
 
         return target
 
