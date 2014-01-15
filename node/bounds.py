@@ -14,6 +14,13 @@ class GetBounds(base.Node):
         for i in 'xmin','ymin','zmin','xmax','ymax','zmax':
             self.add_datum(i, datum.FloatFunctionDatum(self, i))
 
+    def xmin(self): return self.input.xmin
+    def xmax(self): return self.input.xmax
+    def ymin(self): return self.input.ymin
+    def ymax(self): return self.input.ymax
+    def zmin(self): return self.input.zmin
+    def zmax(self): return self.input.zmax
+
     def get_control(self):
         import control.bounds
         return control.bounds.GetBoundsControl

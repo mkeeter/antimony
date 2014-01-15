@@ -232,7 +232,7 @@ class Expression(object):
         """ Returns a region appropriate for 2D or height-map rendering.
         """
         zmin = 0 if math.isinf(self.zmin) else self.zmin
-        zmax = 0 if math.isinf(self.zmin) else self.zmax
+        zmax = 0 if math.isinf(self.zmax) else self.zmax
 
         return region.Region((self.xmin, self.ymin, zmin),
                              (self.xmax, self.ymax, zmax), voxels_per_unit)
