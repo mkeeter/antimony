@@ -8,7 +8,7 @@ import sys
 base = os.path.abspath(sys.argv[0])
 if sys.argv[0]: base = os.path.dirname(base)
 
-libname = 'libfab' + ('.dylib' if 'Darwin' in os.uname() else '.so')
+libname = 'libcfab' + ('.dylib' if 'Darwin' in os.uname() else '.so')
 filenames =[
     os.path.join(base, 'fab/', libname),
     os.path.join(base, '../lib/', libname),
@@ -24,7 +24,7 @@ for filename in filenames:
     else:
         break
 else:
-    raise OSError('libfab not found')
+    raise OSError('libcfab not found')
 
 
 # Helper functions for pointer and pointer to pointer

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
-project(libfab)
+project(libcfab)
 
 #set(CMAKE_BUILD_TYPE DEBUG)
 set(CMAKE_BUILD_TYPE RELEASE)
@@ -14,7 +14,7 @@ find_library(M_LIB m)
 
 include_directories(.)
 
-add_library(fab SHARED
+add_library(cfab SHARED
 
     tree/eval.c tree/render.c
     tree/tree.c tree/parser.c
@@ -29,5 +29,5 @@ add_library(fab SHARED
     util/region.c
 )
 
-target_link_libraries(fab ${PNG_LIBRARY} ${M_LIB})
-install(TARGETS fab DESTINATION ${PROJECT_SOURCE_DIR}/..)
+target_link_libraries(cfab ${PNG_LIBRARY} ${M_LIB})
+install(TARGETS cfab DESTINATION ${PROJECT_SOURCE_DIR}/..)
