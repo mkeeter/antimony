@@ -72,13 +72,18 @@ class Image(object):
             overlapping images of different z heights.
         """
 
-        # Update width and height
         # Scale height-map values
-        z_scale = ((source.zmax - target.zmin) /
-                 (target.zmax - target.zmin))
+        try:
+            z_scale = ((source.zmax - target.zmin) /
+                       (target.zmax - target.zmin))
+        except ZeroDivisionError:
+            z_scale = 1
 
-        pixel_scale = ((target.width / (target.xmax - target.xmin)) /
-                       (source.width / (source.xmax - source.xmin)))
+        pixel_scale = (
+                ((target.height / (target.ymax - target.ymin)) /
+                       (source.height / (source.ymax - source.ymin))),
+                ((target.width / (target.xmax - target.xmin)) /
+                       (source.width / (source.xmax - source.xmin))))
 
         # Resample the image to be at the same scale as screen pixels
         source = source.copy()

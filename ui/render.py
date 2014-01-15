@@ -7,14 +7,18 @@ class RenderTask(object):
 
     MAX_ITERATION = 4
 
-    def __init__(self, expression, transform, resolution, callback):
+    def __init__(self, expression, transform, resolution,
+                 posttransform, callback):
         """ Creates a render task.
             'expression' is an Expression object.
             'transform' and 'screen' are transform and pixel matrices.
+            'posttransform' is a post-render transform applied to corners of
+             the image (used in rendering 2D images)
             'callback' is a function to call when we're done rendering.
         """
         self.expression = expression
         self.transform = transform
+        self.posttransform = posttransform
         self.resolution = resolution
         self.callback = callback
 
@@ -29,7 +33,8 @@ class RenderTask(object):
     def __eq__(self, other):
         return (self.expression == other[0] and
                 self.transform == other[1] and
-                self.resolution == other[2])
+                self.resolution == other[2] and
+                self.posttransform == other[3])
 
     def run(self):
 
@@ -54,16 +59,37 @@ class RenderTask(object):
         dx = self.transformed.xmax - self.transformed.xmin
         dy = self.transformed.ymax - self.transformed.ymin
         dz = self.transformed.zmax - self.transformed.zmin
-        # Linear interpolation between these two resolutions
+        if min(dx, dy, dz) == 0:    return 1
+
+        # Pick top and bottom resolutions
         bottom = 16 / min(dx, dy, dz)
         top = self.resolution
         if (top < bottom):  top = bottom
+
+        # Linear interpolation between these two resolutions
         i = self.iteration / float(self.MAX_ITERATION-1)
         return top*i + bottom*(1-i)
 
 
     def _refine(self):
-        self.image = self.tree.render(self.get_resolution())
+        # Render the image at the given resolution
+        image = self.tree.render(self.get_resolution())
+
+        # Apply the post-transform to image corners
+        # (used in flattening out 2D images)
+        a = self.posttransform * QtGui.QVector3D(
+                image.xmin, image.ymin, image.zmin)
+        b = self.posttransform * QtGui.QVector3D(
+                image.xmax, image.ymax, image.zmax)
+
+        # Modify image bounds
+        image.xmin = min(a.x(), b.x())
+        image.ymin = min(a.y(), b.y())
+        image.xmax = max(a.x(), b.x())
+        image.ymax = max(a.y(), b.y())
+        image.zmin = image.zmax = 0
+
+        self.image = image
 
         # Then call the callback (which updates rendering)
         self.callback()

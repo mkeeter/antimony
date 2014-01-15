@@ -349,8 +349,11 @@ class Canvas(QtGui.QWidget):
                      (self.pixel_matrix()*QtGui.QVector3D(0, 0, 0)).x())
             args = (e,
                     self.transform_matrix() if e.has_xyz_bounds()
-                    else self.transform_matrix_2d(),
-                    scale, self.update)
+                        else self.transform_matrix_2d(),
+                    scale,
+                    self.transform_matrix_tilt() if not e.has_xyz_bounds()
+                        else QtGui.QMatrix4x4(),
+                    self.update)
 
             if d in self.render_tasks and self.render_tasks[d][-1] == args:
                 if self.render_tasks[d][-1].can_refine():

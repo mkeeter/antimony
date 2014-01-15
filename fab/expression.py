@@ -221,7 +221,10 @@ class Expression(object):
         """
         return (not math.isinf(self.xmax - self.xmin) and
                 not math.isinf(self.ymax - self.ymin) and
-                not math.isinf(self.zmax - self.zmin))
+                not math.isinf(self.zmax - self.zmin) and
+                (self.xmax > self.xmin) and
+                (self.ymax > self.ymin) and
+                (self.zmax > self.zmin))
 
     def get_xy_region(self, voxels_per_unit):
         """ Returns a region appropriate for 2D or height-map rendering.
