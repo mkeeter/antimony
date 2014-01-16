@@ -103,11 +103,7 @@ class TriangleControl(base.NodeControl):
     def draw_triangle(self, painter, mask=False):
         """ Draws the triangle on the given painter.
         """
-        if mask:
-            painter.setPen(QtGui.QPen(QtCore.Qt.color1, 4))
-            painter.setBrush(QtGui.QBrush())
-        else:
-            painter.setPen(QtGui.QPen(QtGui.QColor(200, 200, 200), 4))
+        self.set_pen(painter, mask, None, colors.blue)
         painter.drawPath(self.triangle_path(self.pos()))
 
 
@@ -118,24 +114,15 @@ class TriangleControl(base.NodeControl):
         pos = self.canvas.unit_to_pixel(position) - self.pos()
         x, y = pos.x(), pos.y()
 
-        if mask:
-            painter.setBrush(QtGui.QBrush(QtCore.Qt.color1))
-            painter.setPen(QtGui.QPen(QtCore.Qt.color1, 2))
-        else:
-            painter.setBrush(QtGui.QBrush(QtGui.QColor(*colors.light_grey)))
-            painter.setPen(QtGui.QPen(QtGui.QColor(*colors.dark_grey), 2))
+        self.set_brush(painter, mask, colors.blue)
 
-        if mask:
-            d = 22
-        elif self.drag_control.hover or self.drag_control.drag:
-            d = 20
-        else:
-            d = 16
+        if mask:                                                d = 22
+        elif self.drag_control.hover or self.drag_control.drag: d = 20
+        else:                                                   d = 16
 
         painter.drawEllipse(x - d/2, y - d/2, d, d)
         if mask:    return
 
-        painter.setPen(QtGui.QPen(QtGui.QColor(*colors.dark_grey), 0))
         lines = [QtCore.QLine(x-4, y+2, x, y-4),
                  QtCore.QLine(x, y-4, x+4, y+2),
                  QtCore.QLine(x+4, y+2, x-4, y+2)]
