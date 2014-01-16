@@ -140,6 +140,9 @@ class App(QtGui.QApplication):
             with open(filename, 'rb') as f:
                 state = pickle.load(f)
 
+                # Clear existing widgets
+                self.clear()
+
                 # Reconstruct all nodes
                 node.base.load_nodes(state[0])
 

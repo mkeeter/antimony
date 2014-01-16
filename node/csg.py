@@ -46,7 +46,7 @@ class Intersection(base.Node):
 
     def get_control(self):
         import control.csg
-        return control.csg.Intersection
+        return control.csg.IntersectionControl
 
     def make_shape(self):
         """ Computes the intersection of A and B
@@ -75,7 +75,7 @@ class Cutout(base.Node):
 
     def get_control(self):
         import control.csg
-        return control.csg.Cutout
+        return control.csg.CutoutControl
 
     def make_shape(self):
         """ Computes A & ~B
