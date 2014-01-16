@@ -33,13 +33,22 @@ class Image(object):
 
         return i
 
-    def to_QImage(self):
+    def to_QImage(self, zmin=None, zmax=None):
         """ Converts this image into a QImage.
         """
         from PySide import QtGui
 
+        # Calculate z scale and offset
+        if zmin is None or zmax is None or zmin == zmax:
+            z_scale = 1/256.
+            z_offset = 0
+        else:
+            z_scale =  (self.zmax - self.zmin) / (256. * (zmax - zmin))
+            z_offset = (self.zmin - zmin) * 256. / (zmax - zmin)
+
         # Translate to 8-bit greyscale
-        scaled = np.array(self.array[::-1,:] >> 8, dtype=np.uint8)
+        scaled = np.array(self.array*z_scale + z_offset, dtype=np.uint8)
+        scaled[self.array == 0] = 0
 
         # Then make into an RGB image
         rgb = np.dstack([
@@ -56,96 +65,6 @@ class Image(object):
         qimage.pixels = pixels
 
         return qimage
-
-
-    def copy(self):
-        """ Makes a shallow copy of the provided images.
-        """
-        i = Image(self.width, self.height)
-        i.array = self.array
-        for v in ['xmin','ymin','zmin','xmax','ymax','zmax']:
-            setattr(i, v, getattr(self, v))
-        return i
-
-    @staticmethod
-    def blit_onto(source, target):
-        """ Blits a source image onto a target image, scaling and properly
-            overlapping images of different z heights.
-        """
-
-        # Scale height-map values
-        try:
-            z_scale = ((source.zmax - target.zmin) /
-                       (target.zmax - target.zmin))
-        except ZeroDivisionError:
-            z_scale = 1
-
-        pixel_scale = (
-                ((target.height / (target.ymax - target.ymin)) /
-                       (source.height / (source.ymax - source.ymin))),
-                ((target.width / (target.xmax - target.xmin)) /
-                       (source.width / (source.xmax - source.xmin))))
-
-        if pixel_scale[0] == 0 or pixel_scale[1] == 0:  return
-
-        # Resample the image to be at the same scale as screen pixels
-        source = source.copy()
-        source.array = scipy.ndimage.interpolation.zoom(
-                source.array[::-1, :] * z_scale, # weird y flip makes me sad
-                pixel_scale, output=np.uint16, order=0)
-
-        # Update width and height
-        source.height, source.width = source.array.shape
-
-        # Trim the array in x and y
-        if target.xmin > source.xmin:
-            imin = int(source.width * (target.xmin - source.xmin) /
-                                      (source.xmax - source.xmin))
-            source.xmin = target.xmin
-            source.array = source.array[:,imin:]
-
-        if target.xmax < source.xmax:
-            imax = int(source.width * (target.xmax - source.xmax) /
-                                      (source.xmax - source.xmin))
-            source.xmax = target.xmax
-            source.array = source.array[:,:imax]
-
-        if target.ymin > source.ymin:
-            jmin = int(source.width * (target.ymin - source.ymin) /
-                                      (source.ymax - source.ymin))
-            source.ymin = target.ymin
-            source.array = source.array[jmin:,:]
-
-        if target.ymax < source.ymax:
-            jmax = int(source.width * (target.ymax - source.ymax) /
-                                      (source.ymax - source.ymin))
-            source.ymax = target.ymax
-            source.array = source.array[:jmax,:]
-
-        # Update width and height
-        source.height, source.width = source.array.shape
-
-        imin = int(target.width * (source.xmin - target.xmin) /
-                                  (target.xmax - target.xmin))
-
-        jmin = int(target.height * (source.ymin - target.ymin) /
-                                   (target.ymax - target.ymin))
-
-        subtarget = target.array[jmin : jmin+source.height,
-                                 imin : imin+source.width]
-
-        # Clip to fix pixel precision errors on the edges
-        if subtarget.shape != source.array.shape:
-            source.array = source.array[:subtarget.shape[0],
-                                        :subtarget.shape[1]]
-
-        try:
-            np.copyto(subtarget, source.array, where=source.array > subtarget)
-        except AttributeError:
-            np.putmask(subtarget, source.array > subtarget, source.array)
-
-        return target
-
 
 
     def pixels(self, flip_y=False):

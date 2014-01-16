@@ -87,7 +87,8 @@ class RenderTask(object):
         image.ymin = min(a.y(), b.y())
         image.xmax = max(a.x(), b.x())
         image.ymax = max(a.y(), b.y())
-        image.zmin = image.zmax = 0
+        image.zmin = min(a.z(), b.z())
+        image.zmax = max(a.z(), b.z())
 
         self.image = image
 

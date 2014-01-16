@@ -283,19 +283,15 @@ class Canvas(QtGui.QWidget):
         elif y is not None: return v_.y()
 
 
-    def get_bounding_rect(self, expression):
-        """ For a given expression, finds a bounding rectangle
+    def get_bounding_rect(self, image):
+        """ For a given image, finds a bounding rectangle
             (to draw that expression's image).
         """
-        if expression.has_xyz_bounds(): M = QtGui.QMatrix4x4()
-        else:                           M = self.transform_matrix_tilt()
+        c1 = self.pixel_matrix() * QtGui.QVector3D(
+                image.xmin, image.ymin, image.zmin)
+        c2 = self.pixel_matrix() * QtGui.QVector3D(
+                image.xmax, image.ymax, image.zmax)
 
-        c1 = self.pixel_matrix() * M * QtGui.QVector3D(
-                expression.xmin, expression.ymin,
-                expression.zmin if not math.isinf(expression.zmin) else 0)
-        c2 = self.pixel_matrix() * M * QtGui.QVector3D(
-                expression.xmax, expression.ymax,
-                expression.zmax if not math.isinf(expression.zmax) else 0)
         return QtCore.QRect(c1.x(), c2.y(), c2.x() - c1.x(), c1.y() - c2.y())
 
 
@@ -370,6 +366,11 @@ class Canvas(QtGui.QWidget):
         """ Paints all rendered expressions (i.e. RenderTasks with a image
             member variable.
         """
+
+        # Save the composition mode, since we're about to change it
+        comp = painter.compositionMode()
+        painter.setCompositionMode(QtGui.QPainter.CompositionMode_Lighten)
+
         images = []
         for tasks in self.render_tasks.itervalues():
             for t in tasks[::-1]:
@@ -379,24 +380,16 @@ class Canvas(QtGui.QWidget):
 
         if not images:  return
 
-        pix_i = self.pixel_matrix().inverted()[0]
+        zmin = min(i.zmin for i in images)
+        zmax = max(i.zmax for i in images)
 
-        lower_left = pix_i * QtGui.QVector3D(0, self.height(), 0)
-        upper_right = pix_i * QtGui.QVector3D(self.width(), 0, 0)
+        for i in images:
+            qimg = i.to_QImage(zmin, zmax)
+            painter.drawImage(self.get_bounding_rect(i), qimg, qimg.rect())
 
-        background = fab.image.Image(self.width(), self.height())
+        # Restore the saved composition mode
+        painter.setCompositionMode(comp)
 
-        background.xmin = lower_left.x()
-        background.xmax = upper_right.x()
-        background.ymin = lower_left.y()
-        background.ymax = upper_right.y()
-        background.zmin = min(i.zmin for i in images)
-        background.zmax = max(i.zmax for i in images)
-
-        for i in images:    fab.image.Image.blit_onto(i, background)
-
-        qimg = background.to_QImage()
-        painter.drawImage(qimg.rect(), qimg, qimg.rect())
 
 
     def find_expressions(self):
