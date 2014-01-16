@@ -55,19 +55,11 @@ class PointControl(base.NodeControl):
         """
         width, height = self.width(), self.height()
 
-        if mask:
-            painter.setBrush(QtGui.QBrush(QtCore.Qt.color1))
-            painter.setPen(QtGui.QPen(QtCore.Qt.color1, 2))
-        else:
-            painter.setBrush(QtGui.QBrush(QtGui.QColor(*colors.light_grey)))
-            painter.setPen(QtGui.QPen(QtGui.QColor(*colors.dark_grey), 2))
+        self.set_brush(painter, mask, colors.dark_grey)
 
-        if mask:
-            d = 22
-        elif self.drag_control.hover or self.drag_control.drag:
-            d = 20
-        else:
-            d = 14
+        if mask:                                                d = 22
+        elif self.drag_control.hover or self.drag_control.drag: d = 20
+        else:                                                   d = 14
 
         painter.drawEllipse((width - d) / 2, (height - d) / 2, d, d)
 
