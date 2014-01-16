@@ -83,12 +83,13 @@ class RenderTask(object):
                 image.xmax, image.ymax, image.zmax)
 
         # Modify image bounds
-        image.xmin = min(a.x(), b.x())
-        image.ymin = min(a.y(), b.y())
-        image.xmax = max(a.x(), b.x())
-        image.ymax = max(a.y(), b.y())
-        image.zmin = min(a.z(), b.z())
-        image.zmax = max(a.z(), b.z())
+        image.xmin, image.ymin, image.zmin = a.x(), a.y(), a.z()
+        image.xmax, image.ymax, image.zmax = b.x(), b.y(), b.z()
+
+        # Properly flip upside-down 2D images
+        if image.ymin > image.ymax:
+            image.array = image.array[::-1]
+            image.ymin, image.ymax = image.ymax, image.ymin
 
         self.image = image
 
