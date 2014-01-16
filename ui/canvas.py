@@ -13,7 +13,7 @@ class Canvas(QtGui.QWidget):
         self.center = QtGui.QVector3D(0, 0, 0)
         self.yaw   = 0
         self.pitch = 0
-        self.scale = 0.01
+        self.scale = 0.02
 
         self.dragging = False
         self.spinning = False

@@ -29,7 +29,7 @@ class ScaleControl(base.NodeControl):
         self.position = QtGui.QVector3D()
         self.scale = QtGui.QVector3D()
 
-        self.draw_scale = 50.0
+        self.draw_scale = 25
 
         self.sync()
         self.make_masks()
