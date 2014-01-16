@@ -201,6 +201,17 @@ def scale_xy(part, x0, y0, sxy):
 
 ################################################################################
 
+def extrude_z(part, z0, z1):
+    # max(part, max(z0-Z, Z-z1))
+    p = Expression('a%sa-f%gZ-Zf%g' % (part.math, z0, z1))
+    for i in 'xmin','xmax','ymin','ymax':
+        setattr(p, i, getattr(part, i))
+    p.zmin = z0
+    p.zmax = z1
+    return p
+
+################################################################################
+
 def shear_x_y(part, y0, y1, dx0, dx1):
     dx = dx1 - dx0
     dy = y1 - y0
