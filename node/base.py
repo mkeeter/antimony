@@ -37,17 +37,25 @@ class Node(object):
                 A list of datum tuples (name, datum class, datum argument)
                 A list of children tuples (name, index in node list)
         """
-        # Flatten each datum
+        # Flatten each datum.
+        # Order matters, so we use our built-in array
+        # (otherwise connections will end up connected to the wrong places,
+        #  because they use index within self.datums)
         datums = []
+        for d in self.datums:
+            if isinstance(d[1], datum.FunctionDatum):
+                datums.append((d[0], d[1].__class__, d[1].function_name))
+            elif isinstance(d[1], datum.EvalDatum):
+                datums.append((d[0], d[1].__class__, d[1]._expr))
+
+        # Find and flatten all children
+        # Order doesn't matter here because there aren't any connections.
         children = []
         for key in self.__dict__:
             attr = getattr(self, key)
-            if isinstance(attr, datum.FunctionDatum):
-                datums.append((key[1:], attr.__class__, attr.function_name))
-            elif isinstance(attr, datum.EvalDatum):
-                datums.append((key[1:], attr.__class__, attr._expr))
-            elif isinstance(attr, Node):
+            if isinstance(attr, Node):
                 children.append((key, nodes.index(attr)))
+
         return [self.__class__, datums, children]
 
     @classmethod

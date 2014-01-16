@@ -22,7 +22,12 @@ class NodeControl(QtGui.QWidget):
         if self._sync():    # defined in subclasses
             self.reposition()
         if self.editor:                     self.editor.sync()
-        for c in self.node.connections():   c.control.sync()
+
+        # Sync all connections (if their controls have been constructed,
+        # to prevent problems when loading files)
+        for c in self.node.connections():
+            if c.control:   c.control.sync()
+
 
     def contextMenuEvent(self, event):
         """ Ignore context menu events so that these widgets
