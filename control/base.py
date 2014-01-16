@@ -123,6 +123,33 @@ class NodeControl(QtGui.QWidget):
                 path.lineTo(self.canvas.unit_to_pixel(p) - offset)
         return path
 
+    def set_pen(self, painter, mask, drag, color):
+        """ Configures the painter to draw a standard line
+            with the given color.
+        """
+        painter.setBrush(QtGui.QBrush())
+        if mask:
+            painter.setPen(QtGui.QPen(QtCore.Qt.color1, 8))
+        elif drag is not None and (drag.hover or drag.drag):
+            painter.setPen(QtGui.QPen(QtGui.QColor(
+                *colors.highlight(color)), 4))
+        else:
+            painter.setPen(QtGui.QPen(QtGui.QColor(*color), 4))
+
+    def set_brush(self, painter, mask, color):
+        """ Sets up a standard (filled) brush for drawing
+            in the given color.
+        """
+        if mask:
+            painter.setBrush(QtGui.QBrush(QtCore.Qt.color1))
+            painter.setPen(QtGui.QPen(QtCore.Qt.color1, 2))
+        else:
+            painter.setBrush(QtGui.QBrush(QtGui.QColor(
+                *colors.highlight(color))))
+            painter.setPen(QtGui.QPen(QtGui.QColor(*color), 2))
+
+
+
 
 ################################################################################
 

@@ -113,13 +113,8 @@ class CubeControl(base.NodeControl):
     def draw_wireframe(self, painter, mask=False):
         """ Draws the wireframe for this cube.
         """
-        painter.setBrush(QtGui.QBrush())
-        if mask:
-            painter.setPen(QtGui.QPen(QtCore.Qt.color1, 2))
-        else:
-            painter.setPen(QtGui.QPen(QtGui.QColor(*colors.light_grey), 2))
-        p = self.wireframe_path(self.pos())
-        painter.drawPath(p)
+        self.set_pen(painter, mask, None, colors.blue)
+        painter.drawPath(self.wireframe_path(self.pos()))
 
 
     def draw_center(self, painter, mask=False):
@@ -130,12 +125,8 @@ class CubeControl(base.NodeControl):
                      self.node.b.control.position)/2)
                 - self.pos())
         x, y = pos.x(), pos.y()
-        if mask:
-            painter.setBrush(QtGui.QBrush(QtCore.Qt.color1))
-            painter.setPen(QtGui.QPen(QtCore.Qt.color1, 2))
-        else:
-            painter.setBrush(QtGui.QBrush(QtGui.QColor(*colors.light_grey)))
-            painter.setPen(QtGui.QPen(QtGui.QColor(*colors.dark_grey), 2))
+
+        self.set_brush(painter, mask, colors.blue)
 
         if mask:                                                    d = 22
         elif self.drag_control.hover or self.drag_control.drag:     d = 20

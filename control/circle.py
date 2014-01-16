@@ -124,18 +124,16 @@ class CircleControl(base.NodeControl):
         """
         width, height = self.width(), self.height()
 
-        if mask:
-            painter.setBrush(QtGui.QBrush(QtCore.Qt.color1))
-            painter.setPen(QtGui.QPen(QtCore.Qt.color1, 2))
-        else:
-            painter.setBrush(QtGui.QBrush(QtGui.QColor(*colors.light_grey)))
-            painter.setPen(QtGui.QPen(QtGui.QColor(*colors.dark_grey), 2))
+        self.set_brush(painter, mask, colors.blue)
 
         if mask:                                                    d = 22
         elif self.drag_control.hover or self.drag_control.drag:     d = 20
-        else:                                                       d = 14
+        else:                                                       d = 16
 
         painter.drawEllipse((width - d) / 2, (height - d) / 2, d, d)
+        d = 8
+        painter.drawEllipse((width - d) / 2, (height - d) / 2, d, d)
+
 
 
     def draw_ring(self, painter, mask=False):
@@ -144,19 +142,10 @@ class CircleControl(base.NodeControl):
         if self.r <= 0:     return
         path = self.ring_path(self.pos())
 
-        if mask:
-            r = 6
-        elif self.ring_drag_control.hover or self.ring_drag_control.drag:
-            r = 4
-        else:
-            r = 2
+        if mask:    r = 6
+        else:       r = 2
 
-        if mask:
-            painter.setBrush(QtGui.QBrush())
-            painter.setPen(QtGui.QPen(QtCore.Qt.color1, r))
-        else:
-            painter.setBrush(QtGui.QBrush())
-            painter.setPen(QtGui.QPen(QtGui.QColor(*colors.light_grey), r))
+        self.set_pen(painter, mask, self.ring_drag_control, colors.blue)
 
         painter.drawPath(path)
 
