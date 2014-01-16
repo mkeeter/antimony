@@ -116,9 +116,12 @@ class SphereControl(base.NodeControl):
 
         if mask:                                                    d = 22
         elif self.drag_control.hover or self.drag_control.drag:     d = 20
-        else:                                                       d = 14
+        else:                                                       d = 16
 
         painter.drawEllipse((width - d) / 2, (height - d) / 2, d, d)
+        d = 8
+        painter.drawEllipse((width - d) / 2, (height - d) / 2, d, d)
+
 
     def draw_wireframe(self, painter, mask=False):
         """ Draw the wireframe outline of a sphere.
