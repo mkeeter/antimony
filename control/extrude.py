@@ -58,7 +58,8 @@ class ExtrudeZControl(base.NodeControl):
         """ Returns a painter path that draws a base for the extrusion
             and a line pointing upwards to the top.
         """
-        scale = max(4, (self.top - self.position.z())/10.)
+        scale = max(0.08 / self.canvas.scale,
+                (self.top - self.position.z())/10.)
         lines = [[
                 self.position + QtGui.QVector3D(-scale, 0, 0),
                 self.position,
@@ -76,7 +77,8 @@ class ExtrudeZControl(base.NodeControl):
     def top_path(self, offset=QtCore.QPoint()):
         center = QtGui.QVector3D(
                 self.position.x(), self.position.y(), self.top)
-        scale = max(3, (self.top - self.position.z()) / 15.)
+        scale = max(0.06 / self.canvas.scale,
+                (self.top - self.position.z()) / 15.)
         line = [
                 center + QtGui.QVector3D(-scale, 0, -scale),
                 center,
