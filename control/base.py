@@ -123,7 +123,7 @@ class NodeControl(QtGui.QWidget):
                 path.lineTo(self.canvas.unit_to_pixel(p) - offset)
         return path
 
-    def set_line(self, painter, mask, drag, color):
+    def set_pen(self, painter, mask, drag, color):
         """ Configures the painter to draw a standard line
             with the given color.
         """

@@ -158,20 +158,19 @@ class ScaleControl(base.NodeControl):
         return self.draw_lines(lines, offset)
 
     def draw_x_handle(self, painter, mask=False):
-        self.set_line(painter, mask, self.scale_x, colors.orange)
+        self.set_pen(painter, mask, self.scale_x, colors.orange)
         painter.drawPath(self.x_handle_path(self.pos()))
 
     def draw_y_handle(self, painter, mask=False):
-        self.set_line(painter, mask, self.scale_y, colors.orange)
+        self.set_pen(painter, mask, self.scale_y, colors.orange)
         painter.drawPath(self.y_handle_path(self.pos()))
 
     def draw_z_handle(self, painter, mask=False):
-        self.set_line(painter, mask, self.scale_z, colors.orange)
+        self.set_pen(painter, mask, self.scale_z, colors.orange)
         painter.drawPath(self.z_handle_path(self.pos()))
 
-
     def draw_axes(self, painter, mask=False):
-        self.set_line(painter, mask, None, colors.orange)
+        self.set_pen(painter, mask, None, colors.orange)
         painter.drawPath(self.axes_path(self.pos()))
 
 
