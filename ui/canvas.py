@@ -45,24 +45,43 @@ class Canvas(QtGui.QWidget):
 
     def openMenuAt(self, point):
         menu = QtGui.QMenu()
-        items = [("Triangle", TriangleControl),
-                 ("Circle", CircleControl),
-                 ("Point (2D)", PointControl),
-                 ("Point (3D)", Point3DControl),
-                 ("Sphere", SphereControl),
-                 ("Rectangular prism", CubeControl), None,
-                 ("Scale", ScaleControl),
-                 ("Extrude", ExtrudeZControl), None,
-                 ("Union", UnionControl),
-                 ("Intersection", IntersectionControl),
-                 ("Cutout", CutoutControl), None,
-                 ("Get bounds", GetBoundsControl),
-                 ("Set bounds", SetBoundsControl)]
+
+        items = [
+                ('2D',
+                     ("Triangle", TriangleControl),
+                     ("Circle", CircleControl),
+                     ("Point (2D)", PointControl),
+                ),
+
+                ('3D',
+                     ("Sphere", SphereControl),
+                     ("Rectangular prism", CubeControl),
+                     ("Point (3D)", Point3DControl),
+                ),
+
+                ('CSG',
+                     ("Union", UnionControl),
+                     ("Intersection", IntersectionControl),
+                     ("Cutout", CutoutControl),
+                ),
+
+                ('Operations',
+                     ("Extrude", ExtrudeZControl),
+                     ("Scale", ScaleControl),
+                ),
+
+                ('Advanced',
+                     ("Get bounds", GetBoundsControl),
+                     ("Set bounds", SetBoundsControl),
+                ),
+        ]
 
         actions = {}
         for i in items:
-            if i is None:   menu.addSeparator()
-            else:           actions[menu.addAction(i[0])] = i[1].new
+            m = QtGui.QMenu(i[0])
+            for j in i[1:]:
+                actions[m.addAction(j[0])] = j[1].new
+            menu.addMenu(m)
 
         # Open up the menu at the given point and get a constructor back.
         result = menu.exec_(self.mapToGlobal(point))
