@@ -58,8 +58,10 @@ class ExtrudeZControl(base.NodeControl):
         """ Returns a painter path that draws a base for the extrusion
             and a line pointing upwards to the top.
         """
-        scale = max(0.08 / self.canvas.scale,
+        scale = max(
+                0.08 / self.canvas.scale,
                 (self.top - self.position.z())/10.)
+
         lines = [[
                 self.position + QtGui.QVector3D(-scale, 0, 0),
                 self.position,
@@ -74,16 +76,22 @@ class ExtrudeZControl(base.NodeControl):
         ]]
         return self.draw_lines(lines, offset)
 
+
     def top_path(self, offset=QtCore.QPoint()):
+        """ Draws a pointy arrow at the top of the extrude shape.
+        """
+        scale = max(
+                0.06 / self.canvas.scale,
+                (self.top - self.position.z()) / 15.)
+
         center = QtGui.QVector3D(
                 self.position.x(), self.position.y(), self.top)
-        scale = max(0.06 / self.canvas.scale,
-                (self.top - self.position.z()) / 15.)
         line = [
                 center + QtGui.QVector3D(-scale, 0, -scale),
                 center,
                 center + QtGui.QVector3D(scale, 0, -scale)]
         return self.draw_lines([line], offset)
+
 
     def reposition(self):
         """ Repositions this widget and calls self.update
