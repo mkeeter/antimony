@@ -158,45 +158,20 @@ class ScaleControl(base.NodeControl):
         return self.draw_lines(lines, offset)
 
     def draw_x_handle(self, painter, mask=False):
-        painter.setBrush(QtGui.QBrush())
-        if mask:
-            painter.setPen(QtGui.QPen(QtCore.Qt.color1, 8))
-        elif self.scale_x.hover or self.scale_x.drag:
-            painter.setPen(QtGui.QPen(QtGui.QColor(
-                *colors.highlight(colors.orange)), 4))
-        else:
-            painter.setPen(QtGui.QPen(QtGui.QColor(*colors.orange), 4))
+        self.set_line(painter, mask, self.scale_x, colors.orange)
         painter.drawPath(self.x_handle_path(self.pos()))
 
     def draw_y_handle(self, painter, mask=False):
-        painter.setBrush(QtGui.QBrush())
-        if mask:
-            painter.setPen(QtGui.QPen(QtCore.Qt.color1, 8))
-        elif self.scale_y.hover or self.scale_y.drag:
-            painter.setPen(QtGui.QPen(QtGui.QColor(
-                *colors.highlight(colors.orange)), 4))
-        else:
-            painter.setPen(QtGui.QPen(QtGui.QColor(*colors.orange), 4))
+        self.set_line(painter, mask, self.scale_y, colors.orange)
         painter.drawPath(self.y_handle_path(self.pos()))
 
     def draw_z_handle(self, painter, mask=False):
-        painter.setBrush(QtGui.QBrush())
-        if mask:
-            painter.setPen(QtGui.QPen(QtCore.Qt.color1, 8))
-        elif self.scale_z.hover or self.scale_z.drag:
-            painter.setPen(QtGui.QPen(QtGui.QColor(
-                *colors.highlight(colors.orange)), 4))
-        else:
-            painter.setPen(QtGui.QPen(QtGui.QColor(*colors.orange), 4))
+        self.set_line(painter, mask, self.scale_z, colors.orange)
         painter.drawPath(self.z_handle_path(self.pos()))
 
 
     def draw_axes(self, painter, mask=False):
-        painter.setBrush(QtGui.QBrush())
-        if mask:
-            painter.setPen(QtGui.QPen(QtCore.Qt.color1, 4))
-        else:
-            painter.setPen(QtGui.QPen(QtGui.QColor(*colors.orange), 4))
+        self.set_line(painter, mask, None, colors.orange)
         painter.drawPath(self.axes_path(self.pos()))
 
 
@@ -206,13 +181,7 @@ class ScaleControl(base.NodeControl):
         pos = self.canvas.unit_to_pixel(self.position) - self.pos()
         x, y = pos.x(), pos.y()
 
-        if mask:
-            painter.setBrush(QtGui.QBrush(QtCore.Qt.color1))
-            painter.setPen(QtGui.QPen(QtCore.Qt.color1, 2))
-        else:
-            painter.setBrush(QtGui.QBrush(QtGui.QColor(
-                *colors.highlight(colors.orange))))
-            painter.setPen(QtGui.QPen(QtGui.QColor(*colors.orange), 2))
+        self.set_brush(painter, mask, colors.orange)
 
         if mask:                                                    d = 22
         elif self.drag_control.hover or self.drag_control.drag:     d = 20
