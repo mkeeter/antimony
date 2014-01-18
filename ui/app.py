@@ -189,6 +189,7 @@ class App(QtGui.QApplication):
     def on_export_stl(self):
         """ Exports as a .stl mesh
         """
+
         expressions = self.canvas.find_expressions()
         if not expressions:
             return QtGui.QMessageBox.critical(self.canvas, "Export error",
@@ -203,15 +204,53 @@ class App(QtGui.QApplication):
                     "<b>Export error:</b>" +
                     "<br><br>All expressions must be 3D objects.")
 
-        res, b = QtGui.QInputDialog.getDouble(
-                self.window, "Resolution", "Voxels/unit", 2, 1, 100, 1)
-        if not b:           return
+        rd = ResolutionDialog(self.canvas,
+                combined.xmax - combined.xmin,
+                combined.ymax - combined.ymin,
+                combined.zmax - combined.zmin)
+
+        if not rd.exec_():  return
+        res = rd.number.value()
 
         filename, filetype = QtGui.QFileDialog.getSaveFileName(
                 self.window, "Export (.stl)", '', '*.stl')
         if not filename:    return
 
         combined.to_tree().triangulate(res, filename)
+
+################################################################################
+
+class ResolutionDialog(QtGui.QDialog):
+    def __init__(self, parent, dx, dy, dz):
+        super(ResolutionDialog, self).__init__(parent)
+
+        layout = QtGui.QFormLayout(self)
+        self.setWindowTitle("Export .stl")
+
+        label = QtGui.QLabel("<b>Resolution</b><br>(voxels/unit)", self)
+        layout.addRow(label)
+
+        self.number = QtGui.QDoubleSpinBox(self)
+        self.number.setMinimum(0.01)
+        self.number.setMaximum(10)
+        self.number.setStyleSheet("width: 100px;")
+
+        button = QtGui.QPushButton("Okay", self)
+        button.clicked.connect(self.accept)
+
+        layout.addRow(self.number, button)
+
+        voxels = QtGui.QLabel('0 x 0 x 0', self)
+        layout.addRow(voxels)
+        self.setLayout(layout)
+
+        self.number.valueChanged.connect(lambda v:
+                voxels.setText('%i x %i x %i' %
+                    (max(1, v*dx), max(1, v*dy), max(1, v*dz))))
+
+        self.number.setValue(1)
+
+
 
 
 import control.base, control.connection
