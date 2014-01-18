@@ -3,6 +3,8 @@ import os
 import math
 import threading
 
+import numpy as np
+
 class MathTree(object):
     def __init__(self, expr, ptr):
         self.ptr  = ptr
@@ -73,6 +75,26 @@ class MathTree(object):
         libfab.render16(self.ptr, region, image.pixels(), halt)
 
         return image
+
+
+    def triangulate(self, resolution, filename, abort):
+        """ Renders a tree into a mesh at the given resolution,
+            saving as a .stl file.
+        """
+        if self.expr.has_xyz_bounds():
+            region = self.expr.get_xyz_region(resolution)
+        else:
+            raise Exception("Unknown render region!")
+
+        verts = ctypes.POINTER(ctypes.c_float)()
+        count = ctypes.c_uint(0)
+        libfab.triangulate(self.ptr, region,
+                           ctypes.byref(verts), ctypes.byref(count))
+        v = np.array([verts[i] for i in range(count.value)])
+        libfab.free_mesh(verts)
+
+        if not abort.is_set():  write_stl(v, filename)
+
 
     def eval_i(self, X, Y, Z):
         """ Evaluates this tree on the given interval.
