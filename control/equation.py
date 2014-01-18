@@ -56,6 +56,7 @@ class EquationViewerControl(TextLabelControl):
         return changed
 
     def reposition(self):
+        self.font.setPointSize(min(14, max(6, self.canvas.scale * 800)))
         self.move(self.canvas.unit_to_pixel(self.position))
         self.setFixedSize(self.get_text_size())
 

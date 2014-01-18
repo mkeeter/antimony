@@ -9,7 +9,7 @@ class EquationViewer(base.Node):
         self.add_datum('z', datum.FloatDatum(self, z))
 
         self.add_datum('input', datum.ExpressionDatum(self, "None"))
-        self.add_datum('output', datum.ExpressionFunctionDatum(self, "None"))
+        self.add_datum('output', datum.ExpressionFunctionDatum(self, "make_shape"))
 
     def get_control(self):
         import control.equation
