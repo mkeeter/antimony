@@ -18,7 +18,7 @@ class ImageControl(base.NodeControl):
 
         # Import an image and convert it into a QRegion
         img = QtGui.QImage(filename)
-        bmp = QtGui.QRegion(QtGui.QPixmap(img.createHeuristicMask()))
+        bmp = QtGui.QRegion(QtGui.QPixmap(img.createMaskFromColor(0xffffffff)))
 
         e = Expression(None)
         for r in bmp.rects():
