@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "triangulate.h"
 
@@ -88,7 +89,8 @@ Vec3f zero_crossing(const float d[8],
 
 _STATIC_
 void triangulate_voxel(MathTree* tree, const Region r,
-                       float** verts, unsigned* count, unsigned* allocated)
+                       float** const verts, unsigned* const count,
+                       unsigned* const allocated)
 {
     // Recursive case: split into subregions and recurse
     if (r.voxels > 1)
@@ -135,10 +137,10 @@ void triangulate_voxel(MathTree* tree, const Region r,
 
             // Do we need to allocate more space for incoming vertices?
             // If so, double the buffer size.
-            if (*allocated - *count < 3)
+            if ((*count) + 9 >= (*allocated))
             {
-                *verts = realloc(*verts, 2*sizeof(float)*(*allocated));
                 *allocated *= 2;
+                *verts = realloc(*verts, sizeof(float)*(*allocated));
             }
 
             // ...and insert vertices into the mesh.
@@ -160,10 +162,11 @@ void triangulate_voxel(MathTree* tree, const Region r,
 // Sets *out to the number of vertices returned.
 float* triangulate(MathTree* tree, const Region r, unsigned* const out)
 {
-    float* verts = malloc(3*sizeof(float));
+    float* verts = malloc(9*sizeof(float));
     *out = 0;
-    unsigned allocated = 3;
+    unsigned allocated = 9;
 
-    triangulate_voxel(tree, r, &verts, &count, &allocated);
-    return realloc(verts, (*out)*sizeof(float));
+    triangulate_voxel(tree, r, &verts, out, &allocated);
+    verts = realloc(verts, (*out)*sizeof(float));
+    return verts;
 }
