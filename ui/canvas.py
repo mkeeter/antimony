@@ -48,31 +48,32 @@ class Canvas(QtGui.QWidget):
 
         items = [
                 ('2D',
-                     ("Triangle", TriangleControl),
-                     ("Circle", CircleControl),
-                     ("Point (2D)", PointControl),
+                    ("Triangle", TriangleControl),
+                    ("Circle", CircleControl),
+                    ("Point (2D)", PointControl),
                 ),
 
                 ('3D',
-                     ("Sphere", SphereControl),
-                     ("Rectangular prism", CubeControl),
-                     ("Point (3D)", Point3DControl),
+                    ("Sphere", SphereControl),
+                    ("Rectangular prism", CubeControl),
+                    ("Point (3D)", Point3DControl),
                 ),
 
                 ('CSG',
-                     ("Union", UnionControl),
-                     ("Intersection", IntersectionControl),
-                     ("Cutout", CutoutControl),
+                    ("Union", UnionControl),
+                    ("Intersection", IntersectionControl),
+                    ("Cutout", CutoutControl),
                 ),
 
                 ('Operations',
-                     ("Extrude", ExtrudeZControl),
-                     ("Scale", ScaleControl),
+                    ("Extrude", ExtrudeZControl),
+                    ("Scale", ScaleControl),
                 ),
 
                 ('Advanced',
-                     ("Get bounds", GetBoundsControl),
-                     ("Set bounds", SetBoundsControl),
+                    ("Show equation", EquationViewerControl),
+                    ("Get bounds", GetBoundsControl),
+                    ("Set bounds", SetBoundsControl),
                 ),
         ]
 
@@ -446,6 +447,7 @@ from control.circle import CircleControl
 from control.triangle import TriangleControl
 from control.csg import UnionControl, IntersectionControl, CutoutControl
 from control.bounds import GetBoundsControl, SetBoundsControl
+from control.equation import EquationViewerControl
 
 from ui.editor import Editor
 from ui.render import RenderTask
