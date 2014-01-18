@@ -56,27 +56,18 @@ class ScaleControl(base.NodeControl):
 
 
     def make_masks(self):
-        for n in ['x_handle','y_handle','z_handle','center','axes']:
-            func = getattr(self, 'draw_' + n)
-            painter = QtGui.QPainter()
-            bitmap = QtGui.QBitmap(self.size())
-            bitmap.clear()
 
-            painter.begin(bitmap)
-            func(painter, True)
-            painter.end()
+        self.scale_x.mask = self.paint_mask(self.draw_x_handle)
+        self.scale_y.mask = self.paint_mask(self.draw_y_handle)
+        self.scale_z.mask = self.paint_mask(self.draw_z_handle)
+        self.drag_control.mask = self.paint_mask(self.draw_center)
 
-            setattr(self, n + '_mask', QtGui.QRegion(bitmap))
-        self.scale_x.mask = self.x_handle_mask
-        self.scale_y.mask = self.y_handle_mask
-        self.scale_z.mask = self.z_handle_mask
-        self.drag_control.mask = self.center_mask
+        self.setMask(self.scale_x.mask |
+                     self.scale_y.mask |
+                     self.scale_z.mask |
+                     self.drag_control.mask |
+                     self.paint_mask(self.draw_axes))
 
-        self.setMask(self.x_handle_mask |
-                     self.y_handle_mask |
-                     self.z_handle_mask |
-                     self.center_mask   |
-                     self.axes_mask)
 
     def _sync(self):
         v = QtGui.QVector3D(

@@ -133,22 +133,10 @@ class ExtrudeZControl(base.NodeControl):
         painter.drawPath(self.top_path(self.pos()))
 
     def make_masks(self):
-        for n in 'base','top':
-            func = getattr(self, 'draw_'+n)
-            painter = QtGui.QPainter()
-            bitmap = QtGui.QBitmap(self.size())
-            bitmap.clear()
+        self.drag_control.mask = self.paint_mask(self.draw_base)
+        self.drag_top_control.mask = self.paint_mask(self.draw_top)
 
-            painter.begin(bitmap)
-            func(painter, True)
-            painter.end()
-
-            setattr(self, n+'_mask', QtGui.QRegion(bitmap))
-
-        self.drag_control.mask = self.base_mask
-        self.drag_top_control.mask = self.top_mask
-
-        self.setMask(self.base_mask | self.top_mask)
+        self.setMask(self.drag_control.mask | self.drag_top_control.mask)
 
 
     def paintEvent(self, paintEvent):

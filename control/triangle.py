@@ -48,18 +48,9 @@ class TriangleControl(base.NodeControl):
     def make_mask(self):
         """ Make the triangular mask image.
         """
-        painter = QtGui.QPainter()
-        bitmap = QtGui.QBitmap(self.size())
-        bitmap.clear()
-
-        # We'll store the center as the clickable mask region
-        painter.begin(bitmap)
-        self.draw_center(painter, mask=True)
-        self.drag_control.mask = QtGui.QRegion(bitmap)
-        self.draw_triangle(painter, mask=True)
-        painter.end()
-
-        self.setMask(bitmap)
+        self.drag_control.mask = self.paint_mask(self.draw_center)
+        self.setMask(self.drag_control.mask |
+                     self.paint_mask(self.draw_triangle))
 
 
     def drag(self, v, p):

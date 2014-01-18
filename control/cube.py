@@ -42,17 +42,10 @@ class CubeControl(base.NodeControl):
     def make_mask(self):
         """ Make the cube's mask and assign it to painters.
         """
-        painter = QtGui.QPainter()
-        bitmap = QtGui.QBitmap(self.size())
-        bitmap.clear()
+        self.drag_control.mask = self.paint_mask(self.draw_center)
+        self.setMask(self.drag_control.mask |
+                     self.paint_mask(self.draw_wireframe))
 
-        painter.begin(bitmap)
-        self.draw_center(painter, mask=True)
-        self.drag_control.mask = QtGui.QRegion(bitmap)
-        self.draw_wireframe(painter, mask=True)
-        painter.end()
-
-        self.setMask(bitmap)
 
     def drag(self, v, p):
         """ Call the drag methods of all child points.

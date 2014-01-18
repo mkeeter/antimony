@@ -69,21 +69,12 @@ class CircleControl(base.NodeControl):
 
 
     def make_masks(self):
-        for n in ['center','ring']:
-            func = getattr(self, 'draw_' + n)
-            painter = QtGui.QPainter()
-            bitmap = QtGui.QBitmap(self.size())
-            bitmap.clear()
-
-            painter.begin(bitmap)
-            func(painter, True)
-            painter.end()
-
-            setattr(self, n + '_mask', QtGui.QRegion(bitmap))
-
-        self.drag_control.mask = self.center_mask
-        self.ring_drag_control.mask = self.ring_mask
-        self.setMask(self.center_mask | self.ring_mask)
+        """ Render various masks and assign them to the DragManagers.
+            (then set the global widget mask)
+        """
+        self.drag_control.mask = self.paint_mask(self.draw_center)
+        self.ring_drag_control.mask = self.paint_mask(self.draw_ring)
+        self.setMask(self.drag_control.mask | self.ring_drag_control.mask)
 
 
     def _sync(self):
