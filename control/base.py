@@ -307,13 +307,21 @@ class TextLabelControl(NodeControl):
 
         self.position = QtGui.QVector3D()
 
-        fm = QtGui.QFontMetrics(self.font)
-        rect = fm.boundingRect(self.text)
-        self.setFixedSize(rect.width() + 20, rect.height() + 20)
+        self.setFixedSize(self.get_text_size())
 
         self.sync()
         self.show()
         self.raise_()
+
+    def get_text_size(self):
+        xmax = 0
+        dy = 0
+        fm = QtGui.QFontMetrics(self.font)
+        for line in self.text.split('\n'):
+            rect = fm.boundingRect(line)
+            xmax = max(rect.width() + 20, xmax)
+            dy += rect.height() + 8
+        return QtCore.QSize(xmax, dy + 12)
 
 
     def editor_position(self):
@@ -353,8 +361,15 @@ class TextLabelControl(NodeControl):
             painter.setBrush(QtGui.QColor(*(colors.blue + (100,))))
         painter.drawRect(self.rect())
         painter.setPen(QtGui.QColor(255, 255, 255))
+
+        # Paint lines of text from bottom to top
+        fm = QtGui.QFontMetrics(self.font)
         painter.setFont(self.font)
-        painter.drawText(10, self.height() - 10, self.text)
+        y = self.height() - 10
+        for line in self.text.split('\n')[::-1]:
+            painter.drawText(10, y, line)
+            y -= fm.boundingRect(line).height() + 8
+
 
     def get_input_pos(self):
         return self.pos() + QtCore.QPoint(0, self.height()/2)
