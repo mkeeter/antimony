@@ -63,6 +63,7 @@ libfab.render16.argtypes = [
 # tree/triangulate.h
 libfab.triangulate.argtypes = [
     MathTreeP, Region, pp(ctypes.c_float), p(ctypes.c_uint)]
+libfab.free_mesh.argtypes = [p(ctypes.c_float)]
 
 # tree/tree.h
 libfab.free_tree.argtypes = [MathTreeP]

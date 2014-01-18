@@ -171,3 +171,8 @@ void triangulate(MathTree* tree, const Region r,
     triangulate_voxel(tree, r, &v, count, &allocated);
     *verts = realloc(v, (*count)*sizeof(float));
 }
+
+void free_mesh(float* const verts)
+{
+    free(verts);
+}
