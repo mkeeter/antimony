@@ -96,6 +96,15 @@ class Datum(object):
         self.parents = set()
         self.children = set()
 
+    def render_me(self):
+        """ Returns True if this is an expression that we can render.
+        """
+        return (isinstance(self, ExpressionFunctionDatum) and
+                not list(self.input) and self.valid() and
+                not any(o.target for o in self.outputs) and
+                self.value().has_xy_bounds())
+
+
     def connections(self):
         """ Returns a list of connections attached to this datum.
         """
