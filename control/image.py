@@ -13,13 +13,20 @@ class ImageControl(base.NodeControl):
             image should be a QRegion object.
         """
         filename, filetype = QtGui.QFileDialog.getOpenFileName(
-                self.window, "Open", '', "*.png|*.jpg")
+                canvas, "Open", '', "Images (*.png *.jpg *.gif)")
         if not filename:    return
 
-        e = Expression()
-        for r in image.rects():
-            e |= rectangle(r.left(), r.right(), r.bottom(), r.top())
-        i = ImageNode(get_name('img'), x, y, image)
+        # Import an image and convert it into a QRegion
+        img = QtGui.QImage(filename)
+        bmp = QtGui.QRegion(QtGui.QPixmap(img.createHeuristicMask()))
+
+        e = Expression(None)
+        print bmp
+        for r in bmp.rects():
+            print r
+            print r.left(), r.right(), r.bottom(), r.top()
+            e |= rectangle(r.left(), r.right() + 1.01, r.bottom(), r.top() + 1.01)
+        i = ImageNode(get_name('img'), x, y, e, img.width(), img.height())
 
         return cls(canvas, i)
 
@@ -33,7 +40,7 @@ class ImageControl(base.NodeControl):
         self.sync()
         self.editor_datums = ['name','x','y','shape']
 
-        self.size = QtCore.QSize(target.xmax, target.ymax)
+        self.size = QtCore.QSize()
 
         self.show()
         self.raise_()
@@ -43,7 +50,11 @@ class ImageControl(base.NodeControl):
         p = QtCore.QPointF(
                 self.node.x if self.node._x.valid() else self.position.x(),
                 self.node.y if self.node._y.valid() else self.position.y())
-        size = QtCore.QSize(target.xmax, target.ymax)
+
+        if self.node._shape.valid():
+            size = QtCore.QSize(self.node.shape.xmax, self.node.shape.ymax)
+        else:
+            size = self.size
 
         changed = (p != self.position) or (size != self.size)
 
@@ -54,7 +65,7 @@ class ImageControl(base.NodeControl):
         return changed
 
     def reposition(self):
-        self.move(self.position)
+        self.move(self.canvas.unit_to_pixel(self.position))
         self.setFixedSize(self.size)
 
     def paintEvent(self, painter):

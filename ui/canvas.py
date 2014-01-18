@@ -70,6 +70,10 @@ class Canvas(QtGui.QWidget):
                     ("Scale", ScaleControl),
                 ),
 
+                ('Import',
+                    ("Image", ImageControl),
+                ),
+
                 ('Advanced',
                     ("Show equation", EquationViewerControl),
                     ("Get bounds", GetBoundsControl),
@@ -380,6 +384,8 @@ class Canvas(QtGui.QWidget):
                 # Make a new empty list
                 if not d in self.render_tasks:  self.render_tasks[d] = []
                 # Then append a new task to the end of it
+                print "Making render task to render",d
+                print args
                 self.render_tasks[d].append(RenderTask(*args))
 
 
@@ -445,6 +451,7 @@ from control.triangle import TriangleControl
 from control.csg import UnionControl, IntersectionControl, CutoutControl
 from control.bounds import GetBoundsControl, SetBoundsControl
 from control.equation import EquationViewerControl
+from control.image import ImageControl
 
 from ui.editor import Editor
 from ui.render import RenderTask
