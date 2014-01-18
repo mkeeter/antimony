@@ -11,8 +11,9 @@ static const uint8_t VERTEX_LOOP[] = {6, 4, 5, 1, 3, 2, 6};
 
 // Based on which vertices are filled, this map tells you which
 // edges to interpolate between when forming zero, one, or two
-// triangles.
-// (filled vertex is first in the pair)
+// triangles for a tetrahedron.
+// (filled vertex is first in the pair, and is given as a tetrahedron vertex
+//  so you have to translate into a proper cube vertex).
 static const int EDGE_MAP[16][2][3][2] = {
     {{{-1,-1}, {-1,-1}, {-1,-1}}, {{-1,-1}, {-1,-1}, {-1,-1}}}, // ----
     {{{ 0, 2}, { 0, 1}, { 0, 3}}, {{-1,-1}, {-1,-1}, {-1,-1}}}, // ---0
@@ -149,9 +150,9 @@ void triangulate_voxel(MathTree* tree, const Region r,
                 const Vec3f vertex = zero_crossing(d,
                         vertices[EDGE_MAP[lookup][i][v][0]],
                         vertices[EDGE_MAP[lookup][i][v][1]]);
-                (*verts)[(*count)++] = vertex.x;
-                (*verts)[(*count)++] = vertex.y;
-                (*verts)[(*count)++] = vertex.z;
+                (*verts)[(*count)++] = vertex.x + r.X[0];
+                (*verts)[(*count)++] = vertex.y + r.Y[0];
+                (*verts)[(*count)++] = vertex.z + r.Z[0];
             }
         }
     }
