@@ -384,8 +384,6 @@ class Canvas(QtGui.QWidget):
                 # Make a new empty list
                 if not d in self.render_tasks:  self.render_tasks[d] = []
                 # Then append a new task to the end of it
-                print "Making render task to render",d
-                print args
                 self.render_tasks[d].append(RenderTask(*args))
 
 

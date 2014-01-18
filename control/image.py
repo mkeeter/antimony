@@ -21,10 +21,7 @@ class ImageControl(base.NodeControl):
         bmp = QtGui.QRegion(QtGui.QPixmap(img.createHeuristicMask()))
 
         e = Expression(None)
-        print bmp
         for r in bmp.rects():
-            print r
-            print r.left(), r.right(), r.bottom(), r.top()
             e |= rectangle(r.left(), r.right() + 1.01, r.bottom(), r.top() + 1.01)
         i = ImageNode(get_name('img'), x, y, e, img.width(), img.height())
 
