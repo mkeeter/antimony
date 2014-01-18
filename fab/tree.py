@@ -77,7 +77,7 @@ class MathTree(object):
         return image
 
 
-    def triangulate(self, resolution, filename, abort):
+    def triangulate(self, resolution, filename, abort=threading.Event()):
         """ Renders a tree into a mesh at the given resolution,
             saving as a .stl file.
         """
@@ -107,3 +107,4 @@ from expression import Expression
 from libfab import libfab
 from region import Region
 from image import Image
+from mesh import write_stl

@@ -1,5 +1,6 @@
 import sys
 import cPickle as pickle
+import operator
 
 from PySide import QtCore, QtGui
 
@@ -22,6 +23,9 @@ class Window(QtGui.QMainWindow):
          fileMenu.addAction(app.open_action)
          fileMenu.addAction(app.save_action)
          fileMenu.addAction(app.saveas_action)
+
+         exportMenu = self.menuBar().addMenu("Export");
+         exportMenu.addAction(app.export_stl_action)
 
 ################################################################################
 
@@ -96,6 +100,9 @@ class App(QtGui.QApplication):
         self.saveas_action = QtGui.QAction("Save As", self)
         self.saveas_action.setShortcuts(QtGui.QKeySequence.SaveAs)
         self.saveas_action.triggered.connect(self.on_saveas)
+
+        self.export_stl_action = QtGui.QAction("Mesh (.stl)", self)
+        self.export_stl_action.triggered.connect(self.on_export_stl)
 
     def clear(self):
         """ Deletes all nodes, connections, and UI representations of same.
@@ -178,6 +185,33 @@ class App(QtGui.QApplication):
         if filename:
             self.filename = filename
             return self.on_save()
+
+    def on_export_stl(self):
+        """ Exports as a .stl mesh
+        """
+        expressions = self.canvas.find_expressions()
+        if not expressions:
+            return QtGui.QMessageBox.critical(self.canvas, "Export error",
+                    "<b>Export error:</b>" +
+                    "<br><br>Must have one or more expressions.")
+
+        # Merge all expressions into one for export
+        combined = reduce(operator.or_, [e[1] for e in expressions])
+
+        if not combined.has_xyz_bounds():
+            return QtGui.QMessageBox.critical(self.canvas, "Export error",
+                    "<b>Export error:</b>" +
+                    "<br><br>All expressions must be 3D objects.")
+
+        res, b = QtGui.QInputDialog.getDouble(
+                self.window, "Resolution", "Voxels/unit", 2, 1, 100, 1)
+        if not b:           return
+
+        filename, filetype = QtGui.QFileDialog.getSaveFileName(
+                self.window, "Export (.stl)", '', '*.stl')
+        if not filename:    return
+
+        combined.to_tree().triangulate(res, filename)
 
 
 import control.base, control.connection
