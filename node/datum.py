@@ -75,6 +75,7 @@ class MultiInput(object):
     def disconnect(self, conn):
         self.i.remove(conn)
         conn.target = None
+        if not self.i:  self.parent.set_expr('None')
         self.parent.sync()
     def expr(self):
         if len(self.i) > 1:     return "%i inputs" % len(self.i)
