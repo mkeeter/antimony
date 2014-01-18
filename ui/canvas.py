@@ -70,6 +70,10 @@ class Canvas(QtGui.QWidget):
                     ("Scale", ScaleControl),
                 ),
 
+                ('Import',
+                    ("Image", ImageControl),
+                ),
+
                 ('Advanced',
                     ("Show equation", EquationViewerControl),
                     ("Get bounds", GetBoundsControl),
@@ -445,6 +449,7 @@ from control.triangle import TriangleControl
 from control.csg import UnionControl, IntersectionControl, CutoutControl
 from control.bounds import GetBoundsControl, SetBoundsControl
 from control.equation import EquationViewerControl
+from control.image import ImageControl
 
 from ui.editor import Editor
 from ui.render import RenderTask

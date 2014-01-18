@@ -24,6 +24,7 @@ class Expression(object):
         elif type(math) is str:
             self.math = math
         else:
+            print type(math)
             raise TypeError("Cannot construct a Expression from '%s'" % math)
 
         if self.math is None:
