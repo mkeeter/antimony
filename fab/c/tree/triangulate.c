@@ -150,9 +150,9 @@ void triangulate_voxel(MathTree* tree, const Region r,
                 const Vec3f vertex = zero_crossing(d,
                         vertices[EDGE_MAP[lookup][i][v][0]],
                         vertices[EDGE_MAP[lookup][i][v][1]]);
-                (*verts)[(*count)++] = vertex.x + r.X[0];
-                (*verts)[(*count)++] = vertex.y + r.Y[0];
-                (*verts)[(*count)++] = vertex.z + r.Z[0];
+                (*verts)[(*count)++] = vertex.x * (r.X[1] - r.X[0]) + r.X[0];
+                (*verts)[(*count)++] = vertex.y * (r.Y[1] - r.Y[0]) + r.Y[0];
+                (*verts)[(*count)++] = vertex.z * (r.Z[1] - r.Z[0]) + r.Z[0];
             }
         }
     }
