@@ -52,16 +52,6 @@ class ConnectionControl(QtGui.QWidget):
         """
         origin, target = self.get_origin(), self.get_target()
 
-        # If we don't have a node to which we should connect,
-        # then hide this widget and return.
-        if origin is None or target is None:
-            self.hide()
-            return
-        # Otherwise, show and raise the widget.
-        elif self.isHidden():
-            self.show()
-            self.raise_()
-
         path = self.get_path(origin, target, QtCore.QPoint())
         rect = path.boundingRect().toRect()
         rect.setTop(rect.top() - 5)
