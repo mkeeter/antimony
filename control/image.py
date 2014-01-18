@@ -89,7 +89,17 @@ class ImageControl(base.NodeControl):
     def draw_outline(self, painter, mask=False):
         """ Draws this image's 2D boundary on the floor.
         """
-        self.set_pen(painter, mask, None, colors.grey)
+        if mask:
+            painter.setPen(QtCore.Qt.color1)
+        else:
+            painter.setPen(QtGui.QColor(*colors.green))
+
+        if mask:
+            painter.setBrush(QtCore.Qt.color1)
+        elif self.drag_control.drag or self.drag_control.hover:
+            painter.setBrush(QtGui.QColor(*(colors.green + (100,))))
+        else:
+            painter.setBrush(QtGui.QColor(*(colors.green + (50,))))
         painter.drawPath(self.outline_path(self.pos()))
 
     def make_mask(self):
@@ -98,14 +108,8 @@ class ImageControl(base.NodeControl):
         self.drag_control.mask = self.paint_mask(self.draw_outline)
         self.setMask(self.drag_control.mask)
 
-    def paintEvent(self, painter):
-        painter = QtGui.QPainter(self)
-        painter.setPen(QtGui.QColor(*colors.blue))
-        if self.drag_control.drag or self.drag_control.hover:
-            painter.setBrush(QtGui.QColor(*(colors.blue + (150,))))
-        else:
-            painter.setBrush(QtGui.QColor(*(colors.blue + (100,))))
-        painter.drawRect(self.rect())
+    def paintEvent(self, event):
+        self.draw_outline(QtGui.QPainter(self))
 
 
 from node.base import get_name
