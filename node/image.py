@@ -22,11 +22,11 @@ class ImageNode(base.Node):
 
     def make_shape(self):
         e = self.expr
-        e.xmin, e.xmax = -1, self.w + 1
-        e.ymin, e.ymax = -1, self.h + 1
+        e.xmin, e.xmax = 0, self.w + 1
+        e.ymin, e.ymax = 0, self.h + 1
         e = scale_x(e, 0, self.scale)
-        e = scale_y(e, self.h/2, -self.scale)
-        e = move(e, self.x, self.y)
+        e = scale_y(e, 0, -self.scale)
+        e = move(e, self.x, self.y + self.h*self.scale)
         return e
 
 from fab.expression import Expression

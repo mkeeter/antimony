@@ -48,9 +48,14 @@ class ImageControl(base.NodeControl):
                 self.node.x if self.node._x.valid() else self.position.x(),
                 self.node.y if self.node._y.valid() else self.position.y())
 
-        size = QtCore.QSize(
-                self.node.w if self.node._w.valid() else self.imgsize.width(),
-                self.node.h if self.node._h.valid() else self.imgsize.height())
+        if self.node._scale.valid():
+            size = QtCore.QSize(
+                    self.node.w * self.node.scale if self.node._w.valid()
+                                else self.imgsize.width(),
+                    self.node.h * self.node.scale if self.node._h.valid()
+                                else self.imgsize.height())
+        else:
+            size = self.imgsize
 
         changed = (p != self.position) or (size != self.imgsize)
 
