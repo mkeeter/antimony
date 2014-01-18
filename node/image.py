@@ -24,9 +24,10 @@ class ImageNode(base.Node):
         e = self.expr
         e.xmin, e.xmax = -1, self.w + 1
         e.ymin, e.ymax = -1, self.h + 1
-        e = scale_xy(e, 0, 0, self.scale)
+        e = scale_x(e, 0, self.scale)
+        e = scale_y(e, self.h/2, -self.scale)
         e = move(e, self.x, self.y)
         return e
 
 from fab.expression import Expression
-from fab.shapes import move, scale_xy
+from fab.shapes import move, scale_x, scale_y
