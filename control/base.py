@@ -35,6 +35,7 @@ class NodeControl(QtGui.QWidget):
         """
         pass
 
+
     def delete(self):
         """ Cleanly deletes both abstract and UI representations.
         """
@@ -63,12 +64,14 @@ class NodeControl(QtGui.QWidget):
         self.canvas.setFocus()
         self.deleteLater()
 
+
     def release(self):
         self.releaseMouse()
         for d in dir(self):
             if isinstance(getattr(self,d), DragManager):
                 getattr(self, d).drag = False
         self.update()
+
 
     def open_editor(self):
         """ Opens / closes the editor.
@@ -78,6 +81,7 @@ class NodeControl(QtGui.QWidget):
         elif self.editor:
             self.editor.animate_close()
 
+
     def editor_position(self):
         """ Returns a canvas pixel location at which the editor
             should be placed.
@@ -85,10 +89,12 @@ class NodeControl(QtGui.QWidget):
         p = self.position
         return self.canvas.unit_to_pixel(p)
 
+
     def get_input_pos(self):
         return self.editor_position() - QtCore.QPoint(8, 0)
     def get_output_pos(self):
         return self.editor_position() + QtCore.QPoint(8, 0)
+
 
     def get_datum_output(self, d):
         """ Returns a canvas pixel location for the given datum's output.
@@ -111,6 +117,7 @@ class NodeControl(QtGui.QWidget):
         else:
             return self.get_input_pos()
 
+
     def draw_lines(self, lines, offset):
         """ Draws a set of lines (given by QVector3D coordinates).
             Lines should be a list of lists of QVector3Ds.
@@ -122,6 +129,7 @@ class NodeControl(QtGui.QWidget):
             for p in L[1:]:
                 path.lineTo(self.canvas.unit_to_pixel(p) - offset)
         return path
+
 
     def set_pen(self, painter, mask, drag, color):
         """ Configures the painter to draw a standard line
@@ -136,6 +144,7 @@ class NodeControl(QtGui.QWidget):
         else:
             painter.setPen(QtGui.QPen(QtGui.QColor(*color), 4))
 
+
     def set_brush(self, painter, mask, color):
         """ Sets up a standard (filled) brush for drawing
             in the given color.
@@ -147,6 +156,21 @@ class NodeControl(QtGui.QWidget):
             painter.setBrush(QtGui.QBrush(QtGui.QColor(
                 *colors.highlight(color))))
             painter.setPen(QtGui.QPen(QtGui.QColor(*color), 2))
+
+
+    def paint_mask(self, func):
+        """ Calls a particular function to generate a mask.
+            The function should take a boolean 'mask' as its second argument.
+        """
+        painter = QtGui.QPainter()
+        bitmap = QtGui.QBitmap(self.size())
+        bitmap.clear()
+
+        painter.begin(bitmap)
+        func(painter, mask=True)
+        painter.end()
+
+        return QtGui.QRegion(bitmap)
 
 
 

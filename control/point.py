@@ -66,15 +66,8 @@ class PointControl(base.NodeControl):
     def make_mask(self):
         """ Render a mask and set it to this widget's mask.
         """
-        painter = QtGui.QPainter()
-        bitmap = QtGui.QBitmap(self.size())
-        bitmap.clear()
+        self.drag_control.mask = self.paint_mask(self.paint)
 
-        painter.begin(bitmap)
-        self.paint(painter, True)
-        painter.end()
-
-        self.drag_control.mask = QtGui.QRegion(bitmap)
 
     def get_input_pos(self):
         """ Returns a position to which we should attach input wires.
