@@ -32,6 +32,7 @@ class ImageControl(base.NodeControl):
         super(ImageControl, self).__init__(canvas, target)
 
         self.drag_control = base.DragXY(self)
+        self.drag_scale_control = base.DragManager(self, self.drag_scale)
         self.position = QtCore.QPointF()
 
         self.sync()
@@ -54,23 +55,26 @@ class ImageControl(base.NodeControl):
                                 else self.imgsize.width(),
                     self.node.h * self.node.scale if self.node._h.valid()
                                 else self.imgsize.height())
+            scale = self.node.scale
         else:
             size = self.imgsize
+            scale = self.imgscale
 
         changed = (p != self.position) or (size != self.imgsize)
 
         # Cache these values
         self.position = p
+        self.imgscale = scale
         self.imgsize = size
 
         return changed
 
     def reposition(self):
         rect = self.outline_path().boundingRect().toRect()
-        rect.setTop(rect.top() - 5)
-        rect.setBottom(rect.bottom() + 5)
-        rect.setLeft(rect.left() - 5)
-        rect.setRight(rect.right() + 5)
+        rect.setTop(rect.top() - 15)
+        rect.setBottom(rect.bottom() + 15)
+        rect.setLeft(rect.left() - 15)
+        rect.setRight(rect.right() + 15)
 
         self.setGeometry(rect)
         self.make_mask()
@@ -94,27 +98,61 @@ class ImageControl(base.NodeControl):
     def draw_outline(self, painter, mask=False):
         """ Draws this image's 2D boundary on the floor.
         """
-        if mask:
-            painter.setPen(QtCore.Qt.color1)
-        else:
-            painter.setPen(QtGui.QColor(*colors.green))
+        self.set_pen(painter, mask, None, colors.green)
+        painter.drawPath(self.outline_path(self.pos()))
+
+    def draw_base(self, painter, mask=False):
+        self.set_brush(painter, mask, colors.green)
+        pt = self.canvas.unit_to_pixel(self.position) - self.pos()
+
+        if mask:                                                    d = 22
+        elif self.drag_control.hover or self.drag_control.drag:     d = 20
+        else:                                                       d = 16
+
+        painter.drawEllipse(pt.x() - d/2, pt.y() - d/2, d, d)
+
+    def draw_scale(self, painter, mask=False):
+        self.set_brush(painter, mask, colors.green)
+        pt = self.canvas.unit_to_pixel(
+                self.position.x() + self.imgsize.width(),
+                self.position.y() + self.imgsize.height()) - self.pos()
 
         if mask:
-            painter.setBrush(QtCore.Qt.color1)
-        elif self.drag_control.drag or self.drag_control.hover:
-            painter.setBrush(QtGui.QColor(*(colors.green + (100,))))
+            d = 20
+        elif self.drag_scale_control.hover or self.drag_scale_control.drag:
+            d = 18
         else:
-            painter.setBrush(QtGui.QColor(*(colors.green + (50,))))
-        painter.drawPath(self.outline_path(self.pos()))
+            d = 14
+
+        painter.drawEllipse(pt.x() - d/2, pt.y() - d/2, d, d)
+
+        s = d/(2*math.sqrt(2)) - 2
+        painter.drawLine(pt.x() - s, pt.y() + s, pt.x() + s, pt.y() - s)
+
+    def drag_scale(self, v, p):
+        if not self.node._scale.simple():   return
+
+        w = self.imgsize.width() / self.imgscale
+        h = self.imgsize.height() / self.imgscale
+
+        self.node._scale.set_expr(str(max(1 / min(w,h), min(
+            (self.imgsize.width() + v.x()) / w,
+            (self.imgsize.height() + v.y()) / h))))
 
     def make_mask(self):
         """ Make the wireframe mask image.
         """
-        self.drag_control.mask = self.paint_mask(self.draw_outline)
-        self.setMask(self.drag_control.mask)
+        self.drag_control.mask = self.paint_mask(self.draw_base)
+        self.drag_scale_control.mask = self.paint_mask(self.draw_scale)
+        self.setMask(self.drag_control.mask |
+                     self.drag_scale_control.mask |
+                     self.paint_mask(self.draw_outline))
 
     def paintEvent(self, event):
-        self.draw_outline(QtGui.QPainter(self))
+        painter = QtGui.QPainter(self)
+        self.draw_outline(painter)
+        self.draw_base(painter)
+        self.draw_scale(painter)
 
 
 from node.base import get_name
