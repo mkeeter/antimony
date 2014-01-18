@@ -77,7 +77,7 @@ Vec3f zero_crossing(const float d[8],
         const float r = interpolate(d, x0 + p*dx, y0 + p*dy, z0 + p*dz);
 
         if      (r < -EPSILON)  p += step;
-        else if (r > EPSILON)   p += step;
+        else if (r > EPSILON)   p -= step;
         else                    break;
 
         step /= 2;
@@ -158,15 +158,15 @@ void triangulate_voxel(MathTree* tree, const Region r,
 
 }
 
-// Returns an array of vertices (as x,y,z float triplets).
-// Sets *out to the number of vertices returned.
-float* triangulate(MathTree* tree, const Region r, unsigned* const out)
+// Finds an array of vertices (as x,y,z float triplets).
+// Sets *count to the number of vertices returned.
+void triangulate(MathTree* tree, const Region r,
+                 float** const verts, unsigned* const count)
 {
-    float* verts = malloc(9*sizeof(float));
-    *out = 0;
+    float* v = malloc(9*sizeof(float));
+    *count = 0;
     unsigned allocated = 9;
 
-    triangulate_voxel(tree, r, &verts, out, &allocated);
-    verts = realloc(verts, (*out)*sizeof(float));
-    return verts;
+    triangulate_voxel(tree, r, &v, count, &allocated);
+    *verts = realloc(v, (*count)*sizeof(float));
 }
