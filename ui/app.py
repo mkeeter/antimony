@@ -1,5 +1,6 @@
 import sys
 import cPickle as pickle
+import operator
 
 from PySide import QtCore, QtGui
 
@@ -22,6 +23,9 @@ class Window(QtGui.QMainWindow):
          fileMenu.addAction(app.open_action)
          fileMenu.addAction(app.save_action)
          fileMenu.addAction(app.saveas_action)
+
+         exportMenu = self.menuBar().addMenu("Export");
+         exportMenu.addAction(app.export_stl_action)
 
 ################################################################################
 
@@ -96,6 +100,9 @@ class App(QtGui.QApplication):
         self.saveas_action = QtGui.QAction("Save As", self)
         self.saveas_action.setShortcuts(QtGui.QKeySequence.SaveAs)
         self.saveas_action.triggered.connect(self.on_saveas)
+
+        self.export_stl_action = QtGui.QAction("Mesh (.stl)", self)
+        self.export_stl_action.triggered.connect(self.on_export_stl)
 
     def clear(self):
         """ Deletes all nodes, connections, and UI representations of same.
@@ -178,6 +185,72 @@ class App(QtGui.QApplication):
         if filename:
             self.filename = filename
             return self.on_save()
+
+    def on_export_stl(self):
+        """ Exports as a .stl mesh
+        """
+
+        expressions = self.canvas.find_expressions()
+        if not expressions:
+            return QtGui.QMessageBox.critical(self.canvas, "Export error",
+                    "<b>Export error:</b>" +
+                    "<br><br>Must have one or more expressions.")
+
+        # Merge all expressions into one for export
+        combined = reduce(operator.or_, [e[1] for e in expressions])
+
+        if not combined.has_xyz_bounds():
+            return QtGui.QMessageBox.critical(self.canvas, "Export error",
+                    "<b>Export error:</b>" +
+                    "<br><br>All expressions must be 3D objects.")
+
+        rd = ResolutionDialog(self.canvas,
+                combined.xmax - combined.xmin,
+                combined.ymax - combined.ymin,
+                combined.zmax - combined.zmin)
+
+        if not rd.exec_():  return
+        res = rd.number.value()
+
+        filename, filetype = QtGui.QFileDialog.getSaveFileName(
+                self.window, "Export (.stl)", '', '*.stl')
+        if not filename:    return
+
+        combined.to_tree().triangulate(res, filename)
+
+################################################################################
+
+class ResolutionDialog(QtGui.QDialog):
+    def __init__(self, parent, dx, dy, dz):
+        super(ResolutionDialog, self).__init__(parent)
+
+        layout = QtGui.QFormLayout(self)
+        self.setWindowTitle("Export .stl")
+
+        label = QtGui.QLabel("<b>Resolution</b><br>(voxels/unit)", self)
+        layout.addRow(label)
+
+        self.number = QtGui.QDoubleSpinBox(self)
+        self.number.setMinimum(0.01)
+        self.number.setMaximum(10)
+        self.number.setStyleSheet("width: 100px;")
+
+        button = QtGui.QPushButton("Okay", self)
+        button.clicked.connect(self.accept)
+
+        layout.addRow(self.number, button)
+
+        voxels = QtGui.QLabel('0 x 0 x 0', self)
+        layout.addRow(voxels)
+        self.setLayout(layout)
+
+        self.number.valueChanged.connect(lambda v:
+                voxels.setText('%i x %i x %i' %
+                    (max(1, v*dx), max(1, v*dy), max(1, v*dz))))
+
+        self.number.setValue(1)
+
+
 
 
 import control.base, control.connection

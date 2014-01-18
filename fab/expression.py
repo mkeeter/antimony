@@ -239,6 +239,13 @@ class Expression(object):
                              (self.xmax, self.ymax, zmax), voxels_per_unit)
 
 
+    def get_xyz_region(self, voxels_per_unit):
+        """ Returns a region appropriate for 3D rendering.
+        """
+        return region.Region((self.xmin, self.ymin, self.zmin),
+                             (self.xmax, self.ymax, self.zmax), voxels_per_unit)
+
+
 import tree
 import region
 import interval

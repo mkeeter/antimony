@@ -18,6 +18,7 @@ add_library(cfab SHARED
 
     tree/eval.c tree/render.c
     tree/tree.c tree/parser.c
+    tree/triangulate.c
 
     tree/math/math_f.c tree/math/math_i.c tree/math/math_r.c
 

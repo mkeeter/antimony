@@ -52,13 +52,18 @@ libfab.free_arrays.argtypes  = [p(Region)]
 
 class MathTreeP(ctypes.c_void_p):   pass
 
-# tree/solver.h
+# tree/render.h
 libfab.render8.argtypes  = [
     MathTreeP, Region, pp(ctypes.c_uint8), p(ctypes.c_int)
 ]
 libfab.render16.argtypes = [
     MathTreeP, Region, pp(ctypes.c_uint16), p(ctypes.c_int)
 ]
+
+# tree/triangulate.h
+libfab.triangulate.argtypes = [
+    MathTreeP, Region, pp(ctypes.c_float), p(ctypes.c_uint)]
+libfab.free_mesh.argtypes = [p(ctypes.c_float)]
 
 # tree/tree.h
 libfab.free_tree.argtypes = [MathTreeP]
