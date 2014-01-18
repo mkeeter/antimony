@@ -3,6 +3,7 @@
 #include "triangulate.h"
 
 #include "tree/tree.h"
+#include "tree/eval.h"
 #include "util/constants.h"
 
 static const uint8_t VERTEX_LOOP[] = {6, 4, 5, 1, 3, 2, 6};
@@ -86,9 +87,72 @@ Vec3f zero_crossing(const float d[8],
 
 
 _STATIC_
-unsigned triangulate_voxel(MathTree* tree, const Region r, float** mesh)
+void triangulate_voxel(MathTree* tree, const Region r,
+                       float** verts, unsigned* count, unsigned* allocated)
 {
-    return 0;
+    // Recursive case: split into subregions and recurse
+    if (r.voxels > 1)
+    {
+        Region octants[8];
+        const uint8_t split = octsect(r, octants);
+        for (int i=0; i < 8; ++i)
+        {
+            if (split & (1 << i))
+            {
+                triangulate_voxel(tree, octants[i],
+                                  verts, count, allocated);
+            }
+        }
+        return;
+    }
+
+    // Find corner distance values for this voxel
+    float d[8];
+    for (int i=0; i < 8; ++i)
+    {
+        d[i] = eval_f(tree, (i & 4) ? r.X[1] : r.X[0],
+                            (i & 2) ? r.Y[1] : r.Y[0],
+                            (i & 1) ? r.Z[1] : r.Z[0]);
+    }
+
+    // Loop over the siz tetrahedra that make up a voxel cell
+    for (int t=0; t < 6; ++t)
+    {
+        // Find vertex positions for this tetrahedron
+        uint8_t vertices[] = {0, 7, VERTEX_LOOP[t], VERTEX_LOOP[t+1]};
+
+        // Figure out which of the sixteen possible combinations
+        // we're currently experiencing.
+        uint8_t lookup = 0;
+        for (int v=3; v>=0; --v) {
+            lookup = (lookup << 1) + (d[vertices[v]] < 0);
+        }
+
+        // Iterate over (up to) two triangles in this tetrahedron
+        for (int i=0; i < 2; ++i)
+        {
+            if (EDGE_MAP[lookup][i][0][0] == -1)    break;
+
+            // Do we need to allocate more space for incoming vertices?
+            if (*allocated - *count < 3)
+            {
+                *verts = realloc(*verts, 2 * (*allocated));
+                *allocated *= 2;
+            }
+
+            // ...and insert vertices into the mesh.
+            for (int v=0; v < 3; ++v)
+            {
+                const Vec3f vertex = zero_crossing(d,
+                        vertices[EDGE_MAP[lookup][i][v][0]],
+                        vertices[EDGE_MAP[lookup][i][v][1]]);
+                (*verts)[(*count)++] = vertex.x;
+                (*verts)[(*count)++] = vertex.y;
+                (*verts)[(*count)++] = vertex.z;
+            }
+        }
+    }
+
 }
 
 float* triangulate(MathTree* tree, const Region r, unsigned* const out)
