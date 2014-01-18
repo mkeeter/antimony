@@ -106,7 +106,7 @@ class CubeControl(base.NodeControl):
     def draw_wireframe(self, painter, mask=False):
         """ Draws the wireframe for this cube.
         """
-        self.set_pen(painter, mask, None, colors.blue)
+        self.set_pen(painter, mask, None, colors.grey)
         painter.drawPath(self.wireframe_path(self.pos()))
 
 
@@ -119,7 +119,7 @@ class CubeControl(base.NodeControl):
                 - self.pos())
         x, y = pos.x(), pos.y()
 
-        self.set_brush(painter, mask, colors.blue)
+        self.set_brush(painter, mask, colors.grey)
 
         if mask:                                                    d = 22
         elif self.drag_control.hover or self.drag_control.drag:     d = 20

@@ -94,7 +94,7 @@ class TriangleControl(base.NodeControl):
     def draw_triangle(self, painter, mask=False):
         """ Draws the triangle on the given painter.
         """
-        self.set_pen(painter, mask, None, colors.blue)
+        self.set_pen(painter, mask, None, colors.grey)
         painter.drawPath(self.triangle_path(self.pos()))
 
 
@@ -105,7 +105,7 @@ class TriangleControl(base.NodeControl):
         pos = self.canvas.unit_to_pixel(position) - self.pos()
         x, y = pos.x(), pos.y()
 
-        self.set_brush(painter, mask, colors.blue)
+        self.set_brush(painter, mask, colors.grey)
 
         if mask:                                                d = 22
         elif self.drag_control.hover or self.drag_control.drag: d = 20

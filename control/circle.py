@@ -115,7 +115,7 @@ class CircleControl(base.NodeControl):
         """
         width, height = self.width(), self.height()
 
-        self.set_brush(painter, mask, colors.blue)
+        self.set_brush(painter, mask, colors.grey)
 
         if mask:                                                    d = 22
         elif self.drag_control.hover or self.drag_control.drag:     d = 20
@@ -136,7 +136,7 @@ class CircleControl(base.NodeControl):
         if mask:    r = 6
         else:       r = 2
 
-        self.set_pen(painter, mask, self.ring_drag_control, colors.blue)
+        self.set_pen(painter, mask, self.ring_drag_control, colors.grey)
 
         painter.drawPath(path)
 

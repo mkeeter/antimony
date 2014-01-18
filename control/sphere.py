@@ -107,7 +107,7 @@ class SphereControl(base.NodeControl):
         """
         width, height = self.width(), self.height()
 
-        self.set_brush(painter, mask, colors.blue)
+        self.set_brush(painter, mask, colors.grey)
 
         if mask:                                                    d = 22
         elif self.drag_control.hover or self.drag_control.drag:     d = 20
@@ -127,7 +127,7 @@ class SphereControl(base.NodeControl):
         if mask:    r = 6
         else:       r = 2
 
-        self.set_pen(painter, mask, self.radius_drag, colors.blue)
+        self.set_pen(painter, mask, self.radius_drag, colors.grey)
 
         painter.drawPath(path)
 
