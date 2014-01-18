@@ -115,7 +115,7 @@ void triangulate_voxel(MathTree* tree, const Region r,
                             (i & 1) ? r.Z[1] : r.Z[0]);
     }
 
-    // Loop over the siz tetrahedra that make up a voxel cell
+    // Loop over the six tetrahedra that make up a voxel cell
     for (int t=0; t < 6; ++t)
     {
         // Find vertex positions for this tetrahedron
@@ -134,9 +134,10 @@ void triangulate_voxel(MathTree* tree, const Region r,
             if (EDGE_MAP[lookup][i][0][0] == -1)    break;
 
             // Do we need to allocate more space for incoming vertices?
+            // If so, double the buffer size.
             if (*allocated - *count < 3)
             {
-                *verts = realloc(*verts, 2 * (*allocated));
+                *verts = realloc(*verts, 2*sizeof(float)*(*allocated));
                 *allocated *= 2;
             }
 
@@ -155,9 +156,14 @@ void triangulate_voxel(MathTree* tree, const Region r,
 
 }
 
+// Returns an array of vertices (as x,y,z float triplets).
+// Sets *out to the number of vertices returned.
 float* triangulate(MathTree* tree, const Region r, unsigned* const out)
 {
+    float* verts = malloc(3*sizeof(float));
+    *out = 0;
+    unsigned allocated = 3;
 
-    *out = 12;
-    return NULL;
+    triangulate_voxel(tree, r, &verts, &count, &allocated);
+    return realloc(verts, (*out)*sizeof(float));
 }
