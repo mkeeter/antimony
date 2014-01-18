@@ -37,7 +37,7 @@ class ImageControl(base.NodeControl):
         self.sync()
         self.editor_datums = ['name','x','y','scale','shape']
 
-        self.size = QtCore.QSize()
+        self.imgsize = QtCore.QSize()
 
         self.show()
         self.raise_()
@@ -49,26 +49,54 @@ class ImageControl(base.NodeControl):
                 self.node.y if self.node._y.valid() else self.position.y())
 
         size = QtCore.QSize(
-                self.node.w if self.node._w.valid() else self.size.width(),
-                self.node.h if self.node._h.valid() else self.size.height())
+                self.node.w if self.node._w.valid() else self.imgsize.width(),
+                self.node.h if self.node._h.valid() else self.imgsize.height())
 
-        changed = (p != self.position) or (size != self.size)
+        changed = (p != self.position) or (size != self.imgsize)
 
         # Cache these values
         self.position = p
-        self.size = size
+        self.imgsize = size
 
         return changed
 
     def reposition(self):
-        pos = self.canvas.unit_to_pixel(self.position)
-        print self.position, self.size
-        size = self.canvas.unit_to_pixel(
-                self.position.x() + self.size.width(),
-                self.position.y() + self.size.height()) - pos
+        rect = self.outline_path().boundingRect().toRect()
+        rect.setTop(rect.top() - 5)
+        rect.setBottom(rect.bottom() + 5)
+        rect.setLeft(rect.left() - 5)
+        rect.setRight(rect.right() + 5)
 
-        self.move(pos.x(), pos.y() + size.y())
-        self.setFixedSize(QtCore.QSize(size.x(), -size.y()))
+        self.setGeometry(rect)
+        self.make_mask()
+        self.update()
+
+    def outline_path(self, offset=QtCore.QPoint()):
+        """ Draws a path that outlines this image.
+        """
+        coords = [
+                QtGui.QVector3D(self.position.x(), self.position.y(), 0),
+                QtGui.QVector3D(self.position.x() + self.imgsize.width(),
+                                self.position.y(), 0),
+                QtGui.QVector3D(self.position.x() + self.imgsize.width(),
+                                self.position.y() + self.imgsize.height(), 0),
+                QtGui.QVector3D(self.position.x(),
+                                self.position.y() + self.imgsize.height(), 0),
+                QtGui.QVector3D(self.position.x(), self.position.y(), 0)]
+        return self.draw_lines([coords], offset)
+
+
+    def draw_outline(self, painter, mask=False):
+        """ Draws this image's 2D boundary on the floor.
+        """
+        self.set_pen(painter, mask, None, colors.grey)
+        painter.drawPath(self.outline_path(self.pos()))
+
+    def make_mask(self):
+        """ Make the wireframe mask image.
+        """
+        self.drag_control.mask = self.paint_mask(self.draw_outline)
+        self.setMask(self.drag_control.mask)
 
     def paintEvent(self, painter):
         painter = QtGui.QPainter(self)
