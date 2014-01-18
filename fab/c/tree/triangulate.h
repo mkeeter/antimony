@@ -5,6 +5,6 @@
 
 struct MathTree_;
 
-float* triangulate(struct MathTree_* tree, Region r, unsigned* out);
+float* triangulate(struct MathTree_* tree, Region r, unsigned* const out);
 
 #endif
