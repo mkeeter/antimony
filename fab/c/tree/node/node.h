@@ -84,6 +84,7 @@ Node* asin_n(Node* n);
 Node* acos_n(Node* n);
 Node* atan_n(Node* n);
 Node* neg_n(Node* n);
+Node* exp_n(Node* n);
 
 // Constants
 Node* constant_n(float value);

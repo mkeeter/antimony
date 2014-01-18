@@ -29,6 +29,7 @@ float* asin_r(float* A, float* R, int c);
 float* acos_r(float* A, float* R, int c);
 float* atan_r(float* A, float* R, int c);
 float* neg_r(float* A, float* R, int c);
+float* exp_r(float* A, float* R, int c);
 
 // Variables
 float* X_r(float* X, float* R, int c);

@@ -18,6 +18,7 @@
     OP_SQUARE q
     OP_SQRT r
     OP_NEG  n
+    OP_EXP  e
 
     OP_X    X
     OP_Y    Y
@@ -220,6 +221,7 @@ Node* get_token(const char** const input, _Bool* const failed,
         case 'q':
         case 'r':
         case 'n':
+        case 'e':
             lhs = get_token(input, failed, X, Y, Z, cache);
             break;
 
@@ -255,6 +257,7 @@ Node* get_token(const char** const input, _Bool* const failed,
         case 'q':   out = square_n(lhs); break;
         case 'r':   out = sqrt_n(lhs); break;
         case 'n':   out = neg_n(lhs); break;
+        case 'e':   out = exp_n(lhs); break;
 
         default:
             *failed = true;

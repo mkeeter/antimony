@@ -40,6 +40,7 @@ float eval_f(MathTree* tree, const float x, const float y, const float z)
                 case OP_ACOS:   node->results.f = acos_f(A); break;
                 case OP_ATAN:   node->results.f = atan_f(A); break;
                 case OP_NEG:    node->results.f = neg_f(A); break;
+                case OP_EXP:    node->results.f = exp_f(A); break;
 
                 case OP_X:      node->results.f = X_f(x); break;
                 case OP_Y:      node->results.f = Y_f(y); break;
@@ -91,6 +92,7 @@ Interval eval_i(MathTree* tree, const Interval X,
                 case OP_ACOS:   node->results.i = acos_i(A); break;
                 case OP_ATAN:   node->results.i = atan_i(A); break;
                 case OP_NEG:    node->results.i = neg_i(A); break;
+                case OP_EXP:    node->results.i = exp_i(A); break;
 
                 case OP_CONST:  break;
                 case OP_X:      node->results.i = X_i(X); break;
@@ -140,6 +142,7 @@ float* eval_r(MathTree* tree, const Region r)
                 case OP_ACOS:   acos_r(A, R, c); break;
                 case OP_ATAN:   atan_r(A, R, c); break;
                 case OP_NEG:    neg_r(A, R, c); break;
+                case OP_EXP:    exp_r(A, R, c); break;
 
                 case OP_CONST:  break;
                 case OP_X:      X_r(r.X, R, c); break;

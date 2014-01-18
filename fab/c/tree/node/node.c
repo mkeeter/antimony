@@ -95,6 +95,7 @@ Node* asin_n(Node* child) { return unary_n(child, asin_f, OP_ASIN); }
 Node* acos_n(Node* child) { return unary_n(child, acos_f, OP_ACOS); }
 Node* atan_n(Node* child) { return unary_n(child, atan_f, OP_ATAN); }
 Node* neg_n(Node* child) { return unary_n(child, neg_f, OP_NEG); }
+Node* exp_n(Node* child) { return unary_n(child, abs_f, OP_EXP); }
 
 ////////////////////////////////////////////////////////////////////////////////
 

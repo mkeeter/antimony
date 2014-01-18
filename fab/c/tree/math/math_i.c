@@ -242,6 +242,12 @@ Interval neg_i(Interval A)
                       .upper = -A.lower};
 }
 
+Interval exp_i(Interval A)
+{
+    return (Interval){.lower = exp(A.lower),
+                      .upper = exp(A.upper)};
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 Interval X_i(Interval X)

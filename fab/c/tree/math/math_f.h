@@ -29,6 +29,7 @@ float asin_f(float A);
 float acos_f(float A);
 float atan_f(float A);
 float neg_f(float A);
+float exp_f(float A);
 
 // Variables
 float X_f(float X);

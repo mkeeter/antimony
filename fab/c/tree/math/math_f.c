@@ -94,6 +94,11 @@ float neg_f(float A)
     return -A;
 }
 
+float exp_f(float A)
+{
+    return exp(A);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 float X_f(float X)

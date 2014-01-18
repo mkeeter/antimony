@@ -23,6 +23,7 @@ typedef enum Opcode_ {
     OP_ACOS,
     OP_ATAN,
     OP_NEG,
+    OP_EXP,
 
     OP_X,
     OP_Y,

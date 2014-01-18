@@ -31,6 +31,7 @@ Interval asin_i(Interval A);
 Interval acos_i(Interval A);
 Interval atan_i(Interval A);
 Interval neg_i(Interval A);
+Interval exp_i(Interval A);
 
 // Variables
 Interval X_i(Interval X);

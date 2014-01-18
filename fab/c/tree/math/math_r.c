@@ -128,6 +128,13 @@ float* neg_r(float* A, float* R, int c)
     return R;
 }
 
+float* exp_r(float* A, float* R, int c)
+{
+    for (int q = 0; q < c; ++q)
+        R[q] = exp(A[q]);
+    return R;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 float* X_r(float* X, float* R, int c)

@@ -130,6 +130,13 @@ static void neg_p(Node* n, FILE* f)
     fprint_node(n->lhs, f);
 }
 
+static void exp_p(Node* n, FILE* f)
+{
+    fprintf(f, "exp(");
+    fprint_node(n->lhs, f);
+    fprintf(f, ")");
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 static void constant_p(Node* n, FILE* f)
@@ -186,6 +193,7 @@ void fprint_node(Node* n, FILE* f)
         case OP_ACOS:   acos_p(n, f); break;
         case OP_ATAN:   atan_p(n, f); break;
         case OP_NEG:    neg_p(n, f); break;
+        case OP_EXP:    exp_p(n, f); break;
 
         case OP_CONST:  constant_p(n, f); break;
         case OP_X:      X_p(n, f); break;
