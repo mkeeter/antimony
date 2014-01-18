@@ -134,7 +134,7 @@ static void neg_p(Node* n, FILE* f)
 
 static void constant_p(Node* n, FILE* f)
 {
-    fprintf(f, "%g", n->results.f);
+    fprintf(f, "%.3g", n->results.f);
 }
 
 static void X_p(Node* n, FILE* f)
