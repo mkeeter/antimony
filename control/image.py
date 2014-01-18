@@ -35,7 +35,7 @@ class ImageControl(base.NodeControl):
         self.position = QtCore.QPointF()
 
         self.sync()
-        self.editor_datums = ['name','x','y','shape']
+        self.editor_datums = ['name','x','y','scale','shape']
 
         self.size = QtCore.QSize()
 
@@ -48,10 +48,9 @@ class ImageControl(base.NodeControl):
                 self.node.x if self.node._x.valid() else self.position.x(),
                 self.node.y if self.node._y.valid() else self.position.y())
 
-        if self.node._shape.valid():
-            size = QtCore.QSize(self.node.shape.xmax, self.node.shape.ymax)
-        else:
-            size = self.size
+        size = QtCore.QSize(
+                self.node.w if self.node._w.valid() else self.size.width(),
+                self.node.h if self.node._h.valid() else self.size.height())
 
         changed = (p != self.position) or (size != self.size)
 
@@ -62,8 +61,14 @@ class ImageControl(base.NodeControl):
         return changed
 
     def reposition(self):
-        self.move(self.canvas.unit_to_pixel(self.position))
-        self.setFixedSize(self.size)
+        pos = self.canvas.unit_to_pixel(self.position)
+        print self.position, self.size
+        size = self.canvas.unit_to_pixel(
+                self.position.x() + self.size.width(),
+                self.position.y() + self.size.height()) - pos
+
+        self.move(pos.x(), pos.y() + size.y())
+        self.setFixedSize(QtCore.QSize(size.x(), -size.y()))
 
     def paintEvent(self, painter):
         painter = QtGui.QPainter(self)

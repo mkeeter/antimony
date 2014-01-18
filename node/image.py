@@ -6,6 +6,9 @@ class ImageNode(base.Node):
         super(ImageNode, self).__init__(name)
         self.add_datum('x', datum.FloatDatum(self, x))
         self.add_datum('y', datum.FloatDatum(self, y))
+        self.add_datum('scale', datum.FloatDatum(self, 1))
+
+        # Secret datums (used in reconstruction but nowhere else)
         self.add_datum('expr', datum.ExpressionDatum(self, "'%s'" % expr))
         self.add_datum('w', datum.FloatDatum(self, w))
         self.add_datum('h', datum.FloatDatum(self, h))
@@ -21,6 +24,8 @@ class ImageNode(base.Node):
         e = self.expr
         e.xmin, e.xmax = -1, self.w + 1
         e.ymin, e.ymax = -1, self.h + 1
+        e = scale_xy(e, 0, 0, self.scale)
+        e = move(e, self.x, self.y)
         return e
 
 from fab.expression import Expression
