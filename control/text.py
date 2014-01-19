@@ -61,13 +61,7 @@ class TextControl(base.NodeControl):
 
 
     def reposition(self):
-        rect = self.outline_path().boundingRect().toRect()
-        rect.setTop(rect.top() - 15)
-        rect.setBottom(rect.bottom() + 15)
-        rect.setLeft(rect.left() - 15)
-        rect.setRight(rect.right() + 15)
-
-        self.setGeometry(rect)
+        self.setGeometry(self.get_rect(self.outline_path, offset=15))
         self.make_mask()
         self.update()
 

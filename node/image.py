@@ -1,11 +1,9 @@
 import base
 import datum
 
-class ImageNode(base.Node):
+class ImageNode(base.Node2D):
     def __init__(self, name, x, y, expr, w, h):
-        super(ImageNode, self).__init__(name)
-        self.add_datum('x', datum.FloatDatum(self, x))
-        self.add_datum('y', datum.FloatDatum(self, y))
+        super(ImageNode, self).__init__(name, x, y)
         self.add_datum('scale', datum.FloatDatum(self, 1))
 
         # Secret datums (used in reconstruction but nowhere else)

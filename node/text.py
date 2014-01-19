@@ -1,11 +1,9 @@
 import base
 import datum
 
-class Text(base.Node):
+class Text(base.Node2D):
     def __init__(self, name, x, y, scale, txt):
-        super(Text, self).__init__(name)
-        self.add_datum('x', datum.FloatDatum(self, x))
-        self.add_datum('y', datum.FloatDatum(self, y))
+        super(Text, self).__init__(name, x, y)
 
         self.add_datum('scale', datum.FloatDatum(self, scale))
         self.add_datum('txt', datum.StringDatum(self, txt))

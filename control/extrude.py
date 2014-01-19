@@ -92,21 +92,15 @@ class ExtrudeZControl(base.NodeControl):
                 center + QtGui.QVector3D(scale, 0, -scale)]
         return self.draw_lines([line], offset)
 
+    def full_path(self):
+        p = self.base_path()
+        p.connectPath(self.top_path())
+        return p
 
     def reposition(self):
         """ Repositions this widget and calls self.update
         """
-        p = self.base_path()
-        p.connectPath(self.top_path())
-
-        rect = p.boundingRect().toRect()
-        rect.setTop(rect.top() - 15)
-        rect.setBottom(rect.bottom() + 15)
-        rect.setLeft(rect.left() - 15)
-        rect.setRight(rect.right() + 15)
-
-        self.setGeometry(rect)
-
+        self.setGeometry(self.get_rect(self.full_path, offset=15))
         self.make_masks()
         self.update()
 

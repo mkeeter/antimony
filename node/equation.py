@@ -1,12 +1,9 @@
 import base
 import datum
 
-class EquationViewer(base.Node):
+class EquationViewer(base.Node3D):
     def __init__(self, name, x, y, z):
-        super(EquationViewer, self).__init__(name)
-        self.add_datum('x', datum.FloatDatum(self, x))
-        self.add_datum('y', datum.FloatDatum(self, y))
-        self.add_datum('z', datum.FloatDatum(self, z))
+        super(EquationViewer, self).__init__(name, x, y, z)
 
         self.add_datum('input', datum.ExpressionDatum(self, "None"))
         self.add_datum('output', datum.ExpressionFunctionDatum(self, "make_shape"))
