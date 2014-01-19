@@ -1,6 +1,8 @@
 import sys
 import cPickle as pickle
 import operator
+import threading
+import time
 
 from PySide import QtCore, QtGui
 
@@ -216,7 +218,36 @@ class App(QtGui.QApplication):
                 self.window, "Export (.stl)", '', '*.stl')
         if not filename:    return
 
-        combined.to_tree().triangulate(res, filename)
+        self.block("Exporting",
+                   lambda: combined.to_tree().triangulate(res, filename))
+
+    def block(self, message, func):
+        txt = QtGui.QLabel(message, self.canvas)
+
+        txt.setGeometry(self.canvas.geometry())
+        txt.setAlignment(QtCore.Qt.AlignCenter)
+        txt.setStyleSheet("""
+                background-color: rgba(100, 100, 100, 75%);
+                color: #eee;
+                font: 60px;
+                """)
+        txt.show()
+
+        thread = threading.Thread(target=func)
+        thread.daemon = True
+        thread.start()
+        dots = 0
+        while True:
+            if not thread.is_alive():
+                thread.join()
+                break
+            pause = 1 if dots == 3 else 0.5
+            txt.setText(message + '.'*dots + ' '*(3-dots))
+            dots = (dots + 1) % 4
+            for i in range(int(pause/0.05)):
+                self.processEvents()
+                time.sleep(0.05)
+        txt.deleteLater()
 
 ################################################################################
 
