@@ -53,7 +53,7 @@ class Node(object):
         children = []
         for key in self.__dict__:
             attr = getattr(self, key)
-            if isinstance(attr, Node):
+            if isinstance(attr, Node) and key is not 'parent':
                 children.append((key, nodes.index(attr)))
 
         return [self.__class__, datums, children]
