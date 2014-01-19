@@ -165,6 +165,8 @@ class App(QtGui.QApplication):
         control.base.make_node_widgets(self.canvas)
         control.connection.make_connection_widgets(node.base.nodes, self.canvas)
 
+        self.filename = filename
+
 
     def on_save(self):
         """ Saves a pickled representation of our current state.
