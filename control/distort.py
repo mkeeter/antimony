@@ -53,10 +53,11 @@ class DistortControl(base.NodeControl):
 
     def make_masks(self):
         self.drag_control.mask = self.paint_mask(self.draw_center)
-        self.radius_drag.mask = self.paint_mask(self.draw_handles)
+        self.radius_drag.mask = self.paint_mask(self.draw_wireframe)
         self.setMask(self.drag_control.mask |
                      self.radius_drag.mask |
-                     self.paint_mask(self.draw_wireframe))
+                     self.paint_mask(self.draw_wireframe) |
+                     self.paint_mask(self.draw_arrows))
 
 
     def drag_radius(self, v, p):
@@ -87,48 +88,34 @@ class DistortControl(base.NodeControl):
 
 
     def wireframe_path(self, offset=QtCore.QPoint()):
-        """ Draws paths for the main axes.
+        """ Draws a circle, projected to be facing the camera.
         """
-        lines = [[self.position - QtGui.QVector3D(self.r, 0, 0),
-                  self.position + QtGui.QVector3D(self.r, 0, 0)],
-                 [self.position - QtGui.QVector3D(0, self.r, 0),
-                  self.position + QtGui.QVector3D(0, self.r, 0)],
-                 [self.position - QtGui.QVector3D(0, 0, self.r),
-                  self.position + QtGui.QVector3D(0, 0, self.r)]]
-        return self.draw_lines(lines, offset)
-
-
-    def draw_handles(self, painter, mask=False):
-        """ Draws circular handles at the ends of all the axes.
-        """
-        self.set_brush(painter, mask, colors.orange)
-
-        if mask:                                                    d = 14
-        elif self.radius_drag.hover or self.radius_drag.drag:       d = 12
-        else:                                                       d = 10
-
-        pts = [self.position - QtGui.QVector3D(self.r, 0, 0),
-               self.position + QtGui.QVector3D(self.r, 0, 0),
-               self.position - QtGui.QVector3D(0, self.r, 0),
-               self.position + QtGui.QVector3D(0, self.r, 0),
-               self.position - QtGui.QVector3D(0, 0, self.r),
-               self.position + QtGui.QVector3D(0, 0, self.r)]
-
-        for pt in pts:
-            p = self.canvas.unit_to_pixel(pt) - self.pos()
-            painter.drawEllipse(p.x() - d/2, p.y() - d/2, d, d)
-
+        m = QtGui.QMatrix4x4()
+        m.rotate(-math.degrees(self.canvas.yaw), QtGui.QVector3D(0, 0, 1))
+        m.rotate(-math.degrees(self.canvas.pitch), QtGui.QVector3D(1, 0, 0))
+        lines = [m * QtGui.QVector3D(math.cos(i/32.*math.pi*2)*self.r,
+                                     math.sin(i/32.*math.pi*2)*self.r, 0)
+                + self.position
+                 for i in range(33)]
+        return self.draw_lines([lines], offset)
 
 
     def draw_wireframe(self, painter, mask=False):
-        self.set_pen(painter, mask, None, colors.orange)
+        self.set_pen(painter, mask, self.radius_drag, colors.orange)
         painter.drawPath(self.wireframe_path(self.pos()))
+
+
+    def draw_arrows(self, painter, mask=False):
+        self.set_pen(painter, mask, None, colors.orange)
+        painter.drawPath(self.arrow_path(self.pos()))
+
 
     def paintEvent(self, event):
         painter = QtGui.QPainter(self)
         self.draw_wireframe(painter)
-        self.draw_handles(painter)
+        self.draw_arrows(painter)
         self.draw_center(painter)
+
 
 ################################################################################
 
@@ -138,12 +125,54 @@ class AttractControl(DistortControl):
         a = Attract(get_name('attract'), x, y, z, scale)
         return cls(canvas, a)
 
+    def arrow_path(self, offset=QtCore.QPoint()):
+        path = QtGui.QPainterPath()
+        r = self.r / 2.
+        s = self.r / 6.
+        v = QtGui.QVector3D
+        pts = [
+                [v(self.r, 0, 0), v(r, 0, 0)],
+                [v(r+s, s, 0), v(r, 0, 0), v(r+s, -s, 0)],
+                [v(0, self.r, 0), v(0, r, 0)],
+                [v(s, r+s, 0), v(0, r, 0), v(-s, r+s, 0)],
+                [v(0, 0, self.r), v(0, 0, r)],
+                [v(s, 0, r+s), v(0, 0, r), v(-s, 0, r+s)]]
+        for arrow in pts:
+            path.addPath(
+                self.draw_lines([[self.position - p for p in arrow]], offset))
+            path.addPath(
+                self.draw_lines([[self.position + p for p in arrow]], offset))
+
+        return path
+
+
+
 
 class RepelControl(DistortControl):
     @classmethod
     def new(cls, canvas, x, y, z, scale):
         r = Repel(get_name('repel'), x, y, z, scale)
         return cls(canvas, r)
+
+    def arrow_path(self, offset=QtCore.QPoint()):
+        path = QtGui.QPainterPath()
+        r = self.r / 1.3
+        s = self.r / 6.
+        v = QtGui.QVector3D
+        pts = [
+                [v(0, 0, 0), v(r, 0, 0)],
+                [v(r-s, s, 0), v(r, 0, 0), v(r-s, -s, 0)],
+                [v(0, 0, 0), v(0, r, 0)],
+                [v(s, r-s, 0), v(0, r, 0), v(-s, r-s, 0)],
+                [v(0, 0, 0), v(0, 0, r)],
+                [v(s, 0, r-s), v(0, 0, r), v(-s, 0, r-s)]]
+        for arrow in pts:
+            path.addPath(
+                self.draw_lines([[self.position - p for p in arrow]], offset))
+            path.addPath(
+                self.draw_lines([[self.position + p for p in arrow]], offset))
+
+        return path
 
 from node.distort import Attract, Repel
 from node.base import get_name
