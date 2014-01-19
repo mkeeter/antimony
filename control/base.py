@@ -172,6 +172,19 @@ class NodeControl(QtGui.QWidget):
 
         return QtGui.QRegion(bitmap)
 
+    def get_rect(self, func, offset):
+        """ Gets a bounding box from a painter path.
+            func should be a function with no arguments that returns
+            a QPainterPath.
+        """
+        rect = func().boundingRect().toRect()
+
+        rect.setTop(rect.top() - offset)
+        rect.setBottom(rect.bottom() + offset)
+        rect.setLeft(rect.left() - offset)
+        rect.setRight(rect.right() + offset)
+
+        return rect
 
 
 
