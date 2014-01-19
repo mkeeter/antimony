@@ -92,11 +92,14 @@ class ImageControl(base.NodeControl):
     def draw_outline(self, painter, mask=False):
         """ Draws this image's 2D boundary on the floor.
         """
-        self.set_pen(painter, mask, None, colors.green)
+        self.set_pen(painter, mask, None, colors.grey)
+        p = painter.pen()
+        p.setStyle(QtCore.Qt.DotLine)
+        painter.setPen(p)
         painter.drawPath(self.outline_path(self.pos()))
 
     def draw_base(self, painter, mask=False):
-        self.set_brush(painter, mask, colors.green)
+        self.set_brush(painter, mask, colors.grey)
         pt = self.canvas.unit_to_pixel(self.position) - self.pos()
 
         if mask:                                                    d = 22
@@ -106,7 +109,7 @@ class ImageControl(base.NodeControl):
         painter.drawEllipse(pt.x() - d/2, pt.y() - d/2, d, d)
 
     def draw_scale(self, painter, mask=False):
-        self.set_brush(painter, mask, colors.green)
+        self.set_brush(painter, mask, colors.grey)
         pt = self.canvas.unit_to_pixel(
                 self.position.x() + self.imgsize.width(),
                 self.position.y() + self.imgsize.height()) - self.pos()

@@ -69,14 +69,17 @@ class TextControl(base.NodeControl):
     def draw_outline(self, painter, mask=False):
         """ Draws this text block's 2D boundary on the floor.
         """
-        self.set_pen(painter, mask, None, colors.green)
+        self.set_pen(painter, mask, None, colors.grey)
+        p = painter.pen()
+        p.setStyle(QtCore.Qt.DotLine)
+        painter.setPen(p)
         painter.drawPath(self.outline_path(self.pos()))
 
 
     def draw_base(self, painter, mask=False):
         """ Draws a simple circle at the lower-left of this text.
         """
-        self.set_brush(painter, mask, colors.green)
+        self.set_brush(painter, mask, colors.grey)
         pt = self.canvas.unit_to_pixel(self.bbox.left(),
                                        self.bbox.top()) - self.pos()
 
@@ -91,7 +94,7 @@ class TextControl(base.NodeControl):
         """ Draws a slightly smaller, slashed circle at the top right of
             the text's bounding box.
         """
-        self.set_brush(painter, mask, colors.green)
+        self.set_brush(painter, mask, colors.grey)
         pt = self.canvas.unit_to_pixel(self.bbox.right(),
                                        self.bbox.bottom()) - self.pos()
 
