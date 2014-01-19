@@ -1,12 +1,9 @@
 import base
 import datum
 
-class Scale(base.Node):
+class Scale(base.Node3D):
     def __init__(self, name, x, y, z, sx, sy, sz):
-        super(Scale, self).__init__(name)
-        self.add_datum('x', datum.FloatDatum(self, x))
-        self.add_datum('y', datum.FloatDatum(self, y))
-        self.add_datum('z', datum.FloatDatum(self, z))
+        super(Scale, self).__init__(name, x, y, z)
         self.add_datum('sx', datum.FloatDatum(self, sx))
         self.add_datum('sy', datum.FloatDatum(self, sy))
         self.add_datum('sz', datum.FloatDatum(self, sz))
