@@ -408,7 +408,47 @@ def revolve_x(part):
         p.zmin, p.zmax =  p.ymin, p.ymax
     return p
 
+################################################################################
 
+def attract(part, x, y, z, r):
+
+    # Shift the part so that it is centered
+    part = move(part, -x, -y, -z)
+
+    # exponential fallout value
+    # x*(1 - exp(-sqrt(x**2 + y**2 + z**2) / r))
+    d = '+f1xn/r++qXqYqZf%g' % r
+    p = part.map(X='*X'+d, Y='*Y'+d, Z='*Z'+d)
+
+    b = r/math.e
+    p.xmin = part.xmin - b
+    p.ymin = part.ymin - b
+    p.zmin = part.zmin - b
+    p.xmax = part.xmax + b
+    p.ymax = part.ymax + b
+    p.zmax = part.zmax + b
+
+    return move(p, x, y, z)
+
+def repel(part, x, y, z, r):
+
+    # Shift the part so that it is centered
+    part = move(part, -x, -y, -z)
+
+    # exponential fallout value
+    # x*(1 - exp(-sqrt(x**2 + y**2 + z**2) / r))
+    d = '-f1xn/r++qXqYqZf%g' % r
+    p = part.map(X='*X'+d, Y='*Y'+d, Z='*Z'+d)
+
+    b = r/math.e
+    p.xmin = part.xmin - b
+    p.ymin = part.ymin - b
+    p.zmin = part.zmin - b
+    p.xmax = part.xmax + b
+    p.ymax = part.ymax + b
+    p.zmax = part.zmax + b
+
+    return move(p, x, y, z)
 
 ################################################################################
 
