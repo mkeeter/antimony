@@ -237,15 +237,23 @@ class Expression(object):
         zmin = 0 if math.isinf(self.zmin) else self.zmin
         zmax = 0 if math.isinf(self.zmax) else self.zmax
 
-        return region.Region((self.xmin, self.ymin, zmin),
-                             (self.xmax, self.ymax, zmax), voxels_per_unit)
+        dx = (self.xmax - self.xmin) / 20.
+        dy = (self.ymax - self.ymin) / 20.
+        dz = (zmax - zmin) / 20.
+        return region.Region((self.xmin-dx, self.ymin-dy, zmin-dz),
+                             (self.xmax+dx, self.ymax+dy, zmax+dz),
+                             voxels_per_unit)
 
 
     def get_xyz_region(self, voxels_per_unit):
         """ Returns a region appropriate for 3D rendering.
         """
-        return region.Region((self.xmin, self.ymin, self.zmin),
-                             (self.xmax, self.ymax, self.zmax), voxels_per_unit)
+        dx = (self.xmax - self.xmin) / 20.
+        dy = (self.ymax - self.ymin) / 20.
+        dz = (self.zmax - self.zmin) / 20.
+        return region.Region((self.xmin-dx, self.ymin-dy, self.zmin-dz),
+                             (self.xmax+dx, self.ymax+dy, self.zmax+dz),
+                             voxels_per_unit)
 
 
 import tree
