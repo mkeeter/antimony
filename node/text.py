@@ -18,6 +18,6 @@ class Text(base.Node):
         return control.text.TextControl
 
     def make_shape(self):
-        return fab.shapes.text(self.txt, self.x, self.y, self.scale)
+        return fab.shapes.text(self.txt, self.x, self.y, self.scale,'LB')
 
 import fab.shapes
