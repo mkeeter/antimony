@@ -412,7 +412,7 @@ def revolve_x(part):
 
 ################################################################################
 
-def text(text, x, y, height = 1, align = 'CC'):
+def text(text, x, y, height=1, align='CC'):
 
     dx, dy = 0, -1
     text_shape = None
