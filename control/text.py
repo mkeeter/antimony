@@ -28,14 +28,13 @@ class TextControl(base.NodeControl):
 
 
     def editor_position(self):
-        return self.canvas.unit_to_pixel(self.bbox.left(), self.bbox.bottom())
+        return self.canvas.unit_to_pixel(self.bbox.left(), self.bbox.top())
 
     def _sync(self):
         if self.node._shape.valid() and self.node.shape.has_xy_bounds():
             s = self.node.shape
             bbox = QtCore.QRectF(s.xmin, s.ymin,
                                  s.xmax - s.xmin, s.ymax - s.ymin)
-            print bbox
         else:
             bbox = self.bbox
 
@@ -85,7 +84,7 @@ class TextControl(base.NodeControl):
         """
         self.set_brush(painter, mask, colors.green)
         pt = self.canvas.unit_to_pixel(self.bbox.left(),
-                                       self.bbox.bottom()) - self.pos()
+                                       self.bbox.top()) - self.pos()
 
         if mask:                                                    d = 22
         elif self.drag_control.hover or self.drag_control.drag:     d = 20
@@ -100,7 +99,7 @@ class TextControl(base.NodeControl):
         """
         self.set_brush(painter, mask, colors.green)
         pt = self.canvas.unit_to_pixel(self.bbox.right(),
-                                       self.bbox.top()) - self.pos()
+                                       self.bbox.bottom()) - self.pos()
 
         if mask:
             d = 20

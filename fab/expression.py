@@ -5,9 +5,11 @@ def wrapped(f):
         all arguments into Expression objects.
     """
     def wrapped(*args, **kwargs):
-        return f(*[Expression(a) if not isinstance(a, Expression)
+        return f(*[Expression(a) if (not isinstance(a, Expression)
+                                     and a is not None)
                                 else a for a in args],
-                **{k:Expression(a) if not isinstance(a, Expression)
+                **{k:Expression(a) if (not isinstance(a, Expression)
+                                       and a is not None)
                                 else a for k, a in kwargs.items()})
     return wrapped
 
