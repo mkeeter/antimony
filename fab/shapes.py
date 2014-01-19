@@ -428,9 +428,6 @@ def text(text, x, y, height=1, align='CC'):
                 if line_shape is None:  line_shape  = chr_math
                 else:                   line_shape |= chr_math
                 dx += _glyphs[c].width + 0.1
-                print c
-                print line_shape.xmin, line_shape.xmax
-                print line_shape.ymin, line_shape.ymax
         dx -= 0.1
 
         if line_shape is not None:
@@ -441,11 +438,11 @@ def text(text, x, y, height=1, align='CC'):
             elif align[0] == 'R':
                 line_shape = move(line_shape, -dx, 0)
 
-            text_shape |= line_shape
+            if text_shape is None:  text_shape  = line_shape
+            else:                   text_shape |= line_shape
 
         dy -= 1.55
         dx = 0
-
     dy += 1.55
     if text_shape is None:  return None
 

@@ -20,7 +20,7 @@ class TextControl(base.NodeControl):
         self.bbox = QtCore.QRectF()
         self.scale = 0
 
-        self.editor_datums = ['name','x','y','scale','txt']
+        self.editor_datums = ['name','x','y','scale','txt','shape']
 
         self.sync()
         self.show()
@@ -31,8 +31,6 @@ class TextControl(base.NodeControl):
         return self.canvas.unit_to_pixel(self.bbox.left(), self.bbox.bottom())
 
     def _sync(self):
-        print self.node.shape, self.node.shape.xmin, self.node.shape.ymin
-        print  self.node.shape.xmax, self.node.shape.ymax
         if self.node._shape.valid() and self.node.shape.has_xy_bounds():
             s = self.node.shape
             bbox = QtCore.QRectF(s.xmin, s.ymin,
