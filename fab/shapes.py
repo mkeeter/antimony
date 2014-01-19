@@ -428,6 +428,9 @@ def text(text, x, y, height=1, align='CC'):
                 if line_shape is None:  line_shape  = chr_math
                 else:                   line_shape |= chr_math
                 dx += _glyphs[c].width + 0.1
+                print c
+                print line_shape.xmin, line_shape.xmax
+                print line_shape.ymin, line_shape.ymax
         dx -= 0.1
 
         if line_shape is not None:
@@ -455,8 +458,6 @@ def text(text, x, y, height=1, align='CC'):
 
     if height != 1:
         text_shape = scale_xy(text_shape, 0, 0, height)
-        dx *= height
-        dy *= height
 
     return move(text_shape, x, y)
 
@@ -496,15 +497,15 @@ _glyphs['B'] = shape
 
 shape = circle(0.25, 0.275, 0.275)
 shape &= ~circle(0.25, 0.275, 0.175)
-shape &= rectangle(0.25, 1, 0, 0.275) + rectangle(0, 1, 0.275, 1)
+shape &= rectangle(0.25, 1, 0, 0.275) | rectangle(0, 1, 0.275, 1)
 shape |= rectangle(0, 0.1, 0, 1)
 shape |= rectangle(0.1, 0.25, 0, 0.1)
 shape.width = 0.525
 _glyphs['b'] = shape
 
 
-shape = circle(0.3, 0.7, 0.3) - circle(0.3, 0.7, 0.2)
-shape |= circle(0.3, 0.3, 0.3) - circle(0.3, 0.3, 0.2)
+shape = circle(0.3, 0.7, 0.3) & ~circle(0.3, 0.7, 0.2)
+shape |= circle(0.3, 0.3, 0.3) & ~circle(0.3, 0.3, 0.2)
 shape &= ~rectangle(0, 0.6, 0.3, 0.7)
 shape &= ~triangle(0.3, 0.5, 1, 1.5, 1, -0.5)
 shape &= ~rectangle(0.3, 0.6, 0.2, 0.8)
@@ -520,7 +521,7 @@ shape.width = 0.48
 _glyphs['c'] = shape
 
 
-shape = circle(0.1, 0.5, 0.5) - circle(0.1, 0.5, 0.4)
+shape = circle(0.1, 0.5, 0.5) & ~circle(0.1, 0.5, 0.4)
 shape &= rectangle(0, 1, 0, 1)
 shape |= rectangle(0, 0.1, 0, 1)
 shape.width = 0.6
@@ -556,7 +557,7 @@ shape.width = 0.6
 _glyphs['F'] = shape
 
 
-shape = circle(0.4, 0.75, 0.25) - circle(0.4, 0.75, 0.15)
+shape = circle(0.4, 0.75, 0.25) & ~circle(0.4, 0.75, 0.15)
 shape &= rectangle(0, 0.4, 0.75, 1)
 shape |= rectangle(0, 0.4, 0.45, 0.55)
 shape |= rectangle(0.15, 0.25, 0, 0.75)
@@ -567,14 +568,14 @@ _glyphs['f'] = shape
 shape = circle(0.275, -0.1, 0.275)
 shape &= ~circle(0.275, -0.1, 0.175)
 shape &= rectangle(0, 0.55, -0.375, -0.1)
-shape |= circle(0.275, 0.275, 0.275) - circle(0.275, 0.275, 0.175)
+shape |= circle(0.275, 0.275, 0.275) & ~circle(0.275, 0.275, 0.175)
 shape |= rectangle(0.45, 0.55, -0.1, 0.55)
 shape.width = 0.55
 _glyphs['g'] = shape
 
 
-shape = circle(0.3, 0.7, 0.3) - circle(0.3, 0.7, 0.2)
-shape |= circle(0.3, 0.3, 0.3) - circle(0.3, 0.3, 0.2)
+shape = circle(0.3, 0.7, 0.3) & ~circle(0.3, 0.7, 0.2)
+shape |= circle(0.3, 0.3, 0.3) & ~circle(0.3, 0.3, 0.2)
 shape &= ~rectangle(0, 0.6, 0.3, 0.7)
 shape |= rectangle(0, 0.1, 0.3, 0.7)
 shape |= rectangle(0.5, 0.6, 0.3, 0.4)
@@ -667,8 +668,8 @@ shape.width = 0.8
 _glyphs['M'] = shape
 
 
-shape = circle(0.175, 0.35, 0.175) - circle(0.175, 0.35, 0.075)
-shape |= circle(0.425, 0.35, 0.175) - circle(0.425, 0.35, 0.075)
+shape = circle(0.175, 0.35, 0.175) & ~circle(0.175, 0.35, 0.075)
+shape |= circle(0.425, 0.35, 0.175) & ~circle(0.425, 0.35, 0.075)
 shape &= rectangle(0, 0.65, 0.35, 0.65)
 shape |= rectangle(0, 0.1, 0, 0.525)
 shape |= rectangle(0.25, 0.35, 0, 0.35)
@@ -694,8 +695,8 @@ shape.width = 0.55
 _glyphs['n'] = shape
 
 
-shape = circle(0.3, 0.7, 0.3) - circle(0.3, 0.7, 0.2)
-shape |= circle(0.3, 0.3, 0.3) - circle(0.3, 0.3, 0.2)
+shape = circle(0.3, 0.7, 0.3) & ~circle(0.3, 0.7, 0.2)
+shape |= circle(0.3, 0.3, 0.3) & ~circle(0.3, 0.3, 0.2)
 shape &= ~rectangle(0, 0.6, 0.3, 0.7)
 shape |= rectangle(0, 0.1, 0.3, 0.7)
 shape |= rectangle(0.5, 0.6, 0.3, 0.7)
@@ -726,8 +727,8 @@ shape.width = 0.55
 _glyphs['p'] = shape
 
 
-shape = circle(0.3, 0.7, 0.3) - circle(0.3, 0.7, 0.2)
-shape |= circle(0.3, 0.3, 0.3) - circle(0.3, 0.3, 0.2)
+shape = circle(0.3, 0.7, 0.3) & ~circle(0.3, 0.7, 0.2)
+shape |= circle(0.3, 0.3, 0.3) & ~circle(0.3, 0.3, 0.2)
 shape &= ~rectangle(0, 0.6, 0.3, 0.7)
 shape |= rectangle(0, 0.1, 0.3, 0.7)
 shape |= rectangle(0.5, 0.6, 0.3, 0.7)
@@ -737,7 +738,7 @@ shape.width = 0.6
 _glyphs['Q'] = shape
 
 
-shape = circle(0.275, 0.275, 0.275) - circle(0.275, 0.275, 0.175)
+shape = circle(0.275, 0.275, 0.275) & ~circle(0.275, 0.275, 0.175)
 shape |= rectangle(0.45, 0.55, -0.375, 0.55)
 shape.width = 0.55
 _glyphs['q'] = shape
@@ -755,7 +756,7 @@ shape.width = 0.575
 _glyphs['R'] = shape
 
 
-shape = circle(0.55, 0, 0.55) - scale_x(circle(0.55, 0, 0.45), 0.55, 0.8)
+shape = circle(0.55, 0, 0.55) & ~scale_x(circle(0.55, 0, 0.45), 0.55, 0.8)
 shape &= rectangle(0, 0.55, 0, 0.55)
 shape = scale_x(shape, 0, 0.7)
 shape |= rectangle(0, 0.1, 0, 0.55)
@@ -780,12 +781,12 @@ shape.width = 0.4875
 _glyphs['s'] = shape
 
 
-shape = rectangle(0, 0.6, 0.9, 1) + rectangle(0.25, 0.35, 0, 0.9)
+shape = rectangle(0, 0.6, 0.9, 1) | rectangle(0.25, 0.35, 0, 0.9)
 shape.width = 0.6
 _glyphs['T'] = shape
 
 
-shape = circle(0.4, 0.25, 0.25) - circle(0.4, 0.25, 0.15)
+shape = circle(0.4, 0.25, 0.25) & ~circle(0.4, 0.25, 0.15)
 shape &= rectangle(0, 0.4, 0, 0.25)
 shape |= rectangle(0, 0.4, 0.55, 0.65)
 shape |= rectangle(0.15, 0.25, 0.25, 1)
@@ -793,7 +794,7 @@ shape.width = 0.4
 _glyphs['t'] = shape
 
 
-shape = circle(0.3, 0.3, 0.3) - circle(0.3, 0.3, 0.2)
+shape = circle(0.3, 0.3, 0.3) & ~circle(0.3, 0.3, 0.2)
 shape &= rectangle(0, 0.6, 0, 0.3)
 shape |= rectangle(0, 0.1, 0.3, 1)
 shape |= rectangle(0.5, 0.6, 0.3, 1)
@@ -801,7 +802,7 @@ shape.width = 0.6
 _glyphs['U'] = shape
 
 
-shape = circle(0.275, 0.275, 0.275) - circle(0.275, 0.275, 0.175)
+shape = circle(0.275, 0.275, 0.275) & ~circle(0.275, 0.275, 0.175)
 shape &= rectangle(0, 0.55, 0, 0.275)
 shape |= rectangle(0, 0.1, 0.275, 0.55)
 shape |= rectangle(0.45, 0.55, 0, 0.55)
@@ -865,7 +866,7 @@ _glyphs['Y'] = shape
 
 shape = triangle(0, 0.55, 0.1, 0.55, 0.325, 0)
 shape |= triangle(0.325, 0, 0.225, 0, 0, 0.55)
-shape |= reflect_x(shape, 0.275) + move(reflect_x(shape, 0.275), -0.225, -0.55)
+shape |= reflect_x(shape, 0.275) | move(reflect_x(shape, 0.275), -0.225, -0.55)
 shape &= rectangle(0, 0.55, -0.375, 0.55)
 shape.width = 0.55
 _glyphs['y'] = shape
@@ -910,12 +911,12 @@ shape = rectangle(0, 0.1, 0.55, 0.8)
 shape.width = 0.1
 _glyphs["'"] = shape
 
-shape = rectangle(0, 0.1, 0.55, 0.8) + rectangle(0.2, 0.3, 0.55, 0.8)
+shape = rectangle(0, 0.1, 0.55, 0.8) | rectangle(0.2, 0.3, 0.55, 0.8)
 shape.width = 0.3
 _glyphs['"'] = shape
 
 
-shape = circle(0.075, 0.15, 0.075) + circle(0.075, 0.45, 0.075)
+shape = circle(0.075, 0.15, 0.075) | circle(0.075, 0.45, 0.075)
 shape.width = 0.15
 _glyphs[':'] = shape
 
@@ -941,14 +942,14 @@ shape.width = 0.45
 _glyphs['-'] = shape
 
 
-shape = circle(0, 0.4, 0.6) - scale_x(circle(0, 0.4, 0.5), 0, 0.7)
+shape = circle(0, 0.4, 0.6) & ~scale_x(circle(0, 0.4, 0.5), 0, 0.7)
 shape &= rectangle(0, 0.6, -0.2, 1)
 shape = scale_x(shape, 0, 1/2.)
 shape.width = 0.3
 _glyphs[')'] = shape
 
 
-shape = circle(0.6, 0.4, 0.6) - scale_x(circle(0.6, 0.4, 0.5), 0.6, 0.7)
+shape = circle(0.6, 0.4, 0.6) & ~scale_x(circle(0.6, 0.4, 0.5), 0.6, 0.7)
 shape &= rectangle(0, 0.6, -0.2, 1)
 shape = scale_x(shape, 0, 1/2.)
 shape.width = 0.3
@@ -989,7 +990,7 @@ shape.width = 0.5
 _glyphs['4'] = shape
 
 
-shape = circle(0.325, 0.325, 0.325) - circle(0.325, 0.325, 0.225)
+shape = circle(0.325, 0.325, 0.325) & ~circle(0.325, 0.325, 0.225)
 shape &= ~rectangle(0, 0.325, 0.325, 0.65)
 shape |= rectangle(0, 0.325, 0.55, 0.65)
 shape |= rectangle(0, 0.1, 0.55, 1)
@@ -998,14 +999,14 @@ shape.width = 0.65
 _glyphs['5'] = shape
 
 
-shape = circle(0.275, 0.725, 0.275) - scale_y(circle(0.275, 0.725, 0.175), .725, 1.2)
+shape = circle(0.275, 0.725, 0.275) & ~scale_y(circle(0.275, 0.725, 0.175), .725, 1.2)
 shape &= rectangle(0, 0.55, 0.725, 1)
 shape &= ~triangle(0.275, 0.925, 0.55, 0.9, 0.55, 0.725)
 shape = scale_y(shape, 1, 2)
 shape = scale_x(shape, 0, 1.1)
 shape &= ~rectangle(0.275, 0.65, 0., 0.7)
 shape |= rectangle(0, 0.1, 0.275, 0.45)
-shape |= circle(0.275, 0.275, 0.275) - circle(0.275, 0.275, 0.175)
+shape |= circle(0.275, 0.275, 0.275) & ~circle(0.275, 0.275, 0.175)
 shape.width = 0.55
 _glyphs['6'] = shape
 
@@ -1030,7 +1031,7 @@ shape.width = _glyphs['6'].width
 _glyphs['9'] = shape
 
 
-shape = circle(0.5, 0.5, 0.5) - scale_x(circle(0.5, 0.5, 0.4), 0.5, 0.7**0.5)
+shape = circle(0.5, 0.5, 0.5) & ~scale_x(circle(0.5, 0.5, 0.4), 0.5, 0.7**0.5)
 shape = scale_x(shape, 0, 0.7)
 shape.width = 0.7
 _glyphs['0'] = shape
@@ -1048,7 +1049,7 @@ shape.width = 0.55
 _glyphs['/'] = shape
 
 
-shape = circle(0.275, 0.725, 0.275) - circle(0.275, 0.725, 0.175)
+shape = circle(0.275, 0.725, 0.275) & ~circle(0.275, 0.725, 0.175)
 shape &= ~rectangle(0, 0.275, 0.45, 0.725)
 shape |= rectangle(0.225, 0.325, 0.3, 0.55)
 shape |= circle(0.275, 0.075, 0.075)
