@@ -100,13 +100,7 @@ class CircleControl(base.NodeControl):
         """ Repositions the node and calls self.update
         """
         # Get bounding box from painter path
-        rect = self.ring_path().boundingRect().toRect()
-        rect.setTop(rect.top() - 5)
-        rect.setBottom(rect.bottom() + 5)
-        rect.setLeft(rect.left() - 5)
-        rect.setRight(rect.right() + 5)
-
-        self.setGeometry(rect)
+        self.setGeometry(self.get_rect(self.ring_path))
         self.make_masks()
         self.update()
 

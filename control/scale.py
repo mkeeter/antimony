@@ -85,21 +85,17 @@ class ScaleControl(base.NodeControl):
 
         return changed
 
-    def reposition(self):
-        """ Repositions this widget and calls self.update
-        """
+    def combined_path(self):
         p = self.axes_path()
         p.connectPath(self.x_handle_path())
         p.connectPath(self.y_handle_path())
         p.connectPath(self.z_handle_path())
+        return p
 
-        rect = p.boundingRect().toRect()
-        rect.setTop(rect.top() - 15)
-        rect.setBottom(rect.bottom() + 15)
-        rect.setLeft(rect.left() - 15)
-        rect.setRight(rect.right() + 15)
-
-        self.setGeometry(rect)
+    def reposition(self):
+        """ Repositions this widget and calls self.update
+        """
+        self.setGeometry(self.get_rect(self.combined_path, offset=15))
 
         self.make_masks()
         self.update()
