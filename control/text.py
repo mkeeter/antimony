@@ -27,11 +27,17 @@ class TextControl(base.NodeControl):
         self.raise_()
 
 
+    def editor_position(self):
+        return self.canvas.unit_to_pixel(self.bbox.left(), self.bbox.bottom())
+
     def _sync(self):
-        if self.node._shape.valid():
+        print self.node.shape, self.node.shape.xmin, self.node.shape.ymin
+        print  self.node.shape.xmax, self.node.shape.ymax
+        if self.node._shape.valid() and self.node.shape.has_xy_bounds():
             s = self.node.shape
             bbox = QtCore.QRectF(s.xmin, s.ymin,
                                  s.xmax - s.xmin, s.ymax - s.ymin)
+            print bbox
         else:
             bbox = self.bbox
 
@@ -138,3 +144,6 @@ class TextControl(base.NodeControl):
         self.draw_outline(painter)
         self.draw_base(painter)
         self.draw_scale(painter)
+
+from node.text import Text
+from node.base import get_name
