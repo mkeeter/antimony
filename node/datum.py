@@ -253,6 +253,14 @@ class NameDatum(EvalDatum):
         """
         super(NameDatum, self).set_expr("'%s'" % e)
 
+class StringDatum(EvalDatum):
+    def __init__(self, node, value):
+        super(StringDatum, self).__init__(node, str, "'%s'" % value)
+
+    def get_expr(self):
+        return self._expr[1:-1]
+    def set_expr(self, e):
+        super(StringDatum, self).set_expr("'%s'" % e)
 
 ################################################################################
 
