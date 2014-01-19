@@ -91,9 +91,45 @@ Vec3f zero_crossing(const float d[8],
 _STATIC_
 void triangulate_voxel(MathTree* tree, const Region r,
                        float** const verts, unsigned* const count,
-                       unsigned* const allocated)
+                       unsigned* const allocated,
+                       Region packed, const float* data)
 {
-    // Recursive case: split into subregions and recurse
+    // If we can calculate all of the points in this region with a single
+    // eval_r call, then do so.  This large chunk will be used in future
+    // recursive calls to make things more efficient.
+    const unsigned voxels = (r.ni+1)*(r.nj+1)*(r.nk+1);
+    if (!data && voxels < MIN_VOLUME)
+    {
+        packed = r;
+
+        // Copy the X, Y, Z vectors into a flattened matrix form.
+        packed.X = malloc(voxels*sizeof(float));
+        packed.Y = malloc(voxels*sizeof(float));
+        packed.Z = malloc(voxels*sizeof(float));
+
+        int q = 0;
+        for (int k = 0; k <= r.nk; ++k) {
+            for (int j = 0; j <= r.nj; ++j) {
+                for (int i = 0; i <= r.ni; ++i) {
+                    packed.X[q] = r.X[i];
+                    packed.Y[q] = r.Y[j];
+                    packed.Z[q] = r.Z[k];
+                    q++;
+                }
+            }
+        }
+        // Update the voxel count
+        packed.voxels = voxels;
+
+        data = eval_r(tree, packed);
+
+        // Free the allocated matrices
+        free(packed.X);
+        free(packed.Y);
+        free(packed.Z);
+    }
+
+    // If we have greater than one voxel, subdivide and recurse.
     if (r.voxels > 1)
     {
         Region octants[8];
@@ -103,7 +139,8 @@ void triangulate_voxel(MathTree* tree, const Region r,
             if (split & (1 << i))
             {
                 triangulate_voxel(tree, octants[i],
-                                  verts, count, allocated);
+                                  verts, count, allocated,
+                                  packed, data);
             }
         }
         return;
@@ -113,9 +150,12 @@ void triangulate_voxel(MathTree* tree, const Region r,
     float d[8];
     for (int i=0; i < 8; ++i)
     {
-        d[i] = eval_f(tree, (i & 4) ? r.X[1] : r.X[0],
-                            (i & 2) ? r.Y[1] : r.Y[0],
-                            (i & 1) ? r.Z[1] : r.Z[0]);
+        // Figure out where this bit of data lives in the larger eval_r array.
+        d[i] = data[(r.imin - packed.imin + ((i & 4) ? r.ni : 0)) +
+                    (r.jmin - packed.jmin + ((i & 2) ? r.nj : 0))
+                        * (packed.ni+1) +
+                    (r.kmin - packed.kmin + ((i & 1) ? r.nk : 0))
+                        * (packed.ni+1) * (packed.nj+1)];
     }
 
     // Loop over the six tetrahedra that make up a voxel cell
@@ -168,7 +208,8 @@ void triangulate(MathTree* tree, const Region r,
     *count = 0;
     unsigned allocated = 9;
 
-    triangulate_voxel(tree, r, &v, count, &allocated);
+    Region packed;
+    triangulate_voxel(tree, r, &v, count, &allocated, packed, NULL);
     *verts = realloc(v, (*count)*sizeof(float));
 }
 
