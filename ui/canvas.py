@@ -50,6 +50,7 @@ class Canvas(QtGui.QWidget):
                 ('2D',
                     ("Triangle", TriangleControl),
                     ("Circle", CircleControl),
+                    ("Text", TextControl),
                     ("Point (2D)", PointControl),
                 ),
 
@@ -441,6 +442,7 @@ from node.datum import ExpressionFunctionDatum
 
 from control.point import PointControl, Point3DControl
 from control.cube import CubeControl
+from control.text import TextControl
 from control.sphere import SphereControl
 from control.scale import ScaleControl
 from control.extrude import ExtrudeZControl
