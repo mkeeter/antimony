@@ -19,3 +19,5 @@ class Text(base.Node):
 
     def make_shape(self):
         return fab.shapes.text(self.x, self.y, self.scale)
+
+import fab.shapes
