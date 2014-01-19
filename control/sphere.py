@@ -40,28 +40,16 @@ class SphereControl(base.NodeControl):
         if not self.node._r.simple():   return
 
         p -= self.position
-        p.setZ(0)
         p = p.normalized()
 
-        v.setZ(0)
         dr = QtGui.QVector3D.dotProduct(p, v)
         self.node._r.set_expr(str(float(self.node._r.get_expr()) + dr))
 
     def make_masks(self):
-        for n in ['center', 'wireframe']:
-            func = getattr(self, 'draw_' + n)
-            painter = QtGui.QPainter()
-            bitmap = QtGui.QBitmap(self.size())
-            bitmap.clear()
-
-            painter.begin(bitmap)
-            func(painter, True)
-            painter.end()
-
-            setattr(self, n+'_mask', QtGui.QRegion(bitmap))
-        self.drag_control.mask = self.center_mask
-        self.radius_drag.mask = self.wireframe_mask
-        self.setMask(self.center_mask | self.wireframe_mask)
+        self.drag_control.mask = self.paint_mask(self.draw_center)
+        self.radius_drag.mask = self.paint_mask(self.draw_wireframe)
+        self.setMask(self.drag_control.mask |
+                     self.radius_drag.mask)
 
 
     def wireframe_path(self, offset=QtCore.QPoint()):
