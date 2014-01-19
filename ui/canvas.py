@@ -69,6 +69,8 @@ class Canvas(QtGui.QWidget):
                 ('Operations',
                     ("Extrude", ExtrudeZControl),
                     ("Scale", ScaleControl),
+                    ("Attract", AttractControl),
+                    ("Repel", RepelControl),
                 ),
 
                 ('Import',
@@ -442,6 +444,7 @@ from node.datum import ExpressionFunctionDatum
 
 from control.point import PointControl, Point3DControl
 from control.cube import CubeControl
+from control.distort import AttractControl, RepelControl
 from control.text import TextControl
 from control.sphere import SphereControl
 from control.scale import ScaleControl
