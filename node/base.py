@@ -108,6 +108,28 @@ class Node(object):
         return self.__getattribute__('_'+v).value()
 
 
+################################################################################
+
+class Node2D(Node):
+    """ Graph node with x,y coordinates
+    """
+    def __init__(self, name, x, y):
+        super(Node2D, self).__init__(name)
+        self.add_datum('x', datum.FloatDatum(self, x))
+        self.add_datum('y', datum.FloatDatum(self, y))
+
+class Node3D(Node):
+    """ Graph node with x,y,z coordinates.
+    """
+    def __init__(self, name, x, y, z):
+        super(Node3D, self).__init__(name)
+        self.add_datum('x', datum.FloatDatum(self, x))
+        self.add_datum('y', datum.FloatDatum(self, y))
+        self.add_datum('z', datum.FloatDatum(self, z))
+
+
+################################################################################
+
 # Master list of nodes
 nodes = []
 def dict():     return {n._name.get_expr(): n for n in nodes}
