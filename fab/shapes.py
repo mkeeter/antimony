@@ -220,7 +220,7 @@ def shear_x_y(part, y0, y1, dx0, dx1):
     p = part.map(X='--Xf%(dx0)g/*f%(dx)g-Yf%(y0)gf%(dy)g' % locals())
 
     # X  = X'+dx0+(dx)*(Y-y0)/dy
-    p.set_bounds(*part.remap_bounds(X='++Xf%(dx0))g/*f%(dx)g-Yf%(y0)gf%(dy)g'
+    p.set_bounds(*part.remap_bounds(X='++Xf%(dx0)g/*f%(dx)g-Yf%(y0)gf%(dy)g'
                                     % locals()))
     return p
 
@@ -885,9 +885,7 @@ shape.width = 0.6
 _glyphs['z'] = shape
 
 
-shape = MathTree.Constant(0)
-shape.bounds = [0,0,0,0,None,None,None]
-shape.shape = True
+shape = Expression(1)
 shape.width = 0.55
 shape.xmin, shape.xmax = 0, 0.55
 shape.ymin, shape.ymax = 0, 1

@@ -101,7 +101,7 @@ class Expression(object):
         e.zmax = min(self.zmax, rhs.zmax)
         return e
     @wrapped
-    def __rand__(self, rhs):
+    def __rand__(self, lhs):
         e = Expression('a' + lhs.math + self.math)
         e.xmin = max(lhs.xmin, self.xmin)
         e.xmax = min(lhs.xmax, self.xmax)
@@ -123,7 +123,7 @@ class Expression(object):
         e.zmax = max(self.zmax, rhs.zmax)
         return e
     @wrapped
-    def __ror__(self, rhs):
+    def __ror__(self, lhs):
         e = Expression('i' + lhs.math + self.math)
         e.xmin = min(lhs.xmin, self.xmin)
         e.xmax = max(lhs.xmax, self.xmax)
