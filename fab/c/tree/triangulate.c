@@ -151,11 +151,14 @@ void triangulate_voxel(MathTree* tree, const Region r,
     for (int i=0; i < 8; ++i)
     {
         // Figure out where this bit of data lives in the larger eval_r array.
-        d[i] = data[(r.imin - packed.imin + ((i & 4) ? r.ni : 0)) +
-                    (r.jmin - packed.jmin + ((i & 2) ? r.nj : 0))
-                        * (packed.ni+1) +
-                    (r.kmin - packed.kmin + ((i & 1) ? r.nk : 0))
-                        * (packed.ni+1) * (packed.nj+1)];
+        const unsigned index =
+            (r.imin - packed.imin + ((i & 4) ? r.ni : 0)) +
+            (r.jmin - packed.jmin + ((i & 2) ? r.nj : 0))
+                * (packed.ni+1) +
+            (r.kmin - packed.kmin + ((i & 1) ? r.nk : 0))
+                * (packed.ni+1) * (packed.nj+1);
+
+        d[i] = data[index];
     }
 
     // Loop over the six tetrahedra that make up a voxel cell
