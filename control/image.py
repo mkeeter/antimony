@@ -10,7 +10,6 @@ class ImageControl(base.NodeControl):
     @classmethod
     def new(cls, canvas, x, y, z, scale):
         """ Constructs a new ImageControl object at the given position.
-            image should be a QRegion object.
         """
         filename, filetype = QtGui.QFileDialog.getOpenFileName(
                 canvas, "Open", '', "Images (*.png *.jpg *.gif)")

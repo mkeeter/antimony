@@ -29,7 +29,7 @@ class Expression(object):
             print type(math)
             raise TypeError("Cannot construct a Expression from '%s'" % math)
 
-        if self.math is None:
+        if math is None:
             self.xmin = self.ymin = self.zmin = -1
             self.xmax = self.ymax = self.zmax = 1
         else:

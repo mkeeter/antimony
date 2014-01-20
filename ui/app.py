@@ -114,6 +114,7 @@ class App(QtGui.QApplication):
         self.export_stl_action = QtGui.QAction("Mesh (.stl)", self)
         self.export_stl_action.triggered.connect(self.on_export_stl)
 
+
     def on_about(self):
         QtGui.QMessageBox.about(self.canvas, "antimony",
                 u"""<b>antimony</b><br><br>
