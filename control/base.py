@@ -16,6 +16,12 @@ class NodeControl(QtGui.QWidget):
 
         self.editor  = None
 
+    def cache(self):
+        for a in dir(self.node):
+            attr = getattr(self.node, a)
+            if not isinstance(attr, datum): continue
+
+
     def sync(self):
         """ Synchs the editor and all node connections.
         """
