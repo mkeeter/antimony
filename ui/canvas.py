@@ -67,6 +67,10 @@ class Canvas(QtGui.QWidget):
                 ),
 
                 ('Operations',
+                    ('Array (2D)', Array2DControl),
+                ),
+
+                ('Transforms',
                     ("Extrude", ExtrudeZControl),
                     ("Scale", ScaleControl),
                     ("Attract", AttractControl),
@@ -446,6 +450,7 @@ from control.point import PointControl, Point3DControl
 from control.cube import CubeControl
 from control.distort import AttractControl, RepelControl
 from control.text import TextControl
+from control.iterate import Array2DControl
 from control.sphere import SphereControl
 from control.scale import ScaleControl
 from control.extrude import ExtrudeZControl
