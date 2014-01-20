@@ -69,6 +69,7 @@ class App(QtGui.QApplication):
         """
         if not self.canvas.openMenuAt(button.geometry().center()):
             return
+
         self.mode = 'move'
         if not self.move_button.selected:
             self.move_button.selected = True
@@ -153,6 +154,7 @@ class App(QtGui.QApplication):
         """
         self.clear()
         self.filename = None
+        self.window.setWindowTitle("Antimony")
 
     def on_open(self):
         """ Opens a file, unpacking into a set of nodes and connections.
@@ -182,7 +184,7 @@ class App(QtGui.QApplication):
         control.connection.make_connection_widgets(node.base.nodes, self.canvas)
 
         self.filename = filename
-
+        self.window.setWindowTitle("Antimony [%s]" % self.filename)
 
     def on_save(self):
         """ Saves a pickled representation of our current state.
@@ -193,6 +195,8 @@ class App(QtGui.QApplication):
         state = self.get_state()
         with open(self.filename, 'wb') as f:
             pickle.dump(state, f)
+
+        self.window.setWindowTitle("Antimony [%s]" % self.filename)
         self.saved_state = state
 
 
@@ -205,6 +209,7 @@ class App(QtGui.QApplication):
         if filename:
             self.filename = filename
             return self.on_save()
+
 
     def on_export_stl(self):
         """ Exports as a .stl mesh
@@ -238,6 +243,7 @@ class App(QtGui.QApplication):
 
         self.block("Exporting",
                    lambda: combined.to_tree().triangulate(res, filename))
+
 
     def block(self, message, func):
         txt = QtGui.QLabel(message, self.canvas)
@@ -299,8 +305,7 @@ class ResolutionDialog(QtGui.QDialog):
 
         self.number.setValue(1)
 
-
-
+################################################################################
 
 import control.base, control.connection
 import ui.editor
