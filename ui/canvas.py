@@ -66,11 +66,11 @@ class Canvas(QtGui.QWidget):
                     ("Cutout", CutoutControl),
                 ),
 
-                ('Operations',
+                ('Iterate',
                     ('Array (2D)', Array2DControl),
                 ),
 
-                ('Transforms',
+                ('Transform',
                     ("Extrude", ExtrudeZControl),
                     ("Scale", ScaleControl),
                     ("Attract", AttractControl),
