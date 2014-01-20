@@ -240,6 +240,12 @@ class FloatDatum(EvalDatum):
 
 ################################################################################
 
+class IntDatum(EvalDatum):
+    def __init__(self, node, value):
+        super(IntDatum, self).__init__(node, int, value)
+
+################################################################################
+
 import name
 class NameDatum(EvalDatum):
     def __init__(self, node, value):

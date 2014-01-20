@@ -16,6 +16,7 @@ from fab.expression import Expression
 
 def get_color(T):
     if T is float:          return yellow
+    elif T is int:          return magenta
     elif T is Expression:   return blue
     elif T is str:          return violet
     raise TypeError("No color assigned for type %s" % T)
