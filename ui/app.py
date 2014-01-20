@@ -1,3 +1,5 @@
+# coding=utf-8
+
 import sys
 import cPickle as pickle
 import operator
@@ -28,6 +30,8 @@ class Window(QtGui.QMainWindow):
 
          exportMenu = self.menuBar().addMenu("Export");
          exportMenu.addAction(app.export_stl_action)
+
+         fileMenu.addAction(app.about_action)
 
 ################################################################################
 
@@ -103,8 +107,20 @@ class App(QtGui.QApplication):
         self.saveas_action.setShortcuts(QtGui.QKeySequence.SaveAs)
         self.saveas_action.triggered.connect(self.on_saveas)
 
+        self.about_action = QtGui.QAction("About", self)
+        self.about_action.triggered.connect(self.on_about)
+
         self.export_stl_action = QtGui.QAction("Mesh (.stl)", self)
         self.export_stl_action.triggered.connect(self.on_export_stl)
+
+    def on_about(self):
+        QtGui.QMessageBox.about(self.canvas, "antimony",
+                u"""<b>antimony</b><br><br>
+                A non-traditional CAD tool.<br>
+                <a href="https://github.com/mkeeter/antimony">https://github.com/mkeeter/antimony</a><br><br>
+                © 2013 Matthew Keeter<br>
+                <a href="mailto:matt.j.keeter@gmail.com">matt.j.keeter@gmail.com</a>
+                """)
 
     def clear(self):
         """ Deletes all nodes, connections, and UI representations of same.
