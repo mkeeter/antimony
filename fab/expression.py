@@ -18,7 +18,7 @@ class Expression(object):
         May also keep track of expression bounds (if known).
     """
 
-    def __init__(self, math):
+    def __init__(self, math=None):
         if math is None:
             self.math = 'f1.0'
         elif type(math) in [int, float]:
