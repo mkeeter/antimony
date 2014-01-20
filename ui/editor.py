@@ -23,11 +23,21 @@ class Editor(QtGui.QGroupBox):
         self.animate_open()
         self.show()
 
+
+    def mousePressEvent(self, event):
+        """ On mouse click, raise this window.
+        """
+        if event.button() == QtCore.Qt.LeftButton:
+            self.raise_()
+            self.update()
+
+
     def raise_(self):
         """ Overload raise_ so that controls stay above editors.
         """
         super(Editor, self).raise_()
         self.control.raise_()
+
 
     def add_header(self, grid):
         """ Adds a header to the UI, including a push button to close
