@@ -82,6 +82,13 @@ class ConnectionControl(QtGui.QWidget):
             (in canvas coordinates).
         """
         self.drag_pos = pos
+
+        ed = self.parentWidget().find_editor(self.drag_pos)
+        if ed is not None:
+            ed.raise_()
+            ed.update()
+            self.raise_()
+
         hit = self.parentWidget().find_input(self.drag_pos)
         if hit is not None and not self.connection.can_connect_to(hit.datum):
             hit = False

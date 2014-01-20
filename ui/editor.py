@@ -23,6 +23,12 @@ class Editor(QtGui.QGroupBox):
         self.animate_open()
         self.show()
 
+    def raise_(self):
+        """ Overload raise_ so that controls stay above editors.
+        """
+        super(Editor, self).raise_()
+        self.control.raise_()
+
     def add_header(self, grid):
         """ Adds a header to the UI, including a push button to close
             and this node's type.

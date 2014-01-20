@@ -337,6 +337,12 @@ class Canvas(QtGui.QWidget):
             if i is not None:   return i
         return None
 
+    def find_editor(self, pos):
+        eds = [c for c in self.findChildren(Editor)
+               if c.geometry().contains(pos)]
+        if len(eds) == 1:   return eds[0]
+        else:               return None
+
 
     def render_expressions(self):
         """ Starts render tasks for all new expressions that don't already
