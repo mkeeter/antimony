@@ -23,7 +23,6 @@ class TriangleControl(base.NodeControl):
         """ Construct the triangle control widget
         """
         self.point_nodes = [target.a, target.b, target.c]
-        self.point_positions = [None for pt in self.point_nodes]
 
         super(TriangleControl, self).__init__(canvas, target)
 
@@ -58,11 +57,6 @@ class TriangleControl(base.NodeControl):
             pt.control.drag_control.dragXY(v, None)
 
 
-    def _sync(self):
-        changed = any(pt.control.sync() for pt in self.point_nodes)
-        positions = [pt.control.position for pt in self.point_nodes]
-        changed |= (positions != self.point_positions)
-        return changed
 
     def reposition(self):
         # Get bounding box from painter path

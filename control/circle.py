@@ -23,10 +23,6 @@ class CircleControl(base.NodeControl):
         self.drag_control = base.DragXY(self)
         self.ring_drag_control = base.DragManager(self, self.drag_ring)
 
-        # Cached values (used if the node's values are invalid)
-        self.position = QtCore.QPointF()
-        self.r = 0
-
         self.sync()
         self.make_masks()
 
@@ -77,24 +73,14 @@ class CircleControl(base.NodeControl):
         self.setMask(self.drag_control.mask | self.ring_drag_control.mask)
 
 
-    def _sync(self):
-        """ Move and scale this control to the appropriate position.
-            Use self.position and self.r if eval fails.
-        """
-        p = QtCore.QPointF(
-                self.node.x if self.node._x.valid() else self.position.x(),
-                self.node.y if self.node._y.valid() else self.position.y())
+    @property
+    def position(self):
+        return QtCore.QPointF(self._cache['x'], self._cache['y'])
 
-        r = self.node.r if self.node._r.valid() else self.r
+    @property
+    def r(self):
+        return self._cache['r']
 
-        # Figure out if these fundamental values have changed
-        changed = (self.position != p) or (self.r != r)
-
-        # Cache these values
-        self.position = p
-        self.r = r
-
-        return changed
 
     def reposition(self):
         """ Repositions the node and calls self.update

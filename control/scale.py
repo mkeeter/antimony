@@ -25,10 +25,6 @@ class ScaleControl(base.NodeControl):
         self.scale_y = base.DragManager(self, self.drag_y)
         self.scale_z = base.DragManager(self, self.drag_z)
 
-        # Cached values (used if the node's values are invalid)
-        self.position = QtGui.QVector3D()
-        self.scale = QtGui.QVector3D()
-
         self.draw_scale = 25
 
         self.sync()
@@ -69,21 +65,17 @@ class ScaleControl(base.NodeControl):
                      self.paint_mask(self.draw_axes))
 
 
-    def _sync(self):
-        v = QtGui.QVector3D(
-                self.node.x if self.node._x.valid() else self.position.x(),
-                self.node.y if self.node._y.valid() else self.position.y(),
-                self.node.z if self.node._z.valid() else self.position.z())
-        s = QtGui.QVector3D(
-                self.node.sx if self.node._sx.valid() else self.scale.x(),
-                self.node.sy if self.node._sy.valid() else self.scale.y(),
-                self.node.sz if self.node._sz.valid() else self.scale.z())
-        changed = (self.position != v) or (self.scale != s)
+    @property
+    def position(self):
+        return QtGui.QVector3D(self._cache['x'],
+                               self._cache['y'],
+                               self._cache['z'])
 
-        self.position = v
-        self.scale = s
-
-        return changed
+    @property
+    def scale(self):
+        return QtGui.QVector3D(self._cache['sx'],
+                               self._cache['sy'],
+                               self._cache['sz'])
 
     def combined_path(self):
         p = self.axes_path()

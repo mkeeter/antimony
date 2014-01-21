@@ -21,9 +21,6 @@ class SphereControl(base.NodeControl):
         self.drag_control = base.DragXYZ(self)
         self.radius_drag = base.DragManager(self, self.drag_radius)
 
-        self.position = QtGui.QVector3D()
-        self.r = 0
-
         self.sync()
         self.make_masks()
 
@@ -64,18 +61,15 @@ class SphereControl(base.NodeControl):
                  for i in range(33)]
         return self.draw_lines([lines], offset)
 
-    def _sync(self):
-        v = QtGui.QVector3D(
-                self.node.x if self.node._x.valid() else self.position.x(),
-                self.node.y if self.node._y.valid() else self.position.y(),
-                self.node.z if self.node._z.valid() else self.position.z())
+    @property
+    def position(self):
+        return QtGui.QVector3D(self._cache['x'],
+                               self._cache['y'],
+                               self._cache['z'])
 
-        r = self.node.r if self.node._r.valid() else self.r
+    @property
+    def r(self):    return self._cache['r']
 
-        changed = (self.position != v) or (self.r != r)
-        self.position = v
-        self.r = r
-        return changed
 
     def reposition(self):
         # Check whether any render information has changed.

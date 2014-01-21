@@ -20,26 +20,16 @@ class PointControl(base.NodeControl):
         self.drag_control = base.DragXY(self)
 
         self.editor_datums = ['name','x','y']
-        self.position = QtCore.QPointF()
 
         self.make_mask()
         self.sync()
         self.show()
         self.raise_()
 
+    @property
+    def position(self):
+        return QtCore.QPointF(self._cache['x'], self._cache['y'])
 
-    def _sync(self):
-        """ Move this control to the appropriate position.
-            Use self.position (cached) if eval fails.
-        """
-        p = QtCore.QPointF(
-                self.node.x if self.node._x.valid() else self.position.x(),
-                self.node.y if self.node._y.valid() else self.position.y())
-
-        changed = (self.position != p)
-        self.position = p
-
-        return changed
 
     def reposition(self):
         self.move(self.canvas.unit_to_pixel(self.position) -
@@ -93,15 +83,11 @@ class Point3DControl(PointControl):
         return cls(canvas, p)
 
     def __init__(self, canvas, target):
-        self.position = QtGui.QVector3D()
-
         super(PointControl, self).__init__(canvas, target)
         self.setFixedSize(30, 30)
 
         self.drag_control = base.DragXYZ(self)
         self.editor_datums = ['name','x','y','z']
-        self.position = QtGui.QVector3D()
-
 
         self.make_mask()
         self.sync()
@@ -109,19 +95,12 @@ class Point3DControl(PointControl):
         self.raise_()
 
 
-    def _sync(self):
-        """ Move this control to the appropriate position.
-            Use self.position (cached) if eval fails.
-        """
-        v = QtGui.QVector3D(
-                self.node.x if self.node._x.valid() else self.position.x(),
-                self.node.y if self.node._y.valid() else self.position.y(),
-                self.node.z if self.node._z.valid() else self.position.z())
+    @property
+    def position(self):
+        return QtGui.QVector3D(self._cache['x'],
+                               self._cache['y'],
+                               self._cache['z'])
 
-        changed = (self.position != v)
-        self.position = v
-
-        return changed
 
     def reposition(self):
         self.move(self.canvas.unit_to_pixel(self.position) -

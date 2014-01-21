@@ -17,12 +17,6 @@ class Array2DControl(base.NodeControl):
         self.drag_control = base.DragXY(self)
         self.drag_spacing_control = base.DragManager(self, self.drag_spacing)
 
-        self.position = QtCore.QPointF()
-        self.dx = 0
-        self.dy = 0
-        self.i = 1
-        self.j = 1
-
         self.dx_plus_hover = False
         self.dy_plus_hover = False
         self.dx_minus_hover = False
@@ -62,23 +56,21 @@ class Array2DControl(base.NodeControl):
                      self.dy_plus_mask |
                      self.dy_minus_mask)
 
-    def _sync(self):
-        v = QtCore.QPointF(
-                self.node.x if self.node._x.valid() else self.position.x(),
-                self.node.y if self.node._y.valid() else self.position.y())
-        dx = self.node.dx if self.node._dx.valid() else self.dx
-        dy = self.node.dy if self.node._dy.valid() else self.dy
-        i = self.node.i if self.node._i.valid() else self.i
-        j = self.node.j if self.node._j.valid() else self.j
+    @property
+    def position(self):
+        return QtCore.QPointF(self._cache['x'], self._cache['y'])
 
-        changed = ((v != self.position) or (dx != self.dx) or (dy != self.dy)
-                    or (i != self.i) or (j != self.j))
+    @property
+    def dx(self):   return self._cache['dx']
 
-        self.position = v
-        self.dx, self.dy = dx, dy
-        self.i, self.j = i, j
+    @property
+    def dy(self):   return self._cache['dy']
 
-        return changed
+    @property
+    def i(self):   return self._cache['i']
+
+    @property
+    def j(self):   return self._cache['j']
 
 
     def reposition(self):

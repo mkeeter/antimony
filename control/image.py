@@ -32,41 +32,26 @@ class ImageControl(base.NodeControl):
 
         self.drag_control = base.DragXY(self)
         self.drag_scale_control = base.DragManager(self, self.drag_scale)
-        self.position = QtCore.QPointF()
 
         self.sync()
         self.editor_datums = ['name','x','y','scale','shape']
-
-        self.imgsize = QtCore.QSize()
 
         self.show()
         self.raise_()
 
 
-    def _sync(self):
-        p = QtCore.QPointF(
-                self.node.x if self.node._x.valid() else self.position.x(),
-                self.node.y if self.node._y.valid() else self.position.y())
+    @property
+    def position(self):
+        return QtCore.QPointF(self._cache['x'], self._cache['y'])
 
-        if self.node._scale.valid():
-            size = QtCore.QSize(
-                    self.node.w * self.node.scale if self.node._w.valid()
-                                else self.imgsize.width(),
-                    self.node.h * self.node.scale if self.node._h.valid()
-                                else self.imgsize.height())
-            scale = self.node.scale
-        else:
-            size = self.imgsize
-            scale = self.imgscale
+    @property
+    def imgscale(self):     return self._cache['scale']
 
-        changed = (p != self.position) or (size != self.imgsize)
+    @property
+    def imgsize(self):
+        return QtCore.QSize(self._cache['w']*self.imgscale,
+                            self._cache['h']*self.imgscale)
 
-        # Cache these values
-        self.position = p
-        self.imgscale = scale
-        self.imgsize = size
-
-        return changed
 
     def reposition(self):
         self.setGeometry(self.get_rect(self.outline_path, offset=15))
