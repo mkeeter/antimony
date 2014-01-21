@@ -3,7 +3,7 @@ from PySide import QtCore, QtGui
 import base
 import colors
 
-class PointControl(base.NodeControl):
+class PointControl(base.NodeControl2D):
 
     @classmethod
     def new(cls, canvas, x, y, z, scale):
@@ -25,11 +25,6 @@ class PointControl(base.NodeControl):
         self.sync()
         self.show()
         self.raise_()
-
-    @property
-    def position(self):
-        return QtCore.QPointF(self._cache['x'], self._cache['y'])
-
 
     def reposition(self):
         self.move(self.canvas.unit_to_pixel(self.position) -

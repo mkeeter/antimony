@@ -354,9 +354,22 @@ class DragXYZ(DragManager):
 
 ################################################################################
 
-class TextLabelControl(NodeControl):
+class NodeControl2D(NodeControl):
+    @property
+    def position(self):
+        return QtCore.QPointF(self._cache['x'], self._cache['y'])
+
+class NodeControl3D(NodeControl):
+    @property
+    def position(self):
+        return QtGui.QVector3D(self._cache['x'],
+                               self._cache['y'],
+                               self._cache['z'])
+
+################################################################################
+
+class TextLabelControl(NodeControl3D):
     """ Represents a draggable label floating in space.
-        Must be attached to a node with x and y (float) datums.
     """
     def __init__(self, canvas, target, text):
         super(TextLabelControl, self).__init__(canvas, target)
@@ -388,12 +401,6 @@ class TextLabelControl(NodeControl):
         return (super(TextLabelControl, self).editor_position() +
                 QtCore.QPoint(self.width(), self.height()))
 
-
-    @property
-    def position(self):
-        return QtGui.QVector3D(self._cache['x'],
-                               self._cache['y'],
-                               self._cache['z'])
 
     def reposition(self):
         self.move(self.canvas.unit_to_pixel(self.position))

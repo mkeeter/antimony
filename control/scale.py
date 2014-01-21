@@ -5,7 +5,7 @@ from PySide import QtCore, QtGui
 import colors
 import base
 
-class ScaleControl(base.NodeControl):
+class ScaleControl(base.NodeControl3D):
 
     @classmethod
     def new(cls, canvas, x, y, z, scale):
@@ -64,12 +64,6 @@ class ScaleControl(base.NodeControl):
                      self.drag_control.mask |
                      self.paint_mask(self.draw_axes))
 
-
-    @property
-    def position(self):
-        return QtGui.QVector3D(self._cache['x'],
-                               self._cache['y'],
-                               self._cache['z'])
 
     @property
     def scale(self):

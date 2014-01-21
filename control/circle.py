@@ -5,7 +5,7 @@ from PySide import QtCore, QtGui
 import colors
 import base
 
-class CircleControl(base.NodeControl):
+class CircleControl(base.NodeControl2D):
 
     @classmethod
     def new(cls, canvas, x, y, z, scale):
@@ -72,10 +72,6 @@ class CircleControl(base.NodeControl):
         self.ring_drag_control.mask = self.paint_mask(self.draw_ring)
         self.setMask(self.drag_control.mask | self.ring_drag_control.mask)
 
-
-    @property
-    def position(self):
-        return QtCore.QPointF(self._cache['x'], self._cache['y'])
 
     @property
     def r(self):

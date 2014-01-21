@@ -5,7 +5,7 @@ from PySide import QtCore, QtGui
 import colors
 import base
 
-class SphereControl(base.NodeControl):
+class SphereControl(base.NodeControl3D):
     @classmethod
     def new(cls, canvas, x, y, z, scale):
         """ Constructs a new sphere at the given point.
@@ -60,12 +60,6 @@ class SphereControl(base.NodeControl):
                 + self.position
                  for i in range(33)]
         return self.draw_lines([lines], offset)
-
-    @property
-    def position(self):
-        return QtGui.QVector3D(self._cache['x'],
-                               self._cache['y'],
-                               self._cache['z'])
 
     @property
     def r(self):    return self._cache['r']

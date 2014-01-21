@@ -5,7 +5,7 @@ from PySide import QtCore, QtGui
 import colors
 import base
 
-class Array2DControl(base.NodeControl):
+class Array2DControl(base.NodeControl2D):
     @classmethod
     def new(cls, canvas, x, y, z, scale):
         a = Array2D(get_name('array'), x, y, 1, 1, scale, scale)
@@ -55,10 +55,6 @@ class Array2DControl(base.NodeControl):
                      self.dx_minus_mask |
                      self.dy_plus_mask |
                      self.dy_minus_mask)
-
-    @property
-    def position(self):
-        return QtCore.QPointF(self._cache['x'], self._cache['y'])
 
     @property
     def dx(self):   return self._cache['dx']

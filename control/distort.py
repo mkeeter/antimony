@@ -5,7 +5,7 @@ from PySide import QtCore, QtGui
 import colors
 import base
 
-class DistortControl(base.NodeControl):
+class DistortControl(base.NodeControl3D):
     def __init__(self, canvas, target):
         super(DistortControl, self).__init__(canvas, target)
 
@@ -20,11 +20,6 @@ class DistortControl(base.NodeControl):
         self.show()
         self.raise_()
 
-    @property
-    def position(self):
-        return QtGui.QVector3D(self._cache['x'],
-                               self._cache['y'],
-                               self._cache['z'])
 
     @property
     def r(self):    return self._cache['r']

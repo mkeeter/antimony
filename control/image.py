@@ -5,7 +5,7 @@ from PySide import QtCore, QtGui
 import colors
 import base
 
-class ImageControl(base.NodeControl):
+class ImageControl(base.NodeControl2D):
 
     @classmethod
     def new(cls, canvas, x, y, z, scale):
@@ -39,10 +39,6 @@ class ImageControl(base.NodeControl):
         self.show()
         self.raise_()
 
-
-    @property
-    def position(self):
-        return QtCore.QPointF(self._cache['x'], self._cache['y'])
 
     @property
     def imgscale(self):     return self._cache['scale']
