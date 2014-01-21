@@ -264,9 +264,9 @@ class StringDatum(EvalDatum):
         super(StringDatum, self).__init__(node, str, "'%s'" % value)
 
     def get_expr(self):
-        return self._expr[1:-1]
+        return self._expr[1:-1].replace("\\","")
     def set_expr(self, e):
-        super(StringDatum, self).set_expr("'%s'" % e)
+        super(StringDatum, self).set_expr("'%s'" % e.replace("'","\\'"))
 
 ################################################################################
 
