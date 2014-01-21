@@ -49,7 +49,12 @@ class RepositionControl(base.NodeControl3D):
             [v(x0, y1, z1), v(x1, y1, z1)]], offset)
 
     def draw_wireframe(self, painter, mask=False):
+        """ Draws this shape's bounding box as a dotted line.
+        """
         self.set_pen(painter, mask, None, colors.green)
+        p = painter.pen()
+        p.setStyle(QtCore.Qt.DotLine)
+        painter.setPen(p)
         painter.drawPath(self.wireframe_path(self.pos()))
 
 
