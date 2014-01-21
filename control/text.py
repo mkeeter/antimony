@@ -17,9 +17,6 @@ class TextControl(base.NodeControl):
         self.drag_control = base.DragXY(self)
         self.drag_scale_control = base.DragManager(self, self.drag_scale)
 
-        self.bbox = QtCore.QRectF()
-        self.scale = 0
-
         self.editor_datums = ['name','x','y','scale','txt','shape']
 
         self.sync()
@@ -30,22 +27,13 @@ class TextControl(base.NodeControl):
     def editor_position(self):
         return self.canvas.unit_to_pixel(self.bbox.left(), self.bbox.top())
 
-    def _sync(self):
-        if self.node._shape.valid() and self.node.shape.has_xy_bounds():
-            s = self.node.shape
-            bbox = QtCore.QRectF(s.xmin, s.ymin,
-                                 s.xmax - s.xmin, s.ymax - s.ymin)
-        else:
-            bbox = self.bbox
-
-        s = self.node.scale if self.node._scale.valid() else self.scale
-
-        changed = (bbox != self.bbox) or (s != self.scale)
-
-        self.bbox = bbox
-        self.scale = s
-
-        return changed
+    @property
+    def bbox(self):
+        s = self._cache['shape']
+        return QtCore.QRectF(s.xmin, s.ymin,
+                             s.xmax - s.xmin, s.ymax - s.ymin)
+    @property
+    def scale(self):    return self._cache['scale']
 
 
     def outline_path(self, offset=QtCore.QPoint()):

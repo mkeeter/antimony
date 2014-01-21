@@ -22,9 +22,6 @@ class ExtrudeZControl(base.NodeControl):
         self.drag_control = base.DragXYZ(self)
         self.drag_top_control = base.DragManager(self, self.drag_top)
 
-        self.position = QtGui.QVector3D()
-        self.top = 0
-
         self.sync()
         self.make_masks()
 
