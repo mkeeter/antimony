@@ -28,11 +28,10 @@ class NodeControl(QtGui.QWidget):
         changed = False
         for key in dir(self.node):
             attr = getattr(self.node, key)
-            if not isinstance(attr, datum): continue
-
-            if attr.valid():
+            if isinstance(attr, node.datum.Datum) and attr.valid():
+                key = key[1:] # trim leading underscore
                 value = attr.value()
-                if value != self._cache.get(key, None):
+                if key not in self._cache or value != self._cache[key]:
                     changed = True
                     self._cache[key] = value
         return changed
@@ -42,7 +41,6 @@ class NodeControl(QtGui.QWidget):
         """ Synchs the editor and all node connections.
         """
         if self.cache():
-            self._sync()
             self.reposition()
 
         if self.editor:
@@ -367,8 +365,6 @@ class TextLabelControl(NodeControl):
         self.font = QtGui.QFont()
         self.drag_control = DragXYZ(self)
 
-        self.position = QtGui.QVector3D()
-
         self.setFixedSize(self.get_text_size())
 
         self.sync()
@@ -393,18 +389,11 @@ class TextLabelControl(NodeControl):
                 QtCore.QPoint(self.width(), self.height()))
 
 
-    def _sync(self):
-        """ Move this control to the appropriate position.
-            Use self.position (cached) if eval fails.
-        """
-        v = QtGui.QVector3D(
-                self.node.x if self.node._x.valid() else self.position.x(),
-                self.node.y if self.node._y.valid() else self.position.y(),
-                self.node.z if self.node._z.valid() else self.position.z())
-        changed = (v != self.position)
-        self.position = v
-
-        return changed
+    @property
+    def position(self):
+        return QtGui.QVector3D(self._cache['x'],
+                               self._cache['y'],
+                               self._cache['z'])
 
     def reposition(self):
         self.move(self.canvas.unit_to_pixel(self.position))
@@ -456,4 +445,5 @@ def make_node_widgets(canvas):
 
 from ui.editor import MakeEditor
 import node.base
+import node.datum
 import fab.expression

@@ -15,7 +15,6 @@ class EquationViewerControl(TextLabelControl):
         super(EquationViewerControl, self).__init__(
                 canvas, target, "None")
         self.editor_datums = ['input','output']
-        self.text = ''
 
     @staticmethod
     def trim_text(txt):
@@ -35,25 +34,22 @@ class EquationViewerControl(TextLabelControl):
         return out
 
 
-    def _sync(self):
-        """ Set self.position and self.equation to an appropriate values.
+    def cache(self):
+        """ Slightly fancier version of 'cache' that also
+            saves the old equation and only regenerates the
+            text if needed.
         """
-        v = QtGui.QVector3D(
-                self.node.x if self.node._x.valid() else self.position.x(),
-                self.node.y if self.node._y.valid() else self.position.y(),
-                self.node.z if self.node._z.valid() else self.position.z())
+        if 'input' in self._cache:  old_math = self._cache['input'].math
+        else:                       old_math = ''
 
-        try:
-            eqn = self.trim_text(str(self.node.input.to_tree()))
-        except RuntimeError:
-            eqn = self.text
+        changed = super(EquationViewerControl, self).cache()
 
-        changed = (v != self.position) or (eqn != self.text)
-
-        self.position = v
-        self.text = eqn
+        if old_math != self._cache['input'].math:
+            self.text = self.trim_text(
+                    str(self.node.input.to_tree()))
 
         return changed
+
 
     def reposition(self):
         self.font.setPointSize(min(14, max(6, self.canvas.scale * 800)))

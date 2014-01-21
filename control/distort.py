@@ -12,9 +12,6 @@ class DistortControl(base.NodeControl):
         self.drag_control = base.DragXYZ(self)
         self.radius_drag = base.DragManager(self, self.drag_radius)
 
-        self.position = QtGui.QVector3D()
-        self.r = 0
-
         self.editor_datums = ['name','input','x','y','z','r','shape']
 
         self.sync()
@@ -23,26 +20,14 @@ class DistortControl(base.NodeControl):
         self.show()
         self.raise_()
 
+    @property
+    def position(self):
+        return QtGui.QVector3D(self._cache['x'],
+                               self._cache['y'],
+                               self._cache['z'])
 
-    def _sync(self):
-        """ Move and scale this control to the appropriate position.
-            Use self.position and self.r if eval fails.
-        """
-        p = QtGui.QVector3D(
-                self.node.x if self.node._x.valid() else self.position.x(),
-                self.node.y if self.node._y.valid() else self.position.y(),
-                self.node.z if self.node._z.valid() else self.position.y())
-
-        r = self.node.r if self.node._r.valid() else self.r
-
-        # Figure out if these fundamental values have changed
-        changed = (self.position != p) or (self.r != r)
-
-        # Cache these values
-        self.position = p
-        self.r = r
-
-        return changed
+    @property
+    def r(self):    return self._cache['r']
 
 
     def reposition(self):
