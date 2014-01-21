@@ -30,8 +30,8 @@ class Expression(object):
             raise TypeError("Cannot construct a Expression from '%s'" % math)
 
         if math is None:
-            self.xmin = self.ymin = self.zmin = -1
-            self.xmax = self.ymax = self.zmax = 1
+            self.xmin = self.ymin = self.zmin = 0
+            self.xmax = self.ymax = self.zmax = 0
         else:
             self.xmin = self.ymin = self.zmin = float('-infinity')
             self.xmax = self.ymax = self.zmax = float('+infinity')
