@@ -71,6 +71,7 @@ class Canvas(QtGui.QWidget):
                 ),
 
                 ('Transform',
+                    ("Reposition", RepositionControl),
                     ("Extrude", ExtrudeZControl),
                     ("Scale", ScaleControl),
                     ("Attract", AttractControl),
@@ -460,6 +461,7 @@ from control.text import TextControl
 from control.iterate import Array2DControl
 from control.sphere import SphereControl
 from control.scale import ScaleControl
+from control.reposition import RepositionControl
 from control.extrude import ExtrudeZControl
 from control.circle import CircleControl
 from control.triangle import TriangleControl
