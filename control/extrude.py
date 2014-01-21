@@ -40,19 +40,15 @@ class ExtrudeZControl(base.NodeControl):
         self.node._top.set_expr(str(float(self.node._top.get_expr()) +
                                     v.z()))
 
-    def _sync(self):
-        v = QtGui.QVector3D(
-                self.node.x if self.node._x.valid() else self.position.x(),
-                self.node.y if self.node._y.valid() else self.position.y(),
-                self.node.z if self.node._z.valid() else self.position.z())
-        top = self.node.top if self.node._top.valid() else self.top
+    @property
+    def position(self):
+        return QtGui.QVector3D(self._cache['x'],
+                               self._cache['y'],
+                               self._cache['z'])
 
-        changed = (top != self.top) or (v != self.position)
+    @property
+    def top(self):  return self._cache['top']
 
-        self.position = v
-        self.top = top
-
-        return changed
 
     def base_path(self, offset=QtCore.QPoint()):
         """ Returns a painter path that draws a base for the extrusion
