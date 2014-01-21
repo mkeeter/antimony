@@ -32,6 +32,14 @@ class Editor(QtGui.QGroupBox):
             self.update()
 
 
+    def mouseDoubleClickEvent(self, event):
+        """ On mouse double-click, lower this window.
+        """
+        if event.button() == QtCore.Qt.LeftButton:
+            self.lower()
+            self.update()
+
+
     def raise_(self):
         """ Overload raise_ so that controls stay above editors.
         """
