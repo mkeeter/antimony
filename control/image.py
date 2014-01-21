@@ -150,10 +150,36 @@ class ImageControl(base.NodeControl):
         self.draw_base(painter)
         self.draw_scale(painter)
 
+################################################################################
+
+class HeightmapControl(ImageControl):
+    @classmethod
+    def new(cls, canvas, x, y, z, scale):
+        """ Constructs a new height map at the given position.
+        """
+        filename, filetype = QtGui.QFileDialog.getOpenFileName(
+                canvas, "Open", '', "Images (*.png *.jpg *.gif)")
+        if not filename:    return
+
+        # Import an image and convert it into a QRegion
+        img = QtGui.QImage(filename)
+
+        e = Expression(None)
+        for i in range(img.width()):
+            for j in range(img.height()):
+                e |= cube(i, i + 1.01, j, j + 1.01,
+                          0, (img.pixel(i,j) & 255)/256.)
+        i = HeightMap(get_name('img'), x, y, e, img.width(), img.height())
+
+        return cls(canvas, i)
+
+    def __init__(self, canvas, target):
+        super(HeightmapControl, self).__init__(canvas, target)
+        self.editor_datums.insert(-1, 'zScale')
 
 from node.base import get_name
-from node.image import ImageNode
+from node.image import ImageNode, HeightMap
 
-from fab.shapes import rectangle
+from fab.shapes import rectangle, cube
 from fab.expression import Expression
 

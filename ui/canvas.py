@@ -79,6 +79,7 @@ class Canvas(QtGui.QWidget):
 
                 ('Import',
                     ("Image", ImageControl),
+                    ("Height map", HeightmapControl),
                 ),
 
                 ('Advanced',
@@ -465,7 +466,7 @@ from control.triangle import TriangleControl
 from control.csg import UnionControl, IntersectionControl, CutoutControl
 from control.bounds import GetBoundsControl, SetBoundsControl
 from control.equation import EquationViewerControl
-from control.image import ImageControl
+from control.image import ImageControl, HeightmapControl
 
 from ui.editor import Editor
 from ui.render import RenderTask

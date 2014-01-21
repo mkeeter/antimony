@@ -27,5 +27,17 @@ class ImageNode(base.Node2D):
         e = move(e, self.x, self.y + self.h*self.scale)
         return e
 
+class HeightMap(ImageNode):
+    def __init__(self, name, x, y, expr, w, h):
+        super(HeightMap, self).__init__(name, x, y, expr, w, h)
+        self.add_datum('zScale', datum.FloatDatum(self, 10))
+
+    def make_shape(self):
+        e = super(HeightMap, self).make_shape()
+        e = scale_z(e, 0, self.scale*self.zScale)
+        e.zmin, e.zmax = 0, self.scale*self.zScale
+        return e
+
+
 from fab.expression import Expression
-from fab.shapes import move, scale_x, scale_y
+from fab.shapes import move, scale_x, scale_y, scale_z
