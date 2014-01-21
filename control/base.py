@@ -14,20 +14,39 @@ class NodeControl(QtGui.QWidget):
         self.node = node
         node.control = self
 
+        self._cache = {}
+        self.cache()
+
         self.editor  = None
 
+
     def cache(self):
-        for a in dir(self.node):
-            attr = getattr(self.node, a)
+        """ Stores a cache of datum values in self._cache
+            Returns True if any of these values have changed,
+            False otherwise.
+        """
+        changed = False
+        for key in dir(self.node):
+            attr = getattr(self.node, key)
             if not isinstance(attr, datum): continue
+
+            if attr.valid():
+                value = attr.value()
+                if value != self._cache.get(key, None):
+                    changed = True
+                    self._cache[key] = value
+        return changed
 
 
     def sync(self):
         """ Synchs the editor and all node connections.
         """
-        if self._sync():    # defined in subclasses
+        if self.cache():
+            self._sync()
             self.reposition()
-        if self.editor:                     self.editor.sync()
+
+        if self.editor:
+            self.editor.sync()
 
         # Sync all connections (if their controls have been constructed,
         # to prevent problems when loading files)
