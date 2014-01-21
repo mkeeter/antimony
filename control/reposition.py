@@ -72,9 +72,9 @@ class RepositionControl(base.NodeControl3D):
         self.update()
 
     def make_masks(self):
-        self.drag_control.mask = self.paint_mask(self.draw_wireframe)
+        self.drag_control.mask = self.paint_mask(self.draw_handle)
         self.setMask(self.drag_control.mask |
-                     self.paint_mask(self.draw_handle))
+                     self.paint_mask(self.draw_wireframe))
 
     def paintEvent(self, event):
         painter = QtGui.QPainter(self)
