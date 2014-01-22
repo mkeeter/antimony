@@ -307,7 +307,7 @@ def rotate_x(part, angle):
 
     ca, sa = math.cos(-angle), math.sin(-angle)
     nsa    = -sa
-    p.set_bounds(*part.remap_bounds(Y='+*f%(ca))gY*f%(sa)gZ' % locals(),
+    p.set_bounds(*part.remap_bounds(Y='+*f%(ca)gY*f%(sa)gZ' % locals(),
                                     Z='+*f%(nsa)gY*f%(ca)gZ' % locals()))
     return p
 
@@ -323,7 +323,7 @@ def rotate_y(part, angle):
     ca, sa = math.cos(-angle), math.sin(-angle)
     nsa    = -sa
 
-    p.set_bounds(*part.remap_bounds(X='+*f%(ca))gX*f%(sa)gZ' % locals(),
+    p.set_bounds(*part.remap_bounds(X='+*f%(ca)gX*f%(sa)gZ' % locals(),
                                     Z='+*f%(nsa)gX*f%(ca)gZ' % locals()))
     return p
 

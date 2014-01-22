@@ -5,16 +5,13 @@ from PySide import QtCore, QtGui
 import colors
 import base
 
-class RotateZControl(base.NodeControl3D):
-    @classmethod
-    def new(cls, canvas, x, y, z, scale):
-        r = RotateZ(get_name('rot'), x, y, z)
-        return cls(canvas, r)
+class RotateControl(base.NodeControl3D):
+
 
     def __init__(self, canvas, target):
         """ Constructs a rotate control widget.
         """
-        super(RotateZControl, self).__init__(canvas, target)
+        super(RotateControl, self).__init__(canvas, target)
 
         self.drag_control = base.DragXYZ(self)
         self.drag_angle_control = base.DragManager(self, self.drag_angle)
@@ -34,8 +31,9 @@ class RotateZControl(base.NodeControl3D):
         """ Drags the angular handle.
         """
         if not self.node._angle.simple():   return
+        delta = self.M().inverted()[0] * (p - self.position)
         self.node._angle.set_expr(str(math.degrees(
-            math.atan2(p.y() - self.position.y(), p.x() - self.position.x()))))
+            math.atan2(delta.y(), delta.x()))))
 
 
     def make_masks(self):
@@ -55,22 +53,24 @@ class RotateZControl(base.NodeControl3D):
         self.update()
 
     def axes_path(self, offset=QtCore.QPoint()):
+        M = self.M()
         pos = self.position
-        lines = [pos + QtGui.QVector3D(self.draw_scale, 0, 0),
+        lines = [pos + M * QtGui.QVector3D(self.draw_scale, 0, 0),
                  pos,
-                 pos + self.draw_scale * QtGui.QVector3D(
+                 pos + M * (self.draw_scale * QtGui.QVector3D(
                      math.cos(math.radians(self.angle)),
                      math.sin(math.radians(self.angle)),
-                     0)]
+                     0))]
 
         arc = []
         a = self.angle if self.angle > 0 else self.angle + 360
         count = int(math.ceil(a / 10))
         step = a / count
         for i in range(count+1):
-            arc.append(QtGui.QVector3D(math.cos(math.radians(i*step)),
-                                       math.sin(math.radians(i*step)),
-                                       0) * self.draw_scale/4 + pos)
+            arc.append(M * (self.draw_scale/4 * QtGui.QVector3D(
+                math.cos(math.radians(i*step)),
+                math.sin(math.radians(i*step)),
+                0)) + pos)
         return self.draw_lines([lines, arc], offset)
 
     def draw_axes(self, painter, mask=False):
@@ -95,11 +95,12 @@ class RotateZControl(base.NodeControl3D):
     def draw_handle(self, painter, mask=False):
         """ Draws a small handle at this node's outside.
         """
-        pos = self.canvas.unit_to_pixel(self.position + self.draw_scale *
+        M = self.M()
+        pos = self.canvas.unit_to_pixel(self.position + M * (self.draw_scale *
                 QtGui.QVector3D(
                      math.cos(math.radians(self.angle)),
                      math.sin(math.radians(self.angle)),
-                     0)) - self.pos()
+                     0))) - self.pos()
         self.set_brush(painter, mask, colors.green)
 
         if mask:
@@ -117,5 +118,39 @@ class RotateZControl(base.NodeControl3D):
         self.draw_center(painter)
         self.draw_handle(painter)
 
+
+class RotateXControl(RotateControl):
+    @classmethod
+    def new(cls, canvas, x, y, z, scale):
+        r = RotateX(get_name('rot'), x, y, z)
+        return cls(canvas, r)
+
+    def M(self):
+        M = QtGui.QMatrix4x4()
+        M.rotate(90, 0, 0, 1)
+        M.rotate(90, 1, 0, 0)
+        return M
+
+class RotateYControl(RotateControl):
+    @classmethod
+    def new(cls, canvas, x, y, z, scale):
+        r = RotateY(get_name('rot'), x, y, z)
+        return cls(canvas, r)
+
+    def M(self):
+        M = QtGui.QMatrix4x4()
+        M.rotate(90, 1, 0, 0)
+        return M
+
+class RotateZControl(RotateControl):
+    @classmethod
+    def new(cls, canvas, x, y, z, scale):
+        r = RotateZ(get_name('rot'), x, y, z)
+        return cls(canvas, r)
+
+    def M(self):
+        M = QtGui.QMatrix4x4()
+        return M
+
 from node.base import get_name
-from node.rotate import RotateZ
+from node.rotate import RotateX, RotateY, RotateZ
