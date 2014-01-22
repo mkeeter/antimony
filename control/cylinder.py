@@ -64,7 +64,7 @@ class CylinderControl(base.NodeControl3D):
 
 
     def draw_arrow(self, painter, mask=False):
-        self.set_pen(painter, mask, self.drag_ring_control, colors.grey)
+        self.set_pen(painter, mask, None, colors.grey)
         painter.drawPath(self.arrow_path(self.pos()))
 
 
