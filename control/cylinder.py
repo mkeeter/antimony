@@ -105,9 +105,10 @@ class CylinderControl(base.NodeControl3D):
         """ Repositions the node and calls self.update
         """
         # Get bounding box from painter path
-        self.setGeometry(self.get_rect(self.ring_path))
+        self.setGeometry(self.get_rect(self.ring_path, offset=15))
         self.make_masks()
         self.update()
+
 
     def draw_center(self, painter, mask=False):
         """ Draws a circular point at the center of this widget.
@@ -121,6 +122,11 @@ class CylinderControl(base.NodeControl3D):
         else:                                                       d = 16
 
         painter.drawEllipse(pos.x() - d/2, pos.y() - d/2, d, d)
+        d = 8
+
+        painter.drawEllipse(pos.x() - d/2, pos.y() - d/4 + 2, d, d/2)
+        painter.drawEllipse(pos.x() - d/2, pos.y() - d/4 - 2, d, d/2)
+
 
     def draw_height(self, painter, mask=False):
         pos = (self.canvas.unit_to_pixel(self.position +
@@ -137,6 +143,7 @@ class CylinderControl(base.NodeControl3D):
             d = 10
 
         painter.drawEllipse(pos.x() - d/2, pos.y() - d/2, d, d)
+
 
     def draw_ring(self, painter, mask=False):
         """ Draws the ring around the widget.
