@@ -238,6 +238,13 @@ class FloatDatum(EvalDatum):
         except: return False
         else:   return True
 
+    def __iadd__(self, delta):
+        """ Increments this node's expression.
+            Throws an exception if this operation fails.
+        """
+        self.set_expr(str(float(self.get_expr()) + delta))
+        return self
+
 ################################################################################
 
 class IntDatum(EvalDatum):
