@@ -88,6 +88,7 @@ class Canvas(QtGui.QWidget):
                     ("Sphere", SphereControl),
                     ("Rectangular prism", CubeControl),
                     ("Cylinder", CylinderControl),
+                    ("Extrusion", ExtrudeZControl),
                     ("Point (3D)", Point3DControl),
                 ),
 
@@ -109,7 +110,6 @@ class Canvas(QtGui.QWidget):
                 ),
 
                 ('Deform',
-                    ("Extrude", ExtrudeZControl),
                     ("Scale", ScaleControl),
                     ("Attract", AttractControl),
                     ("Repel", RepelControl),
