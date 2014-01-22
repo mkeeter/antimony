@@ -23,6 +23,36 @@ class Canvas(QtGui.QWidget):
 
         self.show()
 
+    def get_yaw(self):      return self._yaw
+    def set_yaw(self, v):
+        self._yaw = v
+        self.update()
+        self.sync_all_children()
+
+    def get_pitch(self):    return self._pitch
+    def set_pitch(self, v):
+        self._pitch = v
+        self.update()
+        self.sync_all_children()
+
+    yaw = QtCore.Property(float, get_yaw, set_yaw)
+    pitch = QtCore.Property(float, get_pitch, set_pitch)
+
+
+    def spin_to(self, new_yaw, new_pitch):
+        a = QtCore.QPropertyAnimation(self, "yaw", self)
+        a.setDuration(100)
+        a.setStartValue(self.yaw)
+        a.setEndValue(new_yaw)
+
+        b = QtCore.QPropertyAnimation(self, "pitch", self)
+        b.setDuration(100)
+        b.setStartValue(self.pitch)
+        b.setEndValue(new_pitch)
+
+        a.start(QtCore.QPropertyAnimation.DeleteWhenStopped)
+        b.start(QtCore.QPropertyAnimation.DeleteWhenStopped)
+
     def drag_vector(self, start, end):
         """ Returns the drag vector from start to end (as a QVector3D)
             Input arguments should be in pixel coordinates.
@@ -191,10 +221,10 @@ class Canvas(QtGui.QWidget):
     def spin(self, dyaw, dpitch):
         """ Spins us around in 3D.
         """
-        self.yaw   += dyaw
+        self.yaw += dyaw
+        while self.yaw >  math.pi:   self.yaw -= 2*math.pi
+        while self.yaw < -math.pi:   self.yaw += 2*math.pi
         self.pitch = min(0, max(-math.pi, self.pitch + dpitch))
-        self.update()
-        self.sync_all_children()
 
     def paintEvent(self, paintEvent):
         """ Paints rendered expressions and the canvas axes.

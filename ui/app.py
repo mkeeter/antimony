@@ -61,6 +61,8 @@ class App(QtGui.QApplication):
         self.mode = 'move'
         self.move_button.selected = True
 
+        ui.views.ViewTool(self.canvas)
+
         self.window = Window(self, self.canvas)
 
     def add_object(self, button):
@@ -311,3 +313,4 @@ class ResolutionDialog(QtGui.QDialog):
 import control.base, control.connection
 import ui.editor
 import node.base, node.connection
+import ui.views
