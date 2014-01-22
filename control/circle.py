@@ -44,8 +44,13 @@ class CircleControl(base.NodeControl2D):
 
 
     def get_input_pos(self):
+        """ Get an input at the circle's edge.
+        """
         return self.pos() + QtCore.QPoint(3, self.height()/2)
+
     def get_output_pos(self):
+        """ Get an output at the circle's edge.
+        """
         return self.pos() + QtCore.QPoint(self.width() - 3, self.height()/2)
 
     def drag_ring(self, v, p):
@@ -102,15 +107,11 @@ class CircleControl(base.NodeControl2D):
         painter.drawEllipse((width - d) / 2, (height - d) / 2, d, d)
 
 
-
     def draw_ring(self, painter, mask=False):
         """ Draws the ring around the widget.
         """
         if self.r <= 0:     return
         path = self.ring_path(self.pos())
-
-        if mask:    r = 6
-        else:       r = 2
 
         self.set_pen(painter, mask, self.ring_drag_control, colors.grey)
 
