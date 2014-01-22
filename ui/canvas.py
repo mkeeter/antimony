@@ -87,6 +87,7 @@ class Canvas(QtGui.QWidget):
                 ('3D',
                     ("Sphere", SphereControl),
                     ("Rectangular prism", CubeControl),
+                    ("Cylinder", CylinderControl),
                     ("Point (3D)", Point3DControl),
                 ),
 
@@ -492,6 +493,7 @@ from node.datum import ExpressionFunctionDatum
 
 from control.point import PointControl, Point3DControl
 from control.cube import CubeControl
+from control.cylinder import CylinderControl
 from control.distort import AttractControl, RepelControl
 from control.text import TextControl
 from control.iterate import Array2DControl
