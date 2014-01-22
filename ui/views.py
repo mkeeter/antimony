@@ -31,7 +31,7 @@ class ViewButton(QtGui.QWidget):
             painter.setBrush(QtGui.QBrush(QtGui.QColor(255, 255, 255, 80)))
         else:
             painter.setBrush(QtGui.QBrush(QtGui.QColor(255, 255, 255, 50)))
-        painter.setPen(QtGui.QPen(QtGui.QColor(255, 255, 255, 100), 2))
+        painter.setPen(QtGui.QPen(QtGui.QColor(150, 150, 150), 2))
         painter.drawRect(self.rect())
 
 class ViewTool(QtGui.QWidget):
