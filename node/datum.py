@@ -250,6 +250,12 @@ class FloatDatum(EvalDatum):
 class IntDatum(EvalDatum):
     def __init__(self, node, value):
         super(IntDatum, self).__init__(node, int, value)
+    def __iadd__(self, delta):
+        self.set_expr(str(self.value() + delta))
+        return self
+    def __isub__(self, delta):
+        self.set_expr(str(self.value() - delta))
+        return self
 
 ################################################################################
 
