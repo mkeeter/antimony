@@ -97,9 +97,9 @@ class CircleControl(base.NodeControl2D):
 
         self.set_brush(painter, mask, colors.grey)
 
-        if mask:                                                    d = 22
-        elif self.drag_control.hover or self.drag_control.drag:     d = 20
-        else:                                                       d = 16
+        if mask:                        d = 22
+        elif self.drag_control.active:  d = 20
+        else:                           d = 16
 
         painter.drawEllipse((width - d) / 2, (height - d) / 2, d, d)
         d = 8

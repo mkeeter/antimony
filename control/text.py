@@ -70,9 +70,9 @@ class TextControl(base.NodeControl2D):
         pt = self.canvas.unit_to_pixel(self.bbox.left(),
                                        self.bbox.top()) - self.pos()
 
-        if mask:                                                    d = 22
-        elif self.drag_control.hover or self.drag_control.drag:     d = 20
-        else:                                                       d = 16
+        if mask:                        d = 22
+        elif self.drag_control.active:  d = 20
+        else:                           d = 16
 
         painter.drawEllipse(pt.x() - d/2, pt.y() - d/2, d, d)
 
@@ -85,12 +85,9 @@ class TextControl(base.NodeControl2D):
         pt = self.canvas.unit_to_pixel(self.bbox.right(),
                                        self.bbox.bottom()) - self.pos()
 
-        if mask:
-            d = 20
-        elif self.drag_scale_control.hover or self.drag_scale_control.drag:
-            d = 18
-        else:
-            d = 14
+        if mask:                                d = 20
+        elif self.drag_scale_control.active:    d = 18
+        else:                                   d = 14
 
         painter.drawEllipse(pt.x() - d/2, pt.y() - d/2, d, d)
 

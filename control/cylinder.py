@@ -116,9 +116,9 @@ class CylinderControl(base.NodeControl3D):
 
         self.set_brush(painter, mask, colors.grey)
 
-        if mask:                                                    d = 22
-        elif self.drag_control.hover or self.drag_control.drag:     d = 20
-        else:                                                       d = 16
+        if mask:                        d = 22
+        elif self.drag_control.active:  d = 20
+        else:                           d = 16
 
         painter.drawEllipse(pos.x() - d/2, pos.y() - d/2, d, d)
         d = 8
@@ -134,12 +134,9 @@ class CylinderControl(base.NodeControl3D):
 
         self.set_brush(painter, mask, colors.grey)
 
-        if mask:
-            d = 14
-        elif self.drag_height_control.hover or self.drag_height_control.drag:
-            d = 12
-        else:
-            d = 10
+        if mask:                                d = 14
+        elif self.drag_height_control.active:   d = 12
+        else:                                   d = 10
 
         painter.drawEllipse(pos.x() - d/2, pos.y() - d/2, d, d)
 

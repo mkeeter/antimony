@@ -161,7 +161,7 @@ class NodeControl(QtGui.QWidget):
         painter.setBrush(QtGui.QBrush())
         if mask:
             painter.setPen(QtGui.QPen(QtCore.Qt.color1, 8))
-        elif drag is not None and (drag.hover or drag.drag):
+        elif drag is not None and drag.active:
             painter.setPen(QtGui.QPen(QtGui.QColor(
                 *colors.highlight(color)), 4))
         else:
@@ -226,6 +226,9 @@ class DragManager(QtCore.QObject):
 
         self.parent.installEventFilter(self)
 
+    @property
+    def active(self):
+        return self.drag or self.hover
 
     def eventFilter(self, object, event):
         if object == self.parent:
@@ -415,7 +418,7 @@ class TextLabelControl(NodeControl3D):
     def paint(self, painter):
         painter = QtGui.QPainter(self)
         painter.setPen(QtGui.QColor(*colors.blue))
-        if self.drag_control.drag or self.drag_control.hover:
+        if self.drag_control.active:
             painter.setBrush(QtGui.QColor(*(colors.blue + (150,))))
         else:
             painter.setBrush(QtGui.QColor(*(colors.blue + (100,))))

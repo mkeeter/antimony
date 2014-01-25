@@ -60,9 +60,11 @@ class RepositionControl(base.NodeControl3D):
     def draw_handle(self, painter, mask=False):
         self.set_brush(painter, mask, colors.green)
         pos = self.canvas.unit_to_pixel(self.position) - self.pos()
-        if mask:                                                    d = 22
-        elif self.drag_control.hover or self.drag_control.drag:     d = 20
-        else:                                                       d = 16
+
+        if mask:                        d = 22
+        elif self.drag_control.active:  d = 20
+        else:                           d = 16
+
         painter.drawEllipse(pos.x() - d/2, pos.y() - d/2, d, d)
         self.set_pen(painter, mask, None, colors.green)
         painter.drawLine(pos.x(), pos.y() - 6, pos.x(), pos.y())

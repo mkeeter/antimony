@@ -99,7 +99,7 @@ class ExtrudeZControl(base.NodeControl3D):
         painter.setBrush(QtGui.QBrush())
         if mask:
             painter.setPen(QtGui.QPen(QtCore.Qt.color1, 8))
-        elif self.drag_control.hover or self.drag_control.drag:
+        elif self.drag_control.active:
             painter.setPen(QtGui.QPen(QtGui.QColor(
                 *colors.highlight(colors.orange)), 4))
         else:
@@ -110,7 +110,7 @@ class ExtrudeZControl(base.NodeControl3D):
         painter.setBrush(QtGui.QBrush())
         if mask:
             painter.setPen(QtGui.QPen(QtCore.Qt.color1, 8))
-        elif self.drag_top_control.hover or self.drag_top_control.drag:
+        elif self.drag_top_control.active:
             painter.setPen(QtGui.QPen(QtGui.QColor(
                 *colors.highlight(colors.orange)), 4))
         else:

@@ -59,9 +59,9 @@ class DistortControl(base.NodeControl3D):
 
         self.set_brush(painter, mask, colors.orange)
 
-        if mask:                                                    d = 22
-        elif self.drag_control.hover or self.drag_control.drag:     d = 20
-        else:                                                       d = 16
+        if mask:                        d = 22
+        elif self.drag_control.active:  d = 20
+        else:                           d = 16
 
         painter.drawEllipse(p.x() - d/2, p.y() - d/2, d, d)
 

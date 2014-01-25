@@ -100,9 +100,9 @@ class Array2DControl(base.NodeControl2D):
 
         self.set_brush(painter, mask, colors.green)
 
-        if mask:                                                    d = 22
-        elif self.drag_control.hover or self.drag_control.drag:     d = 20
-        else:                                                       d = 16
+        if mask:                        d = 22
+        elif self.drag_control.active:  d = 20
+        else:                           d = 16
 
         painter.drawEllipse(x - d/2, y - d/2, d, d)
 
@@ -115,7 +115,7 @@ class Array2DControl(base.NodeControl2D):
         self.dy_plus_hover = self.dy_plus_mask.contains(event.pos())
         self.dy_minus_hover = self.dy_minus_mask.contains(event.pos())
 
-        if self.drag_control.hover or self.drag_control.drag:
+        if self.drag_control.active:
             self.dx_plus_hover = self.dx_minus_hover = False
             self.dy_plus_hover = self.dy_minus_hover = False
         self.update()
@@ -158,10 +158,9 @@ class Array2DControl(base.NodeControl2D):
         """
         self.set_brush(painter, mask, colors.green)
 
-        if mask:                                    d = 14
-        elif (self.drag_spacing_control.hover or
-              self.drag_spacing_control.drag):      d = 12
-        else:                                       d = 10
+        if mask:                                d = 14
+        elif self.drag_spacing_control.active:  d = 12
+        else:                                   d = 10
 
         for i in range(self.i):
             for j in range(self.j):
