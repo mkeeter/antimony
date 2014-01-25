@@ -26,6 +26,9 @@ class MathTree(object):
             self._str = self.make_str()
         return self._str
 
+    def clone(self):
+        return self.__class__(self.expr, libfab.clone_tree(self.ptr))
+
     def make_str(self):
         """ @brief Converts the object into an infix-notation string
 
@@ -72,7 +75,24 @@ class MathTree(object):
 
         image = Image.from_region(region)
         halt = ctypes.c_int(0)
-        libfab.render16(self.ptr, region, image.pixels(), halt)
+
+        from datetime import datetime
+
+        regions = region.split_xy(8)
+        pixels = image.pixels()
+        clones = [self.clone() for r in regions]
+
+        threads = [threading.Thread(
+            target=libfab.render16,
+            args=(c.ptr, r, pixels, halt)) for c, r in zip(clones, regions)]
+
+        n = datetime.now()
+        for t in threads:
+            t.daemon = True
+            t.start()
+        for t in threads:
+            t.join()
+        print datetime.now() - n
 
         return image
 

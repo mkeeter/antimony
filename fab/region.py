@@ -34,7 +34,6 @@ class Region(ctypes.Structure):
         ctypes.Structure.__init__(
                 self, 0, 0, 0, ni, nj, nk, ni*nj*nk,
                 None, None, None, None)
-
         libfab.build_arrays(ctypes.byref(self),
                              xmin, ymin, zmin,
                              xmax, ymax, zmax)
