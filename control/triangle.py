@@ -36,7 +36,6 @@ class TriangleControl(base.NodeControl):
         self.raise_()
 
 
-
     def raise_(self):
         """ Overload raise_ so that points stay above triangle lines.
         """

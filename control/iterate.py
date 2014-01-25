@@ -33,8 +33,8 @@ class Array2DControl(base.NodeControl2D):
         """ Drag one of the array nodes to increase or decrease spacing.
         """
         if not self.node._dx.simple() or not self.node._dy.simple():  return
-        self.node._dx.set_expr(str(float(self.node._dx.get_expr()) + v.x()))
-        self.node._dy.set_expr(str(float(self.node._dy.get_expr()) + v.y()))
+        self.node._dx += v.x()
+        self.node._dy += v.y()
 
     def make_masks(self):
         """ Make masks for dragging the base, dragging the array,
@@ -128,24 +128,20 @@ class Array2DControl(base.NodeControl2D):
         """
         if event.button() == QtCore.Qt.LeftButton:
             if self.dx_plus_hover:
-                try:
-                    i = self.node.i
-                    self.node._i.set_expr(str(i + 1))
+                try:    self.node._i += 1
                 except: pass
             elif self.dx_minus_hover:
                 try:
-                    i = self.node.i
-                    if i > 0:   self.node._i.set_expr(str(i - 1))
+                    if self.node.i > 1:
+                        self.node._i -= 1
                 except: pass
             elif self.dy_plus_hover:
-                try:
-                    j = self.node.j
-                    self.node._j.set_expr(str(j + 1))
+                try:    self.node._j += 1
                 except: pass
             elif self.dx_minus_hover:
                 try:
-                    j = self.node.j
-                    if j > 0:   self.node._j.set_expr(str(j - 1))
+                    if self.node.j > 1:
+                        self.node._j -= 1
                 except: pass
             self.sync()
 

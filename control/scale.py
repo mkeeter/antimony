@@ -36,18 +36,15 @@ class ScaleControl(base.NodeControl3D):
 
     def drag_x(self, v, p):
         if not self.node._sx.simple():  return
-        self.node._sx.set_expr(str(float(self.node._sx.get_expr()) +
-                                         v.x()/self.draw_scale))
+        self.node._sx += v.x() / self.draw_scale
 
     def drag_y(self, v, p):
         if not self.node._sy.simple():  return
-        self.node._sy.set_expr(str(float(self.node._sy.get_expr()) +
-                                         v.y()/self.draw_scale))
+        self.node._sy += v.y() / self.draw_scale
 
     def drag_z(self, v, p):
         if not self.node._sz.simple():  return
-        self.node._sz.set_expr(str(float(self.node._sz.get_expr()) +
-                                         v.z()/self.draw_scale))
+        self.node._sz += v.z() / self.draw_scale
 
 
     def make_masks(self):

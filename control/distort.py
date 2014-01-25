@@ -50,7 +50,7 @@ class DistortControl(base.NodeControl3D):
         p = p.normalized()
 
         dr = QtGui.QVector3D.dotProduct(p, v)
-        self.node._r.set_expr(str(float(self.node._r.get_expr()) + dr))
+        self.node._r += dr
 
     def draw_center(self, painter, mask=False):
         """ Draws a circle at the center of the widget.

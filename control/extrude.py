@@ -33,8 +33,7 @@ class ExtrudeZControl(base.NodeControl3D):
         """ Drags the top of the extrusion around.
         """
         if not self.node._top.simple(): return
-        self.node._top.set_expr(str(float(self.node._top.get_expr()) +
-                                    v.z()))
+        self.node._top += v.z()
 
     @property
     def position(self):

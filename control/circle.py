@@ -65,7 +65,7 @@ class CircleControl(base.NodeControl2D):
 
         v.setZ(0)
         dr = QtGui.QVector3D.dotProduct(p, v)
-        self.node._r.set_expr(str(float(self.node._r.get_expr()) + dr))
+        self.node._r += dr
 
 
     def make_masks(self):

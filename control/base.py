@@ -329,11 +329,9 @@ class DragXY(DragManager):
         """ Drag this node by attempting to change its x and y coordinates
         """
         if self.parent.node._x.simple():
-            self.parent.node._x.set_expr(
-                    str(float(self.parent.node._x.get_expr()) + v.x()))
+            self.parent.node._x += v.x()
         if self.parent.node._y.simple():
-            self.parent.node._y.set_expr(
-                    str(float(self.parent.node._y.get_expr()) + v.y()))
+            self.parent.node._y += v.y()
 
 class DragXYZ(DragManager):
     def __init__(self, parent, mask=None):
@@ -343,14 +341,11 @@ class DragXYZ(DragManager):
         """ Drag this node by attempting to change its x, y, and z coordinates
         """
         if self.parent.node._x.simple():
-            self.parent.node._x.set_expr(
-                    str(float(self.parent.node._x.get_expr()) + v.x()))
+            self.parent.node._x += v.x()
         if self.parent.node._y.simple():
-            self.parent.node._y.set_expr(
-                    str(float(self.parent.node._y.get_expr()) + v.y()))
+            self.parent.node._y += v.y()
         if self.parent.node._z.simple():
-            self.parent.node._z.set_expr(
-                    str(float(self.parent.node._z.get_expr()) + v.z()))
+            self.parent.node._z += v.z()
 
 ################################################################################
 
