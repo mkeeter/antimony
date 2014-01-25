@@ -9,7 +9,6 @@ class DistortControl(base.NodeControl3D):
     def __init__(self, canvas, target):
         super(DistortControl, self).__init__(canvas, target)
 
-        self.drag_control = base.DragXYZ(self)
         self.radius_drag = base.DragManager(self, self.drag_radius)
 
         self.editor_datums = ['name','input','x','y','z','r','shape']

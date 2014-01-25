@@ -14,7 +14,6 @@ class Array2DControl(base.NodeControl2D):
     def __init__(self, canvas, target):
         super(Array2DControl, self).__init__(canvas, target)
 
-        self.drag_control = base.DragXY(self)
         self.drag_spacing_control = base.DragManager(self, self.drag_spacing)
 
         self.dx_plus_hover = False

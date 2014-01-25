@@ -355,11 +355,19 @@ class DragXYZ(DragManager):
 ################################################################################
 
 class NodeControl2D(NodeControl):
+    def __init__(self, canvas, node):
+        super(NodeControl2D, self).__init__(canvas, node)
+        self.drag_control = DragXY(self)
+
     @property
     def position(self):
         return QtCore.QPointF(self._cache['x'], self._cache['y'])
 
 class NodeControl3D(NodeControl):
+    def __init__(self, canvas, node):
+        super(NodeControl3D, self).__init__(canvas, node)
+        self.drag_control = DragXYZ(self)
+
     @property
     def position(self):
         return QtGui.QVector3D(self._cache['x'],
@@ -376,7 +384,6 @@ class TextLabelControl(NodeControl3D):
 
         self.text = text
         self.font = QtGui.QFont()
-        self.drag_control = DragXYZ(self)
 
         self.setFixedSize(self.get_text_size())
 

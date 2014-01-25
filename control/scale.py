@@ -20,7 +20,6 @@ class ScaleControl(base.NodeControl3D):
         """
         super(ScaleControl, self).__init__(canvas, target)
 
-        self.drag_control = base.DragXYZ(self)
         self.scale_x = base.DragManager(self, self.drag_x)
         self.scale_y = base.DragManager(self, self.drag_y)
         self.scale_z = base.DragManager(self, self.drag_z)

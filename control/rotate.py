@@ -13,7 +13,6 @@ class RotateControl(base.NodeControl3D):
         """
         super(RotateControl, self).__init__(canvas, target)
 
-        self.drag_control = base.DragXYZ(self)
         self.drag_angle_control = base.DragManager(self, self.drag_angle)
 
         self.draw_scale = 25

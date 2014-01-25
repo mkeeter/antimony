@@ -18,7 +18,6 @@ class SphereControl(base.NodeControl3D):
         """
         super(SphereControl, self).__init__(canvas, target)
 
-        self.drag_control = base.DragXYZ(self)
         self.radius_drag = base.DragManager(self, self.drag_radius)
 
         self.sync()

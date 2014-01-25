@@ -19,7 +19,6 @@ class CylinderControl(base.NodeControl3D):
         """
         super(CylinderControl, self).__init__(canvas, target)
 
-        self.drag_control = base.DragXYZ(self)
         self.drag_ring_control = base.DragManager(self, self.drag_ring)
         self.drag_height_control = base.DragManager(self, self.drag_height)
 

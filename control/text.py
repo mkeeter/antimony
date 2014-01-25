@@ -5,7 +5,7 @@ from PySide import QtCore, QtGui
 import colors
 import base
 
-class TextControl(base.NodeControl):
+class TextControl(base.NodeControl2D):
     @classmethod
     def new(cls, canvas, x, y, z, scale):
         t = Text(get_name('txt'), x, y, scale, 'hello')
@@ -14,7 +14,6 @@ class TextControl(base.NodeControl):
     def __init__(self, canvas, target):
         super(TextControl, self).__init__(canvas, target)
 
-        self.drag_control = base.DragXY(self)
         self.drag_scale_control = base.DragManager(self, self.drag_scale)
 
         self.editor_datums = ['name','x','y','scale','txt','shape']

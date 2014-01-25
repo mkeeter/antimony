@@ -5,7 +5,7 @@ from PySide import QtCore, QtGui
 import colors
 import base
 
-class ExtrudeZControl(base.NodeControl):
+class ExtrudeZControl(base.NodeControl3D):
 
     @classmethod
     def new(cls, canvas, x, y, z, scale):
@@ -19,7 +19,6 @@ class ExtrudeZControl(base.NodeControl):
         """
         super(ExtrudeZControl, self).__init__(canvas, target)
 
-        self.drag_control = base.DragXYZ(self)
         self.drag_top_control = base.DragManager(self, self.drag_top)
 
         self.sync()

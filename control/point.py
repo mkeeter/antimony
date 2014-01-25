@@ -17,8 +17,6 @@ class PointControl(base.NodeControl2D):
         super(PointControl, self).__init__(canvas, target)
         self.setFixedSize(30, 30)
 
-        self.drag_control = base.DragXY(self)
-
         self.editor_datums = ['name','x','y']
 
         self.make_mask()
@@ -81,6 +79,7 @@ class Point3DControl(PointControl):
         super(PointControl, self).__init__(canvas, target)
         self.setFixedSize(30, 30)
 
+        # Replace previous drag controller with one that has a Z component
         self.drag_control = base.DragXYZ(self)
         self.editor_datums = ['name','x','y','z']
 

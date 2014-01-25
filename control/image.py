@@ -30,7 +30,6 @@ class ImageControl(base.NodeControl2D):
     def __init__(self, canvas, target):
         super(ImageControl, self).__init__(canvas, target)
 
-        self.drag_control = base.DragXY(self)
         self.drag_scale_control = base.DragManager(self, self.drag_scale)
 
         self.sync()

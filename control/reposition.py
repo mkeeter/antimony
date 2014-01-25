@@ -14,7 +14,6 @@ class RepositionControl(base.NodeControl3D):
     def __init__(self, canvas, target):
         super(RepositionControl, self).__init__(canvas, target)
 
-        self.drag_control = base.DragXYZ(self)
         self.draw_scale = 10
 
         self.sync()
