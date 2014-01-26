@@ -76,8 +76,6 @@ class MathTree(object):
         image = Image.from_region(region)
         halt = ctypes.c_int(0)
 
-        from datetime import datetime
-
         regions = region.split_xy(8)
         pixels = image.pixels()
         clones = [self.clone() for r in regions]
@@ -86,13 +84,11 @@ class MathTree(object):
             target=libfab.render16,
             args=(c.ptr, r, pixels, halt)) for c, r in zip(clones, regions)]
 
-        n = datetime.now()
         for t in threads:
             t.daemon = True
             t.start()
         for t in threads:
             t.join()
-        print datetime.now() - n
 
         return image
 
