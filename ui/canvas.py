@@ -70,8 +70,14 @@ class Canvas(QtGui.QWidget):
             self.yaw += math.pi/32
         elif event.key() == QtCore.Qt.Key_Right:
             self.yaw -= math.pi/32
+        elif event.key() == QtCore.Qt.Key_Space:
+            self.hide_children()
         self.sync_all_children()
         self.update()
+
+    def keyReleaseEvent(self, event):
+        if event.key() == QtCore.Qt.Key_Space:
+            self.show_children()
 
     def openMenuAt(self, point):
         menu = QtGui.QMenu()
@@ -254,6 +260,22 @@ class Canvas(QtGui.QWidget):
         painter.setPen(QtGui.QPen(QtGui.QColor(*colors.blue), 2))
         painter.drawLine(center, z)
 
+
+    def hide_children(self):
+        for n in self.findChildren(NodeControl):
+            n.hide()
+        for e in self.findChildren(Editor):
+            e.hide()
+        for c in self.findChildren(ConnectionControl):
+            c.hide()
+
+    def show_children(self):
+        for n in self.findChildren(NodeControl):
+            n.show()
+        for e in self.findChildren(Editor):
+            e.show()
+        for c in self.findChildren(ConnectionControl):
+            c.show()
 
     def sync_all_children(self):
         """ Calls sync on all children that have that function.
