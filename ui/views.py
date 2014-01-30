@@ -59,6 +59,12 @@ class ViewTool(QtGui.QWidget):
         self.setFixedSize(bottom.width()*4, bottom.height()*3)
 
         self.move(parent.width() - self.width() - 20, 20)
+
+        mask = QtGui.QRegion()
+        for w in self.findChildren(ViewButton):
+            mask |= QtGui.QRegion(w.geometry())
+        self.setMask(mask)
+
         parent.installEventFilter(self)
         self.show()
 
