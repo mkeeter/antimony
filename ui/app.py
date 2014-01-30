@@ -65,6 +65,10 @@ class App(QtGui.QApplication):
 
         self.window = Window(self, self.canvas)
 
+        self.window.activateWindow()
+        self.window.raise_()
+
+
     def add_object(self, button):
         """ Opens up a menu to add objects
             (centered on the given button).
