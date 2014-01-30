@@ -33,17 +33,18 @@ class Window(QtGui.QMainWindow):
 
          fileMenu.addAction(app.about_action)
 
-class Layers(QtGui.QWidget):
-    def __init__(self, *args):
-        super(Layers, self).__init__()
-        self.layers = args
-        for layer in self.layers:
-            layer.setParent(self)
+class Container(QtGui.QWidget):
+    """ Contains a single full-window widget;
+        Used to stack buttons on top of a full-window canvas.
+    """
+    def __init__(self, widget):
+        super(Container, self).__init__()
+        self.widget = widget
+        self.widget.setParent(self)
 
     def resizeEvent(self, event):
-        for w in self.layers:
-            w.move(QtCore.QPoint())
-            w.resize(self.size())
+        self.widget.move(QtCore.QPoint())
+        self.widget.resize(self.size())
 
 ################################################################################
 
@@ -63,16 +64,16 @@ class App(QtGui.QApplication):
         self.make_actions()
 
         self.canvas = canvas.Canvas()
-        layers = Layers(self.canvas)
+        container = Container(self.canvas)
 
         # Make a bunch of buttons and put them on top of the stack
         self.add_button = button.AddButton(
-                layers, self.add_object, -1)
+                container, self.add_object, -1)
         self.move_button = button.MoveButton(
-                layers, lambda b: self.set_mode(b, 'move'), 0)
+                container, lambda b: self.set_mode(b, 'move'), 0)
         self.del_button = button.DelButton(
-                layers, lambda b: self.set_mode(b, 'delete'), 1)
-        view_tool = ui.views.ViewTool(layers, self.canvas.spin_to)
+                container, lambda b: self.set_mode(b, 'delete'), 1)
+        view_tool = ui.views.ViewTool(container, self.canvas.spin_to)
 
         for b in self.findChildren(button.Button) + [view_tool]:
             b.raise_()
@@ -80,8 +81,8 @@ class App(QtGui.QApplication):
         self.mode = 'move'
         self.move_button.selected = True
 
+        self.window = Window(self, container)
 
-        self.window = Window(self, layers)
 
     def add_object(self, button):
         """ Opens up a menu to add objects
