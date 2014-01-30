@@ -34,13 +34,11 @@ class Window(QtGui.QMainWindow):
          fileMenu.addAction(app.about_action)
 
 class Layers(QtGui.QWidget):
-    def __init__(self, buttons, canvas, images):
+    def __init__(self, *args):
         super(Layers, self).__init__()
-        self.layers = [buttons, canvas, images]
+        self.layers = args
         for layer in self.layers:
             layer.setParent(self)
-        buttons.raise_()
-        images.lower()
 
     def resizeEvent(self, event):
         for w in self.layers:
@@ -65,21 +63,24 @@ class App(QtGui.QApplication):
         self.make_actions()
 
         self.canvas = canvas.Canvas()
-        self.buttons = QtGui.QWidget()
-        self.images = QtGui.QWidget()
+        layers = Layers(self.canvas)
 
+        # Make a bunch of buttons and put them on top of the stack
         self.add_button = button.AddButton(
-                self.canvas, self.add_object, -1)
+                layers, self.add_object, -1)
         self.move_button = button.MoveButton(
-                self.canvas, lambda b: self.set_mode(b, 'move'), 0)
+                layers, lambda b: self.set_mode(b, 'move'), 0)
         self.del_button = button.DelButton(
-                self.canvas, lambda b: self.set_mode(b, 'delete'), 1)
+                layers, lambda b: self.set_mode(b, 'delete'), 1)
+        for b in [self.add_button, self.move_button, self.del_button]:
+            b.raise_()
+
         self.mode = 'move'
         self.move_button.selected = True
 
         ui.views.ViewTool(self.canvas)
 
-        self.window = Window(self, Layers(self.buttons, self.canvas, self.images))
+        self.window = Window(self, layers)
 
     def add_object(self, button):
         """ Opens up a menu to add objects
