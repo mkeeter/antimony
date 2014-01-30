@@ -72,13 +72,14 @@ class App(QtGui.QApplication):
                 layers, lambda b: self.set_mode(b, 'move'), 0)
         self.del_button = button.DelButton(
                 layers, lambda b: self.set_mode(b, 'delete'), 1)
-        for b in [self.add_button, self.move_button, self.del_button]:
+        view_tool = ui.views.ViewTool(layers, self.canvas.spin_to)
+
+        for b in self.findChildren(button.Button) + [view_tool]:
             b.raise_()
 
         self.mode = 'move'
         self.move_button.selected = True
 
-        ui.views.ViewTool(self.canvas)
 
         self.window = Window(self, layers)
 

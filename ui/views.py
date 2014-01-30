@@ -35,10 +35,8 @@ class ViewButton(QtGui.QWidget):
         painter.drawRect(self.rect())
 
 class ViewTool(QtGui.QWidget):
-    def __init__(self, parent):
+    def __init__(self, parent, callback):
         super(ViewTool, self).__init__(parent)
-
-        callback = parent.spin_to
 
         top = ViewButton(self, 0, 0, callback)
         top.move(top.width(), 1)
