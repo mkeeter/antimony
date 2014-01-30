@@ -17,7 +17,7 @@ class Window(QtGui.QMainWindow):
         super(Window, self).__init__()
         self.setWindowTitle("Antimony")
         self.setCentralWidget(canvas)
-        self.setGeometry(0, 900/4, 1440/2, 900/2)
+        self.setGeometry(0, 900/4, 600, 400)
         self.make_menus(app)
         self.show()
 
@@ -32,6 +32,20 @@ class Window(QtGui.QMainWindow):
          exportMenu.addAction(app.export_stl_action)
 
          fileMenu.addAction(app.about_action)
+
+class Layers(QtGui.QWidget):
+    def __init__(self, buttons, canvas, images):
+        super(Layers, self).__init__()
+        self.layers = [buttons, canvas, images]
+        for layer in self.layers:
+            layer.setParent(self)
+        buttons.raise_()
+        images.lower()
+
+    def resizeEvent(self, event):
+        for w in self.layers:
+            w.move(QtCore.QPoint())
+            w.resize(self.size())
 
 ################################################################################
 
@@ -51,6 +65,8 @@ class App(QtGui.QApplication):
         self.make_actions()
 
         self.canvas = canvas.Canvas()
+        self.buttons = QtGui.QWidget()
+        self.images = QtGui.QWidget()
 
         self.add_button = button.AddButton(
                 self.canvas, self.add_object, -1)
@@ -63,7 +79,7 @@ class App(QtGui.QApplication):
 
         ui.views.ViewTool(self.canvas)
 
-        self.window = Window(self, self.canvas)
+        self.window = Window(self, Layers(self.buttons, self.canvas, self.images))
 
     def add_object(self, button):
         """ Opens up a menu to add objects
