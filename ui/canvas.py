@@ -233,6 +233,30 @@ class Canvas(QtGui.QWidget):
         while self.yaw < -math.pi:   self.yaw += 2*math.pi
         self.pitch = min(0, max(-math.pi, self.pitch + dpitch))
 
+    def paint_coordinates(self, painter):
+        M = QtGui.QMatrix4x4()
+        M.rotate(math.degrees(self.pitch), QtGui.QVector3D(1, 0, 0))
+        M.rotate(math.degrees(self.yaw), QtGui.QVector3D(0, 0, 1))
+
+        a = M.inverted()[0] * QtGui.QVector3D(0, 0, 1)
+        for v in [(0,0,1), (0,1,0), (1,0,0)]:
+            dot = abs(QtGui.QVector3D.dotProduct(a, QtGui.QVector3D(*v)))
+            if dot > 0.95:
+                break
+        else:
+            return
+
+        if v == (0,0,1):
+            txt = "X, Y"
+        elif v == (0,1,0):
+            txt = "X, Z"
+        elif v == (1,0,0):
+            txt = "Y, Z"
+        c = 255*20*(dot - 0.95)
+        painter.setPen(QtGui.QColor(c, c, c))
+        painter.drawText(10, self.height() - 10, txt)
+
+
     def paintEvent(self, paintEvent):
         """ Paints rendered expressions and the canvas axes.
         """
@@ -259,6 +283,8 @@ class Canvas(QtGui.QWidget):
         painter.drawLine(center, y)
         painter.setPen(QtGui.QPen(QtGui.QColor(*colors.blue), 2))
         painter.drawLine(center, z)
+
+        self.paint_coordinates(painter)
 
 
     def hide_children(self):
