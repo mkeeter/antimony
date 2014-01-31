@@ -233,7 +233,11 @@ class Canvas(QtGui.QWidget):
         while self.yaw < -math.pi:   self.yaw += 2*math.pi
         self.pitch = min(0, max(-math.pi, self.pitch + dpitch))
 
+
     def paint_coordinates(self, painter):
+        """ Prints the coordinates of the mouse cursor if we're
+            close to one of the major axes.
+        """
         M = QtGui.QMatrix4x4()
         M.rotate(math.degrees(self.pitch), QtGui.QVector3D(1, 0, 0))
         M.rotate(math.degrees(self.yaw), QtGui.QVector3D(0, 0, 1))
@@ -246,12 +250,13 @@ class Canvas(QtGui.QWidget):
         else:
             return
 
+        p = QtGui.QVector3D(1,2,3)
         if v == (0,0,1):
-            txt = "X, Y"
+            txt = "X = %g\nY = %g" % (p.x(), p.y())
         elif v == (0,1,0):
-            txt = "X, Z"
+            txt = "X = %g\nZ = %g" % (p.x(), p.z())
         elif v == (1,0,0):
-            txt = "Y, Z"
+            txt = "Y = %g\nZ = %g" % (p.y(), p.z())
         c = 255*20*(dot - 0.95)
         painter.setPen(QtGui.QColor(c, c, c))
         painter.drawText(10, self.height() - 10, txt)
