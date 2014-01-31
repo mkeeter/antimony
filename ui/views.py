@@ -35,10 +35,8 @@ class ViewButton(QtGui.QWidget):
         painter.drawRect(self.rect())
 
 class ViewTool(QtGui.QWidget):
-    def __init__(self, parent):
+    def __init__(self, parent, callback):
         super(ViewTool, self).__init__(parent)
-
-        callback = parent.spin_to
 
         top = ViewButton(self, 0, 0, callback)
         top.move(top.width(), 1)
@@ -61,6 +59,12 @@ class ViewTool(QtGui.QWidget):
         self.setFixedSize(bottom.width()*4, bottom.height()*3)
 
         self.move(parent.width() - self.width() - 20, 20)
+
+        mask = QtGui.QRegion()
+        for w in self.findChildren(ViewButton):
+            mask |= QtGui.QRegion(w.geometry())
+        self.setMask(mask)
+
         parent.installEventFilter(self)
         self.show()
 

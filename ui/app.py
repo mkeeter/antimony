@@ -17,7 +17,7 @@ class Window(QtGui.QMainWindow):
         super(Window, self).__init__()
         self.setWindowTitle("Antimony")
         self.setCentralWidget(canvas)
-        self.setGeometry(0, 900/4, 1440/2, 900/2)
+        self.setGeometry(0, 900/4, 600, 400)
         self.make_menus(app)
         self.show()
 
@@ -32,6 +32,19 @@ class Window(QtGui.QMainWindow):
          exportMenu.addAction(app.export_stl_action)
 
          fileMenu.addAction(app.about_action)
+
+class Container(QtGui.QWidget):
+    """ Contains a single full-window widget;
+        Used to stack buttons on top of a full-window canvas.
+    """
+    def __init__(self, widget):
+        super(Container, self).__init__()
+        self.widget = widget
+        self.widget.setParent(self)
+
+    def resizeEvent(self, event):
+        self.widget.move(QtCore.QPoint())
+        self.widget.resize(self.size())
 
 ################################################################################
 
@@ -51,19 +64,25 @@ class App(QtGui.QApplication):
         self.make_actions()
 
         self.canvas = canvas.Canvas()
+        container = Container(self.canvas)
 
+        # Make a bunch of buttons and put them on top of the stack
         self.add_button = button.AddButton(
-                self.canvas, self.add_object, -1)
+                container, self.add_object, -1)
         self.move_button = button.MoveButton(
-                self.canvas, lambda b: self.set_mode(b, 'move'), 0)
+                container, lambda b: self.set_mode(b, 'move'), 0)
         self.del_button = button.DelButton(
-                self.canvas, lambda b: self.set_mode(b, 'delete'), 1)
+                container, lambda b: self.set_mode(b, 'delete'), 1)
+        view_tool = ui.views.ViewTool(container, self.canvas.spin_to)
+
+        for b in self.findChildren(button.Button) + [view_tool]:
+            b.raise_()
+
         self.mode = 'move'
         self.move_button.selected = True
 
-        ui.views.ViewTool(self.canvas)
+        self.window = Window(self, container)
 
-        self.window = Window(self, self.canvas)
 
         self.window.activateWindow()
         self.window.raise_()
