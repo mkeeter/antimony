@@ -194,6 +194,11 @@ class Canvas(QtGui.QWidget):
                       0.01 * (p.y() - self.mouse_pos.y()))
         self.mouse_pos = p
 
+        # If we're on one of the major axes (so coordinates are being drawn),
+        # then force a redraw
+        if self.get_axis()[0] is not None:
+            self.update()
+
 
     def wheelEvent(self, event):
         """ Zooms in or out based on mouse wheel spinning.
@@ -234,32 +239,41 @@ class Canvas(QtGui.QWidget):
         self.pitch = min(0, max(-math.pi, self.pitch + dpitch))
 
 
-    def paint_coordinates(self, painter):
-        """ Prints the coordinates of the mouse cursor if we're
-            close to one of the major axes.
+    def get_axis(self):
+        """ Returns a tuple containing the major axis along which the camera
+            is looking and an opacity score (0-1), or (None, None) if we're
+            between axes.
         """
         M = QtGui.QMatrix4x4()
         M.rotate(math.degrees(self.pitch), QtGui.QVector3D(1, 0, 0))
         M.rotate(math.degrees(self.yaw), QtGui.QVector3D(0, 0, 1))
 
+        threshold = 0.98
         a = M.inverted()[0] * QtGui.QVector3D(0, 0, 1)
         for v in [(0,0,1), (0,1,0), (1,0,0)]:
             dot = abs(QtGui.QVector3D.dotProduct(a, QtGui.QVector3D(*v)))
-            if dot > 0.95:
-                break
-        else:
-            return
+            if dot > threshold:
+                return v, (dot - threshold) / (1 - threshold)
+        return None, None
 
-        p = QtGui.QVector3D(1,2,3)
-        if v == (0,0,1):
-            txt = "X = %g\nY = %g" % (p.x(), p.y())
-        elif v == (0,1,0):
-            txt = "X = %g\nZ = %g" % (p.x(), p.z())
-        elif v == (1,0,0):
-            txt = "Y = %g\nZ = %g" % (p.y(), p.z())
-        c = 255*20*(dot - 0.95)
+    def paint_coordinates(self, painter):
+        """ Prints the coordinates of the mouse cursor if we're
+            close to one of the major axes.
+        """
+        axis, alpha = self.get_axis()
+        if axis is None:    return
+
+        p = self.pixel_to_unit(self.mapFromGlobal(QtGui.QCursor.pos()))
+        if axis == (0,0,1):
+            txt = "X: %g" % p.x(), "Y: %g" % p.y()
+        elif axis == (0,1,0):
+            txt = "X: %g" % p.x(), "Z: %g" % p.z()
+        elif axis == (1,0,0):
+            txt = "Y: %g" % p.y(), "Z: %g" % p.z()
+        c = 200*alpha
         painter.setPen(QtGui.QColor(c, c, c))
-        painter.drawText(10, self.height() - 10, txt)
+        painter.drawText(10, self.height() - 25, txt[0])
+        painter.drawText(10, self.height() - 10, txt[1])
 
 
     def paintEvent(self, paintEvent):
