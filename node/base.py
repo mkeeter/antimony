@@ -132,7 +132,17 @@ class Node3D(Node):
 
 # Master list of nodes
 nodes = []
-def dict():     return {n._name.get_expr(): n for n in nodes}
+def dict():
+    d = {}
+    for n in nodes:
+        # Inject variable values directly into namespace.
+        if isinstance(n, Variable):
+            if n._value.valid():
+                d[n._name.get_expr()] = n.value
+        # Otherwise, put node into namespace
+        else:
+            d[n._name.get_expr()] = n
+    return d
 
 def get_name(prefix):
     names = [n._name.get_expr() for n in nodes]
@@ -149,4 +159,6 @@ def load_nodes(data):
     nodes = [Node.inflate(n) for n in data]
     for n, d in zip(nodes, data):
         n.add_children(d[2], nodes)
+
+from variable import Variable
 
