@@ -194,6 +194,11 @@ class Canvas(QtGui.QWidget):
                       0.01 * (p.y() - self.mouse_pos.y()))
         self.mouse_pos = p
 
+        # If we're on one of the major axes (so coordinates are being drawn),
+        # then force a redraw
+        if self.get_axis()[0] is not None:
+            self.update()
+
 
     def wheelEvent(self, event):
         """ Zooms in or out based on mouse wheel spinning.
@@ -233,6 +238,44 @@ class Canvas(QtGui.QWidget):
         while self.yaw < -math.pi:   self.yaw += 2*math.pi
         self.pitch = min(0, max(-math.pi, self.pitch + dpitch))
 
+
+    def get_axis(self):
+        """ Returns a tuple containing the major axis along which the camera
+            is looking and an opacity score (0-1), or (None, None) if we're
+            between axes.
+        """
+        M = QtGui.QMatrix4x4()
+        M.rotate(math.degrees(self.pitch), QtGui.QVector3D(1, 0, 0))
+        M.rotate(math.degrees(self.yaw), QtGui.QVector3D(0, 0, 1))
+
+        threshold = 0.98
+        a = M.inverted()[0] * QtGui.QVector3D(0, 0, 1)
+        for v in [(0,0,1), (0,1,0), (1,0,0)]:
+            dot = abs(QtGui.QVector3D.dotProduct(a, QtGui.QVector3D(*v)))
+            if dot > threshold:
+                return v, (dot - threshold) / (1 - threshold)
+        return None, None
+
+    def paint_coordinates(self, painter):
+        """ Prints the coordinates of the mouse cursor if we're
+            close to one of the major axes.
+        """
+        axis, alpha = self.get_axis()
+        if axis is None:    return
+
+        p = self.pixel_to_unit(self.mapFromGlobal(QtGui.QCursor.pos()))
+        if axis == (0,0,1):
+            txt = "X: %g" % p.x(), "Y: %g" % p.y()
+        elif axis == (0,1,0):
+            txt = "X: %g" % p.x(), "Z: %g" % p.z()
+        elif axis == (1,0,0):
+            txt = "Y: %g" % p.y(), "Z: %g" % p.z()
+        c = 200*alpha
+        painter.setPen(QtGui.QColor(c, c, c))
+        painter.drawText(10, self.height() - 25, txt[0])
+        painter.drawText(10, self.height() - 10, txt[1])
+
+
     def paintEvent(self, paintEvent):
         """ Paints rendered expressions and the canvas axes.
         """
@@ -259,6 +302,8 @@ class Canvas(QtGui.QWidget):
         painter.drawLine(center, y)
         painter.setPen(QtGui.QPen(QtGui.QColor(*colors.blue), 2))
         painter.drawLine(center, z)
+
+        self.paint_coordinates(painter)
 
 
     def hide_children(self):
