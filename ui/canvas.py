@@ -121,6 +121,10 @@ class Canvas(QtGui.QWidget):
                     ("Repel", RepelControl),
                 ),
 
+                ('Variable',
+                    ("Number", FloatVariableControl),
+                ),
+
                 ('Import',
                     ("Image", ImageControl),
                     ("Height map", HeightmapControl),
@@ -566,6 +570,7 @@ from control.text import TextControl
 from control.iterate import Array2DControl
 from control.sphere import SphereControl
 from control.scale import ScaleControl
+from control.variable import FloatVariableControl
 from control.reposition import RepositionControl
 from control.rotate import RotateXControl, RotateYControl, RotateZControl
 from control.extrude import ExtrudeZControl
