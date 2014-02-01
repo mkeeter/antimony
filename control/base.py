@@ -377,12 +377,13 @@ class NodeControl3D(NodeControl):
 class TextLabelControl(NodeControl3D):
     """ Represents a draggable label floating in space.
     """
-    def __init__(self, canvas, target, text):
+    def __init__(self, canvas, target, text, color):
         super(TextLabelControl, self).__init__(canvas, target)
 
         self.text = text
-        self.font = QtGui.QFont()
+        self.color = color
 
+        self.font = QtGui.QFont()
         self.setFixedSize(self.get_text_size())
 
         self.sync()
@@ -417,11 +418,11 @@ class TextLabelControl(NodeControl3D):
 
     def paint(self, painter):
         painter = QtGui.QPainter(self)
-        painter.setPen(QtGui.QColor(*colors.blue))
+        painter.setPen(QtGui.QColor(*self.color))
         if self.drag_control.active:
-            painter.setBrush(QtGui.QColor(*(colors.blue + (150,))))
+            painter.setBrush(QtGui.QColor(*(self.color + (150,))))
         else:
-            painter.setBrush(QtGui.QColor(*(colors.blue + (100,))))
+            painter.setBrush(QtGui.QColor(*(self.color + (100,))))
         painter.drawRect(self.rect())
         painter.setPen(QtGui.QColor(255, 255, 255))
 

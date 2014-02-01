@@ -13,7 +13,7 @@ class UnionControl(base.TextLabelControl):
 
     def __init__(self, canvas, target):
         super(UnionControl, self).__init__(
-                canvas, target, u"A ∪ B")
+                canvas, target, u"A ∪ B", colors.blue)
         self.editor_datums = ['name','A','B','shape']
 
 class IntersectionControl(base.TextLabelControl):
@@ -24,7 +24,7 @@ class IntersectionControl(base.TextLabelControl):
 
     def __init__(self, canvas, target):
         super(IntersectionControl, self).__init__(
-                canvas, target, u"A ∩ B")
+                canvas, target, u"A ∩ B", colors.blue)
         self.editor_datums = ['name','A','B','shape']
 
 
@@ -36,7 +36,7 @@ class CutoutControl(base.TextLabelControl):
 
     def __init__(self, canvas, target):
         super(CutoutControl, self).__init__(
-                canvas, target, u"A ∩ ~B")
+                canvas, target, u"A ∩ ~B", colors.blue)
         self.editor_datums = ['name','A','B','shape']
 
 from node.base import get_name

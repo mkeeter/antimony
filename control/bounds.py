@@ -11,7 +11,7 @@ class GetBoundsControl(base.TextLabelControl):
 
     def __init__(self, canvas, target):
         super(GetBoundsControl, self).__init__(
-                canvas, target, "Get bounds")
+                canvas, target, "Get bounds", colors.blue)
         self.editor_datums = ['name','input','xmin','xmax',
                               'ymin','ymax','zmin','zmax']
 
@@ -23,7 +23,7 @@ class SetBoundsControl(base.TextLabelControl):
 
     def __init__(self, canvas, target):
         super(SetBoundsControl, self).__init__(
-                canvas, target, "Set bounds")
+                canvas, target, "Set bounds", colors.blue)
         self.editor_datums = ['name','input','xmin','xmax',
                               'ymin','ymax', 'zmin','zmax', 'output']
 

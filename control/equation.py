@@ -1,5 +1,6 @@
 from PySide import QtGui
 
+import colors
 from base import TextLabelControl
 
 import re
@@ -13,7 +14,7 @@ class EquationViewerControl(TextLabelControl):
 
     def __init__(self, canvas, target):
         super(EquationViewerControl, self).__init__(
-                canvas, target, "None")
+                canvas, target, "None", colors.blue)
         self.editor_datums = ['input','output']
 
     @staticmethod
