@@ -1,7 +1,6 @@
 import ctypes
 
 import numpy as np
-import scipy.ndimage.interpolation
 
 class Image(object):
     """ Wraps a 16-bit 1-channel numpy array.
