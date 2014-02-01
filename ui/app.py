@@ -33,6 +33,8 @@ class Window(QtGui.QMainWindow):
 
          fileMenu.addAction(app.about_action)
 
+################################################################################
+
 class Container(QtGui.QWidget):
     """ Contains a single full-window widget;
         Used to stack buttons on top of a full-window canvas.
@@ -83,9 +85,21 @@ class App(QtGui.QApplication):
 
         self.window = Window(self, container)
 
-
         self.window.activateWindow()
         self.window.raise_()
+
+
+    def update_title(self):
+        """ Updates the window title based on save/unsaved status.
+        """
+        if self.window is None:
+            return
+        elif self.filename is None:
+            self.window.setWindowTitle("Antimony")
+        elif self.unsaved():
+            self.window.setWindowTitle("Antimony    [%s*]" % self.filename)
+        else:
+            self.window.setWindowTitle("Antimony    [%s]" % self.filename)
 
 
     def add_object(self, button):
@@ -102,6 +116,7 @@ class App(QtGui.QApplication):
         if self.del_button.selected:
             self.del_button.selected = False
             self.del_button.update()
+
 
     def set_mode(self, hit, mode):
         """ Sets self.mode to the given value
@@ -170,6 +185,7 @@ class App(QtGui.QApplication):
         for c in self.canvas.findChildren(ui.editor.Editor):
             c.deleteLater()
 
+
     def get_state(self):
         """ Return a serialized version of the scene
             (used in undo/redo and for saving/loading).
@@ -177,8 +193,10 @@ class App(QtGui.QApplication):
         return (node.base.serialize_nodes(),
                 node.connection.serialize_connections(node.base.nodes))
 
+
     def unsaved(self):
         return self.saved_state != self.get_state()
+
 
     def on_new(self):
         """ Creates a new file by clearing the old file.
@@ -186,6 +204,7 @@ class App(QtGui.QApplication):
         self.clear()
         self.filename = None
         self.window.setWindowTitle("Antimony")
+
 
     def on_open(self):
         """ Opens a file, unpacking into a set of nodes and connections.
@@ -215,7 +234,9 @@ class App(QtGui.QApplication):
         control.connection.make_connection_widgets(node.base.nodes, self.canvas)
 
         self.filename = filename
-        self.window.setWindowTitle("Antimony [%s]" % self.filename)
+        self.saved_state = self.get_state()
+        self.update_title()
+
 
     def on_save(self):
         """ Saves a pickled representation of our current state.
@@ -227,8 +248,8 @@ class App(QtGui.QApplication):
         with open(self.filename, 'wb') as f:
             pickle.dump(state, f)
 
-        self.window.setWindowTitle("Antimony [%s]" % self.filename)
         self.saved_state = state
+        self.update_title()
 
 
     def on_saveas(self):

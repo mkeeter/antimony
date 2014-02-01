@@ -287,6 +287,7 @@ class Canvas(QtGui.QWidget):
         # (not strictly part of the paint process, but I'm putting it here
         #  so that it gets called whenever anything changes)
         self.render_expressions()
+        QtGui.QApplication.instance().update_title()
 
         painter = QtGui.QPainter(self)
         painter.setBackground(QtGui.QColor(0, 0, 0))
