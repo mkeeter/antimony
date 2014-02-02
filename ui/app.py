@@ -22,17 +22,18 @@ class Window(QtGui.QMainWindow):
         self.show()
 
     def make_menus(self, app):
-         fileMenu = self.menuBar().addMenu("File");
-         fileMenu.addAction(app.new_action)
-         fileMenu.addAction(app.open_action)
-         fileMenu.addAction(app.save_action)
-         fileMenu.addAction(app.saveas_action)
-         fileMenu.addAction(app.quit_action)
+        fileMenu = self.menuBar().addMenu("File")
+        fileMenu.addAction(app.new_action)
+        fileMenu.addAction(app.open_action)
+        fileMenu.addAction(app.save_action)
+        fileMenu.addAction(app.saveas_action)
+        fileMenu.addAction(app.quit_action)
 
-         exportMenu = self.menuBar().addMenu("Export");
-         exportMenu.addAction(app.export_stl_action)
+        exportMenu = self.menuBar().addMenu("Export")
+        exportMenu.addAction(app.export_stl_action)
 
-         fileMenu.addAction(app.about_action)
+        helpMenu = self.menuBar().addMenu("Help")
+        helpMenu.addAction(app.about_action)
 
 ################################################################################
 
