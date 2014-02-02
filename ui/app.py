@@ -123,7 +123,7 @@ class App(QtGui.QApplication):
             and selects / deselects all buttons.
         """
         self.mode = mode
-        for b in self.canvas.findChildren(button.Button):
+        for b in self.window.findChildren(button.Button):
             if b.selected != (b == hit):
                 b.selected = (b == hit)
                 b.update()
