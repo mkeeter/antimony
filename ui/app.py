@@ -27,6 +27,7 @@ class Window(QtGui.QMainWindow):
          fileMenu.addAction(app.open_action)
          fileMenu.addAction(app.save_action)
          fileMenu.addAction(app.saveas_action)
+         fileMenu.addAction(app.quit_action)
 
          exportMenu = self.menuBar().addMenu("Export");
          exportMenu.addAction(app.export_stl_action)
@@ -153,6 +154,10 @@ class App(QtGui.QApplication):
 
         self.export_stl_action = QtGui.QAction("Mesh (.stl)", self)
         self.export_stl_action.triggered.connect(self.on_export_stl)
+
+        self.quit_action = QtGui.QAction("Quit", self)
+        self.quit_action.setShortcuts(QtGui.QKeySequence.Quit)
+        self.quit_action.triggered.connect(self.quit)
 
 
     def on_about(self):
