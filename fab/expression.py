@@ -65,8 +65,8 @@ class Expression(object):
         elif other.color is None:
             return self.color
         else:
-            return tuple((c1 + c2) / 2 for c1, c2
-                         in zip(self.color, other.color))
+            return [(c1 + c2) / 2 for c1, c2
+                    in zip(self.color, other.color)]
 
     # Numerical addition
     @wrapped
