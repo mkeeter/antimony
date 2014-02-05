@@ -18,7 +18,7 @@ class Expression(object):
         May also keep track of expression bounds (if known).
     """
 
-    def __init__(self, math=None):
+    def __init__(self, math=None, color=None):
         if math is None:
             self.math = 'f1.0'
         elif type(math) in [int, float]:
@@ -35,6 +35,8 @@ class Expression(object):
         else:
             self.xmin = self.ymin = self.zmin = float('-infinity')
             self.xmax = self.ymax = self.zmax = float('+infinity')
+
+        self.color = color
 
     def __eq__(self, other):
         return all(getattr(self, a) == getattr(other, a) for a in
@@ -53,48 +55,61 @@ class Expression(object):
     def to_tree(self):
         return tree.MathTree.from_expression(self)
 
+    def blend_color(self, other):
+        """ Blends this expression's color with the other's.
+        """
+        if self.color is None and other.color is None:
+            return None
+        elif self.color is None:
+            return other.color
+        elif other.color is None:
+            return self.color
+        else:
+            return tuple((c1 + c2) / 2 for c1, c2
+                         in zip(self.color, other.color))
+
     # Numerical addition
     @wrapped
     def __add__(self, rhs):
-        return Expression('+' + self.math + rhs.math)
+        return Expression('+' + self.math + rhs.math, self.blend_color(rhs))
     @wrapped
     def __radd__(self, lhs):
-        return Expression('+' + lhs.math + self.math)
+        return Expression('+' + lhs.math + self.math, self.blend_color(lhs))
 
     # Numerical subtraction
     @wrapped
     def __sub__(self, rhs):
-        return Expression('-' + self.math + rhs.math)
+        return Expression('-' + self.math + rhs.math, self.blend_color(rhs))
     @wrapped
     def __rsub__(self, lhs):
-        return Expression('-' + lhs.math + self.math)
+        return Expression('-' + lhs.math + self.math, self.blend_color(lhs))
 
     # Multiplication
     @wrapped
     def __mul__(self, rhs):
-        return Expression('*' + self.math + rhs.math)
+        return Expression('*' + self.math + rhs.math, self.blend_color(rhs))
     @wrapped
     def __rmul__(self, lhs):
-        return Expression('*' + lhs.math + self.math)
+        return Expression('*' + lhs.math + self.math, self.blend_color(lhs))
 
     # Division
     @wrapped
     def __div__(self, rhs):
-        return Expression('/' + self.math + rhs.math)
+        return Expression('/' + self.math + rhs.math, self.blend_color(rhs))
     @wrapped
     def __rdiv__(self, lhs):
-        return Expression('/' + lhs.math + self.math)
+        return Expression('/' + lhs.math + self.math, self.blend_color(lhs))
 
     # Negation
     def __neg__(self):
-        return Expression('n' + self.math)
+        return Expression('n' + self.math, self.color)
     def __invert__(self):
-        return Expression('n' + self.math)
+        return Expression('n' + self.math, self.color)
 
     # Logical intersection
     @wrapped
     def __and__(self, rhs):
-        e = Expression('a' + self.math + rhs.math)
+        e = Expression('a' + self.math + rhs.math, self.blend_color(rhs))
         e.xmin = max(self.xmin, rhs.xmin)
         e.xmax = min(self.xmax, rhs.xmax)
         e.ymin = max(self.ymin, rhs.ymin)
@@ -104,7 +119,7 @@ class Expression(object):
         return e
     @wrapped
     def __rand__(self, lhs):
-        e = Expression('a' + lhs.math + self.math)
+        e = Expression('a' + lhs.math + self.math, self.blend_color(lhs))
         e.xmin = max(lhs.xmin, self.xmin)
         e.xmax = min(lhs.xmax, self.xmax)
         e.ymin = max(lhs.ymin, self.ymin)
@@ -116,7 +131,7 @@ class Expression(object):
     # Logical union
     @wrapped
     def __or__(self, rhs):
-        e = Expression('i' + self.math + rhs.math)
+        e = Expression('i' + self.math + rhs.math, self.blend_color(rhs))
         e.xmin = min(self.xmin, rhs.xmin)
         e.xmax = max(self.xmax, rhs.xmax)
         e.ymin = min(self.ymin, rhs.ymin)
@@ -126,7 +141,7 @@ class Expression(object):
         return e
     @wrapped
     def __ror__(self, lhs):
-        e = Expression('i' + lhs.math + self.math)
+        e = Expression('i' + lhs.math + self.math, self.blend_color(lhs))
         e.xmin = min(lhs.xmin, self.xmin)
         e.xmax = max(lhs.xmax, self.xmax)
         e.ymin = min(lhs.ymin, self.ymin)
@@ -145,7 +160,7 @@ class Expression(object):
                 (X.math if X else ' ')+
                 (Y.math if Y else ' ')+
                 (Z.math if Z else ' ')+
-                self.math)
+                self.math, self.color)
 
     def transform(self, M, M_i):
         """ Applies a matrix transformation to our coordinates.
