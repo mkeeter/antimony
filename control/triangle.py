@@ -59,7 +59,7 @@ class TriangleControl(base.NodeControl):
 
     def reposition(self):
         # Get bounding box from painter path
-        self.setGeometry(self.get_rect(self.triangle_path))
+        self.setGeometry(self.get_rect(self.triangle_path, offset=12))
         self.make_mask()
         self.update()
 
