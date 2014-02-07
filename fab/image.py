@@ -57,7 +57,6 @@ class Image(object):
                 scaled, scaled, scaled,
                 np.ones(scaled.shape, dtype=np.uint8)*255])
         else:
-            print self.color
             rgb = np.dstack([
                 (scaled*self.color[2]).astype(np.uint8),
                 (scaled*self.color[1]).astype(np.uint8),
