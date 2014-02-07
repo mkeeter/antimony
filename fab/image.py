@@ -59,9 +59,9 @@ class Image(object):
         else:
             print self.color
             rgb = np.dstack([
-                (scaled*self.color[0]).astype(np.uint8),
-                (scaled*self.color[1]).astype(np.uint8),
                 (scaled*self.color[2]).astype(np.uint8),
+                (scaled*self.color[1]).astype(np.uint8),
+                (scaled*self.color[0]).astype(np.uint8),
                 np.ones(scaled.shape, dtype=np.uint8)*255])
 
         # Finally, convert into a QImage
