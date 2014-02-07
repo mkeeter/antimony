@@ -40,7 +40,7 @@ class Expression(object):
 
     def __eq__(self, other):
         return all(getattr(self, a) == getattr(other, a) for a in
-                ['math','xmin','ymin','zmin','xmax','ymax','zmax'])
+                ['math','xmin','ymin','zmin','xmax','ymax','zmax', 'color'])
 
     def __repr__(self):
         return self.math
