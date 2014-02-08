@@ -49,9 +49,14 @@ class Container(QtGui.QWidget):
             QtGui.QSizePolicy.Expanding,
             QtGui.QSizePolicy.Expanding))
 
+        self.vfill = []
+
     def resizeEvent(self, event):
         self.widget.move(QtCore.QPoint())
         self.widget.resize(self.size())
+
+        for v in self.vfill:
+            v.resize(v.width(), self.height())
 
 ################################################################################
 
@@ -64,8 +69,8 @@ class App(QtGui.QApplication):
             border: 0px;
         }
 
-        QTextEdit {
-            background-color: #002b36;
+        QPlainTextEdit {
+            background-color: rgba(0, 43, 54, 150);
             color: #839496;
         }
         """)
@@ -91,23 +96,14 @@ class App(QtGui.QApplication):
         for b in self.findChildren(button.Button) + [view_tool]:
             b.raise_()
 
-
-        top = QtGui.QWidget()
-
-        script = ui.script.ScriptEditor(top)
-        container.setParent(top)
-
-        layout = QtGui.QHBoxLayout()
-        layout.addWidget(script)
-        print script.sizePolicy().expandingDirections()
-        layout.addWidget(container)
-        print script.sizePolicy().expandingDirections()
-        top.setLayout(layout)
+        script = ui.script.ScriptEditor(container)
+        container.vfill.append(script)
+        script.raise_()
 
         self.mode = 'move'
         self.move_button.selected = True
 
-        self.window = Window(self, top)
+        self.window = Window(self, container)
 
         self.window.activateWindow()
         self.window.raise_()

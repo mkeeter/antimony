@@ -23,13 +23,16 @@ class _Highlighter(QtGui.QSyntaxHighlighter):
                 index = r[0].indexIn(text, index + length)
 
 
-class ScriptEditor(QtGui.QTextEdit):
+class ScriptEditor(QtGui.QPlainTextEdit):
     def __init__(self, parent):
         super(ScriptEditor, self).__init__(parent)
 
         font = QtGui.QFont()
         font.setFamily("Courier")
         self.setFont(font)
+
+        fm = QtGui.QFontMetrics(font)
+        self.setMinimumSize(fm.width(' ')*60, 100)
 
         _Highlighter(self.document())
 
