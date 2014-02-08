@@ -19,15 +19,19 @@ class ColorNodeControl(point.Point3DControl):
         return [self._cache[c]*255 for c in 'RGB']
 
     def paint(self, painter, mask=False):
+        path = QtGui.QPainterPath()
         width, height = self.width(), self.height()
 
+        if mask:                        d = 22.
+        elif self.drag_control.active:  d = 20.
+        else:                           d = 18.
+
+        path.moveTo(width/2, 0)
+        path.arcTo(width/2 - d/2, height - d - 2, d, d, 0., -180.)
+        path.closeSubpath()
+
         self.set_brush(painter, mask, self.color)
-
-        if mask:                        d = 22
-        elif self.drag_control.active:  d = 20
-        else:                           d = 14
-
-        painter.drawEllipse((width - d) / 2, (height - d) / 2, d, d)
+        painter.drawPath(path)
 
     def reposition(self):
         """ Overload reposition so that it also re-renders this widget
