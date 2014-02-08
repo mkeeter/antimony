@@ -62,7 +62,13 @@ class App(QtGui.QApplication):
         QGroupBox {
             background-color: #eee;
             border: 0px;
-        }""")
+        }
+
+        QTextEdit {
+            background-color: #002b36;
+            color: #839496;
+        }
+        """)
 
         self.saved_state = None
         self.filename = None
