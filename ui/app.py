@@ -45,6 +45,9 @@ class Container(QtGui.QWidget):
         super(Container, self).__init__()
         self.widget = widget
         self.widget.setParent(self)
+        self.setSizePolicy(QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Expanding,
+            QtGui.QSizePolicy.Expanding))
 
     def resizeEvent(self, event):
         self.widget.move(QtCore.QPoint())
@@ -82,10 +85,23 @@ class App(QtGui.QApplication):
         for b in self.findChildren(button.Button) + [view_tool]:
             b.raise_()
 
+
+        top = QtGui.QWidget()
+
+        script = ui.script.ScriptEditor(top)
+        container.setParent(top)
+
+        layout = QtGui.QHBoxLayout()
+        layout.addWidget(script)
+        print script.sizePolicy().expandingDirections()
+        layout.addWidget(container)
+        print script.sizePolicy().expandingDirections()
+        top.setLayout(layout)
+
         self.mode = 'move'
         self.move_button.selected = True
 
-        self.window = Window(self, container)
+        self.window = Window(self, top)
 
         self.window.activateWindow()
         self.window.raise_()
@@ -369,3 +385,4 @@ import control.base, control.connection
 import ui.editor
 import node.base, node.connection
 import ui.views
+import ui.script
