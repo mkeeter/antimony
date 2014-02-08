@@ -16,6 +16,8 @@ class Image(object):
         self.xmin = self.ymin = self.zmin = None
         self.xmax = self.ymax = self.zmax = None
 
+        self.color = None
+
 
     @classmethod
     def from_region(cls, region, mm_per_unit=1):
@@ -50,9 +52,16 @@ class Image(object):
         scaled[self.array == 0] = 0
 
         # Then make into an RGB image
-        rgb = np.dstack([
-            scaled, scaled, scaled,
-            np.ones(scaled.shape, dtype=np.uint8)*255])
+        if self.color is None:
+            rgb = np.dstack([
+                scaled, scaled, scaled,
+                np.ones(scaled.shape, dtype=np.uint8)*255])
+        else:
+            rgb = np.dstack([
+                (scaled*self.color[2]).astype(np.uint8),
+                (scaled*self.color[1]).astype(np.uint8),
+                (scaled*self.color[0]).astype(np.uint8),
+                np.ones(scaled.shape, dtype=np.uint8)*255])
 
         # Finally, convert into a QImage
         pixels = rgb.flatten()

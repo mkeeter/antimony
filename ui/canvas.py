@@ -131,6 +131,7 @@ class Canvas(QtGui.QWidget):
                 ),
 
                 ('Advanced',
+                    ("Apply color", ColorNodeControl),
                     ("Show equation", EquationViewerControl),
                     ("Get bounds", GetBoundsControl),
                     ("Set bounds", SetBoundsControl),
@@ -564,6 +565,7 @@ from fab.expression import Expression
 from node.datum import ExpressionFunctionDatum
 
 from control.point import PointControl, Point3DControl
+from control.color import ColorNodeControl
 from control.cube import CubeControl
 from control.cylinder import CylinderControl
 from control.distort import AttractControl, RepelControl

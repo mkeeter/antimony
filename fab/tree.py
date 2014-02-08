@@ -74,6 +74,7 @@ class MathTree(object):
                 raise Exception('Unknown render region!')
 
         image = Image.from_region(region)
+        image.color = self.expr.color
         halt = ctypes.c_int(0)
 
         regions = region.split_xy(8)
