@@ -40,5 +40,11 @@ class ColorNodeControl(point.Point3DControl):
         super(ColorNodeControl, self).reposition()
         self.update()
 
+    def get_input_pos(self):
+        return self.pos() + QtCore.QPoint(2, self.height() - 10)
+
+    def get_output_pos(self):
+        return self.pos() + QtCore.QPoint(self.width() - 2, self.height() - 10)
+
 from node.base import get_name
 from node.color import ColorNode
