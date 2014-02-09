@@ -12,7 +12,7 @@ class _Highlighter(QtGui.QSyntaxHighlighter):
         keyword_format = QtGui.QTextCharFormat()
         keyword_format.setForeground(QtGui.QColor(*colors.green))
 
-        for k in keyword.kwlist:
+        for k in keyword.kwlist + ['input', 'output']:
             self.rules.append(
                     (QtCore.QRegExp(r'\b' + k + r'\b'), keyword_format))
 
