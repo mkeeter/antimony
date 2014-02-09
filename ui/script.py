@@ -39,6 +39,7 @@ class ScriptEditor(QtGui.QPlainTextEdit):
 
         self.horizontalScrollBar().setStyleSheet("QScrollBar {height:0px;}")
         self.verticalScrollBar().setStyleSheet("QScrollBar {width:0px;}")
+        self.setMouseTracking(True)
 
         self.resizing = False
 
@@ -61,5 +62,17 @@ class ScriptEditor(QtGui.QPlainTextEdit):
                         self.height())
             self.mouse_x = event.x()
         else:
-            super(ScriptEditor, self).mouseMoveEvent(event)
+            if event.x() >= self.width() - 20:
+                QtGui.QApplication.instance().setOverrideCursor(
+                        QtCore.Qt.SizeHorCursor)
+            else:
+                QtGui.QApplication.instance().setOverrideCursor(
+                        QtCore.Qt.IBeamCursor)
+                super(ScriptEditor, self).mouseMoveEvent(event)
+
+    def leaveEvent(self, event):
+        QtGui.QApplication.instance().setOverrideCursor(
+                QtCore.Qt.ArrowCursor)
+        super(ScriptEditor, self).leaveEvent(event)
+
 
