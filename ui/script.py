@@ -35,19 +35,31 @@ class ScriptEditor(QtGui.QPlainTextEdit):
         self.resize(fm.width(' ')*60, 100)
 
         _Highlighter(self.document())
+        self.setLineWrapMode(self.NoWrap)
+
+        self.horizontalScrollBar().setStyleSheet("QScrollBar {height:0px;}")
+        self.verticalScrollBar().setStyleSheet("QScrollBar {width:0px;}")
 
         self.resizing = False
 
     def mousePressEvent(self, event):
         if event.x() < self.width() - 20:
-            return event.ignore()
+            super(ScriptEditor, self).mousePressEvent(event)
         else:
             self.resizing = True
             self.mouse_x = event.x()
+
+    def mouseReleaseEvent(self, event):
+        if self.resizing:
+            self.resizing = False
+        else:
+            super(ScriptEditor, self).mouseReleaseEvent(event)
 
     def mouseMoveEvent(self, event):
         if self.resizing:
             self.resize(max(40, self.width() + event.x() - self.mouse_x),
                         self.height())
             self.mouse_x = event.x()
+        else:
+            super(ScriptEditor, self).mouseMoveEvent(event)
 
