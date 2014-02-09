@@ -350,5 +350,40 @@ class ExpressionFunctionDatum(FunctionDatum):
         super(ExpressionFunctionDatum, self).__init__(
                 node, function, Expression)
 
+################################################################################
 
+class ScriptDatum(Datum):
+    """ Represents a Python script.
+    """
+
+    def __init__(self, node, script):
+        self._script = _script
+        self._inputs = []
+        self._outputs = []
+
+        super(ScriptDatum, self).__init__(
+                node, dict, inputType=NoInput)
+
+    def set_expr(self, s):
+        if s == self._script:   return
+
+        self._script = s
+        self.sync()
+
+    def input(self, name, t, d):
+        self._inputs.append([name, t])
+        d[name] = getattr(self.node, name)
+
+    def value(self):
+        self.push_stack()
+
+        d = {}
+        d['input'] = lambda name, t: self.input(name, t, d)
+
+        try:
+            exec(self._script, d)
+        except:     raise
+        finally:    self.pop_stack()
+
+        return d
 

@@ -37,6 +37,8 @@ class _Highlighter(QtGui.QSyntaxHighlighter):
                 index = r[0].indexIn(text, index + length)
 
 
+################################################################################
+
 class ScriptEditor(QtGui.QPlainTextEdit):
     def __init__(self, parent):
         super(ScriptEditor, self).__init__(parent)
