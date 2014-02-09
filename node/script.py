@@ -8,7 +8,7 @@ from fab.shapes import *
 from fab.expression import Expression
 
 c = circle(0, 0, 1)
-output(c)
+output('c', c)
 """
 
     def __init__(self, name, x, y, z):
