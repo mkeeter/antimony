@@ -92,12 +92,14 @@ class ScriptEditor(QtGui.QPlainTextEdit):
 
         # Set up resize button to resize the window with mouse events
         def mousePress(event):
+            QtGui.QPushButton.mousePressEvent(resize_button, event)
             self.resizing = True
             self.mouse_x = event.x()
         def mouseMove(event):
             if not self.resizing:   return
             self.set_width(max(40, self.width() + event.x() - self.mouse_x))
         def mouseRelease(event):
+            QtGui.QPushButton.mouseReleaseEvent(resize_button, event)
             self.resizing = False
         resize_button.mousePressEvent = mousePress
         resize_button.mouseMoveEvent = mouseMove
