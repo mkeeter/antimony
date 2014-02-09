@@ -8,12 +8,25 @@ class _Highlighter(QtGui.QSyntaxHighlighter):
         self.rules = []
 
         keyword_format = QtGui.QTextCharFormat()
-        keyword_format.setForeground(QtGui.QColor(*colors.blue))
+        keyword_format.setForeground(QtGui.QColor(*colors.green))
 
         for k in keyword.kwlist:
             self.rules.append(
                     (QtCore.QRegExp(r'\b' + k + r'\b'), keyword_format))
 
+        quote_format = QtGui.QTextCharFormat()
+        quote_format.setForeground(QtGui.QColor(*colors.cyan))
+        self.rules.append((QtCore.QRegExp(r'\".*\"'), quote_format))
+        self.rules.append((QtCore.QRegExp(r"\'.*\'"), quote_format))
+
+        num_format = QtGui.QTextCharFormat()
+        num_format.setForeground(QtGui.QColor(*colors.blue))
+        self.rules.append((QtCore.QRegExp(r'\d+'), num_format))
+        self.rules.append((QtCore.QRegExp(r'\d+\.\d*'), num_format))
+
+        comment_format = QtGui.QTextCharFormat()
+        comment_format.setForeground(QtGui.QColor(*colors.base01))
+        self.rules.append((QtCore.QRegExp('#.*'), comment_format))
 
     def highlightBlock(self, text):
         for r in self.rules:
