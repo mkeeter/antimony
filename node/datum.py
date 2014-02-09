@@ -370,6 +370,9 @@ class ScriptDatum(Datum):
         self._script = s
         self.sync()
 
+    def get_expr(self):
+        return self._script
+
     def input(self, name, t, d):
         self._inputs.append([name, t])
         d[name] = getattr(self.node, name)

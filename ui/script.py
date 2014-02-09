@@ -48,7 +48,9 @@ class ScriptEditor(QtGui.QPlainTextEdit):
         self.setFont(font)
 
         fm = QtGui.QFontMetrics(font)
-        self.resize(fm.width(' ')*60, 100)
+        self.base_width = fm.width(' ')*60
+        self.resize(0, 100)
+        self.hide()
 
         self.setTabStopWidth(fm.width('    '))
 
@@ -60,6 +62,52 @@ class ScriptEditor(QtGui.QPlainTextEdit):
         self.setMouseTracking(True)
 
         self.resizing = False
+        self.target = None
+        self.textChanged.connect(self.update_target)
+
+    def update_target(self):
+        """ Calls set_expr on the target datum.
+        """
+        if self.target is None:     return
+        self.target.set_expr(self.toPlainText())
+
+    # Create a width_ property to animate opening and closing.
+    def get_width(self):
+        return self.width()
+    def set_width(self, w):
+        self.resize(w, self.height())
+    width_ = QtCore.Property(float, get_width, set_width)
+
+    def open(self, datum):
+        self.target = datum
+        self.setPlainText(self.target.get_expr())
+        if not self.isVisible():
+            self._animate_open()
+
+    def close(self):
+        self.target = None
+        self._animate_close()
+
+    def _animate_open(self):
+        """ Animates the script editor sliding open.
+        """
+        a = QtCore.QPropertyAnimation(self, "width_", self)
+        a.setDuration(100)
+        a.setStartValue(0)
+        a.setEndValue(self.base_width)
+        self.show()
+        a.start(QtCore.QPropertyAnimation.DeleteWhenStopped)
+
+    def _animate_close(self):
+        """ Animates the panel slicing closed.
+            Calls self.hide when the panel is completely closed.
+        """
+        a = QtCore.QPropertyAnimation(self, "width_", self)
+        a.setDuration(100)
+        a.setStartValue(self.width())
+        a.setEndValue(0)
+        a.finished.connect(self.hide)
+        a.start(QtCore.QPropertyAnimation.DeleteWhenStopped)
 
     def mousePressEvent(self, event):
         if event.x() < self.width() - 20:

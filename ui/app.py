@@ -96,9 +96,9 @@ class App(QtGui.QApplication):
         for b in self.findChildren(button.Button) + [view_tool]:
             b.raise_()
 
-        script = ui.script.ScriptEditor(container)
-        container.vfill.append(script)
-        script.raise_()
+        self.script = ui.script.ScriptEditor(container)
+        container.vfill.append(self.script)
+        self.script.raise_()
 
         self.mode = 'move'
         self.move_button.selected = True

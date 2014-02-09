@@ -16,6 +16,14 @@ class Editor(QtGui.QGroupBox):
         for name in self.control.editor_datums:
             self.add_row(grid, name, getattr(self.node, '_'+name))
 
+        if isinstance(control.node, ScriptNode):
+            button = QtGui.QPushButton('Open script', self)
+            button.setFlat(True)
+            button.clicked.connect(lambda:
+                    QtGui.QApplication.instance().script.open(
+                        control.node._script))
+            grid.addWidget(button, grid.rowCount(), 2)
+
         self.setLayout(grid)
         self.sync()
 
@@ -195,3 +203,4 @@ def MakeEditor(control):
 
 from control.connection import Input, Output
 from node.datum import NameDatum, FunctionDatum
+from node.script import ScriptNode
