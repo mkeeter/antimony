@@ -373,7 +373,7 @@ class ScriptDatum(Datum):
     def get_expr(self):
         return self._script
 
-    def input(self, name, t, d):
+    def make_input(self, name, t, d):
         self._inputs.append([name, t])
         d[name] = getattr(self.node, name)
 
@@ -381,11 +381,13 @@ class ScriptDatum(Datum):
         self.push_stack()
 
         d = {}
-        d['input'] = lambda name, t: self.input(name, t, d)
+        d['input'] = lambda name, t: self.make_input(name, t, d)
 
         try:
             exec self._script in d
-        except:     raise
+        except Exception as e:
+            print e
+            raise
         finally:    self.pop_stack()
 
         return d
