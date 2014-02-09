@@ -397,8 +397,8 @@ class ScriptDatum(Datum):
         self.push_stack()
 
         d = {}
-        d['input'] = lambda name, t: self.make_input(name, t, d)
-        d['output'] = lambda name, var: self.make_output(name, var)
+        d['input']  = lambda name, t: self.make_input(name, t, d)
+        d['output'] = self.make_output
         try:
             exec self._script in d
         except Exception as e:
