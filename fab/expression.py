@@ -39,6 +39,7 @@ class Expression(object):
         self.color = color
 
     def __eq__(self, other):
+        if not isinstance(other, Expression):   return False
         return all(getattr(self, a) == getattr(other, a) for a in
                 ['math','xmin','ymin','zmin','xmax','ymax','zmax', 'color'])
 
