@@ -67,21 +67,53 @@ class ScriptEditor(QtGui.QPlainTextEdit):
         self.target = None
         self.textChanged.connect(self.update_target)
 
-        self.close_button = QtGui.QPushButton(u'✖', self)
-        self.close_button.clicked.connect(self.close)
-        self.close_button.setStyleSheet("""
+        self.make_buttons()
+
+
+    def make_buttons(self):
+        """ Creates buttons to resize and close the editor window.
+        """
+        ss = """
             QPushButton {
                 background-color: "%s";
                 border-width: 4px;
                 margin: 0px;
                 color: "%s";
             }
-        """ % (colors.base02h, colors.base1h))
+        """ % (colors.base02h, colors.base1h)
+        close_button = QtGui.QPushButton(u'✖', self)
+        close_button.clicked.connect(self.close)
+        close_button.setStyleSheet(ss)
+        close_button.setCursor(QtCore.Qt.ArrowCursor)
 
-    def resizeEvent(self, event):
-        """ Keep the close button to the far right of the window.
-        """
-        self.close_button.move(self.width() - self.close_button.width(), 0)
+        resize_button = QtGui.QPushButton(u'⇔', self)
+        resize_button.setStyleSheet(ss)
+        resize_button.setCursor(QtCore.Qt.SizeHorCursor)
+
+        # Set up resize button to resize the window with mouse events
+        def mousePress(event):
+            self.resizing = True
+            self.mouse_x = event.x()
+        def mouseMove(event):
+            if not self.resizing:   return
+            self.set_width(max(40, self.width() + event.x() - self.mouse_x))
+        def mouseRelease(event):
+            self.resizing = False
+        resize_button.mousePressEvent = mousePress
+        resize_button.mouseMoveEvent = mouseMove
+        resize_button.mouseReleaseEvent = mouseRelease
+
+        grid = QtGui.QGridLayout(self)
+        grid.setColumnStretch(0, 1)
+        grid.setColumnStretch(1, 0)
+        grid.setRowStretch(0, 0)
+        grid.setRowStretch(1, 0)
+        grid.setRowStretch(2, 1)
+        grid.addWidget(close_button, 0, 1)
+        grid.addWidget(resize_button, 1, 1)
+
+        grid.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(grid)
 
     def update_target(self):
         """ Calls set_expr on the target datum.
@@ -126,40 +158,4 @@ class ScriptEditor(QtGui.QPlainTextEdit):
         a.setEndValue(0)
         a.finished.connect(self.hide)
         a.start(QtCore.QPropertyAnimation.DeleteWhenStopped)
-
-    def mousePressEvent(self, event):
-        if event.x() < self.width() - 20:
-            super(ScriptEditor, self).mousePressEvent(event)
-        else:
-            self.resizing = True
-            self.mouse_x = event.x()
-
-    def mouseReleaseEvent(self, event):
-        if self.resizing:
-            self.resizing = False
-        else:
-            super(ScriptEditor, self).mouseReleaseEvent(event)
-
-    def mouseMoveEvent(self, event):
-        if self.resizing:
-            self.resize(max(40, self.width() + event.x() - self.mouse_x),
-                        self.height())
-            self.mouse_x = event.x()
-        else:
-            if self.close_button.geometry().contains(event.pos()):
-                QtGui.QApplication.instance().setOverrideCursor(
-                        QtCore.Qt.ArrowCursor)
-            elif event.x() >= self.width() - 20:
-                QtGui.QApplication.instance().setOverrideCursor(
-                        QtCore.Qt.SizeHorCursor)
-            else:
-                QtGui.QApplication.instance().setOverrideCursor(
-                        QtCore.Qt.IBeamCursor)
-                super(ScriptEditor, self).mouseMoveEvent(event)
-
-    def leaveEvent(self, event):
-        QtGui.QApplication.instance().setOverrideCursor(
-                QtCore.Qt.ArrowCursor)
-        super(ScriptEditor, self).leaveEvent(event)
-
 
