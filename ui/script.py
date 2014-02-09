@@ -1,3 +1,5 @@
+# coding=utf-8
+
 from PySide import QtCore, QtGui
 import keyword
 from control import colors
@@ -65,6 +67,22 @@ class ScriptEditor(QtGui.QPlainTextEdit):
         self.target = None
         self.textChanged.connect(self.update_target)
 
+        self.close_button = QtGui.QPushButton(u'✖', self)
+        self.close_button.clicked.connect(self.close)
+        self.close_button.setStyleSheet("""
+            QPushButton {
+                background-color: "%s";
+                border-width: 4px;
+                margin: 0px;
+                color: "%s";
+            }
+        """ % (colors.base02h, colors.base1h))
+
+    def resizeEvent(self, event):
+        """ Keep the close button to the far right of the window.
+        """
+        self.close_button.move(self.width() - self.close_button.width(), 0)
+
     def update_target(self):
         """ Calls set_expr on the target datum.
         """
@@ -128,7 +146,10 @@ class ScriptEditor(QtGui.QPlainTextEdit):
                         self.height())
             self.mouse_x = event.x()
         else:
-            if event.x() >= self.width() - 20:
+            if self.close_button.geometry().contains(event.pos()):
+                QtGui.QApplication.instance().setOverrideCursor(
+                        QtCore.Qt.ArrowCursor)
+            elif event.x() >= self.width() - 20:
                 QtGui.QApplication.instance().setOverrideCursor(
                         QtCore.Qt.SizeHorCursor)
             else:

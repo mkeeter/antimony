@@ -17,7 +17,7 @@ class Editor(QtGui.QGroupBox):
             self.add_row(grid, name, getattr(self.node, '_'+name))
 
         if isinstance(control.node, ScriptNode):
-            button = QtGui.QPushButton('Open script', self)
+            button = QtGui.QPushButton('[ open script ]', self)
             button.setFlat(True)
             button.clicked.connect(lambda:
                     QtGui.QApplication.instance().script.open(
