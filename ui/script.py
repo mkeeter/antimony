@@ -35,6 +35,8 @@ class ScriptEditor(QtGui.QPlainTextEdit):
         fm = QtGui.QFontMetrics(font)
         self.resize(fm.width(' ')*60, 100)
 
+        self.setTabStopWidth(fm.width('    '))
+
         _Highlighter(self.document())
         self.setLineWrapMode(self.NoWrap)
 
