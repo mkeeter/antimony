@@ -377,12 +377,23 @@ class ScriptDatum(Datum):
         self._inputs.append([name, t])
         d[name] = getattr(self.node, name)
 
+    def make_output(self, name, var):
+        self._outputs.append([name, var, type(var)])
+
+    def push_stack(self):
+        """ Push stack for recursive eval and clear inputs and outputs.
+        """
+        super(ScriptDatum, self).push_stack()
+        self._inputs = []
+        self._outputs = []
+
+
     def value(self):
         self.push_stack()
 
         d = {}
         d['input'] = lambda name, t: self.make_input(name, t, d)
-
+        d['output'] = lambda name, var: self.make_output(name, var)
         try:
             exec self._script in d
         except Exception as e:
