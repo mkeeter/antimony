@@ -11,7 +11,8 @@ class _Highlighter(QtGui.QSyntaxHighlighter):
         keyword_format.setForeground(QtGui.QColor(*colors.blue))
 
         for k in keyword.kwlist:
-            self.rules.append((QtCore.QRegExp(k), keyword_format))
+            self.rules.append(
+                    (QtCore.QRegExp(r'\b' + k + r'\b'), keyword_format))
 
 
     def highlightBlock(self, text):
