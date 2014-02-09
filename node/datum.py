@@ -374,10 +374,14 @@ class ScriptDatum(Datum):
         return self._script
 
     def make_input(self, name, t, d):
+        if name in ['name','x','y','z']:
+            raise RuntimeError("Reserved name")
         self._inputs.append([name, t])
         d[name] = getattr(self.node, name)
 
     def make_output(self, name, var):
+        if name in ['name','x','y','z']:
+            raise RuntimeError("Reserved name")
         self._outputs.append([name, var, type(var)])
 
     def push_stack(self):
