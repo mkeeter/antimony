@@ -357,7 +357,7 @@ class ScriptDatum(Datum):
     """
 
     def __init__(self, node, script):
-        self._script = _script
+        self._script = script
         self._inputs = []
         self._outputs = []
 
@@ -381,7 +381,7 @@ class ScriptDatum(Datum):
         d['input'] = lambda name, t: self.input(name, t, d)
 
         try:
-            exec(self._script, d)
+            exec self._script in d
         except:     raise
         finally:    self.pop_stack()
 

@@ -132,6 +132,7 @@ class Canvas(QtGui.QWidget):
 
                 ('Advanced',
                     ("Apply color", ColorNodeControl),
+                    ("Script", ScriptNodeControl),
                     ("Show equation", EquationViewerControl),
                     ("Get bounds", GetBoundsControl),
                     ("Set bounds", SetBoundsControl),
@@ -581,6 +582,7 @@ from control.circle import CircleControl
 from control.triangle import TriangleControl
 from control.csg import UnionControl, IntersectionControl, CutoutControl
 from control.bounds import GetBoundsControl, SetBoundsControl
+from control.script import ScriptNodeControl
 from control.equation import EquationViewerControl
 from control.image import ImageControl, HeightmapControl
 
