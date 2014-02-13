@@ -9,6 +9,8 @@ class NodeControl(QtGui.QWidget):
         super(NodeControl, self).__init__(canvas)
         self.setMouseTracking(True)
 
+        self.editor_datums = []
+
         self.canvas = canvas
 
         self.node = node

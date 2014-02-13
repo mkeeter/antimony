@@ -374,15 +374,19 @@ class ScriptDatum(Datum):
         return self._script
 
     def make_input(self, name, t, d):
-        if name == 'name':
+        if name in ['name', 'x', 'y', 'z']:
             raise RuntimeError("Reserved name")
-        elif name not in ['x','y','z']:
-            self._inputs.append([name, t])
-        d[name] = getattr(self.node, name)
+        if t not in [float, Expression]:
+            raise RuntimeError("Invalid type")
+        self._inputs.append([name, t])
+        try:                    d[name] = getattr(self.node, name)
+        except AttributeError:  d[name] = t()
 
     def make_output(self, name, var):
         if name in ['name','x','y','z']:
             raise RuntimeError("Reserved name")
+        if type(var) not in [float, Expression]:
+            raise RuntimeError("Invalid type")
         self._outputs.append([name, var, type(var)])
 
     def push_stack(self):
@@ -407,4 +411,3 @@ class ScriptDatum(Datum):
         finally:    self.pop_stack()
 
         return d
-

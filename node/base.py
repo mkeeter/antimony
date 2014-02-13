@@ -30,6 +30,17 @@ class Node(object):
         setattr(self, '_'+n, d)
 
 
+    def del_datum(self, name):
+        """ Deletes a datum by name.
+        """
+        index = [d[0] for d in self.datums].index(name)
+        del self.datums[index]
+        delattr(self, '_'+name)
+
+        if self.control and name in self.control.editor_datums:
+            self.control.editor_datums.remove(name)
+
+
     def deflate(self, nodes):
         """ Returns a flattened version of this node suitable for saving.
             The flattened node is a three item list:

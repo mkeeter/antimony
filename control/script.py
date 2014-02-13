@@ -13,5 +13,11 @@ class ScriptNodeControl(base.TextLabelControl):
                 canvas, target, "Script", colors.green, "Courier")
         self.editor_datums = ['name']
 
+    def cache(self):
+        """ Updates datum values then calls the standard cache() function.
+        """
+        self.node.update_datums()
+        return super(ScriptNodeControl, self).cache()
+
 from node.script import ScriptNode
 from node.base import get_name
