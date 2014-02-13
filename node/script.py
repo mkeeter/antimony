@@ -26,7 +26,10 @@ output('c', c)
     def update_datums(self):
         """ Updates datums based on script inputs and outputs.
         """
-        print 'x',
+        # Force a script re-eval (to populate _inputs and _outputs)
+        try:        self.script
+        except:     return
+
         # Make a [name, type] array for dynamic datums
         dynamic = [d[0:2] for d in self._script._inputs +
                                    self._script._outputs]
