@@ -373,21 +373,32 @@ class ScriptDatum(Datum):
     def get_expr(self):
         return self._script
 
+
     def make_input(self, name, t, d):
         if name in ['name', 'x', 'y', 'z']:
             raise RuntimeError("Reserved name")
         if t not in [float, Expression]:
             raise RuntimeError("Invalid type")
+        if name in ([o[0] for o in self._outputs] +
+                    [i[0] for i in self._inputs]):
+            raise RuntimeError("Duplicate input name")
         self._inputs.append([name, t])
+
         try:                    d[name] = getattr(self.node, name)
         except AttributeError:  d[name] = t()
+
 
     def make_output(self, name, var):
         if name in ['name','x','y','z']:
             raise RuntimeError("Reserved name")
         if type(var) not in [float, Expression]:
             raise RuntimeError("Invalid type")
-        self._outputs.append([name, var, type(var)])
+        if name in ([o[0] for o in self._outputs] +
+                    [i[0] for i in self._inputs]):
+            raise RuntimeError("Duplicate output name")
+
+        self._outputs.append([name, type(var), var])
+
 
     def push_stack(self):
         """ Push stack for recursive eval and clear inputs and outputs.
