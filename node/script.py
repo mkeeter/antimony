@@ -38,7 +38,6 @@ output('c', c)
         # defaults or defined by this set of dynamic datums.
         for name, d in self.datums:
             if not (name in self.default_datums or [name, d.type] in dynamic):
-                print "Deleting", name
                 self.del_datum(name)
 
         # Add new input datums as needed.
@@ -47,7 +46,6 @@ output('c', c)
             if [name, t] in existing:
                 continue
             elif t is float:
-                print "Adding new datum", name
                 d = datum.FloatDatum(self, 0)
             elif t is Expression:
                 d = datum.ExpressionDatum(self, "None")

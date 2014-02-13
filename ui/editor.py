@@ -7,29 +7,32 @@ class Editor(QtGui.QGroupBox):
         self.node    = control.node
         self.control = control
 
-        grid = QtGui.QGridLayout(self)
-        grid.setSpacing(5)
-        grid.setContentsMargins(0, 3, 0, 3)
+        self.grid = QtGui.QGridLayout(self)
+        self.grid.setSpacing(5)
+        self.grid.setContentsMargins(0, 3, 0, 3)
 
-        self.add_header(grid)
-        self.lines = []
-        for name in self.control.editor_datums:
-            self.add_row(grid, name, getattr(self.node, '_'+name))
+        self.populate_grid()
 
-        if isinstance(control.node, ScriptNode):
-            button = QtGui.QPushButton('[ open script ]', self)
-            button.setFlat(True)
-            button.clicked.connect(lambda:
-                    QtGui.QApplication.instance().script.open(
-                        control.node._script))
-            grid.addWidget(button, grid.rowCount(), 2)
-
-        self.setLayout(grid)
+        self.setLayout(self.grid)
         self.sync()
 
         self._mask_size = 0
         self.animate_open()
         self.show()
+
+    def populate_grid(self):
+        self.add_header(self.grid)
+        self.lines = []
+        for name in self.control.editor_datums:
+            self.add_row(name, getattr(self.node, '_'+name))
+
+        if isinstance(self.control.node, ScriptNode):
+            button = QtGui.QPushButton('[ open script ]', self)
+            button.setFlat(True)
+            button.clicked.connect(lambda:
+                    QtGui.QApplication.instance().script.open(
+                        self.control.node._script))
+            self.grid.addWidget(button, self.grid.rowCount(), 2)
 
 
     def mousePressEvent(self, event):
@@ -67,23 +70,24 @@ class Editor(QtGui.QGroupBox):
         label = type(self.node).__name__
         grid.addWidget(QtGui.QLabel("<b>%s</b>" % label, self), 0, 2)
 
-    def add_row(self, grid, name, dat):
+    def add_row(self, name, dat):
         """ Adds a datum row to the UI, appending a (text input box, datum)
             tuple to self.lines.
         """
-        row = grid.rowCount()
+        row = self.grid.rowCount()
         if (not isinstance(dat, NameDatum) and
             not isinstance(dat, FunctionDatum)):
-            grid.addWidget(Input(dat, self), row, 0)
+            self.grid.addWidget(Input(dat, self), row, 0)
 
-        grid.addWidget(QtGui.QLabel(name, self), row, 1, QtCore.Qt.AlignRight)
+        self.grid.addWidget(QtGui.QLabel(name, self),
+                            row, 1, QtCore.Qt.AlignRight)
         txt = QtGui.QLineEdit(self)
         txt.textChanged.connect(lambda t: self.on_change(t, dat))
-        grid.addWidget(txt, row, 2)
+        self.grid.addWidget(txt, row, 2)
         self.lines.append((txt, dat))
 
         if not isinstance(dat, NameDatum):
-            grid.addWidget(Output(dat, self), row, 3)
+            self.grid.addWidget(Output(dat, self), row, 3)
 
 
     def sync(self):
