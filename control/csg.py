@@ -1,7 +1,5 @@
 # coding=utf-8
 
-from PySide import QtCore, QtGui
-
 import base
 import colors
 

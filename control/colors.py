@@ -5,6 +5,33 @@ magenta = (211, 54, 130)
 violet = (108, 113, 196)
 blue = (38, 139, 210)
 green = (133, 153, 0)
+cyan = (42, 161, 152)
+
+base03 = (0, 43, 54)
+base02 = (7, 54, 66)
+base01 = (88, 110, 117)
+base00 = (101, 123, 131)
+base0 = (131, 148, 150)
+base1 = (147, 161, 161)
+base2 = (238, 232, 213)
+base3 = (253, 246, 227)
+
+base03h = "#002b36"
+base02h = "#073642"
+base01h = "#586e75"
+base00h = "#657b83"
+base0h = "#839496"
+base1h = "#93a1a1"
+base2h = "#eee8d5"
+base3h = "#fdf6e3"
+yellowh = "#b58900"
+orangeh = "#cb4b16"
+redh = "#dc322f"
+magentah = "#d33682"
+violeth = "#6c71c4"
+blueh = "#268bd2"
+cyanh = "#2aa198"
+greenh = "#859900"
 
 dark_grey = (100, 100, 100)
 light_grey = (200, 200, 200)

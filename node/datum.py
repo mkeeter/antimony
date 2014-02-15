@@ -100,7 +100,8 @@ class Datum(object):
     def render_me(self):
         """ Returns True if this is an expression that we can render.
         """
-        return (isinstance(self, ExpressionFunctionDatum) and
+        return ((isinstance(self, ExpressionFunctionDatum) or
+                 isinstance(self, ExpressionOutputDatum)) and
                 not list(self.input) and self.valid() and
                 not any(o.target for o in self.outputs) and
                 self.value().has_xy_bounds())
@@ -350,5 +351,108 @@ class ExpressionFunctionDatum(FunctionDatum):
         super(ExpressionFunctionDatum, self).__init__(
                 node, function, Expression)
 
+################################################################################
 
+class ScriptDatum(Datum):
+    """ Represents a Python script.
+    """
+
+    def __init__(self, node, script):
+        self._script = script
+        self._inputs = []
+        self._outputs = []
+
+        super(ScriptDatum, self).__init__(
+                node, dict, inputType=NoInput)
+
+    def set_expr(self, s):
+        if s == self._script:   return
+
+        self._script = s
+        self.sync()
+
+    def get_expr(self):
+        return self._script
+
+
+    def make_input(self, name, t, d):
+        if name in ['name', 'x', 'y', 'z']:
+            raise RuntimeError("Reserved name")
+        if t not in [float, Expression]:
+            raise RuntimeError("Invalid type")
+        if name in ([o[0] for o in self._outputs] +
+                    [i[0] for i in self._inputs]):
+            raise RuntimeError("Duplicate input name")
+        self._inputs.append([name, t])
+
+        try:                    d[name] = getattr(self.node, name)
+        except AttributeError:  d[name] = t()
+
+
+    def make_output(self, name, var):
+        if name in ['name','x','y','z']:
+            raise RuntimeError("Reserved name")
+        if type(var) not in [float, Expression]:
+            raise RuntimeError("Invalid type")
+        if name in ([o[0] for o in self._outputs] +
+                    [i[0] for i in self._inputs]):
+            raise RuntimeError("Duplicate output name")
+
+        self._outputs.append([name, type(var), var])
+
+
+    def push_stack(self):
+        """ Push stack for recursive eval and clear inputs and outputs.
+        """
+        super(ScriptDatum, self).push_stack()
+        self._inputs = []
+        self._outputs = []
+
+
+    def value(self):
+        self.push_stack()
+
+        d = {}
+        d['input']  = lambda name, t: self.make_input(name, t, d)
+        d['output'] = self.make_output
+        try:
+            exec self._script in d
+        except Exception as e:
+            print e
+            raise
+        finally:    self.pop_stack()
+
+        return d
+
+################################################################################
+
+class OutputDatum(Datum):
+    """ A datum representing a script output.
+        self._value must be pro-actively set after script evaluation.
+    """
+    def __init__(self, node, T):
+        super(OutputDatum, self).__init__(node, T, NoInput)
+        self._value = T()
+
+    def set_value(self, value):
+        """ Stores a new value and triggers synching.
+        """
+        if value != self._value:
+            self._value = value
+            self.sync()
+
+    def get_expr(self):
+        return str(self._value)
+
+    def can_edit(self): return False
+
+    def value(self):    return self._value
+
+class FloatOutputDatum(OutputDatum):
+    def __init__(self, node):
+        super(FloatOutputDatum, self).__init__(node, float)
+
+class ExpressionOutputDatum(OutputDatum):
+    def __init__(self, node):
+        super(ExpressionOutputDatum, self).__init__(node, Expression)
 

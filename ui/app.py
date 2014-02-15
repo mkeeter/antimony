@@ -45,10 +45,18 @@ class Container(QtGui.QWidget):
         super(Container, self).__init__()
         self.widget = widget
         self.widget.setParent(self)
+        self.setSizePolicy(QtGui.QSizePolicy(
+            QtGui.QSizePolicy.Expanding,
+            QtGui.QSizePolicy.Expanding))
+
+        self.vfill = []
 
     def resizeEvent(self, event):
         self.widget.move(QtCore.QPoint())
         self.widget.resize(self.size())
+
+        for v in self.vfill:
+            v.resize(v.width(), self.height())
 
 ################################################################################
 
@@ -59,7 +67,13 @@ class App(QtGui.QApplication):
         QGroupBox {
             background-color: #eee;
             border: 0px;
-        }""")
+        }
+
+        QPlainTextEdit {
+            background-color: rgba(0, 43, 54, 150);
+            color: #839496;
+        }
+        """)
 
         self.saved_state = None
         self.filename = None
@@ -81,6 +95,10 @@ class App(QtGui.QApplication):
 
         for b in self.findChildren(button.Button) + [view_tool]:
             b.raise_()
+
+        self.script = ui.script.ScriptEditor(container)
+        container.vfill.append(self.script)
+        self.script.raise_()
 
         self.mode = 'move'
         self.move_button.selected = True
@@ -369,3 +387,4 @@ import control.base, control.connection
 import ui.editor
 import node.base, node.connection
 import ui.views
+import ui.script

@@ -9,6 +9,8 @@ class NodeControl(QtGui.QWidget):
         super(NodeControl, self).__init__(canvas)
         self.setMouseTracking(True)
 
+        self.editor_datums = []
+
         self.canvas = canvas
 
         self.node = node
@@ -377,13 +379,14 @@ class NodeControl3D(NodeControl):
 class TextLabelControl(NodeControl3D):
     """ Represents a draggable label floating in space.
     """
-    def __init__(self, canvas, target, text, color):
+    def __init__(self, canvas, target, text, color, font=None):
         super(TextLabelControl, self).__init__(canvas, target)
 
         self.text = text
         self.color = color
 
-        self.font = QtGui.QFont()
+        if font:    self.font = QtGui.QFont(font)
+        else:       self.font = QtGui.QFont()
         self.setFixedSize(self.get_text_size())
 
         self.sync()

@@ -30,6 +30,27 @@ class Node(object):
         setattr(self, '_'+n, d)
 
 
+    def del_datum(self, name):
+        """ Deletes a datum by name.
+        """
+        index = [d[0] for d in self.datums].index(name)
+
+        # Delete all connections
+        for c in self.datums[index][1].connections():
+            c.control.deleteLater()
+            c.delete()
+
+        # Then delete the datum from our list
+        del self.datums[index]
+
+        # Remove the attribute
+        delattr(self, '_'+name)
+
+        # And remove from list of editor datums
+        if self.control and name in self.control.editor_datums:
+            self.control.editor_datums.remove(name)
+
+
     def deflate(self, nodes):
         """ Returns a flattened version of this node suitable for saving.
             The flattened node is a three item list:
