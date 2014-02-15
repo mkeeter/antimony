@@ -30,6 +30,9 @@ output('c', c)
         try:        self.script
         except:     return
 
+        # Keep track of whether anything has changed.
+        changed = False
+
         # Make a [name, type] array for dynamic datums
         dynamic = [d[0:2] for d in self._script._inputs +
                                    self._script._outputs]
@@ -38,6 +41,7 @@ output('c', c)
         # defaults or defined by this set of dynamic datums.
         for name, d in self.datums:
             if not (name in self.default_datums or [name, d.type] in dynamic):
+                changed = True
                 self.del_datum(name)
 
         # Add new input datums as needed.
@@ -51,7 +55,10 @@ output('c', c)
                 d = datum.ExpressionDatum(self, "None")
             self.add_datum(name, d)
             self.control.editor_datums.append(name)
+            changed = True
 
+        if changed and self.control.editor:
+            self.control.editor.regenerate_grid()
 
 
 from fab.expression import Expression

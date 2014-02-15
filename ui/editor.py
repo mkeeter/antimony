@@ -7,18 +7,20 @@ class Editor(QtGui.QGroupBox):
         self.node    = control.node
         self.control = control
 
-        self.grid = QtGui.QGridLayout(self)
+        self.grid = QtGui.QGridLayout()
         self.grid.setSpacing(5)
         self.grid.setContentsMargins(0, 3, 0, 3)
 
         self.populate_grid()
 
         self.setLayout(self.grid)
+
         self.sync()
 
         self._mask_size = 0
         self.animate_open()
         self.show()
+
 
     def populate_grid(self):
         self.add_header(self.grid)
@@ -34,6 +36,18 @@ class Editor(QtGui.QGroupBox):
                         self.control.node._script))
             self.grid.addWidget(button, self.grid.rowCount(), 2)
 
+    def clear_grid(self):
+        """ Deletes all widgets from the grid.
+        """
+        while not self.grid.isEmpty():
+            self.grid.takeAt(0).widget().deleteLater()
+
+    def regenerate_grid(self):
+        self.hide() # hide/show are needed to update widget size.
+        self.clear_grid()
+        self.populate_grid()
+        self.set_mask(1)
+        self.show()
 
     def mousePressEvent(self, event):
         """ On mouse click, raise this window.

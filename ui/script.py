@@ -121,7 +121,9 @@ class ScriptEditor(QtGui.QPlainTextEdit):
         """ Calls set_expr on the target datum.
         """
         if self.target is None:     return
-        self.target.set_expr(self.toPlainText())
+        elif self.toPlainText() != self.target.get_expr():
+            self.target.set_expr(self.toPlainText())
+            self.target.node.update_datums()
 
     # Create a width_ property to animate opening and closing.
     def get_width(self):
