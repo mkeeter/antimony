@@ -12,6 +12,11 @@ class ScriptNodeControl(base.TextLabelControl):
         super(ScriptNodeControl, self).__init__(
                 canvas, target, "Script", colors.green, "Courier")
         self.editor_datums = ['name']
+        self.node.update_datums()
+
+    def sync(self):
+        self.node.update_datums()
+        super(ScriptNodeControl, self).sync()
 
 from node.script import ScriptNode
 from node.base import get_name

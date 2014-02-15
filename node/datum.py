@@ -436,13 +436,10 @@ class OutputDatum(Datum):
 
     def set_value(self, value):
         """ Stores a new value and triggers synching.
-            Returns True if the value has been changed.
         """
         if value != self._value:
             self._value = value
             self.sync()
-            return True
-        return False
 
     def get_expr(self):
         return str(self._value)
