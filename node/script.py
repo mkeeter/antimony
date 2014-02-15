@@ -45,9 +45,9 @@ output('c', c)
                 self.del_datum(name)
 
         # Add new input datums as needed.
-        existing = [[name, d.type] for name, d in self.datums]
+        existing = {(name, d.type): d for name, d in self.datums}
         for name, t in self._script._inputs:
-            if [name, t] in existing:
+            if (name, t) in existing:
                 continue
             elif t is float:
                 d = datum.FloatDatum(self, 0)
@@ -56,6 +56,20 @@ output('c', c)
             self.add_datum(name, d)
             self.control.editor_datums.append(name)
             changed = True
+
+        for name, t, value in self._script._outputs:
+            if (name, t) in existing:
+                if existing[(name, t)].set_value(value):
+                    changed = True
+                continue
+            elif t is float:
+                d = datum.FloatOutputDatum(self)
+            elif t is Expression:
+                d = datum.ExpressionOutputDatum(self)
+            d.set_value(value)
+            self.add_datum(name, d)
+            self.control.editor_datums.append(name)
+
 
         if changed and self.control.editor:
             self.control.editor.regenerate_grid()

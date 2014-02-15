@@ -100,7 +100,8 @@ class Datum(object):
     def render_me(self):
         """ Returns True if this is an expression that we can render.
         """
-        return (isinstance(self, ExpressionFunctionDatum) and
+        return ((isinstance(self, ExpressionFunctionDatum) or
+                 isinstance(self, ExpressionOutputDatum)) and
                 not list(self.input) and self.valid() and
                 not any(o.target for o in self.outputs) and
                 self.value().has_xy_bounds())
@@ -422,3 +423,39 @@ class ScriptDatum(Datum):
         finally:    self.pop_stack()
 
         return d
+
+################################################################################
+
+class OutputDatum(Datum):
+    """ A datum representing a script output.
+        self._value must be pro-actively set after script evaluation.
+    """
+    def __init__(self, node, T):
+        super(OutputDatum, self).__init__(node, T, NoInput)
+        self._value = T()
+
+    def set_value(self, value):
+        """ Stores a new value and triggers synching.
+            Returns True if the value has been changed.
+        """
+        if value != self._value:
+            self._value = value
+            self.sync()
+            return True
+        return False
+
+    def get_expr(self):
+        return str(self._value)
+
+    def can_edit(self): return False
+
+    def value(self):    return self._value
+
+class FloatOutputDatum(OutputDatum):
+    def __init__(self, node):
+        super(FloatOutputDatum, self).__init__(node, float)
+
+class ExpressionOutputDatum(OutputDatum):
+    def __init__(self, node):
+        super(ExpressionOutputDatum, self).__init__(node, Expression)
+

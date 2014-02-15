@@ -90,7 +90,8 @@ class Editor(QtGui.QGroupBox):
         """
         row = self.grid.rowCount()
         if (not isinstance(dat, NameDatum) and
-            not isinstance(dat, FunctionDatum)):
+            not isinstance(dat, FunctionDatum) and
+            not isinstance(dat, OutputDatum)):
             self.grid.addWidget(Input(dat, self), row, 0)
 
         self.grid.addWidget(QtGui.QLabel(name, self),
@@ -220,5 +221,5 @@ def MakeEditor(control):
 
 
 from control.connection import Input, Output
-from node.datum import NameDatum, FunctionDatum
+from node.datum import NameDatum, FunctionDatum, OutputDatum
 from node.script import ScriptNode
