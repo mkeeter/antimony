@@ -1,13 +1,9 @@
 import base
 import datum
 
-class Union(base.Node):
+class Union(base.Node3D):
     def __init__(self, name, x, y, z):
-        super(Union, self).__init__(name)
-
-        self.add_datum('x', datum.FloatDatum(self, x))
-        self.add_datum('y', datum.FloatDatum(self, y))
-        self.add_datum('z', datum.FloatDatum(self, z))
+        super(Union, self).__init__(name, x, y, z)
 
         self.add_datum('A', datum.ExpressionDatum(self, "None"))
         self.add_datum('B', datum.ExpressionDatum(self, "None"))
@@ -30,13 +26,9 @@ class Union(base.Node):
 
 ################################################################################
 
-class Intersection(base.Node):
+class Intersection(base.Node3D):
     def __init__(self, name, x, y, z):
-        super(Intersection, self).__init__(name)
-
-        self.add_datum('x', datum.FloatDatum(self, x))
-        self.add_datum('y', datum.FloatDatum(self, y))
-        self.add_datum('z', datum.FloatDatum(self, z))
+        super(Intersection, self).__init__(name, x, y, z)
 
         self.add_datum('A', datum.ExpressionDatum(self, "None"))
         self.add_datum('B', datum.ExpressionDatum(self, "None"))
@@ -59,13 +51,9 @@ class Intersection(base.Node):
 
 ################################################################################
 
-class Cutout(base.Node):
+class Cutout(base.Node3D):
     def __init__(self, name, x, y, z):
-        super(Cutout, self).__init__(name)
-
-        self.add_datum('x', datum.FloatDatum(self, x))
-        self.add_datum('y', datum.FloatDatum(self, y))
-        self.add_datum('z', datum.FloatDatum(self, z))
+        super(Cutout, self).__init__(name, x, y, z)
 
         self.add_datum('A', datum.ExpressionDatum(self, "None"))
         self.add_datum('B', datum.ExpressionDatum(self, "None"))
