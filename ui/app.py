@@ -63,17 +63,6 @@ class Container(QtGui.QWidget):
 class App(QtGui.QApplication):
     def __init__(self):
         super(App, self).__init__(sys.argv)
-        self.setStyleSheet("""
-        QGroupBox {
-            background-color: #eee;
-            border: 0px;
-        }
-
-        QPlainTextEdit {
-            background-color: rgba(0, 43, 54, 150);
-            color: #839496;
-        }
-        """)
 
         self.saved_state = None
         self.filename = None

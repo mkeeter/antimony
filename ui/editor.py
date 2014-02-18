@@ -1,8 +1,32 @@
+# coding=utf-8
+
 from PySide import QtCore, QtGui
 
 class Editor(QtGui.QGroupBox):
     def __init__(self, control):
         super(Editor, self).__init__(control.canvas)
+
+        self.setStyleSheet("""
+        QGroupBox {
+            background-color: #eee;
+            border: 0px;
+        }
+
+        QPushButton {
+            background-color: #ccc;
+            border: none;
+            padding: 5px;
+            padding-left: 8px;
+            padding-right: 8px;
+            margin: 5px;
+            margin-bottom: 10px;
+        }
+
+        QPushButton:pressed {
+            background-color: #bbb;
+        }
+        """)
+
 
         self.node    = control.node
         self.control = control
@@ -29,8 +53,7 @@ class Editor(QtGui.QGroupBox):
             self.add_row(name, getattr(self.node, '_'+name))
 
         if isinstance(self.control.node, ScriptNode):
-            button = QtGui.QPushButton('[ open script ]', self)
-            button.setFlat(True)
+            button = QtGui.QPushButton('open script', self)
             button.clicked.connect(lambda:
                     QtGui.QApplication.instance().script.open(
                         self.control.node._script))
@@ -76,9 +99,10 @@ class Editor(QtGui.QGroupBox):
         """ Adds a header to the UI, including a push button to close
             and this node's type.
         """
-        button = QtGui.QPushButton('[ - ]', self)
-        button.setFlat(True)
+        button = QtGui.QPushButton(u'✖', self)
         button.clicked.connect(self.animate_close)
+        button.setSizePolicy(QtGui.QSizePolicy.Fixed,
+                             QtGui.QSizePolicy.Fixed)
         grid.addWidget(button, 0, 1)
 
         label = type(self.node).__name__

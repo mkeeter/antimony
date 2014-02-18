@@ -59,6 +59,13 @@ class ScriptEditor(QtGui.QPlainTextEdit):
         _Highlighter(self.document())
         self.setLineWrapMode(self.NoWrap)
 
+        self.setStyleSheet("""
+        QPlainTextEdit {
+            background-color: rgba(0, 43, 54, 150);
+            color: #839496;
+        }
+        """)
+
         self.horizontalScrollBar().setStyleSheet("QScrollBar {height:0px;}")
         self.verticalScrollBar().setStyleSheet("QScrollBar {width:0px;}")
         self.setMouseTracking(True)
