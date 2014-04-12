@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <math.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <png.h>
 
