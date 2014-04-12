@@ -108,3 +108,10 @@ libfab.load_png_stats.argtypes = (
 libfab.load_png.argtypes = [p(ctypes.c_char), pp(ctypes.c_uint16)]
 
 del p, pp
+
+################################################################################
+
+# render/render.c
+
+libfab.gl_init.argtypes = []
+libfab.gl_init.restype = ctypes.c_int

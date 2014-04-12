@@ -8,11 +8,18 @@ set(CMAKE_C_FLAGS "-Wall -g -fPIC -pedantic -std=gnu99")
 set(CMAKE_C_FLAGS_RELEASE  "-O3 -D '_STATIC_=static'")
 set(CMAKE_C_FLAGS_DEBUG    "-O0 -D '_STATIC_= '")
 
+# libpng is required
 find_package(PNG REQUIRED)
-include_directories(${PNG_INCLUDE_DIR})
+
+# libm is required
 find_library(M_LIB m)
 
-include_directories(.)
+# glfw and openGL are required
+find_package(PkgConfig REQUIRED)
+pkg_search_module(GLFW REQUIRED glfw3)
+find_library(OPENGL_LIBRARY OpenGL)
+
+include_directories(${PNG_INCLUDE_DIR} ${GLFW_INCLUDE_DIRS} .)
 
 add_library(cfab SHARED
 
@@ -28,7 +35,13 @@ add_library(cfab SHARED
     formats/png.c
 
     util/region.c
+
+    render/render.c
 )
 
-target_link_libraries(cfab ${PNG_LIBRARY} ${M_LIB})
+# Link against libpng, libm, glfw, and opengl
+target_link_libraries(cfab
+    ${PNG_LIBRARY} ${M_LIB} ${GLFW_LIBRARIES} ${OPENGL_LIBRARY})
+
+# To install, copy the cfab library up one level
 install(TARGETS cfab DESTINATION ${PROJECT_SOURCE_DIR}/..)

@@ -96,6 +96,8 @@ class App(QtGui.QApplication):
 
         self.window.activateWindow()
         self.window.raise_()
+        from fab.libfab import libfab
+        libfab.gl_init()
 
 
     def update_title(self):
