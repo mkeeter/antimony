@@ -37,6 +37,7 @@ add_library(cfab SHARED
     util/region.c
 
     render/render.c render/tape.c render/command.c
+    render/shader.c
 )
 
 # Link against libpng, libm, glfw, and opengl

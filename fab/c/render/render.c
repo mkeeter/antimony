@@ -2,12 +2,14 @@
 #include <stdio.h>
 
 #include "render/render.h"
+#include "render/shader.h"
 
 // Global variables shared for the renderer
 GLFWwindow* window;
 
 int gl_init(void)
 {
+    printf("gl_init called\n");
     // Initialize the library
     if (!glfwInit())    return -1;
 
@@ -29,6 +31,7 @@ int gl_init(void)
     }
 
     // Make sure that we made a 3.3+ context.
+    glfwMakeContextCurrent(window);
     int major, minor;
     glGetIntegerv(GL_MAJOR_VERSION, &major);
     glGetIntegerv(GL_MINOR_VERSION, &minor);
@@ -38,6 +41,8 @@ int gl_init(void)
         glfwTerminate();
         return -1;
     }
+    printf("OpenGL initialized!\n");
 
+    shader_compile_frag("/Users/mkeeter/code/antimony/fab/c/render/eval.frag");
     return 0;
 }

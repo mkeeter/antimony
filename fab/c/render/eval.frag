@@ -1,6 +1,6 @@
 #version 330
 
-uniform usampler2D tape;
+uniform usampler1D tape;
 uniform sampler2D values;
 
 out vec4 fragColor;
@@ -31,33 +31,29 @@ out vec4 fragColor;
 
 void main()
 {
-    int index = floor(gl_FragCoord.x);
-    int node = floor(gl_FragCoord.y);
+    int index = int(floor(gl_FragCoord.x));
+    int node = int(floor(gl_FragCoord.y));
 
-    ivec2 op_addr = ivec2(0, node);
-    ivec2 lhs_addr = ivec2(1, node);
-    ivec2 rhs_addr = ivec2(2, node);
-
-    uvec4 texel = texelFetch(tape, 0, node);
-    uint op  = texel.r;
+    uvec4 texel = texelFetch(tape, node, 0);
+    int op = int(texel.r);
 
     // Get LHS and RHS values, either immediate or look-up
     float lhs = 0;
     float rhs = 0;
     if (op <= OP_EXP)
     {
-        if (op && (1 << 8))
+        if ((op & (1 << 8)) != 0)
             lhs = uintBitsToFloat(texel.g);
         else
-            lhs = texelFetch(values, index, texel.g);
+            lhs = texelFetch(values, ivec2(index, texel.g), 0).r;
     }
 
     if (op <= OP_POW)
     {
-        if (op && (1 << 9))
+        if ((op & (1 << 9)) != 0)
             rhs = uintBitsToFloat(texel.b);
         else
-            rhs = texelFetch(values, index, texel.b);
+            rhs = texelFetch(values, ivec2(index, texel.b), 0).r;
     }
 
     float result;
@@ -71,7 +67,7 @@ void main()
 
     else if (op == OP_ABS)  result = abs(lhs);
     else if (op == OP_SQUARE) result = lhs * lhs;
-    else if (op == OP_SQRT) result = sqrt(lhs;
+    else if (op == OP_SQRT) result = sqrt(lhs);
     else if (op == OP_SIN)  result = sin(lhs);
     else if (op == OP_COS)  result = cos(lhs);
     else if (op == OP_TAN)  result = tan(lhs);
