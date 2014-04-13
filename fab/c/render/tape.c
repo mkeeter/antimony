@@ -44,8 +44,8 @@ RenderTape* tape_init(MathTree* tree)
         }
 
         glBindTexture(GL_TEXTURE_2D, tex);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_R32UI, 3, tree->active[level],
-                     0, GL_RED, GL_UNSIGNED_INT, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32UI, 3, tree->active[level],
+                     0, GL_RGB, GL_UNSIGNED_INT, data);
 
         *tape_end = malloc(sizeof(RenderTape));
         **tape_end = (RenderTape) {

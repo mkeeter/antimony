@@ -1,5 +1,7 @@
-#define GLFW_INCLUDE_GLCOREARB
-#include <GLFW/glfw3.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+#include "render/render.h"
 
 // Global variables shared for the renderer
 GLFWwindow* window;
