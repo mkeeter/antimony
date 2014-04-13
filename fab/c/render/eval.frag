@@ -1,6 +1,6 @@
 #version 330
 
-uniform usampler1D tape;
+uniform isampler1D tape;
 uniform sampler2D values;
 
 out vec4 fragColor;
@@ -34,8 +34,8 @@ void main()
     int index = int(floor(gl_FragCoord.x));
     int node = int(floor(gl_FragCoord.y));
 
-    uvec4 texel = texelFetch(tape, node, 0);
-    int op = int(texel.r);
+    ivec4 texel = texelFetch(tape, node, 0);
+    int op = texel.r;
 
     // Get LHS and RHS values, either immediate or look-up
     float lhs = 0;
@@ -43,7 +43,7 @@ void main()
     if (op <= OP_EXP)
     {
         if ((op & (1 << 8)) != 0)
-            lhs = uintBitsToFloat(texel.g);
+            lhs = intBitsToFloat(texel.g);
         else
             lhs = texelFetch(values, ivec2(index, texel.g), 0).r;
     }
@@ -51,7 +51,7 @@ void main()
     if (op <= OP_POW)
     {
         if ((op & (1 << 9)) != 0)
-            rhs = uintBitsToFloat(texel.b);
+            rhs = intBitsToFloat(texel.b);
         else
             rhs = texelFetch(values, ivec2(index, texel.b), 0).r;
     }
