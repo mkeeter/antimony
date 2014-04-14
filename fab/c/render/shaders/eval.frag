@@ -2,7 +2,7 @@
 
 uniform isampler1D tape;
 uniform  sampler2D atlas;
-uniform  sampler2D xyz;
+uniform  sampler1D xyz;
 
 // Properties of the atlas texture
 uniform int block_size;
