@@ -24,6 +24,12 @@ typedef struct RenderCommand_ {
     struct RenderTape_* tape;
 } RenderCommand;
 
+/** @brief Constructs a RenderCommand object from the given tree.
+*/
 RenderCommand* command_init(struct MathTree_* tree);
 
+/** @brief Renders the given command on the provided xyz values.
+    @param xyz Array of x, y, z values.
+*/
+void render_command(RenderCommand* command, float* xyz);
 #endif

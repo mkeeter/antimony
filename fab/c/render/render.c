@@ -146,6 +146,8 @@ void render_blit(const RenderCommand* const command,
 
 void render_command(RenderCommand* command, float* xyz)
 {
+    glfwMakeContextCurrent(window);
+
     // Copy xyz data to the xyz texture.
     glBindTexture(GL_TEXTURE_1D, command->xyz);
     glTexImage1D(GL_TEXTURE_1D, 0, GL_RGB32F, command->block_size,
