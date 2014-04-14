@@ -3,13 +3,18 @@
 
 #include "render/render.h"
 #include "render/shader.h"
+#include "render/command.h"
+#include "render/tape.h"
 
 // Global variables shared for the renderer
 GLFWwindow* window;
 
-int gl_init(void)
+// Shader programs for tick and tock stages
+GLuint tick_program;
+GLuint tock_program;
+
+int gl_init(char* shader_dir)
 {
-    printf("gl_init called\n");
     // Initialize the library
     if (!glfwInit())    return -1;
 
@@ -45,4 +50,104 @@ int gl_init(void)
 
     shader_compile_frag("/Users/mkeeter/code/antimony/fab/c/render/eval.frag");
     return 0;
+}
+
+void render_tick(const RenderCommand* const command,
+                 const RenderTape* const tape)
+{
+    const GLuint program = tick_program;
+    glUseProgram(program);
+
+    // Bind tape texture to 0
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_1D, tape->instructions);
+    glUniform1i(glGetUniformLocation(program, "tape"), 0);
+
+    // Bind atlas texture to 1
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, command->atlas);
+    glUniform1i(glGetUniformLocation(program, "atlas"), 1);
+
+    // Load relevant uniforms
+    glUniform1i(glGetUniformLocation(program, "block_size"),
+                command->block_size);
+    glUniform1i(glGetUniformLocation(program, "block_count"),
+                command->block_count);
+
+    // Target the swap texture with the framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, command->fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                           GL_TEXTURE_2D, command->swap, 0);
+
+    // Prepare the viewport
+    glViewport(0, 0, command->block_size + 1, tape->node_count + 1);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Load triangles that draw a flat rectangle from -1, -1, to 1, 1
+    glBindBuffer(GL_ARRAY_BUFFER, command->rect);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2*sizeof(GLfloat), 0);
+
+    // Draw the full rectangle into the FBO
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+
+void render_tock(const RenderCommand* const command,
+                 const RenderTape* const tape,
+                 const GLint start_slot)
+{
+    const GLuint program = tock_program;
+    glUseProgram(program);
+
+    // Bind tape texture to 0
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, command->swap);
+    glUniform1i(glGetUniformLocation(program, "values"), 0);
+
+    // Load relevant uniforms
+    glUniform1i(glGetUniformLocation(program, "block_size"),
+                command->block_size);
+    glUniform1i(glGetUniformLocation(program, "block_count"),
+                command->block_count);
+    glUniform1i(glGetUniformLocation(program, "start_slot"),
+                start_slot);
+    glUniform1i(glGetUniformLocation(program, "slot_count"),
+                tape->node_count);
+
+    // Target the swap texture with the framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, command->fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                           GL_TEXTURE_2D, command->atlas, 0);
+
+    // Prepare the viewport (contains the whole texture atlas)
+    glViewport(0, 0, command->block_size * command->block_count + 1,
+               command->node_count + 1);
+    if (start_slot == 0)
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Load triangles that draw a flat rectangle from -1, -1, to 1, 1
+    glBindBuffer(GL_ARRAY_BUFFER, command->rect);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2*sizeof(GLfloat), 0);
+
+    // Draw the full rectangle into the FBO
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+
+void render_eval(RenderCommand* command)
+{
+    glBindVertexArray(command->vao);
+
+    RenderTape* tape = command->tape;
+    GLint current_slot = 0;
+    while (tape)
+    {
+        render_tick(command, tape);
+        render_tock(command, tape, current_slot);
+        current_slot += tape->node_count;
+        tape = tape->next;
+    }
+
+    // Switch back to the default framebuffer.
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

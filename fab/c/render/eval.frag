@@ -1,7 +1,11 @@
 #version 330
 
 uniform isampler1D tape;
-uniform sampler2D values;
+uniform  sampler2D atlas;
+
+// Properties of the atlas texture
+uniform int block_size;
+uniform int block_count;
 
 out vec4 fragColor;
 
@@ -29,11 +33,19 @@ out vec4 fragColor;
 #define    OP_Y     19
 #define    OP_Z     20
 
+float get_value(int slot, int index)
+{
+    ivec2 pos = ivec2(index + (slot % block_count) * block_size,
+                      slot / block_count);
+    return texelFetch(atlas, pos, 0).r;
+}
+
 void main()
 {
     int index = int(floor(gl_FragCoord.x));
     int node = int(floor(gl_FragCoord.y));
 
+    // Get the texel that containing evaluation information
     ivec4 texel = texelFetch(tape, node, 0);
     int op = texel.r;
 
@@ -45,7 +57,7 @@ void main()
         if ((op & (1 << 8)) != 0)
             lhs = intBitsToFloat(texel.g);
         else
-            lhs = texelFetch(values, ivec2(index, texel.g), 0).r;
+            lhs = get_value(texel.g, index);
     }
 
     if (op <= OP_POW)
@@ -53,7 +65,7 @@ void main()
         if ((op & (1 << 9)) != 0)
             rhs = intBitsToFloat(texel.b);
         else
-            rhs = texelFetch(values, ivec2(index, texel.b), 0).r;
+            lhs = get_value(texel.b, index);
     }
 
     float result;
@@ -82,5 +94,4 @@ void main()
     else if (op == OP_Z)    result = 0;
 
     fragColor = vec4(result);
-
 }

@@ -8,6 +8,10 @@ struct RenderTape_;
 struct MathTree_;
 
 typedef struct RenderCommand_ {
+    GLuint fbo;     // Framebuffer object
+    GLuint vao;     // Vertex array object
+    GLuint rect;    // Vertex buffer for flat panel
+
     GLuint block_size;  // number of xyz points per block
     GLuint block_count; // number of blocks per row
 

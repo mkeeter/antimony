@@ -7,6 +7,14 @@
 
 #include "tree/tree.h"
 
+static void command_texture_defaults(void)
+{
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+}
+
 RenderCommand* command_init(MathTree* tree)
 {
     RenderCommand* command = calloc(1, sizeof(RenderCommand));
@@ -47,6 +55,7 @@ RenderCommand* command_init(MathTree* tree)
         glBindTexture(GL_TEXTURE_2D, command->atlas);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, side, command->node_count,
                      0, GL_RED, GL_FLOAT, atlas);
+        command_texture_defaults();
 
         free(atlas);
     }
@@ -59,9 +68,23 @@ RenderCommand* command_init(MathTree* tree)
         glBindTexture(GL_TEXTURE_2D, command->swap);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, command->block_size, command->node_max,
                      0, GL_RED, GL_FLOAT, swap);
+        command_texture_defaults();
 
         free(swap);
     }
+
+    // Generate miscellaneous OpenGL objects
+    glGenFramebuffers(1, &command->fbo);
+    glGenVertexArrays(1, &command->vao);
+
+    // Make a screen-filling flat pane used for texture FBO rendering
+    GLfloat rect[12] = {
+            -1, -1,  1, -1,   1,  1,
+            -1, -1,  1,  1,  -1,  1};
+    glGenBuffers(1, &command->rect);
+    glBindBuffer(GL_ARRAY_BUFFER, command->rect);
+    glBufferData(GL_ARRAY_BUFFER, 12*sizeof(rect[0]),
+                 &rect[0], GL_STATIC_DRAW);
 
     return command;
 }
