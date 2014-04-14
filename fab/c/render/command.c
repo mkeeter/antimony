@@ -73,6 +73,10 @@ RenderCommand* command_init(MathTree* tree)
         free(swap);
     }
 
+    glGenTextures(1, &command->xyz);
+    glBindTexture(GL_TEXTURE_1D, command->xyz);
+    command_texture_defaults();
+
     // Generate miscellaneous OpenGL objects
     glGenFramebuffers(1, &command->fbo);
     glGenVertexArrays(1, &command->vao);

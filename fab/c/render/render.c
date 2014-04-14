@@ -9,9 +9,9 @@
 // Global variables shared for the renderer
 GLFWwindow* window;
 
-// Shader programs for tick and tock stages
-GLuint tick_program;
-GLuint tock_program;
+// Shader programs for eval and blit stages
+GLuint eval_program;
+GLuint blit_program;
 
 int gl_init(char* shader_dir)
 {
@@ -52,13 +52,15 @@ int gl_init(char* shader_dir)
     GLuint eval = shader_compile_frag(shader_dir, "eval.frag");
     GLuint blit = shader_compile_frag(shader_dir, "blit.frag");
 
+    eval_program = shader_make_program(tex, eval);
+    blit_program = shader_make_program(tex, blit);
     return 0;
 }
 
-void render_tick(const RenderCommand* const command,
+void render_eval(const RenderCommand* const command,
                  const RenderTape* const tape)
 {
-    const GLuint program = tick_program;
+    const GLuint program = eval_program;
     glUseProgram(program);
 
     // Bind tape texture to 0
@@ -70,6 +72,11 @@ void render_tick(const RenderCommand* const command,
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, command->atlas);
     glUniform1i(glGetUniformLocation(program, "atlas"), 1);
+
+    // Bind xyz data to 2
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_1D, command->xyz);
+    glUniform1i(glGetUniformLocation(program, "xyz"), 2);
 
     // Load relevant uniforms
     glUniform1i(glGetUniformLocation(program, "block_size"),
@@ -95,11 +102,11 @@ void render_tick(const RenderCommand* const command,
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
-void render_tock(const RenderCommand* const command,
+void render_blit(const RenderCommand* const command,
                  const RenderTape* const tape,
                  const GLint start_slot)
 {
-    const GLuint program = tock_program;
+    const GLuint program = blit_program;
     glUseProgram(program);
 
     // Bind tape texture to 0
@@ -137,16 +144,21 @@ void render_tock(const RenderCommand* const command,
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
-void render_eval(RenderCommand* command)
+void render_command(RenderCommand* command, float* xyz)
 {
+    // Copy xyz data to the xyz texture.
+    glBindTexture(GL_TEXTURE_1D, command->xyz);
+    glTexImage1D(GL_TEXTURE_1D, 0, GL_RGB32F, command->block_size,
+                 0, GL_RGB, GL_FLOAT, xyz);
+
     glBindVertexArray(command->vao);
 
     RenderTape* tape = command->tape;
     GLint current_slot = 0;
     while (tape)
     {
-        render_tick(command, tape);
-        render_tock(command, tape, current_slot);
+        render_eval(command, tape);
+        render_blit(command, tape, current_slot);
         current_slot += tape->node_count;
         tape = tape->next;
     }

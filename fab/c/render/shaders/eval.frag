@@ -2,6 +2,7 @@
 
 uniform isampler1D tape;
 uniform  sampler2D atlas;
+uniform  sampler2D xyz;
 
 // Properties of the atlas texture
 uniform int block_size;
@@ -89,9 +90,9 @@ void main()
     else if (op == OP_NEG)  result = -lhs;
     else if (op == OP_EXP)  result = exp(lhs);
 
-    else if (op == OP_X)    result = 0;
-    else if (op == OP_Y)    result = 0;
-    else if (op == OP_Z)    result = 0;
+    else if (op == OP_X)    result = texelFetch(xyz, index, 0).r;
+    else if (op == OP_Y)    result = texelFetch(xyz, index, 0).g;
+    else if (op == OP_Z)    result = texelFetch(xyz, index, 0).b;
 
     fragColor = vec4(result);
 }

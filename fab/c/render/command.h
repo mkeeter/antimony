@@ -20,6 +20,7 @@ typedef struct RenderCommand_ {
 
     GLuint atlas; // texture storing node values
     GLuint swap;  // texture used as render target
+    GLuint xyz;   // texture storing xyz data for this render pass
     struct RenderTape_* tape;
 } RenderCommand;
 
