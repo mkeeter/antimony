@@ -29,7 +29,7 @@ RenderCommand* command_init(MathTree* tree)
 
     // Block count is the number of xyz blocks in the texture's x space
     // It is chosen so that all of the node values can fit in the texture.
-    command->block_count = ceil(command->node_max / side);
+    command->block_count = ceil(command->node_max / (float)side);
 
     // Block size is the number of points in an xyz block
     command->block_size = side / command->block_count;

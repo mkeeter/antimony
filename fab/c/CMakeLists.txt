@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 2.6)
 project(libcfab)
 
-#set(CMAKE_BUILD_TYPE DEBUG)
-set(CMAKE_BUILD_TYPE RELEASE)
+set(CMAKE_BUILD_TYPE DEBUG)
+#set(CMAKE_BUILD_TYPE RELEASE)
 
 set(CMAKE_C_FLAGS "-Wall -g -fPIC -pedantic -std=gnu99")
 set(CMAKE_C_FLAGS_RELEASE  "-O3 -D '_STATIC_=static'")
@@ -43,6 +43,9 @@ add_library(cfab SHARED
 # Link against libpng, libm, glfw, and opengl
 target_link_libraries(cfab
     ${PNG_LIBRARY} ${M_LIB} ${GLFW_LIBRARIES} ${OPENGL_LIBRARY})
+
+add_executable(glrender render/glrender.c)
+target_link_libraries(glrender cfab)
 
 # To install, copy the cfab library up one level
 install(TARGETS cfab DESTINATION ${PROJECT_SOURCE_DIR}/..)
