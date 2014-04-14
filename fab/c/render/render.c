@@ -48,7 +48,10 @@ int gl_init(char* shader_dir)
     }
     printf("OpenGL initialized!\n");
 
-    shader_compile_frag("/Users/mkeeter/code/antimony/fab/c/render/eval.frag");
+    GLuint  tex = shader_compile_vert(shader_dir, "texture.vert");
+    GLuint eval = shader_compile_frag(shader_dir, "eval.frag");
+    GLuint blit = shader_compile_frag(shader_dir, "blit.frag");
+
     return 0;
 }
 

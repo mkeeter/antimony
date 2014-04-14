@@ -8,7 +8,7 @@
 
 int main(int argc, char** argv)
 {
-    gl_init();
+    gl_init("/Users/mkeeter/code/antimony/fab/c/render/shaders/");
 
     MathTree* tree = parse("-Xf1");
 

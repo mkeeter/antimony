@@ -4,8 +4,8 @@
 #define GLFW_INCLUDE_GLCOREARB
 #include <GLFW/glfw3.h>
 
-GLuint shader_compile_vert(char* filename);
-GLuint shader_compile_frag(char* filename);
-GLuint shader_compile(char* filename, GLenum type);
+GLuint shader_compile_vert(char* folder, char* filename);
+GLuint shader_compile_frag(char* folder, char* filename);
+GLuint shader_compile(char* folder, char* filename, GLenum type);
 
 #endif

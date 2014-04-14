@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "render/shader.h"
 
@@ -30,39 +31,51 @@ GLuint shader_make_program(const GLuint vert, const GLuint frag)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-GLuint shader_compile_vert(char* filename)
+GLuint shader_compile_vert(char* folder, char* filename)
 {
-    return shader_compile(filename, GL_VERTEX_SHADER);
+    return shader_compile(folder, filename, GL_VERTEX_SHADER);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-GLuint shader_compile_frag(char* filename)
+GLuint shader_compile_frag(char* folder, char* filename)
 {
-    return shader_compile(filename, GL_FRAGMENT_SHADER);
+    return shader_compile(folder, filename, GL_FRAGMENT_SHADER);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-GLuint shader_compile(char* filename, GLenum type)
+GLuint shader_compile(char* folder, char* filename, GLenum type)
 {
-    FILE* file = fopen(filename, "rb");
+    // Concatenate folder and file name
+    size_t len = strlen(folder) + strlen(filename);
+    char* const path = calloc(sizeof(char), len);
+    strcat(path, folder);
+    strcat(path, filename);
+
+    // Open the file and check for existance
+    FILE* file = fopen(path, "rb");
     if (!file) {
-        printf("No such file %s\n", filename);
+        printf("No such file %s\n", path);
         return 0;
     }
+
+    // Figure out the size of the file
     fseek(file, 0, SEEK_END);
     GLint end = ftell(file);
     rewind(file);
 
+    // Load the shader's text into a character array
     char* const txt = malloc(sizeof(GLchar) * end);
     fread(txt, end, 1, file);
     fclose(file);
 
+    // Attempt to compile the shader
     GLuint shader = glCreateShader(type);
     glShaderSource(shader, 1, (const GLchar*const*)&txt, &end);
     glCompileShader(shader);
 
+    // Check the compile status.
     GLint status;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
     if (status == GL_FALSE) {
