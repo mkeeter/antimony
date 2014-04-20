@@ -42,17 +42,11 @@ RenderTape* tape_init(MathTree* tree)
                     ((uint32_t*)(data))[3*n + 2] = node->rhs->rank;
             }
             node->rank = rank++;
-            printf("%f %f %f\n", data[3*n], data[3*n+1], data[3*n+2]);
         }
 
-        printf("Tex = %i\n", tex);
         glBindTexture(GL_TEXTURE_1D, tex);
-        printf("error: %i\n", glGetError());
-        printf("ptr: %p\n", (void*)data);
-
         glTexImage1D(GL_TEXTURE_1D, 0, GL_RGB32F, tree->active[level],
                      0, GL_RGB, GL_FLOAT, data);
-        printf("error: 0x%x\n", glGetError());
 
         *tape_end = malloc(sizeof(RenderTape));
         **tape_end = (RenderTape) {
