@@ -57,6 +57,14 @@ int gl_init(char* shader_dir)
     return 0;
 }
 
+void gl_tex_defaults(GLenum tex_enum)
+{
+    glTexParameterf(tex_enum, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameterf(tex_enum, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(tex_enum, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(tex_enum, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+}
+
 void render_eval(const RenderCommand* const command,
                  const RenderTape* const tape)
 {
@@ -168,6 +176,16 @@ static void print_tape(RenderTape* tape)
     printf("\n");
 }
 
+static void print_xyz(RenderCommand* command)
+{
+    float tex[command->block_size*3];
+    glBindTexture(GL_TEXTURE_1D, command->xyz);
+    glGetTexImage(GL_TEXTURE_1D, 0, GL_RGB, GL_FLOAT, &tex);
+    for (int i=0; i < command->block_size*3; ++i)
+        printf("%f ", tex[i]);
+    printf("\n");
+}
+
 void render_command(RenderCommand* command, float* xyz)
 {
     glfwMakeContextCurrent(window);
@@ -177,6 +195,8 @@ void render_command(RenderCommand* command, float* xyz)
     glTexImage1D(GL_TEXTURE_1D, 0, GL_RGB32F, command->block_size,
                  0, GL_RGB, GL_FLOAT, xyz);
 
+    printf("XYZ: ");
+    print_xyz(command);
 
     glBindVertexArray(command->vao);
 
@@ -185,7 +205,6 @@ void render_command(RenderCommand* command, float* xyz)
     while (tape)
     {
         printf("Tape:\n");
-        print_tape(tape);
         render_eval(command, tape);
         print_swap(command);
         render_blit(command, tape, current_slot);

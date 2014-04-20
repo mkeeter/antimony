@@ -94,5 +94,5 @@ void main()
     else if (op == OP_Y)    result = texelFetch(xyz, index, 0).g;
     else if (op == OP_Z)    result = texelFetch(xyz, index, 0).b;
 
-    fragColor = vec4(float(op));
+    fragColor = vec4(result);
 }

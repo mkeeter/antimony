@@ -2,7 +2,9 @@
 
 #include "tree/tree.h"
 #include "tree/node/node.h"
+
 #include "render/tape.h"
+#include "render/render.h"
 
 RenderTape* tape_init(MathTree* tree)
 {
@@ -47,6 +49,7 @@ RenderTape* tape_init(MathTree* tree)
         glBindTexture(GL_TEXTURE_1D, tex);
         glTexImage1D(GL_TEXTURE_1D, 0, GL_RGB32F, tree->active[level],
                      0, GL_RGB, GL_FLOAT, data);
+        gl_tex_defaults(GL_TEXTURE_1D);
 
         *tape_end = malloc(sizeof(RenderTape));
         **tape_end = (RenderTape) {

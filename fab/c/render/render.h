@@ -10,6 +10,11 @@
 */
 int gl_init(char* shader_dir);
 
+/** @brief Sets texture defaults
+    @param tex_enum GL_TEXTURE_1D or GL_TEXTURE_2D
+*/
+void gl_tex_defaults(GLenum tex_enum);
+
 /** @brief OpenGL window (for context)
 */
 extern GLFWwindow* window;

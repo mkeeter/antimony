@@ -14,14 +14,14 @@ int main(int argc, char** argv)
     MathTree* tree = parse("-Xf1");
 
     RenderCommand* command = command_init(tree);
-    float* xyz = malloc(sizeof(float)*command->block_size);
+    float* xyz = malloc(sizeof(float)*command->block_size*3);
     printf("Block size:  %u\n", command->block_size);
     printf("Block count: %u\n", command->block_count);
     printf("Node count:  %u\n", command->node_count);
     printf("Node max:    %u\n", command->node_max);
-    for (int i=0; i < command->block_size; ++i)
+    for (int i=0; i < command->block_size*3; ++i)
     {
-        xyz[i] = 0.1 * i;
+        xyz[i] = 0.1*i;
     }
 
     render_command(command, xyz);
