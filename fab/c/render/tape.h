@@ -5,7 +5,7 @@
 #include <GLFW/glfw3.h>
 
 typedef struct RenderTape_ {
-    GLint instructions;
+    GLuint instructions;
     int node_count;
     struct RenderTape_* next;
 } RenderTape;

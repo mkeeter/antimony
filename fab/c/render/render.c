@@ -144,6 +144,30 @@ void render_blit(const RenderCommand* const command,
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
+static void print_swap(RenderCommand* command)
+{
+    unsigned count = command->node_max * command->block_size;
+    float tex[count];
+    glBindTexture(GL_TEXTURE_2D, command->swap);
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RED, GL_FLOAT, &tex);
+
+    for (int i=0; i < count; ++i)
+    {
+        printf("%f ", tex[i]);
+    }
+    printf("\n");
+}
+
+static void print_tape(RenderTape* tape)
+{
+    float tex[tape->node_count*3];
+    glBindTexture(GL_TEXTURE_1D, tape->instructions);
+    glGetTexImage(GL_TEXTURE_1D, 0, GL_RGB, GL_FLOAT, &tex);
+    for (int i=0; i < tape->node_count*3; ++i)
+        printf("%f ", tex[i]);
+    printf("\n");
+}
+
 void render_command(RenderCommand* command, float* xyz)
 {
     glfwMakeContextCurrent(window);
@@ -153,13 +177,17 @@ void render_command(RenderCommand* command, float* xyz)
     glTexImage1D(GL_TEXTURE_1D, 0, GL_RGB32F, command->block_size,
                  0, GL_RGB, GL_FLOAT, xyz);
 
+
     glBindVertexArray(command->vao);
 
     RenderTape* tape = command->tape;
     GLint current_slot = 0;
     while (tape)
     {
+        printf("Tape:\n");
+        print_tape(tape);
         render_eval(command, tape);
+        print_swap(command);
         render_blit(command, tape, current_slot);
         current_slot += tape->node_count;
         tape = tape->next;

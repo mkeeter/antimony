@@ -1,8 +1,8 @@
 #version 330
 
-uniform isampler1D tape;
-uniform  sampler2D atlas;
-uniform  sampler1D xyz;
+uniform sampler1D tape;
+uniform sampler2D atlas;
+uniform sampler1D xyz;
 
 // Properties of the atlas texture
 uniform int block_size;
@@ -47,8 +47,8 @@ void main()
     int node = int(floor(gl_FragCoord.y));
 
     // Get the texel that containing evaluation information
-    ivec4 texel = texelFetch(tape, node, 0);
-    int op = texel.r;
+    vec4 texel = texelFetch(tape, node, 0);
+    int op = floatBitsToInt(texel.r);
 
     // Get LHS and RHS values, either immediate or look-up
     float lhs = 0;
@@ -56,17 +56,17 @@ void main()
     if (op <= OP_EXP)
     {
         if ((op & (1 << 8)) != 0)
-            lhs = intBitsToFloat(texel.g);
+            lhs = texel.g;
         else
-            lhs = get_value(texel.g, index);
+            lhs = get_value(floatBitsToInt(texel.g), index);
     }
 
     if (op <= OP_POW)
     {
         if ((op & (1 << 9)) != 0)
-            rhs = intBitsToFloat(texel.b);
+            rhs = texel.b;
         else
-            lhs = get_value(texel.b, index);
+            lhs = get_value(floatBitsToInt(texel.b), index);
     }
 
     float result;
@@ -94,5 +94,5 @@ void main()
     else if (op == OP_Y)    result = texelFetch(xyz, index, 0).g;
     else if (op == OP_Z)    result = texelFetch(xyz, index, 0).b;
 
-    fragColor = vec4(result);
+    fragColor = vec4(float(op));
 }
