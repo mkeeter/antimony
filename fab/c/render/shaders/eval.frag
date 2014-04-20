@@ -50,12 +50,17 @@ void main()
     vec4 texel = texelFetch(tape, node, 0);
     int op = floatBitsToInt(texel.r);
 
+    // Figure out if this opcode has immediate arguments
+    bool lhs_i = (op & (1 << 8)) != 0;
+    bool rhs_i = (op & (1 << 9)) != 0;
+    op = op & 255;
+
     // Get LHS and RHS values, either immediate or look-up
     float lhs = 0;
     float rhs = 0;
     if (op <= OP_EXP)
     {
-        if ((op & (1 << 8)) != 0)
+        if (lhs_i)
             lhs = texel.g;
         else
             lhs = get_value(floatBitsToInt(texel.g), index);
@@ -63,10 +68,10 @@ void main()
 
     if (op <= OP_POW)
     {
-        if ((op & (1 << 9)) != 0)
+        if (rhs_i)
             rhs = texel.b;
         else
-            lhs = get_value(floatBitsToInt(texel.b), index);
+            rhs = get_value(floatBitsToInt(texel.b), index);
     }
 
     float result;

@@ -169,22 +169,43 @@ static void print_swap(RenderCommand* command)
 
 static void print_tape(RenderTape* tape)
 {
+    printf("Tape: ");
     float tex[tape->node_count*3];
     glBindTexture(GL_TEXTURE_1D, tape->instructions);
     glGetTexImage(GL_TEXTURE_1D, 0, GL_RGB, GL_FLOAT, &tex);
-    for (int i=0; i < tape->node_count*3; ++i)
-        printf("%f ", tex[i]);
+    for (int i=0; i < tape->node_count; ++i)
+    {
+        printf("%u ", ((uint32_t*)tex)[3*i]);
+        printf("%f ", tex[3*i+1]);
+        printf("%f ", tex[3*i+2]);
+    }
     printf("\n");
 }
 
 static void print_xyz(RenderCommand* command)
 {
+    printf("XYZ: ");
     float tex[command->block_size*3];
     glBindTexture(GL_TEXTURE_1D, command->xyz);
     glGetTexImage(GL_TEXTURE_1D, 0, GL_RGB, GL_FLOAT, &tex);
     for (int i=0; i < command->block_size*3; ++i)
         printf("%f ", tex[i]);
     printf("\n");
+}
+
+static void print_atlas(RenderCommand* command)
+{
+    printf("Atlas:\n");
+    float tex[command->atlas_rows * command->atlas_cols];
+    glBindTexture(GL_TEXTURE_2D, command->atlas);
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RED, GL_FLOAT, &tex);
+    int q=0;
+    for (int i=0; i < command->atlas_rows; ++i) {
+        for (int j=0; j < command->atlas_cols; ++j) {
+            printf("%.2f ", tex[q++]);
+        }
+        printf("\n");
+    }
 }
 
 void render_command(RenderCommand* command, float* xyz)
@@ -205,10 +226,11 @@ void render_command(RenderCommand* command, float* xyz)
     GLint current_slot = 0;
     while (tape)
     {
-        printf("Tape:\n");
+        print_tape(tape);
         render_eval(command, tape);
         print_swap(command);
         render_blit(command, tape, current_slot);
+        print_atlas(command);
         current_slot += tape->node_count;
         tape = tape->next;
     }
