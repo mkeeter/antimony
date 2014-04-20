@@ -15,6 +15,9 @@ typedef struct RenderCommand_ {
     GLuint block_size;  // number of xyz points per block
     GLuint block_count; // number of blocks per row
 
+    GLuint atlas_cols;  // number of columns in the atlas
+    GLuint atlas_rows;  // number of rows in the atlas
+
     GLuint node_count;  // total number of nodes in the expression
     GLuint node_max;   // maximum number of nodes in a single evaluation
 

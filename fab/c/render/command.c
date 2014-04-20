@@ -32,21 +32,22 @@ RenderCommand* command_init(MathTree* tree)
     command->block_count = ceil(command->node_max / (float)side);
 
     // Block size is the number of points in an xyz block
-    command->block_size = side / command->block_count;
+    command->block_size = 8;//side / command->block_count;
+
+    command->atlas_cols = command->block_count * command->block_size;
+    command->atlas_rows = ceil(command->node_count / (float)command->block_count);
 
     {   // Create the master texture, initializing it to all zeros
-        GLuint height = side;
-        if (command->node_count < side)
-            height = command->node_count;
 
-        float* atlas = malloc(sizeof(float) * height * side);
-        for (GLuint i=0; i < height*side; ++i)
+        float* atlas = malloc(sizeof(float) * command->atlas_rows *
+                                              command->atlas_cols);
+        for (GLuint i=0; i < command->atlas_rows * command->atlas_cols; ++i)
             atlas[i] = 0;
 
         glGenTextures(1, &command->atlas);
         glBindTexture(GL_TEXTURE_2D, command->atlas);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, side, command->node_count,
-                     0, GL_RED, GL_FLOAT, atlas);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_R32F, command->atlas_cols,
+                     command->atlas_rows, 0, GL_RED, GL_FLOAT, atlas);
         gl_tex_defaults(GL_TEXTURE_2D);
 
         free(atlas);

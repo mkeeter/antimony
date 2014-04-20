@@ -154,6 +154,7 @@ void render_blit(const RenderCommand* const command,
 
 static void print_swap(RenderCommand* command)
 {
+    printf("Swap: \n");
     unsigned count = command->node_max * command->block_size;
     float tex[count];
     glBindTexture(GL_TEXTURE_2D, command->swap);
