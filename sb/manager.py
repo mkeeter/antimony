@@ -7,8 +7,7 @@ class NodeManager(QtCore.QObject):
     def make_dict(self):
         from sb.node import Node
         return {str(n.object_datums['name']._value): n.proxy()
-                for n in self.findChildren(Node)
-                if hasattr(n, 'object_datums')}
+                for n in self.findChildren(Node)}
 
 # Create a single instance of the node manager
 NodeManager = NodeManager()
