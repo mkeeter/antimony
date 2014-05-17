@@ -1,27 +1,22 @@
 from PySide import QtGui
-from sb.scene import GraphicsScene
-from sb.view import GraphicsView
+
+from sb.canvas import Canvas
 from ui_main_window import Ui_MainWindow
 
 class MainWindow(QtGui.QMainWindow):
-    def __init__(self, scene):
+    def __init__(self):
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.add_view(scene)
+        self.add_canvas()
         self.set_shortcuts()
 
-    def add_view(self, scene):
+    def add_canvas(self):
         """ Adds the QGraphicsView that represents our scene.
         """
-        scene.setSceneRect( -100.0, -100.0, 200.0, 200.0)
-        self.item = QtGui.QGraphicsEllipseItem(None, scene)
-        self.item.setRect( -50.0, -50.0, 100.0, 100.0)
-
-        v = QtGui.QGraphicsView(scene)
-        v.setStyleSheet("QWidget { background-color: red; }")
-        self.ui.gridLayout.addWidget(v, 0, 0)
-        v.lower()
+        self.canvas = Canvas()
+        self.ui.gridLayout.addWidget(self.canvas, 0, 0)
+        self.canvas.lower()
 
     def set_shortcuts(self):
         """ Sets keyboard shortcuts for UI actions
