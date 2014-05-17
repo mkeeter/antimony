@@ -43,6 +43,9 @@
             <height>0</height>
            </size>
           </property>
+          <property name="styleSheet">
+           <string notr="true">QLabel { color: white; }</string>
+          </property>
           <property name="text">
            <string>TextLabel</string>
           </property>
@@ -98,7 +101,6 @@
             <height>101</height>
            </size>
           </property>
-          <zorder>verticalLayoutWidget_2</zorder>
          </widget>
         </item>
         <item>
