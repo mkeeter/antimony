@@ -6,10 +6,3 @@ class ViewSelector(QtGui.QWidget):
         super(ViewSelector, self).__init__(parent)
         self.ui = Ui_ViewSelector()
         self.ui.setupUi(self)
-
-if __name__ == "__main__":
-    import sys
-    app = QtGui.QApplication(sys.argv)
-    v = ViewSelector()
-    v.show()
-    sys.exit(app.exec_())
