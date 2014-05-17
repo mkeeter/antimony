@@ -5,13 +5,15 @@ from PySide import QtGui
 from sb.scene import GraphicsScene
 from sb.ui.main_window import MainWindow
 
+from sb.controls.axes import AxesControl
+
 class App(QtGui.QApplication):
     def __init__(self):
         super(App, self).__init__(sys.argv)
 
         self.window = MainWindow()
-        t = self.window.canvas.scene.addText("OMGWTF")
-        t.setFlags(QtGui.QGraphicsItem.ItemIsMovable)
+        self.a = AxesControl(self.window.canvas)
+
         self.window.activateWindow()
         self.window.show()
         self.window.raise_()
