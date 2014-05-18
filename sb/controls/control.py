@@ -4,9 +4,9 @@ from sb.datum import Datum
 class Control(QtGui.QGraphicsItem):
     def __init__(self, canvas):
         super(Control, self).__init__()
-        self.canvas = canvas
-        self.canvas.scene.addItem(self)
-        self.canvas.rotated.connect(self.prepareGeometryChange)
+        self._canvas = canvas
+        self._canvas.scene.addItem(self)
+        self._canvas.rotated.connect(self.prepareGeometryChange)
 
         # Set _post_init to be called when control returns to the event loop
         # (which will happen after the superclass finishes its own __init__)
@@ -22,7 +22,7 @@ class Control(QtGui.QGraphicsItem):
 
     @property
     def matrix(self):
-        return self.canvas.matrix
+        return self._canvas.matrix
 
     def transform_points(self, points):
         """ Transforms a list of QVector3Ds (in world coordinates), returning
