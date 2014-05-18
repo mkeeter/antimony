@@ -98,7 +98,7 @@ QPushButton:pressed {
     </widget>
    </item>
    <item row="0" column="2">
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="title">
      <property name="text">
       <string>TextLabel</string>
      </property>

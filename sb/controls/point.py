@@ -45,3 +45,12 @@ class Point3DControl(Control):
             self.z += d.z()
         self._mouse_click_pos = event.pos()
 
+    def update_center(self):
+        """ Recalculates screen coordinates where the node viewer should be
+            positioned, then emits center_changed with that position.
+        """
+        pt = self.transform_points([
+            QtGui.QVector3D(self.x._value, self.y._value, self.z._value)])[0]
+        print self._canvas.mapFromScene(pt)
+        self.center_changed.emit(self._canvas.mapFromScene(pt))
+

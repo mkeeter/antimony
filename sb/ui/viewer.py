@@ -22,21 +22,28 @@ class _DatumLineEdit(QtGui.QLineEdit):
 ################################################################################
 
 class NodeViewer(QtGui.QWidget):
-    def __init__(self, canvas, node):
-        """ canvas must be a sb.canvas.Canvas instance
-            node must be a sb.nodes.node.Node instance
+    def __init__(self, control):
+        """ control should be a sb.controls.control.Control instance
         """
-        super(NodeViewer, self).__init__(canvas)
+        super(NodeViewer, self).__init__(control._canvas)
         self.ui = Ui_Viewer()
         self.ui.setupUi(self)
-        self._populate_grid(node)
+        self._populate_grid(control._node)
         self.move(100, 100)
 
+        self.ui.title.setText("<b>%s</b>" % type(control._node).__name__)
         self.ui.closeButton.pressed.connect(self.animate_close)
+
+        # If the node has changed, reposition based on the
+        # control's viewer_position() function
+        control.center_changed.connect(self.reposition)
 
         self._mask_size = 0
         self.animate_open()
         self.show()
+
+    def reposition(self, point):
+        self.move(point)
 
     def paintEvent(self, event):
         """ Override paintEvent so that the widget can be styled using qss.

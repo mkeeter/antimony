@@ -1,9 +1,14 @@
 from PySide import QtCore, QtGui
 from sb.datum import Datum
 
-class Control(QtGui.QGraphicsItem):
+class Control(QtGui.QGraphicsItem, QtCore.QObject):
+
+    center_changed = QtCore.Signal(QtCore.QPoint)
+
     def __init__(self, canvas, node=None):
-        super(Control, self).__init__()
+        QtGui.QGraphicsItem.__init__(self)
+        QtCore.QObject.__init__(self)
+
         self.setFlags(QtGui.QGraphicsItem.ItemIgnoresTransformations)
         self.setAcceptHoverEvents(True)
 
@@ -15,6 +20,7 @@ class Control(QtGui.QGraphicsItem):
 
         self._node = node
         if self._node is not None:
+            self._node.changed.connect(self.update_center)
             self._node.changed.connect(self.prepareGeometryChange)
             self._node.changed.connect(self.update)
             self._node.changed.connect(self._canvas.update)
@@ -63,6 +69,10 @@ class Control(QtGui.QGraphicsItem):
 
     def mouseDoubleClickEvent(self, event):
         if self._node is not None:
-            NodeViewer(self._canvas, self._node)
+            NodeViewer(self)
+            # Force a recalculation to position the NodeViewer at the right
+            # place (since this will cause the control to emit center_changed)
+            self._node.changed.emit()
+
 
 from sb.ui.viewer import NodeViewer
