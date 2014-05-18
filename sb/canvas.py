@@ -23,6 +23,7 @@ class Canvas(QtGui.QGraphicsView):
 
         self._yaw = 0
         self._pitch = 0
+        self._scale = 1
 
     @property
     def matrix(self):
@@ -33,8 +34,7 @@ class Canvas(QtGui.QGraphicsView):
         """
         M = QtGui.QMatrix4x4()
         # Remember that these operations are applied back-asswards.
-        s = self.transform().m11()
-        M.scale(s, -s, s)
+        M.scale(self._scale, -self._scale, self._scale)
         M.rotate(math.degrees(self._pitch), QtGui.QVector3D(1, 0, 0))
         M.rotate(math.degrees(self._yaw), QtGui.QVector3D(0, 0, 1))
         return M
@@ -46,10 +46,7 @@ class Canvas(QtGui.QGraphicsView):
         p = self.mapToScene(event.pos())
         r = self.sceneRect()
         s = 1.001 ** -event.delta()
-        self.setSceneRect(p.x() + (r.x() - p.x()) / s,
-                          p.y() + (r.y() - p.y()) / s,
-                          r.width() / s, r.height() / s)
-        self.scale(s, s)
+        self._scale *= s
         self.zoomed.emit()
 
     def mousePressEvent(self, event):

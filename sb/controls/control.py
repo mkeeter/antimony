@@ -21,6 +21,7 @@ class Control(QtGui.QGraphicsItem, QtCore.QObject):
         if self._node is not None:
             self._node.changed.connect(self.on_change)
             canvas.rotated.connect(self.on_change)
+            canvas.zoomed.connect(self.on_change)
             canvas.zoomed.connect(self.on_center_change)
             canvas.panned.connect(self.on_center_change)
         else:
