@@ -24,11 +24,15 @@ class Canvas(QtGui.QGraphicsView):
 
     @property
     def matrix(self):
-        """ Rotation transform matrix
+        """ Scale + rotation transform matrix
+            (since our controls should be scale-invariant, they're all created
+             with ItemIgnoresTransformations and the scaling is done here
+             instead)
         """
         M = QtGui.QMatrix4x4()
         # Remember that these operations are applied back-asswards.
-        M.scale(1, -1, 1)
+        s = self.transform().m11()
+        M.scale(s, -s, s)
         M.rotate(math.degrees(self._pitch), QtGui.QVector3D(1, 0, 0))
         M.rotate(math.degrees(self._yaw), QtGui.QVector3D(0, 0, 1))
         return M

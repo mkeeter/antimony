@@ -8,6 +8,8 @@ class Control(QtGui.QGraphicsItem):
         self._canvas.scene.addItem(self)
         self._canvas.rotated.connect(self.prepareGeometryChange)
 
+        self.setFlags(QtGui.QGraphicsItem.ItemIgnoresTransformations)
+
         # Set _post_init to be called when control returns to the event loop
         # (which will happen after the superclass finishes its own __init__)
         self._post_init_timer = QtCore.QTimer()
