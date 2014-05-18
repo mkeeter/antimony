@@ -51,6 +51,5 @@ class Point3DControl(Control):
         """
         pt = self.transform_points([
             QtGui.QVector3D(self.x._value, self.y._value, self.z._value)])[0]
-        print self._canvas.mapFromScene(pt)
         self.center_changed.emit(self._canvas.mapFromScene(pt))
 

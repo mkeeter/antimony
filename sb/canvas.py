@@ -6,6 +6,8 @@ from sb.controls.axes import AxesControl
 
 class Canvas(QtGui.QGraphicsView):
     rotated = QtCore.Signal(QtGui.QMatrix4x4)
+    panned = QtCore.Signal()
+    zoomed = QtCore.Signal()
 
     def __init__(self, parent=None):
         self.scene = QtGui.QGraphicsScene(parent)
@@ -48,6 +50,7 @@ class Canvas(QtGui.QGraphicsView):
                           p.y() + (r.y() - p.y()) / s,
                           r.width() / s, r.height() / s)
         self.scale(s, s)
+        self.zoomed.emit()
 
     def mousePressEvent(self, event):
         """ On mouse click, save the click position.
@@ -71,6 +74,7 @@ class Canvas(QtGui.QGraphicsView):
             r = self.sceneRect()
             r.translate(self._mouse_click_pos - p)
             self.setSceneRect(r)
+            self.panned.emit()
         elif event.buttons() == QtCore.Qt.RightButton:
             p = event.pos()
             dy = -0.01 * (self._mouse_click_pos.x() - p.x())
