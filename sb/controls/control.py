@@ -13,8 +13,11 @@ class Control(QtGui.QGraphicsItem):
 
         self._hover = False
 
-        if node is not None:
-            node.changed.connect(self.prepareGeometryChange)
+        self._node = node
+        if self._node is not None:
+            self._node.changed.connect(self.prepareGeometryChange)
+            self._node.changed.connect(self.update)
+            self._node.changed.connect(self._canvas.update)
             # something something deletion
 
     @property
@@ -58,3 +61,8 @@ class Control(QtGui.QGraphicsItem):
             self._hover = False
             self.update()
 
+    def mouseDoubleClickEvent(self, event):
+        if self._node is not None:
+            NodeViewer(self._canvas, self._node)
+
+from sb.ui.viewer import NodeViewer
