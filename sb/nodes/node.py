@@ -25,9 +25,6 @@ class Node(QtCore.QObject):
         self.object_datums = {}
         self.view_datums = {}
 
-        # Create an empty list of UI handles
-        self.handles = []
-
         # Every object has a name (which is used by NodeManager when creating
         # its dictionary of NodeProxy objects.
         self.object_datums['name'] = datum.NameDatum(self, name)
