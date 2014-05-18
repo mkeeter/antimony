@@ -17,6 +17,8 @@ class Canvas(QtGui.QGraphicsView):
         self.setSceneRect(-self.width()/2, -self.height()/2,
                            self.width(), self.height())
 
+        self.setRenderHints(QtGui.QPainter.Antialiasing | QtGui.QPainter.SmoothPixmapTransform)
+
         self._yaw = 0
         self._pitch = 0
 
