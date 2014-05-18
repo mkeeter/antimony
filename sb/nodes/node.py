@@ -39,6 +39,7 @@ class Node(QtCore.QObject):
         for d in self.object_datums, self.view_datums:
             for a in d.itervalues():
                 a.changed.connect(self.changed)
+                a.update()
 
 
     def proxy(self):

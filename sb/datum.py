@@ -136,7 +136,7 @@ class Datum(QtCore.QObject):
         # 'changed' signal so that when we change, it updates itself.
         if Datum._caller and not self in Datum._caller._connected_datums:
             self.changed.connect(Datum._caller.update)
-            Datum._caller._connected_datums.insert(self)
+            Datum._caller._connected_datums.add(self)
 
 
     def disconnect_parents(self):
@@ -145,7 +145,7 @@ class Datum(QtCore.QObject):
             connections that are still active).
         """
         for d in self._connected_datums:
-            d.disconnect(d.changed, self.update)
+            d.disconnect(QtCore.SIGNAL('changed'), self.update)
         self._connected_datums = set()
 
 
@@ -159,9 +159,10 @@ class Datum(QtCore.QObject):
             value = self.get_value()
             valid = True
         except:
+            import traceback
+            traceback.print_exc()
             value = self._value
             valid = False
-            raise
         finally:
             Datum._caller = None
 
