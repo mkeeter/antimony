@@ -1,6 +1,6 @@
 import sys
 
-from PySide import QtGui
+from PySide import QtCore, QtGui
 
 from sb.scene import GraphicsScene
 from sb.ui.main_window import MainWindow
@@ -12,7 +12,7 @@ class App(QtGui.QApplication):
         super(App, self).__init__(sys.argv)
 
         self.window = MainWindow()
-        self.a = AxesControl(self.window.canvas)
+        a = AxesControl(self.window.canvas)
 
         self.window.activateWindow()
         self.window.show()
