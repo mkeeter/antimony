@@ -17,7 +17,6 @@ class Control(QtGui.QGraphicsItem):
         del self._post_init_timer
         for d in self.__dict__.itervalues():
             if isinstance(d, Datum):
-                print d
                 d.changed.connect(self.prepareGeometryChange)
 
     @property
