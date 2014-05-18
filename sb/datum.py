@@ -216,14 +216,12 @@ class FloatDatum(EvalDatum):
     def __init__(self, node, value):
         super(FloatDatum, self).__init__(node, float, value)
 
-    '''
     def __iadd__(self, delta):
         """ Increments this node's expression.
             Throws an exception if this operation fails.
         """
-        self.set_expr(str(float(self.get_expr()) + delta))
+        self.set_expr(str(float(self._expr) + delta))
         return self
-    '''
 
 ################################################################################
 

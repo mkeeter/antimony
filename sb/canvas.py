@@ -64,7 +64,9 @@ class Canvas(QtGui.QGraphicsView):
         """ On mouse move, pan or rotate.
         """
         super(Canvas, self).mouseMoveEvent(event)
-        if event.buttons() == QtCore.Qt.LeftButton:
+        if self.scene.mouseGrabberItem() is not None:
+            return
+        elif event.buttons() == QtCore.Qt.LeftButton:
             p = self.mapToScene(event.pos())
             r = self.sceneRect()
             r.translate(self._mouse_click_pos - p)

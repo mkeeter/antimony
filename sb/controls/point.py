@@ -8,6 +8,8 @@ class Point3DControl(Control):
         self.x = x
         self.y = y
         self.z = z
+        self.setFlags(QtGui.QGraphicsItem.ItemIsMovable |
+                      QtGui.QGraphicsItem.ItemIsSelectable)
 
     def boundingRect(self):
         return self.bounding_box([
@@ -25,4 +27,21 @@ class Point3DControl(Control):
         path = QtGui.QPainterPath()
         path.addEllipse(pt.x() - 5, pt.y() - 5, 10, 10)
         return path
+
+    def mousePressEvent(self, event):
+        """ Saves a mouse click position (in scene coordinates).
+        """
+        self._mouse_click_pos = event.pos()
+
+    def mouseMoveEvent(self, event):
+        drag = event.pos() - self._mouse_click_pos
+        d = self.itransform_points([drag])[0]
+
+        if self.x.simple():
+            self.x += d.x()
+        if self.y.simple():
+            self.y += d.y()
+        if self.z.simple():
+            self.z += d.z()
+        self._mouse_click_pos = event.pos()
 

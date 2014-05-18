@@ -29,6 +29,13 @@ class Control(QtGui.QGraphicsItem):
         t = [m * p for p in points]
         return [QtCore.QPointF(p.x(), p.y()) for p in t]
 
+    def itransform_points(self, points):
+        """ Transforms a list of QPointFs in scene coordinates, returning
+            a list of QVector3Ds in world coordinates.
+        """
+        m = self.matrix.inverted()[0]
+        return [m * QtGui.QVector3D(t) for t in points]
+
     def bounding_box(self, points, padding=10):
         """ Returns a QRectF representing the bounding box (in scene coordinates)
             of the given set of points (which are in world coordinates).
