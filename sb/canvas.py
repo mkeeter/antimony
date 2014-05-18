@@ -25,6 +25,8 @@ class Canvas(QtGui.QGraphicsView):
         """ Rotation transform matrix
         """
         M = QtGui.QMatrix4x4()
+        # Remember that these operations are applied back-asswards.
+        M.scale(1, -1, 1)
         M.rotate(math.degrees(self._pitch), QtGui.QVector3D(1, 0, 0))
         M.rotate(math.degrees(self._yaw), QtGui.QVector3D(0, 0, 1))
         return M
@@ -62,8 +64,8 @@ class Canvas(QtGui.QGraphicsView):
             self.setSceneRect(r)
         elif event.buttons() == QtCore.Qt.RightButton:
             p = event.pos()
-            dp = 0.01 * (self._mouse_click_pos.x() - p.x())
-            dy = 0.01 * (self._mouse_click_pos.y() - p.y())
+            dy = -0.01 * (self._mouse_click_pos.x() - p.x())
+            dp = -0.01 * (self._mouse_click_pos.y() - p.y())
             self._pitch = min(0, max(-math.pi, self._pitch + dp))
             self._yaw = ((self._yaw + dy + math.pi) % (2 * math.pi)) - math.pi
             self._mouse_click_pos = p
