@@ -1,4 +1,5 @@
 from PySide import QtCore, QtGui
+from sb.datum import Datum
 
 class Control(QtGui.QGraphicsItem):
     def __init__(self, canvas):
@@ -6,6 +7,18 @@ class Control(QtGui.QGraphicsItem):
         self.canvas = canvas
         self.canvas.scene.addItem(self)
         self.canvas.rotated.connect(self.prepareGeometryChange)
+
+        # Set _post_init to be called when control returns to the event loop
+        # (which will happen after the superclass finishes its own __init__)
+        self._post_init_timer = QtCore.QTimer()
+        self._post_init_timer.singleShot(0, self._post_init)
+
+    def _post_init(self):
+        del self._post_init_timer
+        for d in self.__dict__.itervalues():
+            if isinstance(d, Datum):
+                print d
+                d.changed.connect(self.prepareGeometryChange)
 
     @property
     def matrix(self):

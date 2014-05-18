@@ -2,10 +2,10 @@ import sys
 
 from PySide import QtCore, QtGui
 
-from sb.scene import GraphicsScene
 from sb.ui.main_window import MainWindow
 
 from sb.controls.axes import AxesControl
+from sb.nodes.point import Point3D
 
 class App(QtGui.QApplication):
     def __init__(self):
@@ -13,6 +13,8 @@ class App(QtGui.QApplication):
 
         self.window = MainWindow()
         a = AxesControl(self.window.canvas)
+        b = Point3D('hi', 10, 10, 10)
+        b.make_controls(self.window.canvas)
 
         self.window.activateWindow()
         self.window.show()

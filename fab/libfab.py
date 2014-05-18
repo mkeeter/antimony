@@ -11,6 +11,7 @@ if sys.argv[0]: base = os.path.dirname(base)
 libname = 'libcfab' + ('.dylib' if 'Darwin' in os.uname() else '.so')
 filenames =[
     os.path.join(base, 'fab/', libname),
+    os.path.join(base, '../fab/', libname),
     os.path.join(base, '../lib/', libname),
     os.path.join(base, '../Frameworks/', libname),
     libname
