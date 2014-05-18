@@ -4,6 +4,7 @@ from sb.controls.control import Control
 class AxesControl(Control):
     def __init__(self, canvas):
         super(AxesControl, self).__init__(canvas)
+        self.setAcceptHoverEvents(False)
 
     def boundingRect(self):
         return self.bounding_box([

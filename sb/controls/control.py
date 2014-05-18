@@ -2,24 +2,20 @@ from PySide import QtCore, QtGui
 from sb.datum import Datum
 
 class Control(QtGui.QGraphicsItem):
-    def __init__(self, canvas):
+    def __init__(self, canvas, node=None):
         super(Control, self).__init__()
+        self.setFlags(QtGui.QGraphicsItem.ItemIgnoresTransformations)
+        self.setAcceptHoverEvents(True)
+
         self._canvas = canvas
         self._canvas.scene.addItem(self)
         self._canvas.rotated.connect(self.prepareGeometryChange)
 
-        self.setFlags(QtGui.QGraphicsItem.ItemIgnoresTransformations)
+        self._hover = False
 
-        # Set _post_init to be called when control returns to the event loop
-        # (which will happen after the superclass finishes its own __init__)
-        self._post_init_timer = QtCore.QTimer()
-        self._post_init_timer.singleShot(0, self._post_init)
-
-    def _post_init(self):
-        del self._post_init_timer
-        for d in self.__dict__.itervalues():
-            if isinstance(d, Datum):
-                d.changed.connect(self.prepareGeometryChange)
+        if node is not None:
+            node.changed.connect(self.prepareGeometryChange)
+            # something something deletion
 
     @property
     def matrix(self):
@@ -44,3 +40,14 @@ class Control(QtGui.QGraphicsItem):
         ymax = max(p.y() for p in pts)
         return QtCore.QRectF(xmin - padding, ymin - padding,
                              xmax - xmin + 2*padding, ymax - ymin + 2*padding)
+
+    def hoverEnterEvent(self, event):
+        if not self._hover:
+            self._hover = True
+            self.update()
+
+    def hoverLeaveEvent(self, event):
+        if self._hover:
+            self._hover = False
+            self.update()
+

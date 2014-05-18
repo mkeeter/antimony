@@ -7,7 +7,7 @@ class Point3D(Node3D):
 
     def make_controls(self, canvas):
         Point3DControl(
-                canvas,
+                self, canvas,
                 self.object_datums['x'],
                 self.object_datums['y'],
                 self.object_datums['z'])
