@@ -17,8 +17,12 @@ class Control(QtGui.QGraphicsItem, QtCore.QObject):
 
         self._hover = False
 
+        canvas.zoomed.connect(self.prepareGeometryChange)
+        canvas.rotated.connect(self.prepareGeometryChange)
+
         self._node = node
         if self._node is not None:
+            self._node.changed.connect(self.prepareGeometryChange)
             self._node.changed.connect(self._canvas.update)
             self._node.changed.connect(self.update_center)
             canvas.zoomed.connect(self.update_center)
