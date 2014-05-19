@@ -1,13 +1,12 @@
 from PySide import QtCore, QtGui
 from sb.datum import Datum
 
-class Control(QtGui.QGraphicsItem, QtCore.QObject):
+class Control(QtGui.QGraphicsObject):
 
     center_changed = QtCore.Signal(QtCore.QPoint)
 
     def __init__(self, canvas, node=None):
-        QtGui.QGraphicsItem.__init__(self)
-        QtCore.QObject.__init__(self)
+        super(Control, self).__init__()
 
         self.setFlags(QtGui.QGraphicsItem.ItemIgnoresTransformations)
         self.setAcceptHoverEvents(True)
