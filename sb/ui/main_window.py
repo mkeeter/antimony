@@ -44,13 +44,24 @@ class MainWindow(QtGui.QMainWindow):
             act.triggered.connect(lambda: self.create_new(d))
 
     def create_new(self, d):
-        name = NodeManager.get_name(d)
+        """ Creates a new instance of d, placing it at the center of
+            the viewport and attaching it to the mouse.
+        """
+        # This is the mouse position in viewport coordinates
         mouse_pos = self.canvas.rect().center()
+        # ...and in scene coordinates
         scene_pos = self.canvas.sceneRect().center()
-        obj_pos = self.canvas.matrix * QtGui.QVector3D(scene_pos)
+        # ... and in world coordinates
+        obj_pos = self.canvas.imatrix * QtGui.QVector3D(scene_pos)
+
+        # Move the mouse to the center of the canvas
         QtGui.QCursor.setPos(self.canvas.mapToGlobal(mouse_pos))
 
+        # Pick a unique name then create the node
+        name = NodeManager.get_name(d)
         node = d(name, obj_pos.x(), obj_pos.y(), obj_pos.z(), None)
+
+        # Make a control, then make it stick to the mouse
         c = node.make_controls(self.canvas)
         c._mouse_click_pos = scene_pos
         c._hover = True

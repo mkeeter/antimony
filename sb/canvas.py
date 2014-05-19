@@ -43,6 +43,9 @@ class Canvas(QtGui.QGraphicsView):
         M.rotate(math.degrees(self._yaw), QtGui.QVector3D(0, 0, 1))
         return M
 
+    @property
+    def imatrix(self):
+        return self.matrix.inverted()[0]
 
     def wheelEvent(self, event):
         """ On mouse scroll, zoom about the cursor's position.
