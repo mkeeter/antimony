@@ -153,7 +153,13 @@
     </property>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuAdd">
+    <property name="title">
+     <string>Add</string>
+    </property>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuAdd"/>
    <addaction name="menuExport"/>
    <addaction name="menuHelp"/>
   </widget>
