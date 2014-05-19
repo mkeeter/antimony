@@ -46,7 +46,7 @@ class Point3DControl(Control):
         self._mouse_click_pos = event.pos()
 
     def update_center(self):
-        """ Recalculates screen coordinates where the node viewer should be
+        """ Recalculates viewport coordinates where the node viewer should be
             positioned, then emits center_changed with that position.
         """
         pt = self.transform_points([
