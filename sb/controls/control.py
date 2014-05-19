@@ -80,10 +80,22 @@ class Control(QtGui.QGraphicsObject):
 
     def mouseDoubleClickEvent(self, event):
         if self._node is not None:
-            NodeViewer(self)
-            # Force a recalculation to position the NodeViewer at the right
-            # place (since this will cause the control to emit center_changed)
-            self._node.changed.emit()
+            v = NodeViewer(self)
+            self.update_center()
+            return v
+
+    def mousePressEvent(self, event):
+        """ Saves a mouse click position (in scene coordinates) to
+            self._mouse_click_pos
+        """
+        self._mouse_click_pos = event.pos()
+
+    def mouseReleaseEvent(self, event):
+        """ On mouse release, call ungrabMouse (only matters after initial
+            construction, when the control called grabMouse, but does no
+            harm here).
+        """
+        self.ungrabMouse()
 
 
 from sb.ui.viewer import NodeViewer
