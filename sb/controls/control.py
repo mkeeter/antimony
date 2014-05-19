@@ -21,11 +21,21 @@ class Control(QtGui.QGraphicsObject):
 
         self._node = node
         if self._node is not None:
+            # When the node changes, inform the scene that our bounding box
+            # has changed, force a canvas redraw, and update the center
+            # for any node viewers that may have been created.
             self._node.changed.connect(self.prepareGeometryChange)
             self._node.changed.connect(self._canvas.update)
             self._node.changed.connect(self.update_center)
+
+            # Where there's a node, there could be a node viewer, so
+            # call all of the node viewer functions when the view changes.
+            canvas.rotated.connect(self.update_center)
             canvas.zoomed.connect(self.update_center)
             canvas.panned.connect(self.update_center)
+
+            # Finally, when the node is destroyed, delete ourself.
+            self._node.destroyed.connect(self.deleteLater)
 
     @property
     def matrix(self):
