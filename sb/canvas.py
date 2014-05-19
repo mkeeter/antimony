@@ -25,6 +25,10 @@ class Canvas(QtGui.QGraphicsView):
         self._pitch = 0
         self._scale = 1
 
+        # When rotating or zooming, force a redraw
+        self.rotated.connect(self.update)
+        self.zoomed.connect(self.update)
+
     @property
     def matrix(self):
         """ Scale + rotation transform matrix

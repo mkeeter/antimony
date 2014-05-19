@@ -19,22 +19,10 @@ class Control(QtGui.QGraphicsItem, QtCore.QObject):
 
         self._node = node
         if self._node is not None:
-            self._node.changed.connect(self.on_change)
-            canvas.rotated.connect(self.on_change)
-            canvas.zoomed.connect(self.on_change)
-            canvas.zoomed.connect(self.on_center_change)
-            canvas.panned.connect(self.on_center_change)
-        else:
-            self._canvas.rotated.connect(self.prepareGeometryChange)
-
-    def on_change(self):
-        self.update_center()
-        self.prepareGeometryChange()
-        self.update()
-        self._canvas.update()
-
-    def on_center_change(self):
-        self.update_center()
+            self._node.changed.connect(self._canvas.update)
+            self._node.changed.connect(self.update_center)
+            canvas.zoomed.connect(self.update_center)
+            canvas.panned.connect(self.update_center)
 
     @property
     def matrix(self):
