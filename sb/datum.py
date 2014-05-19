@@ -91,6 +91,9 @@ class MultiInput(object):
 ################################################################################
 
 class Datum(QtCore.QObject):
+
+    class ValidError(RuntimeError): pass
+
     _caller = None
     changed = QtCore.Signal()
 
@@ -107,12 +110,17 @@ class Datum(QtCore.QObject):
 
     @property
     def value(self):
+        """ Connects the calling node to our changed signal, then returns
+            self._value if valid and raise an exception if not.
+        """
         self.connect_caller()
-        return self._value
+        if self._valid:
+            return self._value
+        else:
+            raise Datum.ValidError()
 
     @property
     def valid(self):
-        self.connect_caller()
         return self._valid
 
     '''
@@ -282,7 +290,7 @@ class FunctionDatum(Datum):
         super(FunctionDatum, self).__init__(node, data_type)
 
     def display_str(self):
-        if self._valid():   return 'Function'
+        if self._valid:     return 'Function'
         else:               return 'Function (invalid)'
 
     def can_edit(self): return False
