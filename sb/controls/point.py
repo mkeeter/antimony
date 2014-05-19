@@ -3,17 +3,13 @@ from PySide import QtCore, QtGui
 from sb.controls.control import Control
 
 class Point3DControl(Control):
-    def __init__(self, node, canvas, x, y, z):
+    def __init__(self, node, canvas):
         super(Point3DControl, self).__init__(canvas, node)
-        self.x = x
-        self.y = y
-        self.z = z
         self.setFlags(QtGui.QGraphicsItem.ItemIsMovable |
                       QtGui.QGraphicsItem.ItemIsSelectable)
 
     def boundingRect(self):
-        return self.bounding_box([
-            QtGui.QVector3D(self.x._value, self.y._value, self.z._value)])
+        return self.bounding_box([self.pos])
 
     def paint(self, painter, options, widget):
         if self._hover:
@@ -22,34 +18,31 @@ class Point3DControl(Control):
         painter.drawPath(self.shape())
 
     def shape(self):
-        pt = self.transform_points([
-            QtGui.QVector3D(self.x._value, self.y._value, self.z._value)])[0]
+        pt = self.transform_points([self.pos])[0]
         path = QtGui.QPainterPath()
         path.addEllipse(pt.x() - 5, pt.y() - 5, 10, 10)
         return path
 
-    def mousePressEvent(self, event):
-        """ Saves a mouse click position (in scene coordinates).
-        """
-        self._mouse_click_pos = event.pos()
+    @property
+    def pos(self):
+        return QtGui.QVector3D(
+                self._node.object_datums['x']._value,
+                self._node.object_datums['y']._value,
+                self._node.object_datums['z']._value)
 
     def mouseMoveEvent(self, event):
         drag = event.pos() - self._mouse_click_pos
         d = self.itransform_points([drag])[0]
 
-        if self.x.simple():
-            self.x += d.x()
-        if self.y.simple():
-            self.y += d.y()
-        if self.z.simple():
-            self.z += d.z()
+        for a in 'xyz':
+            if self._node.object_datums[a].simple():
+                self._node.object_datums[a] += getattr(d, a)()
         self._mouse_click_pos = event.pos()
 
     def update_center(self):
         """ Recalculates viewport coordinates where the node viewer should be
             positioned, then emits center_changed with that position.
         """
-        pt = self.transform_points([
-            QtGui.QVector3D(self.x._value, self.y._value, self.z._value)])[0]
+        pt = self.transform_points([self.pos])[0]
         self.center_changed.emit(self._canvas.mapFromScene(pt))
 
