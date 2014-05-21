@@ -37,6 +37,7 @@ class NodeViewer(QtGui.QWidget):
         # If the node has changed, reposition based on the
         # control's viewer_position() function
         control.center_changed.connect(self.move)
+        control.destroyed.connect(self.animate_close)
 
         proxy = control._canvas.scene.addWidget(self)
         proxy.setZValue(-1)
