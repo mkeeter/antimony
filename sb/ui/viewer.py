@@ -8,19 +8,26 @@ class _DatumLineEdit(QtGui.QLineEdit):
     def __init__(self, datum, parent=None):
         super(_DatumLineEdit, self).__init__(parent)
         self._datum = datum
+
         if hasattr(self._datum, 'set_expr'):
             self.textEdited.connect(self._datum.set_expr)
         else:
             self.setEnabled(False)
         self.setText(self._datum.display_str())
         self._datum.changed.connect(self.on_datum_changed)
+        self.on_datum_changed()
 
     def on_datum_changed(self):
         self.setText(self._datum.display_str())
         if self._datum.valid:
-            self.setStyleSheet("")
+            self.setStyleSheet("""
+                QLineEdit:disabled { color: #ccc; }
+                """)
         else:
-            self.setStyleSheet("QLineEdit { background-color: #faa; }")
+            self.setStyleSheet("""
+                QLineEdit { background-color: #faa; }
+                QLineEdit:disabled { color: #fcc; }
+            """)
 
 ################################################################################
 
