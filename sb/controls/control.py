@@ -15,6 +15,7 @@ class Control(QtGui.QGraphicsObject):
         self._canvas.scene.addItem(self)
 
         self._hover = False
+        self._dragged = False
 
         canvas.zoomed.connect(self.prepareGeometryChange)
         canvas.rotated.connect(self.prepareGeometryChange)
@@ -36,6 +37,12 @@ class Control(QtGui.QGraphicsObject):
 
             # Finally, when the node is destroyed, delete ourself.
             self._node.destroyed.connect(self.deleteLater)
+
+    def delete_node(self):
+        """ Schedules the node for deletion
+            (which will also delete oneself).
+        """
+        self._node.deleteLater()
 
     @property
     def matrix(self):
@@ -79,15 +86,15 @@ class Control(QtGui.QGraphicsObject):
             self.update()
 
     def mouseDoubleClickEvent(self, event):
-        if self._node is not None:
-            v = NodeViewer(self)
-            self.update_center()
-            return v
+        v = NodeViewer(self)
+        self.update_center()
+        return v
 
     def mousePressEvent(self, event):
         """ Saves a mouse click position (in scene coordinates) to
             self._mouse_click_pos
         """
+        self._dragged = False
         self._mouse_click_pos = event.pos()
 
     def mouseReleaseEvent(self, event):
@@ -95,7 +102,19 @@ class Control(QtGui.QGraphicsObject):
             construction, when the control called grabMouse, but does no
             harm here).
         """
+        if not self._dragged:
+            self.setSelected(True)
         self.ungrabMouse()
+
+    def mouseMoveEvent(self, event):
+        """ On mouse move, call self.drag with the given drag
+            (in world coordinates).
+        """
+        drag = event.pos() - self._mouse_click_pos
+        d = self.itransform_points([drag])[0]
+        self.drag(d)
+        self._mouse_click_pos = event.pos()
+        self._dragged = True
 
 
 from sb.ui.viewer import NodeViewer

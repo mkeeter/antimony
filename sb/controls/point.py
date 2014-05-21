@@ -14,7 +14,10 @@ class Point3DControl(Control):
     def paint(self, painter, options, widget):
         if self._hover:
             painter.setPen(QtGui.QPen(QtCore.Qt.white, 2))
-        painter.setBrush(QtGui.QBrush(QtCore.Qt.red))
+        if self.isSelected():
+            painter.setBrush(QtGui.QBrush(QtCore.Qt.green))
+        else:
+            painter.setBrush(QtGui.QBrush(QtCore.Qt.red))
         painter.drawPath(self.shape())
 
     def shape(self):
@@ -30,14 +33,10 @@ class Point3DControl(Control):
                 self._node.object_datums['y']._value,
                 self._node.object_datums['z']._value)
 
-    def mouseMoveEvent(self, event):
-        drag = event.pos() - self._mouse_click_pos
-        d = self.itransform_points([drag])[0]
-
+    def drag(self, d):
         for a in 'xyz':
             if self._node.object_datums[a].simple():
                 self._node.object_datums[a] += getattr(d, a)()
-        self._mouse_click_pos = event.pos()
 
     def update_center(self):
         """ Recalculates viewport coordinates where the node viewer should be
