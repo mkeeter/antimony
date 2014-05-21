@@ -1,5 +1,7 @@
 from PySide import QtCore, QtGui
+
 from sb.datum import Datum
+import sb.colors
 
 class Control(QtGui.QGraphicsObject):
 
@@ -8,7 +10,9 @@ class Control(QtGui.QGraphicsObject):
     def __init__(self, canvas, node=None):
         super(Control, self).__init__()
 
-        self.setFlags(QtGui.QGraphicsItem.ItemIgnoresTransformations)
+        self.setFlags(QtGui.QGraphicsItem.ItemIsMovable |
+                      QtGui.QGraphicsItem.ItemIsSelectable |
+                      QtGui.QGraphicsItem.ItemIgnoresTransformations)
         self.setAcceptHoverEvents(True)
 
         self._canvas = canvas
@@ -40,7 +44,8 @@ class Control(QtGui.QGraphicsObject):
 
     def delete_node(self):
         """ Schedules the node for deletion
-            (which will also delete oneself).
+            (which will also delete oneself once the node emits its
+             destroyed signal).
         """
         self._node.deleteLater()
 
@@ -102,7 +107,7 @@ class Control(QtGui.QGraphicsObject):
             construction, when the control called grabMouse, but does no
             harm here).
         """
-        if not self._dragged:
+        if not self._dragged and event.button() == QtCore.Qt.LeftButton:
             self.setSelected(True)
         self.ungrabMouse()
 
@@ -116,5 +121,22 @@ class Control(QtGui.QGraphicsObject):
         self._mouse_click_pos = event.pos()
         self._dragged = True
 
+    def set_default_pen(self, painter):
+        if self.isSelected() or self._hover:
+            painter.setPen(QtGui.QPen(QtGui.QColor(sb.colors.base3), 2))
+        else:
+            painter.setPen(QtGui.QPen(QtGui.QColor(sb.colors.base3_d), 2))
+
+    def set_default_brush(self, painter):
+        if self.isSelected() or self._hover:
+            painter.setBrush(QtGui.QBrush(QtGui.QColor(sb.colors.base1_h)))
+        else:
+            painter.setBrush(QtGui.QBrush(QtGui.QColor(sb.colors.base1)))
+
+    def shape(self):
+        """ By default, controls have no selection region.
+            It's up to subclasses to define this function.
+        """
+        return QtGui.QPainterPath()
 
 from sb.ui.viewer import NodeViewer

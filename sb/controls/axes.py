@@ -26,6 +26,3 @@ class AxesControl(Control):
         painter.drawLine(pts[0], pts[2])
         painter.setPen(QtGui.QPen(QtCore.Qt.blue, 2))
         painter.drawLine(pts[0], pts[3])
-
-    def shape(self):
-        return QtGui.QPainterPath()

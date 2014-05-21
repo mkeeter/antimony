@@ -5,19 +5,13 @@ from sb.controls.control import Control
 class Point3DControl(Control):
     def __init__(self, node, canvas):
         super(Point3DControl, self).__init__(canvas, node)
-        self.setFlags(QtGui.QGraphicsItem.ItemIsMovable |
-                      QtGui.QGraphicsItem.ItemIsSelectable)
 
     def boundingRect(self):
         return self.bounding_box([self.pos])
 
     def paint(self, painter, options, widget):
-        if self._hover:
-            painter.setPen(QtGui.QPen(QtCore.Qt.white, 2))
-        if self.isSelected():
-            painter.setBrush(QtGui.QBrush(QtCore.Qt.green))
-        else:
-            painter.setBrush(QtGui.QBrush(QtCore.Qt.red))
+        self.set_default_pen(painter)
+        self.set_default_brush(painter)
         painter.drawPath(self.shape())
 
     def shape(self):

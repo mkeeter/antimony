@@ -89,8 +89,10 @@ class Canvas(QtGui.QGraphicsView):
             self.rotated.emit(self.matrix)
 
     def keyPressEvent(self, event):
-        if event.key() == QtCore.Qt.Key_Delete:
+        if self.scene.focusItem():
+            super(Canvas, self).keyPressEvent(event)
+        elif event.key() == QtCore.Qt.Key_Delete:
             for i in self.scene.selectedItems():
                 i.delete_node()
-        self.update()
+            self.update()
 
