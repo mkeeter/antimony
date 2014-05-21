@@ -25,7 +25,7 @@ class NodeViewer(QtGui.QWidget):
     def __init__(self, control):
         """ control should be a sb.controls.control.Control instance
         """
-        super(NodeViewer, self).__init__(control._canvas)
+        super(NodeViewer, self).__init__()
         self.ui = Ui_Viewer()
         self.ui.setupUi(self)
         self._populate_grid(control._node)
@@ -36,14 +36,14 @@ class NodeViewer(QtGui.QWidget):
 
         # If the node has changed, reposition based on the
         # control's viewer_position() function
-        control.center_changed.connect(self.reposition)
+        control.center_changed.connect(self.move)
+
+        proxy = control._canvas.scene.addWidget(self)
+        proxy.setZValue(-1)
 
         self._mask_size = 0
         self.animate_open()
         self.show()
-
-    def reposition(self, point):
-        self.move(point)
 
     def paintEvent(self, event):
         """ Override paintEvent so that the widget can be styled using qss.
@@ -70,6 +70,7 @@ class NodeViewer(QtGui.QWidget):
         full = self.sizeHint()
         self.setMask(QtGui.QRegion(0, 0, full.width()*frac  + 1,
                                          full.height()*frac + 1))
+        self.update()
 
     def _get_mask(self):
         """ Find what fraction of the widget is masked

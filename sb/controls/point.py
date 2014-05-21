@@ -44,5 +44,5 @@ class Point3DControl(Control):
             positioned, then emits center_changed with that position.
         """
         pt = self.transform_points([self.pos])[0]
-        self.center_changed.emit(self._canvas.mapFromScene(pt))
+        self.center_changed.emit(QtCore.QPoint(pt.x(), pt.y()))
 
