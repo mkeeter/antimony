@@ -8,7 +8,10 @@ class _DatumLineEdit(QtGui.QLineEdit):
     def __init__(self, datum, parent=None):
         super(_DatumLineEdit, self).__init__(parent)
         self._datum = datum
-        self.textEdited.connect(self._datum.set_expr)
+        if hasattr(self._datum, 'set_expr'):
+            self.textEdited.connect(self._datum.set_expr)
+        else:
+            self.setEnabled(False)
         self.setText(self._datum.display_str())
         self._datum.changed.connect(self.on_datum_changed)
 

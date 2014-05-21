@@ -7,6 +7,9 @@ class AxesControl(Control):
         self.setAcceptHoverEvents(False)
         self.setZValue(-10)
 
+        self.setAcceptHoverEvents(False)
+        self.setFlags(QtGui.QGraphicsItem.ItemIgnoresTransformations)
+
     def boundingRect(self):
         return self.bounding_box([
             QtGui.QVector3D(0, 0, 0),

@@ -41,9 +41,11 @@ class Node(QtCore.QObject):
                 a.changed.connect(self.changed)
                 a.update()
 
-
     def proxy(self):
         return NodeProxy(self)
+
+    def make_controls(self, canvas):
+        return self.__class__._control(canvas, self)
 
 ################################################################################
 

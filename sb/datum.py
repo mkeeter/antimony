@@ -318,7 +318,6 @@ class FloatFunctionDatum(FunctionDatum):
 
 ################################################################################
 
-
 class ExpressionFunctionDatum(FunctionDatum):
     """ Represents a math expression calculated by a function.
     """
@@ -327,6 +326,10 @@ class ExpressionFunctionDatum(FunctionDatum):
         """ Pass in a parent node and a function to generate
             an output Expression.
         """
+
+        # If we were passed in a function, get the function name instead.
+        if not isinstance(function, str):
+            function = function.__name__
         super(ExpressionFunctionDatum, self).__init__(
                 node, function, Expression)
 

@@ -6,9 +6,7 @@ class Point3D(Node3D):
     menu_category = "3D"
 
     name_prefix = 'p'
+    _control = Point3DControl
 
     def __init__(self, name, x, y, z, scale):
         super(Point3D, self).__init__(name, x, y, z)
-
-    def make_controls(self, canvas):
-        return Point3DControl(self, canvas)

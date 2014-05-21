@@ -7,16 +7,16 @@ class Control(QtGui.QGraphicsObject):
 
     center_changed = QtCore.Signal(QtCore.QPoint)
 
-    def __init__(self, canvas, node=None):
-        super(Control, self).__init__()
+    def __init__(self, canvas, node=None, parent=None):
+        super(Control, self).__init__(parent)
 
-        self.setFlags(QtGui.QGraphicsItem.ItemIsMovable |
-                      QtGui.QGraphicsItem.ItemIsSelectable |
+        self.setFlags(QtGui.QGraphicsItem.ItemIsSelectable |
                       QtGui.QGraphicsItem.ItemIgnoresTransformations)
         self.setAcceptHoverEvents(True)
 
         self._canvas = canvas
-        self._canvas.scene.addItem(self)
+        if parent is None:
+            self._canvas.scene.addItem(self)
 
         self._hover = False
         self._dragged = False
@@ -91,9 +91,12 @@ class Control(QtGui.QGraphicsObject):
             self.update()
 
     def mouseDoubleClickEvent(self, event):
-        v = NodeViewer(self)
-        self.update_center()
-        return v
+        if self.parentObject():
+            return self.parentObject().mouseDoubleClickEvent(event)
+        else:
+            v = NodeViewer(self)
+            self.update_center()
+            return v
 
     def mousePressEvent(self, event):
         """ Saves a mouse click position (in scene coordinates) to
@@ -115,9 +118,9 @@ class Control(QtGui.QGraphicsObject):
         """ On mouse move, call self.drag with the given drag
             (in world coordinates).
         """
-        drag = event.pos() - self._mouse_click_pos
-        d = self.itransform_points([drag])[0]
-        self.drag(d)
+        self.drag(*self.itransform_points([
+            event.pos(),
+            event.pos() - self._mouse_click_pos]))
         self._mouse_click_pos = event.pos()
         self._dragged = True
 
@@ -133,10 +136,21 @@ class Control(QtGui.QGraphicsObject):
         else:
             painter.setBrush(QtGui.QBrush(QtGui.QColor(sb.colors.base1)))
 
+
+
+class DummyControl(Control):
+    """ Represents a control that cannot be drawn or selected.
+    """
+
+    def boundingRect(self):
+        return QtCore.QRectF()
+
+    def paint(self, painter, widget, object):
+        return
+
     def shape(self):
         """ By default, controls have no selection region.
             It's up to subclasses to define this function.
         """
         return QtGui.QPainterPath()
-
 from sb.ui.viewer import NodeViewer
