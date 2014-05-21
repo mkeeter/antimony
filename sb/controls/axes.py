@@ -5,6 +5,7 @@ class AxesControl(Control):
     def __init__(self, canvas):
         super(AxesControl, self).__init__(canvas)
         self.setAcceptHoverEvents(False)
+        self.setZValue(-10)
 
     def boundingRect(self):
         return self.bounding_box([
@@ -25,3 +26,6 @@ class AxesControl(Control):
         painter.drawLine(pts[0], pts[2])
         painter.setPen(QtGui.QPen(QtCore.Qt.blue, 2))
         painter.drawLine(pts[0], pts[3])
+
+    def shape(self):
+        return QtGui.QPainterPath()
