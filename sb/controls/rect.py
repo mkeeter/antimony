@@ -46,7 +46,8 @@ class RectangleControl(DummyControl):
         self.upper_right = _RectanglePtControl(canvas, node, self, 1)
 
     def update_center(self):
-        pass
+        pt = self.transform_points([self.lower_left.pos])[0]
+        self.center_changed.emit(QtCore.QPoint(pt.x(), pt.y()))
 
     def drag(self, p, d):
         self.rect.drag(p, d)
