@@ -97,11 +97,18 @@ class Datum(QtCore.QObject):
     _caller = None
     changed = QtCore.Signal()
 
-    def __init__(self, node, data_type):
+    def __init__(self, node, data_type, **kwargs):
+        """ Base constructor for Datum objects.
+
+            Valid keyword arguments:
+                has_output: True or False
+                input_handler: ???
+        """
         super(Datum, self).__init__(node)
         self.data_type = data_type
 
-        #self.input   = inputType(self)
+        self.input_handler = kwargs.get('input_handler', None)
+        self.has_output = kwargs.get('has_output', True)
 
         self._value = self.data_type()
         self._valid = False
@@ -185,8 +192,8 @@ class EvalDatum(Datum):
     """ Datum where a value is calculated by running 'eval' on a user-provided
         string (or a user-provided input connection).
     """
-    def __init__(self, node, data_type, expr):
-        super(EvalDatum, self).__init__(node, data_type)
+    def __init__(self, node, data_type, expr, **kwargs):
+        super(EvalDatum, self).__init__(node, data_type, **kwargs)
         self.set_expr(str(expr))
 
     def display_str(self):
@@ -252,7 +259,7 @@ class IntDatum(EvalDatum):
 
 class NameDatum(EvalDatum):
     def __init__(self, node, value):
-        super(NameDatum, self).__init__(node, Name, value)
+        super(NameDatum, self).__init__(node, Name, value, has_output=False)
 
     def display_str(self):
         return self._expr[1:-1]

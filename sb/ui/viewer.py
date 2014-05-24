@@ -1,5 +1,6 @@
 from PySide import QtCore, QtGui
 
+from sb.ui.iobox import InputBox, OutputBox
 from ui_viewer import Ui_Viewer
 
 class _DatumLineEdit(QtGui.QLineEdit):
@@ -72,6 +73,8 @@ class NodeViewer(QtGui.QWidget):
             self.ui.grid.addWidget(QtGui.QLabel(name),
                                    row, 1, QtCore.Qt.AlignRight)
             self.ui.grid.addWidget(_DatumLineEdit(datum), row, 2)
+            if datum.has_output:
+                self.ui.grid.addWidget(OutputBox(datum, self))
 
     def _set_mask(self, frac):
         """ Mask a certain percentage of the widget.
