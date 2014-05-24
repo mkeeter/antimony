@@ -3,6 +3,7 @@ import math
 from PySide import QtCore, QtGui
 
 from sb.controls.control import Control, DummyControl
+from sb.controls.point import Point2DControl
 from sb.controls.multiline import MultiLineControl
 
 class _RadiusControl(MultiLineControl):
@@ -29,42 +30,13 @@ class _RadiusControl(MultiLineControl):
             self._node.object_datums['r'] += QtGui.QVector3D.dotProduct(
                     (p - self.pos).normalized(), d)
 
-
-class _CircleCenter(Control):
-    @property
-    def pos(self):
-        return self.parentObject().pos
-
-    def boundingRect(self):
-        return self.bounding_box([self.pos])
-
-    def paint(self, painter, options, widget):
-        self.set_default_pen(painter)
-        self.set_default_brush(painter)
-        painter.drawPath(self.shape())
-
-    def shape(self):
-        pt = self.transform_points([self.pos])[0]
-        path = QtGui.QPainterPath()
-        path.addEllipse(pt.x() - 5, pt.y() - 5, 10, 10)
-        return path
-
-    def drag(self, p, d):
-        for a in 'xy':
-            if self._node.object_datums[a].simple():
-                self._node.object_datums[a] += getattr(d, a)()
-
-    def update_center(self):
-        self.parentObject().update_center()
-
-
 ################################################################################
 
 class CircleControl(DummyControl):
 
     def __init__(self, canvas, node):
         super(CircleControl, self).__init__(canvas, node)
-        self._center = _CircleCenter(canvas, node, self)
+        self._center = Point2DControl(canvas, node, self)
         self._radius = _RadiusControl(canvas, node, self)
 
     @property
