@@ -59,7 +59,8 @@ class MainWindow(QtGui.QMainWindow):
 
         # Pick a unique name then create the node
         name = NodeManager.get_name(d)
-        node = d(name, obj_pos.x(), obj_pos.y(), obj_pos.z(), None)
+        node = d(name, obj_pos.x(), obj_pos.y(), obj_pos.z(),
+                 100 / self.canvas._scale)
 
         # Make a control, then make it stick to the mouse
         c = node.make_controls(self.canvas)

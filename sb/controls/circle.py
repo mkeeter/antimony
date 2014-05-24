@@ -2,7 +2,7 @@ import math
 
 from PySide import QtCore, QtGui
 
-from sb.controls.control import Control, DummyControl
+from sb.controls.control import DummyControl
 from sb.controls.point import Point2DControl
 from sb.controls.multiline import MultiLineControl
 
