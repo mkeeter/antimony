@@ -21,8 +21,9 @@ class Control(QtGui.QGraphicsObject):
         self._hover = False
         self._dragged = False
 
-        canvas.zoomed.connect(self.prepareGeometryChange)
-        canvas.rotated.connect(self.prepareGeometryChange)
+        if parent is not None:
+            canvas.zoomed.connect(self.prepareGeometryChange)
+            canvas.rotated.connect(self.prepareGeometryChange)
 
         self._node = node
         if self._node is not None and parent is None:
