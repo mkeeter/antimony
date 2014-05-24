@@ -25,7 +25,7 @@ class Control(QtGui.QGraphicsObject):
         canvas.rotated.connect(self.prepareGeometryChange)
 
         self._node = node
-        if self._node is not None:
+        if self._node is not None and parent is None:
             # When the node changes, inform the scene that our bounding box
             # has changed, force a canvas redraw, and update the center
             # for any node viewers that may have been created.

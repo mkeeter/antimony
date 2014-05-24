@@ -11,9 +11,6 @@ class _RadiusControl(MultiLineControl):
     def pos(self):
         return self.parentObject().pos
 
-    def __init__(self, canvas, node, parent):
-        super(_RadiusControl, self).__init__(canvas, node, parent)
-
     def _lines(self):
         pos = self.parentObject().pos
         r = self._node.object_datums['r']._value
@@ -21,9 +18,6 @@ class _RadiusControl(MultiLineControl):
         return [[pos + r * QtGui.QVector3D(math.cos(i*2*math.pi/n),
                                            math.sin(i*2*math.pi/n), 0)
                 for i in range(n+1)]]
-
-    def update_center(self):
-        self.parentObject().update_center()
 
     def drag(self, p, d):
         if self._node.object_datums['r'].simple():
