@@ -25,6 +25,8 @@ class Control(QtGui.QGraphicsObject):
             canvas.zoomed.connect(self.prepareGeometryChange)
             canvas.rotated.connect(self.prepareGeometryChange)
 
+        self._viewer = None
+
         self._node = node
         if self._node is not None and parent is None:
             # When the node changes, inform the scene that our bounding box
@@ -42,6 +44,9 @@ class Control(QtGui.QGraphicsObject):
 
             # Finally, when the node is destroyed, delete ourself.
             self._node.destroyed.connect(self.deleteLater)
+
+    def _viewer_destroyed(self):
+        self._viewer = None
 
     def delete_node(self):
         """ Schedules the node for deletion
@@ -94,10 +99,10 @@ class Control(QtGui.QGraphicsObject):
     def mouseDoubleClickEvent(self, event):
         if self.parentObject():
             return self.parentObject().mouseDoubleClickEvent(event)
-        else:
-            v = NodeViewer(self)
+        elif not self._viewer:
+            self._viewer = NodeViewer(self)
+            self._viewer.destroyed.connect(self._viewer_destroyed)
             self.update_center()
-            return v
 
     def mousePressEvent(self, event):
         """ Saves a mouse click position (in scene coordinates) to
@@ -137,7 +142,23 @@ class Control(QtGui.QGraphicsObject):
         else:
             painter.setBrush(QtGui.QBrush(QtGui.QColor(sb.colors.base1)))
 
+    def datum_input_pos(self, d):
+        """ Returns a position (in scene coordinates) where inputs to the
+            given datum should be connected.
+        """
+        if self._viewer is not None:
+            d = self._viewer.datum_input_box(d)
+            return self._viewer.mapToParent(d.geometry().center())
 
+    def datum_output_pos(self, d):
+        """ Returns a position (in scene coordinates) where outputs to the
+            given datum should be connected.
+        """
+        if self._viewer is not None:
+            d = self._viewer.datum_output_box(d)
+            return self._viewer.mapToParent(d.geometry().center())
+
+################################################################################
 
 class DummyControl(Control):
     """ Represents a control that cannot be drawn or selected.

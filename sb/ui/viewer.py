@@ -37,6 +37,8 @@ class NodeViewer(QtGui.QWidget):
         """ control should be a sb.controls.control.Control instance
         """
         super(NodeViewer, self).__init__()
+        self._control = control
+
         self.ui = Ui_Viewer()
         self.ui.setupUi(self)
         self._populate_grid(control._node)
@@ -116,3 +118,19 @@ class NodeViewer(QtGui.QWidget):
         a.setEndValue(0)
         a.finished.connect(self.deleteLater)
         a.start(QtCore.QPropertyAnimation.DeleteWhenStopped)
+
+    def datum_input_box(self, d):
+        """ Finds an input box connected to the given datum.
+            Returns None if no such box is found.
+        """
+        for c in self.findChildren(InputBox):
+            if c._datum == d:   return c
+        return None
+
+    def datum_output_box(self, d):
+        """ Finds an output box connected to the given datum.
+            Returns None if no such box is found.
+        """
+        for c in self.findChildren(OutputBox):
+            if c._datum == d:   return c
+        return None

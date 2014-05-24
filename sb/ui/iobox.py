@@ -1,5 +1,6 @@
 from PySide import QtCore, QtGui
 import sb.colors
+from sb.controls.connection import Connection
 
 class IObox(QtGui.QPushButton):
     def __init__(self, datum, parent):
@@ -20,9 +21,13 @@ QPushButton:hover {
     background-color: "%s";
 }""" % (color, sb.colors.highlight(color)))
 
+################################################################################
+
 class InputBox(IObox):
     pass
 
 class OutputBox(IObox):
-    pass
+    def mousePressEvent(self, event):
+        c = Connection(self._datum, self.parent()._control)
+        c.grabMouse()
 
