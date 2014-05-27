@@ -37,7 +37,7 @@ class Node(QtCore.QObject):
     def _post_init(self):
         del self._post_init_timer
         for d in self.object_datums, self.view_datums:
-            for a in d.itervalues():
+            for a in d.values():
                 a.changed.connect(self.changed)
                 a.update()
 

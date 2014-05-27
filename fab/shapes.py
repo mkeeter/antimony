@@ -1,6 +1,6 @@
 import math
 
-from expression import Expression
+from fab.expression import Expression
 
 def circle(x0, y0, r):
 
@@ -463,7 +463,7 @@ def text(text, x, y, height=1, align='CC'):
 
         for c in line:
             if not c in _glyphs.keys():
-                print 'Warning:  Unknown character "%s"' % c
+                print('Warning:  Unknown character "%s"' % c)
             else:
                 chr_math = move(_glyphs[c], dx, dy)
                 if line_shape is None:  line_shape  = chr_math

@@ -1,7 +1,7 @@
 from PySide import QtCore, QtGui
 
 from sb.ui.iobox import InputBox, OutputBox
-from ui_viewer import Ui_Viewer
+from .ui_viewer import Ui_Viewer
 
 class _DatumLineEdit(QtGui.QLineEdit):
     """ A class derived from QLineEdit used specifically for editing datums.

@@ -28,7 +28,7 @@ def highlight(color, scale=1.2):
 
 # Automatically generate highlighted and dimmed versions
 # of the colors
-colors = list(locals().iterkeys())
+colors = list(locals().keys())
 for c in colors:
     if not c.startswith('__') and isinstance(eval(c), str):
         exec('%s_h = "%s"' % (c, highlight(eval(c))))

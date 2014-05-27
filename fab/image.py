@@ -106,6 +106,6 @@ class Image(object):
                 filename, self.width, self.height,
                 bounds, self.pixels(flip_y=True))
 
-from libfab import libfab
+from fab.libfab import libfab
 
 

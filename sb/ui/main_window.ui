@@ -203,7 +203,7 @@
   <customwidget>
    <class>ViewSelector</class>
    <extends>QWidget</extends>
-   <header>view_selector.h</header>
+   <header>.view_selector.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

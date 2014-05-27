@@ -35,7 +35,7 @@ def pp(t):  return p(p(t))
 ################################################################################
 
 # util/region.h
-from region import Region
+from fab.region import Region
 
 libfab.split.argtypes = [Region, p(Region), ctypes.c_int]
 libfab.split.restype  = ctypes.c_int
@@ -79,7 +79,7 @@ libfab.count_nodes.argtypes = [MathTreeP]
 libfab.count_nodes.restype  = ctypes.c_uint
 
 # tree/eval.h
-from interval import Interval
+from fab.interval import Interval
 
 libfab.eval_i.argtypes = [MathTreeP, Interval, Interval, Interval]
 libfab.eval_i.restype  =  Interval

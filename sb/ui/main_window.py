@@ -4,7 +4,7 @@ from PySide import QtGui
 
 from sb.canvas import Canvas
 from sb.manager import NodeManager
-from ui_main_window import Ui_MainWindow
+from .ui_main_window import Ui_MainWindow
 
 class MainWindow(QtGui.QMainWindow):
     def __init__(self):
@@ -71,9 +71,9 @@ class MainWindow(QtGui.QMainWindow):
     def make_add_menu(self):
         import sb.nodes
         self._categories = {}
-        for v in sb.nodes.__dict__.itervalues():
+        for v in sb.nodes.__dict__.values():
             if isinstance(v, types.ModuleType) and 'sb.nodes' in v.__name__:
-                for d in v.__dict__.itervalues():
+                for d in v.__dict__.values():
                     try:
                         sub = issubclass(d, sb.nodes.node.Node)
                     except:

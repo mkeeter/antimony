@@ -16,7 +16,7 @@ class MathTree(object):
 
     @classmethod
     def from_expression(cls, expr):
-        ptr = libfab.parse(expr.math)
+        ptr = libfab.parse(expr.math.encode())
         if ptr.value is None:
             raise RuntimeError("Math expression parsing failed.")
         return cls(expr, ptr)
@@ -120,8 +120,8 @@ class MathTree(object):
         return libfab.eval_i(self.ptr, X, Y, Z)
 
 
-from expression import Expression
-from libfab import libfab
-from region import Region
-from image import Image
-from mesh import write_stl
+from fab.expression import Expression
+from fab.libfab import libfab
+from fab.region import Region
+from fab.image import Image
+from fab.mesh import write_stl

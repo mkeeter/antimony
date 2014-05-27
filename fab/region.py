@@ -17,11 +17,12 @@ class Region(ctypes.Structure):
                 ('Z', ctypes.POINTER(ctypes.c_float)),
                 ('L', ctypes.POINTER(ctypes.c_uint16))]
 
-    def __init__(self, (xmin, ymin, zmin)=(0.,0.,0.),
-                       (xmax, ymax, zmax)=(0.,0.,0.),
+    def __init__(self, xyzmin=(0.,0.,0.), xyzmax=(0., 0., 0.),
                        pixels_per_unit=100.):
         """ Constructs a top-level region.
         """
+        xmin, ymin, zmin = xyzmin
+        xmax, ymax, zmax = xyzmax
 
         dx = float(xmax - xmin)
         dy = float(ymax - ymin)
@@ -87,5 +88,5 @@ class Region(ctypes.Structure):
             return [L[i] for i in range(8) if (bits & (1 << i))]
 
 
-from libfab import libfab
-from vec3f import Vec3f
+from fab.libfab import libfab
+from fab.vec3f import Vec3f

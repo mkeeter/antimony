@@ -26,7 +26,7 @@ class Expression(object):
         elif type(math) is str:
             self.math = math
         else:
-            print type(math)
+            print(type(math))
             raise TypeError("Cannot construct a Expression from '%s'" % math)
 
         if math is None:
@@ -272,6 +272,6 @@ class Expression(object):
                              voxels_per_unit)
 
 
-import tree
-import region
-import interval
+import fab.tree as tree
+import fab.region as region
+import fab.interval as interval

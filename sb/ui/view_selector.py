@@ -1,5 +1,5 @@
 from PySide import QtGui
-from ui_view_selector import Ui_ViewSelector
+from .ui_view_selector import Ui_ViewSelector
 
 class ViewSelector(QtGui.QWidget):
     def __init__(self, parent=None):
