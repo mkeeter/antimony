@@ -12,6 +12,23 @@ from fab.expression import Expression
 #   No inputs allowed
 #   One input allowed
 #   Multiple inputs allowed
+
+class _SingleInput(QtCore.QObject):
+    def __init__(self, parent):
+        super(_SingleInput, self).__init__(parent)
+        self.i = None
+    def __bool__(self):
+        return self.i is not None
+    def get_value(self):
+        return self.i.value
+    def accepts(self, d):
+        return (self.i is None and d != self.parent() and
+                d.data_type == self.parent().data_type)
+    def connect(self, d):
+        self.i = d
+    def disconnect(self):
+        self.i = None
+
 '''
 class NoInput(object):
     """ Object that rejects all inputs.
@@ -101,14 +118,14 @@ class Datum(QtCore.QObject):
         """ Base constructor for Datum objects.
 
             Valid keyword arguments:
-                has_output: True or False
-                input_handler: ???
+                has_output: True or False (default True)
+                input_type: class to handle inputs
         """
         super(Datum, self).__init__(node)
         self.data_type = data_type
 
-        self.input_handler = kwargs.get('input_handler', None)
         self.has_output = kwargs.get('has_output', True)
+        self.input_handler = kwargs.get('input_type', lambda x: None)(self)
 
         self._value = self.data_type()
         self._valid = False
@@ -130,19 +147,14 @@ class Datum(QtCore.QObject):
     def valid(self):
         return self._valid
 
-    '''
-    def can_connect(self, conn):
-        """ Returns True if we can accept the given connection (as an input)
-        """
-        return self.input.accepts(conn)
 
-    def can_edit(self):
-        """ Returns True if we can edit this datum
-            (false if it's tied to an input)
+    def can_connect(self, d):
+        """ Returns True if we can accept an incoming connection from the 
+            given datum.
         """
-        return self.input.value() is None
+        return (self.input_handler is not None and
+                self.input_handler.accepts(d))
 
-    '''
 
     def connect_caller(self):
         """ Connects Datum._caller's update slot to this node's changed signal
@@ -199,7 +211,10 @@ class EvalDatum(Datum):
     def display_str(self):
         """ Returns the expression string.
         """
-        return self._expr
+        if self.input_handler:
+            return self.input_handler.i.display_str()
+        else:
+            return self._expr
 
     def set_expr(self, e):
         """ Sets the expression string and calls self.update
@@ -212,9 +227,12 @@ class EvalDatum(Datum):
         """ Attempts to evaluate the expression and return a value.
             Raises an exception if this fails.
         """
-        t = eval(self._expr, NodeManager.make_dict())
-        if not isinstance(t, self.data_type):
-            t = self.data_type(t)
+        if self.input_handler:
+            t = self.input_handler.get_value()
+        else:
+            t = eval(self._expr, NodeManager.make_dict())
+            if not isinstance(t, self.data_type):
+                t = self.data_type(t)
 
         return t
 
@@ -230,7 +248,8 @@ class EvalDatum(Datum):
 
 class FloatDatum(EvalDatum):
     def __init__(self, node, value):
-        super(FloatDatum, self).__init__(node, float, value)
+        super(FloatDatum, self).__init__(node, float, value,
+                                         input_type=_SingleInput)
 
     def __iadd__(self, delta):
         """ Increments this node's expression.
@@ -243,7 +262,8 @@ class FloatDatum(EvalDatum):
 
 class IntDatum(EvalDatum):
     def __init__(self, node, value):
-        super(IntDatum, self).__init__(node, int, value)
+        super(IntDatum, self).__init__(node, int, value,
+                                       input_type=_SingleInput)
 
     '''
     def __iadd__(self, delta):

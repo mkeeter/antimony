@@ -72,11 +72,15 @@ class NodeViewer(QtGui.QWidget):
         """
         for name, datum in node.object_datums.items():
             row = self.ui.grid.rowCount()
+            if datum.input_handler is not None:
+                self.ui.grid.addWidget(InputBox(datum, self), row, 0)
+
             self.ui.grid.addWidget(QtGui.QLabel(name),
                                    row, 1, QtCore.Qt.AlignRight)
             self.ui.grid.addWidget(_DatumLineEdit(datum), row, 2)
+
             if datum.has_output:
-                self.ui.grid.addWidget(OutputBox(datum, self))
+                self.ui.grid.addWidget(OutputBox(datum, self), row, 3)
 
     def _set_mask(self, frac):
         """ Mask a certain percentage of the widget.
@@ -118,6 +122,16 @@ class NodeViewer(QtGui.QWidget):
         a.setEndValue(0)
         a.finished.connect(self.deleteLater)
         a.start(QtCore.QPropertyAnimation.DeleteWhenStopped)
+
+    def datum_input_box_at(self, p):
+        """ Looks for an input box at the given position (in NodeViewer
+            viewport coordinates).  Returns None if no such box is found.
+        """
+        print(p)
+        for c in self.findChildren(InputBox):
+            if c.geometry().contains(p):
+                return c
+        return None
 
     def datum_input_box(self, d):
         """ Finds an input box connected to the given datum.

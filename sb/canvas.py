@@ -3,6 +3,7 @@ import math
 from PySide import QtCore, QtGui
 
 from sb.controls.axes import AxesControl
+from sb.ui.viewer import NodeViewer
 
 class Canvas(QtGui.QGraphicsView):
     rotated = QtCore.Signal(QtGui.QMatrix4x4)
@@ -96,3 +97,15 @@ class Canvas(QtGui.QGraphicsView):
                 i.delete_node()
             self.update()
 
+    def datum_input_box_at(self, p):
+        """ Looks for an input box at the given position
+            (in scene coordinates).  Returns None if no such
+            box is found.
+        """
+        for item in self.items(self.mapFromScene(p)):
+            if isinstance(item, QtGui.QGraphicsProxyWidget):
+                input_box = item.widget().datum_input_box_at(
+                        item.mapFromScene(p).toPoint())
+                if input_box is not None:
+                    return input_box
+        return None
