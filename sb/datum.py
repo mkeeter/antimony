@@ -155,7 +155,6 @@ class Datum(QtCore.QObject):
         return (self.input_handler is not None and
                 self.input_handler.accepts(d))
 
-
     def connect_caller(self):
         """ Connects Datum._caller's update slot to this node's changed signal
         """
