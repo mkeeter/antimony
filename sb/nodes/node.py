@@ -45,7 +45,7 @@ class Node(QtCore.QObject):
         return NodeProxy(self)
 
     def make_controls(self, canvas):
-        return self.__class__._control(canvas, self)
+        return self.__class__._control_type(canvas, self)
 
 ################################################################################
 

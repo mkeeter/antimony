@@ -9,7 +9,7 @@ class Rectangle(Node):
     menu_category = "2D"
 
     name_prefix = 'r'
-    _control = RectangleControl
+    _control_type = RectangleControl
 
     def __init__(self, name, x, y, z, scale):
         super(Rectangle, self).__init__(name)

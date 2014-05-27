@@ -9,7 +9,7 @@ class Circle(Node2D):
     menu_category = "2D"
 
     name_prefix = 'c'
-    _control = CircleControl
+    _control_type = CircleControl
 
     def __init__(self, name, x, y, z, scale):
         super(Circle, self).__init__(name, x, y)
