@@ -37,6 +37,8 @@ class _DatumLineEdit(QtGui.QLineEdit):
 
 class NodeViewer(QtGui.QWidget):
 
+    io_pos_changed = QtCore.Signal()
+
     def __init__(self, control):
         """ control should be a sb.controls.control.Control instance
         """
@@ -51,13 +53,13 @@ class NodeViewer(QtGui.QWidget):
         self.ui.title.setText("<b>%s</b>" % type(control._node).__name__)
         self.ui.closeButton.pressed.connect(self.animate_close)
 
-        # If the node has changed, reposition based on the
-        # control's viewer_position() function
+        # If the node has changed, reposition
         control.center_changed.connect(self.move)
         control.destroyed.connect(self.animate_close)
+        self.io_pos_changed.connect(control.io_pos_changed)
 
         proxy = control._canvas.scene.addWidget(self)
-        proxy.setZValue(-1)
+        proxy.setZValue(-2)
 
         self._mask_size = 0
         self.animate_open()
@@ -95,6 +97,7 @@ class NodeViewer(QtGui.QWidget):
         self.setMask(QtGui.QRegion(0, 0, full.width()*frac  + 1,
                                          full.height()*frac + 1))
         self.update()
+        self.io_pos_changed.emit()
 
     def _get_mask(self):
         """ Find what fraction of the widget is masked

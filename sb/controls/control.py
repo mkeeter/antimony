@@ -150,21 +150,27 @@ class Control(QtGui.QGraphicsObject):
         """ Returns a position (in scene coordinates) where inputs to the
             given datum should be connected.
         """
+        a = self.center_pos()
         if self._viewer is not None:
-            d = self._viewer.datum_input_box(d)
-            return self._viewer.mapToParent(d.geometry().center())
+            b = self._viewer.mapToParent(
+                    self._viewer.datum_input_box(d).geometry().center())
+            m = self._viewer.mask_size
+            return a * (1 - m) + b * m
         else:
-            return self.center_pos()
+            return a
 
     def datum_output_pos(self, d):
         """ Returns a position (in scene coordinates) where outputs to the
             given datum should be connected.
         """
+        a = self.center_pos()
         if self._viewer is not None:
-            d = self._viewer.datum_output_box(d)
-            return self._viewer.mapToParent(d.geometry().center())
+            b = self._viewer.mapToParent(
+                    self._viewer.datum_output_box(d).geometry().center())
+            m = self._viewer.mask_size
+            return a * (1 - m) + b * m
         else:
-            return self.center_pos()
+            return a
 
 ################################################################################
 
