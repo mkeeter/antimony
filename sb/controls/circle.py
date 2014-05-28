@@ -40,12 +40,17 @@ class CircleControl(DummyControl):
                 self._node.object_datums['y']._value,
                 0)
 
+
+    def center_pos(self):
+        pt = self.transform_points([self.pos])[0]
+        return pt.toPoint()
+
+
     def update_center(self):
         """ Recalculates viewport coordinates where the node viewer should be
             positioned, then emits center_changed with that position.
         """
-        pt = self.transform_points([self.pos])[0]
-        self.center_changed.emit(QtCore.QPoint(pt.x(), pt.y()))
+        self.center_changed.emit(self.center_pos())
 
     def drag(self, p, d):
         self._center.drag(p, d)

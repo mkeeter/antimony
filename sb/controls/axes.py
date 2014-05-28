@@ -1,7 +1,7 @@
 from PySide import QtCore, QtGui
-from sb.controls.control import Control
+from sb.controls.control import DummyControl
 
-class AxesControl(Control):
+class AxesControl(DummyControl):
     def __init__(self, canvas):
         super(AxesControl, self).__init__(canvas)
         self.setAcceptHoverEvents(False)

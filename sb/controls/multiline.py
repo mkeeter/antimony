@@ -1,4 +1,5 @@
 import operator
+from functools import reduce
 
 from PySide import QtCore, QtGui
 

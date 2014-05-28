@@ -19,6 +19,9 @@ class _DatumLineEdit(QtGui.QLineEdit):
         self.on_datum_changed()
 
     def on_datum_changed(self):
+        if self._datum.input_handler is not None:
+            self.setEnabled(not bool(self._datum.input_handler))
+
         self.setText(self._datum.display_str())
         if self._datum.valid:
             self.setStyleSheet("""
@@ -33,6 +36,7 @@ class _DatumLineEdit(QtGui.QLineEdit):
 ################################################################################
 
 class NodeViewer(QtGui.QWidget):
+
     def __init__(self, control):
         """ control should be a sb.controls.control.Control instance
         """
@@ -127,7 +131,6 @@ class NodeViewer(QtGui.QWidget):
         """ Looks for an input box at the given position (in NodeViewer
             viewport coordinates).  Returns None if no such box is found.
         """
-        print(p)
         for c in self.findChildren(InputBox):
             if c.geometry().contains(p):
                 return c

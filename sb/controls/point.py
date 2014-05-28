@@ -29,12 +29,15 @@ class Point3DControl(Control):
             if self._node.object_datums[a].simple():
                 self._node.object_datums[a] += getattr(d, a)()
 
+    def center_pos(self):
+        pt = self.transform_points([self.pos])[0]
+        return pt.toPoint()
+
     def update_center(self):
         """ Recalculates viewport coordinates where the node viewer should be
             positioned, then emits center_changed with that position.
         """
-        pt = self.transform_points([self.pos])[0]
-        self.center_changed.emit(QtCore.QPoint(pt.x(), pt.y()))
+        self.center_changed.emit(self.center_pos())
 
 ################################################################################
 
@@ -64,10 +67,13 @@ class Point2DControl(Control):
             if self._node.object_datums[a].simple():
                 self._node.object_datums[a] += getattr(d, a)()
 
+    def center_pos(self):
+        pt = self.transform_points([self.pos])[0]
+        return pt.toPoint()
+
     def update_center(self):
         """ Recalculates viewport coordinates where the node viewer should be
             positioned, then emits center_changed with that position.
         """
-        pt = self.transform_points([self.pos])[0]
-        self.center_changed.emit(QtCore.QPoint(pt.x(), pt.y()))
+        self.center_changed.emit(self.center_pos())
 

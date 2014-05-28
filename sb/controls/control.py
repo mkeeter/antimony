@@ -5,7 +5,11 @@ import sb.colors
 
 class Control(QtGui.QGraphicsObject):
 
+    """ Signal emitted when center (for editor) changes. """
     center_changed = QtCore.Signal(QtCore.QPoint)
+
+    """ Signal called when position for IO connections changes. """
+    io_pos_changed = QtCore.Signal()
 
     def __init__(self, canvas, node=None, parent=None):
         super(Control, self).__init__(parent)
@@ -33,7 +37,6 @@ class Control(QtGui.QGraphicsObject):
             # has changed, force a canvas redraw, and update the center
             # for any node viewers that may have been created.
             self._node.changed.connect(self.prepareGeometryChange)
-            self._node.changed.connect(self._canvas.update)
             self._node.changed.connect(self.update_center)
 
             # Where there's a node, there could be a node viewer, so
@@ -44,6 +47,7 @@ class Control(QtGui.QGraphicsObject):
 
             # Finally, when the node is destroyed, delete ourself.
             self._node.destroyed.connect(self.deleteLater)
+        self.center_changed.connect(self.io_pos_changed)
 
     def _viewer_destroyed(self):
         self._viewer = None
@@ -149,6 +153,8 @@ class Control(QtGui.QGraphicsObject):
         if self._viewer is not None:
             d = self._viewer.datum_input_box(d)
             return self._viewer.mapToParent(d.geometry().center())
+        else:
+            return self.center_pos()
 
     def datum_output_pos(self, d):
         """ Returns a position (in scene coordinates) where outputs to the
@@ -157,6 +163,8 @@ class Control(QtGui.QGraphicsObject):
         if self._viewer is not None:
             d = self._viewer.datum_output_box(d)
             return self._viewer.mapToParent(d.geometry().center())
+        else:
+            return self.center_pos()
 
 ################################################################################
 

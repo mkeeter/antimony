@@ -26,7 +26,10 @@ class _SingleInput(QtCore.QObject):
                 d.data_type == self.parent().data_type)
     def connect(self, d):
         self.i = d
-    def disconnect(self):
+        self.parent().update()
+    def disconnect(self, d):
+        """ Disconnects the given datum from this input handler.
+        """
         self.i = None
 
 '''
