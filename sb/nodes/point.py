@@ -18,7 +18,7 @@ class Point2D(Node2D):
     menu_category = "2D"
 
     name_prefix = 'p'
-    _control = Point2DControl
+    _control_type = Point2DControl
 
     def __init__(self, name ,x, y, z, scale):
         super(Point2D, self).__init__(name, x, y)
