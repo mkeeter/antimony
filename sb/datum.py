@@ -29,8 +29,11 @@ class _SingleInput(QtCore.QObject):
         self.parent().update()
     def disconnect(self, d):
         """ Disconnects the given datum from this input handler.
+            Also removes it from the parent datum's connected datum set.
         """
         self.i = None
+        if d in self.parent()._connected_datums:
+            self.parent()._connected_datums.remove(d)
 
 '''
 class NoInput(object):

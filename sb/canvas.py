@@ -5,6 +5,9 @@ from PySide import QtCore, QtGui
 from sb.controls.axes import AxesControl
 from sb.ui.viewer import NodeViewer
 
+from sb.controls.control import Control
+from sb.controls.connection import Connection
+
 class Canvas(QtGui.QGraphicsView):
     rotated = QtCore.Signal(QtGui.QMatrix4x4)
     panned = QtCore.Signal()
@@ -94,7 +97,10 @@ class Canvas(QtGui.QGraphicsView):
             super(Canvas, self).keyPressEvent(event)
         elif event.key() == QtCore.Qt.Key_Delete:
             for i in self.scene.selectedItems():
-                i.delete_node()
+                if isinstance(i, Control):
+                    i.delete_node()
+                elif isinstance(i, Connection):
+                    i.delete_connection()
             self.update()
 
     def datum_input_box_at(self, p):
