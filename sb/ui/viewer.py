@@ -62,6 +62,7 @@ class NodeViewer(QtGui.QWidget):
 
         self.proxy = control._canvas.scene.addWidget(self)
         self.proxy.setZValue(-2)
+        self.proxy.setFocusPolicy(QtCore.Qt.TabFocus)
 
         self._mask_size = 0
         self.animate_open()
