@@ -21,6 +21,8 @@ class _SingleInput(QtCore.QObject):
         return self.i is not None
     def get_value(self):
         return self.i.value
+    def get_display_str(self):
+        return self.i.display_str()
     def accepts(self, d):
         return (self.i is None and d != self.parent() and
                 d.data_type == self.parent().data_type)
@@ -29,11 +31,17 @@ class _SingleInput(QtCore.QObject):
         self.parent().update()
     def disconnect(self, d):
         """ Disconnects the given datum from this input handler.
-            Also removes it from the parent datum's connected datum set.
+            Also removes it from the parent datum's connected datum set
+            and forces an update of the datum's expression.
         """
         self.i = None
         if d in self.parent()._connected_datums:
             self.parent()._connected_datums.remove(d)
+
+        if not self.parent().simple():
+            self.parent().set_expr(None)
+        else:
+            self.parent().changed.emit()
 
 '''
 class NoInput(object):
@@ -234,6 +242,7 @@ class EvalDatum(Datum):
         """
         if self.input_handler:
             t = self.input_handler.get_value()
+            self._expr = self.input_handler.get_display_str()
         else:
             t = eval(self._expr, NodeManager.make_dict())
             if not isinstance(t, self.data_type):
