@@ -55,15 +55,20 @@ class NodeViewer(QtGui.QWidget):
 
         # If the node has changed, reposition
         control.center_changed.connect(self.move)
+        control.center_changed.connect(self._prepare_geometry_change)
+
         control.destroyed.connect(self.animate_close)
         self.io_pos_changed.connect(control.io_pos_changed)
 
-        proxy = control._canvas.scene.addWidget(self)
-        proxy.setZValue(-2)
+        self.proxy = control._canvas.scene.addWidget(self)
+        self.proxy.setZValue(-2)
 
         self._mask_size = 0
         self.animate_open()
         self.show()
+
+    def _prepare_geometry_change(self, pt):
+        self.proxy.prepareGeometryChange()
 
     def paintEvent(self, event):
         """ Override paintEvent so that the widget can be styled using qss.
