@@ -109,3 +109,11 @@ class Canvas(QtGui.QGraphicsView):
                 if input_box is not None:
                     return input_box
         return None
+
+    '''
+    def paintEvent(self, event):
+        import datetime
+        d = datetime.datetime.now()
+        super(Canvas, self).paintEvent(event)
+        print(datetime.datetime.now() - d)
+    '''
