@@ -1,4 +1,5 @@
 import operator
+import functools
 
 from PySide import QtCore
 
@@ -37,87 +38,32 @@ class _SingleInput(QtCore.QObject):
         self.i = None
         if d in self.parent()._connected_datums:
             self.parent()._connected_datums.remove(d)
+        self.parent().changed.emit()
 
-        if not self.parent().simple():
-            self.parent().set_expr(None)
+class _MultiInput(QtCore.QObject):
+    def __init__(self, parent):
+        super(_MultiInput, self).__init__(parent)
+        self.i = []
+    def __bool__(self):
+        return len(self.i) != 0
+    def get_value(self):
+        return functools.reduce(operator.or_, [a.value for a in self.i])
+    def get_display_str(self):
+        return "%i inputs" % len(self.i)
+    def accepts(self, d):
+        return (d not in self.i and d != self.parent() and
+                d.data_type == self.parent().data_type)
+    def connect(self, d):
+        self.i.append[i]
+        self.parent().update()
+    def disconnect(self, d):
+        self.i.remove[d]
+        if d in self.parent()._connected_datums:
+            self.parent()._connected_datums.remove(d)
+        if len(self.i) == 0:
+            self.parent().set_expr('None')
         else:
             self.parent().changed.emit()
-
-'''
-class NoInput(object):
-    """ Object that rejects all inputs.
-    """
-    def __init__(self, parent):     self.parent = parent
-    def __nonzero__(self):          return False
-    def __iter__(self):             return [].__iter__()
-    def accepts(self, conn):        return False
-    def size(self):                 return 0
-    def value(self):                return None
-    def connect(self, conn):
-        raise RuntimeError("Cannot connect to a NoInput object")
-    def disconnect(self, conn):
-        raise RuntimeError("Cannot disconnect from a NoInput object")
-
-class SingleInput(object):
-    """ Object that represents a single-source input system.
-    """
-    def __init__(self, parent):
-        self.parent = parent
-        self.i = None
-    def __nonzero__(self):  return self.i is not None
-    def value(self):        return self.i.source.value() if self.i else None
-    def size(self):
-        return 0 if self.i is None else 1
-    def __iter__(self):
-        return [].__iter__() if self.i is None else [self.i].__iter__()
-    def accepts(self, conn):
-        return (conn.source != self.parent and
-                conn.source.type == self.parent.type and
-                self.i is None)
-    def connect(self, conn):
-        self.i = conn
-        conn.target = self.parent
-        self.parent.sync()
-    def disconnect(self, conn):
-        self.i = None
-        conn.target = None
-        self.parent.sync()
-    def expr(self):
-        if self.i:  return self.i.source.get_expr()
-        else:       return None
-
-class MultiInput(object):
-    """ Object that represents a multi-source input system.
-        Uses reduce with the given operator to combine inputs.
-    """
-    def __init__(self, parent, op=operator.or_):
-        self.parent = parent
-        self.i = []
-        self.op = op
-    def __nonzero__(self):  return self.i != []
-    def size(self):         return len(i)
-    def __iter__(self):     return self.i.__iter__()
-    def value(self):
-        if self.i:  return reduce(self.op, [i.source.value() for i in self.i])
-        else:       return None
-    def accepts(self, conn):
-        return (conn.source != self.parent and
-                conn.source.type == self.parent.type and
-                not conn.source in [c.source for c in self.i])
-    def connect(self, conn):
-        self.i.append(conn)
-        conn.target = self.parent
-        self.parent.sync()
-    def disconnect(self, conn):
-        self.i.remove(conn)
-        conn.target = None
-        if not self.i:  self.parent.set_expr('None')
-        self.parent.sync()
-    def expr(self):
-        if len(self.i) > 1:     return "%i inputs" % len(self.i)
-        elif len(self.i) == 1:  return "1 input"
-        else:                   return None
-'''
 
 ################################################################################
 
@@ -317,7 +263,7 @@ class StringDatum(EvalDatum):
 class ExpressionDatum(EvalDatum):
     def __init__(self, node, value):
         super(ExpressionDatum, self).__init__(
-                node, Expression, value)
+                node, Expression, value, input_type=_MultiInput)
 
 ################################################################################
 

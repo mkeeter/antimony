@@ -65,11 +65,21 @@ class Canvas(QtGui.QGraphicsView):
                 (in scene coordinates for left-click,
                  pixel coordinates for right-click)
         """
-        super(Canvas, self).mousePressEvent(event)
-        if event.buttons() == QtCore.Qt.LeftButton:
-            self._mouse_click_pos = self.mapToScene(event.pos())
-        else:
-            self._mouse_click_pos = event.pos()
+        if not super().mousePressEvent(event):
+            if event.buttons() == QtCore.Qt.LeftButton:
+                self._mouse_click_pos = self.mapToScene(event.pos())
+            else:
+                self._mouse_click_pos = event.pos()
+        return True
+
+    def pan(self, d):
+        """ Pans the scene.  d is a delta in scene coordinates.
+        """
+        r = self.sceneRect()
+        r.translate(d)
+        self.setSceneRect(r)
+        self.panned.emit()
+
 
     def mouseMoveEvent(self, event):
         """ On mouse move, pan or rotate.
@@ -79,10 +89,7 @@ class Canvas(QtGui.QGraphicsView):
             return
         elif event.buttons() == QtCore.Qt.LeftButton:
             p = self.mapToScene(event.pos())
-            r = self.sceneRect()
-            r.translate(self._mouse_click_pos - p)
-            self.setSceneRect(r)
-            self.panned.emit()
+            self.pan(self._mouse_click_pos - p)
         elif event.buttons() == QtCore.Qt.RightButton:
             p = event.pos()
             dy = -0.01 * (self._mouse_click_pos.x() - p.x())
