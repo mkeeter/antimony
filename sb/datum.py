@@ -49,15 +49,15 @@ class _MultiInput(QtCore.QObject):
     def get_value(self):
         return functools.reduce(operator.or_, [a.value for a in self.i])
     def get_display_str(self):
-        return "%i inputs" % len(self.i)
+        return "%i input%s" % (len(self.i), 's' if len(self.i) != 1 else '')
     def accepts(self, d):
         return (d not in self.i and d != self.parent() and
                 d.data_type == self.parent().data_type)
     def connect(self, d):
-        self.i.append[i]
+        self.i.append(d)
         self.parent().update()
     def disconnect(self, d):
-        self.i.remove[d]
+        self.i.remove(d)
         if d in self.parent()._connected_datums:
             self.parent()._connected_datums.remove(d)
         if len(self.i) == 0:
@@ -90,6 +90,8 @@ class Datum(QtCore.QObject):
         self._value = self.data_type()
         self._valid = False
 
+        # self._connected_datums is a set of child datums which have been
+        # connected to the changed signal.
         self._connected_datums = set()
 
     @property
@@ -109,7 +111,7 @@ class Datum(QtCore.QObject):
 
 
     def can_connect(self, d):
-        """ Returns True if we can accept an incoming connection from the 
+        """ Returns True if we can accept an incoming connection from the
             given datum.
         """
         return (self.input_handler is not None and
@@ -171,7 +173,7 @@ class EvalDatum(Datum):
         """ Returns the expression string.
         """
         if self.input_handler:
-            return self.input_handler.i.display_str()
+            return self.input_handler.get_display_str()
         else:
             return self._expr
 
