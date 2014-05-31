@@ -172,6 +172,12 @@ class Control(QtGui.QGraphicsObject):
         else:
             return a
 
+    def update_center(self):
+        """ Recalculates viewport coordinates where the node viewer should be
+            positioned, then emits center_changed with that position.
+        """
+        self.center_changed.emit(self.center_pos())
+
 ################################################################################
 
 class DummyControl(Control):

@@ -49,8 +49,5 @@ class RectangleControl(DummyControl):
         pt = self.transform_points([self.lower_left.pos])[0]
         return pt.toPoint()
 
-    def update_center(self):
-        self.center_changed.emit(self.center_pos())
-
     def drag(self, p, d):
         self.rect.drag(p, d)

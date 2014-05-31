@@ -45,13 +45,6 @@ class CircleControl(DummyControl):
         pt = self.transform_points([self.pos])[0]
         return pt.toPoint()
 
-
-    def update_center(self):
-        """ Recalculates viewport coordinates where the node viewer should be
-            positioned, then emits center_changed with that position.
-        """
-        self.center_changed.emit(self.center_pos())
-
     def drag(self, p, d):
         self._center.drag(p, d)
 
