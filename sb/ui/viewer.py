@@ -22,7 +22,10 @@ class _DatumLineEdit(QtGui.QLineEdit):
         if self._datum.input_handler is not None:
             self.setEnabled(not bool(self._datum.input_handler))
 
+        p = self.cursorPosition()
         self.setText(self._datum.display_str())
+        self.setCursorPosition(p)
+
         if self._datum.valid:
             self.setStyleSheet("""
                 QLineEdit:disabled { color: #ccc; }
