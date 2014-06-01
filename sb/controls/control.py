@@ -29,35 +29,29 @@ class Control(QtGui.QGraphicsObject):
             canvas.zoomed.connect(self.prepareGeometryChange)
             canvas.rotated.connect(self.prepareGeometryChange)
 
-        self._viewer = None
+        self.viewer = None
 
-        self._node = node
-        if self._node is not None and parent is None:
-            # When the node changes, inform the scene that our bounding box
-            # has changed, force a canvas redraw, and update the center
-            # for any node viewers that may have been created.
-            self._node.changed.connect(self.prepareGeometryChange)
-            self._node.changed.connect(self.update_center)
-
+        if node is not None and parent is None:
             # Where there's a node, there could be a node viewer, so
-            # call all of the node viewer functions when the view changes.
+            # update the center when any view parameters change.
             canvas.rotated.connect(self.update_center)
             canvas.zoomed.connect(self.update_center)
             canvas.panned.connect(self.update_center)
 
             # Finally, when the node is destroyed, delete ourself.
-            self._node.destroyed.connect(self.deleteLater)
+            node.destroyed.connect(self.deleteLater)
+
         self.center_changed.connect(self.io_pos_changed)
 
-    def _viewer_destroyed(self):
-        self._viewer = None
+        self.delete_node = lambda: node.deleteLater()
+        self._cache = {}
 
-    def delete_node(self):
-        """ Schedules the node for deletion
-            (which will also delete oneself once the node emits its
-             destroyed signal).
-        """
-        self._node.deleteLater()
+    def update_cache(self, d, value, valid):
+        self._cache[d.name] = value
+        self.update_center()
+
+    def _viewer_destroyed(self):
+        self.viewer = None
 
     @property
     def matrix(self):
@@ -103,9 +97,9 @@ class Control(QtGui.QGraphicsObject):
     def mouseDoubleClickEvent(self, event):
         if self.parentObject():
             return self.parentObject().mouseDoubleClickEvent(event)
-        elif not self._viewer:
-            self._viewer = NodeViewer(self)
-            self._viewer.destroyed.connect(self._viewer_destroyed)
+        elif not self.viewer:
+            self.viewer = NodeViewer(self)
+            self.viewer.destroyed.connect(self._viewer_destroyed)
             self.update_center()
 
     def mousePressEvent(self, event):
@@ -151,10 +145,10 @@ class Control(QtGui.QGraphicsObject):
             given datum should be connected.
         """
         a = self.center_pos()
-        if self._viewer is not None:
-            b = self._viewer.mapToParent(
-                    self._viewer.datum_input_box(d).geometry().center())
-            m = self._viewer.mask_size
+        if self.viewer is not None:
+            b = self.viewer.mapToParent(
+                    self.viewer.datum_input_box(d).geometry().center())
+            m = self.viewer.mask_size
             return a * (1 - m) + b * m
         else:
             return a
@@ -164,10 +158,10 @@ class Control(QtGui.QGraphicsObject):
             given datum should be connected.
         """
         a = self.center_pos()
-        if self._viewer is not None:
-            b = self._viewer.mapToParent(
-                    self._viewer.datum_output_box(d).geometry().center())
-            m = self._viewer.mask_size
+        if self.viewer is not None:
+            b = self.viewer.mapToParent(
+                    self.viewer.datum_output_box(d).geometry().center())
+            m = self.viewer.mask_size
             return a * (1 - m) + b * m
         else:
             return a
@@ -176,6 +170,7 @@ class Control(QtGui.QGraphicsObject):
         """ Recalculates viewport coordinates where the node viewer should be
             positioned, then emits center_changed with that position.
         """
+        self.prepareGeometryChange()
         self.center_changed.emit(self.center_pos())
 
 ################################################################################

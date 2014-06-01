@@ -72,9 +72,9 @@ class Datum(QtCore.QObject):
     class ValidError(RuntimeError): pass
 
     _caller = None
-    changed = QtCore.Signal()
+    changed = QtCore.Signal(object, object, bool)
 
-    def __init__(self, node, data_type, **kwargs):
+    def __init__(self, name, node, data_type, **kwargs):
         """ Base constructor for Datum objects.
 
             Valid keyword arguments:
@@ -82,6 +82,8 @@ class Datum(QtCore.QObject):
                 input_type: class to handle inputs
         """
         super(Datum, self).__init__(node)
+        self.name = name
+
         self.data_type = data_type
 
         self.has_output = kwargs.get('has_output', True)
@@ -157,7 +159,7 @@ class Datum(QtCore.QObject):
         if value != self._value or valid != self._valid:
             self._value = value
             self._valid = valid
-            self.changed.emit()
+            self.changed.emit(self, self._value, self._valid)
 
 ################################################################################
 
@@ -165,8 +167,8 @@ class EvalDatum(Datum):
     """ Datum where a value is calculated by running 'eval' on a user-provided
         string (or a user-provided input connection).
     """
-    def __init__(self, node, data_type, expr, **kwargs):
-        super(EvalDatum, self).__init__(node, data_type, **kwargs)
+    def __init__(self, name, node, data_type, expr, **kwargs):
+        super(EvalDatum, self).__init__(name, node, data_type, **kwargs)
         self.set_expr(str(expr))
 
     def display_str(self):
@@ -209,9 +211,13 @@ class EvalDatum(Datum):
 ################################################################################
 
 class FloatDatum(EvalDatum):
-    def __init__(self, node, value):
-        super(FloatDatum, self).__init__(node, float, value,
+    def __init__(self, name, node, value):
+        super(FloatDatum, self).__init__(name, node, float, value,
                                          input_type=_SingleInput)
+
+    def increment(self, delta):
+        if self.simple():
+            self += delta
 
     def __iadd__(self, delta):
         """ Increments this node's expression.
@@ -223,8 +229,8 @@ class FloatDatum(EvalDatum):
 ################################################################################
 
 class IntDatum(EvalDatum):
-    def __init__(self, node, value):
-        super(IntDatum, self).__init__(node, int, value,
+    def __init__(self, name, node, value):
+        super(IntDatum, self).__init__(name, node, int, value,
                                        input_type=_SingleInput)
 
     '''
@@ -240,8 +246,8 @@ class IntDatum(EvalDatum):
 ################################################################################
 
 class NameDatum(EvalDatum):
-    def __init__(self, node, value):
-        super(NameDatum, self).__init__(node, Name, value, has_output=False)
+    def __init__(self, name, node, value):
+        super(NameDatum, self).__init__(name, node, Name, value, has_output=False)
 
     def display_str(self):
         return self._expr[1:-1]
@@ -252,8 +258,8 @@ class NameDatum(EvalDatum):
         super(NameDatum, self).set_expr("'%s'" % e)
 
 class StringDatum(EvalDatum):
-    def __init__(self, node, value):
-        super(StringDatum, self).__init__(node, str, "'%s'" % value)
+    def __init__(self, name, node, value):
+        super(StringDatum, self).__init__(name, node, str, "'%s'" % value)
 
     def display_str(self):
         return self._expr[1:-1].replace("\\","")
@@ -263,9 +269,9 @@ class StringDatum(EvalDatum):
 ################################################################################
 
 class ExpressionDatum(EvalDatum):
-    def __init__(self, node, value):
+    def __init__(self, name, node, value):
         super(ExpressionDatum, self).__init__(
-                node, Expression, value, input_type=_MultiInput)
+                name, node, Expression, value, input_type=_MultiInput)
 
 ################################################################################
 
@@ -274,9 +280,9 @@ class FunctionDatum(Datum):
         Usually used for a node output value.
     """
 
-    def __init__(self, node, function_name, data_type):
+    def __init__(self, name, node, function_name, data_type):
         self.function_name = function_name
-        super(FunctionDatum, self).__init__(node, data_type)
+        super(FunctionDatum, self).__init__(name, node, data_type)
 
     def display_str(self):
         if self._valid:     return 'Function'
@@ -298,8 +304,8 @@ class FunctionDatum(Datum):
 class FloatFunctionDatum(FunctionDatum):
     """ Represents a calculated float value.
     """
-    def __init__(self, node, function):
-        super(FloatFunctionDatum, self).__init__(node, function, float)
+    def __init__(self, name, node, function):
+        super(FloatFunctionDatum, self).__init__(name, node, function, float)
 
     def get_expr(self):
         if self._valid:     return str(self._value)
@@ -311,7 +317,7 @@ class ExpressionFunctionDatum(FunctionDatum):
     """ Represents a math expression calculated by a function.
     """
 
-    def __init__(self, node, function):
+    def __init__(self, name, node, function):
         """ Pass in a parent node and a function to generate
             an output Expression.
         """
@@ -320,7 +326,7 @@ class ExpressionFunctionDatum(FunctionDatum):
         if not isinstance(function, str):
             function = function.__name__
         super(ExpressionFunctionDatum, self).__init__(
-                node, function, Expression)
+                name, node, function, Expression)
 
 ################################################################################
 

@@ -13,8 +13,7 @@ class App(QtGui.QApplication):
 
         self.window = MainWindow()
         a = AxesControl(self.window.canvas)
-        b = Point3D('hi', 10, 10, 10, None)
-        b.make_controls(self.window.canvas)
+        b = Point3D(self.window.canvas, 'hi', 10, 10, 10)
 
         self.window.activateWindow()
         self.window.show()

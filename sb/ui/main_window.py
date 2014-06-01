@@ -59,14 +59,14 @@ class MainWindow(QtGui.QMainWindow):
 
         # Pick a unique name then create the node
         name = NodeManager.get_name(d)
-        node = d(name, obj_pos.x(), obj_pos.y(), obj_pos.z(),
-                 100 / self.canvas._scale)
+        node = d.new(self.canvas, name,
+                     obj_pos.x(), obj_pos.y(), obj_pos.z(),
+                     100 / self.canvas._scale)
 
-        # Make a control, then make it stick to the mouse
-        c = node.make_controls(self.canvas)
-        c._mouse_click_pos = scene_pos
-        c._hover = True
-        c.grabMouse()
+        # Stick this node's control to the mouse
+        node.control._mouse_click_pos = scene_pos
+        node.control._hover = True
+        node.control.grabMouse
 
     def make_add_menu(self):
         import sb.nodes

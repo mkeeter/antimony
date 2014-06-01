@@ -6,9 +6,9 @@ class NodeManager(QtCore.QObject):
 
     def make_dict(self):
         from sb.nodes.node import Node
-        return {str(n.object_datums['name']._value): n.proxy()
+        return {str(n.datums['name']._value): n.proxy()
                 for n in self.findChildren(Node) if 'name' in
-                n.object_datums}
+                n.datums}
 
     def get_name(self, node_class):
         """ Finds an appropriate unused name for the given node class.
@@ -16,7 +16,7 @@ class NodeManager(QtCore.QObject):
         i = 0
         while True:
             name = '%s%i' % (node_class.name_prefix, i)
-            if name in [str(f.object_datums['name']._value)
+            if name in [str(f.datums['name']._value)
                         for f in self.findChildren(node_class)]:
                 i += 1
             else:

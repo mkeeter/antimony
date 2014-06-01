@@ -7,21 +7,24 @@ import fab.shapes
 class Circle(Node2D):
     menu_name = "Circle"
     menu_category = "2D"
-
     name_prefix = 'c'
-    _control_type = CircleControl
 
-    def __init__(self, name, x, y, z, scale):
-        super(Circle, self).__init__(name, x, y)
-        self.object_datums['r'] = datum.FloatDatum(self, 100)
-        self.object_datums['shape'] = datum.ExpressionFunctionDatum(
-                self, self.make_shape)
+    def __init__(self, canvas, name, x, y, r):
+        super().__init__(canvas, name, x, y)
+        self.datums += [
+                datum.FloatDatum('r', self, 100),
+                datum.ExpressionFunctionDatum('shape', self, self.make_shape)]
+        self.control = CircleControl(canvas, self)
+
+    @classmethod
+    def new(cls, canvas, name, x, y, z, scale):
+        return cls(canvas, name, x, y, scale)
 
     def make_shape(self):
         """ Return a math expression representing this circle.
         """
         return fab.shapes.circle(
-                self.object_datums['x'].value,
-                self.object_datums['y'].value,
-                self.object_datums['r'].value)
+                self.datums['x'].value,
+                self.datums['y'].value,
+                self.datums['r'].value)
 
