@@ -43,8 +43,20 @@ class Control(QtGui.QGraphicsObject):
 
         self.center_changed.connect(self.io_pos_changed)
 
-        self.delete_node = lambda: node.deleteLater()
         self._cache = {}
+        self._node = node
+
+    def delete_node(self):
+        self._node.deleteLater()
+
+    def watch_datums(self, *args):
+        """ Marks a list of datums (by name) as ones to be watched,
+            connected their changed signal to update_cache.
+        """
+        for name in args:
+            d = self._node.get_datum(name)
+            d.changed.connect(self.update_cache)
+            self._cache[d.name] = d._value
 
     def update_cache(self, d, value, valid):
         self._cache[d.name] = value

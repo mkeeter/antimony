@@ -85,7 +85,10 @@ class NodeViewer(QtGui.QWidget):
     def _populate_grid(self, node):
         """ Adds a set of grid rows with editor panels connected to datums.
         """
-        for name, datum in node.object_datums.items():
+        for datum in node.datums:
+            name = datum.name
+            if name[0] == '_':
+                continue
             row = self.ui.grid.rowCount()
             if datum.input_handler is not None:
                 self.ui.grid.addWidget(InputBox(datum, self), row, 0)

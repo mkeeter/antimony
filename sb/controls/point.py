@@ -3,18 +3,10 @@ from PySide import QtCore, QtGui
 from sb.controls.control import Control
 
 class Point3DControl(Control):
-    drag_x = QtCore.Signal(float)
-    drag_y = QtCore.Signal(float)
-    drag_z = QtCore.Signal(float)
 
     def __init__(self, canvas, node):
         super().__init__(canvas, node)
-        for d in node.datums:
-            d.changed.connect(self.update_cache)
-            self._cache[d.name] = d._value
-        self.drag_x.connect(node.get_datum('x').increment)
-        self.drag_y.connect(node.get_datum('y').increment)
-        self.drag_z.connect(node.get_datum('z').increment)
+        self.watch_datums('x','y','z')
 
     @property
     def pos(self):
@@ -36,9 +28,9 @@ class Point3DControl(Control):
         return path
 
     def drag(self, c, d):
-        self.drag_x.emit(d.x())
-        self.drag_y.emit(d.y())
-        self.drag_z.emit(d.z())
+        self._node.get_datum('x').increment(d.x())
+        self._node.get_datum('y').increment(d.y())
+        self._node.get_datum('z').increment(d.z())
 
     def center_pos(self):
         pt = self.transform_points([self.pos])[0]

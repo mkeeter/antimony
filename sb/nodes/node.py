@@ -17,7 +17,6 @@ class Node(QtCore.QObject):
         """
         # Call the QObject constructor with the NodeManager as parent
         super(Node, self).__init__(NodeManager)
-
         self.datums = [datum.NameDatum('name', self, name)]
 
     def get_datum(self, n):
