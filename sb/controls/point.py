@@ -39,11 +39,14 @@ class Point3DControl(Control):
 ################################################################################
 
 class Point2DControl(Control):
+    def __init__(self, canvas, node):
+        super().__init__(canvas, node)
+        self.watch_datums('x','y')
+
     @property
     def pos(self):
         return QtGui.QVector3D(
-                self._node.datums['x']._value,
-                self._node.datums['y']._value, 0)
+                self._cache['x'], self._cache['y'], 0)
 
     def boundingRect(self):
         return self.bounding_box([self.pos])
@@ -60,9 +63,8 @@ class Point2DControl(Control):
         return path
 
     def drag(self, c, d):
-        for a in 'xy':
-            if self._node.datums[a].simple():
-                self._node.datums[a] += getattr(d, a)()
+        self._node.get_datum('x').increment(d.x())
+        self._node.get_datum('y').increment(d.y())
 
     def center_pos(self):
         pt = self.transform_points([self.pos])[0]
