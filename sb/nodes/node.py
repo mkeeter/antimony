@@ -19,6 +19,14 @@ class Node(QtCore.QObject):
         super(Node, self).__init__(NodeManager)
         self.datums = [datum.NameDatum('name', self, name)]
 
+        # After the constructor is done and control returns to the event loop,
+        # update all of the datums (useful for setting validity of functions)
+        QtCore.QTimer.singleShot(0, self._update_datums)
+
+    def _update_datums(self):
+        for d in self.datums:
+            d.update()
+
     def get_datum(self, n):
         """ Returns the datum with the given name.
         """
