@@ -37,8 +37,8 @@ class _SingleInput(QtCore.QObject):
             and forces an update of the datum's expression.
         """
         self.i = None
-        if d in self.parent()._connected_datums:
-            self.parent()._connected_datums.remove(d)
+        if d in self.parent()._upstream:
+            self.parent()._upstream.remove(d)
         self.parent().emit_changed()
 
 class _MultiInput(QtCore.QObject):
@@ -60,8 +60,8 @@ class _MultiInput(QtCore.QObject):
         self.parent().emit_changed()
     def disconnect(self, d):
         self.i.remove(d)
-        if d in self.parent()._connected_datums:
-            self.parent()._connected_datums.remove(d)
+        if d in self.parent()._upstream:
+            self.parent()._upstream.remove(d)
         if len(self.i) == 0:
             self.parent().set_expr('None')
         else:
@@ -127,9 +127,12 @@ class Datum(QtCore.QObject):
         """
         # Link the previous item in the call stack to our
         # 'changed' signal so that when we change, it updates itself.
-        if Datum._caller and not self in Datum._caller._upstream:
-            self.changed.connect(Datum._caller.update)
-            Datum._caller._upstream.add(self)
+        caller = Datum._caller
+        if caller and not self in caller._upstream:
+            self.changed.connect(caller.update)
+            self.destroyed.connect(
+                    lambda q=caller: q._upstream.remove(self)
+                                     if self in q._upstream else None)
 
 
     def disconnect_parents(self):
@@ -139,6 +142,7 @@ class Datum(QtCore.QObject):
         """
         for d in self._upstream:
             d.disconnect(QtCore.SIGNAL('changed'), self.update)
+            d.disconnect(QtCore.SIGNAL('destroyed'), self, 0)
         self._upstream = set()
 
     def emit_changed(self):
