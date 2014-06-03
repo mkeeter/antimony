@@ -94,9 +94,9 @@ class Datum(QtCore.QObject):
         self._value = self.data_type()
         self._valid = False
 
-        # self._connected_datums is a set of child datums which have been
-        # connected to the changed signal.
-        self._connected_datums = set()
+        # self._upstream is a set of upstream datums whose changed signals
+        # have been connected to our update slot.
+        self._upstream = set()
 
 
     @property
@@ -127,9 +127,9 @@ class Datum(QtCore.QObject):
         """
         # Link the previous item in the call stack to our
         # 'changed' signal so that when we change, it updates itself.
-        if Datum._caller and not self in Datum._caller._connected_datums:
+        if Datum._caller and not self in Datum._caller._upstream:
             self.changed.connect(Datum._caller.update)
-            Datum._caller._connected_datums.add(self)
+            Datum._caller._upstream.add(self)
 
 
     def disconnect_parents(self):
@@ -137,9 +137,9 @@ class Datum(QtCore.QObject):
             Should be called when we're about to update (which re-establishes
             connections that are still active).
         """
-        for d in self._connected_datums:
+        for d in self._upstream:
             d.disconnect(QtCore.SIGNAL('changed'), self.update)
-        self._connected_datums = set()
+        self._upstream = set()
 
     def emit_changed(self):
         """ Forces the datum to emit self.changed with appropriate values.
