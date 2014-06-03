@@ -66,7 +66,7 @@ class MainWindow(QtGui.QMainWindow):
         # Stick this node's control to the mouse
         node.control._mouse_click_pos = scene_pos
         node.control._hover = True
-        node.control.grabMouse
+        node.control.grabMouse()
 
     def make_add_menu(self):
         import sb.nodes
