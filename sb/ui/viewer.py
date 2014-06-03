@@ -8,25 +8,25 @@ class _DatumLineEdit(QtGui.QLineEdit):
     """
     def __init__(self, datum, parent=None):
         super(_DatumLineEdit, self).__init__(parent)
-        self._datum = datum
 
-        if hasattr(self._datum, 'set_expr'):
-            self.textEdited.connect(self._datum.set_expr)
+        if hasattr(datum, 'set_expr'):
+            self.textEdited.connect(datum.set_expr)
         else:
             self.setEnabled(False)
-        self.setText(self._datum.display_str())
-        self._datum.changed.connect(self.on_datum_changed)
-        self.on_datum_changed()
+        self.setText(datum.display_str())
 
-    def on_datum_changed(self):
-        if self._datum.input_handler is not None:
-            self.setEnabled(not bool(self._datum.input_handler))
+        datum.changed.connect(self.on_datum_changed)
+        self.on_datum_changed(datum)
+
+    def on_datum_changed(self, d):
+        if d.input_handler is not None:
+            self.setEnabled(not bool(d.input_handler))
 
         p = self.cursorPosition()
-        self.setText(self._datum.display_str())
+        self.setText(d.display_str())
         self.setCursorPosition(p)
 
-        if self._datum.valid:
+        if d.valid:
             self.setStyleSheet("""
                 QLineEdit:disabled { color: #ccc; }
                 """)
