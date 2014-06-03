@@ -111,7 +111,6 @@ class Control(QtGui.QGraphicsObject):
             return self.parentObject().mouseDoubleClickEvent(event)
         elif not self.viewer:
             self.viewer = NodeViewer(self)
-            self.viewer.destroyed.connect(self._viewer_destroyed)
             self.update_center()
 
     def mousePressEvent(self, event):

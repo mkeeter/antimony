@@ -60,7 +60,12 @@ class NodeViewer(QtGui.QWidget):
         control.center_changed.connect(self.move)
         control.center_changed.connect(self._prepare_geometry_change)
 
+        # If the control is deleted, slide closed
         control.destroyed.connect(self.animate_close)
+
+        # If the viewer is destroyed, trigger callback in control
+        self.destroyed.connect(control._viewer_destroyed)
+
         self.io_pos_changed.connect(control.io_pos_changed)
 
         self.proxy = control._canvas.scene.addWidget(self)
