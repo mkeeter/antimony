@@ -29,7 +29,7 @@ class _SingleInput(QtCore.QObject):
                 d.data_type == self.parent().data_type)
     def connect(self, d):
         self.i = d
-        self.parent().update()
+        self.parent().emit_changed()
     def disconnect(self, d):
         """ Disconnects the given datum from this input handler.
             Also removes it from the parent datum's connected datum set
@@ -38,7 +38,7 @@ class _SingleInput(QtCore.QObject):
         self.i = None
         if d in self.parent()._connected_datums:
             self.parent()._connected_datums.remove(d)
-        self.parent().changed.emit()
+        self.parent().emit_changed()
 
 class _MultiInput(QtCore.QObject):
     def __init__(self, parent):
@@ -55,7 +55,7 @@ class _MultiInput(QtCore.QObject):
                 d.data_type == self.parent().data_type)
     def connect(self, d):
         self.i.append(d)
-        self.parent().update()
+        self.parent().emit_changed()
     def disconnect(self, d):
         self.i.remove(d)
         if d in self.parent()._connected_datums:
@@ -63,7 +63,7 @@ class _MultiInput(QtCore.QObject):
         if len(self.i) == 0:
             self.parent().set_expr('None')
         else:
-            self.parent().changed.emit()
+            self.parent().emit_changed()
 
 ################################################################################
 
@@ -138,6 +138,10 @@ class Datum(QtCore.QObject):
             d.disconnect(QtCore.SIGNAL('changed'), self.update)
         self._connected_datums = set()
 
+    def emit_changed(self):
+        """ Forces the datum to emit self.changed with appropriate values.
+        """
+        self.changed.emit(self, self._value, self._valid)
 
     def update(self):
         """ Updates self._valid and self._value, emitting self.changed
