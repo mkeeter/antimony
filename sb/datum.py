@@ -29,6 +29,7 @@ class _SingleInput(QtCore.QObject):
                 d.data_type == self.parent().data_type)
     def connect(self, d):
         self.i = d
+        d.destroyed.connect(lambda: self.disconnect(d))
         self.parent().emit_changed()
     def disconnect(self, d):
         """ Disconnects the given datum from this input handler.
@@ -55,6 +56,7 @@ class _MultiInput(QtCore.QObject):
                 d.data_type == self.parent().data_type)
     def connect(self, d):
         self.i.append(d)
+        d.destroyed.connect(lambda: self.disconnect(d))
         self.parent().emit_changed()
     def disconnect(self, d):
         self.i.remove(d)

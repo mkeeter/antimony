@@ -43,20 +43,10 @@ class Connection(QtGui.QGraphicsObject):
         self.color = self._base_color
 
         self.prepareGeometryChange()
-        self._input_datum.destroyed.connect(self.on_input_datum_destroyed)
-        self._output_datum.destroyed.connect(self.on_output_datum_destroyed)
+        self._input_datum.destroyed.connect(self.deleteLater)
+        self._output_datum.destroyed.connect(self.deleteLater)
 
         self._input_datum.update()
-
-    def on_input_datum_destroyed(self):
-        self._input_datum = None
-        self.deleteLater()
-
-    def on_output_datum_destroyed(self):
-        if self._input_datum:
-            self._input_datum.input_handler.disconnect(self._output_datum)
-        self._output_datum = None
-        self.deleteLater()
 
     def delete_connection(self):
         self._input_datum.input_handler.disconnect(self._output_datum)
