@@ -98,6 +98,7 @@ class Datum(QtCore.QObject):
         # connected to the changed signal.
         self._connected_datums = set()
 
+
     @property
     def value(self):
         """ Connects the calling node to our changed signal, then returns

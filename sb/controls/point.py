@@ -39,8 +39,8 @@ class Point3DControl(Control):
 ################################################################################
 
 class Point2DControl(Control):
-    def __init__(self, canvas, node):
-        super().__init__(canvas, node)
+    def __init__(self, canvas, node, parent=None):
+        super().__init__(canvas, node, parent=None)
         self.watch_datums('x','y')
 
     @property

@@ -24,7 +24,7 @@ class Circle(Node2D):
         """ Return a math expression representing this circle.
         """
         return fab.shapes.circle(
-                self.datums['x'].value,
-                self.datums['y'].value,
-                self.datums['r'].value)
+                self.get_datum('x').value,
+                self.get_datum('y').value,
+                self.get_datum('r').value)
 

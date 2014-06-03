@@ -182,7 +182,8 @@ class Control(QtGui.QGraphicsObject):
             positioned, then emits center_changed with that position.
         """
         self.prepareGeometryChange()
-        self.center_changed.emit(self.center_pos())
+        if not self.parentObject():
+            self.center_changed.emit(self.center_pos())
 
 ################################################################################
 
