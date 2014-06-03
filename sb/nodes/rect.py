@@ -25,5 +25,5 @@ class Rectangle(Node):
 
     def make_shape(self):
         return fab.shapes.rectangle(
-                self.datums['x0'].value, self.datums['x1'].value,
-                self.datums['y0'].value, self.datums['y1'].value)
+                self.get_datum('x0').value, self.get_datum('x1').value,
+                self.get_datum('y0').value, self.get_datum('y1').value)
