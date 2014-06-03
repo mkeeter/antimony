@@ -15,7 +15,7 @@ class NodeManager(QtCore.QObject):
         i = 0
         while True:
             name = '%s%i' % (node_class.name_prefix, i)
-            if name in [str(f.datums['name']._value)
+            if name in [str(f.get_datum('name')._value)
                         for f in self.findChildren(node_class)]:
                 i += 1
             else:
