@@ -13,8 +13,15 @@ PyObject* EvalDatum::getValue() const
 {
     PyObject *globals = Py_BuildValue("{}");
     PyObject *locals = Py_BuildValue("{}");
+
     PyObject* new_value = PyRun_String(
-                expr.toStdString().c_str(), Py_eval_input, globals, locals);
+            expr.toStdString().c_str(), Py_eval_input, globals, locals);
+
+    if (new_value == NULL)
+    {
+        PyErr_Clear();
+    }
+
     Py_DECREF(globals);
     Py_DECREF(locals);
 

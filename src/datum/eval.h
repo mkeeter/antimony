@@ -17,6 +17,8 @@ protected:
     void setExpr(QString new_expr);
 
     QString expr;
+
+    friend class TestDatum;
 };
 
 #endif // EVAL_H

@@ -1,13 +1,13 @@
 QT += core gui widgets testlib
 
-TARGET = test
+CONFIG += testcase
 
 SOURCES += \
-    ../test/main.cpp \
     ../src/datum/datum.cpp \
     ../src/datum/eval.cpp \
     ../src/datum/float.cpp \
     ../test/test_datum.cpp \
+    ../test/main.cpp \
 
 HEADERS  += \
     ../src/datum/datum.h \

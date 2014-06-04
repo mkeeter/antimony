@@ -7,8 +7,10 @@ class TestDatum : public QObject
 {
     Q_OBJECT
 private slots:
-    void testFloatEvalValid();
-    void testFloatEvalInvalid();
+    void testFloatValid();
+    void testFloatInvalid();
+    void testFloatValidToInvalid();
+    void testFloatInvalidToValid();
 
 };
 

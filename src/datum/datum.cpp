@@ -1,5 +1,6 @@
 #include <Python.h>
 #include "datum/datum.h"
+#include <QDebug>
 
 Datum::Datum(QString name, QObject* parent)
     : QObject(parent), value(NULL), valid(false), input_handler(NULL)
@@ -16,7 +17,6 @@ void Datum::update()
 {
     // Request that all upstream datums disconnect.
     emit disconnectFrom(this);
-
     PyObject* new_value = getValue();
 
     // If our previous value was valid and our new value is invalid,
