@@ -7,10 +7,13 @@
 void TestDatum::testFloatEvalValid()
 {
     FloatDatum* d = new FloatDatum("x","12.3");
-    QVERIFY(true);
+    QVERIFY(d->valid == true);
+    delete d;
 }
 
 void TestDatum::testFloatEvalInvalid()
 {
-    QVERIFY(true);
+    FloatDatum* d = new FloatDatum("x","12.3!");
+    QVERIFY(d->valid == false);
+    delete d;
 }

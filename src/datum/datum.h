@@ -29,6 +29,8 @@ protected:
     bool valid;
 
     InputHandler* input_handler;
+
+    friend class TestDatum;
 };
 
 #endif // DATUM_H

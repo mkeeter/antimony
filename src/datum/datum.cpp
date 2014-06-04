@@ -19,7 +19,6 @@ void Datum::update()
 
     PyObject* new_value = getValue();
 
-
     // If our previous value was valid and our new value is invalid,
     // mark valid = false and emit a changed signal.
     if (new_value == NULL && valid)
@@ -35,6 +34,8 @@ void Datum::update()
         Py_XDECREF(value);
         value = new_value;
         Py_INCREF(value);
+
+        valid = true;
 
         emit changed();
     }

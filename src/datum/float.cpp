@@ -1,5 +1,6 @@
 #include <Python.h>
 #include "datum/float.h"
+#include <QDebug>
 
 FloatDatum::FloatDatum(QString name, QString expr, QObject *parent)
     : EvalDatum(name, parent)
