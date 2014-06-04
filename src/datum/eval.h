@@ -1,13 +1,14 @@
 #ifndef EVAL_H
 #define EVAL_H
 
+#include <Python.h>
 #include "datum/datum.h"
 
 class EvalDatum : public Datum
 {
     Q_OBJECT
 public:
-    explicit EvalDatum(QString name, QString expr, QObject* parent=0);
+    explicit EvalDatum(QString name, QObject* parent=0);
     virtual ~EvalDatum() { /* Nothing to do here */ }
 
 protected:

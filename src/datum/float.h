@@ -1,6 +1,7 @@
 #ifndef FLOAT_H
 #define FLOAT_H
 
+#include <Python.h>
 #include "datum/eval.h"
 
 class FloatDatum : public EvalDatum

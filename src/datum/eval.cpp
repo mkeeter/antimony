@@ -1,16 +1,21 @@
+#include <Python.h>
 #include "datum/eval.h"
 
-EvalDatum::EvalDatum(QString name, QString expr, QObject *parent) :
+EvalDatum::EvalDatum(QString name, QObject *parent) :
     Datum(name, parent)
 {
-    setExpr(expr);
+    // Nothing to do here
 }
 
 PyObject* EvalDatum::getValue() const
 {
-    // python magic here!
+    PyObject *globals = Py_BuildValue("{}");
+    PyObject *locals = Py_BuildValue("{}");
+    const char* a = "123.3";
     PyObject* new_value = PyRun_String(
-                expr.toStdString().c_str(), 0, NULL, NULL);
+                a, Py_file_input, globals, locals);
+    Py_DECREF(globals);
+    Py_DECREF(locals);
 
     if (new_value != NULL && !validate(new_value))
     {

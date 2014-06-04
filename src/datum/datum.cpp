@@ -1,4 +1,5 @@
-#include "datum.h"
+#include <Python.h>
+#include "datum/datum.h"
 
 Datum::Datum(QString name, QObject* parent)
     : QObject(parent), value(NULL), valid(false), input_handler(NULL)

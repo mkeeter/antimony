@@ -1,9 +1,10 @@
-#include "float.h"
+#include <Python.h>
+#include "datum/float.h"
 
 FloatDatum::FloatDatum(QString name, QString expr, QObject *parent)
-    : EvalDatum(name, expr, parent)
+    : EvalDatum(name, parent)
 {
-    // Nothing to do here
+    setExpr(expr);
 }
 
 bool FloatDatum::validate(PyObject *v) const
