@@ -9,7 +9,7 @@ EvalDatum::EvalDatum(QString name, QObject *parent) :
     // Nothing to do here
 }
 
-PyObject* EvalDatum::getValue() const
+PyObject* EvalDatum::getCurrentValue() const
 {
     PyObject *globals = Py_BuildValue("{}");
     PyObject *locals = Py_BuildValue("{}");

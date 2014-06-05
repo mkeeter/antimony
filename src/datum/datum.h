@@ -14,6 +14,9 @@ public:
     explicit Datum(QString name, QObject* parent=0);
     virtual ~Datum();
 
+    PyObject* getValue() const { return value; }
+    bool      getValid() const { return valid; }
+
 signals:
     void changed();
     void disconnectFrom(Datum *me);
@@ -23,14 +26,12 @@ public slots:
 
 protected:
     void connectUpstream(Datum* upstream);
-    virtual PyObject* getValue() const=0;
+    virtual PyObject* getCurrentValue() const=0;
 
     PyObject* value;
     bool valid;
 
     InputHandler* input_handler;
-
-    friend class TestDatum;
 };
 
 #endif // DATUM_H

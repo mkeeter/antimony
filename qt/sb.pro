@@ -11,7 +11,8 @@ SOURCES += \
     ../src/datum/float.cpp \
     ../src/node/node.cpp \
     ../src/node/manager.cpp \
-    ../src/node/proxy.cpp
+    ../src/node/proxy.cpp \
+    ../src/datum/input.cpp
 
 HEADERS  += \
     ../src/mainwindow.h \
@@ -20,7 +21,8 @@ HEADERS  += \
     ../src/datum/float.h \
     ../src/node/node.h \
     ../src/node/manager.h \
-    ../src/node/proxy.h
+    ../src/node/proxy.h \
+    ../src/datum/input.h
 
 INCLUDEPATH += ../src
 

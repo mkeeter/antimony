@@ -7,14 +7,14 @@
 void TestDatum::testFloatValid()
 {
     FloatDatum* d = new FloatDatum("x","12.3");
-    QVERIFY(d->valid == true);
+    QVERIFY(d->getValid() == true);
     delete d;
 }
 
 void TestDatum::testFloatInvalid()
 {
     FloatDatum* d = new FloatDatum("x","12.3!");
-    QVERIFY(d->valid == false);
+    QVERIFY(d->getValid() == false);
     delete d;
 }
 
@@ -22,12 +22,12 @@ void TestDatum::testFloatValidToInvalid()
 {
     FloatDatum* d = new FloatDatum("x","12.3");
     d->setExpr("10.0!");
-    QVERIFY(d->valid == false);
+    QVERIFY(d->getValid() == false);
 }
 
 void TestDatum::testFloatInvalidToValid()
 {
     FloatDatum* d = new FloatDatum("x","12.3!");
     d->setExpr("10.0");
-    QVERIFY(d->valid == true);
+    QVERIFY(d->getValid() == true);
 }

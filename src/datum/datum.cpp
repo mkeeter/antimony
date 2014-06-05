@@ -17,7 +17,7 @@ void Datum::update()
 {
     // Request that all upstream datums disconnect.
     emit disconnectFrom(this);
-    PyObject* new_value = getValue();
+    PyObject* new_value = getCurrentValue();
 
     // If our previous value was valid and our new value is invalid,
     // mark valid = false and emit a changed signal.

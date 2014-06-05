@@ -11,14 +11,13 @@ class EvalDatum : public Datum
 public:
     explicit EvalDatum(QString name, QObject* parent=0);
 
-protected:
-    virtual PyObject* getValue() const;
-    virtual bool validate(PyObject* v) const=0;
+    QString getExpr() const { return expr; }
     void setExpr(QString new_expr);
+protected:
+    virtual PyObject* getCurrentValue() const;
+    virtual bool validate(PyObject* v) const=0;
 
     QString expr;
-
-    friend class TestDatum;
 };
 
 #endif // EVAL_H
