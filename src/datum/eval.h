@@ -4,12 +4,12 @@
 #include <Python.h>
 #include "datum/datum.h"
 
+
 class EvalDatum : public Datum
 {
     Q_OBJECT
 public:
     explicit EvalDatum(QString name, QObject* parent=0);
-    virtual ~EvalDatum() { /* Nothing to do here */ }
 
 protected:
     virtual PyObject* getValue() const;

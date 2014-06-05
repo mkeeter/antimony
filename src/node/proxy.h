@@ -1,14 +1,17 @@
 #ifndef NODE_PROXY_H
 #define NODE_PROXY_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <Python.h>
 
-int hello(void);
+class Datum;
+class Node;
 
-#ifdef __cplusplus
-}
-#endif
+typedef struct {
+    PyObject_HEAD
+    Datum* caller;
+    Node* node;
+} proxy_ProxyObject;
+
+PyObject* proxyType();
 
 #endif // NODE_PROXY_H
