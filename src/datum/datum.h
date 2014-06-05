@@ -16,6 +16,7 @@ public:
 
     PyObject* getValue() const { return value; }
     bool      getValid() const { return valid; }
+    virtual PyTypeObject* getType() const=0;
 
 signals:
     void changed();
