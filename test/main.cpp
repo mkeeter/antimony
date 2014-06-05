@@ -6,8 +6,7 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
-    QTEST_DISABLE_KEYPAD_NAVIGATION
+    QCoreApplication app(argc, argv);
     Py_Initialize();
 
     TestDatum tc;
