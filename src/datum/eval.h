@@ -14,8 +14,10 @@ public:
     QString getExpr() const { return expr; }
     void setExpr(QString new_expr);
 protected:
+    virtual QString prepareExpr(QString s) const { return s; }
     virtual PyObject* getCurrentValue() const;
-    virtual bool validate(PyObject* v) const;
+    virtual bool validatePyObject(PyObject* v) const;
+    virtual bool validateExpr(PyObject* v) const;
 
     QString expr;
 };

@@ -9,9 +9,15 @@ EvalDatum::EvalDatum(QString name, QObject *parent) :
     // Nothing to do here
 }
 
-bool EvalDatum::validate(PyObject* v) const
+bool EvalDatum::validatePyObject(PyObject* v) const
 {
     Q_UNUSED(v);
+    return true;
+}
+
+bool EvalDatum::validateExpr(QString e) const
+{
+    Q_UNUSED(e);
     return true;
 }
 
@@ -20,21 +26,27 @@ PyObject* EvalDatum::getCurrentValue() const
     PyObject *globals = Py_BuildValue("{}");
     PyObject *locals = Py_BuildValue("{}");
 
-    PyObject* new_value = PyRun_String(
-            expr.toStdString().c_str(), Py_eval_input, globals, locals);
+    QString e = prepareExpr(expr);
+    PyObject* new_value = NULL;
 
-    if (new_value == NULL)
+    if (validateExpr(e))
     {
-        PyErr_Clear();
-    }
+        new_value = PyRun_String(
+                e.toStdString().c_str(), Py_eval_input, globals, locals);
 
-    Py_DECREF(globals);
-    Py_DECREF(locals);
+        if (new_value == NULL)
+        {
+            PyErr_Clear();
+        }
 
-    if (new_value != NULL && !validate(new_value))
-    {
-        Py_DECREF(new_value);
-        new_value = NULL;
+        Py_DECREF(globals);
+        Py_DECREF(locals);
+
+        if (new_value != NULL && !validatePyObject(new_value))
+        {
+            Py_DECREF(new_value);
+            new_value = NULL;
+        }
     }
     return new_value;
 }

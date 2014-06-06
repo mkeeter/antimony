@@ -13,7 +13,7 @@ NameDatum::NameDatum(QString name, QString expr, QObject *parent)
 
 bool NameDatum::isKeyword(PyObject* v)
 {
-    // Lazy initialization of eyword.kwlist.__contains__
+    // Lazy initialization of keyword.kwlist.__contains__
     if (!kwlist_contains)
     {
         PyObject* keyword_module = PyImport_ImportModule("keyword");

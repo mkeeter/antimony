@@ -110,11 +110,12 @@ void TestDatum::NameValidate()
 {
     NameDatum* d;
 
-    d = new NameDatum("a", "'hello'");
+    d = new NameDatum("a", "hello");
     QVERIFY(d->getValid() == true);
     delete d;
 
-    d = new NameDatum("a", "'with'");
+    d = new NameDatum("a", "with");
     QVERIFY(d->getValid() == false);
     delete d;
 }
+
