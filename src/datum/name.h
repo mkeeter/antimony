@@ -12,8 +12,9 @@ public:
     virtual PyTypeObject* getType() const { return &PyUnicode_Type; }
 protected:
     virtual bool validate(PyObject* v) const;
+    static bool isKeyword(PyObject* v);
 
-    static PyObject* kwlist;
+    static PyObject* kwlist_contains;
 };
 
 #endif // NAME_H

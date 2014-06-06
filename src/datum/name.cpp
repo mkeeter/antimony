@@ -3,26 +3,39 @@
 #include "datum/input.h"
 #include <QDebug>
 
-PyObject* NameDatum::kwlist = NULL;
+PyObject* NameDatum::kwlist_contains = NULL;
 
 NameDatum::NameDatum(QString name, QString expr, QObject *parent)
     : EvalDatum(name, parent)
 {
     setExpr(expr);
+}
 
-    // Lazy initialization of keyword list.
-    if (!kwlist)
+bool NameDatum::isKeyword(PyObject* v)
+{
+    // Lazy initialization of eyword.kwlist.__contains__
+    if (!kwlist_contains)
     {
-        PyObject *globals = Py_BuildValue("{}");
-        PyObject *locals = Py_BuildValue("{}");
-        kwlist = PyRun_String("__import__('keyword').kwlist",
-                              Py_eval_input, globals, locals);
-        Py_DECREF(globals);
-        Py_DECREF(locals);
+        PyObject* keyword_module = PyImport_ImportModule("keyword");
+        PyObject* kwlist = PyObject_GetAttrString(keyword_module, "kwlist");
+        Py_DECREF(keyword_module);
+        kwlist_contains = PyObject_GetAttrString(kwlist, "__contains__");
+        Py_DECREF(kwlist);
     }
+
+    PyObject* args = PyTuple_Pack(1, v);
+    PyObject* in_kwlist = PyObject_Call(kwlist_contains, args, NULL);
+
+    Py_DECREF(args);
+
+    bool result = PyObject_IsTrue(in_kwlist);
+
+    Py_DECREF(in_kwlist);
+
+    return result;
 }
 
 bool NameDatum::validate(PyObject *v) const
 {
-    return PyFloat_CheckExact(v);
+    return PyUnicode_Check(v) && !isKeyword(v);
 }

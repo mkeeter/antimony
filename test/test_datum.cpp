@@ -5,6 +5,7 @@
 
 #include "test_datum.h"
 #include "datum/float.h"
+#include "datum/name.h"
 
 void TestDatum::FloatValid()
 {
@@ -103,4 +104,17 @@ void TestDatum::SingleInputLinkDelete()
     QVERIFY(a->hasInputValue() == false);
     QVERIFY(s.count() == 1);
     delete a;
+}
+
+void TestDatum::NameValidate()
+{
+    NameDatum* d;
+
+    d = new NameDatum("a", "'hello'");
+    QVERIFY(d->getValid() == true);
+    delete d;
+
+    d = new NameDatum("a", "'with'");
+    QVERIFY(d->getValid() == false);
+    delete d;
 }
