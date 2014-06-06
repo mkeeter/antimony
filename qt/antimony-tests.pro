@@ -10,7 +10,7 @@ SOURCES += \
     ../src/node/manager.cpp \
     ../src/node/proxy.cpp \
     ../src/datum/input.cpp \
-    ../src/datum/connection.cpp \
+    ../src/datum/link.cpp \
     ../test/test_datum.cpp \
     ../test/main.cpp
 
@@ -22,7 +22,7 @@ HEADERS  += \
     ../src/node/manager.h \
     ../src/node/proxy.h \
     ../src/datum/input.h \
-    ../src/datum/connection.h \
+    ../src/datum/link.h \
     ../test/test_datum.h
 
 INCLUDEPATH += ../src

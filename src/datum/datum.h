@@ -6,7 +6,7 @@
 #include <QSet>
 
 class InputHandler;
-class Connection;
+class Link;
 
 class Datum : public QObject
 {
@@ -22,7 +22,8 @@ public:
     bool hasInputValue() const;
 
     virtual bool canEdit() const;
-    Connection* connectionFrom();
+    Link* linkFrom();
+
     void connectUpstream(Datum* upstream);
 
 signals:

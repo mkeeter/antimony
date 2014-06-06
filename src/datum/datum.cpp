@@ -4,7 +4,7 @@
 
 #include "datum/datum.h"
 #include "datum/input.h"
-#include "datum/connection.h"
+#include "datum/link.h"
 
 Datum::Datum(QString name, QObject* parent)
     : QObject(parent), value(NULL), valid(false), input_handler(NULL)
@@ -27,9 +27,9 @@ bool Datum::canEdit() const
     return !hasInputValue();
 }
 
-Connection* Datum::connectionFrom()
+Link* Datum::linkFrom()
 {
-    return new Connection(this);
+    return new Link(this);
 }
 
 void Datum::update()

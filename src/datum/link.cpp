@@ -1,9 +1,9 @@
 #include <Python.h>
 
-#include "datum/connection.h"
+#include "datum/link.h"
 #include "datum/datum.h"
 
-Connection::Connection(Datum* parent) :
+Link::Link(Datum* parent) :
     QObject(parent), control(NULL)
 {
     // Nothing to do here

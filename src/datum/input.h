@@ -5,16 +5,17 @@
 #include <QObject>
 #include <QPointer>
 
-class Connection;
+class Link;
+class Datum;
 
 class InputHandler : public QObject
 {
     Q_OBJECT
 public:
-    explicit InputHandler(QObject* parent=0);
+    explicit InputHandler(Datum* parent);
     virtual PyObject* getValue() const=0;
-    virtual bool accepts(Connection* input) const=0;
-    virtual void addInput(Connection* input)=0;
+    virtual bool accepts(Link* input) const=0;
+    virtual void addInput(Link* input)=0;
     virtual bool hasInput() const=0;
 };
 
@@ -24,13 +25,13 @@ class SingleInputHandler : public InputHandler
 {
     Q_OBJECT
 public:
-    explicit SingleInputHandler(QObject* parent=0);
+    SingleInputHandler(Datum* parent);
     virtual PyObject* getValue() const;
-    virtual bool accepts(Connection* input) const;
-    virtual void addInput(Connection* input);
+    virtual bool accepts(Link* input) const;
+    virtual void addInput(Link* input);
     virtual bool hasInput() const;
 protected:
-    QPointer<Connection> in;
+    QPointer<Link> in;
 };
 
 #endif // INPUT_H

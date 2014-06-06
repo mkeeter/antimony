@@ -2,15 +2,21 @@
 
 #include "datum/input.h"
 #include "datum/datum.h"
-#include "datum/connection.h"
+#include "datum/link.h"
 
-InputHandler::InputHandler(QObject *parent) :
-    QObject(parent)
+InputHandler::InputHandler(Datum *parent)
+    : QObject(parent)
 {
     // Nothing to do here
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+SingleInputHandler::SingleInputHandler(Datum *parent)
+    : InputHandler(parent)
+{
+    // Nothing to do here
+}
 
 PyObject* SingleInputHandler::getValue() const
 {
@@ -36,17 +42,17 @@ PyObject* SingleInputHandler::getValue() const
     }
 }
 
-bool SingleInputHandler::accepts(Connection* input) const
+bool SingleInputHandler::accepts(Link* input) const
 {
     return in.isNull() &&
             dynamic_cast<Datum*>(parent())->getType() ==
             dynamic_cast<Datum*>(input->parent())->getType();
 }
 
-void SingleInputHandler::addInput(Connection* input)
+void SingleInputHandler::addInput(Link* input)
 {
     Q_ASSERT(in.isNull());
-    in = QPointer<Connection>(input);
+    in = QPointer<Link>(input);
 }
 
 bool SingleInputHandler::hasInput() const
