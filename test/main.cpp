@@ -4,6 +4,7 @@
 
 #include "test_datum.h"
 #include "test_node.h"
+#include "test_name.h"
 
 int main(int argc, char *argv[])
 {
@@ -12,16 +13,19 @@ int main(int argc, char *argv[])
 
     int out = 0;
 
-    if (!out)
-    {
+    if (!out) {
         TestDatum t;
-        int out = QTest::qExec(&t, argc, argv);
+        out = QTest::qExec(&t, argc, argv);
     }
 
-    if (!out)
-    {
+    if (!out) {
         TestNode t;
-        int out = QTest::qExec(&t, argc, argv);
+        out = QTest::qExec(&t, argc, argv);
+    }
+
+    if (!out) {
+        TestName t;
+        out = QTest::qExec(&t, argc, argv);
     }
 
     Py_Finalize();

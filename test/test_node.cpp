@@ -22,35 +22,10 @@ void TestNode::GetDatum()
     QVERIFY(dynamic_cast<NameDatum*>(p->getDatum("name"))->getExpr() == "p");
 }
 
-void TestNode::NodeName()
+void TestNode::DeleteNode()
 {
     Point3D* p = new Point3D("p", "0", "0", "0");
-    QVERIFY(NodeManager::manager()->getName("p") == "p0");
+    QSignalSpy s(p->getDatum("x"), SIGNAL(destroyed()));
     delete p;
-}
-
-void TestNode::MultiNodeName()
-{
-    Point3D* p = new Point3D("p0", "0", "0", "0");
-    QVERIFY(NodeManager::manager()->getName("p") == "p1");
-    delete p;
-}
-
-void TestNode::Rename()
-{
-    Point3D* p = new Point3D("p0", "0", "0", "0");
-    dynamic_cast<NameDatum*>(p->getDatum("name"))->setExpr("not_p0");
-    QVERIFY(NodeManager::manager()->getName("p") == "p0");
-    QVERIFY(dynamic_cast<NameDatum*>(p->getDatum("name"))->getValid() == true);
-    delete p;
-}
-
-void TestNode::RenameWithSpaces()
-{
-    Point3D* p = new Point3D("p0", "0", "0", "0");
-    dynamic_cast<NameDatum*>(p->getDatum("name"))->setExpr("   p0   ");
-    QVERIFY(NodeManager::manager()->getName("p") == "p1");
-    QVERIFY(dynamic_cast<NameDatum*>(p->getDatum("name"))->getValid() == true);
-    delete p;
-
+    QVERIFY(s.count() == 1);
 }

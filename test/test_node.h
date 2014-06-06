@@ -11,10 +11,7 @@ public:
 
 private slots:
     void GetDatum();
-    void NodeName();
-    void MultiNodeName();
-    void Rename();
-    void RenameWithSpaces();
+    void DeleteNode();
 
 };
 

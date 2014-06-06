@@ -15,7 +15,8 @@ SOURCES += \
     ../src/datum/name.cpp \
     ../test/test_datum.cpp \
     ../test/main.cpp \
-    ../test/test_node.cpp
+    ../test/test_node.cpp \
+    ../test/test_name.cpp
 
 HEADERS  += \
     ../src/datum/datum.h \
@@ -29,7 +30,8 @@ HEADERS  += \
     ../src/datum/link.h \
     ../src/datum/name.h \
     ../test/test_datum.h \
-    ../test/test_node.h
+    ../test/test_node.h \
+    ../test/test_name.h
 
 INCLUDEPATH += ../src
 
