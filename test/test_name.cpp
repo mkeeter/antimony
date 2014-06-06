@@ -42,7 +42,7 @@ void TestName::RenameWithSpaces()
 {
     Point3D* p = new Point3D("p0", "0", "0", "0");
     dynamic_cast<NameDatum*>(p->getDatum("name"))->setExpr("   p0   ");
-    QVERIFY(NodeManager::manager()->getName("p") == "p1");
     QVERIFY(dynamic_cast<NameDatum*>(p->getDatum("name"))->getValid() == true);
+    QVERIFY(NodeManager::manager()->getName("p") == "p1");
     delete p;
 }
