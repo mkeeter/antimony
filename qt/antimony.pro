@@ -15,6 +15,7 @@ SOURCES += \
     ../src/datum/input.cpp \
     ../src/datum/link.cpp \
     ../src/datum/name.cpp \
+    ../src/node/3d/point3d.cpp
 
 HEADERS  += \
     ../src/mainwindow.h \
@@ -26,7 +27,8 @@ HEADERS  += \
     ../src/node/proxy.h \
     ../src/datum/input.h \
     ../src/datum/name.h \
-    ../src/datum/link.h
+    ../src/datum/link.h \
+    ../src/node/3d/point3d.h
 
 INCLUDEPATH += ../src
 

@@ -11,9 +11,8 @@ class Node : public QObject
 {
     Q_OBJECT
 public:
-    explicit Node(QObject* parent=0);
+    explicit Node(QString name, QObject* parent=NULL);
     PyObject* proxy();
-    virtual QString prefix() const=0;
     Datum* getDatum(QString name);
 
 protected:

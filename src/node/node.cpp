@@ -1,17 +1,20 @@
 #include <Python.h>
 
-#include "datum/datum.h"
 #include "node/node.h"
 #include "node/manager.h"
 #include "node/proxy.h"
 
-Node::Node(QObject* parent) :
-    QObject(parent)
+#include "datum/datum.h"
+#include "datum/name.h"
+
+Node::Node(QString name, QObject* parent) :
+    QObject(parent), control(NULL)
 {
     if (parent == NULL)
     {
         setParent(NodeManager::manager());
     }
+    new NameDatum("name", name, this);
 }
 
 

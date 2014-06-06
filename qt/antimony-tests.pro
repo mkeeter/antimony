@@ -9,11 +9,13 @@ SOURCES += \
     ../src/node/node.cpp \
     ../src/node/manager.cpp \
     ../src/node/proxy.cpp \
+    ../src/node/3d/point3d.cpp \
     ../src/datum/input.cpp \
     ../src/datum/link.cpp \
     ../src/datum/name.cpp \
     ../test/test_datum.cpp \
-    ../test/main.cpp
+    ../test/main.cpp \
+    ../test/test_node.cpp
 
 HEADERS  += \
     ../src/datum/datum.h \
@@ -22,10 +24,12 @@ HEADERS  += \
     ../src/node/node.h \
     ../src/node/manager.h \
     ../src/node/proxy.h \
+    ../src/node/3d/point3d.h \
     ../src/datum/input.h \
     ../src/datum/link.h \
     ../src/datum/name.h \
-    ../test/test_datum.h
+    ../test/test_datum.h \
+    ../test/test_node.h
 
 INCLUDEPATH += ../src
 

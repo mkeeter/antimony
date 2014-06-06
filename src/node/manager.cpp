@@ -1,6 +1,7 @@
 #include <Python.h>
 
 #include <QApplication>
+#include <QDebug>
 
 #include "node/manager.h"
 #include "node/node.h"
