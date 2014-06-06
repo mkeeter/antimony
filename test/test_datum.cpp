@@ -82,8 +82,10 @@ void TestDatum::SingleInputLinkDelete()
     FloatDatum* a = new FloatDatum("a", "1");
     FloatDatum* b = new FloatDatum("b", "2!");
     a->addLink(b->linkFrom());
+
+    QSignalSpy s(a, SIGNAL(changed()));
     delete b;
 
-    //QVERIFY(a->hasInputValue() == false);
-    //QVERIFY(a->getValid() == true);
+    QVERIFY(a->hasInputValue() == false);
+    QVERIFY(s.count() == 1);
 }
