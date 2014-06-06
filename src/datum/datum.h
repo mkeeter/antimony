@@ -6,6 +6,7 @@
 #include <QSet>
 
 class InputHandler;
+class Connection;
 
 class Datum : public QObject
 {
@@ -18,6 +19,12 @@ public:
     bool      getValid() const { return valid; }
     virtual PyTypeObject* getType() const=0;
 
+    bool hasInputValue() const;
+
+    virtual bool canEdit() const;
+    Connection* connectionFrom();
+    void connectUpstream(Datum* upstream);
+
 signals:
     void changed();
     void disconnectFrom(Datum *me);
@@ -26,11 +33,12 @@ public slots:
     void onDisconnectRequest(Datum* downstream);
 
 protected:
-    void connectUpstream(Datum* upstream);
     virtual PyObject* getCurrentValue() const=0;
 
     PyObject* value;
     bool valid;
+
+    bool editable;
 
     InputHandler* input_handler;
 };

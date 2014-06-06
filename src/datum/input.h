@@ -5,7 +5,7 @@
 #include <QObject>
 #include <QPointer>
 
-class Datum;
+class Connection;
 
 class InputHandler : public QObject
 {
@@ -13,8 +13,9 @@ class InputHandler : public QObject
 public:
     explicit InputHandler(QObject* parent=0);
     virtual PyObject* getValue() const=0;
-    virtual bool accepts(Datum* input) const=0;
-    virtual void addInput(Datum* input)=0;
+    virtual bool accepts(Connection* input) const=0;
+    virtual void addInput(Connection* input)=0;
+    virtual bool hasInput() const=0;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -25,10 +26,11 @@ class SingleInputHandler : public InputHandler
 public:
     explicit SingleInputHandler(QObject* parent=0);
     virtual PyObject* getValue() const;
-    virtual bool accepts(Datum* input) const;
-    virtual void addInput(Datum* input);
+    virtual bool accepts(Connection* input) const;
+    virtual void addInput(Connection* input);
+    virtual bool hasInput() const;
 protected:
-    QPointer<Datum> in;
+    QPointer<Connection> in;
 };
 
 #endif // INPUT_H

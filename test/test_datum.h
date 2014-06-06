@@ -11,6 +11,7 @@ private slots:
     void testFloatInvalid();
     void testFloatValidToInvalid();
     void testFloatInvalidToValid();
+    void testFloatSetSame();
 
 };
 

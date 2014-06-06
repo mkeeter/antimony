@@ -14,8 +14,9 @@ Node::Node(QObject* parent) :
 }
 
 
-NodeProxy* Node::proxy()
+PyObject* Node::proxy()
 {
     PyObject* p = PyObject_CallObject(proxyType(), NULL);
     ((proxy_ProxyObject*)p)->node = this;
+    return p;
 }

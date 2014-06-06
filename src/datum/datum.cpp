@@ -1,6 +1,10 @@
 #include <Python.h>
-#include "datum/datum.h"
+
 #include <QDebug>
+
+#include "datum/datum.h"
+#include "datum/input.h"
+#include "datum/connection.h"
 
 Datum::Datum(QString name, QObject* parent)
     : QObject(parent), value(NULL), valid(false), input_handler(NULL)
@@ -13,18 +17,43 @@ Datum::~Datum()
     Py_XDECREF(value);
 }
 
+bool Datum::hasInputValue() const
+{
+    return input_handler != NULL && input_handler->hasInput();
+}
+
+bool Datum::canEdit() const
+{
+    return !hasInputValue();
+}
+
+Connection* Datum::connectionFrom()
+{
+    return new Connection(this);
+}
+
 void Datum::update()
 {
     // Request that all upstream datums disconnect.
     emit disconnectFrom(this);
-    PyObject* new_value = getCurrentValue();
 
+    PyObject* new_value;
+    if (hasInputValue())
+    {
+        new_value = input_handler->getValue();
+    }
+    else
+    {
+        new_value = getCurrentValue();
+    }
+
+    bool has_changed = false;
     // If our previous value was valid and our new value is invalid,
     // mark valid = false and emit a changed signal.
     if (new_value == NULL && valid)
     {
         valid = false;
-        emit changed();
+        has_changed = true;
     }
     // If we've gone from invalid to valid or gotten a different object,
     // save the new value and emit changed.
@@ -37,9 +66,22 @@ void Datum::update()
 
         valid = true;
 
-        emit changed();
+        has_changed = true;
     }
     Py_XDECREF(new_value);
+
+    // If our editable state has changed, mark that we need to emit the
+    // changed signal (so that node viewers can modify their lineedits)
+    if (canEdit() != editable)
+    {
+        editable = canEdit();
+        has_changed = true;
+    }
+
+    if (has_changed)
+    {
+        emit changed();
+    }
 }
 
 void Datum::onDisconnectRequest(Datum* downstream)

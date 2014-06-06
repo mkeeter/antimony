@@ -2,6 +2,7 @@
 
 #include "datum/input.h"
 #include "datum/datum.h"
+#include "datum/connection.h"
 
 InputHandler::InputHandler(QObject *parent) :
     QObject(parent)
@@ -13,19 +14,42 @@ InputHandler::InputHandler(QObject *parent) :
 
 PyObject* SingleInputHandler::getValue() const
 {
-    if (in)
+    Q_ASSERT(!in.isNull());
+
+    Datum* source = dynamic_cast<Datum*>(in->parent());
+    Datum* target = dynamic_cast<Datum*>(parent());
+
+    Q_ASSERT(source);
+    Q_ASSERT(target);
+
+    target->connectUpstream(source);
+
+    if (source->getValid())
     {
-        return in->getValue();
+        PyObject* v = source->getValue();
+        Py_INCREF(v);
+        return v;
     }
-    return NULL;
+    else
+    {
+        return NULL;
+    }
 }
 
-bool SingleInputHandler::accepts(Datum* input) const
+bool SingleInputHandler::accepts(Connection* input) const
 {
-    // Need to compare datum type here
+    return in.isNull() &&
+            dynamic_cast<Datum*>(parent())->getType() ==
+            dynamic_cast<Datum*>(input->parent())->getType();
 }
 
-void SingleInputHandler::addInput(Datum* input)
+void SingleInputHandler::addInput(Connection* input)
 {
-    in = QPointer<Datum>(input);
+    Q_ASSERT(in.isNull());
+    in = QPointer<Connection>(input);
+}
+
+bool SingleInputHandler::hasInput() const
+{
+    return !in.isNull();
 }

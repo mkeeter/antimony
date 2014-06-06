@@ -1,17 +1,17 @@
 #ifndef NODE_H
 #define NODE_H
 
+#include <Python.h>
 #include <QObject>
 
 class Control;
-struct NodeProxy;
 
 class Node : public QObject
 {
     Q_OBJECT
 public:
     explicit Node(QObject* parent=0);
-    NodeProxy* proxy();
+    PyObject* proxy();
     virtual QString prefix() const=0;
 
 protected:
