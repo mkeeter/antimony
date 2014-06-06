@@ -22,7 +22,10 @@ public:
     bool hasInputValue() const;
 
     virtual bool canEdit() const;
+
     Link* linkFrom();
+    bool acceptsLink(Link* upstream) const;
+    void addLink(Link* input);
 
     void connectUpstream(Datum* upstream);
 

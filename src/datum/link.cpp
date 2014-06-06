@@ -1,5 +1,7 @@
 #include <Python.h>
 
+#include <QDebug>
+
 #include "datum/link.h"
 #include "datum/datum.h"
 

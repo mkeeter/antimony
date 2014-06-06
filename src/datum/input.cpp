@@ -1,4 +1,5 @@
 #include <Python.h>
+#include <QDebug>
 
 #include "datum/input.h"
 #include "datum/datum.h"
@@ -53,9 +54,24 @@ void SingleInputHandler::addInput(Link* input)
 {
     Q_ASSERT(in.isNull());
     in = QPointer<Link>(input);
+    dynamic_cast<Datum*>(parent())->update();
 }
 
 bool SingleInputHandler::hasInput() const
 {
-    return !in.isNull();
+    if (in.isNull())
+    {
+        return false;
+    }
+
+    // If a datum has been destroyed, it emits the destroyed signal before
+    // its children are destroyed.  Because the destroyed signal causes
+    // downstream datums to update, hasInput can be called with a un-deleted
+    // connection that has a deleted datum as a parent.
+    //
+    // The strange construct below uses dynamic_cast to see whether this is
+    // the case (because if everything but the QObject has been deleted, the
+    // dynamic cast will fail).
+    Datum* d = dynamic_cast<Datum*>(in->parent());
+    return d != NULL;
 }

@@ -27,9 +27,19 @@ bool Datum::canEdit() const
     return !hasInputValue();
 }
 
+bool Datum::acceptsLink(Link* upstream) const
+{
+    return input_handler->accepts(upstream);
+}
+
 Link* Datum::linkFrom()
 {
     return new Link(this);
+}
+
+void Datum::addLink(Link* input)
+{
+    input_handler->addInput(input);
 }
 
 void Datum::update()
