@@ -10,8 +10,6 @@ class FloatDatum : public EvalDatum
 public:
     explicit FloatDatum(QString name, QString expr, QObject *parent = 0);
     virtual PyTypeObject* getType() const { return &PyFloat_Type; }
-protected:
-    virtual bool validate(PyObject* v) const;
 
 };
 

@@ -11,6 +11,7 @@ SOURCES += \
     ../src/node/proxy.cpp \
     ../src/datum/input.cpp \
     ../src/datum/link.cpp \
+    ../src/datum/name.cpp \
     ../test/test_datum.cpp \
     ../test/main.cpp
 
@@ -23,6 +24,7 @@ HEADERS  += \
     ../src/node/proxy.h \
     ../src/datum/input.h \
     ../src/datum/link.h \
+    ../src/datum/name.h \
     ../test/test_datum.h
 
 INCLUDEPATH += ../src

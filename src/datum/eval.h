@@ -15,7 +15,7 @@ public:
     void setExpr(QString new_expr);
 protected:
     virtual PyObject* getCurrentValue() const;
-    virtual bool validate(PyObject* v) const=0;
+    virtual bool validate(PyObject* v) const;
 
     QString expr;
 };

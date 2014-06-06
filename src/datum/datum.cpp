@@ -57,6 +57,13 @@ void Datum::update()
         new_value = getCurrentValue();
     }
 
+    // Check that the new value's type is acceptable.
+    if (new_value != NULL && !PyObject_TypeCheck(new_value, getType()))
+    {
+        Py_DECREF(new_value);
+        new_value = NULL;
+    }
+
     bool has_changed = false;
     // If our previous value was valid and our new value is invalid,
     // mark valid = false and emit a changed signal.

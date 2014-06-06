@@ -9,6 +9,7 @@ class TestDatum : public QObject
 private slots:
     void FloatValid();
     void FloatInvalid();
+    void FloatValidateFail();
     void FloatValidToInvalid();
     void FloatInvalidToValid();
     void FloatSetSame();

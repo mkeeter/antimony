@@ -9,8 +9,3 @@ FloatDatum::FloatDatum(QString name, QString expr, QObject *parent)
     input_handler = new SingleInputHandler(this);
     setExpr(expr);
 }
-
-bool FloatDatum::validate(PyObject *v) const
-{
-    return PyFloat_CheckExact(v);
-}

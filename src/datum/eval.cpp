@@ -9,6 +9,12 @@ EvalDatum::EvalDatum(QString name, QObject *parent) :
     // Nothing to do here
 }
 
+bool EvalDatum::validate(PyObject* v) const
+{
+    Q_UNUSED(v);
+    return true;
+}
+
 PyObject* EvalDatum::getCurrentValue() const
 {
     PyObject *globals = Py_BuildValue("{}");

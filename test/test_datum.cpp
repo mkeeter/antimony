@@ -20,6 +20,13 @@ void TestDatum::FloatInvalid()
     delete d;
 }
 
+void TestDatum::FloatValidateFail()
+{
+    FloatDatum* d = new FloatDatum("x","'this is not a float'");
+    QVERIFY(d->getValid() == false);
+    delete d;
+}
+
 void TestDatum::FloatValidToInvalid()
 {
     FloatDatum* d = new FloatDatum("x","12.3");
@@ -27,6 +34,7 @@ void TestDatum::FloatValidToInvalid()
     d->setExpr("10.0!");
     QVERIFY(d->getValid() == false);
     QVERIFY(s.count() == 1);
+    delete d;
 }
 
 void TestDatum::FloatInvalidToValid()
@@ -36,6 +44,7 @@ void TestDatum::FloatInvalidToValid()
     d->setExpr("10.0");
     QVERIFY(d->getValid() == true);
     QVERIFY(s.count() == 1);
+    delete d;
 }
 
 void TestDatum::FloatSetSame()
@@ -45,7 +54,7 @@ void TestDatum::FloatSetSame()
     d->setExpr("12.3");
     QVERIFY(d->getValid() == true);
     QVERIFY(s.count() == 0);
-
+    delete d;
 }
 
 void TestDatum::SingleInputAccepts()
@@ -54,6 +63,7 @@ void TestDatum::SingleInputAccepts()
     FloatDatum* b = new FloatDatum("b", "10.1");
     QVERIFY(a->acceptsLink(b->linkFrom()) == true);
     delete a;
+    delete b;
 }
 
 void TestDatum::SingleInputHasValue()
@@ -63,6 +73,8 @@ void TestDatum::SingleInputHasValue()
     QVERIFY(a->hasInputValue() == false);
     a->addLink(b->linkFrom());
     QVERIFY(a->hasInputValue() == true);
+    delete a;
+    delete b;
 }
 
 void TestDatum::SingleInputLink()
@@ -75,6 +87,8 @@ void TestDatum::SingleInputLink()
 
     QVERIFY(a->getValid() == false);
     QVERIFY(s.count() == 1);
+    delete a;
+    delete b;
 }
 
 void TestDatum::SingleInputLinkDelete()
@@ -88,4 +102,5 @@ void TestDatum::SingleInputLinkDelete()
 
     QVERIFY(a->hasInputValue() == false);
     QVERIFY(s.count() == 1);
+    delete a;
 }
