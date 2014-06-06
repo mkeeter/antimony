@@ -4,6 +4,7 @@
 #include <Python.h>
 #include <QObject>
 
+class NameDatum;
 class Datum;
 
 class NodeManager : public QObject
@@ -14,8 +15,12 @@ public:
     PyObject* proxyDict(Datum* caller);
     QString getName(QString prefix) const;
 
-    static NodeManager* _manager;
     static NodeManager* manager();
+
+    bool isNameUnique(QString name) const;
+    NameDatum* findMatchingName(PyObject* proposed) const;
+protected:
+    static NodeManager* _manager;
 };
 
 #endif // MANAGER_H

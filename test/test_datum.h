@@ -18,6 +18,7 @@ private slots:
     void SingleInputLinkDelete();
     void SingleInputHasValue();
     void NameValidate();
+    void NamePrepare();
 
 };
 

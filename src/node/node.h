@@ -5,6 +5,7 @@
 #include <QObject>
 
 class Control;
+class Datum;
 
 class Node : public QObject
 {
@@ -13,6 +14,7 @@ public:
     explicit Node(QObject* parent=0);
     PyObject* proxy();
     virtual QString prefix() const=0;
+    Datum* getDatum(QString name);
 
 protected:
     Control* control;

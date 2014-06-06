@@ -9,6 +9,11 @@ EvalDatum::EvalDatum(QString name, QObject *parent) :
     // Nothing to do here
 }
 
+QString EvalDatum::prepareExpr(QString s) const
+{
+    return s;
+}
+
 bool EvalDatum::validatePyObject(PyObject* v) const
 {
     Q_UNUSED(v);
@@ -19,6 +24,11 @@ bool EvalDatum::validateExpr(QString e) const
 {
     Q_UNUSED(e);
     return true;
+}
+
+bool EvalDatum::validateType(PyObject* v) const
+{
+    return PyObject_TypeCheck(v, getType());
 }
 
 PyObject* EvalDatum::getCurrentValue() const
@@ -42,7 +52,8 @@ PyObject* EvalDatum::getCurrentValue() const
         Py_DECREF(globals);
         Py_DECREF(locals);
 
-        if (new_value != NULL && !validatePyObject(new_value))
+        if (new_value != NULL && (!validateType(new_value) ||
+                                  !validatePyObject(new_value)))
         {
             Py_DECREF(new_value);
             new_value = NULL;

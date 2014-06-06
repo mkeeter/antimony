@@ -11,8 +11,9 @@ public:
     explicit NameDatum(QString name, QString expr, QObject *parent = 0);
     virtual PyTypeObject* getType() const { return &PyUnicode_Type; }
 protected:
-    virtual QString prepareExpr(QString s) const { return s.trimmed(); }
-    virtual bool validate(PyObject* v) const;
+    virtual QString prepareExpr(QString s) const;
+    virtual bool validatePyObject(PyObject* v) const;
+    virtual bool validateExpr(QString e) const;
     static bool isKeyword(PyObject* v);
 
     static PyObject* kwlist_contains;

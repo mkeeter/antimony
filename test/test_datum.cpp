@@ -117,5 +117,34 @@ void TestDatum::NameValidate()
     d = new NameDatum("a", "with");
     QVERIFY(d->getValid() == false);
     delete d;
+
+    d = new NameDatum("a", "  omgwtf  ");
+    QVERIFY(d->getValid() == true);
+    delete d;
+
+    d = new NameDatum("a", "hi!");
+    QVERIFY(d->getValid() == false);
+    delete d;
+
+    d = new NameDatum("a", "12a");
+    QVERIFY(d->getValid() == false);
+    delete d;
+
+    d = new NameDatum("a", "a12");
+    QVERIFY(d->getValid() == true);
+    delete d;
+
+    d = new NameDatum("a", "a'12");
+    QVERIFY(d->getValid() == false);
+    delete d;
 }
 
+void TestDatum::NamePrepare()
+{
+    NameDatum* d = new NameDatum("a", "hello");
+    QSignalSpy s(d, SIGNAL(changed()));
+    d->setExpr("   hello   ");
+    QVERIFY(s.count() == 0);
+
+    delete d;
+}

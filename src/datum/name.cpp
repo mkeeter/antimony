@@ -1,7 +1,11 @@
 #include <Python.h>
+
+#include <QDebug>
+#include <QRegExp>
+
 #include "datum/name.h"
 #include "datum/input.h"
-#include <QDebug>
+#include "node/manager.h"
 
 PyObject* NameDatum::kwlist_contains = NULL;
 
@@ -9,6 +13,17 @@ NameDatum::NameDatum(QString name, QString expr, QObject *parent)
     : EvalDatum(name, parent)
 {
     setExpr(expr);
+}
+
+QString NameDatum::prepareExpr(QString s) const
+{
+    return "'" + s.trimmed() + "'";
+}
+
+bool NameDatum::validateExpr(QString e) const
+{
+    QRegExp regex("'[_a-zA-Z][_a-zA-Z0-9]*'");
+    return regex.exactMatch(e);
 }
 
 bool NameDatum::isKeyword(PyObject* v)
@@ -35,7 +50,8 @@ bool NameDatum::isKeyword(PyObject* v)
     return result;
 }
 
-bool NameDatum::validate(PyObject *v) const
+bool NameDatum::validatePyObject(PyObject *v) const
 {
-    return PyUnicode_Check(v) && !isKeyword(v);
+    NameDatum* match = NodeManager::manager()->findMatchingName(v);
+    return (match == NULL || match == this) && !isKeyword(v);
 }
