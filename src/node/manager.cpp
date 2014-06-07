@@ -70,7 +70,6 @@ PyObject* NodeManager::proxyDict(Datum* caller)
             PyDict_SetItem(d, name->getValue(), proxy);
         }
     }
-    PyObject* s = PyObject_Str(PyDict_Keys(d));
     return d;
 }
 
