@@ -14,7 +14,7 @@ public:
     explicit Point3D(QString name, QString x, QString y, QString z,
                      QObject* parent=NULL);
     explicit Point3D(float x, float y, float z, float scale,
-                     Canvas* canvas, QObject* parent=NULL);
+                     QObject* parent=NULL);
 
 };
 

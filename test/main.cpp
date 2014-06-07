@@ -5,6 +5,7 @@
 #include "test_datum.h"
 #include "test_node.h"
 #include "test_name.h"
+#include "test_proxy.h"
 
 int main(int argc, char *argv[])
 {
@@ -25,6 +26,11 @@ int main(int argc, char *argv[])
 
     if (!out) {
         TestName t;
+        out = QTest::qExec(&t, argc, argv);
+    }
+
+    if (!out) {
+        TestProxy t;
         out = QTest::qExec(&t, argc, argv);
     }
 

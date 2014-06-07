@@ -22,6 +22,7 @@ PyObject* Node::proxy()
 {
     PyObject* p = PyObject_CallObject(proxyType(), NULL);
     ((proxy_ProxyObject*)p)->node = this;
+    ((proxy_ProxyObject*)p)->caller = NULL;
     return p;
 }
 

@@ -1,4 +1,59 @@
+#include <Python.h>
+
+#include <QString>
+
+#include "datum/datum.h"
+#include "node/node.h"
 #include "node/proxy.h"
+
+static PyObject* proxy_getAttro(PyObject* o, PyObject* attr_name)
+{
+    PyObject* result = PyObject_GenericGetAttr(o, attr_name);
+    if (result != NULL)
+    {
+        return result;
+    }
+    PyErr_Clear();
+
+    if (!PyUnicode_Check(attr_name))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Attribute must be unicode");
+        return NULL;
+    }
+
+    wchar_t* w = PyUnicode_AsWideCharString(attr_name, NULL);
+    Q_ASSERT(w);
+
+    QString str = QString::fromWCharArray(w);
+    Datum* datum = ((proxy_ProxyObject*)o)->node->getDatum(str);
+    PyMem_Free(w);
+
+    if (datum)
+    {
+        // If we have a known caller, then mark that this datum is an upstream node
+        // for the caller.
+        if (((proxy_ProxyObject*)o)->caller)
+        {
+            ((proxy_ProxyObject*)o)->caller->connectUpstream(datum);
+        }
+
+        if (datum->getValid())
+        {
+            PyObject* value = datum->getValue();
+            Py_INCREF(value);
+            return value;
+        }
+        else
+        {
+            PyErr_SetString(PyExc_RuntimeError, "Invalid datum lookup.");
+        }
+    }
+    else
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Nonexistent datum lookup.");
+        return NULL;
+    }
+}
 
 static PyTypeObject proxy_ProxyType = {
     PyVarObject_HEAD_INIT(NULL, 0)
@@ -17,7 +72,7 @@ static PyTypeObject proxy_ProxyType = {
     0,                         /* tp_hash  */
     0,                         /* tp_call */
     0,                         /* tp_str */
-    0,                         /* tp_getattro */
+    &proxy_getAttro,           /* tp_getattro */
     0,                         /* tp_setattro */
     0,                         /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT,        /* tp_flags */
