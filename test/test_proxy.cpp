@@ -43,8 +43,10 @@ void TestProxy::GetInvalidDatum()
     PyObject* proxy = p->proxy();
     PyObject* x = PyObject_GetAttrString(proxy, "x");
     QVERIFY(x == NULL);
+    PyErr_Clear();
     Py_DECREF(proxy);
     Py_XDECREF(x);
+    delete p;
 }
 
 void TestProxy::GetNonexistentDatum()
@@ -53,7 +55,19 @@ void TestProxy::GetNonexistentDatum()
     PyObject* proxy = p->proxy();
     PyObject* q = PyObject_GetAttrString(proxy, "q");
     QVERIFY(q == NULL);
+    PyErr_Clear();
     Py_DECREF(proxy);
     Py_XDECREF(q);
     delete p;
+}
+
+void TestProxy::EvalValid()
+{
+    Point3D* a = new Point3D("p0", "0.0", "1.0", "2.0");
+    QVERIFY(a->getDatum("name")->getValid());
+    Point3D* b = new Point3D("p1", "p0.x", "1.0", "2.0");
+    QVERIFY(b->getDatum("x")->getValid() == true);
+    QVERIFY(a->getDatum("x")->getValue() == b->getDatum("x")->getValue());
+    delete a;
+    delete b;
 }

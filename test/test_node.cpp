@@ -20,6 +20,7 @@ void TestNode::GetDatum()
     Point3D* p = new Point3D("p", "0", "0", "0");
     QVERIFY(dynamic_cast<NameDatum*>(p->getDatum("name")));
     QVERIFY(dynamic_cast<NameDatum*>(p->getDatum("name"))->getExpr() == "p");
+    delete p;
 }
 
 void TestNode::DeleteNode()

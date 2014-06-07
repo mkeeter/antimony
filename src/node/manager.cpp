@@ -58,9 +58,11 @@ QString NodeManager::getName(QString prefix) const
 PyObject* NodeManager::proxyDict(Datum* caller)
 {
     PyObject* d = PyDict_New();
+    PyDict_SetItemString(d, "__builtins__", PyEval_GetBuiltins());
     for (Node* n : findChildren<Node*>())
     {
         NameDatum* name = dynamic_cast<NameDatum*>(n->getDatum("name"));
+
         if (name->getValid())
         {
             PyObject* proxy = n->proxy();
@@ -68,6 +70,7 @@ PyObject* NodeManager::proxyDict(Datum* caller)
             PyDict_SetItem(d, name->getValue(), proxy);
         }
     }
+    PyObject* s = PyObject_Str(PyDict_Keys(d));
     return d;
 }
 

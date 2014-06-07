@@ -37,7 +37,7 @@ public slots:
     void onDisconnectRequest(Datum* downstream);
 
 protected:
-    virtual PyObject* getCurrentValue() const=0;
+    virtual PyObject* getCurrentValue()=0;
 
     PyObject* value;
     bool valid;

@@ -2,6 +2,7 @@
 #include <QDebug>
 
 #include "datum/eval.h"
+#include "node/manager.h"
 
 EvalDatum::EvalDatum(QString name, QObject *parent) :
     Datum(name, parent)
@@ -31,21 +32,23 @@ bool EvalDatum::validateType(PyObject* v) const
     return PyObject_TypeCheck(v, getType());
 }
 
-PyObject* EvalDatum::getCurrentValue() const
+PyObject* EvalDatum::getCurrentValue()
 {
-    PyObject *globals = Py_BuildValue("{}");
-    PyObject *locals = Py_BuildValue("{}");
-
     QString e = prepareExpr(expr);
     PyObject* new_value = NULL;
 
     if (validateExpr(e))
     {
+        PyObject *globals = NodeManager::manager()->proxyDict(this);
+        PyObject *locals = Py_BuildValue("{}");
+
         new_value = PyRun_String(
-                e.toStdString().c_str(), Py_eval_input, globals, locals);
+                 e.toStdString().c_str(),
+                 Py_eval_input, globals, locals);
 
         if (new_value == NULL)
         {
+            PyErr_Print();
             PyErr_Clear();
         }
 

@@ -13,6 +13,7 @@ private slots:
     void GetValidDatum();
     void GetInvalidDatum();
     void GetNonexistentDatum();
+    void EvalValid();
 };
 
 #endif // TEST_PROXY_H

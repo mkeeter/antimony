@@ -21,6 +21,7 @@ Node::Node(QString name, QObject* parent) :
 PyObject* Node::proxy()
 {
     PyObject* p = PyObject_CallObject(proxyType(), NULL);
+    Q_ASSERT(p);
     ((proxy_ProxyObject*)p)->node = this;
     ((proxy_ProxyObject*)p)->caller = NULL;
     return p;

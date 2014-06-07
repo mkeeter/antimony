@@ -11,6 +11,7 @@ public:
 
 private slots:
     void NodeName();
+    void NameValid();
     void MultiNodeName();
     void Rename();
     void RenameWithSpaces();

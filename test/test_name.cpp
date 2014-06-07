@@ -22,6 +22,13 @@ void TestName::NodeName()
     delete p;
 }
 
+void TestName::NameValid()
+{
+    Point3D* p = new Point3D("p0", "0", "0", "0");
+    QVERIFY(p->getDatum("name")->getValid());
+    delete p;
+}
+
 void TestName::MultiNodeName()
 {
     Point3D* p = new Point3D("p0", "0", "0", "0");

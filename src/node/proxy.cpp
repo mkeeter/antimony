@@ -51,8 +51,8 @@ static PyObject* proxy_getAttro(PyObject* o, PyObject* attr_name)
     else
     {
         PyErr_SetString(PyExc_RuntimeError, "Nonexistent datum lookup.");
-        return NULL;
     }
+    return NULL;
 }
 
 static PyTypeObject proxy_ProxyType = {
