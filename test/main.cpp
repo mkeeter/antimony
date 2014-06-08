@@ -1,4 +1,4 @@
-#include <Python.h>
+#include <boost/python.hpp>
 
 #include <QtTest/QtTest>
 
