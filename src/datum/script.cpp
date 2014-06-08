@@ -14,7 +14,7 @@ ScriptDatum::ScriptDatum(QString name, QString expr, QObject *parent)
 
 PyObject* ScriptDatum::getCurrentValue()
 {
-    globals = NodeManager::manager()->proxyDict();
+    globals = NodeManager::manager()->proxyDict(this);
     PyObject *locals = Py_BuildValue("{}");
 
     PyObject* out = PyRun_String(
@@ -51,7 +51,7 @@ void ScriptDatum::makeInput(QString name, PyTypeObject *type)
 
     if (d == NULL)
     {
-        if (type == PyFloat_Type)
+        if (type == &PyFloat_Type)
         {
             d = new FloatDatum(name, "0.0", parent());
         }
@@ -67,7 +67,7 @@ void ScriptDatum::makeInput(QString name, PyTypeObject *type)
 
     if (d->getValid())
     {
-        PyDict_SetItemString(globals, name.toStdString().c_str(), d->getValue())
+        PyDict_SetItemString(globals, name.toStdString().c_str(), d->getValue());
     }
     else
     {

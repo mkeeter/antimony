@@ -13,7 +13,6 @@ int main(int argc, char *argv[])
     Py_Initialize();
 
     int out = 0;
-
     if (!out) {
         TestDatum t;
         out = QTest::qExec(&t, argc, argv);
