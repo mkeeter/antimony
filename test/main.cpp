@@ -2,6 +2,7 @@
 
 #include <QtTest/QtTest>
 
+#include "fab.h"
 #include "test_datum.h"
 #include "test_node.h"
 #include "test_name.h"
@@ -10,6 +11,8 @@
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
+
+    fab::loadModule();
     Py_Initialize();
 
     int out = 0;

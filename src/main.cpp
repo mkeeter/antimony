@@ -4,9 +4,11 @@
 #include <QDebug>
 
 #include "mainwindow.h"
+#include "fab.h"
 
 int main(int argc, char *argv[])
 {
+    fab::loadModule();
     Py_Initialize();
 
     QApplication a(argc, argv);

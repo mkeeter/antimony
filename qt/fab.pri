@@ -13,6 +13,8 @@ SOURCES += \
     ../fab/tree/node/results.c \
     ../fab/formats/png.c \
     ../fab/util/region.c \
+    ../fab/shape.cpp \
+    ../fab/fab.cpp
 
 HEADERS += \
     ../fab/tree/eval.h \
@@ -29,6 +31,8 @@ HEADERS += \
     ../fab/tree/node/results.h \
     ../fab/formats/png.h \
     ../fab/util/region.h \
+    ../fab/shape.h \
+    ../fab/fab.h
 
 
 INCLUDEPATH += ../fab
