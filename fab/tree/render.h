@@ -5,6 +5,10 @@
 
 #include "util/region.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct MathTree_;
 
 /** @brief Recursively renders a tree
@@ -27,5 +31,9 @@ void render8(struct MathTree_* tree, Region region,
 void render16(struct MathTree_* tree, Region region,
              uint16_t** img, volatile int* halt);
 
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

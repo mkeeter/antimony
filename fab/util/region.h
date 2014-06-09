@@ -5,6 +5,10 @@
 
 #include "util/vec3f.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct MathTree_;
 
 typedef struct Region_ {
@@ -84,5 +88,8 @@ void bisect_x(const Region r, Region* const A, Region* const B);
 void bisect_y(const Region r, Region* const A, Region* const B);
 void bisect_z(const Region r, Region* const A, Region* const B);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif

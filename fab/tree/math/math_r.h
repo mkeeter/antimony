@@ -1,6 +1,10 @@
 #ifndef MATH_R_H
 #define MATH_R_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** @file tree/math/math_r.h
     @brief Functions for doing math on many distinct points at once
     @details These functions take in input arrays A and B,
@@ -35,5 +39,9 @@ float* exp_r(float* A, float* R, int c);
 float* X_r(float* X, float* R, int c);
 float* Y_r(float* Y, float* R, int c);
 float* Z_r(float* Z, float* R, int c);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

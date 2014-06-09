@@ -5,6 +5,10 @@
 #include "util/region.h"
 #include "util/switches.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct Node_;
 
 /** @struct Results_
@@ -24,5 +28,9 @@ typedef struct Results_
     @param value Constant to fill
 */
 void fill_results(struct Node_* n, float value);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

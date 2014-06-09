@@ -1,6 +1,10 @@
 #ifndef MATH_F_H
 #define MATH_F_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** @file tree/math/math_f.h
     @brief Functions for doing math on floating-point numbers.
     @details These functions take in input floats A and B,
@@ -35,5 +39,9 @@ float exp_f(float A);
 float X_f(float X);
 float Y_f(float Y);
 float Z_f(float Z);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

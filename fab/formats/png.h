@@ -3,6 +3,10 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** @brief Saves a 16-bit luminosity .png image
     @param output_file_name Target filename
     @param ni Image width (pixels)
@@ -47,4 +51,9 @@ void depth_blit(uint8_t const*const*const src,
                 const int x, const int y,
                 const int ni, const int nj,
                 const float R, const float G, const float B);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif

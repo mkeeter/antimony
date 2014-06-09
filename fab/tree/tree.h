@@ -5,6 +5,10 @@
 
 #include "tree/node/opcodes.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** @struct ustack_
     @brief A simple FIFO stack of unsigned integers.
 */
@@ -116,5 +120,9 @@ void enable_nodes(MathTree* tree);
     The bit mask is of the form (x_active << 2) | (y_active << 1) | (z_active)
 */
 uint8_t active_axes(const MathTree* const tree);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

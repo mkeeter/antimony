@@ -1,6 +1,10 @@
 #ifndef OPCODES_H
 #define OPCODES_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** @enum Opcode_
     @brief Node operations
 */
@@ -45,5 +49,9 @@ const char* dot_color(Opcode op);
 
 /** @returns Node font size for a dot graph */
 int dot_fontsize(Opcode op);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

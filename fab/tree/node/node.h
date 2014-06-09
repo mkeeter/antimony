@@ -13,6 +13,10 @@
 #define NODE_BOOLEAN    4
 #define NODE_IN_TREE    8
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** @struct Node_
     @brief Recursive data structure defining a node in a math tree.
 */
@@ -93,5 +97,9 @@ Node* constant_n(float value);
 Node* X_n(void);
 Node* Y_n(void);
 Node* Z_n(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

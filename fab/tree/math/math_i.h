@@ -3,6 +3,10 @@
 
 #include "util/interval.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** @file tree/math/math_i.h
     @brief Functions for doing math on intervals
     @details These functions take in input Intervals A and B
@@ -38,5 +42,8 @@ Interval X_i(Interval X);
 Interval Y_i(Interval Y);
 Interval Z_i(Interval Z);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif

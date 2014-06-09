@@ -5,6 +5,10 @@
 #include "util/region.h"
 #include "util/switches.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // Forward declarations
 struct MathTree_;
 
@@ -26,5 +30,9 @@ Interval  eval_i(struct MathTree_* n, const Interval X,
     @details Results are stored in n->head->results.r
 */
 float*  eval_r(struct MathTree_* n, const Region r);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

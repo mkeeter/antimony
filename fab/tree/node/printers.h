@@ -3,6 +3,10 @@
 
 #include <stdio.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct Node_;
 
 /** @brief Recursively prints a node to standard output. */
@@ -16,5 +20,8 @@ void fdprint_node(struct Node_* n, int fd);
 /** @brief Recursively prints a node to a given file */
 void fprint_node(struct Node_* n, FILE* file);
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif
