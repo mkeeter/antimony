@@ -1,5 +1,5 @@
 SOURCES += \
-    ../fab/tree/eval.c \
+    ../fab/tree/eval_c.c \
     ../fab/tree/render.c \
     ../fab/tree/tree.c \
     ../fab/tree/parser.c \
@@ -16,3 +16,8 @@ SOURCES += \
 
 INCLUDEPATH += ../fab
 DEFINES += '_STATIC_= '
+
+macx {
+    LIBS += -L/usr/local/lib -lpng
+    INCLUDEPATH += /usr/local/include/libpng16/
+}
