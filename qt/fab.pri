@@ -14,6 +14,23 @@ SOURCES += \
     ../fab/formats/png.c \
     ../fab/util/region.c \
 
+HEADERS += \
+    ../fab/tree/eval.h \
+    ../fab/tree/render.h \
+    ../fab/tree/tree.h \
+    ../fab/tree/parser.h \
+    ../fab/tree/triangulate.h \
+    ../fab/tree/math/math_f.h \
+    ../fab/tree/math/math_i.h \
+    ../fab/tree/math/math_r.h \
+    ../fab/tree/node/node.h \
+    ../fab/tree/node/opcodes.h \
+    ../fab/tree/node/printers.h \
+    ../fab/tree/node/results.h \
+    ../fab/formats/png.h \
+    ../fab/util/region.h \
+
+
 INCLUDEPATH += ../fab
 DEFINES += '_STATIC_= '
 

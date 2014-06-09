@@ -10,6 +10,19 @@ SOURCES += \
     ../src/datum/name.cpp \
     ../src/node/3d/point3d.cpp
 
+HEADERS += \
+    ../src/datum/datum.h \
+    ../src/datum/eval.h \
+    ../src/datum/float.h \
+    ../src/node/node.h \
+    ../src/node/manager.h \
+    ../src/node/proxy.h \
+    ../src/datum/input.h \
+    ../src/datum/link.h \
+    ../src/datum/name.h \
+    ../src/node/3d/point3d.h
+
+
 INCLUDEPATH += ../src
 
 macx {

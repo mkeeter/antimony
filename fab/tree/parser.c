@@ -96,7 +96,7 @@ Node* get_cached_node(NodeCache* const cache, Node* const n);
 /*  Counts the number of nodes in this list with NODE_IN_TREE in their flags
  */
 _STATIC_
-unsigned count_nodes(NodeList* list);
+unsigned count_list_nodes(NodeList* list);
 
 /* Destructively converts a list into an array of nodes, only copying nodes
  * with NODE_IN_TREE set in their flags.
@@ -382,7 +382,7 @@ Node* get_cached_node(NodeCache* const cache, Node* const n)
 }
 
 _STATIC_
-unsigned count_nodes(NodeList* list)
+unsigned count_list_nodes(NodeList* list)
 {
     unsigned count = 0;
     while (list) {
@@ -428,7 +428,7 @@ _STATIC_
 MathTree* cache_to_tree(NodeCache* c)
 {
     // Count the number of constants in the tree
-    const unsigned num_constants = count_nodes(c->constants);
+    const unsigned num_constants = count_list_nodes(c->constants);
 
     // Create the tree
     MathTree* const tree = new_tree(c->levels, num_constants);
@@ -443,7 +443,7 @@ MathTree* cache_to_tree(NodeCache* c)
         {
             unsigned count = 0;
             for (int op=0; op < LAST_OP; ++op) {
-                count += count_nodes(c->nodes[level][op]);
+                count += count_list_nodes(c->nodes[level][op]);
             }
 
             // Allocate space in the tree for these nodes
