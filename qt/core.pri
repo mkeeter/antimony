@@ -12,3 +12,9 @@ SOURCES += \
 
 INCLUDEPATH += ../src
 
+macx {
+    QMAKE_CXXFLAGS += $$system(/usr/local/bin/python3-config --includes)
+    QMAKE_LFLAGS   += $$system(/usr/local/bin/python3-config --ldflags)
+    LIBS += -L/usr/local/lib -lboost_python3
+    QMAKE_CXXFLAGS += -isystem/usr/local/include
+}

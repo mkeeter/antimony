@@ -7,7 +7,7 @@ SOURCES += \
     ../fab/tree/math/math_f.c \
     ../fab/tree/math/math_i.c \
     ../fab/tree/math/math_r.c \
-    ../fab/tree/node/node.c \
+    ../fab/tree/node/node_c.c \
     ../fab/tree/node/opcodes.c \
     ../fab/tree/node/printers.c \
     ../fab/tree/node/results.c \
