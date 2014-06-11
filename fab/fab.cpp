@@ -21,8 +21,11 @@ BOOST_PYTHON_MODULE(fab)
     class_<MathShape>("MathShape", init<std::string>())
             .def(init<std::string, float, float, float, float>())
             .def(init<std::string, float, float, float, float, float, float>())
+            .def(init<std::string, Bounds>())
             .def_readwrite("math", &MathShape::math)
-            .def_readwrite("bounds", &MathShape::bounds);
+            .def_readwrite("bounds", &MathShape::bounds)
+            .def("map", &MathShape::map);
+
 
     class_<Transform>("Transform",
         init<std::string, std::string, std::string, std::string>())

@@ -10,6 +10,7 @@ int main(int argc, char *argv[])
 {
     fab::loadModule();
     Py_Initialize();
+    PyRun_InteractiveLoop(stdin, "<stdin>");
 
     QApplication a(argc, argv);
     MainWindow w;
