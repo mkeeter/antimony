@@ -4,6 +4,7 @@
 
 #include "tree/tree.h"
 #include "tree/parser.h"
+#include "cpp/shape.h"
 
 #include "test_fab.h"
 
@@ -54,4 +55,23 @@ void TestFab::ParseExpressions()
     t = parse("+X");
     QVERIFY(t == NULL);
     free(t);
+}
+
+void TestFab::MoveShape()
+{
+    MathShape a("+Xf1.0");
+    // Apply a 2D transform to the shape
+    MathShape b = a.map(Transform("+Xf2.0","","",""));
+    QVERIFY(b.math == "m+Xf2.0  +Xf1.0");
+}
+
+void TestFab::MoveBounds()
+{
+    Bounds a(0, -2, 1, 2);
+    // Apply a 2D (inverse) transform to the bounds
+    Bounds b = a.map(Transform("","","+Xf2.0","*YY"));
+    QVERIFY(b.xmin == 2);
+    QVERIFY(b.xmax == 3);
+    QVERIFY(b.ymin == -4);
+    QVERIFY(b.ymax ==  4);
 }

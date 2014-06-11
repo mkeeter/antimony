@@ -11,9 +11,9 @@ public:
 private slots:
     void ImportFab();
     void ParseExpressions();
-    /*
     void MoveShape();
     void MoveBounds();
+    /*
     void MoveShapeWithBounds();
     void BadTransformExpression();
     */
