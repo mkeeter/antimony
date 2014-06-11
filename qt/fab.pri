@@ -14,7 +14,9 @@ SOURCES += \
     ../fab/formats/png.c \
     ../fab/util/region.c \
     ../fab/shape.cpp \
-    ../fab/fab.cpp
+    ../fab/fab.cpp \
+    ../fab/bounds.cpp \
+    ../fab/transform.cpp
 
 HEADERS += \
     ../fab/tree/eval.h \
@@ -32,7 +34,9 @@ HEADERS += \
     ../fab/formats/png.h \
     ../fab/util/region.h \
     ../fab/shape.h \
-    ../fab/fab.h
+    ../fab/fab.h \
+    ../fab/bounds.h \
+    ../fab/transform.h
 
 
 INCLUDEPATH += ../fab
