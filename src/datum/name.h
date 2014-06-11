@@ -10,6 +10,10 @@ class NameDatum : public EvalDatum
 public:
     explicit NameDatum(QString name, QString expr, QObject *parent = 0);
     virtual PyTypeObject* getType() const { return &PyUnicode_Type; }
+signals:
+    void nameChanged(QString new_name);
+public slots:
+    void onNameChange();
 protected:
     virtual QString prepareExpr(QString s) const;
     virtual bool validatePyObject(PyObject* v) const;

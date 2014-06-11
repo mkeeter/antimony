@@ -13,6 +13,15 @@ NameDatum::NameDatum(QString name, QString expr, QObject *parent)
     : EvalDatum(name, parent)
 {
     setExpr(expr);
+    connect(this, SIGNAL(changed()), this, SLOT(onNameChange()));
+}
+
+void NameDatum::onNameChange()
+{
+    if (getValid())
+    {
+        emit nameChanged(getExpr().trimmed());
+    }
 }
 
 QString NameDatum::prepareExpr(QString s) const

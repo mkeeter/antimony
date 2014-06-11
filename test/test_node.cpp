@@ -30,3 +30,28 @@ void TestNode::DeleteNode()
     delete p;
     QVERIFY(s.count() == 1);
 }
+
+void TestNode::EvalValid()
+{
+    Point3D* a = new Point3D("p0", "0.0", "1.0", "2.0");
+    QVERIFY(a->getDatum("name")->getValid());
+    Point3D* b = new Point3D("p1", "p0.x", "1.0", "2.0");
+    QVERIFY(b->getDatum("x")->getValid() == true);
+    QVERIFY(a->getDatum("x")->getValue() == b->getDatum("x")->getValue());
+    delete a;
+    delete b;
+}
+
+void TestNode::NameChangeEval()
+{
+    Point3D* a = new Point3D("old_name", "0.0", "1.0", "2.0");
+    QVERIFY(a->getDatum("name")->getValid());
+    Point3D* b = new Point3D("p1", "new_name.x", "1.0", "2.0");
+    QVERIFY(b->getDatum("x")->getValid() == false);
+    dynamic_cast<NameDatum*>(a->getDatum("name"))->setExpr("new_name");
+    QVERIFY(b->getDatum("x")->getValid() == true);
+    QVERIFY(a->getDatum("x")->getValue() == b->getDatum("x")->getValue());
+    delete a;
+    delete b;
+}
+

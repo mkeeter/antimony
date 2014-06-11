@@ -16,14 +16,15 @@ struct MathShape
     MathShape(std::string math, float xmin, float ymin, float zmin,
               float xmax, float ymax, float zmax);
     MathShape(std::string math, Bounds bounds);
+    ~MathShape();
 
     struct MathTree_* getTree();
 
     MathShape map(Transform t) const;
 
     struct MathTree_* tree;
-    std::string math;
-    Bounds bounds;
+    const std::string math;
+    const Bounds bounds;
 };
 
 #endif // SHAPE_H

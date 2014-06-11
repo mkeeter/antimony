@@ -19,6 +19,9 @@ public:
 
     bool isNameUnique(QString name) const;
     NameDatum* findMatchingName(PyObject* proposed) const;
+protected slots:
+    void onNameChange(QString new_name);
+
 protected:
     static NodeManager* _manager;
 };

@@ -1,3 +1,5 @@
+#include <cstdlib>
+
 #include "tree/tree.h"
 #include "tree/parser.h"
 
@@ -27,6 +29,11 @@ MathShape::MathShape(std::string math, Bounds bounds)
     : tree(NULL), math(math), bounds(bounds)
 {
     // Nothing to do here
+}
+
+MathShape::~MathShape()
+{
+   free(tree);
 }
 
 MathTree* MathShape::getTree()

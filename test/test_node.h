@@ -12,6 +12,8 @@ public:
 private slots:
     void GetDatum();
     void DeleteNode();
+    void EvalValid();
+    void NameChangeEval();
 
 };
 

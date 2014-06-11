@@ -10,11 +10,16 @@
 Node::Node(QString name, QObject* parent) :
     QObject(parent), control(NULL)
 {
+    new NameDatum("name", name, this);
+
     if (parent == NULL)
     {
         setParent(NodeManager::manager());
+        connect(dynamic_cast<NameDatum*>(getDatum("name")),
+                SIGNAL(nameChanged(QString)),
+                dynamic_cast<NodeManager*>(NodeManager::manager()),
+                SLOT(onNameChange(QString)));
     }
-    new NameDatum("name", name, this);
 }
 
 

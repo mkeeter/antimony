@@ -6,7 +6,6 @@
 #include "test_proxy.h"
 
 #include "datum/datum.h"
-#include "node/manager.h"
 #include "node/3d/point3d.h"
 
 TestProxy::TestProxy(QObject* parent)
@@ -59,15 +58,4 @@ void TestProxy::GetNonexistentDatum()
     Py_DECREF(proxy);
     Py_XDECREF(q);
     delete p;
-}
-
-void TestProxy::EvalValid()
-{
-    Point3D* a = new Point3D("p0", "0.0", "1.0", "2.0");
-    QVERIFY(a->getDatum("name")->getValid());
-    Point3D* b = new Point3D("p1", "p0.x", "1.0", "2.0");
-    QVERIFY(b->getDatum("x")->getValid() == true);
-    QVERIFY(a->getDatum("x")->getValue() == b->getDatum("x")->getValue());
-    delete a;
-    delete b;
 }

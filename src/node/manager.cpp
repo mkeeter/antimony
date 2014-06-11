@@ -81,3 +81,17 @@ NodeManager* NodeManager::manager()
     }
     return _manager;
 }
+
+void NodeManager::onNameChange(QString new_name)
+{
+    // When a node's name changes, call update on any EvalDatums that
+    // contain the new name as a substring.
+    for (EvalDatum* e : findChildren<EvalDatum*>())
+    {
+        if (e->getExpr().indexOf(new_name) != -1)
+        {
+            e->update();
+        }
+    }
+
+}
