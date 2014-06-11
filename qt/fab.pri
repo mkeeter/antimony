@@ -13,10 +13,10 @@ SOURCES += \
     ../fab/tree/node/results.c \
     ../fab/formats/png.c \
     ../fab/util/region.c \
-    ../fab/shape.cpp \
-    ../fab/fab.cpp \
-    ../fab/bounds.cpp \
-    ../fab/transform.cpp
+    ../fab/cpp/shape.cpp \
+    ../fab/cpp/fab.cpp \
+    ../fab/cpp/bounds.cpp \
+    ../fab/cpp/transform.cpp
 
 HEADERS += \
     ../fab/tree/eval.h \
@@ -33,10 +33,10 @@ HEADERS += \
     ../fab/tree/node/results.h \
     ../fab/formats/png.h \
     ../fab/util/region.h \
-    ../fab/shape.h \
-    ../fab/fab.h \
-    ../fab/bounds.h \
-    ../fab/transform.h
+    ../fab/cpp/shape.h \
+    ../fab/cpp/fab.h \
+    ../fab/cpp/bounds.h \
+    ../fab/cpp/transform.h
 
 
 INCLUDEPATH += ../fab

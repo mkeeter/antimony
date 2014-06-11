@@ -1,7 +1,7 @@
 #include <cstdlib>
 #include <cmath>
 
-#include "bounds.h"
+#include "cpp/bounds.h"
 #include "tree/tree.h"
 #include "tree/parser.h"
 #include "util/interval.h"

@@ -1,8 +1,8 @@
 #include <boost/python.hpp>
 
-#include "fab.h"
-#include "shape.h"
-#include "transform.h"
+#include "cpp/fab.h"
+#include "cpp/shape.h"
+#include "cpp/transform.h"
 
 using namespace boost::python;
 

@@ -3,7 +3,7 @@
 #include "tree/tree.h"
 #include "tree/parser.h"
 
-#include "shape.h"
+#include "cpp/shape.h"
 
 MathShape::MathShape(std::string math)
     : tree(NULL), math(math)

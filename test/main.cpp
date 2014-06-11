@@ -2,7 +2,7 @@
 
 #include <QtTest/QtTest>
 
-#include "fab.h"
+#include "cpp/fab.h"
 
 #include "test_datum.h"
 #include "test_node.h"
