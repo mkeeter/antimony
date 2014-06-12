@@ -29,6 +29,7 @@ struct MathShape
 
     const std::string math;
     const Bounds bounds;
+
 protected:
     struct MathTree_* tree;
 };
