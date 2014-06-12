@@ -11,6 +11,10 @@ public:
     Bounds(float xmin, float ymin, float zmin,
            float xmax, float ymax, float zmax);
 
+    /** Applies the inverse transform to bounds intervals.
+     *
+     *  Raises fab::ParseError if Transform contains invalid expressions.
+     */
     Bounds map(Transform t) const;
 
     const float xmin, ymin, zmin;

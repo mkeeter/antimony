@@ -18,6 +18,9 @@ protected:
     virtual QString prepareExpr(QString s) const;
     virtual bool validatePyObject(PyObject* v) const;
     virtual bool validateExpr(QString e) const;
+
+    /** Checks if the given object collides with a Python keyword.
+     */
     static bool isKeyword(PyObject* v);
 
     static PyObject* kwlist_contains;

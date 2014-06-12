@@ -14,10 +14,22 @@ public:
     QString getExpr() const { return expr; }
     void setExpr(QString new_expr);
 protected:
+    /** Function called on the string before evaluation.
+     */
     virtual QString prepareExpr(QString s) const;
+
     virtual PyObject* getCurrentValue();
+
+    /** Validation function called on Python object.
+     */
     virtual bool validatePyObject(PyObject* v) const;
+
+    /** Validation function called on expression before evalution.
+     */
     virtual bool validateExpr(QString e) const;
+
+    /** Validation function that checks object type.
+     */
     virtual bool validateType(PyObject* v) const;
 
     QString expr;
