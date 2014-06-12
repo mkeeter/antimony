@@ -854,10 +854,8 @@ shape.width = 0.6
 _glyphs['z'] = shape
 
 
-shape = Expression(1)
+shape = MathShape("1", 0, 0.55, 0, 1)
 shape.width = 0.55
-shape.xmin, shape.xmax = 0, 0.55
-shape.ymin, shape.ymax = 0, 1
 _glyphs[' '] = shape
 
 
