@@ -46,3 +46,5 @@ macx {
     LIBS += -L/usr/local/lib -lpng
     INCLUDEPATH += /usr/local/include/libpng16/
 }
+
+RESOURCES += ../fab/fab.qrc
