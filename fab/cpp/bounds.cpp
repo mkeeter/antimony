@@ -10,15 +10,14 @@
 #include "util/interval.h"
 
 Bounds::Bounds()
-    : xmin(-INFINITY), ymin(-INFINITY), zmin(-INFINITY),
-      xmax(INFINITY),  ymax(INFINITY),  zmax(INFINITY)
+    : Bounds(-INFINITY, -INFINITY, -INFINITY,
+              INFINITY,  INFINITY,  INFINITY)
 {
     // Nothing to do here
 }
 
 Bounds::Bounds(float xmin, float ymin, float xmax, float ymax)
-    : xmin(xmin), ymin(ymin), zmin(-INFINITY),
-      xmax(xmax), ymax(ymax), zmax(INFINITY)
+    : Bounds(xmin, ymin, -INFINITY, xmax, ymax, INFINITY)
 {
     // Nothing to do here
 }
