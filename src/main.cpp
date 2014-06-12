@@ -4,12 +4,13 @@
 #include <QDebug>
 
 #include "mainwindow.h"
-#include "fab.h"
+#include "cpp/fab.h"
 
 int main(int argc, char *argv[])
 {
-    fab::loadModule();
+    fab::preInit();
     Py_Initialize();
+    fab::postInit();
     PyRun_InteractiveLoop(stdin, "<stdin>");
 
     QApplication a(argc, argv);

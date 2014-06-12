@@ -1,5 +1,9 @@
 #include <boost/python.hpp>
 
+#include <QFile>
+#include <QString>
+#include <QTextStream>
+
 #include "cpp/fab.h"
 #include "cpp/shape.h"
 #include "cpp/transform.h"
@@ -47,7 +51,33 @@ BOOST_PYTHON_MODULE(fab)
     register_exception_translator<fab::ParseError>(fab::onParseError);
 }
 
-void fab::loadModule()
+void fab::preInit()
 {
     PyImport_AppendInittab("fab", PyInit_fab);
+}
+
+void fab::postInit()
+{
+    PyObject* shapes_module = PyModule_New("shapes");
+
+    PyObject* fab_str = PyUnicode_FromString("fab");
+    PyObject* fab = PyImport_Import(fab_str);
+
+    QFile shapes_file(":fab/py/shapes.py");
+    shapes_file.open(QFile::ReadOnly | QFile::Text);
+    QString shapes_txt = QTextStream(&shapes_file).readAll();
+
+    // Evaluate shapes.py, using the shapes module as the globals dict
+    PyObject* dict = PyModule_GetDict(shapes_module);
+    PyDict_SetItemString(dict, "__builtins__", PyEval_GetBuiltins());
+    PyRun_String(shapes_txt.toStdString().c_str(), Py_file_input,
+                 dict, dict);
+
+    // Remove the __builtins__ item (which was needed for evaluation)
+    PyObject_DelAttrString(dict, "__builtins__");
+
+    PyObject_SetAttrString(fab, "shapes", shapes_module);
+
+    Py_DECREF(fab_str);
+    Py_DECREF(fab);
 }

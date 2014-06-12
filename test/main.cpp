@@ -14,8 +14,9 @@ int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
 
-    fab::loadModule();
+    fab::preInit();
     Py_Initialize();
+    fab::postInit();
 
     int out = 0;
     if (!out) {
