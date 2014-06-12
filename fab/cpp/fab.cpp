@@ -6,6 +6,12 @@
 
 using namespace boost::python;
 
+void fab::onParseError(const fab::ParseError &e)
+{
+    (void)e;
+    PyErr_SetString(PyExc_RuntimeError, "Failed to parse math expression");
+}
+
 BOOST_PYTHON_MODULE(fab)
 {
     class_<Bounds>("Bounds", init<>())
@@ -37,6 +43,8 @@ BOOST_PYTHON_MODULE(fab)
             .def_readonly("z_reverse", &Transform::z_reverse)
             .def_readonly("y_reverse", &Transform::y_reverse)
             .def_readonly("z_reverse", &Transform::z_reverse);
+
+    register_exception_translator<fab::ParseError>(fab::onParseError);
 }
 
 void fab::loadModule()

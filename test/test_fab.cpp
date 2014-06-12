@@ -75,3 +75,4 @@ void TestFab::MoveBounds()
     QVERIFY(b.ymin == -4);
     QVERIFY(b.ymax ==  4);
 }
+

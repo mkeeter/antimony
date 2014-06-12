@@ -13,10 +13,6 @@ private slots:
     void ParseExpressions();
     void MoveShape();
     void MoveBounds();
-    /*
-    void MoveShapeWithBounds();
-    void BadTransformExpression();
-    */
 
 };
 

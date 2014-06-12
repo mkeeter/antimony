@@ -1,32 +1,36 @@
 #include <cstdlib>
 
+#include "fab.h"
 #include "tree/tree.h"
 #include "tree/parser.h"
 
 #include "cpp/shape.h"
 
 MathShape::MathShape(std::string math)
-    : tree(NULL), math(math)
+    : math(math), tree(parse(math.c_str()))
 {
-    // Nothing to do here
+    if (tree == NULL)
+    {
+        throw fab::ParseError();
+    }
 }
 
 MathShape::MathShape(std::string math, float xmin, float ymin,
                      float xmax, float ymax)
-    : tree(NULL), math(math), bounds(xmin, ymin, xmax, ymax)
+    : math(math), bounds(xmin, ymin, xmax, ymax), tree(parse(math.c_str()))
 {
     // Nothing to do here
 }
 
 MathShape::MathShape(std::string math, float xmin, float ymin, float zmin,
                      float xmax, float ymax, float zmax)
-    : tree(NULL), math(math), bounds(xmin, ymin, zmin, xmax, ymax, zmax)
+    : math(math), bounds(xmin, ymin, zmin, xmax, ymax, zmax),  tree(parse(math.c_str()))
 {
     // Nothing to do here
 }
 
 MathShape::MathShape(std::string math, Bounds bounds)
-    : tree(NULL), math(math), bounds(bounds)
+    : math(math), bounds(bounds), tree(parse(math.c_str()))
 {
     // Nothing to do here
 }
@@ -38,10 +42,6 @@ MathShape::~MathShape()
 
 MathTree* MathShape::getTree()
 {
-    if (tree == NULL)
-    {
-        tree = parse(math.c_str());
-    }
     return tree;
 }
 

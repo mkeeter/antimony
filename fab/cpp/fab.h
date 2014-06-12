@@ -3,6 +3,8 @@
 
 namespace fab
 {
+    struct ParseError {};
+    void onParseError(ParseError const& e);
     void loadModule();
 }
 

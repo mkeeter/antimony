@@ -22,9 +22,10 @@ struct MathShape
 
     MathShape map(Transform t) const;
 
-    struct MathTree_* tree;
     const std::string math;
     const Bounds bounds;
+protected:
+    struct MathTree_* tree;
 };
 
 #endif // SHAPE_H
