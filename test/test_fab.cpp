@@ -5,6 +5,7 @@
 #include "tree/tree.h"
 #include "tree/parser.h"
 #include "cpp/shape.h"
+#include "cpp/fab.h"
 
 #include "test_fab.h"
 
@@ -76,3 +77,12 @@ void TestFab::MoveBounds()
     QVERIFY(b.ymax ==  4);
 }
 
+void TestFab::InvalidShape()
+{
+    try {
+        MathShape a("+X");
+        QVERIFY(false);
+    } catch (fab::ParseError e) {
+        QVERIFY(true);
+    }
+}

@@ -9,9 +9,16 @@ class TestProxy : public QObject
 public:
     explicit TestProxy(QObject *parent = 0);
 private slots:
+    /** Construct a proxy object. */
     void MakeProxy();
+
+    /** Get a value from a proxy using getattr. */
     void GetValidDatum();
+
+    /** Attempt to get a datum that is currently invalid. */
     void GetInvalidDatum();
+
+    /** Attempt to get a nonexistent datum. */
     void GetNonexistentDatum();
 };
 

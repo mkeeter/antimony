@@ -10,9 +10,16 @@ public:
     explicit TestNode(QObject *parent = 0);
 
 private slots:
+    /** Can you get a datum from a node? */
     void GetDatum();
+
+    /** Does a node emit destroyed when deleted? */
     void DeleteNode();
+
+    /** Test evaluating interlinked nodes. */
     void EvalValid();
+
+    /** Change one node's name; make another node valid. */
     void NameChangeEval();
 
 };

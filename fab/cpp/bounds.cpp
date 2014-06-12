@@ -2,10 +2,12 @@
 #include <cmath>
 
 #include "cpp/bounds.h"
+#include "cpp/fab.h"
+
 #include "tree/tree.h"
 #include "tree/parser.h"
-#include "util/interval.h"
 #include "tree/eval.h"
+#include "util/interval.h"
 
 Bounds::Bounds()
     : xmin(-INFINITY), ymin(-INFINITY), zmin(-INFINITY),
@@ -42,6 +44,10 @@ Bounds Bounds::map(Transform t) const
     if (t.x_reverse.length())
     {
         MathTree* tree = parse(t.x_reverse.c_str());
+        if (tree == NULL)
+        {
+            throw fab::ParseError();
+        }
         x_out = eval_i(tree, x, y, z);
         free(tree);
     }
@@ -49,6 +55,10 @@ Bounds Bounds::map(Transform t) const
     if (t.y_reverse.length())
     {
         MathTree* tree = parse(t.y_reverse.c_str());
+        if (tree == NULL)
+        {
+            throw fab::ParseError();
+        }
         y_out = eval_i(tree, x, y, z);
         free(tree);
     }
@@ -56,6 +66,10 @@ Bounds Bounds::map(Transform t) const
     if (t.z_reverse.length())
     {
         MathTree* tree = parse(t.z_reverse.c_str());
+        if (tree == NULL)
+        {
+            throw fab::ParseError();
+        }
         z_out = eval_i(tree, x, y, z);
         free(tree);
     }
