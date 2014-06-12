@@ -58,12 +58,13 @@ signals:
     /** Emitted to request upstream datums to disconnect.
      */
     void disconnectFrom(Datum *me);
+
 public slots:
     /** Called to update this datum.  May emit changed.
      */
     void update();
 
-    /** Called to disconnect a downstream datum.
+    /** Called to disconnect from a downstream datum.
      */
     void onDisconnectRequest(Datum* downstream);
 

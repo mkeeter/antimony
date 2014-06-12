@@ -20,6 +20,9 @@ private slots:
 
     /** Attempt to get a nonexistent datum. */
     void GetNonexistentDatum();
+
+    /** Change a datum's name, invalidating downstream datums. */
+    void DatumNameChange();
 };
 
 #endif // TEST_PROXY_H

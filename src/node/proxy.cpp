@@ -8,6 +8,8 @@
 
 static PyObject* proxy_getAttro(PyObject* o, PyObject* attr_name)
 {
+    // Try to get attribute using default getattr
+    // If that doesn't work, then we'll try to look it up as a Datum value.
     PyObject* result = PyObject_GenericGetAttr(o, attr_name);
     if (result != NULL)
     {
@@ -15,6 +17,8 @@ static PyObject* proxy_getAttro(PyObject* o, PyObject* attr_name)
     }
     PyErr_Clear();
 
+
+    // First, make sure that the attribute name is a unicode string.
     if (!PyUnicode_Check(attr_name))
     {
         PyErr_SetString(PyExc_RuntimeError, "Attribute must be unicode");
@@ -32,9 +36,16 @@ static PyObject* proxy_getAttro(PyObject* o, PyObject* attr_name)
     {
         // If we have a known caller, then mark that this datum is an upstream node
         // for the caller.
-        if (((proxy_ProxyObject*)o)->caller)
+        proxy_ProxyObject* p = ((proxy_ProxyObject*)o);
+        if (p->caller)
         {
-            ((proxy_ProxyObject*)o)->caller->connectUpstream(datum);
+            // Connect this datum as an upstream datum of the caller
+            p->caller->connectUpstream(datum);
+
+            // Also connect the node's name as an upstream datum
+            // (since if the name changes, the expression may become invalid)
+            Node* n = dynamic_cast<Node*>(datum->parent());
+            p->caller->connectUpstream(n->getDatum("name"));
         }
 
         if (datum->getValid())
