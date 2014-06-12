@@ -3,14 +3,12 @@ import math
 from fab import MathShape
 
 def circle(x0, y0, r):
-
     # sqrt((X-x0)**2 + (Y-y0)**2) - r
     r = abs(r)
     return MathShape(
             '-r+q%sq%sf%g' % (('-Xf%g' % x0) if x0 else 'X',
                               ('-Yf%g' % y0) if y0 else 'Y', r),
-            x0 - r, y0 - r,
-            x0 + r, y0 + r)
+            x0 - r, y0 - r, x0 + r, y0 + r)
 
 ################################################################################
 
@@ -88,14 +86,9 @@ def slot(x, y, width, height, angle=0, chamfer=0.2):
 ################################################################################
 
 def move(part, dx, dy, dz=0):
-    p = part.map('-Xf%g' % dx if dx else None,
-                 '-Yf%g' % dy if dy else None,
-                 '-Zf%g' % dz if dz else None)
-    p.xmin, p.xmax = part.xmin + dx, part.xmax + dx
-    p.ymin, p.ymax = part.ymin + dy, part.ymax + dy
-    p.zmin, p.zmax = part.zmin + dz, part.zmax + dz
-
-    return p
+    return part.map(Transform(
+        '-Xf%g' % dx, '-Yf%g' % dy, '-Zf%g' % dz,
+        '+Xf%g' % dx, '+Yf%g' % dy, '+Zf%g' % dz))
 
 translate = move
 
@@ -105,100 +98,89 @@ def rotate(part, angle):
 
     angle *= math.pi/180
     ca, sa = math.cos(angle), math.sin(angle)
-    nsa    = -sa
+    nca, nsa = math.cos(-angle), math.sin(-angle)
 
-    p = part.map(X='+*f%(ca)gX*f%(sa)gY'  % locals(),
-                 Y='+*f%(nsa)gX*f%(ca)gY' % locals())
-
-    ca, sa = math.cos(-angle), math.sin(-angle)
-    nsa    = -sa
-    p.set_bounds(*part.remap_bounds(X='+*f%(ca)gX*f%(sa)gY'  % locals(),
-                                    Y='+*f%(nsa)gX*f%(ca)gY' % locals()))
-
-    return p
+    return part.map(Transform(
+        '+*f%(ca)gX*f%(sa)gY'    % locals(),
+        '+*f%(nsa)gX*f%(ca)gY'   % locals(),
+        '+*f%(nca)gX*f%(nsa)gY'  % locals()
+        '+*f%(sa)gX*f%(nca)gY'   % locals()))
 
 ################################################################################
 
 def reflect_x(part, x0=0):
     # X' = 2*x0-X
-    p = part.map(X='-*f2f%gX' % x0 if x0 else 'nX')
-
     # X  = 2*x0-X'
-    p.set_bounds(*part.remap_bounds(X='-*f2f%gX' % x0 if x0 else 'nX'))
-    return p
+    return part.map(Transform(
+        '-*f2f%gX' % x0, '',
+        '-*f2f%gX' % x0, ''))
 
 def reflect_y(part, y0=0):
     # Y' = 2*y0-Y
-    p = part.map(Y='-*f2f%gY' % y0 if y0 else 'nY')
-
-    # Y  = 2*y0-Y'
-    p.set_bounds(*part.remap_bounds(Y='-*f2f%gY' % y0 if y0 else 'nY'))
-    return p
+    return part.map(Transform(
+        '', '-*f2f%gY' % y0,
+        '', '-*f2f%gY' % y0))
 
 def reflect_xy(part):
-    p = part.map(X='Y', Y='X')
-    p.set_bounds(*part.remap_bounds(X='Y', Y='X'))
-    return p
+    return part.map(Transform(
+        'Y', 'X', 'Y', 'X'))
 
 ################################################################################
 
 def scale_x(part, x0, sx):
     # X' = x0 + (X-x0)/sx
-    p = part.map(X='+f%(x0)g/-Xf%(x0)gf%(sx)g' % locals()
-                    if x0 else '/Xf%g' % sx)
-
-    # X  = (X'-x0)*sx + x0
-    p.set_bounds(*part.remap_bounds(X='+f%(x0)g*f%(sx)g-Xf%(x0)g' % locals()
-                                    if x0 else '*Xf%g' % sx))
-    return p
+    return part.map(Transform(
+        '+f%(x0)g/-Xf%(x0)gf%(sx)g' % locals()
+                if x0 else '/Xf%g' % sx,
+        'Y',
+        '+f%(x0)g*f%(sx)g-Xf%(x0)g' % locals()
+                if x0 else '*Xf%g' % sx,
+        'Y'))
 
 def scale_y(part, y0, sy):
     # Y' = y0 + (Y-y0)/sy
-    p = part.map(Y='+f%(y0)g/-Yf%(y0)gf%(sy)g' % locals()
-                    if y0 else '/Yf%g' % sy)
-
-    # Y  = (Y'-y0)*sy + y0
-    p.set_bounds(*part.remap_bounds(Y='+f%(y0)g*f%(sy)g-Yf%(y0)g' % locals()
-                                    if y0 else '*Yf%g' % sy))
-    return p
+    return part.map(Transform(
+        'X',
+        '+f%(y0)g/-Yf%(y0)gf%(sy)g' % locals()
+                if y0 else '/Yf%g' % sy,
+        'X',
+        '+f%(y0)g*f%(sy)g-Yf%(y0)g' % locals()
+                if y0 else '*Yf%g' % sy))
 
 def scale_z(part, z0, sz):
     # Z' = z0 + (Y-y0)/sz
-    p = part.map(Z='+f%(z0)g/-Zf%(z0)gf%(sz)g' % locals()
-                    if z0 else '/Zf%g' % sz)
-
     # Z  = (Z'-z0)*sz + z0
-    p.set_bounds(*part.remap_bounds(Z='+f%(z0)g*f%(sz)g-Zf%(z0)g' % locals()
-                                    if z0 else '*Zf%g' % sz))
-    return p
+    return part.map(Transform(
+        'X', 'Y',
+        '+f%(z0)g/-Zf%(z0)gf%(sz)g' % locals()
+                if z0 else '/Zf%g' % sz,
+        'X', 'Y',
+        '+f%(z0)g*f%(sz)g-Zf%(z0)g' % locals()
+                if z0 else '*Zf%g' % sz))
 
 def scale_xy(part, x0, y0, sxy):
     # X' = x0 + (X-x0)/sx
     # Y' = y0 + (Y-y0)/sy
-    p = part.map(X='+f%(x0)g/-Xf%(x0)gf%(sxy)g' % locals()
-                    if x0 else '/Xf%g' % sxy,
-                 Y='+f%(y0)g/-Yf%(y0)gf%(sxy)g' % locals()
-                    if y0 else '/Yf%g' % sxy)
-
     # X  = (X'-x0)*sx + x0
     # Y  = (Y'-y0)*sy + y0
-    p.set_bounds(*part.remap_bounds(X='+f%(x0))g*f%(sxy)g-Xf%(x0)g' % locals()
-                                   if x0 else '*Xf%g' % sxy,
-                                   Y='+f%(y0)g*f%(sxy)g-Yf%(y0)g' % locals()
-                                   if y0 else '*Yf%g' % sxy))
-    return p
+    return part.map(Transform(
+        '+f%(x0)g/-Xf%(x0)gf%(sxy)g' % locals()
+                if x0 else '/Xf%g' % sxy,
+        '+f%(y0)g/-Yf%(y0)gf%(sxy)g' % locals()
+                if y0 else '/Yf%g' % sxy,
+        '+f%(x0))g*f%(sxy)g-Xf%(x0)g' % locals()
+                if x0 else '*Xf%g' % sxy,
+        '+f%(y0)g*f%(sxy)g-Yf%(y0)g' % locals()
+                if y0 else '*Yf%g' % sxy))
 
 ################################################################################
 
 def extrude_z(part, z0, z1):
     # max(part, max(z0-Z, Z-z1))
-    p = Expression('am  f1%sa-f%gZ-Zf%g' % (part.math, z0, z1))
-    for i in 'xmin','xmax','ymin','ymax':
-        setattr(p, i, getattr(part, i))
-
-    p.zmin = z0
-    p.zmax = z1
-    return p
+    return MathShape(
+            'am  f1%sa-f%gZ-Zf%g' % (part.math, z0, z1),
+            part.bounds.xmin, part.bounds.ymin, z0,
+            part.bounds.xmax, part.bounds.ymax, z1)
 
 ################################################################################
 
@@ -207,12 +189,12 @@ def shear_x_y(part, y0, y1, dx0, dx1):
     dy = y1 - y0
 
     # X' = X-dx0-dx*(Y-y0)/dy
-    p = part.map(X='--Xf%(dx0)g/*f%(dx)g-Yf%(y0)gf%(dy)g' % locals())
-
     # X  = X'+dx0+(dx)*(Y-y0)/dy
-    p.set_bounds(*part.remap_bounds(X='++Xf%(dx0)g/*f%(dx)g-Yf%(y0)gf%(dy)g'
-                                    % locals()))
-    return p
+    return part.map(Transform(
+            '--Xf%(dx0)g/*f%(dx)g-Yf%(y0)gf%(dy)g' % locals(),
+            'Y',
+            '++Xf%(dx0)g/*f%(dx)g-Yf%(y0)gf%(dy)g' % locals(),
+            'Y'))
 
 ################################################################################
 
@@ -223,15 +205,11 @@ def taper_x_y(part, x0, y0, y1, s0, s1):
     s1y0 = s1 * y0
 
     #   X'=x0+(X-x0)*(y1-y0)/(Y*(s1-s0)+s0*y1-s1*y0))
-    X = '+f%(x0)g/*-Xf%(x0)gf%(dy)g-+*Yf%(ds)gf%(s0y1)gf%(s1y0)g' % locals()
-    p = part.map(X=X)
-
     #   X=(X'-x0)*(Y*(s1-s0)+s0*y1-s1*y0)/(y1-y0)+x0
-    p.set_bounds(*part.remap_bounds(
-            X='+f%(x0)g*-Xf%(x0)g/-+*Yf%(ds)gf%(s0y1)gf%(s1y0)gf%(dy)g'
-            % locals()))
-
-    return p
+    return part.map(Transform(
+        '+f%(x0)g/*-Xf%(x0)gf%(dy)g-+*Yf%(ds)gf%(s0y1)gf%(s1y0)g' % locals()
+        'Y',
+        '+f%(x0)g*-Xf%(x0)g/-+*Yf%(ds)gf%(s0y1)gf%(s1y0)gf%(dy)g' % locals()))
 
 ################################################################################
 
@@ -239,39 +217,25 @@ def blend(p0, p1, amount):
     joint = p0 | p1
 
     # sqrt(abs(p0)) + sqrt(abs(p1)) - amount
-    fillet = Expression('-+rb%srb%sf%g' % (p0.math, p1.math, amount))
-    out = joint | fillet
-    out.set_bounds(joint.xmin, joint.xmax,
-                   joint.ymin, joint.ymax,
-                   joint.zmin, joint.zmax)
-
-    return out
+    fillet = MathShape('-+rb%srb%sf%g' % (p0.math, p1.math, amount),
+                       joint.bounds)
+    return joint | fillet
 
 ################################################################################
 
-def extrusion(part, z0, z1):
-    # max(part, max(z0-Z, Z-z1))
-    s = Expression('a%sa-f%gZ-Zf%g' % (part.math, z0, z1))
-    for i in 'xmin','xmax','ymin','ymax':
-        setattr(s, i, getattr(part, i))
-    s.zmin, s.zmax = z0, z1
-    return s
-
 def cylinder(x0, y0, z0, z1, r):
-    return extrusion(circle(x0, y0, r), z0, z1)
+    return extrude_z(circle(x0, y0, r), z0, z1)
 
 def sphere(x0, y0, z0, r):
-    s = Expression('-r++q%sq%sq%sf%g' % (('-Xf%g' % x0) if x0 else 'X',
-                                         ('-Yf%g' % y0) if y0 else 'Y',
-                                         ('-Zf%g' % z0) if z0 else 'Z',
-                                         r))
-    s.xmin, s.xmax = x0 - r, x0 + r
-    s.ymin, s.ymax = y0 - r, y0 + r
-    s.zmin, s.zmax = z0 - r, z0 + r
-    return s
+    return MathShape(
+            '-r++q%sq%sq%sf%g' % (('-Xf%g' % x0) if x0 else 'X',
+                                  ('-Yf%g' % y0) if y0 else 'Y',
+                                  ('-Zf%g' % z0) if z0 else 'Z',
+                                  r),
+            x0 - r, y0 - r, z0 - r, x0 + r, y0 + r, z0 + r)
 
 def cube(x0, x1, y0, y1, z0, z1):
-    return extrusion(rectangle(x0, x1, y0, y1), z0, z1)
+    return extrude_z(rectangle(x0, x1, y0, y1), z0, z1)
 
 def cone(x0, y0, z0, z1, r):
     cyl = cylinder(x0, y0, z0, z1, r)
@@ -289,63 +253,50 @@ def rotate_x(part, angle):
 
     angle *= math.pi/180
     ca, sa = math.cos(angle), math.sin(angle)
-    nsa    = -sa
+    nca, nsa = math.cos(-angle), math.sin(-angle)
 
-    p = part.map(Y='+*f%(ca)gY*f%(sa)gZ'  % locals(),
-                 Z='+*f%(nsa)gY*f%(ca)gZ' % locals())
+    return part.map(Transform(
+        '', '+*f%(ca)gY*f%(sa)gZ'  % locals(),
+            '+*f%(nsa)gY*f%(ca)gZ' % locals(),
 
-    ca, sa = math.cos(-angle), math.sin(-angle)
-    nsa    = -sa
-    p.set_bounds(*part.remap_bounds(Y='+*f%(ca)gY*f%(sa)gZ' % locals(),
-                                    Z='+*f%(nsa)gY*f%(ca)gZ' % locals()))
-    return p
+        'X', '+*f%(nca)gY*f%(nsa)gZ' % locals(),
+             '+*f%(sa)gY*f%(nca)gZ' % locals()))
 
 def rotate_y(part, angle):
 
     angle *= math.pi/180
     ca, sa = math.cos(angle), math.sin(angle)
-    nsa    = -sa
+    nca, nsa = math.cos(-angle), math.sin(-angle)
 
-    p = part.map(X='+*f%(ca)gX*f%(sa)gZ'  % locals(),
-                 Z='+*f%(nsa)gX*f%(ca)gZ' % locals())
-
-    ca, sa = math.cos(-angle), math.sin(-angle)
-    nsa    = -sa
-
-    p.set_bounds(*part.remap_bounds(X='+*f%(ca)gX*f%(sa)gZ' % locals(),
-                                    Z='+*f%(nsa)gX*f%(ca)gZ' % locals()))
-    return p
+    return part.map(Transform(
+            '+*f%(ca)gX*f%(sa)gZ'  % locals(), 'Y',
+            '+*f%(nsa)gX*f%(ca)gZ' % locals(),
+            '+*f%(nca)gX*f%(nsa)gZ' % locals(), 'Y',
+            '+*f%(sa)gX*f%(nca)gZ' % locals()))
 
 rotate_z = rotate
 
 ################################################################################
 
 def reflect_z(part, z0=0):
-    p = part.map(Z='-*f2f%gZ' % z0 if z0 else 'nZ')
-    p.set_bounds(*part.remap_bounds(Z='-*f2f%gZ' % z0 if z0 else 'nZ'))
-    return p
+    return part.map(Transform(
+        'X', 'Y', '-*f2f%gZ' % z0 if z0 else 'nZ',
+        'X', 'Y', '-*f2f%gZ' % z0 if z0 else 'nZ'))
 
 def reflect_xz(part):
-    p = part.map(X='Z', Z='X')
-    p.set_bounds(*part.remap_bounds(X='Z', Z='X'))
-    return p
+    return part.map(Transform('Z', 'Y', 'X', 'Z', 'Y', 'X'))
 
 def reflect_yz(part):
-    p = part.map(Y='Z', Z='Y')
-    p.set_bounds(*part.remap_bounds(Y='Z', Z='Y'))
-    return p
+    p = part.map(Transform('X', 'Z', 'Y', 'X', 'Z', 'Y'))
 
 ################################################################################
 
 def shear_x_z(part, z0, z1, dx0, dx1):
-
     #   X' = X-dx0-(dx1-dx0)*(Z-z0)/(z1-z0)
-    p = part.map(X='--Xf%(dx0)g/*f%(dx)g-Zf%(z0)gf%(dz)g' % locals())
-
     #   X = X'+dx0+(dx1-dx0)*(Z-z0)/(z1-z0)
-    p.set_bounds(*part.remap_bounds(X='++Xf%(dx0))g/*f%(dx)g-Zf%(z0)gf%(dz)g'
-                                    % locals()))
-    return p
+    return part.map(Transform(
+        '--Xf%(dx0)g/*f%(dx)g-Zf%(z0)gf%(dz)g' % locals(), '', '',
+        '++Xf%(dx0))g/*f%(dx)g-Zf%(z0)gf%(dz)g' % locals(), '', ''))
 
 ################################################################################
 
@@ -355,48 +306,44 @@ def taper_xy_z(part, x0, y0, z0, z1, s0, s1):
 
     # X' =  x0 +(X-x0)*dz/(s1*(Z-z0) + s0*(z1-Z))
     # Y' =  y0 +(Y-y0)*dz/(s1*(Z-z0) + s0*(z1-Z))
-    p = part.map(
-        X='+f%(x0)g/*-Xf%(x0)gf%(dz)g+*f%(s1)g-Zf%(z0)g*f%(s0)g-f%(z1)gZ'
-            % locals(),
-        Y='+f%(y0)g/*-Yf%(y0)gf%(dz)g+*f%(s1)g-Zf%(z0)g*f%(s0)g-f%(z1)gZ'
-            % locals())
-
     # X  = (X' - x0)*(s1*(Z-z0) + s0*(z1-Z))/dz + x0
     # Y  = (Y' - y0)*(s1*(Z-z0) + s0*(z1-Z))/dz + y0
-    p.set_bounds(part.remap_bounds(
+    return part.map(Transform(
+        '+f%(x0)g/*-Xf%(x0)gf%(dz)g+*f%(s1)g-Zf%(z0)g*f%(s0)g-f%(z1)gZ'
+            % locals(),
+        '+f%(y0)g/*-Yf%(y0)gf%(dz)g+*f%(s1)g-Zf%(z0)g*f%(s0)g-f%(z1)gZ'
+            % locals(),
+        '',
         X='+/*-Xf%(x0)g+*f%(s1)g-Zf%(z0)g*f%(s0)g-f%(z1)gZf%(dz)gf%(x0)g'
             % locals(),
         Y='+/*-Yf%(y0)g+*f%(s1)g-Zf%(z0)g*f%(s0)g-f%(z1)gZf%(dz)gf%(y0)g'
-            % locals()))
-
-    return p
+            % locals(),
+        ''))
 
 ################################################################################
 
 def revolve_y(part):
     ''' Revolve a part in the XY plane about the Y axis. '''
     #   X' = sqrt(X**2 + Z**2)
-    p = part.map(X='r+qXqZ')
-
-    if part.bounds[0] and part.bounds[1]:
-        p.xmin = min(-abs(part.xmin), -abs(part.xmax))
-        p.xmax = max( abs(part.xmin),  abs(part.xmax))
-        p.ymin, p.ymax = part.ymin, part.ymax
-        p.zmin, p.zmax = p.xmin, p.xmax
-    return p
+    p = part.map('r+qXqZ', '', '', '')
+    return MathShape(
+            p.math,
+            min(-abs(part.xmin), -abs(part.xmax))
+            max( abs(part.xmin),  abs(part.xmax))
+            part.ymin, part.ymax,
+            part.xmin, part.xmax)
 
 
 def revolve_x(part):
     ''' Revolve a part in the XY plane about the X axis. '''
     #   Y' = sqrt(Y**2 + Z**2)
-    p = part.map(Y='r+qYqZ')
-
-    if part.bounds[0] and part.bounds[1]:
-        p.xmin, p.xmax = part.xmin, part.xmax
-        p.ymin = min(-abs(part.ymin), -abs(part.ymax))
-        p.ymax = max( abs(part.ymin),  abs(part.ymax))
-        p.zmin, p.zmax =  p.ymin, p.ymax
-    return p
+    p = part.map('', 'r+qYqZ', '', '')
+    return MathShape(
+            p.math,
+            part.xmin, part.xmax,
+            min(-abs(part.ymin), -abs(part.ymax))
+            max( abs(part.ymin),  abs(part.ymax))
+            part.ymin, part.ymax)
 
 ################################################################################
 
@@ -408,17 +355,14 @@ def attract(part, x, y, z, r):
     # exponential fallout value
     # x*(1 - exp(-sqrt(x**2 + y**2 + z**2) / r))
     d = '+f1xn/r++qXqYqZf%g' % r
-    p = part.map(X='*X'+d, Y='*Y'+d, Z='*Z'+d)
+    p = part.map(Transform(
+        '*X'+d, '*Y'+d, '*Z'+d, '', '', ''))
 
     b = r/math.e
-    p.xmin = part.xmin - b
-    p.ymin = part.ymin - b
-    p.zmin = part.zmin - b
-    p.xmax = part.xmax + b
-    p.ymax = part.ymax + b
-    p.zmax = part.zmax + b
-
-    return move(p, x, y, z)
+    return move(MathShape(
+        p.math,
+        part.xmin - b, part.ymin - b, part.zmin - b,
+        part.xmax + b, part.ymax + b, part.zmax + b), x, y, z)
 
 def repel(part, x, y, z, r):
 
@@ -428,17 +372,14 @@ def repel(part, x, y, z, r):
     # exponential fallout value
     # x*(1 - exp(-sqrt(x**2 + y**2 + z**2) / r))
     d = '-f1xn/r++qXqYqZf%g' % r
-    p = part.map(X='*X'+d, Y='*Y'+d, Z='*Z'+d)
+    p = part.map(Transform('*X'+d, '*Y'+d, '*Z'+d, '', '', ''))
 
     b = r/math.e
-    p.xmin = part.xmin - b
-    p.ymin = part.ymin - b
-    p.zmin = part.zmin - b
-    p.xmax = part.xmax + b
-    p.ymax = part.ymax + b
-    p.zmax = part.zmax + b
-
-    return move(p, x, y, z)
+    return move(MathShape(
+        p.math,
+        part.xmin - b, part.ymin - b, part.zmin - b,
+        part.xmax + b, part.ymax + b, part.zmax + b),
+        x, y, z)
 
 ################################################################################
 
