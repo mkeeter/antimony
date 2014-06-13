@@ -2,11 +2,12 @@
 #define SHAPE_H
 
 #include <string>
+#include <memory>
 
-#include "bounds.h"
-#include "transform.h"
+#include "cpp/bounds.h"
+#include "cpp/transform.h"
 
-struct MathTree_;
+#include "tree/tree.h"
 
 /** Represents a math expression and a set of bounds. */
 struct MathShape
@@ -19,11 +20,6 @@ struct MathShape
               float xmax, float ymax, float zmax);
     MathShape(std::string math, Bounds bounds);
 
-    ~MathShape();
-
-    /** Returns the parsed MathTree object. */
-    struct MathTree_* getTree();
-
     /** Returns a new shape with re-mapped coordinates and bounds. */
     MathShape map(Transform t) const;
 
@@ -31,7 +27,7 @@ struct MathShape
     const Bounds bounds;
 
 protected:
-    struct MathTree_* tree;
+    std::shared_ptr<MathTree> tree;
 };
 
 MathShape operator~(const MathShape& a);
