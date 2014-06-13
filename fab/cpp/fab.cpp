@@ -34,7 +34,10 @@ BOOST_PYTHON_MODULE(fab)
             .def(init<std::string, Bounds>())
             .def_readonly("math", &MathShape::math)
             .def_readonly("bounds", &MathShape::bounds)
-            .def("map", &MathShape::map);
+            .def("map", &MathShape::map)
+            .def(self & self)
+            .def(self | self)
+            .def(~self);
 
 
     class_<Transform>("Transform",

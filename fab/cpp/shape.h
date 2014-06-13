@@ -34,4 +34,8 @@ protected:
     struct MathTree_* tree;
 };
 
+MathShape operator~(const MathShape& a);
+MathShape operator|(const MathShape& a, const MathShape& b);
+MathShape operator&(const MathShape& a, const MathShape& b);
+
 #endif // SHAPE_H
