@@ -75,9 +75,7 @@ void fab::postInit()
     PyDict_SetItemString(dict, "__builtins__", PyEval_GetBuiltins());
     PyRun_String(shapes_txt.toStdString().c_str(), Py_file_input,
                  dict, dict);
-
-    // Remove the __builtins__ item (which was needed for evaluation)
-    PyObject_DelAttrString(dict, "__builtins__");
+    assert(PyErr_Occurred() == NULL);
 
     PyObject_SetAttrString(fab, "shapes", shapes_module);
 
