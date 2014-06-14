@@ -1,6 +1,6 @@
 import math
 
-from fab import MathShape
+from fab import MathShape, Transform
 
 def circle(x0, y0, r):
     # sqrt((X-x0)**2 + (Y-y0)**2) - r
@@ -855,7 +855,7 @@ _widths['z'] = 0.6
 _glyphs['z'] = shape
 
 
-shape = MathShape("1", 0, 0.55, 0, 1)
+shape = MathShape("f1.0", 0, 0.55, 0, 1)
 _widths[' '] = 0.55
 _glyphs[' '] = shape
 
