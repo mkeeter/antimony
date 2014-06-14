@@ -1,6 +1,7 @@
 SOURCES += \
     ../src/datum/datum.cpp \
     ../src/datum/eval.cpp \
+    ../src/datum/script.cpp \
     ../src/datum/float.cpp \
     ../src/node/node.cpp \
     ../src/node/manager.cpp \
@@ -13,6 +14,7 @@ SOURCES += \
 HEADERS += \
     ../src/datum/datum.h \
     ../src/datum/eval.h \
+    ../src/datum/script.h \
     ../src/datum/float.h \
     ../src/node/node.h \
     ../src/node/manager.h \
