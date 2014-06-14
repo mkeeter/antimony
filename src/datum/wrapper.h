@@ -8,6 +8,11 @@ class ScriptDatum;
 typedef struct {
     PyObject_HEAD
     ScriptDatum* datum;
-} ScriptWrapperObject;
+} ScriptInputWrapper;
+
+typedef struct {
+    PyObject_HEAD
+    ScriptDatum* datum;
+} ScriptOutputWrapper;
 
 #endif // WRAPPER_H
