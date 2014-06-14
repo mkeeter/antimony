@@ -8,34 +8,23 @@
 #include "cpp/shape.h"
 
 MathShape::MathShape(std::string math)
-    : math(math), tree(parse(math.c_str()), free)
+    : MathShape(math, Bounds())
 {
-    if (tree == NULL)
-    {
-        throw fab::ParseError();
-    }
+    // Nothing to do here
 }
 
 MathShape::MathShape(std::string math, float xmin, float ymin,
                      float xmax, float ymax)
-    : math(math), bounds(xmin, ymin, xmax, ymax),
-      tree(parse(math.c_str()), free)
+    : MathShape(math, Bounds(xmin, ymin, xmax, ymax))
 {
-    if (tree == NULL)
-    {
-        throw fab::ParseError();
-    }
+    // Nothing to do here
 }
 
 MathShape::MathShape(std::string math, float xmin, float ymin, float zmin,
                      float xmax, float ymax, float zmax)
-    : math(math), bounds(xmin, ymin, zmin, xmax, ymax, zmax),
-      tree(parse(math.c_str()), free)
+    : MathShape(math, Bounds(xmin, ymin, zmin, xmax, ymax, zmax))
 {
-    if (tree == NULL)
-    {
-        throw fab::ParseError();
-    }
+    // Nothing to do here
 }
 
 MathShape::MathShape(std::string math, Bounds bounds)
