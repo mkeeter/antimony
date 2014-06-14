@@ -9,9 +9,16 @@
 
 
 ScriptDatum::ScriptDatum(QString name, QString expr, QObject *parent)
-    : EvalDatum(name, parent)
+    : EvalDatum(name, parent), globals(NULL),
+      input_func(scriptInput(this)), output_func(scriptOutput(this))
 {
     setExpr(expr);
+}
+
+ScriptDatum::~ScriptDatum()
+{
+    Py_DECREF(input_func);
+    Py_DECREF(output_func);
 }
 
 int ScriptDatum::getStartToken() const
@@ -22,8 +29,8 @@ int ScriptDatum::getStartToken() const
 void ScriptDatum::modifyGlobalsDict(PyObject* g)
 {
     globals = g;
-    PyDict_SetItemString(g, "input", scriptInput(this));
-    PyDict_SetItemString(g, "output", scriptOutput(this));
+    PyDict_SetItemString(g, "input", input_func);
+    PyDict_SetItemString(g, "output", output_func);
 }
 
 void ScriptDatum::makeInput(QString name, PyTypeObject *type)

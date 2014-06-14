@@ -13,6 +13,8 @@ class ScriptDatum : public EvalDatum
     Q_OBJECT
 public:
     explicit ScriptDatum(QString name, QString expr, QObject *parent);
+    virtual ~ScriptDatum();
+
     void makeInput(QString name, PyTypeObject* type);
     virtual PyTypeObject* getType() const { return Py_None->ob_type; }
 protected:
@@ -25,16 +27,8 @@ protected:
     virtual void modifyGlobalsDict(PyObject* g);
 
     PyObject* globals;
-};
-
-/** Helper struct that wraps a ScriptDatum and can be used in Python
- */
-struct ScriptDatumWrapper
-{
-    explicit ScriptDatumWrapper() {}
-    void makeInput(std::string name, PyTypeObject* type)
-        { datum->makeInput(QString::fromStdString(name), type); }
-    ScriptDatum* datum;
+    PyObject* input_func;
+    PyObject* output_func;
 };
 
 #endif // SCRIPT_H
