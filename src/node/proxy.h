@@ -10,7 +10,7 @@ typedef struct {
     PyObject_HEAD
     Datum* caller;
     Node* node;
-} proxy_ProxyObject;
+} NodeProxyObject;
 
 PyObject* proxyType();
 

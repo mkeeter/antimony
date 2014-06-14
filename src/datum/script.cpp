@@ -6,6 +6,7 @@
 #include "node/node.h"
 #include "node/manager.h"
 
+
 ScriptDatum::ScriptDatum(QString name, QString expr, QObject *parent)
     : EvalDatum(name, parent)
 {

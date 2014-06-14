@@ -6,7 +6,7 @@
 #include "node/node.h"
 #include "node/proxy.h"
 
-static PyObject* proxy_getAttro(PyObject* o, PyObject* attr_name)
+static PyObject* NodeProxy_getAttro(PyObject* o, PyObject* attr_name)
 {
     // Try to get attribute using default getattr
     // If that doesn't work, then we'll try to look it up as a Datum value.
@@ -29,14 +29,14 @@ static PyObject* proxy_getAttro(PyObject* o, PyObject* attr_name)
     Q_ASSERT(w);
 
     QString str = QString::fromWCharArray(w);
-    Datum* datum = ((proxy_ProxyObject*)o)->node->getDatum(str);
+    Datum* datum = ((NodeProxyObject*)o)->node->getDatum(str);
     PyMem_Free(w);
 
     if (datum)
     {
         // If we have a known caller, then mark that this datum is an upstream node
         // for the caller.
-        proxy_ProxyObject* p = ((proxy_ProxyObject*)o);
+        NodeProxyObject* p = ((NodeProxyObject*)o);
         if (p->caller)
         {
             // Connect this datum as an upstream datum of the caller
@@ -66,10 +66,10 @@ static PyObject* proxy_getAttro(PyObject* o, PyObject* attr_name)
     return NULL;
 }
 
-static PyTypeObject proxy_ProxyType = {
+static PyTypeObject NodeProxyType = {
     PyVarObject_HEAD_INIT(NULL, 0)
     "proxy.NodeProxy",               /* tp_name */
-    sizeof(proxy_ProxyObject), /* tp_basicsize */
+    sizeof(NodeProxyObject),   /* tp_basicsize */
     0,                         /* tp_itemsize */
     0,                         /* tp_dealloc */
     0,                         /* tp_print */
@@ -83,14 +83,14 @@ static PyTypeObject proxy_ProxyType = {
     0,                         /* tp_hash  */
     0,                         /* tp_call */
     0,                         /* tp_str */
-    &proxy_getAttro,           /* tp_getattro */
+    &NodeProxy_getAttro,       /* tp_getattro */
     0,                         /* tp_setattro */
     0,                         /* tp_as_buffer */
     Py_TPFLAGS_DEFAULT,        /* tp_flags */
     "Node proxy objects",      /* tp_doc */
 };
 
-static PyModuleDef proxymodule = {
+static PyModuleDef NodeProxyModule = {
     PyModuleDef_HEAD_INIT,
     "proxy",
     "Small module that contains a node proxy class",
@@ -103,16 +103,16 @@ PyInit_proxy(void)
 {
     PyObject* m;
 
-    proxy_ProxyType.tp_new = PyType_GenericNew;
-    if (PyType_Ready(&proxy_ProxyType) < 0)
+    NodeProxyType.tp_new = PyType_GenericNew;
+    if (PyType_Ready(&NodeProxyType) < 0)
         return NULL;
 
-    m = PyModule_Create(&proxymodule);
+    m = PyModule_Create(&NodeProxyModule);
     if (m == NULL)
         return NULL;
 
-    Py_INCREF(&proxy_ProxyType);
-    PyModule_AddObject(m, "NodeProxy", (PyObject*)&proxy_ProxyType);
+    Py_INCREF(&NodeProxyType);
+    PyModule_AddObject(m, "NodeProxy", (PyObject*)&NodeProxyType);
     return m;
 }
 

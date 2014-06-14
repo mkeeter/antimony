@@ -66,7 +66,7 @@ PyObject* NodeManager::proxyDict(Datum* caller)
         if (name->getValid())
         {
             PyObject* proxy = n->proxy();
-            ((proxy_ProxyObject*)proxy)->caller = caller;
+            ((NodeProxyObject*)proxy)->caller = caller;
             PyDict_SetItem(d, name->getValue(), proxy);
         }
     }
