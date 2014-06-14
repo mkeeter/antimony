@@ -2,6 +2,7 @@
 
 #include "datum/script.h"
 #include "datum/float.h"
+#include "datum/wrapper.h"
 
 #include "node/node.h"
 #include "node/manager.h"
@@ -21,6 +22,8 @@ int ScriptDatum::getStartToken() const
 void ScriptDatum::modifyGlobalsDict(PyObject* g)
 {
     globals = g;
+    PyDict_SetItemString(g, "input", scriptInput(this));
+    PyDict_SetItemString(g, "output", scriptOutput(this));
 }
 
 void ScriptDatum::makeInput(QString name, PyTypeObject *type)

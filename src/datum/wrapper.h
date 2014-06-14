@@ -15,4 +15,7 @@ typedef struct {
     ScriptDatum* datum;
 } ScriptOutputWrapper;
 
+PyObject* scriptInput(ScriptDatum* d);
+PyObject* scriptOutput(ScriptDatum* d);
+
 #endif // WRAPPER_H
