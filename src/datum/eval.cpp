@@ -32,6 +32,16 @@ bool EvalDatum::validateType(PyObject* v) const
     return PyObject_TypeCheck(v, getType());
 }
 
+int EvalDatum::getStartToken() const
+{
+    return Py_eval_input;
+}
+
+void EvalDatum::modifyGlobalsDict(PyObject *g)
+{
+    // Nothing to do here
+}
+
 PyObject* EvalDatum::getCurrentValue()
 {
     QString e = prepareExpr(expr);
@@ -39,12 +49,14 @@ PyObject* EvalDatum::getCurrentValue()
 
     if (validateExpr(e))
     {
-        PyObject *globals = NodeManager::manager()->proxyDict(this);
-        PyObject *locals = Py_BuildValue("{}");
+        PyObject* globals = NodeManager::manager()->proxyDict(this);
+        PyObject* locals = Py_BuildValue("{}");
+
+        modifyGlobalsDict(globals);
 
         new_value = PyRun_String(
                  e.toStdString().c_str(),
-                 Py_eval_input, globals, locals);
+                 getStartToken(), globals, locals);
 
         if (new_value == NULL)
         {

@@ -4,7 +4,6 @@
 #include <Python.h>
 #include "datum/datum.h"
 
-
 class EvalDatum : public Datum
 {
     Q_OBJECT
@@ -18,6 +17,8 @@ protected:
      */
     virtual QString prepareExpr(QString s) const;
 
+    /** Overload function to actually get the current value.
+     */
     virtual PyObject* getCurrentValue();
 
     /** Validation function called on Python object.
@@ -31,6 +32,14 @@ protected:
     /** Validation function that checks object type.
      */
     virtual bool validateType(PyObject* v) const;
+
+    /** Function that returns the desired start token for PyRun_String
+     */
+    virtual int getStartToken() const;
+
+    /** Function that modifies the globals dict before eval is called.
+     */
+    virtual void modifyGlobalsDict(PyObject* g);
 
     QString expr;
 };

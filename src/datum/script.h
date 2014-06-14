@@ -2,20 +2,24 @@
 #define SCRIPT_H
 
 #include <Python.h>
-#include "datum/datum.h"
+#include "datum/eval.h"
 
-class ScriptDatum : public Datum
+class ScriptDatum : public EvalDatum
 {
     Q_OBJECT
 public:
     explicit ScriptDatum(QString name, QString expr, QObject *parent);
-    void setScript(QString new_script);
     void makeInput(QString name, PyTypeObject* type);
-    void makeOutput(QString name, PyObject* o);
+    virtual PyTypeObject* getType() const { return Py_None->ob_type; }
 protected:
-    virtual PyObject* getCurrentValue();
+    /** Function that returns the desired start token for PyRun_String
+     */
+    virtual int getStartToken() const;
 
-    QString script;
+    /** Function that modifies the globals dict before eval is called.
+     */
+    virtual void modifyGlobalsDict(PyObject* g);
+
     PyObject* globals;
 };
 
