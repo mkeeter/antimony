@@ -30,6 +30,10 @@ private slots:
     /** Make a script node with an input
      */
     void MakeScriptInput();
+
+    /** Confirm that script input creates a new datum
+     */
+    void CheckScriptInput();
 };
 
 #endif // TEST_SCRIPT_H

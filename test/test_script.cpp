@@ -52,27 +52,38 @@ void TestScript::MakeScriptInput()
     ScriptNode* n;
 
     n = new ScriptNode("s", "0.0", "0.0", "0.0",
-                                   "input('q', float)");
+                       "input('q', float)");
     QVERIFY(n->getDatum("script")->getValid() == true);
     delete n;
 
 
     n = new ScriptNode("s", "0.0", "0.0", "0.0",
-                                   "input('q', 12)");
+                       "input('q', 12)");
     QVERIFY(n->getDatum("script")->getValid() == false);
     delete n;
 
     n = new ScriptNode("s", "0.0", "0.0", "0.0",
-                                   "input(12, float)");
+                       "input(12, float)");
     QVERIFY(n->getDatum("script")->getValid() == false);
     delete n;
 
     n = new ScriptNode("s", "0.0", "0.0", "0.0",
-                                   "input('q', float, 12)");
+                       "input('q', float, 12)");
     QVERIFY(n->getDatum("script")->getValid() == false);
     delete n;
 
     n = new ScriptNode("s", "0.0", "0.0", "0.0",
-                                   "input('q', float, x=12)");
+                       "input('q', float, x=12)");
     QVERIFY(n->getDatum("script")->getValid() == false);
+
+    n = new ScriptNode("s", "0.0", "0.0", "0.0",
+                       "input('q', str)");
+    QVERIFY(n->getDatum("script")->getValid() == false);
+}
+
+void TestScript::CheckScriptInput()
+{
+    ScriptNode* n;
+    n = new ScriptNode("s", "0.0", "0.0", "0.0", "input('q', float)");
+    QVERIFY(n->getDatum("q") != NULL);
 }
