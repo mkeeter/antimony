@@ -48,4 +48,27 @@ protected:
     QPointer<Link> in;
 };
 
+////////////////////////////////////////////////////////////////////////////////
+
+class ShapeInputHandler : public InputHandler
+{
+    Q_OBJECT
+public:
+    ShapeInputHandler(Datum* parent);
+    virtual PyObject* getValue() const;
+    virtual bool accepts(Link* input) const;
+    virtual void addInput(Link* input);
+    virtual bool hasInput() const;
+protected:
+    /** Removes inactive input pointers from the list.
+     */
+    void prune();
+
+    /** Count the number of (live) inputs to this handler.
+     */
+    int inputCount() const;
+    QList<QPointer<Link>> in;
+
+};
+
 #endif // INPUT_H

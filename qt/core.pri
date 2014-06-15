@@ -11,7 +11,8 @@ SOURCES += \
     ../src/datum/name.cpp \
     ../src/node/3d/point3d.cpp \
     ../src/datum/wrapper.cpp \
-    ../src/node/meta/script_node.cpp
+    ../src/node/meta/script_node.cpp \
+    ../src/datum/shape_datum.cpp
 
 HEADERS += \
     ../src/datum/datum.h \
@@ -26,7 +27,8 @@ HEADERS += \
     ../src/datum/name.h \
     ../src/node/3d/point3d.h \
     ../src/datum/wrapper.h \
-    ../src/node/meta/script_node.h
+    ../src/node/meta/script_node.h \
+    ../src/datum/shape_datum.h
 
 
 INCLUDEPATH += ../src
