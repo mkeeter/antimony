@@ -60,9 +60,9 @@ void TestFab::ParseExpressions()
 
 void TestFab::MoveShape()
 {
-    MathShape a("+Xf1.0");
+    Shape a("+Xf1.0");
     // Apply a 2D transform to the shape
-    MathShape b = a.map(Transform("+Xf2.0","","",""));
+    Shape b = a.map(Transform("+Xf2.0","","",""));
     QVERIFY(b.math == "m+Xf2.0  +Xf1.0");
 }
 
@@ -80,7 +80,7 @@ void TestFab::MoveBounds()
 void TestFab::InvalidShape()
 {
     try {
-        MathShape a("+X");
+        Shape a("+X");
         QVERIFY(false);
     } catch (fab::ParseError e) {
         QVERIFY(true);

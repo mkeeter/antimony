@@ -28,13 +28,13 @@ BOOST_PYTHON_MODULE(fab)
             .def_readonly("ymax", &Bounds::ymax)
             .def_readonly("zmax", &Bounds::zmax);
 
-    class_<MathShape>("MathShape", init<std::string>())
+    class_<Shape>("Shape", init<std::string>())
             .def(init<std::string, float, float, float, float>())
             .def(init<std::string, float, float, float, float, float, float>())
             .def(init<std::string, Bounds>())
-            .def_readonly("math", &MathShape::math)
-            .def_readonly("bounds", &MathShape::bounds)
-            .def("map", &MathShape::map)
+            .def_readonly("math", &Shape::math)
+            .def_readonly("bounds", &Shape::bounds)
+            .def("map", &Shape::map)
             .def(self & self)
             .def(self | self)
             .def(~self);
@@ -55,7 +55,7 @@ BOOST_PYTHON_MODULE(fab)
 }
 
 
-PyTypeObject* fab::MathShapeType = NULL;
+PyTypeObject* fab::ShapeType = NULL;
 
 void fab::preInit()
 {
@@ -69,7 +69,7 @@ void fab::postInit()
     PyObject* fab_str = PyUnicode_FromString("fab");
     PyObject* fab = PyImport_Import(fab_str);
 
-    MathShapeType = (PyTypeObject*)PyObject_GetAttrString(fab, "MathShape");
+    ShapeType = (PyTypeObject*)PyObject_GetAttrString(fab, "Shape");
 
     QFile shapes_file(":fab/py/shapes.py");
     shapes_file.open(QFile::ReadOnly | QFile::Text);

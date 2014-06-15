@@ -7,27 +7,27 @@
 
 #include "cpp/shape.h"
 
-MathShape::MathShape(std::string math)
-    : MathShape(math, Bounds())
+Shape::Shape(std::string math)
+    : Shape(math, Bounds())
 {
     // Nothing to do here
 }
 
-MathShape::MathShape(std::string math, float xmin, float ymin,
+Shape::Shape(std::string math, float xmin, float ymin,
                      float xmax, float ymax)
-    : MathShape(math, Bounds(xmin, ymin, xmax, ymax))
+    : Shape(math, Bounds(xmin, ymin, xmax, ymax))
 {
     // Nothing to do here
 }
 
-MathShape::MathShape(std::string math, float xmin, float ymin, float zmin,
+Shape::Shape(std::string math, float xmin, float ymin, float zmin,
                      float xmax, float ymax, float zmax)
-    : MathShape(math, Bounds(xmin, ymin, zmin, xmax, ymax, zmax))
+    : Shape(math, Bounds(xmin, ymin, zmin, xmax, ymax, zmax))
 {
     // Nothing to do here
 }
 
-MathShape::MathShape(std::string math, Bounds bounds)
+Shape::Shape(std::string math, Bounds bounds)
     : math(math), bounds(bounds), tree(parse(math.c_str()), free)
 {
     if (tree == NULL)
@@ -36,23 +36,23 @@ MathShape::MathShape(std::string math, Bounds bounds)
     }
 }
 
-MathShape MathShape::map(Transform t) const
+Shape Shape::map(Transform t) const
 {
-    return MathShape("m" + (t.x_forward.length() ? t.x_forward : " ")
+    return Shape("m" + (t.x_forward.length() ? t.x_forward : " ")
                          + (t.y_forward.length() ? t.y_forward : " ")
                          + (t.z_forward.length() ? t.z_reverse : " ") + math,
                      bounds.map(t));
 }
 
-MathShape operator~(const MathShape& a)
+Shape operator~(const Shape& a)
 {
-    return MathShape("n" + a.math);
+    return Shape("n" + a.math);
 }
 
 
-MathShape operator&(const MathShape& a, const MathShape& b)
+Shape operator&(const Shape& a, const Shape& b)
 {
-    return MathShape("a" + a.math + b.math,
+    return Shape("a" + a.math + b.math,
                      fmax(a.bounds.xmin, b.bounds.xmin),
                      fmax(a.bounds.ymin, b.bounds.ymin),
                      fmax(a.bounds.zmin, b.bounds.zmin),
@@ -61,9 +61,9 @@ MathShape operator&(const MathShape& a, const MathShape& b)
                      fmin(a.bounds.zmax, b.bounds.zmax));
 }
 
-MathShape operator|(const MathShape& a, const MathShape& b)
+Shape operator|(const Shape& a, const Shape& b)
 {
-    return MathShape("i" + a.math + b.math,
+    return Shape("i" + a.math + b.math,
                      fmin(a.bounds.xmin, b.bounds.xmin),
                      fmin(a.bounds.ymin, b.bounds.ymin),
                      fmin(a.bounds.zmin, b.bounds.zmin),

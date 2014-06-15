@@ -1,11 +1,11 @@
 import math
 
-from fab import MathShape, Transform
+from fab import Shape, Transform
 
 def circle(x0, y0, r):
     # sqrt((X-x0)**2 + (Y-y0)**2) - r
     r = abs(r)
-    return MathShape(
+    return Shape(
             '-r+q%sq%sf%g' % (('-Xf%g' % x0) if x0 else 'X',
                               ('-Yf%g' % y0) if y0 else 'Y', r),
             x0 - r, y0 - r, x0 + r, y0 + r)
@@ -37,7 +37,7 @@ def triangle(x0, y0, x1, y1, x2, y2):
     e2 = edge(x2, y2, x0-x2, y0-y2)
 
     # -min(e0, min(e1, e2))
-    return MathShape(
+    return Shape(
             'ni%(e0)si%(e1)s%(e2)s' % locals(),
             min(x0, x1, x2), min(y0, y1, y2),
             max(x0, x1, x2), max(y0, y1, y2))
@@ -46,7 +46,7 @@ def triangle(x0, y0, x1, y1, x2, y2):
 
 def rectangle(x0, x1, y0, y1):
     # max(max(x0 - X, X - x1), max(y0 - Y, Y - y1)
-    return MathShape(
+    return Shape(
             'aa-f%(x0)gX-Xf%(x1)ga-f%(y0)gY-Yf%(y1)g' % locals(),
             x0, y0, x1, y1)
 
@@ -177,7 +177,7 @@ def scale_xy(part, x0, y0, sxy):
 
 def extrude_z(part, z0, z1):
     # max(part, max(z0-Z, Z-z1))
-    return MathShape(
+    return Shape(
             'am  f1%sa-f%gZ-Zf%g' % (part.math, z0, z1),
             part.bounds.xmin, part.bounds.ymin, z0,
             part.bounds.xmax, part.bounds.ymax, z1)
@@ -217,7 +217,7 @@ def blend(p0, p1, amount):
     joint = p0 | p1
 
     # sqrt(abs(p0)) + sqrt(abs(p1)) - amount
-    fillet = MathShape('-+rb%srb%sf%g' % (p0.math, p1.math, amount),
+    fillet = Shape('-+rb%srb%sf%g' % (p0.math, p1.math, amount),
                        joint.bounds)
     return joint | fillet
 
@@ -227,7 +227,7 @@ def cylinder(x0, y0, z0, z1, r):
     return extrude_z(circle(x0, y0, r), z0, z1)
 
 def sphere(x0, y0, z0, r):
-    return MathShape(
+    return Shape(
             '-r++q%sq%sq%sf%g' % (('-Xf%g' % x0) if x0 else 'X',
                                   ('-Yf%g' % y0) if y0 else 'Y',
                                   ('-Zf%g' % z0) if z0 else 'Z',
@@ -326,7 +326,7 @@ def revolve_y(part):
     ''' Revolve a part in the XY plane about the Y axis. '''
     #   X' = sqrt(X**2 + Z**2)
     p = part.map('r+qXqZ', '', '', '')
-    return MathShape(
+    return Shape(
             p.math,
             min(-abs(part.xmin), -abs(part.xmax)),
             max( abs(part.xmin),  abs(part.xmax)),
@@ -338,7 +338,7 @@ def revolve_x(part):
     ''' Revolve a part in the XY plane about the X axis. '''
     #   Y' = sqrt(Y**2 + Z**2)
     p = part.map('', 'r+qYqZ', '', '')
-    return MathShape(
+    return Shape(
             p.math,
             part.xmin, part.xmax,
             min(-abs(part.ymin), -abs(part.ymax)),
@@ -359,7 +359,7 @@ def attract(part, x, y, z, r):
         '*X'+d, '*Y'+d, '*Z'+d, '', '', ''))
 
     b = r/math.e
-    return move(MathShape(
+    return move(Shape(
         p.math,
         part.xmin - b, part.ymin - b, part.zmin - b,
         part.xmax + b, part.ymax + b, part.zmax + b), x, y, z)
@@ -375,7 +375,7 @@ def repel(part, x, y, z, r):
     p = part.map(Transform('*X'+d, '*Y'+d, '*Z'+d, '', '', ''))
 
     b = r/math.e
-    return move(MathShape(
+    return move(Shape(
         p.math,
         part.xmin - b, part.ymin - b, part.zmin - b,
         part.xmax + b, part.ymax + b, part.zmax + b),
@@ -855,7 +855,7 @@ _widths['z'] = 0.6
 _glyphs['z'] = shape
 
 
-shape = MathShape("f1.0", 0, 0.55, 0, 1)
+shape = Shape("f1.0", 0, 0.55, 0, 1)
 _widths[' '] = 0.55
 _glyphs[' '] = shape
 

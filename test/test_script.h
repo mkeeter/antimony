@@ -35,7 +35,7 @@ private slots:
      */
     void CheckFloatInput();
 
-    /** Confirm that script input creates a new MathShape datum
+    /** Confirm that script input creates a new Shape datum
      */
     void CheckShapeInput();
 };

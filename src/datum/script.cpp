@@ -53,9 +53,9 @@ PyObject* ScriptDatum::makeInput(QString name, PyTypeObject *type)
         {
             d = new FloatDatum(name, "0.0", parent());
         }
-        else if (type == fab::MathShapeType)
+        else if (type == fab::ShapeType)
         {
-            d = new MathShapeDatum(name, parent());
+            d = new ShapeDatum(name, parent());
         }
         else
         {

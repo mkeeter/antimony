@@ -22,7 +22,7 @@ namespace fab
      */
     void postInit();
 
-    extern PyTypeObject* MathShapeType;
+    extern PyTypeObject* ShapeType;
 }
 
 #endif // FAB_H

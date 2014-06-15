@@ -94,7 +94,7 @@ PyObject* ShapeInputHandler::getValue() const
         PyDict_SetItemString(globals, "__builtins__", PyEval_GetBuiltins());
         PyObject* locals = Py_BuildValue("{}");
 
-        PyObject* out = PyRun_String("__import__('fab').MathShape('f1.0')",
+        PyObject* out = PyRun_String("__import__('fab').Shape('f1.0')",
                                      Py_eval_input, globals, locals);
 
         Py_DECREF(globals);

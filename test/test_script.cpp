@@ -96,7 +96,7 @@ void TestScript::CheckFloatInput()
 void TestScript::CheckShapeInput()
 {
     ScriptNode* n;
-    n = new ScriptNode("s", "0.0", "0.0", "0.0", "from fab import MathShape;input('q', MathShape)");
+    n = new ScriptNode("s", "0.0", "0.0", "0.0", "from fab import Shape;input('q', Shape)");
     QVERIFY(n->getDatum("q") != NULL);
-    QVERIFY(dynamic_cast<MathShapeDatum*>(n->getDatum("q")));
+    QVERIFY(dynamic_cast<ShapeDatum*>(n->getDatum("q")));
 }
