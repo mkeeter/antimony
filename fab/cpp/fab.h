@@ -1,6 +1,8 @@
 #ifndef FAB_H
 #define FAB_H
 
+#include <Python.h>
+
 namespace fab
 {
     struct ParseError {};
@@ -19,6 +21,8 @@ namespace fab
      *  Must be called after Py_Initialize().
      */
     void postInit();
+
+    extern PyTypeObject* MathShapeType;
 }
 
 #endif // FAB_H

@@ -54,6 +54,9 @@ BOOST_PYTHON_MODULE(fab)
     register_exception_translator<fab::ParseError>(fab::onParseError);
 }
 
+
+PyTypeObject* fab::MathShapeType = NULL;
+
 void fab::preInit()
 {
     PyImport_AppendInittab("fab", PyInit_fab);
@@ -65,6 +68,8 @@ void fab::postInit()
 
     PyObject* fab_str = PyUnicode_FromString("fab");
     PyObject* fab = PyImport_Import(fab_str);
+
+    MathShapeType = (PyTypeObject*)PyObject_GetAttrString(fab, "MathShape");
 
     QFile shapes_file(":fab/py/shapes.py");
     shapes_file.open(QFile::ReadOnly | QFile::Text);

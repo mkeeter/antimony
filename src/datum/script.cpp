@@ -2,10 +2,13 @@
 
 #include "datum/script.h"
 #include "datum/float.h"
+#include "datum/shape_datum.h"
 #include "datum/wrapper.h"
 
 #include "node/node.h"
 #include "node/manager.h"
+
+#include "cpp/fab.h"
 
 
 ScriptDatum::ScriptDatum(QString name, QString expr, QObject *parent)
@@ -49,6 +52,10 @@ PyObject* ScriptDatum::makeInput(QString name, PyTypeObject *type)
         if (type == &PyFloat_Type)
         {
             d = new FloatDatum(name, "0.0", parent());
+        }
+        else if (type == fab::MathShapeType)
+        {
+            d = new MathShapeDatum(name, parent());
         }
         else
         {

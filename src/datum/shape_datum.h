@@ -3,6 +3,7 @@
 
 #include <Python.h>
 #include "datum/datum.h"
+#include "cpp/fab.h"
 
 class MathShapeDatum : public Datum
 {
@@ -15,6 +16,9 @@ public:
      */
     virtual PyObject* getCurrentValue() { return NULL; }
 
+    /** Returns the python MathShape class.
+     */
+    virtual PyTypeObject* getType() const { return fab::MathShapeType; }
 };
 
 #endif // SHAPE_DATUM_H
