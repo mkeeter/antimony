@@ -1,9 +1,9 @@
 #include <Python.h>
 
-#include "node/3d/point3d.h"
+#include "node/3d/point3d_node.h"
 #include "node/manager.h"
 
-#include "datum/float.h"
+#include "datum/float_datum.h"
 
 Point3D::Point3D(QString name, QString x, QString y, QString z,
                  QObject* parent)

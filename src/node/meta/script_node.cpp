@@ -3,8 +3,8 @@
 #include "node/meta/script_node.h"
 #include "node/manager.h"
 
-#include "datum/float.h"
-#include "datum/script.h"
+#include "datum/float_datum.h"
+#include "datum/script_datum.h"
 
 ScriptNode::ScriptNode(QString name, QString x, QString y, QString z,
                        QString script, QObject* parent)

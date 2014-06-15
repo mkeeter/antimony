@@ -1,6 +1,6 @@
 #include <Python.h>
 #include "datum/wrapper.h"
-#include "datum/script.h"
+#include "datum/script_datum.h"
 
 static PyObject* ScriptInput_Call(PyObject* callable_object,
                                   PyObject* args, PyObject* kw)

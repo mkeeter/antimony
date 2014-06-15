@@ -3,7 +3,7 @@
 #include <QDebug>
 #include <QRegExp>
 
-#include "datum/name.h"
+#include "datum/name_datum.h"
 #include "datum/input.h"
 #include "node/manager.h"
 

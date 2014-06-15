@@ -4,9 +4,9 @@
 
 #include "test_script.h"
 
-#include "datum/script.h"
+#include "datum/script_datum.h"
 #include "datum/shape_datum.h"
-#include "datum/float.h"
+#include "datum/float_datum.h"
 
 #include "node/meta/script_node.h"
 

@@ -5,8 +5,8 @@
 
 #include "test_name.h"
 
-#include "datum/name.h"
-#include "node/3d/point3d.h"
+#include "datum/name_datum.h"
+#include "node/3d/point3d_node.h"
 #include "node/manager.h"
 
 TestName::TestName(QObject *parent) :

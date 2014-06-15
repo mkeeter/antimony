@@ -4,8 +4,8 @@
 #include <QSignalSpy>
 
 #include "test_datum.h"
-#include "datum/float.h"
-#include "datum/name.h"
+#include "datum/float_datum.h"
+#include "datum/name_datum.h"
 
 void TestDatum::FloatValid()
 {

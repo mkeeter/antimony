@@ -8,7 +8,7 @@
 #include "node/proxy.h"
 
 #include "datum/datum.h"
-#include "datum/name.h"
+#include "datum/name_datum.h"
 
 NodeManager* NodeManager::_manager = NULL;
 

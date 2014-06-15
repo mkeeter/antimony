@@ -1,34 +1,34 @@
 SOURCES += \
     ../src/datum/datum.cpp \
     ../src/datum/eval.cpp \
-    ../src/datum/script.cpp \
-    ../src/datum/float.cpp \
     ../src/node/node.cpp \
     ../src/node/manager.cpp \
     ../src/node/proxy.cpp \
     ../src/datum/input.cpp \
     ../src/datum/link.cpp \
-    ../src/datum/name.cpp \
-    ../src/node/3d/point3d.cpp \
     ../src/datum/wrapper.cpp \
     ../src/node/meta/script_node.cpp \
-    ../src/datum/shape_datum.cpp
+    ../src/datum/shape_datum.cpp \
+    ../src/datum/float_datum.cpp \
+    ../src/datum/name_datum.cpp \
+    ../src/datum/script_datum.cpp \
+    ../src/node/3d/point3d_node.cpp
 
 HEADERS += \
     ../src/datum/datum.h \
     ../src/datum/eval.h \
-    ../src/datum/script.h \
-    ../src/datum/float.h \
     ../src/node/node.h \
     ../src/node/manager.h \
     ../src/node/proxy.h \
     ../src/datum/input.h \
     ../src/datum/link.h \
-    ../src/datum/name.h \
-    ../src/node/3d/point3d.h \
     ../src/datum/wrapper.h \
     ../src/node/meta/script_node.h \
-    ../src/datum/shape_datum.h
+    ../src/datum/shape_datum.h \
+    ../src/datum/float_datum.h \
+    ../src/datum/name_datum.h \
+    ../src/datum/script_datum.h \
+    ../src/node/3d/point3d_node.h
 
 
 INCLUDEPATH += ../src

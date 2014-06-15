@@ -5,7 +5,7 @@
 #include "node/proxy.h"
 
 #include "datum/datum.h"
-#include "datum/name.h"
+#include "datum/name_datum.h"
 
 Node::Node(QString name, QObject* parent) :
     QObject(parent), control(NULL)

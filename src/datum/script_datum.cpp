@@ -1,7 +1,7 @@
 #include <Python.h>
 
-#include "datum/script.h"
-#include "datum/float.h"
+#include "datum/script_datum.h"
+#include "datum/float_datum.h"
 #include "datum/shape_datum.h"
 #include "datum/wrapper.h"
 
