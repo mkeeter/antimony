@@ -3,7 +3,11 @@
 #include <QtTest/QtTest>
 
 #include "test_script.h"
+
 #include "datum/script.h"
+#include "datum/shape_datum.h"
+#include "datum/float.h"
+
 #include "node/meta/script_node.h"
 
 TestScript::TestScript(QObject* parent)
@@ -81,9 +85,18 @@ void TestScript::MakeScriptInput()
     QVERIFY(n->getDatum("script")->getValid() == false);
 }
 
-void TestScript::CheckScriptInput()
+void TestScript::CheckFloatInput()
 {
     ScriptNode* n;
     n = new ScriptNode("s", "0.0", "0.0", "0.0", "input('q', float)");
     QVERIFY(n->getDatum("q") != NULL);
+    QVERIFY(dynamic_cast<FloatDatum*>(n->getDatum("q")));
+}
+
+void TestScript::CheckShapeInput()
+{
+    ScriptNode* n;
+    n = new ScriptNode("s", "0.0", "0.0", "0.0", "from fab import MathShape;input('q', MathShape)");
+    QVERIFY(n->getDatum("q") != NULL);
+    QVERIFY(dynamic_cast<MathShapeDatum*>(n->getDatum("q")));
 }

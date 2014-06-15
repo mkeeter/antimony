@@ -31,9 +31,13 @@ private slots:
      */
     void MakeScriptInput();
 
-    /** Confirm that script input creates a new datum
+    /** Confirm that script input creates a new float datum
      */
-    void CheckScriptInput();
+    void CheckFloatInput();
+
+    /** Confirm that script input creates a new MathShape datum
+     */
+    void CheckShapeInput();
 };
 
 #endif // TEST_SCRIPT_H
