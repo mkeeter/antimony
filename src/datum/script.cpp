@@ -52,7 +52,7 @@ PyObject* ScriptDatum::makeInput(QString name, PyTypeObject *type)
         }
         else
         {
-            PyErr_SetString(PyExc_RuntimeError, "Invalid datum type");
+            PyErr_SetString(PyExc_TypeError, "Invalid datum type");
             return NULL;
         }
     }
