@@ -41,8 +41,7 @@ static PyObject* ScriptInput_Call(PyObject* callable_object,
     PyMem_Free(w);
 
     ScriptDatum* d = ((ScriptInputWrapper*)callable_object)->datum;
-    d->makeInput(str, (PyTypeObject*)type);
-    return Py_None;
+    return d->makeInput(str, (PyTypeObject*)type);
 }
 
 static PyObject* ScriptOutput_Call(PyObject* callable_object,

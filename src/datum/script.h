@@ -15,7 +15,7 @@ public:
     explicit ScriptDatum(QString name, QString expr, QObject *parent);
     virtual ~ScriptDatum();
 
-    void makeInput(QString name, PyTypeObject* type);
+    PyObject* makeInput(QString name, PyTypeObject* type);
     virtual PyTypeObject* getType() const { return Py_None->ob_type; }
 protected:
     /** Function that returns the desired start token for PyRun_String

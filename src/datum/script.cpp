@@ -33,7 +33,7 @@ void ScriptDatum::modifyGlobalsDict(PyObject* g)
     PyDict_SetItemString(g, "output", output_func);
 }
 
-void ScriptDatum::makeInput(QString name, PyTypeObject *type)
+PyObject* ScriptDatum::makeInput(QString name, PyTypeObject *type)
 {
     Node* n = dynamic_cast<Node*>(parent());
     Datum* d = n->getDatum(name);
@@ -53,6 +53,7 @@ void ScriptDatum::makeInput(QString name, PyTypeObject *type)
         else
         {
             PyErr_SetString(PyExc_RuntimeError, "Invalid datum type");
+            return NULL;
         }
     }
 
@@ -63,5 +64,7 @@ void ScriptDatum::makeInput(QString name, PyTypeObject *type)
     else
     {
         PyErr_SetString(PyExc_RuntimeError, "Accessed invalid datum value");
+        return NULL;
     }
+    return Py_None;
 }
