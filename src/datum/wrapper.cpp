@@ -2,6 +2,18 @@
 #include "datum/wrapper.h"
 #include "datum/script.h"
 
+static PyObject* ScriptInput_Call(PyObject *callable_object,
+                                  PyObject *args, PyObject *kw)
+{
+    return Py_None;
+}
+
+static PyObject* ScriptOutput_Call(PyObject *callable_object,
+                                   PyObject *args, PyObject *kw)
+{
+    return Py_None;
+}
+
 static PyTypeObject ScriptInputWrapperType = {
     PyVarObject_HEAD_INIT(NULL, 0)
     "wrapper.ScriptInputWrapper",   /* tp_name */

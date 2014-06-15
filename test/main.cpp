@@ -9,6 +9,7 @@
 #include "test_name.h"
 #include "test_proxy.h"
 #include "test_fab.h"
+#include "test_script.h"
 
 int main(int argc, char *argv[])
 {
@@ -41,6 +42,11 @@ int main(int argc, char *argv[])
 
     if (!out) {
         TestFab t;
+        out = QTest::qExec(&t, argc, argv);
+    }
+
+    if (!out) {
+        TestScript t;
         out = QTest::qExec(&t, argc, argv);
     }
 
