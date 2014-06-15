@@ -2,15 +2,53 @@
 #include "datum/wrapper.h"
 #include "datum/script.h"
 
-static PyObject* ScriptInput_Call(PyObject *callable_object,
-                                  PyObject *args, PyObject *kw)
+static PyObject* ScriptInput_Call(PyObject* callable_object,
+                                  PyObject* args, PyObject* kw)
 {
+    if (kw && PyDict_Size(kw) != 0)
+    {
+        PyErr_SetString(PyExc_RuntimeError,
+                        "No keyword arguments allowed.");
+        return NULL;
+    }
+
+    if (PyTuple_Size(args) != 2)
+    {
+        PyErr_SetString(PyExc_RuntimeError,
+                        "Invalid argument count");
+        return NULL;
+    }
+
+    PyObject* name = PyTuple_GetItem(args, 0);
+    if (!PyUnicode_Check(name))
+    {
+        PyErr_SetString(PyExc_TypeError,
+                        "Invalid first argument (must be a string)");
+        return NULL;
+    }
+
+    PyObject* type = PyTuple_GetItem(args, 1);
+    if (!PyType_Check(type))
+    {
+        PyErr_SetString(PyExc_TypeError,
+                        "Invalid second argument (must be a type)");
+        return NULL;
+    }
+
+    wchar_t* w = PyUnicode_AsWideCharString(name, NULL);
+    Q_ASSERT(w);
+    QString str = QString::fromWCharArray(w);
+    PyMem_Free(w);
+
+    ScriptDatum* d = ((ScriptInputWrapper*)callable_object)->datum;
+    d->makeInput(str, (PyTypeObject*)type);
     return Py_None;
 }
 
-static PyObject* ScriptOutput_Call(PyObject *callable_object,
-                                   PyObject *args, PyObject *kw)
+static PyObject* ScriptOutput_Call(PyObject* callable_object,
+                                   PyObject* args, PyObject* kw)
 {
+    PyObject_Print(args, stdout, 0);
     return Py_None;
 }
 
@@ -29,7 +67,7 @@ static PyTypeObject ScriptInputWrapperType = {
     0,                         /* tp_as_sequence */
     0,                         /* tp_as_mapping */
     0,                         /* tp_hash  */
-    0,                         /* tp_call */
+    ScriptInput_Call,          /* tp_call */
     0,                         /* tp_str */
     0,                         /* tp_getattro */
     0,                         /* tp_setattro */
@@ -53,7 +91,7 @@ static PyTypeObject ScriptOutputWrapperType = {
     0,                         /* tp_as_sequence */
     0,                         /* tp_as_mapping */
     0,                         /* tp_hash  */
-    0,                         /* tp_call */
+    ScriptOutput_Call,         /* tp_call */
     0,                         /* tp_str */
     0,                         /* tp_getattro */
     0,                         /* tp_setattro */
