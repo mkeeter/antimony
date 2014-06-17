@@ -34,7 +34,8 @@ public:
     /** Returns a NameDatum with matching name, or NULL.
      */
     NameDatum* findMatchingName(PyObject* proposed) const;
-protected slots:
+
+public slots:
     /** Triggers an update on all EvalDatums that use the new name.
      */
     void onNameChange(QString new_name);
