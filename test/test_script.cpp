@@ -79,10 +79,12 @@ void TestScript::MakeScriptInput()
     n = new ScriptNode("s", "0.0", "0.0", "0.0",
                        "input('q', float, x=12)");
     QVERIFY(n->getDatum("script")->getValid() == false);
+    delete n;
 
     n = new ScriptNode("s", "0.0", "0.0", "0.0",
                        "input('q', str)");
     QVERIFY(n->getDatum("script")->getValid() == false);
+    delete n;
 }
 
 void TestScript::CheckFloatInput()
@@ -91,6 +93,7 @@ void TestScript::CheckFloatInput()
     n = new ScriptNode("s", "0.0", "0.0", "0.0", "input('q', float)");
     QVERIFY(n->getDatum("q") != NULL);
     QVERIFY(dynamic_cast<FloatDatum*>(n->getDatum("q")));
+    delete n;
 }
 
 void TestScript::CheckShapeInput()
