@@ -125,8 +125,12 @@ void TestScript::AddThenRemoveDatum()
     ScriptDatum* d = dynamic_cast<ScriptDatum*>(n->getDatum("script"));
     QVERIFY(n->getDatum("x") != NULL);
     QVERIFY(dynamic_cast<FloatDatum*>(n->getDatum("x")));
+
     d->setExpr("from fab import Shape; input('x', Shape)");
     QVERIFY(n->getDatum("x") != NULL);
     QVERIFY(dynamic_cast<ShapeDatum*>(n->getDatum("x")));
+
+    d->setExpr("input('q', float)");
+    QVERIFY(n->getDatum("x") == NULL);
     delete n;
 }
