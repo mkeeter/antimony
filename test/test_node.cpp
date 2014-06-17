@@ -55,3 +55,13 @@ void TestNode::NameChangeEval()
     delete b;
 }
 
+void TestNode::NewNodeCreation()
+{
+    Point3D* a = new Point3D("a", "b.x", "0.0", "0.0");
+    QVERIFY(a->getDatum("x")->getValid() == false);
+    Point3D* b = new Point3D("b", "0.0", "0.0", "0.0");
+    QVERIFY(a->getDatum("x")->getValid() == true);
+    delete a;
+    delete b;
+}
+

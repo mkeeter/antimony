@@ -39,7 +39,9 @@ int EvalDatum::getStartToken() const
 
 void EvalDatum::modifyGlobalsDict(PyObject *g)
 {
-    // Nothing to do here
+    Q_UNUSED(g);
+    // (nothing to do here; this function is mainly provided for the sake of
+    //  the ScriptDatum derived class).
 }
 
 PyObject* EvalDatum::getCurrentValue()

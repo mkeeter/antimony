@@ -22,6 +22,9 @@ private slots:
     /** Change one node's name; make another node valid. */
     void NameChangeEval();
 
+    /** Create a new node, making another node valid. */
+    void NewNodeCreation();
+
 };
 
 #endif // TEST_NODE_H

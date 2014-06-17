@@ -46,6 +46,10 @@ private slots:
     /** Make sure that datums are deleted when script changes.
      */
     void AddThenRemoveDatum();
+
+    /** Use a datum from another node in a script.
+     */
+    void UseOtherDatum();
 };
 
 #endif // TEST_SCRIPT_H

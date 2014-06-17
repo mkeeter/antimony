@@ -1,6 +1,7 @@
 #include <Python.h>
 
 #include <QtTest/QtTest>
+#include <QSignalSpy>
 
 #include "test_script.h"
 
@@ -9,6 +10,7 @@
 #include "datum/float_datum.h"
 
 #include "node/meta/script_node.h"
+#include "node/3d/point3d_node.h"
 
 TestScript::TestScript(QObject* parent)
     : QObject(parent)
@@ -132,5 +134,21 @@ void TestScript::AddThenRemoveDatum()
 
     d->setExpr("input('q', float)");
     QVERIFY(n->getDatum("x") == NULL);
+    delete n;
+}
+
+void TestScript::UseOtherDatum()
+{
+    Point3D* p = new Point3D("p", "0.!", "0.0", "0.0");
+    ScriptNode* n = new ScriptNode("s", "0.0", "0.0", "0.0", "p.x + 1");
+    QVERIFY(n->getDatum("script")->getValid() == false);
+
+    QSignalSpy s(n->getDatum("script"), SIGNAL(changed()));
+    dynamic_cast<FloatDatum*>(p->getDatum("x"))->setExpr("1.0");
+
+    QCOMPARE(s.count(), 1);
+    QVERIFY(n->getDatum("script")->getValid() == true);
+
+    delete p;
     delete n;
 }
