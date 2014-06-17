@@ -38,7 +38,7 @@ void ScriptDatum::modifyGlobalsDict(PyObject* g)
 
 PyObject* ScriptDatum::makeInput(QString name, PyTypeObject *type)
 {
-    if (!name.size() || name.at(0) == '_')
+    if (!name.size() || name.at(0) == '_' || name == "name")
     {
         PyErr_SetString(PyExc_RuntimeError, "Invalid datum name");
         return NULL;
@@ -95,7 +95,7 @@ PyObject* ScriptDatum::getCurrentValue()
     {
         QString name = d->objectName();
         if (d != this && name.size() && name.at(0) != '_' &&
-            !touched.contains(name))
+            name != "name" && !touched.contains(name))
         {
             delete d;
         }
