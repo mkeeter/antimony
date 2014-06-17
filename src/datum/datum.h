@@ -81,6 +81,8 @@ protected:
     bool editable;
 
     InputHandler* input_handler;
+
+    bool _once;
 };
 
 #endif // DATUM_H

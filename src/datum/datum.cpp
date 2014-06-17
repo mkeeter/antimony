@@ -6,8 +6,11 @@
 #include "datum/input.h"
 #include "datum/link.h"
 
+#include "node/manager.h"
+
 Datum::Datum(QString name, QObject* parent)
-    : QObject(parent), value(NULL), valid(false), input_handler(NULL)
+    : QObject(parent), value(NULL), valid(false), input_handler(NULL),
+      _once(true)
 {
     setObjectName(name);
 }
@@ -44,6 +47,14 @@ void Datum::addLink(Link* input)
 
 void Datum::update()
 {
+    // The very first time that update() is called, refresh all other nodes
+    // that may refer to this node by name (then never do so again).
+    if (_once)
+    {
+        _once = false;
+        NodeManager::manager()->onNameChange(objectName());
+    }
+
     // Request that all upstream datums disconnect.
     emit disconnectFrom(this);
 
