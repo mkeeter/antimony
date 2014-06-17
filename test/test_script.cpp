@@ -117,3 +117,16 @@ void TestScript::InvalidInputNames()
     QVERIFY(n->getDatum("_reserved") == NULL);
     delete n;
 }
+
+void TestScript::AddThenRemoveDatum()
+{
+    ScriptNode* n;
+    n = new ScriptNode("s", "0.0", "0.0", "0.0", "input('x', float)");
+    ScriptDatum* d = dynamic_cast<ScriptDatum*>(n->getDatum("script"));
+    QVERIFY(n->getDatum("x") != NULL);
+    QVERIFY(dynamic_cast<FloatDatum*>(n->getDatum("x")));
+    d->setExpr("from fab import Shape; input('x', Shape)");
+    QVERIFY(n->getDatum("x") != NULL);
+    QVERIFY(dynamic_cast<ShapeDatum*>(n->getDatum("x")));
+    delete n;
+}

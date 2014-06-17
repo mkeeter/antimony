@@ -42,6 +42,10 @@ private slots:
     /** Try to make an input with an invalid name.
      */
     void InvalidInputNames();
+
+    /** Make sure that datums are deleted when script changes.
+     */
+    void AddThenRemoveDatum();
 };
 
 #endif // TEST_SCRIPT_H
