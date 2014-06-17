@@ -99,4 +99,18 @@ void TestScript::CheckShapeInput()
     n = new ScriptNode("s", "0.0", "0.0", "0.0", "from fab import Shape;input('q', Shape)");
     QVERIFY(n->getDatum("q") != NULL);
     QVERIFY(dynamic_cast<ShapeDatum*>(n->getDatum("q")));
+    delete n;
+}
+
+void TestScript::InvalidInputNames()
+{
+    ScriptNode* n;
+    n = new ScriptNode("s", "0.0", "0.0", "0.0", "from fab import Shape;input('', Shape)");
+    QVERIFY(n->getDatum("script")->getValid() == false);
+    delete n;
+
+    n = new ScriptNode("s", "0.0", "0.0", "0.0", "from fab import Shape;input('_reserved', Shape)");
+    QVERIFY(n->getDatum("script")->getValid() == false);
+    QVERIFY(n->getDatum("_reserved") == NULL);
+    delete n;
 }

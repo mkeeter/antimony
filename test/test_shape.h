@@ -10,6 +10,8 @@ public:
     explicit TestShape(QObject *parent = 0);
 
 private slots:
+    /** Confirm that the default shape is valid (with no inputs)
+     */
     void MakeEmptyShape();
 };
 

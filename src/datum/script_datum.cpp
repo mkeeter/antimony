@@ -38,6 +38,12 @@ void ScriptDatum::modifyGlobalsDict(PyObject* g)
 
 PyObject* ScriptDatum::makeInput(QString name, PyTypeObject *type)
 {
+    if (!name.size() || name.at(0) == '_')
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Invalid datum name");
+        return NULL;
+    }
+
     Node* n = dynamic_cast<Node*>(parent());
     Datum* d = n->getDatum(name);
 

@@ -38,6 +38,10 @@ private slots:
     /** Confirm that script input creates a new Shape datum
      */
     void CheckShapeInput();
+
+    /** Try to make an input with an invalid name.
+     */
+    void InvalidInputNames();
 };
 
 #endif // TEST_SCRIPT_H
