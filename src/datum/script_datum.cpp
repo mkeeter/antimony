@@ -52,7 +52,7 @@ PyObject* ScriptDatum::makeInput(QString name, PyTypeObject *type)
 
     if (d != NULL && d->getType() != type)
     {
-        d->deleteLater();
+        delete d;
         d = NULL;
     }
 
