@@ -47,6 +47,9 @@ PyObject* ScriptDatum::makeInput(QString name, PyTypeObject *type)
     Node* n = dynamic_cast<Node*>(parent());
     Datum* d = n->getDatum(name);
 
+    // Save that this datum is still present in the script
+    touched.insert(name);
+
     if (d != NULL && d->getType() != type)
     {
         d->deleteLater();
@@ -80,4 +83,22 @@ PyObject* ScriptDatum::makeInput(QString name, PyTypeObject *type)
         return NULL;
     }
     return Py_None;
+}
+
+
+PyObject* ScriptDatum::getCurrentValue()
+{
+    touched.clear();
+    PyObject* out = EvalDatum::getCurrentValue();
+
+    for (auto d : parent()->findChildren<Datum*>())
+    {
+        QString name = d->objectName();
+        if (d != this && name.size() && name.at(0) != '_' &&
+            !touched.contains(name))
+        {
+            delete d;
+        }
+    }
+    return out;
 }
