@@ -40,10 +40,10 @@ class SingleInputHandler : public InputHandler
     Q_OBJECT
 public:
     SingleInputHandler(Datum* parent);
-    virtual PyObject* getValue() const;
-    virtual bool accepts(Link* input) const;
-    virtual void addInput(Link* input);
-    virtual bool hasInput() const;
+    virtual PyObject* getValue() const override;
+    virtual bool accepts(Link* input) const override;
+    virtual void addInput(Link* input) override;
+    virtual bool hasInput() const override;
 protected:
     QPointer<Link> in;
 };
@@ -55,10 +55,10 @@ class ShapeInputHandler : public InputHandler
     Q_OBJECT
 public:
     ShapeInputHandler(Datum* parent);
-    virtual PyObject* getValue() const;
-    virtual bool accepts(Link* input) const;
-    virtual void addInput(Link* input);
-    virtual bool hasInput() const;
+    virtual PyObject* getValue() const override;
+    virtual bool accepts(Link* input) const override;
+    virtual void addInput(Link* input) override;
+    virtual bool hasInput() const override;
 protected:
     /** Removes inactive input pointers from the list.
      */

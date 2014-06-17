@@ -9,15 +9,15 @@ class NameDatum : public EvalDatum
     Q_OBJECT
 public:
     explicit NameDatum(QString name, QString expr, QObject *parent = 0);
-    virtual PyTypeObject* getType() const { return &PyUnicode_Type; }
+    virtual PyTypeObject* getType() const override { return &PyUnicode_Type; }
 signals:
     void nameChanged(QString new_name);
 public slots:
     void onNameChange();
 protected:
-    virtual QString prepareExpr(QString s) const;
-    virtual bool validatePyObject(PyObject* v) const;
-    virtual bool validateExpr(QString e) const;
+    virtual QString prepareExpr(QString s) const override;
+    virtual bool validatePyObject(PyObject* v) const override;
+    virtual bool validateExpr(QString e) const override;
 
     /** Checks if the given object collides with a Python keyword.
      */

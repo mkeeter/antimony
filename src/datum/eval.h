@@ -19,7 +19,7 @@ protected:
 
     /** Overload function to actually get the current value.
      */
-    virtual PyObject* getCurrentValue();
+    virtual PyObject* getCurrentValue() override;
 
     /** Validation function called on Python object.
      */

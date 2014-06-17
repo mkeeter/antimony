@@ -17,19 +17,19 @@ public:
     virtual ~ScriptDatum();
 
     PyObject* makeInput(QString name, PyTypeObject* type);
-    virtual PyTypeObject* getType() const { return Py_None->ob_type; }
+    virtual PyTypeObject* getType() const override { return Py_None->ob_type; }
 protected:
     /** Evaluates the script (getting back None) and causing datum creation.
      */
-    virtual PyObject* getCurrentValue();
+    virtual PyObject* getCurrentValue() override;
 
     /** Function that returns the desired start token for PyRun_String
      */
-    virtual int getStartToken() const;
+    virtual int getStartToken() const override;
 
     /** Function that modifies the globals dict before eval is called.
      */
-    virtual void modifyGlobalsDict(PyObject* g);
+    virtual void modifyGlobalsDict(PyObject* g) override;
 
     PyObject* globals;
     PyObject* input_func;

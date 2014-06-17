@@ -14,11 +14,11 @@ public:
     /** Overload function to get the current value; always fails
      *  (because the shape will always from the input handler)
      */
-    virtual PyObject* getCurrentValue() { return NULL; }
+    virtual PyObject* getCurrentValue() override { return NULL; }
 
     /** Returns the python Shape class.
      */
-    virtual PyTypeObject* getType() const { return fab::ShapeType; }
+    virtual PyTypeObject* getType() const override { return fab::ShapeType; }
 };
 
 #endif // SHAPE_DATUM_H
