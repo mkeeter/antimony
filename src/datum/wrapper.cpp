@@ -47,8 +47,37 @@ static PyObject* ScriptInput_Call(PyObject* callable_object,
 static PyObject* ScriptOutput_Call(PyObject* callable_object,
                                    PyObject* args, PyObject* kw)
 {
-    PyObject_Print(args, stdout, 0);
-    return Py_None;
+    if (kw && PyDict_Size(kw) != 0)
+    {
+        PyErr_SetString(PyExc_RuntimeError,
+                        "No keyword arguments allowed.");
+        return NULL;
+    }
+
+    if (PyTuple_Size(args) != 2)
+    {
+        PyErr_SetString(PyExc_RuntimeError,
+                        "Invalid argument count");
+        return NULL;
+    }
+
+    PyObject* name = PyTuple_GetItem(args, 0);
+    if (!PyUnicode_Check(name))
+    {
+        PyErr_SetString(PyExc_TypeError,
+                        "Invalid first argument (must be a string)");
+        return NULL;
+    }
+
+    PyObject* out = PyTuple_GetItem(args, 1);
+
+    wchar_t* w = PyUnicode_AsWideCharString(name, NULL);
+    Q_ASSERT(w);
+    QString str = QString::fromWCharArray(w);
+    PyMem_Free(w);
+
+    ScriptDatum* d = ((ScriptOutputWrapper*)callable_object)->datum;
+    return d->makeOutput(str, out);
 }
 
 static PyTypeObject ScriptInputWrapperType = {
