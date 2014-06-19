@@ -99,6 +99,17 @@ void TestScript::CheckFloatInput()
     delete n;
 }
 
+void TestScript::ChangeFloatInput()
+{
+    ScriptNode* n = new ScriptNode("s", "0.0", "0.0", "0.0", "input('q', float); print(q)");
+
+    QSignalSpy s(n->getDatum("script"), SIGNAL(changed()));
+    dynamic_cast<FloatDatum*>(n->getDatum("q"))->setExpr("1.0");
+    QCOMPARE(s.count(), 1);
+
+    delete n;
+}
+
 void TestScript::CheckShapeInput()
 {
     ScriptNode* n;

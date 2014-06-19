@@ -35,6 +35,10 @@ private slots:
      */
     void CheckFloatInput();
 
+    /** Confirm that when an input changes, the script emits changed()
+     */
+    void ChangeFloatInput();
+
     /** Confirm that script input creates a new Shape datum
      */
     void CheckShapeInput();
