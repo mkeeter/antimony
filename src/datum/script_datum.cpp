@@ -3,6 +3,7 @@
 #include "datum/script_datum.h"
 #include "datum/float_datum.h"
 #include "datum/shape_datum.h"
+#include "datum/output_datum.h"
 #include "datum/wrapper.h"
 
 #include "node/node.h"
@@ -91,12 +92,51 @@ PyObject* ScriptDatum::makeInput(QString name, PyTypeObject *type)
     return Py_None;
 }
 
+PyObject* ScriptDatum::makeOutput(QString name, PyObject *out)
+{
+    if (!isValidName(name))
+    {
+        PyErr_SetString(PyExc_RuntimeError, "Invalid datum name");
+        return NULL;
+    }
+
+    Node* n = dynamic_cast<Node*>(parent());
+    Datum* d = n->getDatum(name);
+
+    // Save that this datum is still present in the script
+    touched.insert(name);
+
+    if (d != NULL && d->getType() != out->ob_type)
+    {
+        delete d;
+        d = NULL;
+    }
+
+    if (d == NULL)
+    {
+        if (out->ob_type == fab::ShapeType)
+        {
+            d = new ShapeOutputDatum(name, parent());
+        }
+        else
+        {
+            PyErr_SetString(PyExc_TypeError, "Invalid datum type");
+            return NULL;
+        }
+    }
+
+    dynamic_cast<OutputDatum*>(d)->setNewValue(out);
+    return Py_None;
+
+}
 
 PyObject* ScriptDatum::getCurrentValue()
 {
     touched.clear();
     PyObject* out = EvalDatum::getCurrentValue();
 
+    // Look at all of the datums (other than the script datum and other
+    // reserved datums), deleting them if they have not been touched.
     for (auto d : parent()->findChildren<Datum*>())
     {
         QString name = d->objectName();
