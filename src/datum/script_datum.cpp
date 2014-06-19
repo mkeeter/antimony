@@ -80,6 +80,9 @@ PyObject* ScriptDatum::makeInput(QString name, PyTypeObject *type)
         }
     }
 
+    // When this input changes, the script datum should update.
+    connectUpstream(d);
+
     if (d->getValid())
     {
         PyDict_SetItemString(globals, name.toStdString().c_str(), d->getValue());
@@ -132,6 +135,15 @@ PyObject* ScriptDatum::makeOutput(QString name, PyObject *out)
 
 PyObject* ScriptDatum::getCurrentValue()
 {
+    // Prevent nested calls to avoid losing the globals dictionary.
+    // This can occur when a new input is created, at which point it triggers
+    // a name change update to this node (while we're still in getCurrentValue).
+    if (globals)
+    {
+        return NULL;
+    }
+
+
     touched.clear();
     PyObject* out = EvalDatum::getCurrentValue();
 
@@ -146,5 +158,8 @@ PyObject* ScriptDatum::getCurrentValue()
             delete d;
         }
     }
+
+    globals = NULL;
+
     return out;
 }
