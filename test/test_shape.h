@@ -13,6 +13,10 @@ private slots:
     /** Confirm that the default shape is valid (with no inputs)
      */
     void MakeEmptyShape();
+
+    /** Confirm that the shape output datum is behaving as expected.
+     */
+    void ShapeOutput();
 };
 
 #endif // TEST_SHAPE_H

@@ -3,6 +3,7 @@
 
 #include "test_shape.h"
 #include "datum/shape_datum.h"
+#include "datum/output_datum.h"
 
 TestShape::TestShape(QObject* parent)
     : QObject(parent)
@@ -14,5 +15,13 @@ void TestShape::MakeEmptyShape()
 {
     ShapeDatum* d = new ShapeDatum("s");
     QVERIFY(d->getValid());
+    delete d;
+}
+
+
+void TestShape::ShapeOutput()
+{
+    ShapeOutputDatum* d = new ShapeOutputDatum("s");
+    QVERIFY(d->getValid() == false);
     delete d;
 }

@@ -3,9 +3,14 @@
 #include "cpp/fab.h"
 
 OutputDatum::OutputDatum(QString name, QObject* parent)
-    : Datum(name, parent)
+    : Datum(name, parent), new_value(NULL)
 {
     // Nothing to do here
+}
+
+OutputDatum::~OutputDatum()
+{
+    Py_XDECREF(new_value);
 }
 
 void OutputDatum::setNewValue(PyObject *p)
@@ -25,6 +30,12 @@ PyObject* OutputDatum::getCurrentValue()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+ShapeOutputDatum::ShapeOutputDatum(QString name, QObject* parent)
+    : OutputDatum(name, parent)
+{
+    // Nothing to do here
+}
 
 PyTypeObject* ShapeOutputDatum::getType() const
 {

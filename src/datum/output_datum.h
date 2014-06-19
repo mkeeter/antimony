@@ -9,6 +9,7 @@ class OutputDatum : public Datum
     Q_OBJECT
 public:
     explicit OutputDatum(QString name, QObject* parent=0);
+    ~OutputDatum();
     void setNewValue(PyObject* p);
 
 protected:
@@ -25,6 +26,7 @@ class ShapeOutputDatum : public OutputDatum
 {
     Q_OBJECT
 public:
+    explicit ShapeOutputDatum(QString name, QObject* parent=0);
     virtual PyTypeObject* getType() const override;
 };
 
