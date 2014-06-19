@@ -19,6 +19,10 @@ public:
     PyObject* makeInput(QString name, PyTypeObject* type);
     virtual PyTypeObject* getType() const override { return Py_None->ob_type; }
 protected:
+    /** Returns True if we can make an input or output datum with this name.
+     */
+    bool isValidName(QString name) const;
+
     /** Evaluates the script (getting back None) and causing datum creation.
      */
     virtual PyObject* getCurrentValue() override;

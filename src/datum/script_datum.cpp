@@ -36,9 +36,15 @@ void ScriptDatum::modifyGlobalsDict(PyObject* g)
     PyDict_SetItemString(g, "output", output_func);
 }
 
+bool ScriptDatum::isValidName(QString name) const
+{
+    return name.size() && name.at(0) != '_' && name != "name" &&
+           name != "script" && !touched.contains(name);
+}
+
 PyObject* ScriptDatum::makeInput(QString name, PyTypeObject *type)
 {
-    if (!name.size() || name.at(0) == '_' || name == "name")
+    if (!isValidName(name))
     {
         PyErr_SetString(PyExc_RuntimeError, "Invalid datum name");
         return NULL;
