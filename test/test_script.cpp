@@ -117,6 +117,12 @@ void TestScript::InvalidInputNames()
     n = new ScriptNode("s", "0.0", "0.0", "0.0", "from fab import Shape;input('_reserved', Shape)");
     QVERIFY(n->getDatum("script")->getValid() == false);
     QVERIFY(n->getDatum("_reserved") == NULL);
+
+    n = new ScriptNode("s", "0.0", "0.0", "0.0",
+                       "from fab import Shape;input('_reserved', Shape);input('_reserved', Shape)");
+    QVERIFY(n->getDatum("script")->getValid() == false);
+    QVERIFY(n->getDatum("_reserved") != NULL);
+
     delete n;
 }
 
