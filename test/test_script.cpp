@@ -166,6 +166,17 @@ void TestScript::MakeShapeOutput()
     QVERIFY(n->getDatum("script")->getValid() == true);
     QVERIFY(n->getDatum("q") != NULL);
     QVERIFY(dynamic_cast<ShapeOutputDatum*>(n->getDatum("q")));
-    QVERIFY(dynamic_cast<ShapeOutputDatum*>(n->getDatum("q"))->getValid());
+    QVERIFY(n->getDatum("q")->getValid());
+
+    QSignalSpy s(n->getDatum("q"), SIGNAL(changed()));
+    QSignalSpy d(n->getDatum("q"), SIGNAL(destroyed()));
+    dynamic_cast<ScriptDatum*>(n->getDatum("script"))->setExpr("from fab import shapes; output('q', shapes.circle(0,0,2))");
+    QCOMPARE(s.count(), 1);
+    QCOMPARE(d.count(), 0);
+
+    dynamic_cast<ScriptDatum*>(n->getDatum("script"))->setExpr("print('hi there')");
+    QVERIFY(n->getDatum("script")->getValid() == true);
+    QVERIFY(n->getDatum("q") == NULL);
+
     delete n;
 }
