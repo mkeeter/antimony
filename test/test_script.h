@@ -50,6 +50,10 @@ private slots:
     /** Use a datum from another node in a script.
      */
     void UseOtherDatum();
+
+    /** Create a shape output
+     */
+    void MakeShapeOutput();
 };
 
 #endif // TEST_SCRIPT_H

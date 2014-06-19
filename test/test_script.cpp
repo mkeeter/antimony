@@ -8,6 +8,7 @@
 #include "datum/script_datum.h"
 #include "datum/shape_datum.h"
 #include "datum/float_datum.h"
+#include "datum/output_datum.h"
 
 #include "node/meta/script_node.h"
 #include "node/3d/point3d_node.h"
@@ -156,5 +157,15 @@ void TestScript::UseOtherDatum()
     QVERIFY(n->getDatum("script")->getValid() == true);
 
     delete p;
+    delete n;
+}
+
+void TestScript::MakeShapeOutput()
+{
+    ScriptNode* n = new ScriptNode("s", "0.0", "0.0", "0.0", "from fab import shapes; output('q', shapes.circle(0,0,1))");
+    QVERIFY(n->getDatum("script")->getValid() == true);
+    QVERIFY(n->getDatum("q") != NULL);
+    QVERIFY(dynamic_cast<ShapeOutputDatum*>(n->getDatum("q")));
+    QVERIFY(dynamic_cast<ShapeOutputDatum*>(n->getDatum("q"))->getValid());
     delete n;
 }
