@@ -120,9 +120,9 @@ void TestScript::InvalidInputNames()
     QVERIFY(n->getDatum("_reserved") == NULL);
 
     n = new ScriptNode("s", "0.0", "0.0", "0.0",
-                       "from fab import Shape;input('_reserved', Shape);input('_reserved', Shape)");
+                       "from fab import Shape;input('dupe', Shape);input('dupe', Shape)");
     QVERIFY(n->getDatum("script")->getValid() == false);
-    QVERIFY(n->getDatum("_reserved") != NULL);
+    QVERIFY(n->getDatum("dupe") != NULL);
 
     delete n;
 }
