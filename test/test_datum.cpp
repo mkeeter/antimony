@@ -103,7 +103,19 @@ void TestDatum::SingleInputLinkDelete()
 
     QVERIFY(a->hasInputValue() == false);
     QVERIFY(s.count() == 1);
+
+    b = new FloatDatum("b", "2!");
+    a->addLink(b->linkFrom());
+
+    QVERIFY(a->hasInputValue() == true);
+    QVERIFY(s.count() == 2);
+
+    a->deleteLink(b);
+    QVERIFY(a->hasInputValue() == false);
+    QVERIFY(s.count() == 3);
+
     delete a;
+    delete b;
 }
 
 void TestDatum::NameValidate()
