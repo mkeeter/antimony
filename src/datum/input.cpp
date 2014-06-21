@@ -111,7 +111,10 @@ PyObject* ShapeInputHandler::getValue() const
     PyObject* or_function = PyUnicode_FromString("__or__");
     for (auto i : in)
     {
-        if (i.isNull())
+        // We check to see if the pointer has been deleted or has been reduced
+        // to a QObject (because destroyed is emitted before complete destruction,
+        // see note above in SingleInputHandler::hasInput)
+        if (i.isNull() || dynamic_cast<Datum*>(i->parent()) == NULL)
         {
             continue;
         }

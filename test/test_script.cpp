@@ -104,7 +104,10 @@ void TestScript::ChangeFloatInput()
     ScriptNode* n = new ScriptNode("s", "0.0", "0.0", "0.0", "input('q', float); print(q)");
 
     QSignalSpy s(n->getDatum("script"), SIGNAL(changed()));
-    dynamic_cast<FloatDatum*>(n->getDatum("q"))->setExpr("1.0");
+
+    // We change the datum to something invalid, otherwise the script's output
+    // will be the same (since it would remain None and valid).
+    dynamic_cast<FloatDatum*>(n->getDatum("q"))->setExpr("q.0");
     QCOMPARE(s.count(), 1);
 
     delete n;

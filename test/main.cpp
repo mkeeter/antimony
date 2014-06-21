@@ -11,6 +11,7 @@
 #include "test_fab.h"
 #include "test_shape.h"
 #include "test_script.h"
+#include "test_function.h"
 
 int main(int argc, char *argv[])
 {
@@ -53,6 +54,11 @@ int main(int argc, char *argv[])
 
     if (!out) {
         TestScript t;
+        out = QTest::qExec(&t, argc, argv);
+    }
+
+    if (!out) {
+        TestFunction t;
         out = QTest::qExec(&t, argc, argv);
     }
 

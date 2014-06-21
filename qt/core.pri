@@ -13,7 +13,8 @@ SOURCES += \
     ../src/datum/name_datum.cpp \
     ../src/datum/script_datum.cpp \
     ../src/node/3d/point3d_node.cpp \
-    ../src/datum/output_datum.cpp
+    ../src/datum/output_datum.cpp \
+    ../src/datum/function_datum.cpp
 
 HEADERS += \
     ../src/datum/datum.h \
@@ -30,7 +31,8 @@ HEADERS += \
     ../src/datum/name_datum.h \
     ../src/datum/script_datum.h \
     ../src/node/3d/point3d_node.h \
-    ../src/datum/output_datum.h
+    ../src/datum/output_datum.h \
+    ../src/datum/function_datum.h
 
 
 INCLUDEPATH += ../src

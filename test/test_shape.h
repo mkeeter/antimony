@@ -17,6 +17,14 @@ private slots:
     /** Confirm that the shape output datum is behaving as expected.
      */
     void ShapeOutput();
+
+    /** Put an input into a ShapeDatum and make sure it works.
+     */
+    void ShapeInput();
+
+    /** Put multiple inputs into a ShapeDatum; they should be OR'ed.
+     */
+    void MultiShapeInput();
 };
 
 #endif // TEST_SHAPE_H

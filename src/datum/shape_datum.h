@@ -11,14 +11,20 @@ class ShapeDatum : public Datum
 public:
     explicit ShapeDatum(QString name, QObject* parent=0);
 
-    /** Overload function to get the current value; always fails
-     *  (because the shape will always from the input handler)
-     */
-    virtual PyObject* getCurrentValue() override { return NULL; }
-
     /** Returns the python Shape class.
      */
     virtual PyTypeObject* getType() const override { return fab::ShapeType; }
+
+    /** User editing is always forbidden.
+     */
+    virtual bool canEdit() const override { return false; }
+
+protected:
+    /** Overload function to get the current value; always fails
+     *  (because the shape will always come from the input handler)
+     */
+    virtual PyObject* getCurrentValue() override { return NULL; }
+
 };
 
 #endif // SHAPE_DATUM_H
