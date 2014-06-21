@@ -43,6 +43,12 @@ Link* Datum::linkFrom()
 void Datum::addLink(Link* input)
 {
     input_handler->addInput(input);
+    connect(input, SIGNAL(destroyed()), this, SLOT(update()));
+}
+
+void Datum::deleteLink(Datum* upstream)
+{
+    input_handler->deleteInput(upstream);
 }
 
 void Datum::update()

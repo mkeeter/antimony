@@ -31,6 +31,10 @@ public:
     /** Returns True if this input handler has a value to offer.
      */
     virtual bool hasInput() const=0;
+
+    /** Delete the link to a particular upstream datum.
+     */
+    virtual void deleteInput(Datum* d)=0;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -44,6 +48,7 @@ public:
     virtual bool accepts(Link* input) const override;
     virtual void addInput(Link* input) override;
     virtual bool hasInput() const override;
+    virtual void deleteInput(Datum* d) override;
 protected:
     QPointer<Link> in;
 };
@@ -59,6 +64,7 @@ public:
     virtual bool accepts(Link* input) const override;
     virtual void addInput(Link* input) override;
     virtual bool hasInput() const override;
+    virtual void deleteInput(Datum* d) override;
 protected:
     /** Removes inactive input pointers from the list.
      */

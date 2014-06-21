@@ -7,6 +7,7 @@
 #include "datum/output_datum.h"
 #include "datum/function_datum.h"
 #include "datum/float_datum.h"
+#include "datum/link.h"
 
 #include "node/3d/point3d_node.h"
 
@@ -70,6 +71,27 @@ void TestShape::MultiShapeInput()
 
     QSignalSpy s(d, SIGNAL(changed()));
     dynamic_cast<FloatDatum*>(p->getDatum("z"))->setExpr("2.0");
+    QVERIFY(d->getValid() == true);
+    QCOMPARE(s.count(), 1);
+
+    delete p;
+    delete d;
+}
+
+void TestShape::DeleteInput()
+{
+    Point3D* p = new Point3D("p", "0.0", "1.0", "!.0");
+    ShapeFunctionDatum* a = new ShapeFunctionDatum("a", p, "circle", {"x","y","z"});
+
+    ShapeDatum* d = new ShapeDatum("d");
+    Link* link = a->linkFrom();
+
+    d->addLink(link);
+    QVERIFY(d->getValid() == false);
+
+    QSignalSpy s(d, SIGNAL(changed()));
+    delete link;
+
     QVERIFY(d->getValid() == true);
     QCOMPARE(s.count(), 1);
 

@@ -25,6 +25,10 @@ private slots:
     /** Put multiple inputs into a ShapeDatum; they should be OR'ed.
      */
     void MultiShapeInput();
+
+    /** Put multiple inputs into a ShapeDatum, then delete them.
+     */
+    void DeleteInput();
 };
 
 #endif // TEST_SHAPE_H

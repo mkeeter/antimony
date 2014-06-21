@@ -76,6 +76,13 @@ bool SingleInputHandler::hasInput() const
     return d != NULL;
 }
 
+void SingleInputHandler::deleteInput(Datum *d)
+{
+    Q_ASSERT(!in.isNull() && in->parent() == d);
+    delete in;
+    in.clear();
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 ShapeInputHandler::ShapeInputHandler(Datum* parent)
@@ -170,6 +177,7 @@ bool ShapeInputHandler::accepts(Link* input) const
 
 void ShapeInputHandler::addInput(Link* input)
 {
+    prune();
     in << QPointer<Link>(input);
     dynamic_cast<Datum*>(parent())->update();
 }
@@ -203,4 +211,19 @@ int ShapeInputHandler::inputCount() const
         }
     }
     return count;
+}
+
+void ShapeInputHandler::deleteInput(Datum *d)
+{
+    bool found = false;
+    for (auto i : in)
+    {
+        if (!i.isNull() && i->parent() == d)
+        {
+            delete i;
+            found = true;
+        }
+    }
+    Q_ASSERT(found);
+    prune();
 }
