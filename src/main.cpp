@@ -3,7 +3,8 @@
 #include <QApplication>
 #include <QDebug>
 
-#include "mainwindow.h"
+#include "ui/main_window.h"
+#include "app.h"
 #include "cpp/fab.h"
 
 int main(int argc, char *argv[])
@@ -11,12 +12,9 @@ int main(int argc, char *argv[])
     fab::preInit();
     Py_Initialize();
     fab::postInit();
-    PyRun_InteractiveLoop(stdin, "<stdin>");
+    //PyRun_InteractiveLoop(stdin, "<stdin>");
 
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
-
+    App a(argc, argv);
     int out = a.exec();
 
     Py_Finalize();

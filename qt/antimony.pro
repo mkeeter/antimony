@@ -9,7 +9,18 @@ include(core.pri)
 
 SOURCES += \
     ../src/main.cpp \
-    ../src/mainwindow.cpp \
+    ../src/ui/main_window.cpp \
+    ../src/ui/view_selector.cpp \
+    ../src/ui/canvas.cpp \
+    ../src/app.cpp
 
 HEADERS += \
-    ../src/mainwindow.h
+    ../src/ui/main_window.h \
+    ../src/ui/view_selector.h \
+    ../src/ui/canvas.h \
+    ../src/app.h
+
+FORMS += \
+    ../src/ui/forms/main_window.ui \
+    ../src/ui/forms/view_selector.ui \
+    ../src/ui/forms/viewer.ui \

@@ -15,7 +15,16 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <property name="margin">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
      <number>0</number>
     </property>
     <item row="0" column="0">
@@ -203,7 +212,7 @@
   <customwidget>
    <class>ViewSelector</class>
    <extends>QWidget</extends>
-   <header>.view_selector.h</header>
+   <header>../src/ui/view_selector.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

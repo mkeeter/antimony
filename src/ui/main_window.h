@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+class Canvas;
+
 namespace Ui {
 class MainWindow;
 }
@@ -16,7 +18,19 @@ public:
     ~MainWindow();
 
 private:
+    /** Creates a canvas widget and adds it to the window.
+     */
+    void addCanvas();
+
+    /** Sets up main keyboard shortcuts
+     *  (because Qt Designer doesn't have a good way to do so)
+     */
+    void setShortcuts();
+
     Ui::MainWindow *ui;
+    Canvas* canvas;
+
+    friend class App;
 };
 
 #endif // MAIN_WINDOW_H
