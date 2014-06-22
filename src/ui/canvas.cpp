@@ -1,3 +1,5 @@
+#include <QMouseEvent>
+
 #include "canvas.h"
 
 Canvas::Canvas(QWidget* parent)
@@ -22,4 +24,28 @@ QMatrix4x4 Canvas::getMatrix() const
     M.rotate(yaw,   QVector3D(0, 0, 1));
 
     return M;
+}
+
+QPointF Canvas::worldToScene(QVector3D v) const
+{
+    QMatrix4x4 M = getMatrix();
+    QVector3D w = M * v;
+    return QPointF(w.x(), w.y());
+}
+
+QVector3D Canvas::sceneToWorld(QPointF p) const
+{
+    QMatrix4x4 M = getMatrix().inverted();
+    return M * QVector3D(p.x(), p.y(), 0);
+}
+
+void Canvas::mousePressEvent(QMouseEvent *event)
+{
+    QGraphicsView::mousePressEvent(event);
+    // bla bla bla save mouse position here
+}
+
+void Canvas::pan(QPointF d)
+{
+    setSceneRect(sceneRect().translated(d));
 }

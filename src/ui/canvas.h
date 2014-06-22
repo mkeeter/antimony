@@ -16,8 +16,24 @@ public:
      */
     QMatrix4x4 getMatrix() const;
 
-protected:
+    /** Transforms points from world to scene coordinates.
+     */
+    QPointF worldToScene(QVector3D v) const;
+
+    /** On mouse press, save mouse down position.
+     */
+    virtual void mousePressEvent(QMouseEvent *event) override;
+
+    /** Transforms points from scene to world coordinates.
+     */
+    QVector3D sceneToWorld(QPointF p) const;
+
     QGraphicsScene* scene;
+
+protected:
+    /** Pans the scene rectangle.
+     */
+    void pan(QPointF d);
 
     float scale;
     float pitch;
