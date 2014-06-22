@@ -25,6 +25,18 @@ private slots:
     /** Create a new node, making another node valid. */
     void NewNodeCreation();
 
+    /** Assign p.x = p.x and make sure it fails.
+     */
+    void DirectRecursiveConnection();
+
+    /** Assign p.x = p.y, p.y = p.x and make sure it fails.
+     */
+    void LoopingRecursiveConnection();
+
+    /** More complicated recursive connection.
+     */
+    void ComplexRecursiveConnection();
+
 };
 
 #endif // TEST_NODE_H

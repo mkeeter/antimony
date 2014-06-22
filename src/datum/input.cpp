@@ -29,9 +29,7 @@ PyObject* SingleInputHandler::getValue() const
     Q_ASSERT(source);
     Q_ASSERT(target);
 
-    target->connectUpstream(source);
-
-    if (source->getValid())
+    if (target->connectUpstream(source) && source->getValid())
     {
         PyObject* v = source->getValue();
         Py_INCREF(v);
@@ -133,9 +131,7 @@ PyObject* ShapeInputHandler::getValue() const
         Q_ASSERT(source);
         Q_ASSERT(target);
 
-        target->connectUpstream(source);
-
-        valid &= source->getValid();
+        valid &= target->connectUpstream(source) && source->getValid();
 
         if (!valid)
         {

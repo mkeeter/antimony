@@ -81,9 +81,7 @@ PyObject* ScriptDatum::makeInput(QString name, PyTypeObject *type)
     }
 
     // When this input changes, the script datum should update.
-    connectUpstream(d);
-
-    if (d->getValid())
+    if (connectUpstream(d) && d->getValid())
     {
         PyDict_SetItemString(globals, name.toStdString().c_str(), d->getValue());
     }

@@ -3,7 +3,8 @@
 
 #include <Python.h>
 #include <QObject>
-#include <QSet>
+#include <QList>
+#include <QPointer>
 
 class InputHandler;
 class Link;
@@ -52,8 +53,9 @@ public:
     void deleteLink(Datum* upstream);
 
     /** Connects the argument as an upstream Datum.
+     *  Returns false if there's a recursive loop.
      */
-    void connectUpstream(Datum* upstream);
+    bool connectUpstream(Datum* upstream);
 
 signals:
     /** Emitted when value, valid, or editable changes.
@@ -87,6 +89,7 @@ protected:
 
     InputHandler* input_handler;
 
+    QList<QPointer<Datum>> _upstream;
     bool _once;
 };
 

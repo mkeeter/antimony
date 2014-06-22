@@ -63,6 +63,8 @@ void Datum::update()
 
     // Request that all upstream datums disconnect.
     emit disconnectFrom(this);
+    _upstream.clear();
+    _upstream << this;
 
     PyObject* new_value;
     if (hasInputValue())
@@ -117,9 +119,15 @@ void Datum::onDisconnectRequest(Datum* downstream)
     disconnect(this, 0, downstream, 0);
 }
 
-void Datum::connectUpstream(Datum* upstream)
+bool Datum::connectUpstream(Datum* upstream)
 {
+    if (upstream->_upstream.contains(this))
+    {
+        return false;
+    }
+    _upstream << upstream->_upstream;
     connect(upstream, &Datum::changed,   this, &Datum::update);
     connect(upstream, &Datum::destroyed, this, &Datum::update);
     connect(this, &Datum::disconnectFrom, upstream, &Datum::onDisconnectRequest);
+    return true;
 }

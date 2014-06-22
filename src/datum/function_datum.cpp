@@ -38,16 +38,21 @@ PyObject* FunctionDatum::getCurrentValue()
 
         if (d)
         {
-            connectUpstream(d);
-            if (d->getValid())
+            if (connectUpstream(d) && d->getValid())
             {
                 PyObject* v = d->getValue();
                 Py_INCREF(v);
                 PyTuple_SetItem(args, count++, v);
             }
+            else
+            {
+                success = false;
+            }
         }
-
-        success &= (d && d->getValid());
+        else
+        {
+            success = false;
+        }
     }
 
     PyObject* out = success ? PyObject_CallObject(function, args) : NULL;

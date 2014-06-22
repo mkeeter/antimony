@@ -6,6 +6,7 @@
 #include "test_node.h"
 
 #include "datum/name_datum.h"
+#include "datum/float_datum.h"
 #include "node/3d/point3d_node.h"
 #include "node/manager.h"
 
@@ -65,3 +66,31 @@ void TestNode::NewNodeCreation()
     delete b;
 }
 
+
+void TestNode::DirectRecursiveConnection()
+{
+    Point3D* a = new Point3D("a", "a.x", "0.0", "0.0");
+    QVERIFY(a->getDatum("x")->getValid() == false);
+    delete a;
+}
+
+void TestNode::LoopingRecursiveConnection()
+{
+    Point3D* a = new Point3D("a", "a.y", "a.x", "0.0");
+    QVERIFY(a->getDatum("x")->getValid() == false);
+    QVERIFY(a->getDatum("y")->getValid() == false);
+    delete a;
+}
+
+void TestNode::ComplexRecursiveConnection()
+{
+    Point3D* a = new Point3D("a", "0.0", "a.x", "0.0");
+    QVERIFY(a->getDatum("x")->getValid() == true);
+    QVERIFY(a->getDatum("y")->getValid() == true);
+
+    dynamic_cast<FloatDatum*>(a->getDatum("x"))->setExpr("a.y");
+    QVERIFY(a->getDatum("x")->getValid() == false);
+    QVERIFY(a->getDatum("y")->getValid() == false);
+
+    delete a;
+}

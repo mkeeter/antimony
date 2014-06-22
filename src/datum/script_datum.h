@@ -3,7 +3,7 @@
 
 #include <Python.h>
 
-#include <string>
+#include <QSet>
 #include <QString>
 #include <QMap>
 
