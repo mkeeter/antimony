@@ -19,6 +19,7 @@ public:
     /** Transforms points from world to scene coordinates.
      */
     QPointF worldToScene(QVector3D v) const;
+    QVector<QPointF> worldToScene(QVector<QVector3D> v) const;
 
     /** On mouse press, save mouse down position.
      */

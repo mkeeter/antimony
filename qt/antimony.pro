@@ -13,14 +13,16 @@ SOURCES += \
     ../src/ui/view_selector.cpp \
     ../src/ui/canvas.cpp \
     ../src/app.cpp \
-    ../src/control/control.cpp
+    ../src/control/control.cpp \
+    ../src/control/axes_control.cpp
 
 HEADERS += \
     ../src/ui/main_window.h \
     ../src/ui/view_selector.h \
     ../src/ui/canvas.h \
     ../src/app.h \
-    ../src/control/control.h
+    ../src/control/control.h \
+    ../src/control/axes_control.h
 
 FORMS += \
     ../src/ui/forms/main_window.ui \

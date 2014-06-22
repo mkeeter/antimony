@@ -65,4 +65,15 @@ protected:
     QPointF _click_pos;
 };
 
+
+/** A DummyControl is non-interactive by default and below all other controls.
+ */
+class DummyControl : public Control
+{
+    Q_OBJECT
+public:
+    explicit DummyControl(Canvas* canvas, Node* node, QGraphicsItem* parent=0);
+    virtual void drag(QVector3D center, QVector3D delta) override;
+};
+
 #endif // CONTROL_H

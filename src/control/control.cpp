@@ -100,3 +100,22 @@ void Control::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     _click_pos = event->pos();
     _dragged = true;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+DummyControl::DummyControl(Canvas *canvas, Node *node, QGraphicsItem *parent)
+    : Control(canvas, node, parent)
+{
+    setFlag(QGraphicsItem::ItemIsSelectable, false);
+    setAcceptHoverEvents(false);
+    setZValue(-10);
+}
+
+void DummyControl::drag(QVector3D center, QVector3D delta)
+{
+    Q_UNUSED(center);
+    Q_UNUSED(delta);
+
+    // A DummyControl should never be dragged.
+    Q_ASSERT(false);
+}

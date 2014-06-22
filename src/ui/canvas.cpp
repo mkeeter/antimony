@@ -1,6 +1,7 @@
 #include <QMouseEvent>
 
 #include "canvas.h"
+#include "control/axes_control.h"
 
 Canvas::Canvas(QWidget* parent)
     : QGraphicsView(parent), scene(new QGraphicsScene(parent)),
@@ -12,6 +13,8 @@ Canvas::Canvas(QWidget* parent)
 
     setSceneRect(-width()/2, -height()/2, width(), height());
     setRenderHints(QPainter::Antialiasing);
+
+    new AxesControl(this);
 }
 
 QMatrix4x4 Canvas::getMatrix() const
@@ -31,6 +34,16 @@ QPointF Canvas::worldToScene(QVector3D v) const
     QMatrix4x4 M = getMatrix();
     QVector3D w = M * v;
     return QPointF(w.x(), w.y());
+}
+
+QVector<QPointF> Canvas::worldToScene(QVector<QVector3D> v) const
+{
+    QVector<QPointF> out;
+    for (auto p : v)
+    {
+        out << worldToScene(p);
+    }
+    return out;
 }
 
 QVector3D Canvas::sceneToWorld(QPointF p) const
