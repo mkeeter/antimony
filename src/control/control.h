@@ -56,6 +56,10 @@ protected:
      */
     virtual void drag(QVector3D center, QVector3D delta)=0;
 
+    /** Gets the value of a specific datum (which must be a double).
+     */
+    double getValue(QString name);
+
     Canvas* canvas;
     Node* node;
     NodeViewer* viewer;

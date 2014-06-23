@@ -1,4 +1,7 @@
 #include <QMouseEvent>
+#include <QDebug>
+
+#include <cmath>
 
 #include "canvas.h"
 #include "control/axes_control.h"
@@ -23,8 +26,8 @@ QMatrix4x4 Canvas::getMatrix() const
 
     // Remember that these operations are applied in reverse order.
     M.scale(scale, -scale, scale);
-    M.rotate(pitch, QVector3D(1, 0, 0));
-    M.rotate(yaw,   QVector3D(0, 0, 1));
+    M.rotate(pitch * 180 / M_PI, QVector3D(1, 0, 0));
+    M.rotate(yaw  *  180 / M_PI, QVector3D(0, 0, 1));
 
     return M;
 }
@@ -55,10 +58,51 @@ QVector3D Canvas::sceneToWorld(QPointF p) const
 void Canvas::mousePressEvent(QMouseEvent *event)
 {
     QGraphicsView::mousePressEvent(event);
-    // bla bla bla save mouse position here
+    if (!event->isAccepted())
+    {
+        if (event->button() == Qt::LeftButton)
+        {
+            _click_pos = mapToScene(event->pos());
+        }
+        else
+        {
+            _click_pos = event->pos();
+        }
+    }
+}
+
+void Canvas::mouseMoveEvent(QMouseEvent *event)
+{
+    QGraphicsView::mouseMoveEvent(event);
+    if (mouseGrabber() == NULL)
+    {
+        if (event->buttons() == Qt::LeftButton)
+        {
+            pan(_click_pos - mapToScene(event->pos()));
+        }
+        else if (event->buttons() == Qt::RightButton)
+        {
+            QPointF d = _click_pos - event->pos();
+            pitch = fmin(0, fmax(-M_PI, pitch - 0.01 * d.y()));
+            yaw = fmod(yaw + M_PI - 0.01 * d.x(), M_PI*2) - M_PI;
+
+            _click_pos = event->pos();
+            update();
+            emit(viewChanged());
+        }
+    }
+}
+
+void Canvas::wheelEvent(QWheelEvent *event)
+{
+    QVector3D a = sceneToWorld(mapToScene(event->pos()));
+    scale *= pow(1.001, -event->delta());
+    QVector3D b = sceneToWorld(mapToScene(event->pos()));
+    pan(worldToScene(a - b));
 }
 
 void Canvas::pan(QPointF d)
 {
     setSceneRect(sceneRect().translated(d));
+    emit(viewChanged());
 }
