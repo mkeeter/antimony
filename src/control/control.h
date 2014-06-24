@@ -91,6 +91,7 @@ class DummyControl : public Control
 public:
     explicit DummyControl(Canvas* canvas, Node* node, QGraphicsItem* parent=0);
     virtual void drag(QVector3D center, QVector3D delta) override;
+    virtual QPainterPath shape() const;
 };
 
 #endif // CONTROL_H

@@ -81,7 +81,7 @@ void Canvas::mousePressEvent(QMouseEvent *event)
 void Canvas::mouseMoveEvent(QMouseEvent *event)
 {
     QGraphicsView::mouseMoveEvent(event);
-    if (mouseGrabber() == NULL)
+    if (scene->mouseGrabberItem() == NULL)
     {
         if (event->buttons() == Qt::LeftButton)
         {

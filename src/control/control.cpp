@@ -174,3 +174,8 @@ void DummyControl::drag(QVector3D center, QVector3D delta)
     // A DummyControl should never be dragged.
     Q_ASSERT(false);
 }
+
+QPainterPath DummyControl::shape() const
+{
+    return QPainterPath();
+}

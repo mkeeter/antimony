@@ -46,4 +46,5 @@ void Point3DControl::drag(QVector3D center, QVector3D delta)
     dragValue("x", delta.x());
     dragValue("y", delta.y());
     dragValue("z", delta.z());
+    prepareGeometryChange();
 }
