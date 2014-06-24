@@ -15,7 +15,8 @@ SOURCES += \
     ../src/app.cpp \
     ../src/control/control.cpp \
     ../src/control/axes_control.cpp \
-    ../src/control/3d/point3d_control.cpp
+    ../src/control/3d/point3d_control.cpp \
+    ../src/ui/colors.cpp
 
 HEADERS += \
     ../src/ui/main_window.h \
@@ -24,7 +25,8 @@ HEADERS += \
     ../src/app.h \
     ../src/control/control.h \
     ../src/control/axes_control.h \
-    ../src/control/3d/point3d_control.h
+    ../src/control/3d/point3d_control.h \
+    ../src/ui/colors.h
 
 FORMS += \
     ../src/ui/forms/main_window.ui \

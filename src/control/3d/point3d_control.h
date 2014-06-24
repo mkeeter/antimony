@@ -2,7 +2,9 @@
 #define POINT3D_CONTROL_H
 
 #include <Python.h>
+
 #include <QObject>
+#include <QVector3D>
 
 #include "control/control.h"
 
@@ -21,9 +23,16 @@ public:
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                        QWidget *widget) override;
 
+    /** Returns a painter path shape for selection.
+     */
+    virtual QPainterPath shape() const override;
+
     /** Drags the point in x, y, and z.
      */
     virtual void drag(QVector3D center, QVector3D delta) override;
+
+protected:
+    QVector3D position() const;
 
 signals:
 

@@ -7,6 +7,10 @@
 #include "control/control.h"
 #include "node/node.h"
 #include "ui/canvas.h"
+#include "ui/colors.h"
+
+#include "datum/datum.h"
+#include "datum/float_datum.h"
 
 Control::Control(Canvas* canvas, Node* node, QGraphicsItem* parent)
     : QGraphicsObject(parent), canvas(canvas), node(node), viewer(NULL),
@@ -99,6 +103,57 @@ void Control::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
     _click_pos = event->pos();
     _dragged = true;
+}
+
+double Control::getValue(QString name) const
+{
+    Datum* d = node->getDatum(name);
+    Q_ASSERT(d);
+
+    double v = PyFloat_AsDouble(d->getValue());
+    Q_ASSERT(!PyErr_Occurred());
+
+    return v;
+}
+
+void Control::dragValue(QString name, double delta)
+{
+    Datum* d = node->getDatum(name);
+    Q_ASSERT(d);
+
+    FloatDatum* f = dynamic_cast<FloatDatum*>(d);
+    Q_ASSERT(f);
+
+    bool ok = false;
+    double v = f->getExpr().toFloat(&ok);
+    if (ok)
+    {
+        f->setExpr(QString::number(v + delta));
+    }
+}
+
+void Control::setDefaultPen(QPainter *painter) const
+{
+    if (isSelected() or _hover)
+    {
+        painter->setPen(QPen(Colors::base3, 2));
+    }
+    else
+    {
+        painter->setPen(QPen(Colors::base3_d, 2));
+    }
+}
+
+void Control::setDefaultBrush(QPainter *painter) const
+{
+    if (isSelected() or _hover)
+    {
+        painter->setBrush(QBrush(Colors::base1_h));
+    }
+    else
+    {
+        painter->setBrush(QBrush(Colors::base1));
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

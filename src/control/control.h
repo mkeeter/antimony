@@ -58,7 +58,20 @@ protected:
 
     /** Gets the value of a specific datum (which must be a double).
      */
-    double getValue(QString name);
+    double getValue(QString name) const;
+
+    /** Attempts to drag a particular datum's value.
+     */
+    void dragValue(QString name, double delta);
+
+    /** Sets the painter pen to a reasonable default value.
+     */
+    void setDefaultPen(QPainter* painter) const;
+
+    /** Sets the painter brush to a reasonable value.
+     */
+    void setDefaultBrush(QPainter* painter) const;
+
 
     Canvas* canvas;
     Node* node;
