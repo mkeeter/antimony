@@ -128,7 +128,7 @@ void Control::dragValue(QString name, double delta)
     double v = f->getExpr().toFloat(&ok);
     if (ok)
     {
-        f->setExpr(QString::number(v + delta));
+        f->setExpr(QString::number(v + delta, 'f', 4));
     }
 }
 
