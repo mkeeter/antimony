@@ -59,8 +59,16 @@ bool NameDatum::isKeyword(PyObject* v)
     return result;
 }
 
-bool NameDatum::validatePyObject(PyObject *v) const
+PyObject* NameDatum::validatePyObject(PyObject *v) const
 {
     NameDatum* match = NodeManager::manager()->findMatchingName(v);
-    return (match == NULL || match == this) && !isKeyword(v);
+    if ((match == NULL || match == this) && !isKeyword(v))
+    {
+        return v;
+    }
+    else
+    {
+        Py_DECREF(v);
+        return NULL;
+    }
 }

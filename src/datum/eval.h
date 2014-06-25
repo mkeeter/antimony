@@ -23,15 +23,15 @@ protected:
 
     /** Validation function called on Python object.
      */
-    virtual bool validatePyObject(PyObject* v) const;
+    virtual PyObject* validatePyObject(PyObject* v) const;
 
     /** Validation function called on expression before evalution.
      */
     virtual bool validateExpr(QString e) const;
 
-    /** Validation function that checks object type.
+    /** Validation function that checks object type and attempts to cast.
      */
-    virtual bool validateType(PyObject* v) const;
+    virtual PyObject* validateType(PyObject* v) const;
 
     /** Function that returns the desired start token for PyRun_String
      */

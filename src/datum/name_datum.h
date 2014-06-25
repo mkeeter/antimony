@@ -16,7 +16,7 @@ public slots:
     void onNameChange();
 protected:
     virtual QString prepareExpr(QString s) const override;
-    virtual bool validatePyObject(PyObject* v) const override;
+    virtual PyObject* validatePyObject(PyObject* v) const override;
     virtual bool validateExpr(QString e) const override;
 
     /** Checks if the given object collides with a Python keyword.

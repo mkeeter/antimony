@@ -11,6 +11,8 @@ void TestDatum::FloatValid()
 {
     FloatDatum* d = new FloatDatum("x","12.3");
     QVERIFY(d->getValid() == true);
+    d->setExpr("1");
+    QVERIFY(d->getValid() == true);
     delete d;
 }
 

@@ -15,10 +15,9 @@ QString EvalDatum::prepareExpr(QString s) const
     return s;
 }
 
-bool EvalDatum::validatePyObject(PyObject* v) const
+PyObject* EvalDatum::validatePyObject(PyObject* v) const
 {
-    Q_UNUSED(v);
-    return true;
+    return v;
 }
 
 bool EvalDatum::validateExpr(QString e) const
@@ -27,9 +26,27 @@ bool EvalDatum::validateExpr(QString e) const
     return true;
 }
 
-bool EvalDatum::validateType(PyObject* v) const
+PyObject* EvalDatum::validateType(PyObject* v) const
 {
-    return PyObject_TypeCheck(v, getType());
+    if (v == NULL)
+    {
+        return NULL;
+    } else if (PyObject_TypeCheck(v, getType())) {
+        return v;
+    }
+    else
+    {
+        // Attempt to cast into the desired type.
+        PyObject* out = PyObject_CallFunctionObjArgs((PyObject*)getType(), v, NULL);
+        Py_DECREF(v);
+
+        if (PyErr_Occurred())
+        {
+            Q_ASSERT(out == NULL);
+            PyErr_Clear();
+        }
+        return out;
+    }
 }
 
 int EvalDatum::getStartToken() const
@@ -60,7 +77,7 @@ PyObject* EvalDatum::getCurrentValue()
                  e.toStdString().c_str(),
                  getStartToken(), globals, locals);
 
-        if (new_value == NULL)
+        if (PyErr_Occurred())
         {
             PyErr_Print();
             PyErr_Clear();
@@ -69,12 +86,7 @@ PyObject* EvalDatum::getCurrentValue()
         Py_DECREF(globals);
         Py_DECREF(locals);
 
-        if (new_value != NULL && (!validateType(new_value) ||
-                                  !validatePyObject(new_value)))
-        {
-            Py_DECREF(new_value);
-            new_value = NULL;
-        }
+        new_value = validatePyObject(validateType(new_value));
     }
     return new_value;
 }
