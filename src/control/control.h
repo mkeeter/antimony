@@ -27,6 +27,9 @@ public:
      */
     QRectF boundingBox(QVector<QVector3D> points, int padding=10) const;
 
+    /** Returns this control's relevant node.
+     */
+    Node* getNode() { return node; }
 protected:
     /** On hover enter, set _hover to true and update.
      */
