@@ -12,12 +12,15 @@
 #include "ui/viewer.h"
 #include "datum/datum.h"
 #include "control/control.h"
-
+#include "node/node.h"
 
 NodeViewer::NodeViewer(Control* control)
     : QWidget(NULL), ui(new Ui::NodeViewer), _mask_size(0)
 {
     ui->setupUi(this);
+    ui->title->setText(QString("<b>") +
+                       control->getNode()->metaObject()->className() +
+                       QString("</b>"));
     populateGrid(control->getNode());
 
     connect(ui->closeButton, SIGNAL(clicked()), this, SLOT(animateClose()));
