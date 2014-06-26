@@ -7,3 +7,8 @@ ShapeDatum::ShapeDatum(QString name, QObject* parent)
     input_handler = new ShapeInputHandler(this);
     update();
 }
+
+QString ShapeDatum::getString() const
+{
+    return input_handler->getString();
+}

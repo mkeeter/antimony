@@ -100,7 +100,7 @@ void Control::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     QVector3D p1 = canvas->sceneToWorld(event->pos());
 
     drag(p1, p1 - p0);
-
+    canvas->update();
     _click_pos = event->pos();
     _dragged = true;
 }

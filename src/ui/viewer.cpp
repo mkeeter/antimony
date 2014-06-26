@@ -51,8 +51,6 @@ void NodeViewer::setMaskSize(float m)
     QSize full = sizeHint();
     setMask(QRegion(0, 0, full.width()*m + 1, full.height()*m + 1));
     proxy->update();
-
-    qDebug() << m;
 }
 
 void NodeViewer::redrawProxy()
@@ -91,7 +89,14 @@ void NodeViewer::paintEvent(QPaintEvent *)
 
 void NodeViewer::populateGrid(Node *node)
 {
-    // Nothing to do here.. yet
+    for (Datum* d : node->findChildren<Datum*>())
+    {
+        if (d->objectName().startsWith("_"))
+            continue;
+        int row = ui->grid->rowCount();
+        ui->grid->addWidget(new QLabel(d->objectName()), row, 1, Qt::AlignRight);
+        ui->grid->addWidget(new _DatumLineEdit(d), row, 2);
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

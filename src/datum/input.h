@@ -35,6 +35,10 @@ public:
     /** Delete the link to a particular upstream datum.
      */
     virtual void deleteInput(Datum* d)=0;
+
+    /** Return a string suitable for diplay in a node viewer.
+     */
+    virtual QString getString() const=0;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -49,6 +53,7 @@ public:
     virtual void addInput(Link* input) override;
     virtual bool hasInput() const override;
     virtual void deleteInput(Datum* d) override;
+    virtual QString getString() const override;
 protected:
     QPointer<Link> in;
 };
@@ -65,6 +70,7 @@ public:
     virtual void addInput(Link* input) override;
     virtual bool hasInput() const override;
     virtual void deleteInput(Datum* d) override;
+    virtual QString getString() const override;
 protected:
     /** Removes inactive input pointers from the list.
      */

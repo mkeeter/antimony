@@ -35,6 +35,10 @@ public:
      */
     virtual bool canEdit() const;
 
+    /** Returns a string suitable for display in a node viewer.
+     */
+    virtual QString getString() const=0;
+
     /** Creates a link that comes from this Datum with destination unknown.
      */
     Link* linkFrom();
@@ -56,7 +60,6 @@ public:
      *  Returns false if there's a recursive loop.
      */
     bool connectUpstream(Datum* upstream);
-
 signals:
     /** Emitted when value, valid, or editable changes.
      */

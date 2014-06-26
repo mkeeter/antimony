@@ -2,6 +2,7 @@
 #include <QDebug>
 
 #include "datum/eval.h"
+#include "datum/input.h"
 #include "node/manager.h"
 
 EvalDatum::EvalDatum(QString name, QObject *parent) :
@@ -97,5 +98,17 @@ void EvalDatum::setExpr(QString new_expr)
     {
         expr = new_expr;
         update();
+    }
+}
+
+QString EvalDatum::getString() const
+{
+    if (hasInputValue())
+    {
+        return input_handler->getString();
+    }
+    else
+    {
+        return expr;
     }
 }

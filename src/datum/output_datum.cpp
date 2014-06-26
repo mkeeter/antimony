@@ -29,6 +29,11 @@ PyObject* OutputDatum::getCurrentValue()
     return new_value;
 }
 
+QString OutputDatum::getString() const
+{
+    return "Ouput";
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 ShapeOutputDatum::ShapeOutputDatum(QString name, QObject* parent)

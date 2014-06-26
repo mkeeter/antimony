@@ -81,6 +81,12 @@ void SingleInputHandler::deleteInput(Datum *d)
     in.clear();
 }
 
+QString SingleInputHandler::getString() const
+{
+    Q_ASSERT(!in.isNull());
+    return dynamic_cast<Datum*>(in->parent())->getString();
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 ShapeInputHandler::ShapeInputHandler(Datum* parent)
@@ -222,4 +228,20 @@ void ShapeInputHandler::deleteInput(Datum *d)
     }
     Q_ASSERT(found);
     prune();
+}
+
+QString ShapeInputHandler::getString() const
+{
+    if (in.length() == 0)
+    {
+        return QString("No inputs.");
+    }
+    else if (in.length() == 1)
+    {
+        return QString("1 input.");
+    }
+    else
+    {
+        return QString::number(in.length()) + " inputs";
+    }
 }

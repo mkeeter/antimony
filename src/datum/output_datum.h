@@ -11,6 +11,7 @@ public:
     explicit OutputDatum(QString name, QObject* parent=0);
     ~OutputDatum();
     void setNewValue(PyObject* p);
+    virtual QString getString() const override;
 
 protected:
     /** Get the "current" value from new_value.

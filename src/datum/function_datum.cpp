@@ -61,6 +61,11 @@ PyObject* FunctionDatum::getCurrentValue()
     return out;
 }
 
+QString FunctionDatum::getString() const
+{
+    return function_name;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 ShapeFunctionDatum::ShapeFunctionDatum(QString name, QObject* parent,

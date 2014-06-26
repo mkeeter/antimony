@@ -20,6 +20,8 @@ public:
      */
     virtual bool canEdit() const override { return false; }
 
+    virtual QString getString() const override;
+
 protected:
     /** Must return a new reference to a module containing the target function.
      */

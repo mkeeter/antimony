@@ -19,6 +19,8 @@ public:
      */
     virtual bool canEdit() const override { return false; }
 
+    virtual QString getString() const override;
+
 protected:
     /** Overload function to get the current value; always fails
      *  (because the shape will always come from the input handler)

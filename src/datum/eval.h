@@ -21,6 +21,10 @@ protected:
      */
     virtual PyObject* getCurrentValue() override;
 
+    /** Returns a string suitable for display in a node viewer.
+     */
+    virtual QString getString() const override;
+
     /** Validation function called on Python object.
      */
     virtual PyObject* validatePyObject(PyObject* v) const;

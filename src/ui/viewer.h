@@ -61,7 +61,7 @@ class _DatumLineEdit : public QLineEdit
 {
     Q_OBJECT
 public:
-    _DatumLineEdit(Datum* datum, QWidget* parent);
+    _DatumLineEdit(Datum* datum, QWidget* parent=0);
 public slots:
     void onDatumChanged();
 };
