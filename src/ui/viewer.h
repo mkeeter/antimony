@@ -38,7 +38,7 @@ public slots:
      */
     void animateClose();
 
-private:
+protected:
 
     /** Fills in the grid from the source node.
      */
