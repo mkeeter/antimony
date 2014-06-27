@@ -5,6 +5,7 @@
 #include <QPropertyAnimation>
 #include <QGraphicsScene>
 #include <QGraphicsProxyWidget>
+#include <QTimer>
 
 #include "ui_viewer.h"
 
@@ -13,6 +14,8 @@
 #include "datum/datum.h"
 #include "control/control.h"
 #include "node/node.h"
+
+////////////////////////////////////////////////////////////////////////////////
 
 NodeViewer::NodeViewer(Control* control)
     : QWidget(NULL), ui(new Ui::NodeViewer), _mask_size(0)
@@ -25,14 +28,12 @@ NodeViewer::NodeViewer(Control* control)
 
     connect(ui->closeButton, SIGNAL(clicked()), this, SLOT(animateClose()));
 
-    // Fix weird graphics glitches related to proxy widget
-    connect(ui->closeButton, SIGNAL(pressed()), this, SLOT(redrawProxy()));
-    connect(ui->closeButton, SIGNAL(released()), this, SLOT(redrawProxy()));
-
     proxy = control->scene()->addWidget(this);
     proxy->setZValue(-2);
     proxy->setFocusPolicy(Qt::TabFocus);
     animateOpen();
+
+    installEventFilter(new _DrawFilter(this));
 }
 
 NodeViewer::~NodeViewer()
@@ -53,9 +54,10 @@ void NodeViewer::setMaskSize(float m)
     proxy->update();
 }
 
-void NodeViewer::redrawProxy()
+void NodeViewer::redraw()
 {
-    proxy->update();
+    update();
+    //proxy->update();
 }
 
 void NodeViewer::animateClose()
@@ -109,4 +111,22 @@ _DatumLineEdit::_DatumLineEdit(Datum *datum, QWidget *parent)
 void _DatumLineEdit::onDatumChanged()
 {
     // Do nothing here yet
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+_DrawFilter::_DrawFilter(NodeViewer *viewer)
+    : QObject(viewer), viewer(viewer)
+{
+    // Nothing to do here.
+}
+
+bool _DrawFilter::eventFilter(QObject *o, QEvent *e)
+{
+    Q_UNUSED(o);
+    if (e->type() == QEvent::Paint)
+    {
+        QTimer::singleShot(0, viewer, SLOT(redraw()));
+    }
+    return false;
 }

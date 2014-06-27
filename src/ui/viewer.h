@@ -28,7 +28,7 @@ public slots:
     /** Redraws the proxy widget
      *  (used to prevent graphical glitches)
      */
-    void redrawProxy();
+    void redraw();
 
     /** Animates sliding open.
      */
@@ -64,6 +64,19 @@ public:
     _DatumLineEdit(Datum* datum, QWidget* parent=0);
 public slots:
     void onDatumChanged();
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+class _DrawFilter : public QObject
+{
+    Q_OBJECT
+public:
+    _DrawFilter(NodeViewer* viewer);
+    bool eventFilter(QObject* o, QEvent* e);
+
+protected:
+    NodeViewer* viewer;
 };
 
 #endif // VIEWER_H
