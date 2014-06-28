@@ -101,6 +101,9 @@ void TestDatum::RecursiveLink()
     a->addLink(b->linkFrom());
 
     Q_ASSERT(b->acceptsLink(a->linkFrom()) == false);
+
+    delete a;
+    delete b;
 }
 
 void TestDatum::SingleInputLinkDelete()

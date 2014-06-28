@@ -68,4 +68,7 @@ void TestProxy::DatumNameChange()
     QVERIFY(b->getDatum("x")->getValid() == true);
     a->getDatum<NameDatum>("name")->setExpr("q");
     QVERIFY(b->getDatum("x")->getValid() == false);
+
+    delete a;
+    delete b;
 }
