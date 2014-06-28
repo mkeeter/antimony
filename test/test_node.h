@@ -37,6 +37,9 @@ private slots:
      */
     void ComplexRecursiveConnection();
 
+    /** If a recursive connection is fixed, all nodes should become valid
+     */
+    void ModifyRecursiveConnection();
 };
 
 #endif // TEST_NODE_H

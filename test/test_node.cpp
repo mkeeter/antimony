@@ -94,3 +94,16 @@ void TestNode::ComplexRecursiveConnection()
 
     delete a;
 }
+
+void TestNode::ModifyRecursiveConnection()
+{
+    Point3D* a = new Point3D("a", "0.0", "0.0", "0.0");
+    dynamic_cast<FloatDatum*>(a->getDatum("x"))->setExpr("a.y");
+    dynamic_cast<FloatDatum*>(a->getDatum("y"))->setExpr("a.x");
+    dynamic_cast<FloatDatum*>(a->getDatum("x"))->setExpr("1.0");
+
+    a->getDatum("y")->update();
+    QVERIFY(a->getDatum("x")->getValid() == true);
+    QVERIFY(a->getDatum("y")->getValid() == true);
+
+}
