@@ -104,4 +104,5 @@ void TestNode::ModifyRecursiveConnection()
 
     QVERIFY(a->getDatum("x")->getValid() == true);
     QVERIFY(a->getDatum("y")->getValid() == true);
+    delete a;
 }
