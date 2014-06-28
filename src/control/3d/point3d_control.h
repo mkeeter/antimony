@@ -31,6 +31,8 @@ public:
      */
     virtual void drag(QVector3D center, QVector3D delta) override;
 
+    virtual QPointF inspectorPosition() const override;
+
 protected:
     QVector3D position() const;
 

@@ -48,3 +48,8 @@ void Point3DControl::drag(QVector3D center, QVector3D delta)
     dragValue("z", delta.z());
     prepareGeometryChange();
 }
+
+QPointF Point3DControl::inspectorPosition() const
+{
+    return canvas->worldToScene(position());
+}

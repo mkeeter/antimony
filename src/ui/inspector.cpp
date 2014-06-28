@@ -9,7 +9,7 @@
 #include <QTextDocument>
 
 #include "ui/canvas.h"
-#include "ui/viewer.h"
+#include "ui/inspector.h"
 
 #include "datum/datum.h"
 #include "datum/eval.h"
@@ -19,7 +19,7 @@
 
 //////////////////////////////////////////r/////////////////////////////////////
 
-NodeViewer::NodeViewer(Control* control)
+NodeInspector::NodeInspector(Control* control)
 {
     populateLists(control->getNode());
     control->scene()->addItem(this);
@@ -28,7 +28,7 @@ NodeViewer::NodeViewer(Control* control)
     animateOpen();
 }
 
-float NodeViewer::labelWidth() const
+float NodeInspector::labelWidth() const
 {
     float label_width = 0;
     for (auto label : labels)
@@ -38,7 +38,7 @@ float NodeViewer::labelWidth() const
     return label_width;
 }
 
-QRectF NodeViewer::boundingRect() const
+QRectF NodeInspector::boundingRect() const
 {
     float height = 0;
     float width = labelWidth() + 10 + 150 + 5;
@@ -50,7 +50,7 @@ QRectF NodeViewer::boundingRect() const
     return QRectF(0, 0, width*mask_size, height*mask_size);
 }
 
-void NodeViewer::onLayoutChanged()
+void NodeInspector::onLayoutChanged()
 {
     float label_width = labelWidth();
     float x = 0;
@@ -67,7 +67,7 @@ void NodeViewer::onLayoutChanged()
     prepareGeometryChange();
 }
 
-void NodeViewer::populateLists(Node *node)
+void NodeInspector::populateLists(Node *node)
 {
     for (Datum* d : node->findChildren<Datum*>())
     {
@@ -81,7 +81,7 @@ void NodeViewer::populateLists(Node *node)
     onLayoutChanged();
 }
 
-void NodeViewer::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+void NodeInspector::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                        QWidget *widget)
 {
     Q_UNUSED(option);
@@ -92,7 +92,7 @@ void NodeViewer::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     painter->drawRect(boundingRect());
 }
 
-void NodeViewer::animateClose()
+void NodeInspector::animateClose()
 {
     // Take focus away from text entry box to prevent graphical artifacts
     QPropertyAnimation* a = new QPropertyAnimation(this, "mask_size", this);
@@ -103,7 +103,7 @@ void NodeViewer::animateClose()
     a->start(QPropertyAnimation::DeleteWhenStopped);
 }
 
-void NodeViewer::animateOpen()
+void NodeInspector::animateOpen()
 {
     QPropertyAnimation* a = new QPropertyAnimation(this, "mask_size", this);
     a->setDuration(100);
@@ -112,12 +112,12 @@ void NodeViewer::animateOpen()
     a->start(QPropertyAnimation::DeleteWhenStopped);
 }
 
-float NodeViewer::getMaskSize() const
+float NodeInspector::getMaskSize() const
 {
     return mask_size;
 }
 
-void NodeViewer::setMaskSize(float m)
+void NodeInspector::setMaskSize(float m)
 {
     mask_size = m;
     prepareGeometryChange();

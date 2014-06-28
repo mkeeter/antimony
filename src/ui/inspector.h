@@ -1,5 +1,5 @@
-#ifndef VIEWER_H
-#define VIEWER_H
+#ifndef INSPECTOR_H
+#define INSPECTOR_H
 
 #include <QWidget>
 #include <QLineEdit>
@@ -31,12 +31,12 @@ protected:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class NodeViewer : public QGraphicsObject
+class NodeInspector : public QGraphicsObject
 {
     Q_OBJECT
 
 public:
-    explicit NodeViewer(Control* control);
+    explicit NodeInspector(Control* control);
 
     virtual QRectF boundingRect() const override;
 
@@ -75,4 +75,4 @@ protected:
     float mask_size;
 };
 
-#endif // VIEWER_H
+#endif // INSPECTOR_H

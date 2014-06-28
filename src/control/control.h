@@ -6,7 +6,7 @@
 // Forward declarations
 class Canvas;
 class Node;
-class NodeViewer;
+class NodeInspector;
 
 class Control : public QGraphicsObject
 {
@@ -32,12 +32,20 @@ public:
     Node* getNode() { return node; }
 
 protected slots:
-    void redraw() { prepareGeometryChange(); }
+    void redraw();
+
+signals:
+    void inspectorPositionChanged();
+
 protected:
 
     /** Mark a set of datums as causing a re-render when changed.
      */
     void watchDatums(QVector<QString> datums);
+
+    /** Returns the desired editor point (in scene coordinates)
+     */
+    virtual QPointF inspectorPosition() const { return QPointF(); }
 
     /** On hover enter, set _hover to true and update.
      */
@@ -86,7 +94,7 @@ protected:
 
     Canvas* canvas;
     Node* node;
-    NodeViewer* viewer;
+    NodeInspector* viewer;
 
     bool _hover;
     bool _dragged;

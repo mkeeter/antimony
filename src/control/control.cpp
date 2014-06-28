@@ -57,6 +57,12 @@ void Control::watchDatums(QVector<QString> datums)
     }
 }
 
+void Control::redraw()
+{
+    prepareGeometryChange();
+    emit(inspectorPositionChanged());
+}
+
 void Control::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event);

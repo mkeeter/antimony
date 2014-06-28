@@ -12,7 +12,7 @@
 // Only including these files for debugging purposes
 #include "node/3d/point3d_node.h"
 #include "control/3d/point3d_control.h"
-#include "ui/viewer.h"
+#include "ui/inspector.h"
 
 Canvas::Canvas(QWidget* parent)
     : QGraphicsView(parent), scene(new QGraphicsScene(parent)),
@@ -28,7 +28,7 @@ Canvas::Canvas(QWidget* parent)
     new AxesControl(this);
     Point3D* p = new Point3D("p","0.0","0.0","0.0");
     auto c = new Point3DControl(this, p);
-    new NodeViewer(c);
+    new NodeInspector(c);
 }
 
 QMatrix4x4 Canvas::getMatrix() const

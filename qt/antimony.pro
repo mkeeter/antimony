@@ -9,7 +9,7 @@ include(core.pri)
 
 SOURCES += \
     ../src/main.cpp \
-    ../src/ui/viewer.cpp \
+    ../src/ui/inspector.cpp \
     ../src/ui/main_window.cpp \
     ../src/ui/view_selector.cpp \
     ../src/ui/canvas.cpp \
@@ -21,7 +21,7 @@ SOURCES += \
 
 HEADERS += \
     ../src/ui/main_window.h \
-    ../src/ui/viewer.h \
+    ../src/ui/inspector.h \
     ../src/ui/view_selector.h \
     ../src/ui/canvas.h \
     ../src/app.h \
