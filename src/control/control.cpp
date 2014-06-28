@@ -6,8 +6,10 @@
 
 #include "control/control.h"
 #include "node/node.h"
+
 #include "ui/canvas.h"
 #include "ui/colors.h"
+#include "ui/inspector.h"
 
 #include "datum/datum.h"
 #include "datum/float_datum.h"
@@ -89,9 +91,13 @@ void Control::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     {
         dynamic_cast<Control*>(parentObject())->mouseDoubleClickEvent(event);
     }
-    else if (viewer == NULL)
+    else if (viewer.isNull())
     {
-        // Open up a node viewer here.
+        viewer = new NodeInspector(this);
+    }
+    else
+    {
+        viewer->animateClose();
     }
 }
 

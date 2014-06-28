@@ -2,6 +2,7 @@
 #define CONTROL_H
 
 #include <QGraphicsObject>
+#include <QPointer>
 
 // Forward declarations
 class Canvas;
@@ -51,7 +52,6 @@ protected:
      */
     void watchDatums(QVector<QString> datums);
 
-
     /** On hover enter, set _hover to true and update.
      */
     virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
@@ -99,7 +99,7 @@ protected:
 
     Canvas* canvas;
     Node* node;
-    NodeInspector* viewer;
+    QPointer<NodeInspector> viewer;
 
     bool _hover;
     bool _dragged;

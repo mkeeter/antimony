@@ -28,9 +28,11 @@ NodeInspector::NodeInspector(Control* control)
             this, SLOT(onPositionChange()));
 
     populateLists(control->getNode());
-    control->scene()->addItem(this);
     setZValue(-2);
     setFlag(ItemClipsChildrenToShape);
+
+    onPositionChange();
+    control->scene()->addItem(this);
     animateOpen();
 }
 

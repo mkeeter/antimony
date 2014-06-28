@@ -28,7 +28,6 @@ Canvas::Canvas(QWidget* parent)
     new AxesControl(this);
     Point3D* p = new Point3D("p","0.0","0.0","0.0");
     auto c = new Point3DControl(this, p);
-    new NodeInspector(c);
 }
 
 QMatrix4x4 Canvas::getMatrix() const
