@@ -45,7 +45,7 @@ public:
 
     /** Returns True if this datum can accept the given link.
      */
-    bool acceptsLink(Link* upstream) const;
+    bool acceptsLink(Link* upstream);
 
     /** Adds the given link to this datum's input handler.
      */

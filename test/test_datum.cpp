@@ -94,6 +94,15 @@ void TestDatum::SingleInputLink()
     delete b;
 }
 
+void TestDatum::RecursiveLink()
+{
+    FloatDatum* a = new FloatDatum("a", "1");
+    FloatDatum* b = new FloatDatum("a", "1");
+    a->addLink(b->linkFrom());
+
+    Q_ASSERT(b->acceptsLink(a->linkFrom()) == false);
+}
+
 void TestDatum::SingleInputLinkDelete()
 {
     FloatDatum* a = new FloatDatum("a", "1");

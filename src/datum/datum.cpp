@@ -30,8 +30,12 @@ bool Datum::canEdit() const
     return !hasInputValue();
 }
 
-bool Datum::acceptsLink(Link* upstream) const
+bool Datum::acceptsLink(Link* upstream)
 {
+    if (dynamic_cast<Datum*>(upstream->parent())->_upstream.contains(this))
+    {
+        return false;
+    }
     return input_handler->accepts(upstream);
 }
 

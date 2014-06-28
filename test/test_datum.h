@@ -32,6 +32,9 @@ private slots:
     /** Set up a link to a single input handler. */
     void SingleInputLink();
 
+    /** Attempt to make a recursive link. */
+    void RecursiveLink();
+
     /** Delete a link to a single input handler. */
     void SingleInputLinkDelete();
 
