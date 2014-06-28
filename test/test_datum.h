@@ -44,9 +44,6 @@ private slots:
     /** Check name validation. */
     void NameValidate();
 
-    /** Check name pre-processing. */
-    void NamePrepare();
-
 };
 
 #endif // TEST_DATUM_H

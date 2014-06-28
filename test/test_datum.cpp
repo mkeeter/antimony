@@ -161,13 +161,3 @@ void TestDatum::NameValidate()
     QVERIFY(d->getValid() == false);
     delete d;
 }
-
-void TestDatum::NamePrepare()
-{
-    NameDatum* d = new NameDatum("a", "hello");
-    QSignalSpy s(d, SIGNAL(changed()));
-    d->setExpr("   hello   ");
-    QVERIFY(s.count() == 0);
-
-    delete d;
-}
