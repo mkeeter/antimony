@@ -127,19 +127,17 @@ void Datum::update()
 
 void Datum::onDisconnectRequest(Datum* downstream)
 {
-    disconnect(downstream, 0, this, 0);
-    disconnect(this, 0, downstream, 0);
+    disconnect(downstream, &Datum::disconnectFrom,
+               this, &Datum::onDisconnectRequest);
+    disconnect(this, &Datum::changed, downstream, &Datum::update);
+    disconnect(this, &Datum::destroyed, downstream, &Datum::update);
 }
 
 bool Datum::connectUpstream(Datum* upstream)
 {
-    if (upstream->_upstream.contains(this))
-    {
-        return false;
-    }
     _upstream << upstream->_upstream;
     connect(upstream, &Datum::changed,   this, &Datum::update);
     connect(upstream, &Datum::destroyed, this, &Datum::update);
     connect(this, &Datum::disconnectFrom, upstream, &Datum::onDisconnectRequest);
-    return true;
+    return upstream->_upstream.contains(this) ? false : true;
 }
