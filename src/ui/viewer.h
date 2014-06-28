@@ -5,53 +5,9 @@
 #include <QLineEdit>
 #include <QGraphicsProxyWidget>
 
-namespace Ui {
-class NodeViewer;
-}
-
+class Datum;
 class Control;
 class Node;
-
-class NodeViewer : public QWidget
-{
-    Q_OBJECT
-
-public:
-    explicit NodeViewer(Control* control);
-    ~NodeViewer();
-
-    /* Override paintEvent so that the widget can be styled using qss.
-     */
-    void paintEvent(QPaintEvent *) override;
-
-protected:
-
-    /** Fills in the grid from the source node.
-     */
-    void populateGrid(Node* node);
-
-    Ui::NodeViewer *ui;
-    QGraphicsProxyWidget* proxy;
-};
-
-////////////////////////////////////////////////////////////////////////////////
-
-class Datum;
-
-class _DatumLineEdit : public QLineEdit
-{
-    Q_OBJECT
-public:
-    _DatumLineEdit(Datum* datum, QWidget* parent=0);
-public slots:
-    void onDatumChanged();
-    void onTextChanged(QString txt);
-    void contextMenuEvent(QContextMenuEvent *) {}
-protected:
-    Datum* d;
-};
-
-////////////////////////////////////////////////////////////////////////////////
 
 class _DatumTextItem : public QGraphicsTextItem
 {
@@ -71,6 +27,37 @@ protected:
     QTextDocument* txt;
     QColor background;
     QRectF bbox;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+class NodeViewer : public QGraphicsObject
+{
+    Q_OBJECT
+
+public:
+    explicit NodeViewer(Control* control);
+
+    virtual QRectF boundingRect() const override;
+
+    virtual void paint(QPainter *painter,
+                       const QStyleOptionGraphicsItem *option,
+                       QWidget *widget) override;
+
+public slots:
+    void onLayoutChanged();
+
+protected:
+    /** Returns the width of the largest label.
+     */
+    float labelWidth() const;
+
+    /** Fills in the grid from the source node.
+     */
+    void populateLists(Node* node);
+
+    QList<QGraphicsTextItem*> labels;
+    QList<_DatumTextItem*> editors;
 };
 
 #endif // VIEWER_H

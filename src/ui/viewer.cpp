@@ -8,8 +8,6 @@
 #include <QTimer>
 #include <QTextDocument>
 
-#include "ui_viewer.h"
-
 #include "ui/canvas.h"
 #include "ui/viewer.h"
 
@@ -19,91 +17,77 @@
 #include "control/control.h"
 #include "node/node.h"
 
-////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////r/////////////////////////////////////
 
 NodeViewer::NodeViewer(Control* control)
-    : QWidget(NULL), ui(new Ui::NodeViewer)
 {
-    ui->setupUi(this);
-    ui->title->setText(QString("<b>") +
-                       control->getNode()->metaObject()->className() +
-                       QString("</b>"));
-    populateGrid(control->getNode());
-
-    connect(ui->closeButton, SIGNAL(clicked()), this, SLOT(deleteLater()));
-
-    proxy = control->scene()->addWidget(this);
-    proxy->setZValue(-2);
-    proxy->setFocusPolicy(Qt::TabFocus);
-
-    new _DatumTextItem(control->getNode()->getDatum("x"), proxy);
+    populateLists(control->getNode());
+    control->scene()->addItem(this);
+    setZValue(-2);
+    setFlag(ItemClipsChildrenToShape);
 }
 
-NodeViewer::~NodeViewer()
+float NodeViewer::labelWidth() const
 {
-    delete ui;
+    float label_width = 0;
+    for (auto label : labels)
+    {
+        label_width = fmax(label_width, label->boundingRect().width());
+    }
+    return label_width;
 }
 
-void NodeViewer::paintEvent(QPaintEvent *)
+QRectF NodeViewer::boundingRect() const
 {
-    QStyleOption o;
-    o.initFrom(this);
-    QPainter p(this);
-    style()->drawPrimitive(QStyle::PE_Widget, &o, &p, this);
-    proxy->update();
+    float height = 0;
+    float width = labelWidth() + 10 + 150 + 5;
+
+    for (auto e : editors)
+    {
+        height += e->boundingRect().height() + 6;
+    }
+    return QRectF(0, 0, width, height);
 }
 
-void NodeViewer::populateGrid(Node *node)
+void NodeViewer::onLayoutChanged()
+{
+    float label_width = labelWidth();
+    float x = 0;
+    float y = 0;
+    for (int i=0; i < labels.length(); ++i)
+    {
+        float dy = fmax(labels[i]->boundingRect().height(),
+                        editors[i]->boundingRect().height());
+        labels[i]->setPos(x + label_width - labels[i]->boundingRect().width(),
+                          y + 3);
+        editors[i]->setPos(x + label_width + 10, y + 3);
+        y += dy + 6;
+    }
+}
+
+void NodeViewer::populateLists(Node *node)
 {
     for (Datum* d : node->findChildren<Datum*>())
     {
         if (d->objectName().startsWith("_"))
             continue;
-        int row = ui->grid->rowCount();
-        ui->grid->addWidget(new QLabel(d->objectName()), row, 1, Qt::AlignRight);
-        ui->grid->addWidget(new _DatumLineEdit(d), row, 2);
+        labels << new QGraphicsTextItem(d->objectName(), this);
+        editors << new _DatumTextItem(d, this);
+        connect(editors.back(), SIGNAL(boundsChanged()),
+                this, SLOT(onLayoutChanged()));
     }
+    onLayoutChanged();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-_DatumLineEdit::_DatumLineEdit(Datum *datum, QWidget *parent)
-    : QLineEdit(parent), d(datum)
+void NodeViewer::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+                       QWidget *widget)
 {
-    onDatumChanged();
-    connect(datum, SIGNAL(changed()), this, SLOT(onDatumChanged()));
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
 
-    connect(this, SIGNAL(textEdited(QString)),
-            this, SLOT(onTextChanged(QString)));
-    // Nothing to do here
-}
-
-void _DatumLineEdit::onDatumChanged()
-{
-    int p = cursorPosition();
-    setText(d->getString());
-    setCursorPosition(p);
-
-    setEnabled(d->canEdit());
-
-    if (d->getValid())
-    {
-        setStyleSheet("QLineEdit:disabled { color: #ccc; }");
-    }
-    else
-    {
-        setStyleSheet("QLineEdit:disabled { color: #ccc; }\n"
-                      "QLineEdit { background-color: #faa; }");
-    }
-}
-
-void _DatumLineEdit::onTextChanged(QString txt)
-{
-    EvalDatum* e = dynamic_cast<EvalDatum*>(d);
-    if (e && e->canEdit())
-    {
-        e->setExpr(txt);
-    }
+    painter->setBrush(QColor("#ddd"));
+    painter->setPen(Qt::NoPen);
+    painter->drawRect(boundingRect());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -113,7 +97,7 @@ _DatumTextItem::_DatumTextItem(Datum* datum, QGraphicsItem* parent)
       background(Qt::white)
 {
     setTextInteractionFlags(Qt::TextEditorInteraction);
-    setTextWidth(200);
+    setTextWidth(150);
     connect(datum, SIGNAL(changed()), this, SLOT(onDatumChanged()));
     onDatumChanged();
 
@@ -146,7 +130,6 @@ void _DatumTextItem::onTextChanged()
 {
     if (bbox != boundingRect())
     {
-        qDebug() << "bbox changed!";
         bbox = boundingRect();
         emit boundsChanged();
     }
@@ -154,7 +137,6 @@ void _DatumTextItem::onTextChanged()
     EvalDatum* e = dynamic_cast<EvalDatum*>(d);
     if (e && e->canEdit())
     {
-        qDebug() << "Setting expr";
         e->setExpr(txt->toPlainText());
     }
 }
