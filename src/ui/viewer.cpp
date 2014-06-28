@@ -6,6 +6,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsProxyWidget>
 #include <QTimer>
+#include <QTextDocument>
 
 #include "ui_viewer.h"
 
@@ -34,6 +35,8 @@ NodeViewer::NodeViewer(Control* control)
     proxy = control->scene()->addWidget(this);
     proxy->setZValue(-2);
     proxy->setFocusPolicy(Qt::TabFocus);
+
+    new _DatumTextItem(control->getNode()->getDatum("x"), proxy);
 }
 
 NodeViewer::~NodeViewer()
@@ -102,3 +105,66 @@ void _DatumLineEdit::onTextChanged(QString txt)
         e->setExpr(txt);
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+_DatumTextItem::_DatumTextItem(Datum* datum, QGraphicsItem* parent)
+    : QGraphicsTextItem("Helloooo", parent), d(datum), txt(document()),
+      background(Qt::white)
+{
+    setTextInteractionFlags(Qt::TextEditorInteraction);
+    setTextWidth(200);
+    connect(datum, SIGNAL(changed()), this, SLOT(onDatumChanged()));
+    onDatumChanged();
+
+    bbox = boundingRect();
+    connect(txt, SIGNAL(contentsChanged()), this, SLOT(onTextChanged()));
+}
+
+void _DatumTextItem::onDatumChanged()
+{
+    QTextCursor cursor = textCursor();
+    int p = textCursor().position();
+    txt->setPlainText(d->getString());
+    cursor.setPosition(p);
+    setTextCursor(cursor);
+
+    setEnabled(d->canEdit());
+
+    if (d->getValid())
+    {
+        background = Qt::white;
+    }
+    else
+    {
+        background = QColor("#faa");
+    }
+
+}
+
+void _DatumTextItem::onTextChanged()
+{
+    if (bbox != boundingRect())
+    {
+        qDebug() << "bbox changed!";
+        bbox = boundingRect();
+        emit boundsChanged();
+    }
+
+    EvalDatum* e = dynamic_cast<EvalDatum*>(d);
+    if (e && e->canEdit())
+    {
+        qDebug() << "Setting expr";
+        e->setExpr(txt->toPlainText());
+    }
+}
+
+void _DatumTextItem::paint(QPainter* painter,
+                           const QStyleOptionGraphicsItem* o,
+                           QWidget* w)
+{
+    painter->setBrush(background);
+    painter->setPen(Qt::NoPen);
+    painter->drawRect(boundingRect());
+    QGraphicsTextItem::paint(painter, o, w);
+};

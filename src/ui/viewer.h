@@ -51,5 +51,26 @@ protected:
     Datum* d;
 };
 
+////////////////////////////////////////////////////////////////////////////////
+
+class _DatumTextItem : public QGraphicsTextItem
+{
+    Q_OBJECT
+public:
+    _DatumTextItem(Datum* datum, QGraphicsItem* parent);
+public slots:
+    void onTextChanged();
+    void onDatumChanged();
+signals:
+    void boundsChanged();
+protected:
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+               QWidget *widget);
+
+    Datum* d;
+    QTextDocument* txt;
+    QColor background;
+    QRectF bbox;
+};
 
 #endif // VIEWER_H
