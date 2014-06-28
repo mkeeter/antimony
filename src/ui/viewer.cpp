@@ -11,7 +11,10 @@
 
 #include "ui/canvas.h"
 #include "ui/viewer.h"
+
 #include "datum/datum.h"
+#include "datum/eval.h"
+
 #include "control/control.h"
 #include "node/node.h"
 
@@ -62,12 +65,40 @@ void NodeViewer::populateGrid(Node *node)
 ////////////////////////////////////////////////////////////////////////////////
 
 _DatumLineEdit::_DatumLineEdit(Datum *datum, QWidget *parent)
+    : QLineEdit(parent), d(datum)
 {
+    onDatumChanged();
+    connect(datum, SIGNAL(changed()), this, SLOT(onDatumChanged()));
+
+    connect(this, SIGNAL(textEdited(QString)),
+            this, SLOT(onTextChanged(QString)));
     // Nothing to do here
 }
 
 void _DatumLineEdit::onDatumChanged()
 {
-    // Do nothing here yet
+    int p = cursorPosition();
+    setText(d->getString());
+    setCursorPosition(p);
+
+    setEnabled(d->canEdit());
+
+    if (d->getValid())
+    {
+        setStyleSheet("QLineEdit:disabled { color: #ccc; }");
+    }
+    else
+    {
+        setStyleSheet("QLineEdit:disabled { color: #ccc; }\n"
+                      "QLineEdit { background-color: #faa; }");
+    }
 }
 
+void _DatumLineEdit::onTextChanged(QString txt)
+{
+    EvalDatum* e = dynamic_cast<EvalDatum*>(d);
+    if (e && e->canEdit())
+    {
+        e->setExpr(txt);
+    }
+}

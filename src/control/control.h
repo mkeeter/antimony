@@ -30,7 +30,15 @@ public:
     /** Returns this control's relevant node.
      */
     Node* getNode() { return node; }
+
+protected slots:
+    void redraw() { prepareGeometryChange(); }
 protected:
+
+    /** Mark a set of datums as causing a re-render when changed.
+     */
+    void watchDatums(QVector<QString> datums);
+
     /** On hover enter, set _hover to true and update.
      */
     virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;

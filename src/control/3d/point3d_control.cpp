@@ -8,7 +8,7 @@
 Point3DControl::Point3DControl(Canvas* canvas, Node* node)
     : Control(canvas, node)
 {
-    // Nothing to do here
+    watchDatums({"x","y","z"});
 }
 
 QVector3D Point3DControl::position() const

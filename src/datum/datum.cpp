@@ -107,6 +107,14 @@ void Datum::update()
         has_changed = true;
     }
 
+    // If the string representation has changed, then emit changed
+    // so that node viewers can modify their text values.
+    if (getString() != repr)
+    {
+        repr = getString();
+        has_changed = true;
+    }
+
     if (has_changed)
     {
         emit changed();

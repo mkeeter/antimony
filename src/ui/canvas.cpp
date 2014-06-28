@@ -2,6 +2,7 @@
 
 #include <QMouseEvent>
 #include <QDebug>
+#include <QGridLayout>
 
 #include <cmath>
 

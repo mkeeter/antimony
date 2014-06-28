@@ -89,6 +89,7 @@ protected:
     bool valid;
 
     bool editable;
+    QString repr;
 
     InputHandler* input_handler;
 

@@ -45,6 +45,11 @@ public:
     _DatumLineEdit(Datum* datum, QWidget* parent=0);
 public slots:
     void onDatumChanged();
+    void onTextChanged(QString txt);
+    void contextMenuEvent(QContextMenuEvent *) {}
+protected:
+    Datum* d;
 };
+
 
 #endif // VIEWER_H
