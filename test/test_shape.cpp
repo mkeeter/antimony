@@ -70,7 +70,7 @@ void TestShape::MultiShapeInput()
     QVERIFY(d->getValid() == false);
 
     QSignalSpy s(d, SIGNAL(changed()));
-    dynamic_cast<FloatDatum*>(p->getDatum("z"))->setExpr("2.0");
+    p->getDatum<FloatDatum>("z")->setExpr("2.0");
     QVERIFY(d->getValid() == true);
     QCOMPARE(s.count(), 1);
 

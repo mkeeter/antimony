@@ -19,8 +19,8 @@ TestNode::TestNode(QObject* parent)
 void TestNode::GetDatum()
 {
     Point3D* p = new Point3D("p", "0", "0", "0");
-    QVERIFY(dynamic_cast<NameDatum*>(p->getDatum("name")));
-    QVERIFY(dynamic_cast<NameDatum*>(p->getDatum("name"))->getExpr() == "p");
+    QVERIFY(p->getDatum<NameDatum>("name"));
+    QVERIFY(p->getDatum<NameDatum>("name")->getExpr() == "p");
     delete p;
 }
 
@@ -49,7 +49,7 @@ void TestNode::NameChangeEval()
     QVERIFY(a->getDatum("name")->getValid());
     Point3D* b = new Point3D("p1", "new_name.x", "1.0", "2.0");
     QVERIFY(b->getDatum("x")->getValid() == false);
-    dynamic_cast<NameDatum*>(a->getDatum("name"))->setExpr("new_name");
+    a->getDatum<NameDatum>("name")->setExpr("new_name");
     QVERIFY(b->getDatum("x")->getValid() == true);
     QVERIFY(a->getDatum("x")->getValue() == b->getDatum("x")->getValue());
     delete a;
@@ -88,7 +88,7 @@ void TestNode::ComplexRecursiveConnection()
     QVERIFY(a->getDatum("x")->getValid() == true);
     QVERIFY(a->getDatum("y")->getValid() == true);
 
-    dynamic_cast<FloatDatum*>(a->getDatum("x"))->setExpr("a.y");
+    a->getDatum<FloatDatum>("x")->setExpr("a.y");
     QVERIFY(a->getDatum("x")->getValid() == false);
     QVERIFY(a->getDatum("y")->getValid() == false);
 
@@ -98,9 +98,9 @@ void TestNode::ComplexRecursiveConnection()
 void TestNode::ModifyRecursiveConnection()
 {
     Point3D* a = new Point3D("a", "0.0", "0.0", "0.0");
-    dynamic_cast<FloatDatum*>(a->getDatum("x"))->setExpr("a.y");
-    dynamic_cast<FloatDatum*>(a->getDatum("y"))->setExpr("a.x");
-    dynamic_cast<FloatDatum*>(a->getDatum("x"))->setExpr("1.0");
+    a->getDatum<FloatDatum>("x")->setExpr("a.y");
+    a->getDatum<FloatDatum>("y")->setExpr("a.x");
+    a->getDatum<FloatDatum>("x")->setExpr("1.0");
 
     QVERIFY(a->getDatum("x")->getValid() == true);
     QVERIFY(a->getDatum("y")->getValid() == true);

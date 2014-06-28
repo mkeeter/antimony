@@ -37,7 +37,7 @@ void TestFunction::ChangeInput()
 
     ShapeFunctionDatum* d = new ShapeFunctionDatum("c", p, "circle", {"x","y","z"});
     QSignalSpy s(d, SIGNAL(changed()));
-    dynamic_cast<FloatDatum*>(p->getDatum("x"))->setExpr("1.0");
+    p->getDatum<FloatDatum>("x")->setExpr("1.0");
     QCOMPARE(s.count(), 1);
 
     delete p;

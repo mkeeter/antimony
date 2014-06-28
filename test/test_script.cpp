@@ -95,7 +95,7 @@ void TestScript::CheckFloatInput()
     ScriptNode* n;
     n = new ScriptNode("s", "0.0", "0.0", "0.0", "input('q', float)");
     QVERIFY(n->getDatum("q") != NULL);
-    QVERIFY(dynamic_cast<FloatDatum*>(n->getDatum("q")));
+    QVERIFY(n->getDatum<FloatDatum>("q"));
     delete n;
 }
 
@@ -107,7 +107,7 @@ void TestScript::ChangeFloatInput()
 
     // We change the datum to something invalid, otherwise the script's output
     // will be the same (since it would remain None and valid).
-    dynamic_cast<FloatDatum*>(n->getDatum("q"))->setExpr("q.0");
+    n->getDatum<FloatDatum>("q")->setExpr("q.0");
     QCOMPARE(s.count(), 1);
 
     delete n;
@@ -118,7 +118,7 @@ void TestScript::CheckShapeInput()
     ScriptNode* n;
     n = new ScriptNode("s", "0.0", "0.0", "0.0", "from fab import Shape;input('q', Shape)");
     QVERIFY(n->getDatum("q") != NULL);
-    QVERIFY(dynamic_cast<ShapeDatum*>(n->getDatum("q")));
+    QVERIFY(n->getDatum<ShapeDatum>("q"));
     delete n;
 }
 
@@ -145,13 +145,13 @@ void TestScript::AddThenRemoveDatum()
 {
     ScriptNode* n;
     n = new ScriptNode("s", "0.0", "0.0", "0.0", "input('x', float)");
-    ScriptDatum* d = dynamic_cast<ScriptDatum*>(n->getDatum("script"));
+    ScriptDatum* d = n->getDatum<ScriptDatum>("script");
     QVERIFY(n->getDatum("x") != NULL);
-    QVERIFY(dynamic_cast<FloatDatum*>(n->getDatum("x")));
+    QVERIFY(n->getDatum<FloatDatum>("x"));
 
     d->setExpr("from fab import Shape; input('x', Shape)");
     QVERIFY(n->getDatum("x") != NULL);
-    QVERIFY(dynamic_cast<ShapeDatum*>(n->getDatum("x")));
+    QVERIFY(n->getDatum<ShapeDatum>("x"));
 
     d->setExpr("input('q', float)");
     QVERIFY(n->getDatum("x") == NULL);
@@ -165,7 +165,7 @@ void TestScript::UseOtherDatum()
     QVERIFY(n->getDatum("script")->getValid() == false);
 
     QSignalSpy s(n->getDatum("script"), SIGNAL(changed()));
-    dynamic_cast<FloatDatum*>(p->getDatum("x"))->setExpr("1.0");
+    p->getDatum<FloatDatum>("x")->setExpr("1.0");
 
     QCOMPARE(s.count(), 1);
     QVERIFY(n->getDatum("script")->getValid() == true);
@@ -179,16 +179,16 @@ void TestScript::MakeShapeOutput()
     ScriptNode* n = new ScriptNode("s", "0.0", "0.0", "0.0", "from fab import shapes; output('q', shapes.circle(0,0,1))");
     QVERIFY(n->getDatum("script")->getValid() == true);
     QVERIFY(n->getDatum("q") != NULL);
-    QVERIFY(dynamic_cast<ShapeOutputDatum*>(n->getDatum("q")));
+    QVERIFY(n->getDatum<ShapeOutputDatum>("q"));
     QVERIFY(n->getDatum("q")->getValid());
 
     QSignalSpy s(n->getDatum("q"), SIGNAL(changed()));
     QSignalSpy d(n->getDatum("q"), SIGNAL(destroyed()));
-    dynamic_cast<ScriptDatum*>(n->getDatum("script"))->setExpr("from fab import shapes; output('q', shapes.circle(0,0,2))");
+    n->getDatum<ScriptDatum>("script")->setExpr("from fab import shapes; output('q', shapes.circle(0,0,2))");
     QCOMPARE(s.count(), 1);
     QCOMPARE(d.count(), 0);
 
-    dynamic_cast<ScriptDatum*>(n->getDatum("script"))->setExpr("print('hi there')");
+    n->getDatum<ScriptDatum>("script")->setExpr("print('hi there')");
     QVERIFY(n->getDatum("script")->getValid() == true);
     QVERIFY(n->getDatum("q") == NULL);
 

@@ -19,6 +19,13 @@ public:
     /** Looks up a particular Datum by name, return NULL otherwise. */
     Datum* getDatum(QString name);
 
+    /** getDatum plus a dynamic cast.
+     */
+    template <class T> T* getDatum(QString name)
+    {
+        return dynamic_cast<T*>(getDatum(name));
+    }
+
 protected:
     Control* control;
 };

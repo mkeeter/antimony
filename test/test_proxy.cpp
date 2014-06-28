@@ -66,6 +66,6 @@ void TestProxy::DatumNameChange()
     Point3D* a = new Point3D("a", "0.0", "1.0", "2.0");
     Point3D* b = new Point3D("b", "a.x", "1.0", "2.0");
     QVERIFY(b->getDatum("x")->getValid() == true);
-    dynamic_cast<NameDatum*>(a->getDatum("name"))->setExpr("q");
+    a->getDatum<NameDatum>("name")->setExpr("q");
     QVERIFY(b->getDatum("x")->getValid() == false);
 }

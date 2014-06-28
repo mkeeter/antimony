@@ -61,7 +61,7 @@ PyObject* NodeManager::proxyDict(Datum* caller)
     PyDict_SetItemString(d, "__builtins__", PyEval_GetBuiltins());
     for (Node* n : findChildren<Node*>())
     {
-        NameDatum* name = dynamic_cast<NameDatum*>(n->getDatum("name"));
+        NameDatum* name = n->getDatum<NameDatum>("name");
 
         if (name->getValid())
         {
