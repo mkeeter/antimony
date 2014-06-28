@@ -57,6 +57,10 @@ public slots:
      */
     void animateClose();
 
+    /** Change the position of the inspector window.
+     */
+    void onPositionChange();
+
 protected:
     /** Returns the width of the largest label.
      */
@@ -70,6 +74,7 @@ protected:
     void setMaskSize(float m);
     Q_PROPERTY(float mask_size READ getMaskSize WRITE setMaskSize)
 
+    Control* control;
     QList<QGraphicsTextItem*> labels;
     QList<_DatumTextItem*> editors;
     float mask_size;

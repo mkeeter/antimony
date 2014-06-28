@@ -31,6 +31,14 @@ public:
      */
     Node* getNode() { return node; }
 
+    /** Returns the desired editor point (in scene coordinates)
+     */
+    virtual QPointF inspectorPosition() const { return QPointF(); }
+
+    /** Returns the canvas object in which this control is drawn.
+     */
+    Canvas* getCanvas() { return canvas;}
+
 protected slots:
     void redraw();
 
@@ -43,9 +51,6 @@ protected:
      */
     void watchDatums(QVector<QString> datums);
 
-    /** Returns the desired editor point (in scene coordinates)
-     */
-    virtual QPointF inspectorPosition() const { return QPointF(); }
 
     /** On hover enter, set _hover to true and update.
      */

@@ -110,6 +110,7 @@ void Canvas::wheelEvent(QWheelEvent *event)
     scale *= pow(1.001, -event->delta());
     QVector3D b = sceneToWorld(mapToScene(event->pos()));
     pan(worldToScene(a - b));
+    emit(viewChanged());
 }
 
 void Canvas::pan(QPointF d)

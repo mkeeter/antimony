@@ -20,7 +20,13 @@
 //////////////////////////////////////////r/////////////////////////////////////
 
 NodeInspector::NodeInspector(Control* control)
+    : control(control)
 {
+    connect(control, SIGNAL(inspectorPositionChanged()),
+            this, SLOT(onPositionChange()));
+    connect(control->getCanvas(), SIGNAL(viewChanged()),
+            this, SLOT(onPositionChange()));
+
     populateLists(control->getNode());
     control->scene()->addItem(this);
     setZValue(-2);
@@ -121,6 +127,11 @@ void NodeInspector::setMaskSize(float m)
 {
     mask_size = m;
     prepareGeometryChange();
+}
+
+void NodeInspector::onPositionChange()
+{
+    setPos(control->inspectorPosition());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
