@@ -25,6 +25,7 @@ NodeViewer::NodeViewer(Control* control)
     control->scene()->addItem(this);
     setZValue(-2);
     setFlag(ItemClipsChildrenToShape);
+    animateOpen();
 }
 
 float NodeViewer::labelWidth() const
@@ -46,7 +47,7 @@ QRectF NodeViewer::boundingRect() const
     {
         height += e->boundingRect().height() + 6;
     }
-    return QRectF(0, 0, width, height);
+    return QRectF(0, 0, width*mask_size, height*mask_size);
 }
 
 void NodeViewer::onLayoutChanged()
@@ -56,13 +57,14 @@ void NodeViewer::onLayoutChanged()
     float y = 0;
     for (int i=0; i < labels.length(); ++i)
     {
-        float dy = fmax(labels[i]->boundingRect().height(),
-                        editors[i]->boundingRect().height());
+        float ey = editors[i]->boundingRect().height();
+        float ly = labels[i] ->boundingRect().height();
         labels[i]->setPos(x + label_width - labels[i]->boundingRect().width(),
-                          y + 3);
+                          y + (ey - ly) / 2 + 3);
         editors[i]->setPos(x + label_width + 10, y + 3);
-        y += dy + 6;
+        y += fmax(ey, ly) + 6;
     }
+    prepareGeometryChange();
 }
 
 void NodeViewer::populateLists(Node *node)
@@ -88,6 +90,37 @@ void NodeViewer::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     painter->setBrush(QColor("#ddd"));
     painter->setPen(Qt::NoPen);
     painter->drawRect(boundingRect());
+}
+
+void NodeViewer::animateClose()
+{
+    // Take focus away from text entry box to prevent graphical artifacts
+    QPropertyAnimation* a = new QPropertyAnimation(this, "mask_size", this);
+    a->setDuration(100);
+    a->setStartValue(1);
+    a->setEndValue(0);
+    connect(a, SIGNAL(finished()), this, SLOT(deleteLater()));
+    a->start(QPropertyAnimation::DeleteWhenStopped);
+}
+
+void NodeViewer::animateOpen()
+{
+    QPropertyAnimation* a = new QPropertyAnimation(this, "mask_size", this);
+    a->setDuration(100);
+    a->setStartValue(0);
+    a->setEndValue(1);
+    a->start(QPropertyAnimation::DeleteWhenStopped);
+}
+
+float NodeViewer::getMaskSize() const
+{
+    return mask_size;
+}
+
+void NodeViewer::setMaskSize(float m)
+{
+    mask_size = m;
+    prepareGeometryChange();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

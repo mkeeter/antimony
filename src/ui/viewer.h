@@ -45,7 +45,17 @@ public:
                        QWidget *widget) override;
 
 public slots:
+    /** Updates layout of text labels and fields.
+     */
     void onLayoutChanged();
+
+    /** Animates the window sliding open.
+     */
+    void animateOpen();
+
+    /** Animates the window sliding closed, deleting when done.
+     */
+    void animateClose();
 
 protected:
     /** Returns the width of the largest label.
@@ -56,8 +66,13 @@ protected:
      */
     void populateLists(Node* node);
 
+    float getMaskSize() const;
+    void setMaskSize(float m);
+    Q_PROPERTY(float mask_size READ getMaskSize WRITE setMaskSize)
+
     QList<QGraphicsTextItem*> labels;
     QList<_DatumTextItem*> editors;
+    float mask_size;
 };
 
 #endif // VIEWER_H
