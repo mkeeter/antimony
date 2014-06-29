@@ -74,6 +74,14 @@ PyObject* NodeManager::proxyDict(Datum* caller)
     return d;
 }
 
+void NodeManager::clear()
+{
+    for (auto n : findChildren<Node*>())
+    {
+        delete n;
+    }
+}
+
 NodeManager* NodeManager::manager()
 {
     if (_manager == NULL)

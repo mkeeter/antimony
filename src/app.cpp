@@ -1,3 +1,4 @@
+#include <Python.h>
 #include <QMessageBox>
 
 #include "app.h"

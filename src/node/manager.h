@@ -36,6 +36,10 @@ public:
      */
     NameDatum* findMatchingName(PyObject* proposed) const;
 
+    /** Deletes all nodes.
+     */
+    void clear();
+
 public slots:
     /** Triggers an update on all EvalDatums that use the new name.
      */
