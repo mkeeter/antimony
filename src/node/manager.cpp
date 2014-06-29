@@ -59,6 +59,7 @@ PyObject* NodeManager::proxyDict(Datum* caller)
 {
     PyObject* d = PyDict_New();
     PyDict_SetItemString(d, "__builtins__", PyEval_GetBuiltins());
+    PyDict_SetItemString(d, "math", PyImport_ImportModule("math"));
     for (Node* n : findChildren<Node*>())
     {
         NameDatum* name = n->getDatum<NameDatum>("name");

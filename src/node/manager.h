@@ -15,7 +15,8 @@ public:
 
     /** Returns a Python object suitable for use as a globals dictionary.
      *
-     *  This dictionary contains builtins and nodes indexing to proxies.
+     *  This dictionary contains builtins and nodes indexing to proxies,
+     *  as well as the built-in math module.
      */
     PyObject* proxyDict(Datum* caller);
 
