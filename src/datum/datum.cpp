@@ -136,8 +136,11 @@ void Datum::onDisconnectRequest(Datum* downstream)
 bool Datum::connectUpstream(Datum* upstream)
 {
     _upstream << upstream->_upstream;
-    connect(upstream, &Datum::changed,   this, &Datum::update);
-    connect(upstream, &Datum::destroyed, this, &Datum::update);
-    connect(this, &Datum::disconnectFrom, upstream, &Datum::onDisconnectRequest);
+    connect(upstream, &Datum::changed,
+            this, &Datum::update, Qt::UniqueConnection);
+    connect(upstream, &Datum::destroyed,
+            this, &Datum::update, Qt::UniqueConnection);
+    connect(this, &Datum::disconnectFrom,
+            upstream, &Datum::onDisconnectRequest, Qt::UniqueConnection);
     return upstream->_upstream.contains(this) ? false : true;
 }
