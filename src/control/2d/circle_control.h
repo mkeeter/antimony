@@ -36,10 +36,13 @@ public:
      */
     virtual QPointF inspectorPosition() const override;
 
+    virtual QRectF boundingRect() const override;
+
 protected:
     QVector3D position() const;
 
     _RadiusControl* radius;
+    Point2DControl* center;
 };
 
 #endif // CIRCLE_CONTROL_H

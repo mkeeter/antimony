@@ -4,7 +4,7 @@
 _RadiusControl::_RadiusControl(Canvas *canvas, Node *node, QGraphicsItem *parent)
     : MultiLineControl(canvas, node, parent)
 {
-    // Nothing to do here
+    watchDatums({"x","y","r"});
 }
 
 QVector<QVector<QVector3D>> _RadiusControl::lines() const
@@ -34,12 +34,25 @@ void _RadiusControl::drag(QVector3D c, QVector3D d)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void CircleControl::drag(QVector3D center, QVector3D delta)
+CircleControl::CircleControl(Canvas *canvas, Node *node)
+    : DummyControl(canvas, node),
+      radius(new _RadiusControl(canvas, node, this)),
+      center(new Point2DControl(canvas, node, this))
 {
-    // nothing to do here for now
+    watchDatums({"x","y","r"});
+}
+
+void CircleControl::drag(QVector3D c, QVector3D delta)
+{
+    center->drag(c, delta);
 }
 
 QPointF CircleControl::inspectorPosition() const
 {
     return canvas->worldToScene(radius->center());
+}
+
+QRectF CircleControl::boundingRect() const
+{
+    return radius->boundingRect();
 }

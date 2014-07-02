@@ -5,8 +5,8 @@
 #include "ui/canvas.h"
 #include "control/2d/point2d_control.h"
 
-Point2DControl::Point2DControl(Canvas* canvas, Node* node)
-    : Control(canvas, node)
+Point2DControl::Point2DControl(Canvas* canvas, Node* node, QGraphicsItem* parent)
+    : Control(canvas, node, parent)
 {
     watchDatums({"x","y"});
 }
