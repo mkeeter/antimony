@@ -35,11 +35,6 @@ public:
 
 protected:
     QVector3D position() const;
-
-signals:
-
-public slots:
-
 };
 
 #endif // POINT3D_CONTROL_H

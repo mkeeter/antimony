@@ -15,8 +15,10 @@ SOURCES += \
     ../src/ui/canvas.cpp \
     ../src/app.cpp \
     ../src/control/control.cpp \
+    ../src/control/multiline.cpp \
     ../src/control/axes_control.cpp \
     ../src/control/3d/point3d_control.cpp \
+    ../src/control/2d/circle_control.cpp \
     ../src/ui/colors.cpp
 
 HEADERS += \
@@ -26,8 +28,10 @@ HEADERS += \
     ../src/ui/canvas.h \
     ../src/app.h \
     ../src/control/control.h \
+    ../src/control/multiline.h \
     ../src/control/axes_control.h \
     ../src/control/3d/point3d_control.h \
+    ../src/control/2d/circle_control.h \
     ../src/ui/colors.h
 
 FORMS += \
