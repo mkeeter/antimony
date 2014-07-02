@@ -8,6 +8,7 @@
 
 #include "control/control.h"
 #include "control/multiline.h"
+#include "control/2d/point2d_control.h"
 
 class _RadiusControl : public MultiLineControl
 {

@@ -18,6 +18,7 @@ SOURCES += \
     ../src/control/multiline.cpp \
     ../src/control/axes_control.cpp \
     ../src/control/3d/point3d_control.cpp \
+    ../src/control/2d/point2d_control.cpp \
     ../src/control/2d/circle_control.cpp \
     ../src/ui/colors.cpp
 
@@ -31,6 +32,7 @@ HEADERS += \
     ../src/control/multiline.h \
     ../src/control/axes_control.h \
     ../src/control/3d/point3d_control.h \
+    ../src/control/2d/point2d_control.h \
     ../src/control/2d/circle_control.h \
     ../src/ui/colors.h
 
