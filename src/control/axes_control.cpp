@@ -7,7 +7,7 @@
 AxesControl::AxesControl(Canvas* canvas) :
     DummyControl(canvas, NULL)
 {
-    // Nothing to do here
+    setZValue(-10);
 }
 
 QRectF AxesControl::boundingRect() const

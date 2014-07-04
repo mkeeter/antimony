@@ -26,6 +26,7 @@ Control::Control(Canvas* canvas, Node* node, QGraphicsItem* parent)
     {
         canvas->scene->addItem(this);
     }
+    setZValue(1);
 }
 
 QRectF Control::boundingBox(QVector<QVector3D> points, int padding) const
@@ -185,7 +186,6 @@ DummyControl::DummyControl(Canvas *canvas, Node *node, QGraphicsItem *parent)
 {
     setFlag(QGraphicsItem::ItemIsSelectable, false);
     setAcceptHoverEvents(false);
-    setZValue(-10);
 }
 
 void DummyControl::drag(QVector3D center, QVector3D delta)
