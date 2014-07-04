@@ -2,18 +2,20 @@
 #define LINK_H
 
 #include <QObject>
+#include <QPointer>
 
 class Datum;
-class LinkControl;
 
 class Link : public QObject
 {
     Q_OBJECT
 public:
     explicit Link(Datum *parent);
+    void setTarget(Datum* d);
 protected:
-    Datum* target;
-    LinkControl* control;
+    QPointer<Datum> target;
+
+    friend class Connection;
 };
 
 #endif // LINK_H

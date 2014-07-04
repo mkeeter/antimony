@@ -72,6 +72,9 @@ void OutputPort::mousePressEvent(QGraphicsSceneMouseEvent *event)
     if (event->button() == Qt::LeftButton)
     {
         Link* link = datum->linkFrom();
-        new Connection(link, dynamic_cast<NodeInspector*>(parentItem())->getCanvas());
+        NodeInspector* inspector = dynamic_cast<NodeInspector*>(parentItem());
+        Connection* c = new Connection(link, inspector->getCanvas());
+        c->setDragPos(mapToScene(event->pos()));
+        c->grabMouse();
     }
 }

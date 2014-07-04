@@ -13,6 +13,7 @@ public:
     explicit Connection(Link* link, Canvas* canvas);
     QRectF boundingRect() const;
     QPainterPath shape() const;
+    void setDragPos(QPointF p) { drag_pos = p; }
 protected:
     /** Returns starting position in scene coordinates.
      */
@@ -30,8 +31,13 @@ protected:
                const QStyleOptionGraphicsItem *option,
                QWidget *widget);
 
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+
     Link* link;
     Canvas* canvas;
+    QPointF drag_pos;
 };
 
 #endif // CONNECTION_H

@@ -1,5 +1,7 @@
 #include <Python.h>
 
+#include <QGraphicsSceneMouseEvent>
+
 #include "ui/connection.h"
 #include "ui/canvas.h"
 #include "ui/colors.h"
@@ -40,9 +42,16 @@ QPointF Connection::startPos() const
 
 QPointF Connection::endPos() const
 {
-    Datum* d = dynamic_cast<Datum*>(link->parent());
-    Control* c = canvas->getControl(dynamic_cast<Node*>(d->parent()));
-    return c->datumInputPosition(d);
+    if (link->target)
+    {
+        Datum* d = link->target;
+        Control* c = canvas->getControl(dynamic_cast<Node*>(d->parent()));
+        return c->datumInputPosition(d);
+    }
+    else
+    {
+        return drag_pos;
+    }
 }
 
 QPainterPath Connection::path() const
@@ -78,4 +87,21 @@ void Connection::paint(QPainter *painter,
 
     painter->setPen(QPen(color, 4));
     painter->drawPath(path());
+}
+
+void Connection::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (link->target)
+    {
+        return;
+    }
+
+    prepareGeometryChange();
+    drag_pos = event->pos();
+}
+
+void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    QGraphicsObject::mouseReleaseEvent(event);
+    ungrabMouse();
 }

@@ -6,7 +6,12 @@
 #include "datum/datum.h"
 
 Link::Link(Datum* parent) :
-    QObject(parent), control(NULL)
+    QObject(parent)
 {
     // Nothing to do here
+}
+
+void Link::setTarget(Datum *d)
+{
+    target = QPointer<Datum>(d);
 }
