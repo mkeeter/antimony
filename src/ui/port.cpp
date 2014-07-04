@@ -1,10 +1,12 @@
 #include <Python.h>
 
 #include <QPainter>
+#include <QGraphicsSceneMouseEvent>
 
 #include "ui/port.h"
 #include "ui/inspector.h"
 #include "ui/colors.h"
+#include "ui/connection.h"
 
 #include "datum/datum.h"
 
@@ -39,8 +41,6 @@ void Port::paint(QPainter *painter,
 }
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <QDebug>
-
 InputPort::InputPort(Datum *d, NodeInspector *inspector)
     : Port(d, inspector)
 {
@@ -65,4 +65,13 @@ void OutputPort::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     Q_UNUSED(event);
     hover = false;
     update();
+}
+
+void OutputPort::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton)
+    {
+        Link* link = datum->linkFrom();
+        new Connection(link, dynamic_cast<NodeInspector*>(parentItem())->getCanvas());
+    }
 }

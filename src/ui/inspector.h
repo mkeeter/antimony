@@ -10,6 +10,7 @@ class Control;
 class Node;
 class InputPort;
 class OutputPort;
+class Canvas;
 
 class _DatumTextItem : public QGraphicsTextItem
 {
@@ -62,6 +63,10 @@ public slots:
     /** Change the position of the inspector window.
      */
     void onPositionChange();
+
+    /** Returns a pointer to the Canvas object.
+     */
+    Canvas* getCanvas() const;
 
 protected:
     /** Returns the width of the largest label.

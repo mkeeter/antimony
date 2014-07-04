@@ -3,16 +3,35 @@
 
 #include <QGraphicsObject>
 
+class Link;
+class Canvas;
+
 class Connection : public QGraphicsObject
 {
     Q_OBJECT
 public:
-    explicit Connection(QObject *parent = 0);
+    explicit Connection(Link* link, Canvas* canvas);
+    QRectF boundingRect() const;
+    QPainterPath shape() const;
+protected:
+    /** Returns starting position in scene coordinates.
+     */
+    QPointF startPos() const;
 
-signals:
+    /** Returns ending position in scene coordinates.
+     */
+    QPointF endPos() const;
 
-public slots:
+    /** Returns a path for the connection.
+     */
+    QPainterPath path() const;
 
+    void paint(QPainter *painter,
+               const QStyleOptionGraphicsItem *option,
+               QWidget *widget);
+
+    Link* link;
+    Canvas* canvas;
 };
 
 #endif // CONNECTION_H

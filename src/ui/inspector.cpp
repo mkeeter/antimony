@@ -37,6 +37,11 @@ NodeInspector::NodeInspector(Control* control)
     animateOpen();
 }
 
+Canvas* NodeInspector::getCanvas() const
+{
+    return control->getCanvas();
+}
+
 float NodeInspector::labelWidth() const
 {
     float label_width = 0;

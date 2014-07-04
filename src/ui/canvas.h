@@ -5,6 +5,9 @@
 #include <QGraphicsScene>
 #include <QMatrix4x4>
 
+class Node;
+class Control;
+
 class Canvas : public QGraphicsView
 {
     Q_OBJECT
@@ -21,7 +24,6 @@ public:
     QPointF worldToScene(QVector3D v) const;
     QVector<QPointF> worldToScene(QVector<QVector3D> v) const;
 
-
     /** Transforms points from scene to world coordinates.
      */
     QVector3D sceneToWorld(QPointF p) const;
@@ -29,6 +31,10 @@ public:
     /** Look up scale.
      */
     float getScale() const { return scale; }
+
+    /** Finds the control associated with the given node.
+     */
+    Control* getControl(Node* node) const;
 
     QGraphicsScene* scene;
 

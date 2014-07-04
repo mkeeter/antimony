@@ -6,14 +6,12 @@
 
 #include <cmath>
 
-#include "canvas.h"
+#include "ui/canvas.h"
+
+#include "control/control.h"
 #include "control/axes_control.h"
 
-// Only including these files for debugging purposes
-#include "node/3d/point3d_node.h"
-#include "control/3d/point3d_control.h"
-#include "node/2d/circle_node.h"
-#include "control/2d/circle_control.h"
+#include "datum/datum.h"
 
 Canvas::Canvas(QWidget* parent)
     : QGraphicsView(parent), scene(new QGraphicsScene(parent)),
@@ -66,6 +64,20 @@ QVector3D Canvas::sceneToWorld(QPointF p) const
     QMatrix4x4 M = getMatrix().inverted();
     return M * QVector3D(p.x(), p.y(), 0);
 }
+
+Control* Canvas::getControl(Node* node) const
+{
+    for (auto i : items())
+    {
+        Control* c = dynamic_cast<Control*>(i);
+        if (c && c->getNode() == node)
+        {
+            return c;
+        }
+    }
+    return NULL;
+}
+
 
 void Canvas::mousePressEvent(QMouseEvent *event)
 {

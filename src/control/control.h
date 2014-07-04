@@ -6,6 +6,7 @@
 
 // Forward declarations
 class Canvas;
+class Datum;
 class Node;
 class NodeInspector;
 
@@ -44,6 +45,14 @@ public:
      *  (used when creating a new control so that dragging works).
      */
     void setClickPos(QPointF c) { _click_pos = c; }
+
+    /** Returns a datum's output position (in scene coordinates)
+     */
+    QPointF datumOutputPosition(Datum* d) const;
+
+    /** Returns a datum's input position (in scene coordinates)
+     */
+    QPointF datumInputPosition(Datum* d) const;
 
 protected slots:
     void redraw();

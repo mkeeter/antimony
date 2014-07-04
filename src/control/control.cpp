@@ -50,6 +50,24 @@ QRectF Control::boundingBox(QVector<QVector3D> points, int padding) const
                   ymax - ymin + 2*padding);
 }
 
+QPointF Control::datumOutputPosition(Datum *d) const
+{
+    if (inspector)
+    {
+        //return blablabla;
+    }
+    return inspectorPosition();
+}
+
+QPointF Control::datumInputPosition(Datum *d) const
+{
+    if (inspector)
+    {
+        // return blablabla;
+    }
+    return inspectorPosition();
+}
+
 void Control::watchDatums(QVector<QString> datums)
 {
     for (auto n : datums)
