@@ -16,9 +16,10 @@ public:
     virtual void paint(QPainter *painter,
                        const QStyleOptionGraphicsItem *option,
                        QWidget *widget) override;
-
+    void setOpacity(float o) { opacity = o; update(); }
 protected:
     Datum* datum;
+    float opacity;
 };
 
 class InputPort : public Port

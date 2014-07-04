@@ -8,7 +8,7 @@
 #include "datum/datum.h"
 
 Port::Port(Datum* d, NodeInspector* inspector) :
-    QGraphicsObject(inspector), datum(d)
+    QGraphicsObject(inspector), datum(d), opacity(1)
 {
     // Nothing to do here
 }
@@ -25,7 +25,7 @@ void Port::paint(QPainter *painter,
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    painter->setBrush(Qt::red);
+    painter->setBrush(QColor(255, 0, 0, opacity*255));
     painter->setPen(Qt::NoPen);
     painter->drawRect(boundingRect());
 }

@@ -144,6 +144,14 @@ float NodeInspector::getMaskSize() const
 void NodeInspector::setMaskSize(float m)
 {
     mask_size = m;
+    for (auto p : inputs)
+    {
+        p->setOpacity(mask_size);
+    }
+    for (auto p : outputs)
+    {
+        p->setOpacity(mask_size);
+    }
     onLayoutChanged();
     prepareGeometryChange();
 }
