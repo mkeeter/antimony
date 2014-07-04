@@ -4,6 +4,7 @@
 
 #include "ui/port.h"
 #include "ui/inspector.h"
+#include "ui/colors.h"
 
 #include "datum/datum.h"
 
@@ -25,7 +26,10 @@ void Port::paint(QPainter *painter,
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    painter->setBrush(QColor(255, 0, 0, opacity*255));
+    QColor color = Colors::getColor(datum);
+    color.setAlpha(opacity*255);
+    painter->setBrush(color);
+
     painter->setPen(Qt::NoPen);
     painter->drawRect(boundingRect());
 }

@@ -27,9 +27,17 @@ public:
      */
     virtual PyTypeObject* getType() const=0;
 
+    /** Returns True if there is an InputHandler.
+     */
+    bool hasInput() const { return input_handler != NULL; }
+
     /** Returns True if the InputHandler is provided an input value.
      */
     bool hasInputValue() const;
+
+    /** Returns true if the datum should have an output port.
+     */
+    virtual bool hasOutput() const { return true; }
 
     /** Returns True if this Datum can be edited in a viewer.
      */

@@ -94,10 +94,10 @@ void NodeInspector::populateLists(Node *node)
     {
         if (d->objectName().startsWith("_"))
             continue;
-        inputs << new InputPort(d, this);
+        inputs << (d->hasInput() ? new InputPort(d, this) : NULL);
         labels << new QGraphicsTextItem(d->objectName(), this);
         editors << new _DatumTextItem(d, this);
-        outputs << new OutputPort(d, this);
+        outputs << (d->hasOutput() ? new OutputPort(d, this) : NULL);
 
         connect(editors.back(), SIGNAL(boundsChanged()),
                 this, SLOT(onLayoutChanged()));
@@ -146,11 +146,13 @@ void NodeInspector::setMaskSize(float m)
     mask_size = m;
     for (auto p : inputs)
     {
-        p->setOpacity(mask_size);
+        if (p)
+            p->setOpacity(mask_size);
     }
     for (auto p : outputs)
     {
-        p->setOpacity(mask_size);
+        if (p)
+            p->setOpacity(mask_size);
     }
     onLayoutChanged();
     prepareGeometryChange();

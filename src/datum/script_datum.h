@@ -20,6 +20,7 @@ public:
     PyObject* makeOutput(QString name, PyObject* out);
 
     virtual PyTypeObject* getType() const override { return Py_None->ob_type; }
+    virtual bool hasOutput() const override { return false; }
 protected:
     /** Returns True if we can make an input or output datum with this name.
      */

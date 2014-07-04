@@ -20,6 +20,7 @@ public:
 protected:
     Datum* datum;
     float opacity;
+    bool hover;
 };
 
 class InputPort : public Port
