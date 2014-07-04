@@ -3,16 +3,36 @@
 
 #include <QGraphicsObject>
 
-class port : public QGraphicsObject
+class NodeInspector;
+class Datum;
+
+class Port : public QGraphicsObject
 {
     Q_OBJECT
 public:
-    explicit port(QObject *parent = 0);
+    explicit Port(Datum* d, NodeInspector* inspector);
 
-signals:
+    virtual QRectF boundingRect() const override;
+    virtual void paint(QPainter *painter,
+                       const QStyleOptionGraphicsItem *option,
+                       QWidget *widget) override;
 
-public slots:
+protected:
+    Datum* datum;
+};
 
+class InputPort : public Port
+{
+    Q_OBJECT
+public:
+    explicit InputPort(Datum* d, NodeInspector* inspector);
+};
+
+class OutputPort : public Port
+{
+    Q_OBJECT
+public:
+    explicit OutputPort(Datum* d, NodeInspector* inspector);
 };
 
 #endif // PORT_H

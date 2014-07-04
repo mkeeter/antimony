@@ -8,6 +8,8 @@
 class Datum;
 class Control;
 class Node;
+class InputPort;
+class OutputPort;
 
 class _DatumTextItem : public QGraphicsTextItem
 {
@@ -75,6 +77,8 @@ protected:
     Q_PROPERTY(float mask_size READ getMaskSize WRITE setMaskSize)
 
     Control* control;
+    QList<InputPort*> inputs;
+    QList<OutputPort*> outputs;
     QList<QGraphicsTextItem*> labels;
     QList<_DatumTextItem*> editors;
     float mask_size;

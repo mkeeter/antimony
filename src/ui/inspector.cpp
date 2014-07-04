@@ -10,6 +10,7 @@
 
 #include "ui/canvas.h"
 #include "ui/inspector.h"
+#include "ui/port.h"
 
 #include "datum/datum.h"
 #include "datum/eval.h"
@@ -49,7 +50,7 @@ float NodeInspector::labelWidth() const
 QRectF NodeInspector::boundingRect() const
 {
     float height = 0;
-    float width = labelWidth() + 10 + 150 + 5;
+    float width = 15 + labelWidth() + 10 + 150 + 5 + 15;
 
     for (auto e : editors)
     {
@@ -61,15 +62,27 @@ QRectF NodeInspector::boundingRect() const
 void NodeInspector::onLayoutChanged()
 {
     float label_width = labelWidth();
-    float x = 0;
+    float x = 15;
     float y = 0;
+    float xo = boundingRect().width() - 10;
     for (int i=0; i < labels.length(); ++i)
     {
         float ey = editors[i]->boundingRect().height();
         float ly = labels[i] ->boundingRect().height();
+        if (inputs[i])
+        {
+            float iy = inputs[i]->boundingRect().height();
+            inputs[i]->setPos(0, (y + (ey - iy) / 2 + 3) * mask_size);
+        }
         labels[i]->setPos(x + label_width - labels[i]->boundingRect().width(),
                           y + (ey - ly) / 2 + 3);
         editors[i]->setPos(x + label_width + 10, y + 3);
+        if (outputs[i])
+        {
+            float oy = outputs[i]->boundingRect().height();
+            outputs[i]->setPos(xo * mask_size,
+                               (y + (ey - oy) / 2 + 3) * mask_size);
+        }
         y += fmax(ey, ly) + 6;
     }
     prepareGeometryChange();
@@ -81,8 +94,11 @@ void NodeInspector::populateLists(Node *node)
     {
         if (d->objectName().startsWith("_"))
             continue;
+        inputs << new InputPort(d, this);
         labels << new QGraphicsTextItem(d->objectName(), this);
         editors << new _DatumTextItem(d, this);
+        outputs << new OutputPort(d, this);
+
         connect(editors.back(), SIGNAL(boundsChanged()),
                 this, SLOT(onLayoutChanged()));
     }
@@ -128,6 +144,7 @@ float NodeInspector::getMaskSize() const
 void NodeInspector::setMaskSize(float m)
 {
     mask_size = m;
+    onLayoutChanged();
     prepareGeometryChange();
 }
 

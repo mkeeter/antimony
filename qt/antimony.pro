@@ -20,7 +20,8 @@ SOURCES += \
     ../src/control/3d/point3d_control.cpp \
     ../src/control/2d/point2d_control.cpp \
     ../src/control/2d/circle_control.cpp \
-    ../src/ui/colors.cpp
+    ../src/ui/colors.cpp \
+    ../src/ui/port.cpp
 
 HEADERS += \
     ../src/ui/main_window.h \
@@ -34,7 +35,8 @@ HEADERS += \
     ../src/control/3d/point3d_control.h \
     ../src/control/2d/point2d_control.h \
     ../src/control/2d/circle_control.h \
-    ../src/ui/colors.h
+    ../src/ui/colors.h \
+    ../src/ui/port.h
 
 FORMS += \
     ../src/ui/forms/main_window.ui \
