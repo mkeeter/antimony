@@ -21,7 +21,8 @@ public:
 
     /** getDatum plus a dynamic cast.
      */
-    template <class T> T* getDatum(QString name)
+    template <class T>
+    T* getDatum(QString name)
     {
         return dynamic_cast<T*>(getDatum(name));
     }
