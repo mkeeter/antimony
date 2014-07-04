@@ -26,6 +26,10 @@ public:
      */
     QVector3D sceneToWorld(QPointF p) const;
 
+    /** Look up scale.
+     */
+    float getScale() const { return scale; }
+
     QGraphicsScene* scene;
 
 signals:
