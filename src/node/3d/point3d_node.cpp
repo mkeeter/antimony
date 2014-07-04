@@ -5,6 +5,8 @@
 
 #include "datum/float_datum.h"
 
+#include "control/3d/point3d_control.h"
+
 Point3D::Point3D(QString name, QString x, QString y, QString z,
                  QObject* parent)
     : Node(name, parent)
@@ -22,4 +24,9 @@ Point3D::Point3D(float x, float y, float z, float scale,
               QString::number(z), parent)
 {
     Q_UNUSED(scale);
+}
+
+Control* Point3D::makeControl(Canvas *canvas)
+{
+    return new Point3DControl(canvas, this);
 }

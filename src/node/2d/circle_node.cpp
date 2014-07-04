@@ -6,6 +6,8 @@
 #include "datum/float_datum.h"
 #include "datum/function_datum.h"
 
+#include "control/2d/circle_control.h"
+
 CircleNode::CircleNode(QString name, QString x, QString y, QString r,
                        QObject* parent)
     : Node(name, parent)
@@ -23,4 +25,9 @@ CircleNode::CircleNode(float x, float y, float z, float scale, QObject* parent)
                  QString::number(scale), parent)
 {
     Q_UNUSED(z);
+}
+
+Control* CircleNode::makeControl(Canvas *canvas)
+{
+    return new CircleControl(canvas, this);
 }

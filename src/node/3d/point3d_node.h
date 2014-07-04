@@ -3,6 +3,7 @@
 
 #include <Python.h>
 #include <QObject>
+
 #include "node/node.h"
 
 class Canvas;
@@ -15,6 +16,11 @@ public:
                      QObject* parent=NULL);
     explicit Point3D(float x, float y, float z, float scale,
                      QObject* parent=NULL);
+
+    virtual Control* makeControl(Canvas *canvas) override;
+
+    static QString menuName()     { return "Point (3D)"; }
+    static QString menuCategory() { return "3D"; }
 
 };
 

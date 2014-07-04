@@ -6,6 +6,7 @@
 
 class Control;
 class Datum;
+class Canvas;
 
 class Node : public QObject
 {
@@ -26,6 +27,8 @@ public:
     {
         return dynamic_cast<T*>(getDatum(name));
     }
+
+    virtual Control* makeControl(Canvas* canvas)=0;
 
 protected:
     Control* control;
