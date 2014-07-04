@@ -104,7 +104,7 @@ protected:
 
     Canvas* canvas;
     Node* node;
-    QPointer<NodeInspector> viewer;
+    QPointer<NodeInspector> inspector;
 
     bool _hover;
     bool _dragged;

@@ -15,7 +15,7 @@
 #include "datum/float_datum.h"
 
 Control::Control(Canvas* canvas, Node* node, QGraphicsItem* parent)
-    : QGraphicsObject(parent), canvas(canvas), node(node), viewer(NULL),
+    : QGraphicsObject(parent), canvas(canvas), node(node), inspector(NULL),
       _hover(false), _dragged(false)
 {
     setFlags(QGraphicsItem::ItemIsSelectable |
@@ -92,13 +92,13 @@ void Control::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     {
         dynamic_cast<Control*>(parentObject())->mouseDoubleClickEvent(event);
     }
-    else if (viewer.isNull())
+    else if (inspector.isNull())
     {
-        viewer = new NodeInspector(this);
+        inspector = new NodeInspector(this);
     }
     else
     {
-        viewer->animateClose();
+        inspector->animateClose();
     }
 }
 
