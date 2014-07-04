@@ -10,6 +10,9 @@
 #include "ui/canvas.h"
 #include "ui/colors.h"
 #include "ui/inspector.h"
+#include "ui/port.h"
+
+#include <QDebug>
 
 #include "datum/datum.h"
 #include "datum/float_datum.h"
@@ -54,7 +57,14 @@ QPointF Control::datumOutputPosition(Datum *d) const
 {
     if (inspector)
     {
-        //return blablabla;
+        for (auto a : inspector->childItems())
+        {
+            OutputPort* p = dynamic_cast<OutputPort*>(a);
+            if (p && p->getDatum() == d)
+            {
+                return p->mapToScene(p->boundingRect().center());
+            }
+        }
     }
     return inspectorPosition();
 }
@@ -63,7 +73,14 @@ QPointF Control::datumInputPosition(Datum *d) const
 {
     if (inspector)
     {
-        // return blablabla;
+        for (auto a : inspector->childItems())
+        {
+            InputPort* p = dynamic_cast<InputPort*>(a);
+            if (p && p->getDatum() == d)
+            {
+                return p->mapToScene(p->boundingRect().center());
+            }
+        }
     }
     return inspectorPosition();
 }

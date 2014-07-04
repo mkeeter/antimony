@@ -17,6 +17,7 @@ public:
                        const QStyleOptionGraphicsItem *option,
                        QWidget *widget) override;
     void setOpacity(float o) { opacity = o; update(); }
+    Datum* getDatum() { return datum; }
 protected:
     Datum* datum;
     float opacity;
