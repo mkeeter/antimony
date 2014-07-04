@@ -35,6 +35,9 @@ class OutputPort : public Port
     Q_OBJECT
 public:
     explicit OutputPort(Datum* d, NodeInspector* inspector);
+protected:
+    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+    virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 };
 
 #endif // PORT_H

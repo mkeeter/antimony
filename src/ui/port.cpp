@@ -9,9 +9,9 @@
 #include "datum/datum.h"
 
 Port::Port(Datum* d, NodeInspector* inspector) :
-    QGraphicsObject(inspector), datum(d), opacity(1)
+    QGraphicsObject(inspector), datum(d), opacity(1), hover(false)
 {
-    // Nothing to do here
+    setAcceptHoverEvents(true);
 }
 
 QRectF Port::boundingRect() const
@@ -27,6 +27,10 @@ void Port::paint(QPainter *painter,
     Q_UNUSED(widget);
 
     QColor color = Colors::getColor(datum);
+    if (hover)
+    {
+        color = Colors::highlight(color);
+    }
     color.setAlpha(opacity*255);
     painter->setBrush(color);
 
@@ -34,6 +38,8 @@ void Port::paint(QPainter *painter,
     painter->drawRect(boundingRect());
 }
 ////////////////////////////////////////////////////////////////////////////////
+
+#include <QDebug>
 
 InputPort::InputPort(Datum *d, NodeInspector *inspector)
     : Port(d, inspector)
@@ -45,4 +51,18 @@ OutputPort::OutputPort(Datum *d, NodeInspector *inspector)
     : Port(d, inspector)
 {
     // Nothing to do here
+}
+
+void OutputPort::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    Q_UNUSED(event);
+    hover = true;
+    update();
+}
+
+void OutputPort::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    Q_UNUSED(event);
+    hover = false;
+    update();
 }
