@@ -28,8 +28,8 @@ Canvas::Canvas(QWidget* parent)
 
     new AxesControl(this);
 
-    CircleNode* c = new CircleNode("c", "0.0", "0.0", "100");
-    auto ctrl = new CircleControl(this, c);
+    //CircleNode* c = new CircleNode("c", "0.0", "0.0", "100");
+    //auto ctrl = new CircleControl(this, c);
 }
 
 QMatrix4x4 Canvas::getMatrix() const

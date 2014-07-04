@@ -1,3 +1,5 @@
+#include <Python.h>
+
 #include <QKeySequence>
 
 #include "ui_main_window.h"
@@ -11,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     addCanvas();
+    makeAddMenu();
 }
 
 MainWindow::~MainWindow()
@@ -32,4 +35,71 @@ void MainWindow::setShortcuts()
     ui->actionSave->setShortcuts(QKeySequence::Save);
     ui->actionSaveAs->setShortcuts(QKeySequence::SaveAs);
     ui->actionQuit->setShortcuts(QKeySequence::Quit);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+#include "node/node.h"
+#include "control/control.h"
+
+template <class T>
+void MainWindow::createNew()
+{
+    QPoint mouse_pos  = canvas->rect().center();
+    QPointF scene_pos = canvas->sceneRect().center();
+    QVector3D obj_pos = canvas->sceneToWorld(scene_pos);
+
+    QCursor::setPos(canvas->mapToGlobal(mouse_pos));
+
+    Node* n = new T(obj_pos.x(), obj_pos.y(), obj_pos.z(),
+                    100 / canvas->getScale());
+    Control* control = n->makeControl(canvas);
+    control->grabMouse();
+/*
+            # This is the mouse position in viewport coordinates
+        mouse_pos = self.canvas.rect().center()
+        # ...and in scene coordinates
+        scene_pos = self.canvas.sceneRect().center()
+        # ... and in world coordinates
+        obj_pos = self.canvas.imatrix * QtGui.QVector3D(scene_pos)
+
+        # Move the mouse to the center of the canvas
+        QtGui.QCursor.setPos(self.canvas.mapToGlobal(mouse_pos))
+
+        # Pick a unique name then create the node
+        name = NodeManager.get_name(d)
+        node = d.new(self.canvas, name,
+                     obj_pos.x(), obj_pos.y(), obj_pos.z(),
+                     100 / self.canvas._scale)
+
+        # Stick this node's control to the mouse
+        node.control._mouse_click_pos = scene_pos
+        node.control._hover = True
+        node.control.grabMouse()
+        */
+    return;
+}
+
+template <class T>
+void MainWindow::addNodeToAddMenu(QMap<QString, QMenu*> submenus)
+{
+    QString category = T::menuCategory();
+    QString name = T::menuName();
+
+    if (!submenus.contains(category))
+    {
+        submenus[category] = ui->menuAdd->addMenu(category);
+        QAction* a = submenus[category]->addAction(name);
+        connect(a, &QAction::triggered, this, &MainWindow::createNew<T>);
+    }
+}
+
+#include "node/3d/point3d_node.h"
+#include "node/2d/circle_node.h"
+
+void MainWindow::makeAddMenu()
+{
+    QMap<QString, QMenu*> submenus;
+    addNodeToAddMenu<Point3D>(submenus);
+    addNodeToAddMenu<CircleNode>(submenus);
 }

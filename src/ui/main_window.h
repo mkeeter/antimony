@@ -27,6 +27,20 @@ private:
      */
     void setShortcuts();
 
+    /** Makes a new object of the given class.
+     */
+    template <class T>
+    void createNew();
+
+    /** Adds a particular node to the "Add" menu.
+     */
+    template <class T>
+    void addNodeToAddMenu(QMap<QString, QMenu*> submenus);
+
+    /** Populate a menu with all of the widgets.
+     */
+    void makeAddMenu();
+
     Ui::MainWindow *ui;
     Canvas* canvas;
 
