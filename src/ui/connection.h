@@ -5,6 +5,8 @@
 
 class Link;
 class Canvas;
+class Datum;
+class Control;
 
 class Connection : public QGraphicsObject
 {
@@ -14,7 +16,16 @@ public:
     QRectF boundingRect() const;
     QPainterPath shape() const;
     void setDragPos(QPointF p) { drag_pos = p; }
+public slots:
+    void onPortPositionChanged() { prepareGeometryChange(); }
 protected:
+
+    Datum* startDatum() const;
+    Datum* endDatum() const;
+
+    Control* startControl() const;
+    Control* endControl() const;
+
     /** Returns starting position in scene coordinates.
      */
     QPointF startPos() const;

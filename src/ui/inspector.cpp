@@ -161,6 +161,7 @@ void NodeInspector::setMaskSize(float m)
     }
     onLayoutChanged();
     prepareGeometryChange();
+    emit portPositionChanged();
 }
 
 void NodeInspector::onPositionChange()

@@ -59,6 +59,7 @@ protected slots:
 
 signals:
     void inspectorPositionChanged();
+    void portPositionChanged();
 
 protected:
 

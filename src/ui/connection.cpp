@@ -19,6 +19,8 @@ Connection::Connection(Link* link, Canvas* canvas)
     setFlags(QGraphicsItem::ItemIsSelectable);
     canvas->scene->addItem(this);
     setZValue(2);
+    connect(startControl(), &Control::portPositionChanged,
+            this, &Connection::onPortPositionChanged);
 }
 
 QRectF Connection::boundingRect() const
@@ -33,25 +35,39 @@ QPainterPath Connection::shape() const
     return stroker.createStroke(path());
 }
 
+Datum* Connection::startDatum() const
+{
+    return dynamic_cast<Datum*>(link->parent());
+}
+
+Control* Connection::startControl() const
+{
+    return canvas->getControl(dynamic_cast<Node*>(startDatum()->parent()));
+}
+
+Datum* Connection::endDatum() const
+{
+    return link->target ? link->target : NULL;
+}
+
+Control* Connection::endControl() const
+{
+    if (endDatum() == NULL)
+    {
+        return NULL;
+    }
+    return canvas->getControl(dynamic_cast<Node*>(endDatum()->parent()));
+}
+
 QPointF Connection::startPos() const
 {
-    Datum* d = dynamic_cast<Datum*>(link->parent());
-    Control* c = canvas->getControl(dynamic_cast<Node*>(d->parent()));
-    return c->datumOutputPosition(d);
+    return startControl()->datumOutputPosition(startDatum());
 }
 
 QPointF Connection::endPos() const
 {
-    if (link->target)
-    {
-        Datum* d = link->target;
-        Control* c = canvas->getControl(dynamic_cast<Node*>(d->parent()));
-        return c->datumInputPosition(d);
-    }
-    else
-    {
-        return drag_pos;
-    }
+    Control* c = endControl();
+    return c ? c->datumInputPosition(endDatum()) : drag_pos;
 }
 
 QPainterPath Connection::path() const

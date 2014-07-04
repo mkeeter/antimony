@@ -47,6 +47,9 @@ public:
                        const QStyleOptionGraphicsItem *option,
                        QWidget *widget) override;
 
+signals:
+    void portPositionChanged();
+
 public slots:
     /** Updates layout of text labels and fields.
      */

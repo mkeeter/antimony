@@ -30,6 +30,8 @@ Control::Control(Canvas* canvas, Node* node, QGraphicsItem* parent)
         canvas->scene->addItem(this);
     }
     setZValue(1);
+    connect(canvas, SIGNAL(viewChanged()),
+            this, SIGNAL(portPositionChanged()));
 }
 
 QRectF Control::boundingBox(QVector<QVector3D> points, int padding) const
@@ -130,6 +132,10 @@ void Control::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     else if (inspector.isNull())
     {
         inspector = new NodeInspector(this);
+        connect(inspector, SIGNAL(portPositionChanged()),
+                this, SIGNAL(portPositionChanged()));
+        connect(inspector, SIGNAL(destroyed()),
+                this, SIGNAL(portPositionChanged()));
     }
     else
     {
