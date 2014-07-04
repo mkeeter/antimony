@@ -55,29 +55,7 @@ void MainWindow::createNew()
                     100 / canvas->getScale());
     Control* control = n->makeControl(canvas);
     control->grabMouse();
-/*
-            # This is the mouse position in viewport coordinates
-        mouse_pos = self.canvas.rect().center()
-        # ...and in scene coordinates
-        scene_pos = self.canvas.sceneRect().center()
-        # ... and in world coordinates
-        obj_pos = self.canvas.imatrix * QtGui.QVector3D(scene_pos)
-
-        # Move the mouse to the center of the canvas
-        QtGui.QCursor.setPos(self.canvas.mapToGlobal(mouse_pos))
-
-        # Pick a unique name then create the node
-        name = NodeManager.get_name(d)
-        node = d.new(self.canvas, name,
-                     obj_pos.x(), obj_pos.y(), obj_pos.z(),
-                     100 / self.canvas._scale)
-
-        # Stick this node's control to the mouse
-        node.control._mouse_click_pos = scene_pos
-        node.control._hover = True
-        node.control.grabMouse()
-        */
-    return;
+    control->setClickPos(scene_pos);
 }
 
 template <class T>

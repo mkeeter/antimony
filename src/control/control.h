@@ -40,6 +40,11 @@ public:
      */
     Canvas* getCanvas() { return canvas;}
 
+    /** Sets _click_pos
+     *  (used when creating a new control so that dragging works).
+     */
+    void setClickPos(QPointF c) { _click_pos = c; }
+
 protected slots:
     void redraw();
 
