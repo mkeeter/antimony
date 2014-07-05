@@ -7,6 +7,7 @@
 
 class Node;
 class Control;
+class InputPort;
 
 class Canvas : public QGraphicsView
 {
@@ -35,6 +36,10 @@ public:
     /** Finds the control associated with the given node.
      */
     Control* getControl(Node* node) const;
+
+    /** Finds an input port at the given position (or NULL)
+     */
+    InputPort* getInputPortAt(QPointF pos) const;
 
     QGraphicsScene* scene;
 

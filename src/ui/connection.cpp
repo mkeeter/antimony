@@ -5,6 +5,7 @@
 #include "ui/connection.h"
 #include "ui/canvas.h"
 #include "ui/colors.h"
+#include "ui/port.h"
 
 #include "datum/datum.h"
 #include "datum/link.h"
@@ -14,13 +15,18 @@
 #include "control/control.h"
 
 Connection::Connection(Link* link, Canvas* canvas)
-    : QGraphicsObject(), link(link), canvas(canvas)
+    : QGraphicsObject(), link(link), canvas(canvas), drag_state(NONE)
 {
     setFlags(QGraphicsItem::ItemIsSelectable);
     canvas->scene->addItem(this);
     setZValue(2);
     connect(startControl(), &Control::portPositionChanged,
             this, &Connection::onPortPositionChanged);
+}
+
+Connection::~Connection()
+{
+    link->deleteLater();
 }
 
 QRectF Connection::boundingRect() const
@@ -96,7 +102,7 @@ void Connection::paint(QPainter *painter,
     Q_UNUSED(widget);
 
     QColor color = Colors::getColor(dynamic_cast<Datum*>(link->parent()));
-    if (isSelected())
+    if (isSelected() || drag_state == VALID)
     {
         color = Colors::highlight(color);
     }
@@ -111,7 +117,15 @@ void Connection::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     {
         return;
     }
-
+    InputPort* target = canvas->getInputPortAt(event->pos());
+    if (target)
+    {
+        drag_state = VALID;
+    }
+    else
+    {
+        drag_state = INVALID;
+    }
     prepareGeometryChange();
     drag_pos = event->pos();
 }
@@ -120,4 +134,20 @@ void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsObject::mouseReleaseEvent(event);
     ungrabMouse();
+
+    if (link->target)
+    {
+        return;
+    }
+
+    InputPort* target = canvas->getInputPortAt(event->pos());
+    Datum* datum = target ? target->getDatum() : NULL;
+    if (target && datum->acceptsLink(link))
+    {
+        datum->addLink(link);
+    }
+    else
+    {
+        deleteLater();
+    }
 }

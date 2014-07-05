@@ -7,6 +7,7 @@
 #include <cmath>
 
 #include "ui/canvas.h"
+#include "ui/port.h"
 
 #include "control/control.h"
 #include "control/axes_control.h"
@@ -78,6 +79,18 @@ Control* Canvas::getControl(Node* node) const
     return NULL;
 }
 
+InputPort* Canvas::getInputPortAt(QPointF pos) const
+{
+    for (auto i : scene->items(pos))
+    {
+        InputPort* p = dynamic_cast<InputPort*>(i);
+        if (p)
+        {
+            return p;
+        }
+    }
+    return NULL;
+}
 
 void Canvas::mousePressEvent(QMouseEvent *event)
 {
