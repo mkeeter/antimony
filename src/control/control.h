@@ -22,6 +22,10 @@ public:
      */
     explicit Control(Canvas* canvas, Node* node, QGraphicsItem* parent=0);
 
+    /** Destructor for control deletes the underlying node.
+     */
+    ~Control();
+
     /** Finds a bounding box for a set of points in world coordinates.
      *
      *  The returned bounding box is in scene coordinates,

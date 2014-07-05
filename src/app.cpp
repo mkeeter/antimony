@@ -5,11 +5,19 @@
 #include "ui_main_window.h"
 #include "ui/main_window.h"
 
+#include "node/manager.h"
+
 App::App(int argc, char* argv[]) :
     QApplication(argc, argv), window(new MainWindow)
 {
     connectActions();
     window->show();
+}
+
+App::~App()
+{
+    delete window;
+    NodeManager::manager()->clear();
 }
 
 void App::onAbout()

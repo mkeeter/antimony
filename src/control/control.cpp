@@ -34,6 +34,14 @@ Control::Control(Canvas* canvas, Node* node, QGraphicsItem* parent)
             this, SIGNAL(portPositionChanged()));
 }
 
+Control::~Control()
+{
+    if (!parentObject())
+    {
+        delete node;
+    }
+}
+
 QRectF Control::boundingBox(QVector<QVector3D> points, int padding) const
 {
     float xmin =  INFINITY;
