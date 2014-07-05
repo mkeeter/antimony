@@ -29,13 +29,14 @@ private:
 
     /** Makes a new object of the given class.
      */
-    template <class T>
+    template <class N, class C>
     void createNew();
 
     /** Adds a particular node to the "Add" menu.
      */
-    template <class T>
-    void addNodeToAddMenu(QMap<QString, QMenu*> submenus);
+    template <class N, class C>
+    void addNodeToAddMenu(QString category, QString name,
+                          QMap<QString, QMenu*> submenus);
 
     /** Populate a menu with all of the widgets.
      */

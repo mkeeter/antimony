@@ -42,7 +42,7 @@ void MainWindow::setShortcuts()
 #include "node/node.h"
 #include "control/control.h"
 
-template <class T>
+template <class N, class C>
 void MainWindow::createNew()
 {
     QPoint mouse_pos  = canvas->rect().center();
@@ -51,33 +51,34 @@ void MainWindow::createNew()
 
     QCursor::setPos(canvas->mapToGlobal(mouse_pos));
 
-    Node* n = new T(obj_pos.x(), obj_pos.y(), obj_pos.z(),
+    Node* n = new N(obj_pos.x(), obj_pos.y(), obj_pos.z(),
                     100 / canvas->getScale());
-    Control* control = n->makeControl(canvas);
-    control->grabMouse();
-    control->setClickPos(scene_pos);
+    Control* c = new C(canvas, n);
+    c->grabMouse();
+    c->setClickPos(scene_pos);
 }
 
-template <class T>
-void MainWindow::addNodeToAddMenu(QMap<QString, QMenu*> submenus)
+template <class N, class C>
+void MainWindow::addNodeToAddMenu(QString category, QString name,
+                                  QMap<QString, QMenu*> submenus)
 {
-    QString category = T::menuCategory();
-    QString name = T::menuName();
-
     if (!submenus.contains(category))
     {
         submenus[category] = ui->menuAdd->addMenu(category);
         QAction* a = submenus[category]->addAction(name);
-        connect(a, &QAction::triggered, this, &MainWindow::createNew<T>);
+        connect(a, &QAction::triggered, this, &MainWindow::createNew<N, C>);
     }
 }
 
 #include "node/3d/point3d_node.h"
 #include "node/2d/circle_node.h"
 
+#include "control/3d/point3d_control.h"
+#include "control/2d/circle_control.h"
+
 void MainWindow::makeAddMenu()
 {
     QMap<QString, QMenu*> submenus;
-    addNodeToAddMenu<Point3D>(submenus);
-    addNodeToAddMenu<CircleNode>(submenus);
+    addNodeToAddMenu<Point3D, Point3DControl>("3D", "Point", submenus);
+    addNodeToAddMenu<CircleNode, CircleControl>("2D", "Circle", submenus);
 }
