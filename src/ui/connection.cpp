@@ -98,6 +98,10 @@ void Connection::paint(QPainter *painter,
     Q_UNUSED(widget);
 
     QColor color = Colors::getColor(dynamic_cast<Datum*>(link->parent()));
+    if (drag_state == INVALID)
+    {
+        color = Colors::red;
+    }
     if (isSelected() || drag_state == VALID)
     {
         color = Colors::highlight(color);
@@ -114,13 +118,17 @@ void Connection::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         return;
     }
     InputPort* target = canvas->getInputPortAt(event->pos());
-    if (target)
+    if (target && target->getDatum()->acceptsLink(link))
     {
         drag_state = VALID;
     }
-    else
+    else if (target)
     {
         drag_state = INVALID;
+    }
+    else
+    {
+        drag_state = NONE;
     }
     prepareGeometryChange();
     drag_pos = event->pos();
