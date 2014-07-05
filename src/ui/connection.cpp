@@ -97,7 +97,7 @@ void Connection::paint(QPainter *painter,
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    QColor color = Colors::getColor(dynamic_cast<Datum*>(link->parent()));
+    QColor color = Colors::getColor(startDatum());
     if (drag_state == INVALID)
     {
         color = Colors::red;
