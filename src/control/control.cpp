@@ -106,6 +106,7 @@ void Control::redraw()
 {
     prepareGeometryChange();
     emit(inspectorPositionChanged());
+    emit(portPositionChanged());
 }
 
 void Control::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
