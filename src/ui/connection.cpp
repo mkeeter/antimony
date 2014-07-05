@@ -22,11 +22,7 @@ Connection::Connection(Link* link, Canvas* canvas)
     setZValue(2);
     connect(startControl(), &Control::portPositionChanged,
             this, &Connection::onPortPositionChanged);
-}
-
-Connection::~Connection()
-{
-    link->deleteLater();
+    connect(link, SIGNAL(destroyed()), this, SLOT(deleteLater()));
 }
 
 QRectF Connection::boundingRect() const
@@ -148,6 +144,6 @@ void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     }
     else
     {
-        deleteLater();
+        link->deleteLater();
     }
 }

@@ -32,13 +32,10 @@ Control::Control(Canvas* canvas, Node* node, QGraphicsItem* parent)
     setZValue(1);
     connect(canvas, SIGNAL(viewChanged()),
             this, SIGNAL(portPositionChanged()));
-}
 
-Control::~Control()
-{
-    if (!parentObject())
+    if (node)
     {
-        delete node;
+        connect(node, SIGNAL(destroyed()), this, SLOT(deleteLater()));
     }
 }
 

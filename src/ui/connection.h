@@ -13,7 +13,6 @@ class Connection : public QGraphicsObject
     Q_OBJECT
 public:
     explicit Connection(Link* link, Canvas* canvas);
-    ~Connection();
     QRectF boundingRect() const;
     QPainterPath shape() const;
     void setDragPos(QPointF p) { drag_pos = p; }
