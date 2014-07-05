@@ -48,6 +48,7 @@ void Datum::addLink(Link* input)
 {
     input_handler->addInput(input);
     input->setTarget(this);
+    connect(this, SIGNAL(destroyed()), input, SLOT(deleteLater()));
     connect(input, SIGNAL(destroyed()), this, SLOT(update()));
 }
 

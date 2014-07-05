@@ -150,6 +150,13 @@ void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     if (target && datum->acceptsLink(link))
     {
         datum->addLink(link);
+        connect(endControl(), &Control::portPositionChanged,
+                this, &Connection::onPortPositionChanged);
+
+        // Making this connection could cause ports to move around
+        prepareGeometryChange();
+
+        drag_state = NONE;
     }
     else
     {
