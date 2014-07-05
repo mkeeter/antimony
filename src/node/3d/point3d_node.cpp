@@ -5,9 +5,15 @@
 
 #include "datum/float_datum.h"
 
+Point3D::Point3D(QString name, QObject* parent)
+    : Node(name, parent)
+{
+    // Nothing to do here
+}
+
 Point3D::Point3D(QString name, QString x, QString y, QString z,
                  QObject* parent)
-    : Node(name, parent)
+    : Point3D(name, parent)
 {
     new FloatDatum("x", x, this);
     new FloatDatum("y", y, this);
