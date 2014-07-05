@@ -2,6 +2,7 @@
 #define CONNECTION_H
 
 #include <QGraphicsObject>
+#include <QPointer>
 
 class Link;
 class Canvas;
@@ -46,7 +47,7 @@ protected:
 
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
-    Link* link;
+    QPointer<Link> link;
     Canvas* canvas;
     QPointF drag_pos;
 

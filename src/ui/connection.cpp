@@ -23,11 +23,12 @@ Connection::Connection(Link* link, Canvas* canvas)
     connect(startControl(), &Control::portPositionChanged,
             this, &Connection::onPortPositionChanged);
     connect(link, SIGNAL(destroyed()), this, SLOT(deleteLater()));
+    connect(this, SIGNAL(destroyed()), canvas, SLOT(update()));
 }
 
 QRectF Connection::boundingRect() const
 {
-    return path().boundingRect();
+    return link ? path().boundingRect() : QRectF();
 }
 
 QPainterPath Connection::shape() const
@@ -113,7 +114,7 @@ void Connection::paint(QPainter *painter,
 
 void Connection::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (link->target)
+    if (!link || link->target)
     {
         return;
     }
@@ -139,7 +140,7 @@ void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsObject::mouseReleaseEvent(event);
     ungrabMouse();
 
-    if (link->target)
+    if (!link || link->target)
     {
         return;
     }
