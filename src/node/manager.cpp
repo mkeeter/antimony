@@ -78,7 +78,10 @@ void NodeManager::clear()
 {
     for (auto n : findChildren<Node*>())
     {
-        delete n;
+        if (n->parent() == NULL)
+        {
+            delete n;
+        }
     }
 }
 
