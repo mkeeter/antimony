@@ -64,6 +64,7 @@ Control* Connection::endControl() const
 
 QPointF Connection::startPos() const
 {
+    Q_ASSERT(startControl());
     return startControl()->datumOutputPosition(startDatum());
 }
 
