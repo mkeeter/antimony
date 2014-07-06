@@ -131,7 +131,7 @@ void Control::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 void Control::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (parentObject())
+    if (parentObject() && dynamic_cast<Control*>(parentObject())->getNode() == node)
     {
         dynamic_cast<Control*>(parentObject())->mouseDoubleClickEvent(event);
     }

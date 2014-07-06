@@ -97,8 +97,10 @@ void NodeInspector::populateLists(Node *node)
 {
     for (Datum* d : node->findChildren<Datum*>())
     {
-        if (d->objectName().startsWith("_"))
+        if (d->parent() != node || d->objectName().startsWith("_"))
+        {
             continue;
+        }
         inputs << (d->hasInput() ? new InputPort(d, this) : NULL);
         labels << new QGraphicsTextItem(d->objectName(), this);
         editors << new _DatumTextItem(d, this);

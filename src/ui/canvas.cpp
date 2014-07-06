@@ -71,7 +71,9 @@ Control* Canvas::getControl(Node* node) const
     for (auto i : items())
     {
         Control* c = dynamic_cast<Control*>(i);
-        if (c && c->getNode() == node && c->parentItem() == NULL)
+
+        if (c && c->getNode() == node && (c->parentItem() == NULL ||
+            dynamic_cast<Control*>(c->parentItem())->getNode() != node))
         {
             return c;
         }
