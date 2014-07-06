@@ -11,13 +11,8 @@ MultiLineControl::MultiLineControl(Canvas* canvas, Node* node,
     // Nothing to do here
 }
 
-QRectF MultiLineControl::boundingRect() const
+QRectF MultiLineControl::bounds() const
 {
-    if (node.isNull())
-    {
-        return QRectF();
-    }
-
     QVector<QVector3D> points;
     for (auto line : lines())
     {

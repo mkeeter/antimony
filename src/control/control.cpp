@@ -40,6 +40,11 @@ Control::Control(Canvas* canvas, Node* node, QGraphicsItem* parent)
     }
 }
 
+QRectF Control::boundingRect() const
+{
+    return node ? bounds() : QRectF();
+}
+
 QRectF Control::boundingBox(QVector<QVector3D> points, int padding) const
 {
     float xmin =  INFINITY;

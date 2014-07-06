@@ -29,6 +29,14 @@ public:
      */
     QRectF boundingBox(QVector<QVector3D> points, int padding=10) const;
 
+    /** This is the mandatory function made safe from Node deletion.
+     */
+    virtual QRectF boundingRect() const;
+
+    /** This function is overloaded by children to return bounds.
+     */
+    virtual QRectF bounds() const=0;
+
     /** Returns this control's relevant node.
      */
     Node* getNode() const;

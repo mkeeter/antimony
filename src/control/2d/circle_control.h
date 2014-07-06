@@ -36,7 +36,7 @@ public:
      */
     virtual QPointF inspectorPosition() const override;
 
-    virtual QRectF boundingRect() const override;
+    virtual QRectF bounds() const override;
 
 protected:
     QVector3D position() const;

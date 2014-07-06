@@ -16,9 +16,9 @@ QVector3D Point2DControl::position() const
     return QVector3D(getValue("x"), getValue("y"), 0);
 }
 
-QRectF Point2DControl::boundingRect() const
+QRectF Point2DControl::bounds() const
 {
-    return node ? boundingBox({position()}) : QRectF();
+    return boundingBox({position()});
 }
 
 void Point2DControl::paint(QPainter *painter,

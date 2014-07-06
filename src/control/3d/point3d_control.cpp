@@ -18,9 +18,9 @@ QVector3D Point3DControl::position() const
     return QVector3D(getValue("x"), getValue("y"), getValue("z"));
 }
 
-QRectF Point3DControl::boundingRect() const
+QRectF Point3DControl::bounds() const
 {
-    return node ? boundingBox({position()}) : QRectF();
+    return boundingBox({position()});
 }
 
 void Point3DControl::paint(QPainter *painter,

@@ -15,6 +15,10 @@ public:
      */
     virtual QRectF boundingRect() const override;
 
+    /** Override the custom bounds function with nothing.
+     */
+    virtual QRectF bounds() const override { return QRectF(); }
+
     /** Paint the axes.
      */
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,

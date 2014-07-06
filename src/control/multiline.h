@@ -15,7 +15,7 @@ public:
 
     virtual QPainterPath shape() const;
 
-    virtual QRectF boundingRect() const override;
+    virtual QRectF bounds() const override;
 
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                        QWidget *widget) override;

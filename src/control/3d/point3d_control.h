@@ -17,7 +17,7 @@ public:
 
     /** Returns the bounding rect in screen coordinates.
      */
-    virtual QRectF boundingRect() const override;
+    virtual QRectF bounds() const override;
 
     /** Paints a single circle.
      */
