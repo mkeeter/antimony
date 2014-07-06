@@ -27,7 +27,11 @@ QVector<QVector<QVector3D>> CubeControl::lines() const
         {QVector3D(ax, ay, az), QVector3D(ax, by, az),
          QVector3D(bx, by, az), QVector3D(bx, ay, az), QVector3D(ax, ay, az)},
         {QVector3D(ax, ay, bz), QVector3D(ax, by, bz),
-         QVector3D(bx, by, bz), QVector3D(bx, ay, bz), QVector3D(ax, ay, bz)}};
+         QVector3D(bx, by, bz), QVector3D(bx, ay, bz), QVector3D(ax, ay, bz)},
+        {QVector3D(ax, ay, az), QVector3D(ax, ay, bz)},
+        {QVector3D(bx, ay, az), QVector3D(bx, ay, bz)},
+        {QVector3D(ax, by, az), QVector3D(ax, by, bz)},
+        {QVector3D(bx, by, az), QVector3D(bx, by, bz)}};
 }
 
 void CubeControl::drag(QVector3D center, QVector3D delta)
