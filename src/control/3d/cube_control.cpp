@@ -42,5 +42,8 @@ void CubeControl::drag(QVector3D center, QVector3D delta)
 
 QPointF CubeControl::inspectorPosition() const
 {
-    return b->inspectorPosition();
+    return canvas->worldToScene(QVector3D(
+            b->getValue("x"),
+            a->getValue("y"),
+            a->getValue("z")));
 }
