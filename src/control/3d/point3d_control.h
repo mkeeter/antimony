@@ -21,8 +21,7 @@ public:
 
     /** Paints a single circle.
      */
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-                       QWidget *widget) override;
+    virtual void paintControl(QPainter *painter) override;
 
     /** Returns a painter path shape for selection.
      */

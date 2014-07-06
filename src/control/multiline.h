@@ -17,8 +17,7 @@ public:
 
     virtual QRectF bounds() const override;
 
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-                       QWidget *widget) override;
+    virtual void paintControl(QPainter *painter) override;
 
 protected:
     /** Generates a painter path (in scene coordinates)

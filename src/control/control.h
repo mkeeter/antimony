@@ -123,6 +123,14 @@ protected:
      */
     void setDefaultBrush(QPainter* painter) const;
 
+    /** Override paint with a function that is safe under node deletion.
+     */
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+                       QWidget *widget) override;
+
+    /** This function should be defined by child nodes
+     */
+    virtual void paintControl(QPainter* painter)=0;
 
     Canvas* canvas;
     QPointer<Node> node;
@@ -142,8 +150,7 @@ class DummyControl : public Control
 public:
     explicit DummyControl(Canvas* canvas, Node* node, QGraphicsItem* parent=0);
     virtual void drag(QVector3D center, QVector3D delta) override;
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-                       QWidget *widget) override;
+    virtual void paintControl(QPainter *painter);
     virtual QPainterPath shape() const;
 };
 

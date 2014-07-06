@@ -252,6 +252,19 @@ void Control::setDefaultBrush(QPainter *painter) const
     }
 }
 
+void Control::paint(QPainter *painter,
+                    const QStyleOptionGraphicsItem *option,
+                    QWidget *widget)
+{
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
+
+    if (node)
+    {
+        paintControl(painter);
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 DummyControl::DummyControl(Canvas *canvas, Node *node, QGraphicsItem *parent)
@@ -275,11 +288,7 @@ QPainterPath DummyControl::shape() const
     return QPainterPath();
 }
 
-void DummyControl::paint(QPainter *painter,
-                         const QStyleOptionGraphicsItem *option,
-                         QWidget *widget)
+void DummyControl::paintControl(QPainter *painter)
 {
     Q_UNUSED(painter);
-    Q_UNUSED(option);
-    Q_UNUSED(widget);
 }

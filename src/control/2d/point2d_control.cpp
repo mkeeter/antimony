@@ -21,17 +21,8 @@ QRectF Point2DControl::bounds() const
     return boundingBox({position()});
 }
 
-void Point2DControl::paint(QPainter *painter,
-                           const QStyleOptionGraphicsItem *option,
-                           QWidget *widget)
+void Point2DControl::paintControl(QPainter *painter)
 {
-    if (node.isNull())
-    {
-        return;
-    }
-
-    Q_UNUSED(option);
-    Q_UNUSED(widget);
     setDefaultBrush(painter);
     setDefaultPen(painter);
     painter->drawPath(shape());

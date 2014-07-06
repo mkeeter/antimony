@@ -44,16 +44,8 @@ QPainterPath MultiLineControl::shape() const
 }
 
 
-void MultiLineControl::paint(QPainter *painter,
-                             const QStyleOptionGraphicsItem *option,
-                             QWidget *widget)
+void MultiLineControl::paintControl(QPainter *painter)
 {
-    Q_UNUSED(option);
-    Q_UNUSED(widget);
-
-    if (node)
-    {
-        setDefaultPen(painter);
-        painter->drawPath(path());
-    }
+    setDefaultPen(painter);
+    painter->drawPath(path());
 }

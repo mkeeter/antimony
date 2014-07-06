@@ -23,12 +23,8 @@ QRectF Point3DControl::bounds() const
     return boundingBox({position()});
 }
 
-void Point3DControl::paint(QPainter *painter,
-                           const QStyleOptionGraphicsItem *option,
-                           QWidget *widget)
+void Point3DControl::paintControl(QPainter *painter)
 {
-    Q_UNUSED(option);
-    Q_UNUSED(widget);
     setDefaultBrush(painter);
     setDefaultPen(painter);
     painter->drawPath(shape());
