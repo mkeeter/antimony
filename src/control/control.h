@@ -54,6 +54,10 @@ public:
      */
     QPointF datumInputPosition(Datum* d) const;
 
+    /** Gets the value of a specific datum (which must be a double).
+     */
+    double getValue(QString name) const;
+
 protected slots:
     void redraw();
 
@@ -94,10 +98,6 @@ protected:
     /** Called to drag the node around with the mouse.
      */
     virtual void drag(QVector3D center, QVector3D delta)=0;
-
-    /** Gets the value of a specific datum (which must be a double).
-     */
-    double getValue(QString name) const;
 
     /** Attempts to drag a particular datum's value.
      */
