@@ -35,7 +35,8 @@ Control::Control(Canvas* canvas, Node* node, QGraphicsItem* parent)
 
     if (node)
     {
-        connect(node, SIGNAL(destroyed()), this, SLOT(deleteLater()));
+        connect(node, SIGNAL(destroyed()), this, SLOT(deleteLater()),
+                Qt::QueuedConnection);
     }
 }
 
@@ -58,6 +59,11 @@ QRectF Control::boundingBox(QVector<QVector3D> points, int padding) const
     return QRectF(xmin - padding, ymin - padding,
                   xmax - xmin + 2*padding,
                   ymax - ymin + 2*padding);
+}
+
+Node* Control::getNode() const
+{
+    return node;
 }
 
 QPointF Control::datumOutputPosition(Datum *d) const
@@ -104,9 +110,12 @@ void Control::watchDatums(QVector<QString> datums)
 
 void Control::redraw()
 {
-    prepareGeometryChange();
-    emit(inspectorPositionChanged());
-    emit(portPositionChanged());
+    if (node)
+    {
+        prepareGeometryChange();
+        emit(inspectorPositionChanged());
+        emit(portPositionChanged());
+    }
 }
 
 void Control::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
@@ -184,6 +193,18 @@ double Control::getValue(QString name) const
     Q_ASSERT(!PyErr_Occurred());
 
     return v;
+}
+
+void Control::deleteNode()
+{
+    if (parentObject())
+    {
+        dynamic_cast<Control*>(parentObject())->deleteNode();
+    }
+    else
+    {
+        node->deleteLater();
+    }
 }
 
 void Control::dragValue(QString name, double delta)

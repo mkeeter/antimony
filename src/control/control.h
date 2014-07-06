@@ -31,7 +31,7 @@ public:
 
     /** Returns this control's relevant node.
      */
-    Node* getNode() { return node; }
+    Node* getNode() const;
 
     /** Returns the desired editor point (in scene coordinates)
      */
@@ -57,6 +57,10 @@ public:
     /** Gets the value of a specific datum (which must be a double).
      */
     double getValue(QString name) const;
+
+    /** Calls deleteLater on the top-level node.
+     */
+    void deleteNode();
 
 protected slots:
     void redraw();
@@ -113,7 +117,7 @@ protected:
 
 
     Canvas* canvas;
-    Node* node;
+    QPointer<Node> node;
     QPointer<NodeInspector> inspector;
 
     bool _hover;

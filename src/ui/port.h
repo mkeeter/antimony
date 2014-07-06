@@ -2,6 +2,7 @@
 #define PORT_H
 
 #include <QGraphicsObject>
+#include <QPointer>
 
 class NodeInspector;
 class Datum;
@@ -17,9 +18,9 @@ public:
                        const QStyleOptionGraphicsItem *option,
                        QWidget *widget) override;
     void setOpacity(float o) { opacity = o; update(); }
-    Datum* getDatum() { return datum; }
+    Datum* getDatum() const;
 protected:
-    Datum* datum;
+    QPointer<Datum> datum;
     float opacity;
     bool hover;
 };

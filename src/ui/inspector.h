@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QLineEdit>
 #include <QGraphicsProxyWidget>
+#include <QPointer>
 
 class Datum;
 class Control;
@@ -84,7 +85,7 @@ protected:
     void setMaskSize(float m);
     Q_PROPERTY(float mask_size READ getMaskSize WRITE setMaskSize)
 
-    Control* control;
+    QPointer<Control> control;
     QList<InputPort*> inputs;
     QList<OutputPort*> outputs;
     QList<QGraphicsTextItem*> labels;

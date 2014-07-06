@@ -2,6 +2,7 @@
 
 #include <QPainter>
 
+#include "node/node.h"
 #include "ui/canvas.h"
 #include "control/3d/point3d_control.h"
 
@@ -19,7 +20,7 @@ QVector3D Point3DControl::position() const
 
 QRectF Point3DControl::boundingRect() const
 {
-    return boundingBox({position()});
+    return node ? boundingBox({position()}) : QRectF();
 }
 
 void Point3DControl::paint(QPainter *painter,

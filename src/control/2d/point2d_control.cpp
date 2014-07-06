@@ -18,13 +18,18 @@ QVector3D Point2DControl::position() const
 
 QRectF Point2DControl::boundingRect() const
 {
-    return boundingBox({position()});
+    return node ? boundingBox({position()}) : QRectF();
 }
 
 void Point2DControl::paint(QPainter *painter,
                            const QStyleOptionGraphicsItem *option,
                            QWidget *widget)
 {
+    if (node.isNull())
+    {
+        return;
+    }
+
     Q_UNUSED(option);
     Q_UNUSED(widget);
     setDefaultBrush(painter);

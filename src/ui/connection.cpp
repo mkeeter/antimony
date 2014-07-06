@@ -22,7 +22,9 @@ Connection::Connection(Link* link, Canvas* canvas)
     setZValue(2);
     connect(startControl(), &Control::portPositionChanged,
             this, &Connection::onPortPositionChanged);
-    connect(link, SIGNAL(destroyed()), this, SLOT(deleteLater()));
+
+    connect(link, SIGNAL(destroyed()), this, SLOT(deleteLater()),
+            Qt::QueuedConnection);
     connect(this, SIGNAL(destroyed()), canvas, SLOT(update()));
 }
 
@@ -103,6 +105,7 @@ QPointF Connection::endPos() const
 
 QPainterPath Connection::path() const
 {
+    qDebug() << "path called" << link;
     QPointF start = startPos();
     QPointF end = endPos();
 
@@ -123,6 +126,11 @@ void Connection::paint(QPainter *painter,
                        const QStyleOptionGraphicsItem *option,
                        QWidget *widget)
 {
+    if (link.isNull())
+    {
+        return;
+    }
+
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
@@ -142,10 +150,11 @@ void Connection::paint(QPainter *painter,
 
 void Connection::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (!link || link->target)
+    if (drag_state == CONNECTED)
     {
         return;
     }
+
     InputPort* target = canvas->getInputPortAt(event->pos());
     if (target && target->getDatum()->acceptsLink(link))
     {
@@ -166,12 +175,12 @@ void Connection::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsObject::mouseReleaseEvent(event);
-    ungrabMouse();
-
-    if (!link || link->target)
+    if (drag_state == CONNECTED)
     {
         return;
     }
+
+    ungrabMouse();
 
     InputPort* target = canvas->getInputPortAt(event->pos());
     Datum* datum = target ? target->getDatum() : NULL;

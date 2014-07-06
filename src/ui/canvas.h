@@ -62,6 +62,10 @@ protected:
      */
     virtual void wheelEvent(QWheelEvent *event) override;
 
+    /** On delete key press, delete nodes and connections.
+     */
+    virtual void keyPressEvent(QKeyEvent *event) override;
+
     /** Pans the scene rectangle.
      */
     void pan(QPointF d);

@@ -28,6 +28,10 @@ NodeInspector::NodeInspector(Control* control)
     connect(control->getCanvas(), SIGNAL(viewChanged()),
             this, SLOT(onPositionChange()));
 
+    connect(control, SIGNAL(destroyed()),
+            this, SLOT(animateClose()),
+            Qt::QueuedConnection);
+
     populateLists(control->getNode());
     setZValue(-2);
     setFlag(ItemClipsChildrenToShape);
@@ -168,7 +172,10 @@ void NodeInspector::setMaskSize(float m)
 
 void NodeInspector::onPositionChange()
 {
-    setPos(control->inspectorPosition());
+    if (control)
+    {
+        setPos(control->inspectorPosition());
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

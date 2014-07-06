@@ -8,6 +8,10 @@
 
 #include "ui/canvas.h"
 #include "ui/port.h"
+#include "ui/connection.h"
+
+#include "node/node.h"
+#include "datum/link.h"
 
 #include "control/control.h"
 #include "control/axes_control.h"
@@ -26,9 +30,6 @@ Canvas::Canvas(QWidget* parent)
     setRenderHints(QPainter::Antialiasing);
 
     new AxesControl(this);
-
-    //CircleNode* c = new CircleNode("c", "0.0", "0.0", "100");
-    //auto ctrl = new CircleControl(this, c);
 }
 
 QMatrix4x4 Canvas::getMatrix() const
@@ -139,6 +140,30 @@ void Canvas::wheelEvent(QWheelEvent *event)
     QVector3D b = sceneToWorld(mapToScene(event->pos()));
     pan(worldToScene(a - b));
     emit(viewChanged());
+}
+
+void Canvas::keyPressEvent(QKeyEvent *event)
+{
+    if (scene->focusItem())
+    {
+        QGraphicsView::keyPressEvent(event);
+    }
+    else if (event->key() == Qt::Key_Delete)
+    {
+        for (auto i : scene->selectedItems())
+        {
+            Control* control = dynamic_cast<Control*>(i);
+            Connection* conn = dynamic_cast<Connection*>(i);
+            if (control)
+            {
+                control->deleteNode();
+            }
+            else if (conn)
+            {
+                conn->getLink()->deleteLater();
+            }
+        }
+    }
 }
 
 void Canvas::pan(QPointF d)

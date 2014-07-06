@@ -25,6 +25,11 @@ void Port::paint(QPainter *painter,
                  const QStyleOptionGraphicsItem *option,
                  QWidget *widget)
 {
+    if (datum.isNull())
+    {
+        return;
+    }
+
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
@@ -39,6 +44,12 @@ void Port::paint(QPainter *painter,
     painter->setPen(Qt::NoPen);
     painter->drawRect(boundingRect());
 }
+
+Datum* Port::getDatum() const
+{
+    return datum;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 InputPort::InputPort(Datum *d, NodeInspector *inspector)

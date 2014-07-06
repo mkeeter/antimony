@@ -13,6 +13,11 @@ MultiLineControl::MultiLineControl(Canvas* canvas, Node* node,
 
 QRectF MultiLineControl::boundingRect() const
 {
+    if (node.isNull())
+    {
+        return QRectF();
+    }
+
     QVector<QVector3D> points;
     for (auto line : lines())
     {
@@ -51,6 +56,9 @@ void MultiLineControl::paint(QPainter *painter,
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    setDefaultPen(painter);
-    painter->drawPath(path());
+    if (node)
+    {
+        setDefaultPen(painter);
+        painter->drawPath(path());
+    }
 }
