@@ -11,7 +11,7 @@ CubeControl::CubeControl(Canvas* canvas, Node* node)
       a(new Point3DControl(canvas, node->findChild<Node*>("a"), this)),
       b(new Point3DControl(canvas, node->findChild<Node*>("b"), this))
 {
-    // Nothing to do here
+    watchDatums({"a.x","a.y","a.z","b.x","b.y","b.z"});
 }
 
 QVector<QVector<QVector3D>> CubeControl::lines() const
