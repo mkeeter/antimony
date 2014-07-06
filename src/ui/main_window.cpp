@@ -60,25 +60,28 @@ void MainWindow::createNew()
 
 template <class N, class C>
 void MainWindow::addNodeToAddMenu(QString category, QString name,
-                                  QMap<QString, QMenu*> submenus)
+                                  QMap<QString, QMenu*>* submenus)
 {
-    if (!submenus.contains(category))
+    if (!submenus->contains(category))
     {
-        submenus[category] = ui->menuAdd->addMenu(category);
-        QAction* a = submenus[category]->addAction(name);
-        connect(a, &QAction::triggered, this, &MainWindow::createNew<N, C>);
+        (*submenus)[category] = ui->menuAdd->addMenu(category);
     }
+    QAction* a = (*submenus)[category]->addAction(name);
+    connect(a, &QAction::triggered, this, &MainWindow::createNew<N, C>);
 }
 
 #include "node/3d/point3d_node.h"
+#include "node/3d/cube_node.h"
 #include "node/2d/circle_node.h"
 
 #include "control/3d/point3d_control.h"
+#include "control/3d/cube_control.h"
 #include "control/2d/circle_control.h"
 
 void MainWindow::makeAddMenu()
 {
     QMap<QString, QMenu*> submenus;
-    addNodeToAddMenu<Point3D, Point3DControl>("3D", "Point", submenus);
-    addNodeToAddMenu<CircleNode, CircleControl>("2D", "Circle", submenus);
+    addNodeToAddMenu<Point3D, Point3DControl>("3D", "Point", &submenus);
+    addNodeToAddMenu<CubeNode, CubeControl>("3D", "Cube", &submenus);
+    addNodeToAddMenu<CircleNode, CircleControl>("2D", "Circle", &submenus);
 }

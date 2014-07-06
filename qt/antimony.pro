@@ -22,7 +22,8 @@ SOURCES += \
     ../src/control/2d/circle_control.cpp \
     ../src/ui/colors.cpp \
     ../src/ui/port.cpp \
-    ../src/ui/connection.cpp
+    ../src/ui/connection.cpp \
+    ../src/control/3d/cube_control.cpp
 
 HEADERS += \
     ../src/ui/main_window.h \
@@ -38,7 +39,8 @@ HEADERS += \
     ../src/control/2d/circle_control.h \
     ../src/ui/colors.h \
     ../src/ui/port.h \
-    ../src/ui/connection.h
+    ../src/ui/connection.h \
+    ../src/control/3d/cube_control.h
 
 FORMS += \
     ../src/ui/forms/main_window.ui \

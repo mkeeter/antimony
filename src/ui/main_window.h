@@ -36,7 +36,7 @@ private:
      */
     template <class N, class C>
     void addNodeToAddMenu(QString category, QString name,
-                          QMap<QString, QMenu*> submenus);
+                          QMap<QString, QMenu*>* submenus);
 
     /** Populate a menu with all of the widgets.
      */
