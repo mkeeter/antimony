@@ -40,26 +40,47 @@ QPainterPath Connection::shape() const
 
 Datum* Connection::startDatum() const
 {
-    return dynamic_cast<Datum*>(link->parent());
-}
-
-Control* Connection::startControl() const
-{
-    return canvas->getControl(dynamic_cast<Node*>(startDatum()->parent()));
+    Datum* d = dynamic_cast<Datum*>(link->parent());
+    Q_ASSERT(d);
+    return d;
 }
 
 Datum* Connection::endDatum() const
 {
-    return link->target ? link->target : NULL;
+    Q_ASSERT(drag_state == CONNECTED);
+    Q_ASSERT(link->target);
+    return link->target;
 }
+
+Node* Connection::startNode() const
+{
+    Node* n = dynamic_cast<Node*>(startDatum()->parent());
+    Q_ASSERT(n);
+    return n;
+}
+
+Node* Connection::endNode() const
+{
+    Q_ASSERT(drag_state == CONNECTED);
+    Node* n = dynamic_cast<Node*>(endDatum()->parent());
+    Q_ASSERT(n);
+    return n;
+}
+
+Control* Connection::startControl() const
+{
+    Control* c = canvas->getControl(startNode());
+    Q_ASSERT(c);
+    return c;
+}
+
 
 Control* Connection::endControl() const
 {
-    if (endDatum() == NULL)
-    {
-        return NULL;
-    }
-    return canvas->getControl(dynamic_cast<Node*>(endDatum()->parent()));
+    Q_ASSERT(drag_state == CONNECTED);
+    Control* c = canvas->getControl(endNode());
+    Q_ASSERT(c);
+    return c;
 }
 
 QPointF Connection::startPos() const
@@ -70,8 +91,14 @@ QPointF Connection::startPos() const
 
 QPointF Connection::endPos() const
 {
-    Control* c = endControl();
-    return c ? c->datumInputPosition(endDatum()) : drag_pos;
+    if (drag_state == CONNECTED)
+    {
+        return endControl()->datumInputPosition(endDatum());
+    }
+    else
+    {
+        return drag_pos;
+    }
 }
 
 QPainterPath Connection::path() const
@@ -151,13 +178,13 @@ void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     if (target && datum->acceptsLink(link))
     {
         datum->addLink(link);
+        drag_state = CONNECTED;
+
         connect(endControl(), &Control::portPositionChanged,
                 this, &Connection::onPortPositionChanged);
 
         // Making this connection could cause ports to move around
         prepareGeometryChange();
-
-        drag_state = NONE;
     }
     else
     {

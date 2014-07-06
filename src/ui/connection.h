@@ -4,10 +4,13 @@
 #include <QGraphicsObject>
 #include <QPointer>
 
+#include "datum/link.h"
+
 class Link;
 class Canvas;
 class Datum;
 class Control;
+class Node;
 
 class Connection : public QGraphicsObject
 {
@@ -17,12 +20,18 @@ public:
     QRectF boundingRect() const;
     QPainterPath shape() const;
     void setDragPos(QPointF p) { drag_pos = p; }
+
+    Link* getLink() const { return link; }
+
 public slots:
     void onPortPositionChanged() { prepareGeometryChange(); }
 protected:
 
     Datum* startDatum() const;
     Datum* endDatum() const;
+
+    Node* startNode() const;
+    Node* endNode() const;
 
     Control* startControl() const;
     Control* endControl() const;
@@ -51,7 +60,7 @@ protected:
     Canvas* canvas;
     QPointF drag_pos;
 
-    enum { NONE, VALID, INVALID } drag_state;
+    enum { NONE, VALID, INVALID, CONNECTED } drag_state;
 };
 
 #endif // CONNECTION_H
