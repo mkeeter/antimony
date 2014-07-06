@@ -7,7 +7,11 @@
 
 #include "datum/name_datum.h"
 #include "datum/float_datum.h"
+#include "datum/function_datum.h"
+
 #include "node/3d/point3d_node.h"
+#include "node/3d/cube_node.h"
+
 #include "node/manager.h"
 
 TestNode::TestNode(QObject* parent)
@@ -105,4 +109,13 @@ void TestNode::ModifyRecursiveConnection()
     QVERIFY(a->getDatum("x")->getValid() == true);
     QVERIFY(a->getDatum("y")->getValid() == true);
     delete a;
+}
+
+void TestNode::TestChildNodes()
+{
+    CubeNode* c = new CubeNode(0.0, 0.0, 0.0, 1.0);
+    ShapeFunctionDatum* d = c->getDatum<ShapeFunctionDatum>("shape");
+    QVERIFY(d);
+    QVERIFY(d->getValid());
+    delete c;
 }

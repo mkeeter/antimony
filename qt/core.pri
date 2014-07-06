@@ -15,7 +15,8 @@ SOURCES += \
     ../src/node/3d/point3d_node.cpp \
     ../src/datum/output_datum.cpp \
     ../src/datum/function_datum.cpp \
-    ../src/node/2d/circle_node.cpp
+    ../src/node/2d/circle_node.cpp \
+    ../src/node/3d/cube_node.cpp
 
 HEADERS += \
     ../src/datum/datum.h \
@@ -34,7 +35,8 @@ HEADERS += \
     ../src/node/3d/point3d_node.h \
     ../src/datum/output_datum.h \
     ../src/datum/function_datum.h \
-    ../src/node/2d/circle_node.h
+    ../src/node/2d/circle_node.h \
+    ../src/node/3d/cube_node.h
 
 
 INCLUDEPATH += ../src

@@ -40,6 +40,10 @@ private slots:
     /** If a recursive connection is fixed, all nodes should become valid
      */
     void ModifyRecursiveConnection();
+
+    /** Creates a node with child nodes and verifies that it works.
+     */
+    void TestChildNodes();
 };
 
 #endif // TEST_NODE_H

@@ -1,5 +1,7 @@
 #include <Python.h>
 
+#include <QStringList>
+
 #include "node/node.h"
 #include "node/manager.h"
 #include "node/proxy.h"
@@ -34,5 +36,20 @@ PyObject* Node::proxy()
 
 Datum* Node::getDatum(QString name)
 {
-    return findChild<Datum*>(name);
+    QStringList s = name.split(".");
+
+    if (s.length() == 1)
+    {
+        return findChild<Datum*>(s.back());
+    }
+    else
+    {
+        Node* n = findChild<Node*>(s.front());
+        if (n)
+        {
+            s.pop_front();
+            return n->getDatum(s.join("."));
+        }
+    }
+    return NULL;
 }
