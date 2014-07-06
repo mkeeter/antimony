@@ -5,8 +5,9 @@
 #include "ui/canvas.h"
 #include "control/3d/point3d_control.h"
 
-Point3DControl::Point3DControl(Canvas* canvas, Node* node)
-    : Control(canvas, node)
+Point3DControl::Point3DControl(Canvas* canvas, Node* node,
+                               QGraphicsItem* parent)
+    : Control(canvas, node, parent)
 {
     watchDatums({"x","y","z"});
 }
