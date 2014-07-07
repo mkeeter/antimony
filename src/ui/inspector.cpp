@@ -29,8 +29,7 @@ NodeInspector::NodeInspector(Control* control)
             this, SLOT(onPositionChange()));
 
     connect(control, SIGNAL(destroyed()),
-            this, SLOT(animateClose()),
-            Qt::QueuedConnection);
+            this, SLOT(animateClose()));
 
     populateLists(control->getNode());
     setZValue(-2);

@@ -35,8 +35,7 @@ Control::Control(Canvas* canvas, Node* node, QGraphicsItem* parent)
 
     if (node)
     {
-        connect(node, SIGNAL(destroyed()), this, SLOT(deleteLater()),
-                Qt::QueuedConnection);
+        connect(node, SIGNAL(destroyed()), this, SLOT(deleteLater()));
     }
 }
 
