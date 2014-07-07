@@ -30,7 +30,7 @@ Connection::Connection(Link* link, Canvas* canvas)
 
 QRectF Connection::boundingRect() const
 {
-    return link ? path().boundingRect() : QRectF();
+    return areDatumsValid() ? path().boundingRect() : QRectF();
 }
 
 QPainterPath Connection::shape() const
@@ -38,6 +38,12 @@ QPainterPath Connection::shape() const
     QPainterPathStroker stroker;
     stroker.setWidth(4);
     return stroker.createStroke(path());
+}
+
+bool Connection::areDatumsValid() const
+{
+    return link && dynamic_cast<Datum*>(link->parent()) &&
+            (drag_state != CONNECTED || link->target);
 }
 
 Datum* Connection::startDatum() const
@@ -105,7 +111,6 @@ QPointF Connection::endPos() const
 
 QPainterPath Connection::path() const
 {
-    qDebug() << "path called" << link;
     QPointF start = startPos();
     QPointF end = endPos();
 
@@ -191,12 +196,11 @@ void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
         connect(endControl(), &Control::portPositionChanged,
                 this, &Connection::onPortPositionChanged);
-
-        // Making this connection could cause ports to move around
-        prepareGeometryChange();
     }
     else
     {
         link->deleteLater();
     }
+
+    prepareGeometryChange();
 }

@@ -25,7 +25,12 @@ public:
 
 public slots:
     void onPortPositionChanged() { prepareGeometryChange(); }
+
 protected:
+
+    /** Checks that start and end (if not dragging) datums are valid
+     */
+    bool areDatumsValid() const;
 
     Datum* startDatum() const;
     Datum* endDatum() const;
