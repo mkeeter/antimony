@@ -131,7 +131,7 @@ void Connection::paint(QPainter *painter,
                        const QStyleOptionGraphicsItem *option,
                        QWidget *widget)
 {
-    if (link.isNull())
+    if (!areDatumsValid())
     {
         return;
     }
