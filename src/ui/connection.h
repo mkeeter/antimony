@@ -11,6 +11,7 @@ class Canvas;
 class Datum;
 class Control;
 class Node;
+class NodeInspector;
 
 class Connection : public QGraphicsObject
 {
@@ -64,6 +65,8 @@ protected:
     QPointer<Link> link;
     Canvas* canvas;
     QPointF drag_pos;
+
+    NodeInspector* raised_inspector;
 
     enum { NONE, VALID, INVALID, CONNECTED } drag_state;
 };

@@ -8,6 +8,7 @@
 class Node;
 class Control;
 class InputPort;
+class NodeInspector;
 
 class Canvas : public QGraphicsView
 {
@@ -40,6 +41,10 @@ public:
     /** Finds an input port at the given position (or NULL)
      */
     InputPort* getInputPortAt(QPointF pos) const;
+
+    /** Finds an inspector at the given position (or NULL)
+     */
+    NodeInspector* getInspectorAt(QPointF pos) const;
 
     QGraphicsScene* scene;
 

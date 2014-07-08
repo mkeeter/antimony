@@ -9,6 +9,7 @@
 #include "ui/canvas.h"
 #include "ui/port.h"
 #include "ui/connection.h"
+#include "ui/inspector.h"
 
 #include "node/node.h"
 #include "datum/link.h"
@@ -87,6 +88,19 @@ InputPort* Canvas::getInputPortAt(QPointF pos) const
     for (auto i : scene->items(pos))
     {
         InputPort* p = dynamic_cast<InputPort*>(i);
+        if (p)
+        {
+            return p;
+        }
+    }
+    return NULL;
+}
+
+NodeInspector* Canvas::getInspectorAt(QPointF pos) const
+{
+    for (auto i : scene->items(pos))
+    {
+        NodeInspector* p = dynamic_cast<NodeInspector*>(i);
         if (p)
         {
             return p;

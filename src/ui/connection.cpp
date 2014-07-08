@@ -6,6 +6,7 @@
 #include "ui/canvas.h"
 #include "ui/colors.h"
 #include "ui/port.h"
+#include "ui/inspector.h"
 
 #include "datum/datum.h"
 #include "datum/link.h"
@@ -15,7 +16,8 @@
 #include "control/control.h"
 
 Connection::Connection(Link* link, Canvas* canvas)
-    : QGraphicsObject(), link(link), canvas(canvas), drag_state(NONE)
+    : QGraphicsObject(), link(link), canvas(canvas),
+      drag_state(NONE), raised_inspector(NULL)
 {
     setFlags(QGraphicsItem::ItemIsSelectable);
     canvas->scene->addItem(this);
@@ -162,6 +164,17 @@ void Connection::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     {
         return;
     }
+
+    NodeInspector* insp = canvas->getInspectorAt(event->pos());
+    if (raised_inspector)
+    {
+        raised_inspector->setZValue(-2);
+    }
+    if (insp)
+    {
+        insp->setZValue(-1.9);
+    }
+    raised_inspector = insp;
 
     InputPort* target = canvas->getInputPortAt(event->pos());
     if (target && target->getDatum()->acceptsLink(link))
