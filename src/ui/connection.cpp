@@ -25,12 +25,16 @@ Connection::Connection(Link* link, Canvas* canvas)
     connect(startControl(), &Control::portPositionChanged,
             this, &Connection::onPortPositionChanged);
 
-    // Not sure why this has to be a queued connection, but it fails
-    // otherwise (try connecting x to y on a Point3D, then deleting
-    // that connection -- it should crash).
-    connect(link, SIGNAL(destroyed()), this, SLOT(deleteLater()),
-            Qt::QueuedConnection);
+    connect(link, SIGNAL(destroyed()), this, SLOT(deleteLater()));
     connect(this, SIGNAL(destroyed()), canvas, SLOT(update()));
+}
+
+void Connection::onPortPositionChanged()
+{
+    if (areDatumsValid())
+    {
+        prepareGeometryChange();
+    }
 }
 
 QRectF Connection::boundingRect() const

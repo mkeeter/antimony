@@ -25,7 +25,7 @@ public:
     Link* getLink() const { return link; }
 
 public slots:
-    void onPortPositionChanged() { prepareGeometryChange(); }
+    void onPortPositionChanged();
 
 protected:
 
