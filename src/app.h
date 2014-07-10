@@ -4,6 +4,7 @@
 #include <QApplication>
 
 class MainWindow;
+class Canvas;
 
 class App : public QApplication
 {
@@ -11,6 +12,10 @@ class App : public QApplication
 public:
     explicit App(int argc, char *argv[]);
     ~App();
+
+    /** Helper function to get Canvas widget.
+     */
+    Canvas* getCanvas() const;
 
 private slots:
     void onAbout();

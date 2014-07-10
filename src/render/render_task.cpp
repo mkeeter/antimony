@@ -8,16 +8,21 @@
 #include "render/render_worker.h"
 #include "datum/datum.h"
 
+#include "ui/canvas.h"
+
 #include "cpp/fab.h"
 
 RenderTask::RenderTask(Datum* datum)
     : QObject(NULL), datum(datum), thread(NULL), current(NULL),
-      next(NULL), running(false)
+      next(NULL), running(false),
+      canvas(dynamic_cast<App*>(QApplication::instance())->getCanvas())
 {
     connect(datum, SIGNAL(changed()),
             this, SLOT(onDatumChanged()));
     connect(datum, SIGNAL(destroyed()),
             this, SLOT(onDatumDeleted()));
+    connect(canvas, SIGNAL(viewChanged()),
+            this, SLOT(onDatumChanged()));
 }
 
 bool RenderTask::accepts(Datum *d)

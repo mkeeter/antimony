@@ -2,8 +2,10 @@
 #include <QMessageBox>
 
 #include "app.h"
+
 #include "ui_main_window.h"
 #include "ui/main_window.h"
+#include "ui/canvas.h"
 
 #include "node/manager.h"
 
@@ -18,6 +20,11 @@ App::~App()
 {
     delete window;
     NodeManager::manager()->clear();
+}
+
+Canvas* App::getCanvas() const
+{
+    return window->canvas;
 }
 
 void App::onAbout()

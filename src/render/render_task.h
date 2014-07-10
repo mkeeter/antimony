@@ -7,6 +7,7 @@
 
 class Datum;
 class RenderWorker;
+class Canvas;
 
 class RenderTask : public QObject
 {
@@ -32,6 +33,8 @@ protected:
     RenderWorker* next;
 
     bool running;
+
+    Canvas* canvas;
 };
 
 #endif // RENDER_TASK_H

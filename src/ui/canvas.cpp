@@ -183,5 +183,4 @@ void Canvas::keyPressEvent(QKeyEvent *event)
 void Canvas::pan(QPointF d)
 {
     setSceneRect(sceneRect().translated(d));
-    emit(viewChanged());
 }
