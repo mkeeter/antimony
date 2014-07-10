@@ -8,9 +8,11 @@
 
 #include "node/manager.h"
 
+#include "render/render_task.h"
+
 Datum::Datum(QString name, QObject* parent)
     : QObject(parent), value(NULL), valid(false), input_handler(NULL),
-      _once(true)
+      post_init_called(false)
 {
     setObjectName(name);
 }
@@ -61,10 +63,9 @@ void Datum::update()
 {
     // The very first time that update() is called, refresh all other nodes
     // that may refer to this node by name (then never do so again).
-    if (_once)
+    if (!post_init_called)
     {
-        _once = false;
-        NodeManager::manager()->onNameChange(objectName());
+        postInit();
     }
 
     // Request that all upstream datums disconnect.
@@ -124,6 +125,19 @@ void Datum::update()
     if (has_changed)
     {
         emit changed();
+    }
+}
+
+void Datum::postInit()
+{
+    post_init_called = true;
+    NodeManager::manager()->onNameChange(objectName());
+
+    // If we're running the antimony app (not the test suite) and this is a
+    // function that outputs a shape object, make a RenderTask for it.
+    if (RenderTask::accepts(this))
+    {
+        new RenderTask(this);
     }
 }
 

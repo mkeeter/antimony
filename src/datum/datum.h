@@ -93,6 +93,11 @@ protected:
      */
     virtual PyObject* getCurrentValue()=0;
 
+    /** Helper function that is called after construction
+     *  (the first time that update is called)
+     */
+    virtual void postInit();
+
     PyObject* value;
     bool valid;
 
@@ -102,7 +107,7 @@ protected:
     InputHandler* input_handler;
 
     QList<QPointer<Datum>> _upstream;
-    bool _once;
+    bool post_init_called;
 };
 
 #endif // DATUM_H

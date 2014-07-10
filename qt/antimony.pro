@@ -23,7 +23,9 @@ SOURCES += \
     ../src/ui/colors.cpp \
     ../src/ui/port.cpp \
     ../src/ui/connection.cpp \
-    ../src/control/3d/cube_control.cpp
+    ../src/control/3d/cube_control.cpp \
+    ../src/render/render_task.cpp \
+    ../src/render/render_worker.cpp
 
 HEADERS += \
     ../src/ui/main_window.h \
@@ -40,7 +42,9 @@ HEADERS += \
     ../src/ui/colors.h \
     ../src/ui/port.h \
     ../src/ui/connection.h \
-    ../src/control/3d/cube_control.h
+    ../src/control/3d/cube_control.h \
+    ../src/render/render_task.h \
+    ../src/render/render_worker.h
 
 FORMS += \
     ../src/ui/forms/main_window.ui \
