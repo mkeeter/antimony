@@ -1,19 +1,33 @@
-#include <Python.h>
+#include <boost/python.hpp>
 
 #include <QDebug>
 #include <QTime>
 
-#include "render_worker.h"
+#include "render/render_worker.h"
+#include "cpp/shape.h"
 
-RenderWorker::RenderWorker(QObject* parent)
-    : QObject(parent)
+using namespace boost::python;
+
+RenderWorker::RenderWorker(PyObject *s, QMatrix4x4 m)
+    : QObject(NULL), shape(s), matrix(m)
 {
-    // Nothing to do here
+    Py_INCREF(shape);
+}
+
+RenderWorker::~RenderWorker()
+{
+    Py_DECREF(shape);
 }
 
 void RenderWorker::render()
 {
     qDebug() << "Starting render";
+    extract<Shape*> get_shape(shape);
+
+    Q_ASSERT(get_shape.check());
+    Shape* s = get_shape();
+
+    qDebug() << s->math.c_str();
 
     QTime dieTime= QTime::currentTime().addSecs(1);
     while(QTime::currentTime() < dieTime);

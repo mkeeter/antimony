@@ -41,15 +41,18 @@ void RenderTask::onDatumDeleted()
 
 void RenderTask::onDatumChanged()
 {
-    if (next)
+    if (datum->getValid() && datum->getValue())
     {
-        next->deleteLater();
-    }
-    next = new RenderWorker();
+        if (next)
+        {
+            next->deleteLater();
+        }
+        next = new RenderWorker(datum->getValue(), canvas->getMatrix());
 
-    if (!running)
-    {
-        startNextRender();
+        if (!running)
+        {
+            startNextRender();
+        }
     }
 }
 
