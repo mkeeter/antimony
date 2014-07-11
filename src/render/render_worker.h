@@ -5,6 +5,8 @@
 #include <QObject>
 #include <QMatrix4x4>
 
+class RenderImage;
+
 class RenderWorker : public QObject
 {
     Q_OBJECT
@@ -19,6 +21,9 @@ signals:
 protected:
     PyObject* shape;
     QMatrix4x4 matrix;
+    RenderImage* image;
+
+    friend class RenderTask;
 };
 
 #endif // RENDER_WORKER_H

@@ -6,6 +6,8 @@
 
 #include "render/render_task.h"
 #include "render/render_worker.h"
+#include "render/render_image.h"
+
 #include "datum/datum.h"
 
 #include "ui/canvas.h"
@@ -14,7 +16,7 @@
 
 RenderTask::RenderTask(Datum* datum)
     : QObject(NULL), datum(datum), thread(NULL), current(NULL),
-      next(NULL), running(false),
+      next(NULL), image(NULL), running(false),
       canvas(dynamic_cast<App*>(QApplication::instance())->getCanvas())
 {
     connect(datum, SIGNAL(changed()),
@@ -56,13 +58,22 @@ void RenderTask::onDatumChanged()
     }
 }
 
+void RenderTask::onWorkerFinished()
+{
+    if (image)
+    {
+        image->deleteLater();
+    }
+    image = current->image;
+    image->setParent(this);
+    image->addToCanvas(canvas);
+
+    current->deleteLater();
+}
+
 void RenderTask::onThreadFinished()
 {
-    // TODO: Get image from thread.
     running = false;
-
-    thread->deleteLater();
-    current->deleteLater();
 
     // If the datum which we're rendering has been deleted, clean up
     // and call deleteLater on oneself.
@@ -96,10 +107,17 @@ void RenderTask::startNextRender()
 
     connect(thread, SIGNAL(started()),
             current, SLOT(render()));
+
+    connect(current, SIGNAL(finished()),
+            this, SLOT(onWorkerFinished()));
+
+    connect(current, SIGNAL(destroyed()),
+            thread, SLOT(quit()));
+
     connect(thread, SIGNAL(finished()),
             this, SLOT(onThreadFinished()));
-    connect(current, SIGNAL(finished()),
-            thread, SLOT(quit()));
+    connect(thread, SIGNAL(finished()),
+            thread, SLOT(deleteLater()));
 
     thread->start();
 }

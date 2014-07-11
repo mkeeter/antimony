@@ -7,6 +7,7 @@
 
 class Datum;
 class RenderWorker;
+class RenderImage;
 class Canvas;
 
 class RenderTask : public QObject
@@ -18,6 +19,7 @@ public:
 public slots:
     void onDatumChanged();
     void onDatumDeleted();
+    void onWorkerFinished();
     void onThreadFinished();
 
 protected:
@@ -31,6 +33,7 @@ protected:
     QThread* thread;
     RenderWorker* current;
     RenderWorker* next;
+    RenderImage* image;
 
     bool running;
 
