@@ -26,7 +26,6 @@ struct Shape
     const std::string math;
     const Bounds bounds;
 
-protected:
     std::shared_ptr<MathTree> tree;
 };
 

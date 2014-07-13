@@ -5,6 +5,8 @@
 #include <QImage>
 #include <QGraphicsPixmapItem>
 
+#include <cstdint>
+
 #include "cpp/bounds.h"
 
 struct Shape;
@@ -16,6 +18,7 @@ class RenderImage : public QObject
 public:
     explicit RenderImage(Shape* shape, QObject* parent=0);
     ~RenderImage();
+    void render(Shape* shape);
     void addToCanvas(Canvas* canvas);
 
 protected:

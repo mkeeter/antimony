@@ -66,9 +66,9 @@ protected:
     Canvas* canvas;
     QPointF drag_pos;
 
-    NodeInspector* raised_inspector;
-
     enum { NONE, VALID, INVALID, CONNECTED } drag_state;
+
+    NodeInspector* raised_inspector;
 };
 
 #endif // CONNECTION_H
