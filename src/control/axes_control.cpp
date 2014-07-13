@@ -14,9 +14,9 @@ QRectF AxesControl::boundingRect() const
 {
     return boundingBox({
             QVector3D(0, 0, 0),
-            QVector3D(100, 0, 0),
-            QVector3D(0, 100, 0),
-            QVector3D(0, 0, 100)});
+            QVector3D(1, 0, 0),
+            QVector3D(0, 1, 0),
+            QVector3D(0, 0, 1)});
 }
 
 void AxesControl::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -26,9 +26,9 @@ void AxesControl::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 
     QVector<QPointF> pts = canvas->worldToScene({
             QVector3D(0, 0, 0),
-            QVector3D(100, 0, 0),
-            QVector3D(0, 100, 0),
-            QVector3D(0, 0, 100)});
+            QVector3D(1, 0, 0),
+            QVector3D(0, 1, 0),
+            QVector3D(0, 0, 1)});
 
     painter->setPen(QPen(Qt::red, 2));
     painter->drawLine(pts[0], pts[1]);

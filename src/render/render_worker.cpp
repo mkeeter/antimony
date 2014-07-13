@@ -32,17 +32,6 @@ void RenderWorker::render()
     Shape* s = get_shape();
 
     QMatrix4x4 m = matrix;
-    qDebug() << m;
-    for (int i=0; i < 4; ++i)
-    {
-        m(1,i) *= -1;
-    }
-    qDebug() << m;
-    qDebug() << m * QVector3D(1,0,0)
-                << m * QVector3D(0,1,0)
-                   << m * QVector3D(0,0,1);
-    qDebug() << "--------------------------------------------------------------------------------";
-
     QMatrix4x4 mf = m.inverted();
     QMatrix4x4 mi = mf.inverted();
     Transform T = Transform(

@@ -21,7 +21,7 @@
 
 Canvas::Canvas(QWidget* parent)
     : QGraphicsView(parent), scene(new QGraphicsScene(parent)),
-      scale(1), pitch(0), yaw(0)
+      scale(100), pitch(0), yaw(0)
 {
     setScene(scene);
     setStyleSheet("QGraphicsView { border-style: none; }");
