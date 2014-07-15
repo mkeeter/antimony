@@ -71,6 +71,15 @@ protected:
      */
     virtual void keyPressEvent(QKeyEvent *event) override;
 
+    // Properties to automatically animate yaw and pitch.
+    void setYaw(float y) { yaw = y; }
+    float getYaw() const { return yaw; }
+    Q_PROPERTY(float _yaw READ getYaw WRITE setYaw);
+
+    void setPitch(float p) { pitch = p; }
+    float getPitch() const { return pitch; }
+    Q_PROPERTY(float _pitch READ getPitch WRITE setPitch);
+
     /** Pans the scene rectangle.
      */
     void pan(QPointF d);
