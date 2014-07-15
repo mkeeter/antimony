@@ -26,10 +26,10 @@ RenderWorker::~RenderWorker()
 
 void RenderWorker::render()
 {
-    extract<Shape*> get_shape(shape);
+    extract<Shape> get_shape(shape);
 
     Q_ASSERT(get_shape.check());
-    Shape* s = get_shape();
+    Shape s = get_shape();
 
     QMatrix4x4 m = matrix;
     QMatrix4x4 mf = m.inverted();
@@ -51,7 +51,7 @@ void RenderWorker::render()
                 (boost::format("++*Xf%g*Yf%g*Zf%g") %
                     mi(2,0) % mi(2,1) % mi(2,2)).str());
 
-    Shape transformed = s->map(T);
+    Shape transformed = s.map(T);
     //qDebug() << transformed.bounds.xmin << transformed.bounds.xmax << "\t"
     //         << transformed.bounds.ymin << transformed.bounds.ymax << '\t'
     //         << transformed.bounds.zmin << transformed.bounds.zmax;
