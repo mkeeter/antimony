@@ -34,19 +34,22 @@ void RenderWorker::render()
     QMatrix4x4 m = matrix;
     QMatrix4x4 mf = m.inverted();
     QMatrix4x4 mi = mf.inverted();
+
+    Q_ASSERT(mf(0, 3) == 0 && mf(1, 3) == 0 && mf(2, 3) == 0 && mf (3, 3) == 1);
+
     Transform T = Transform(
-                (boost::format("++*Xf%g*Yf%g+*Zf%gf%g") %
-                    mf(0,0) % mf(0,1) % mf(0,2) % mf(0,3)).str(),
-                (boost::format("++*Xf%g*Yf%g+*Zf%gf%g") %
-                    mf(1,0) % mf(1,1) % mf(1,2) % mf(1,3)).str(),
-                (boost::format("++*Xf%g*Yf%g+*Zf%gf%g") %
-                    mf(2,0) % mf(2,1) % mf(2,2) % mf(2,3)).str(),
-                (boost::format("++*Xf%g*Yf%g+*Zf%gf%g") %
-                    mi(0,0) % mi(0,1) % mi(0,2) % mi(0,3)).str(),
-                (boost::format("++*Xf%g*Yf%g+*Zf%gf%g") %
-                    mi(1,0) % mi(1,1) % mi(1,2) % mi(1,3)).str(),
-                (boost::format("++*Xf%g*Yf%g+*Zf%gf%g") %
-                    mi(2,0) % mi(2,1) % mi(2,2) % mi(2,3)).str());
+                (boost::format("++*Xf%g*Yf%g*Zf%g") %
+                    mf(0,0) % mf(0,1) % mf(0,2)).str(),
+                (boost::format("++*Xf%g*Yf%g*Zf%g") %
+                    mf(1,0) % mf(1,1) % mf(1,2)).str(),
+                (boost::format("++*Xf%g*Yf%g*Zf%g") %
+                    mf(2,0) % mf(2,1) % mf(2,2)).str(),
+                (boost::format("++*Xf%g*Yf%g*Zf%g") %
+                    mi(0,0) % mi(0,1) % mi(0,2)).str(),
+                (boost::format("++*Xf%g*Yf%g*Zf%g") %
+                    mi(1,0) % mi(1,1) % mi(1,2)).str(),
+                (boost::format("++*Xf%g*Yf%g*Zf%g") %
+                    mi(2,0) % mi(2,1) % mi(2,2)).str());
 
     Shape transformed = s->map(T);
     //qDebug() << transformed.bounds.xmin << transformed.bounds.xmax << "\t"
