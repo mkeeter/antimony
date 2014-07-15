@@ -31,13 +31,18 @@ void RenderImage::render(Shape *shape)
 {
     image.fill(0x000000);
 
-    uint8_t* pixels8(new uint8_t[image.width() * image.height()]);
-    uint8_t** image8(new uint8_t*[image.height()]);
+    uint8_t* depth8(new uint8_t[image.width() * image.height()]);
+    uint8_t** depth8_rows(new uint8_t*[image.height()]);
+
+    uint8_t* shades8(new uint8_t[image.width() * image.height()]);
+    uint8_t** shades8_rows(new uint8_t*[image.height()]);
     for (int i=0; i < image.height(); ++i)
     {
-        image8[i] = pixels8 + (image.width() * i);
+        depth8_rows[i] = depth8 + (image.width() * i);
+        shades8_rows[i] = shades8 + (image.width() * i);
     }
-    memset(pixels8, 0, image.width() * image.height());
+    memset(depth8, 0, image.width() * image.height());
+    memset(shades8, 0, image.width() * image.height());
 
 
     Region r = (Region) {
@@ -49,8 +54,8 @@ void RenderImage::render(Shape *shape)
     build_arrays(&r, shape->bounds.xmin, shape->bounds.ymin, shape->bounds.zmin,
                      shape->bounds.xmax, shape->bounds.ymax, shape->bounds.zmax);
     int halt=0;
-    render8(shape->tree.get(), r, image8, &halt);
-    qDebug() << r.Z[r.nk] << r.Z[0];
+    render8(shape->tree.get(), r, depth8_rows, &halt);
+    shaded8(shape->tree.get(), r, depth8_rows, shades8_rows, &halt);
 
     free_arrays(&r);
 
@@ -58,10 +63,10 @@ void RenderImage::render(Shape *shape)
     {
         for (int i=0; i < image.width(); ++i)
         {
-            uint8_t pix = image8[j][i];
+            uint8_t pix = depth8_rows[j][i];
             if (pix)
             {
-                image.setPixel(i, j, (pix << 16) | (pix <<  8) | pix);
+                image.setPixel(i, j, shades8_rows[j][i]);
             }
             else
             {
@@ -70,8 +75,11 @@ void RenderImage::render(Shape *shape)
         }
     }
 
-    delete [] pixels8;
-    delete [] image8;
+    delete [] depth8;
+    delete [] depth8_rows;
+
+    delete [] shades8;
+    delete [] shades8_rows;
 }
 
 void RenderImage::addToCanvas(Canvas *canvas)
