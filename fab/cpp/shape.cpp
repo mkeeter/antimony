@@ -28,7 +28,7 @@ Shape::Shape(std::string math, float xmin, float ymin, float zmin,
 }
 
 Shape::Shape(std::string math, Bounds bounds)
-    : math(math), bounds(bounds), tree(parse(math.c_str()), free)
+    : math(math), bounds(bounds), tree(parse(math.c_str()), free_tree)
 {
     if (tree == NULL)
     {
