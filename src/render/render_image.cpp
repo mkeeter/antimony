@@ -58,16 +58,14 @@ void RenderImage::render(Shape *shape)
     {
         for (int i=0; i < image.width(); ++i)
         {
-            if (image8[j][i])
+            uint8_t pix = image8[j][i];
+            if (pix)
             {
-                image.setPixel(i, image.height() - j - 1,
-                               (image8[j][i] << 16) |
-                               (image8[j][i] <<  8) |
-                                image8[j][i]);
+                image.setPixel(i, j, (pix << 16) | (pix <<  8) | pix);
             }
             else
             {
-                image.setPixel(i, image.height() - j - 1, 0xff0000);
+                image.setPixel(i, j, 0xff0000);
             }
         }
     }
@@ -79,7 +77,7 @@ void RenderImage::render(Shape *shape)
 void RenderImage::addToCanvas(Canvas *canvas)
 {
     QGraphicsPixmapItem* pix = new QGraphicsPixmapItem(QPixmap::fromImage(image));
-    pix->setPos(bounds.xmin, -bounds.ymax);
+    pix->setPos(bounds.xmin, bounds.ymin);
     canvas->scene->addItem(pix);
     pixmaps[canvas] = pix;
 }
