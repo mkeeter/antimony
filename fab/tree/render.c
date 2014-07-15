@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <math.h>
+#include <string.h>
 
 #include "tree/eval.h"
 #include "tree/tree.h"
@@ -146,7 +147,122 @@ void region8(MathTree* tree, Region region, uint8_t** img)
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////
 
+void get_normals8(MathTree* tree,
+                  float* X, float* Y, float* Z,
+                  unsigned count, float epsilon,
+                  float (*normals)[3])
+{
+    Region dummy;
+    dummy.X = X;
+    dummy.Y = Y;
+    dummy.Z = Z;
+    dummy.voxels = count;
+
+    float* base = malloc(count*sizeof(float));
+    float* dx = malloc(count*sizeof(float));
+    float* dy = malloc(count*sizeof(float));
+    float* dz = malloc(count*sizeof(float));
+
+    float* result;
+    result = eval_r(tree, dummy);
+    memmove(base, result, count*sizeof(float));
+
+    for (int i=0; i < count; ++i)   X[i] += epsilon;
+    result = eval_r(tree, dummy);
+    memmove(dx, result, count*sizeof(float));
+    for (int i=0; i < count; ++i)   X[i] -= epsilon;
+
+    for (int i=0; i < count; ++i)   Y[i] += epsilon;
+    result = eval_r(tree, dummy);
+    memmove(dy, result, count*sizeof(float));
+    for (int i=0; i < count; ++i)   Y[i] -= epsilon;
+
+    for (int i=0; i < count; ++i)   Z[i] += epsilon;
+    result = eval_r(tree, dummy);
+    memmove(dz, result, count*sizeof(float));
+    for (int i=0; i < count; ++i)   Z[i] -= epsilon;
+
+    // Calculate normals and copy over.
+    for (int i=0; i < count; ++i)
+    {
+        float x = dx[i] - base[i];
+        float y = dy[i] - base[i];
+        float z = dz[i] - base[i];
+
+        float dist = sqrt(pow(x,2) + pow(y, 2) + pow(z,2));
+        normals[i][0] = dist ? x/dist : 0;
+        normals[i][1] = dist ? y/dist : 0;
+        normals[i][2] = dist ? z/dist : 0;
+    }
+    free(base);
+    free(dx);
+    free(dy);
+    free(dz);
+}
+
+_STATIC_
+void shade_pixels8(unsigned count, float (*normals)[3],
+                   unsigned* is, unsigned* js, uint8_t** out)
+{
+    for (int a=0; a < count; ++a)
+    {
+        out[js[a]][is[a]] = normals[a][2] * 255;
+    }
+}
+
+void shaded8(struct MathTree_ *tree, Region region, uint8_t **depth,
+             uint8_t** out, volatile int *halt)
+{
+    float *X = malloc(MIN_VOLUME*sizeof(float)),
+          *Y = malloc(MIN_VOLUME*sizeof(float)),
+          *Z = malloc(MIN_VOLUME*sizeof(float));
+
+    unsigned *is = malloc(MIN_VOLUME*sizeof(unsigned));
+    unsigned *js = malloc(MIN_VOLUME*sizeof(unsigned));
+
+    float (*normals)[3] = malloc(MIN_VOLUME*sizeof(float[3]));
+
+    const float epsilon = (region.X[1] - region.X[0]) / 10.0f;
+
+    unsigned count = 0;
+    for (unsigned j=0; j < region.nj && !*halt; ++j)
+    {
+        for (unsigned i=0; i < region.ni && !*halt; ++i)
+        {
+            // Load this pixel into the set of pixels to render
+            if (depth[j][i])
+            {
+                X[count] = region.X[i];
+                Y[count] = region.Y[j];
+                Z[count] = region.Z[0] + depth[j][i] / 255.0f *
+                            (region.Z[region.nk] - region.Z[0]);
+
+                is[count] = i;
+                js[count] = j;
+                count++;
+            }
+
+            if (count == MIN_VOLUME ||
+                    (count && j == region.nj - 1 && i == region.ni - 1))
+            {
+                get_normals8(tree, X, Y, Z, count, epsilon, normals);
+                shade_pixels8(count, normals, is, js, out);
+                count = 0;
+            }
+        }
+    }
+
+    free(X);
+    free(Y);
+    free(Z);
+
+    free(is);
+    free(js);
+
+    free(normals);
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
