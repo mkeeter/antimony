@@ -40,7 +40,7 @@ Shape Shape::map(Transform t) const
 {
     return Shape("m" + (t.x_forward.length() ? t.x_forward : " ")
                      + (t.y_forward.length() ? t.y_forward : " ")
-                     + (t.z_forward.length() ? t.z_reverse : " ") + math,
+                     + (t.z_forward.length() ? t.z_forward : " ") + math,
                  bounds.map(t));
 }
 
