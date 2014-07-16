@@ -185,6 +185,9 @@ void Canvas::pan(QPointF d)
     setSceneRect(sceneRect().translated(d));
 }
 
+#include <iostream>
+#include <QTime>
+
 void Canvas::paintEvent(QPaintEvent *event)
 {
     if (depth.width() != width() || depth.height() != height())
@@ -193,5 +196,8 @@ void Canvas::paintEvent(QPaintEvent *event)
     }
     depth.fill(0);
 
+    QTime timer;
+    timer.start();
     QGraphicsView::paintEvent(event);
+    std::cout << timer.elapsed() << std::endl;
 }
