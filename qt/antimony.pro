@@ -4,6 +4,10 @@ TARGET = antimony
 TEMPLATE = app
 CONFIG += c++11
 
+# Bump optimization up to -O3 in release builds
+QMAKE_CXXFLAGS_RELEASE -= -O2
+QMAKE_CXXFLAGS_RELEASE += -O3
+
 include(fab.pri)
 include(core.pri)
 
