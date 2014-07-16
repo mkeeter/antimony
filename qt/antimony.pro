@@ -26,7 +26,8 @@ SOURCES += \
     ../src/control/3d/cube_control.cpp \
     ../src/render/render_task.cpp \
     ../src/render/render_worker.cpp \
-    ../src/render/render_image.cpp
+    ../src/render/render_image.cpp \
+    ../src/ui/depth_image.cpp
 
 HEADERS += \
     ../src/ui/main_window.h \
@@ -46,7 +47,8 @@ HEADERS += \
     ../src/control/3d/cube_control.h \
     ../src/render/render_task.h \
     ../src/render/render_worker.h \
-    ../src/render/render_image.h
+    ../src/render/render_image.h \
+    ../src/ui/depth_image.h
 
 FORMS += \
     ../src/ui/forms/main_window.ui \

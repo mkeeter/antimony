@@ -46,6 +46,10 @@ public:
      */
     NodeInspector* getInspectorAt(QPointF pos) const;
 
+    /** Returns a pointer to the depth buffer.
+     */
+    QImage* getDepth() { return &depth; }
+
     QGraphicsScene* scene;
 
 signals:
@@ -71,6 +75,10 @@ protected:
      */
     virtual void keyPressEvent(QKeyEvent *event) override;
 
+    /** On paint event, resize depth canvas then call default painter.
+     */
+    void paintEvent(QPaintEvent *event);
+
     // Properties to automatically animate yaw and pitch.
     void setYaw(float y) { yaw = y; }
     float getYaw() const { return yaw; }
@@ -91,7 +99,7 @@ protected:
     float yaw;
 
     QPointF _click_pos;
-
+    QImage depth;
 };
 
 #endif // CANVAS_H

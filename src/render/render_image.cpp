@@ -2,6 +2,7 @@
 
 #include "render/render_image.h"
 #include "ui/canvas.h"
+#include "ui/depth_image.h"
 
 #include "cpp/shape.h"
 #include "util/region.h"
@@ -11,9 +12,11 @@
 
 RenderImage::RenderImage(Shape* shape, QObject* parent)
     : QObject(parent), bounds(shape->bounds),
-      image(shape->bounds.xmax - shape->bounds.xmin,
+      depth(shape->bounds.xmax - shape->bounds.xmin,
             shape->bounds.ymax - shape->bounds.ymin,
-            QImage::Format_RGB32)
+            QImage::Format_RGB32),
+      shaded(depth.width(), depth.height(), depth.format())
+
 {
     render(shape);
 }
@@ -29,25 +32,26 @@ RenderImage::~RenderImage()
 
 void RenderImage::render(Shape *shape)
 {
-    image.fill(0x000000);
+    depth.fill(0x000000);
+    shaded.fill(0x000000);
 
-    uint8_t* depth8(new uint8_t[image.width() * image.height()]);
-    uint8_t** depth8_rows(new uint8_t*[image.height()]);
+    uint8_t* depth8(new uint8_t[depth.width() * depth.height()]);
+    uint8_t** depth8_rows(new uint8_t*[depth.height()]);
 
-    uint8_t* shades8(new uint8_t[image.width() * image.height()]);
-    uint8_t** shades8_rows(new uint8_t*[image.height()]);
-    for (int i=0; i < image.height(); ++i)
+    uint8_t* shades8(new uint8_t[depth.width() * depth.height()]);
+    uint8_t** shades8_rows(new uint8_t*[depth.height()]);
+    for (int i=0; i < depth.height(); ++i)
     {
-        depth8_rows[i] = depth8 + (image.width() * i);
-        shades8_rows[i] = shades8 + (image.width() * i);
+        depth8_rows[i] = depth8 + (depth.width() * i);
+        shades8_rows[i] = shades8 + (depth.width() * i);
     }
-    memset(depth8, 0, image.width() * image.height());
-    memset(shades8, 0, image.width() * image.height());
+    memset(depth8, 0, depth.width() * depth.height());
+    memset(shades8, 0, depth.width() * depth.height());
 
 
     Region r = (Region) {
             .imin=0, .jmin=0, .kmin=0,
-            .ni=(uint32_t)image.width(), .nj=(uint32_t)image.height(),
+            .ni=(uint32_t)depth.width(), .nj=(uint32_t)depth.height(),
             .nk=uint32_t(shape->bounds.zmax - shape->bounds.zmin)
     };
 
@@ -59,18 +63,19 @@ void RenderImage::render(Shape *shape)
 
     free_arrays(&r);
 
-    for (int j=0; j < image.height(); ++j)
+    for (int j=0; j < depth.height(); ++j)
     {
-        for (int i=0; i < image.width(); ++i)
+        for (int i=0; i < depth.width(); ++i)
         {
             uint8_t pix = depth8_rows[j][i];
             if (pix)
             {
-                image.setPixel(i, j, shades8_rows[j][i]);
+                depth.setPixel(i, j, pix);
+                shaded.setPixel(i, j, shades8_rows[j][i]);
             }
             else
             {
-                image.setPixel(i, j, 0xff0000);
+                depth.setPixel(i, j, 0x0);
             }
         }
     }
@@ -84,7 +89,7 @@ void RenderImage::render(Shape *shape)
 
 void RenderImage::addToCanvas(Canvas *canvas)
 {
-    QGraphicsPixmapItem* pix = new QGraphicsPixmapItem(QPixmap::fromImage(image));
+    DepthImageItem* pix = new DepthImageItem(depth, shaded, canvas);
     pix->setPos(bounds.xmin, bounds.ymin);
     canvas->scene->addItem(pix);
     pixmaps[canvas] = pix;

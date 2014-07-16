@@ -184,3 +184,14 @@ void Canvas::pan(QPointF d)
 {
     setSceneRect(sceneRect().translated(d));
 }
+
+void Canvas::paintEvent(QPaintEvent *event)
+{
+    if (depth.width() != width() || depth.height() != height())
+    {
+        depth = QImage(width(), height(), QImage::Format_RGB32);
+    }
+    depth.fill(0);
+
+    QGraphicsView::paintEvent(event);
+}

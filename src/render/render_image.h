@@ -11,6 +11,7 @@
 
 struct Shape;
 class Canvas;
+class DepthImageItem;
 
 class RenderImage : public QObject
 {
@@ -23,8 +24,9 @@ public:
 
 protected:
     Bounds bounds;
-    QImage image;
-    QMap<Canvas*, QGraphicsPixmapItem*> pixmaps;
+    QImage depth;
+    QImage shaded;
+    QMap<Canvas*, DepthImageItem*> pixmaps;
 };
 
 #endif // RENDER_IMAGE_H
