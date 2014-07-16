@@ -31,8 +31,6 @@ void DepthImageItem::paint(QPainter *painter,
 
     const int s = (zmax - zmin) / (czmax - czmin) * 0xff;
     const int o = (zmin - czmin) / (czmax - czmin) * 0xff;
-    qDebug() << s << o;
-    qDebug() << depth.pixel(10, 10);
     {
         QPainter p(&depth_);
 
@@ -53,7 +51,6 @@ void DepthImageItem::paint(QPainter *painter,
         p.drawImage(0, 0,
                     depth.createMaskFromColor(0xff000000, Qt::MaskOutColor));
     }
-    qDebug() << depth_.pixel(10, 10);
 
     painter->setCompositionMode(QPainter::CompositionMode_Lighten);
     painter->drawImage(0, 0, depth_);

@@ -52,9 +52,6 @@ void RenderWorker::render()
                     mi(2,0) % mi(2,1) % mi(2,2)).str());
 
     Shape transformed = s.map(T);
-    //qDebug() << transformed.bounds.xmin << transformed.bounds.xmax << "\t"
-    //         << transformed.bounds.ymin << transformed.bounds.ymax << '\t'
-    //         << transformed.bounds.zmin << transformed.bounds.zmax;
 
     image = new RenderImage(&transformed);
     image->moveToThread(QApplication::instance()->thread());
