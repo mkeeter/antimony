@@ -7,8 +7,9 @@
 #include "ui/depth_image.h"
 #include "ui/canvas.h"
 
-DepthImageItem::DepthImageItem(QImage depth, QImage shaded, Canvas* canvas)
-    : QGraphicsItem(), depth(depth), shaded(shaded), canvas(canvas)
+DepthImageItem::DepthImageItem(float zmin, float zmax, QImage depth,
+                               Canvas* canvas)
+    : QGraphicsItem(), zmin(zmin), zmax(zmax), depth(depth), canvas(canvas)
 {
     // Nothing to do here
 }
@@ -22,62 +23,38 @@ void DepthImageItem::paint(QPainter *painter,
                            const QStyleOptionGraphicsItem *option,
                            QWidget *widget)
 {
-    QPoint a = canvas->mapFromScene(mapToParent(0, 0).toPoint());
-    QImage& zbuffer = *canvas->getDepth();
-
     // We need to transform the depth image into global z space
-    QImage depth_(zbuffer.width(), zbuffer.height(), zbuffer.format());
-    depth_.fill(0x0); // dummy scale for now
+    QImage depth_ = depth;
+
+    const float czmax = canvas->getZmax();
+    const float czmin = canvas->getZmin();
+
+    const int s = (zmax - zmin) / (czmax - czmin) * 0xff;
+    const int o = (zmin - czmin) / (czmax - czmin) * 0xff;
+    qDebug() << s << o;
+    qDebug() << depth.pixel(10, 10);
     {
         QPainter p(&depth_);
 
-        // Apply scale to depth-map
-        p.setCompositionMode(QPainter::CompositionMode_Multiply);
-        p.drawImage(a.x(), a.y(), depth);
-
         // Apply scale
         QImage scale(depth.width(), depth.height(), depth.format());
-        scale.fill(0xffffff);
+        scale.fill(s | (s << 8) | (s << 16));
         p.setCompositionMode(QPainter::CompositionMode_Multiply);
-        p.drawImage(a.x(), a.y(), scale);
+        p.drawImage(0, 0, scale);
 
         // Apply offset
         QImage offset(depth.width(), depth.height(), depth.format());
-        offset.fill(0x0); // dummy offset for now
+        offset.fill(o | (o << 8) | (o << 16));
         p.setCompositionMode(QPainter::CompositionMode_Plus);
-        p.drawImage(a.x(), a.y(), offset);
+        p.drawImage(0, 0, offset);
 
         // Multiply by a basic mask so that we have zeros outside of original
         p.setCompositionMode(QPainter::CompositionMode_Multiply);
-        p.drawImage(a.x(), a.y(),
+        p.drawImage(0, 0,
                     depth.createMaskFromColor(0xff000000, Qt::MaskOutColor));
     }
+    qDebug() << depth_.pixel(10, 10);
 
-    QImage mask = zbuffer;
-    // Update buffer with lightened height-map.
-    {
-        QPainter p(&zbuffer);
-        p.setCompositionMode(QPainter::CompositionMode_Lighten);
-        p.drawImage(0, 0, depth_);
-    }
-
-    zbuffer.save("zbuffer.png");
-
-    // Subtract old buffer from new buffer.
-    {
-        QPainter p(&mask);
-        p.setCompositionMode(QPainter::CompositionMode_Difference);
-        p.drawImage(0, 0, zbuffer);
-    }
-
-    mask = mask.createMaskFromColor(0, Qt::MaskOutColor);
-
-    QImage masked = shaded;
-    {
-        QPainter p(&masked);
-        p.setCompositionMode(QPainter::CompositionMode_Multiply);
-        p.drawImage(0, 0, mask);
-    }
-
-    painter->drawImage(0, 0, masked);
+    painter->setCompositionMode(QPainter::CompositionMode_Lighten);
+    painter->drawImage(0, 0, depth_);
 }

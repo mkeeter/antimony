@@ -25,7 +25,6 @@ public:
 protected:
     Bounds bounds;
     QImage depth;
-    QImage shaded;
     QMap<Canvas*, DepthImageItem*> pixmaps;
 };
 

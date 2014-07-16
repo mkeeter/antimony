@@ -14,9 +14,7 @@ RenderImage::RenderImage(Shape* shape, QObject* parent)
     : QObject(parent), bounds(shape->bounds),
       depth(shape->bounds.xmax - shape->bounds.xmin,
             shape->bounds.ymax - shape->bounds.ymin,
-            QImage::Format_RGB32),
-      shaded(depth.width(), depth.height(), depth.format())
-
+            QImage::Format_RGB32)
 {
     render(shape);
 }
@@ -33,20 +31,15 @@ RenderImage::~RenderImage()
 void RenderImage::render(Shape *shape)
 {
     depth.fill(0x000000);
-    shaded.fill(0x000000);
 
     uint8_t* depth8(new uint8_t[depth.width() * depth.height()]);
     uint8_t** depth8_rows(new uint8_t*[depth.height()]);
 
-    uint8_t* shades8(new uint8_t[depth.width() * depth.height()]);
-    uint8_t** shades8_rows(new uint8_t*[depth.height()]);
     for (int i=0; i < depth.height(); ++i)
     {
         depth8_rows[i] = depth8 + (depth.width() * i);
-        shades8_rows[i] = shades8 + (depth.width() * i);
     }
     memset(depth8, 0, depth.width() * depth.height());
-    memset(shades8, 0, depth.width() * depth.height());
 
 
     Region r = (Region) {
@@ -59,7 +52,6 @@ void RenderImage::render(Shape *shape)
                      shape->bounds.xmax, shape->bounds.ymax, shape->bounds.zmax);
     int halt=0;
     render8(shape->tree.get(), r, depth8_rows, &halt);
-    shaded8(shape->tree.get(), r, depth8_rows, shades8_rows, &halt);
 
     free_arrays(&r);
 
@@ -70,12 +62,7 @@ void RenderImage::render(Shape *shape)
             uint8_t pix = depth8_rows[j][i];
             if (pix)
             {
-                depth.setPixel(i, j, pix);
-                shaded.setPixel(i, j, shades8_rows[j][i]);
-            }
-            else
-            {
-                depth.setPixel(i, j, 0x0);
+                depth.setPixel(i, j, pix | (pix << 8) | (pix << 16));
             }
         }
     }
@@ -83,13 +70,11 @@ void RenderImage::render(Shape *shape)
     delete [] depth8;
     delete [] depth8_rows;
 
-    delete [] shades8;
-    delete [] shades8_rows;
 }
 
 void RenderImage::addToCanvas(Canvas *canvas)
 {
-    DepthImageItem* pix = new DepthImageItem(depth, shaded, canvas);
+    DepthImageItem* pix = new DepthImageItem(bounds.zmin, bounds.zmax, depth, canvas);
     pix->setPos(bounds.xmin, bounds.ymin);
     canvas->scene->addItem(pix);
     pixmaps[canvas] = pix;

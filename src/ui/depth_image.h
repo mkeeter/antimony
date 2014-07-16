@@ -9,13 +9,15 @@ class Canvas;
 class DepthImageItem : public QGraphicsItem
 {
 public:
-    DepthImageItem(QImage depth, QImage shaded, Canvas* canvas);
+    DepthImageItem(float zmin, float zmax, QImage depth, Canvas* canvas);
     QRectF boundingRect() const;
+
+    float zmin;
+    float zmax;
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
     QImage depth;
-    QImage shaded;
     Canvas* canvas;
 };
 

@@ -46,9 +46,13 @@ public:
      */
     NodeInspector* getInspectorAt(QPointF pos) const;
 
-    /** Returns a pointer to the depth buffer.
+    /** Gets the minimum z position of a DepthImageItem.
      */
-    QImage* getDepth() { return &depth; }
+    float getZmin() const;
+
+    /** Gets the maximum z position of a DepthImageItem.
+     */
+    float getZmax() const;
 
     QGraphicsScene* scene;
 
@@ -99,7 +103,6 @@ protected:
     float yaw;
 
     QPointF _click_pos;
-    QImage depth;
 };
 
 #endif // CANVAS_H

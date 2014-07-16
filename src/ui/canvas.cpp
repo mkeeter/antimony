@@ -10,6 +10,7 @@
 #include "ui/port.h"
 #include "ui/connection.h"
 #include "ui/inspector.h"
+#include "ui/depth_image.h"
 
 #include "node/node.h"
 #include "datum/link.h"
@@ -109,6 +110,35 @@ NodeInspector* Canvas::getInspectorAt(QPointF pos) const
     return NULL;
 }
 
+float Canvas::getZmax() const
+{
+    float zmax = -INFINITY;
+    for (auto i : scene->items())
+    {
+        DepthImageItem* p = dynamic_cast<DepthImageItem*>(i);
+        if (p)
+        {
+            zmax = fmax(zmax, p->zmax);
+        }
+    }
+    return zmax;
+}
+
+float Canvas::getZmin() const
+{
+    float zmin = INFINITY;
+    for (auto i : scene->items())
+    {
+        DepthImageItem* p = dynamic_cast<DepthImageItem*>(i);
+        if (p)
+        {
+            zmin = fmin(zmin, p->zmin);
+        }
+    }
+    return zmin;
+}
+
+
 void Canvas::mousePressEvent(QMouseEvent *event)
 {
     QGraphicsView::mousePressEvent(event);
@@ -190,12 +220,6 @@ void Canvas::pan(QPointF d)
 
 void Canvas::paintEvent(QPaintEvent *event)
 {
-    if (depth.width() != width() || depth.height() != height())
-    {
-        depth = QImage(width(), height(), QImage::Format_RGB32);
-    }
-    depth.fill(0);
-
     QTime timer;
     timer.start();
     QGraphicsView::paintEvent(event);
