@@ -23,6 +23,11 @@ void DepthImageItem::paint(QPainter *painter,
                            const QStyleOptionGraphicsItem *option,
                            QWidget *widget)
 {
+    if (depth.height() == 0)
+    {
+        return;
+    }
+
     // We need to transform the depth image into global z space
     QImage depth_ = depth;
 
