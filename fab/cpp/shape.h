@@ -24,7 +24,7 @@ struct Shape
     Shape map(Transform t) const;
 
     const std::string math;
-    const Bounds bounds;
+    Bounds bounds;
 
     std::shared_ptr<MathTree> tree;
 };

@@ -49,7 +49,8 @@ void RenderTask::onDatumChanged()
         {
             next->deleteLater();
         }
-        next = new RenderWorker(datum->getValue(), canvas->getMatrix());
+        next = new RenderWorker(datum->getValue(), canvas->getMatrix2D(),
+                                canvas->getMatrix());
 
         if (!running)
         {

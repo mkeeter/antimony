@@ -46,6 +46,18 @@ QMatrix4x4 Canvas::getMatrix() const
     return M;
 }
 
+QMatrix4x4 Canvas::getMatrix2D() const
+{
+    QMatrix4x4 M;
+
+    // Remember that these operations are applied in reverse order.
+    M.scale(scale, -scale*cos(pitch), scale);
+    M.rotate(yaw  *  180 / M_PI, QVector3D(0, 0, 1));
+
+    return M;
+
+}
+
 QPointF Canvas::worldToScene(QVector3D v) const
 {
     QMatrix4x4 M = getMatrix();
@@ -223,5 +235,5 @@ void Canvas::paintEvent(QPaintEvent *event)
     QTime timer;
     timer.start();
     QGraphicsView::paintEvent(event);
-    std::cout << timer.elapsed() << std::endl;
+    //std::cout << timer.elapsed() << std::endl;
 }

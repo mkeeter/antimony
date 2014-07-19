@@ -72,10 +72,39 @@ void RenderImage::render(Shape *shape)
 
 }
 
+void RenderImage::applyGradient(bool direction)
+{
+    for (int j=0; j < depth.height(); ++j)
+    {
+        for (int i=0; i < depth.width(); ++i)
+        {
+            uint8_t pix = depth.pixel(i, j) & 0xff;
+            if (pix)
+            {
+                if (direction)
+                {
+                    pix *= j / float(depth.height());
+                }
+                else
+                {
+                    pix *= 1 - j / float(depth.height());
+                }
+                depth.setPixel(i, j, pix | (pix << 8) | (pix << 16));
+            }
+        }
+    }
+}
+
 void RenderImage::addToCanvas(Canvas *canvas)
 {
     DepthImageItem* pix = new DepthImageItem(bounds.zmin, bounds.zmax, depth, canvas);
     pix->setPos(bounds.xmin, bounds.ymin);
     canvas->scene->addItem(pix);
     pixmaps[canvas] = pix;
+}
+
+void RenderImage::setZ(float zmin, float zmax)
+{
+    bounds.zmin = zmin;
+    bounds.zmax = zmax;
 }

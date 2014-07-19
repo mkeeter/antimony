@@ -5,13 +5,15 @@
 #include <QObject>
 #include <QMatrix4x4>
 
+#include "cpp/shape.h"
+
 class RenderImage;
 
 class RenderWorker : public QObject
 {
     Q_OBJECT
 public:
-    explicit RenderWorker(PyObject* s, QMatrix4x4 m);
+    explicit RenderWorker(PyObject* s, QMatrix4x4 m2d, QMatrix4x4 m3d);
     ~RenderWorker();
 
 public slots:
@@ -19,8 +21,11 @@ public slots:
 signals:
     void finished();
 protected:
+    void render2d(Shape s);
+    void render3d(Shape s);
+
     PyObject* shape;
-    QMatrix4x4 matrix;
+    QMatrix4x4 m2d, m3d;
     RenderImage* image;
 
     friend class RenderTask;

@@ -17,8 +17,8 @@ public:
      */
     Bounds map(Transform t) const;
 
-    const float xmin, ymin, zmin;
-    const float xmax, ymax, zmax;
+    float xmin, ymin, zmin;
+    float xmax, ymax, zmax;
 };
 
 #endif // BOUNDS_H
