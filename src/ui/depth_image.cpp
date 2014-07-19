@@ -11,7 +11,7 @@ DepthImageItem::DepthImageItem(float zmin, float zmax, QImage depth,
                                Canvas* canvas)
     : QGraphicsItem(), zmin(zmin), zmax(zmax), depth(depth), canvas(canvas)
 {
-    // Nothing to do here
+    setZValue(-20);
 }
 
 QRectF DepthImageItem::boundingRect() const
