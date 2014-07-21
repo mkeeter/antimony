@@ -22,11 +22,11 @@ ScriptEditor::ScriptEditor(QWidget *parent) :
     setLineWrapMode(NoWrap);
 
     new SyntaxHighlighter(document());
-    setStyleSheet(
-        "QPlainTextEdit {\n"
-        "    background-color: rgba(0, 43, 54, 150);\n"
-        "    color: #839496;\n"
-        "}");
+    setStyleSheet(QString(
+        "QPlainTextEdit {"
+        "    background-color: rgba(0, 43, 54, 150);"
+        "    color: %1;"
+        "}").arg(Colors::base0.name()));
 
     horizontalScrollBar()->setStyleSheet("QScrollBar {height:0px;}");
     verticalScrollBar()->setStyleSheet("QScrollBar {width:0px;}");
@@ -41,13 +41,19 @@ ScriptEditor::ScriptEditor(QWidget *parent) :
 void ScriptEditor::makeButtons()
 {
     QString ss = QString(
-            "QPushButton {\n"
-            "    background-color: \"%1\";\n"
-            "    border-width: 4px;\n"
-            "    margin: 0px;\n"
-            "    color: \"%2\";\n"
+            "QPushButton {"
+            "    background-color: %1;"
+            "    padding: 4px;"
+            "    margin: 0px;"
+            "    color: %2;"
+            "    border-style: none;"
+            "}"
+
+            "QPushButton:hover {"
+            "   background-color: %3;"
             "}").arg(Colors::highlight(Colors::base02).name())
-                .arg(Colors::highlight(Colors::base1).name());
+                .arg(Colors::highlight(Colors::base1).name())
+                .arg(Colors::base01.name());
 
     QPushButton* close_button = new QPushButton("✖", this);
     close_button->setCursor(Qt::ArrowCursor);
