@@ -28,7 +28,7 @@ public:
     void setWidth(int w);
     int getWidth() const;
 
-    Q_PROPERTY(int _width READ getWidth WRITE setWidth);
+    Q_PROPERTY(int _width READ getWidth WRITE setWidth)
 
 public slots:
     void animateOpen();
