@@ -31,7 +31,9 @@ SOURCES += \
     ../src/render/render_task.cpp \
     ../src/render/render_worker.cpp \
     ../src/render/render_image.cpp \
-    ../src/ui/depth_image.cpp
+    ../src/ui/depth_image.cpp \
+    ../src/ui/syntax.cpp \
+    ../src/ui/script.cpp
 
 HEADERS += \
     ../src/ui/main_window.h \
@@ -52,7 +54,9 @@ HEADERS += \
     ../src/render/render_task.h \
     ../src/render/render_worker.h \
     ../src/render/render_image.h \
-    ../src/ui/depth_image.h
+    ../src/ui/depth_image.h \
+    ../src/ui/syntax.h \
+    ../src/ui/script.h
 
 FORMS += \
     ../src/ui/forms/main_window.ui \

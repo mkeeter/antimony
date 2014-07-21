@@ -6,6 +6,7 @@
 
 #include "ui/main_window.h"
 #include "ui/canvas.h"
+#include "ui/script.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -13,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     addCanvas();
+    addScriptEditor();
     makeAddMenu();
 }
 
@@ -26,6 +28,12 @@ void MainWindow::addCanvas()
     canvas = new Canvas(this);
     ui->gridLayout->addWidget(canvas, 0, 0);
     canvas->lower();
+}
+
+void MainWindow::addScriptEditor()
+{
+    script = new ScriptEditor(this);
+    ui->gridLayout->addWidget(script, 0, 0);
 }
 
 void MainWindow::setShortcuts()
