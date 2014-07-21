@@ -180,7 +180,7 @@ void NodeInspector::onPositionChange()
 ////////////////////////////////////////////////////////////////////////////////
 
 _DatumTextItem::_DatumTextItem(Datum* datum, QGraphicsItem* parent)
-    : QGraphicsTextItem("Helloooo", parent), d(datum), txt(document()),
+    : QGraphicsTextItem(parent), d(datum), txt(document()),
       background(Qt::white)
 {
     setTextInteractionFlags(Qt::TextEditorInteraction);
