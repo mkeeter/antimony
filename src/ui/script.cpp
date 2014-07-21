@@ -22,7 +22,6 @@ ScriptEditor::ScriptEditor(QWidget *parent) :
     setLineWrapMode(NoWrap);
 
     new SyntaxHighlighter(document());
-
     setStyleSheet(
         "QPlainTextEdit {\n"
         "    background-color: rgba(0, 43, 54, 150);\n"
@@ -34,6 +33,8 @@ ScriptEditor::ScriptEditor(QWidget *parent) :
     setMouseTracking(true);
 
     makeButtons();
+    setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
+    setWidth(0);
     hide();
 }
 
@@ -93,6 +94,8 @@ void ScriptEditor::animateClose()
     a->start(QPropertyAnimation::DeleteWhenStopped);
     connect(a, SIGNAL(finished()),
             this, SLOT(hide()));
+    connect(a, SIGNAL(finished()),
+            parent(), SLOT(update()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
