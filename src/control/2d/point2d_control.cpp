@@ -41,7 +41,6 @@ void Point2DControl::drag(QVector3D center, QVector3D delta)
     Q_UNUSED(center);
     dragValue("x", delta.x());
     dragValue("y", delta.y());
-    prepareGeometryChange();
 }
 
 QPointF Point2DControl::inspectorPosition() const
