@@ -34,8 +34,8 @@ ScriptEditor::ScriptEditor(QWidget *parent) :
 
     makeButtons();
     setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
-    setWidth(0);
-    hide();
+    setWidth(300);
+    //hide();
 }
 
 void ScriptEditor::makeButtons()

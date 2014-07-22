@@ -15,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     addCanvas();
     addScriptEditor();
-    makeAddMenu();
+    populateMenu(ui->menuAdd);
 }
 
 MainWindow::~MainWindow()
@@ -67,12 +67,12 @@ void MainWindow::createNew()
 }
 
 template <class N, class C>
-void MainWindow::addNodeToAddMenu(QString category, QString name,
-                                  QMap<QString, QMenu*>* submenus)
+void MainWindow::addNodeToMenu(QString category, QString name,
+                                  QMenu* menu, QMap<QString, QMenu*>* submenus)
 {
     if (!submenus->contains(category))
     {
-        (*submenus)[category] = ui->menuAdd->addMenu(category);
+        (*submenus)[category] = menu->addMenu(category);
     }
     QAction* a = (*submenus)[category]->addAction(name);
     connect(a, &QAction::triggered, this, &MainWindow::createNew<N, C>);
@@ -81,15 +81,18 @@ void MainWindow::addNodeToAddMenu(QString category, QString name,
 #include "node/3d/point3d_node.h"
 #include "node/3d/cube_node.h"
 #include "node/2d/circle_node.h"
+#include "node/meta/script_node.h"
 
 #include "control/3d/point3d_control.h"
 #include "control/3d/cube_control.h"
 #include "control/2d/circle_control.h"
+#include "control/meta/script_control.h"
 
-void MainWindow::makeAddMenu()
+void MainWindow::populateMenu(QMenu* menu)
 {
     QMap<QString, QMenu*> submenus;
-    addNodeToAddMenu<Point3D, Point3DControl>("3D", "Point", &submenus);
-    addNodeToAddMenu<CubeNode, CubeControl>("3D", "Cube", &submenus);
-    addNodeToAddMenu<CircleNode, CircleControl>("2D", "Circle", &submenus);
+    addNodeToMenu<Point3D, Point3DControl>("3D", "Point", menu, &submenus);
+    addNodeToMenu<CubeNode, CubeControl>("3D", "Cube", menu, &submenus);
+    addNodeToMenu<CircleNode, CircleControl>("2D", "Circle", menu, &submenus);
+    addNodeToMenu<ScriptNode, ScriptControl>("Meta", "Script", menu, &submenus);
 }

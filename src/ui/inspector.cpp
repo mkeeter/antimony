@@ -236,4 +236,22 @@ void _DatumTextItem::paint(QPainter* painter,
     painter->setPen(Qt::NoPen);
     painter->drawRect(boundingRect());
     QGraphicsTextItem::paint(painter, o, w);
-};
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+_DatumTextButton::_DatumTextButton(Datum *datum, QString label, QGraphicsItem *parent)
+    : QGraphicsTextItem(label, parent), d(datum)
+{
+    // Nothing to do here
+}
+
+void _DatumTextButton::paint(QPainter *painter,
+                             const QStyleOptionGraphicsItem *o,
+                             QWidget *w)
+{
+    painter->setBrush(background);
+    painter->setPen(Qt::NoPen);
+    painter->drawRect(boundingRect());
+    QGraphicsTextItem::paint(painter, o, w);
+}

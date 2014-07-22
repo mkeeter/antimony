@@ -40,12 +40,12 @@ private:
     /** Adds a particular node to the "Add" menu.
      */
     template <class N, class C>
-    void addNodeToAddMenu(QString category, QString name,
+    void addNodeToMenu(QString category, QString name, QMenu* menu,
                           QMap<QString, QMenu*>* submenus);
 
     /** Populate a menu with all of the widgets.
      */
-    void makeAddMenu();
+    void populateMenu(QMenu* menu);
 
     Ui::MainWindow *ui;
     Canvas* canvas;

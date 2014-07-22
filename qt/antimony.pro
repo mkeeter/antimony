@@ -33,7 +33,9 @@ SOURCES += \
     ../src/render/render_image.cpp \
     ../src/ui/depth_image.cpp \
     ../src/ui/syntax.cpp \
-    ../src/ui/script.cpp
+    ../src/ui/script.cpp \
+    ../src/control/text.cpp \
+    ../src/control/meta/script_control.cpp
 
 HEADERS += \
     ../src/ui/main_window.h \
@@ -56,7 +58,9 @@ HEADERS += \
     ../src/render/render_image.h \
     ../src/ui/depth_image.h \
     ../src/ui/syntax.h \
-    ../src/ui/script.h
+    ../src/ui/script.h \
+    ../src/control/text.h \
+    ../src/control/meta/script_control.h
 
 FORMS += \
     ../src/ui/forms/main_window.ui \

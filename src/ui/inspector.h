@@ -33,6 +33,20 @@ protected:
     QRectF bbox;
 };
 
+class _DatumTextButton : public QGraphicsTextItem
+{
+    Q_OBJECT
+public:
+    _DatumTextButton(Datum* datum, QString label, QGraphicsItem* parent);
+
+protected:
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+               QWidget *widget);
+
+    Datum* d;
+    QColor background;
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 
 class NodeInspector : public QGraphicsObject
