@@ -145,8 +145,10 @@ PyObject* ScriptDatum::getCurrentValue()
         return NULL;
     }
 
-
     touched.clear();
+    error_lineno = -1;
+    error_type = "";
+
     PyObject* out = EvalDatum::getCurrentValue();
 
     // Look at all of the datums (other than the script datum and other
