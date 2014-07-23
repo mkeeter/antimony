@@ -11,6 +11,7 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* doc) :
 
     QList<QString> keywords = {"input", "output"};
 
+    // Get all of Python's keywords and add them to a list.
     for (int i=0; i < PyList_Size(kwlist); ++i)
     {
         PyObject* kw = PyList_GetItem(kwlist, i);
@@ -25,6 +26,7 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* doc) :
     Py_DECREF(kwlist);
     Py_DECREF(kwmod);
 
+    // Make rules for all the Python keywords.
     QTextCharFormat kw_format;
     kw_format.setForeground(Colors::green);
     for (auto k : keywords)
