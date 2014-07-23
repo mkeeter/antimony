@@ -14,6 +14,7 @@
 
 #include "datum/datum.h"
 #include "datum/eval.h"
+#include "datum/script_datum.h"
 
 #include "control/control.h"
 #include "node/node.h"
@@ -106,11 +107,19 @@ void NodeInspector::populateLists(Node *node)
         }
         inputs << (d->hasInput() ? new InputPort(d, this) : NULL);
         labels << new QGraphicsTextItem(d->objectName(), this);
-        editors << new _DatumTextItem(d, this);
+
+        if (dynamic_cast<ScriptDatum*>(d))
+        {
+            editors << new _DatumTextButton(d, "Open script", this);
+        }
+        else
+        {
+            editors << new _DatumTextItem(d, this);
+            connect(editors.back(), SIGNAL(boundsChanged()),
+                    this, SLOT(onLayoutChanged()));
+        }
         outputs << (d->hasOutput() ? new OutputPort(d, this) : NULL);
 
-        connect(editors.back(), SIGNAL(boundsChanged()),
-                this, SLOT(onLayoutChanged()));
     }
     onLayoutChanged();
 }
@@ -241,9 +250,24 @@ void _DatumTextItem::paint(QPainter* painter,
 ////////////////////////////////////////////////////////////////////////////////
 
 _DatumTextButton::_DatumTextButton(Datum *datum, QString label, QGraphicsItem *parent)
-    : QGraphicsTextItem(label, parent), d(datum)
+    : QGraphicsTextItem(parent), d(datum), background(Qt::white), hover(false)
 {
-    // Nothing to do here
+    setHtml("<center>" + label + "</center>");
+    setTextWidth(150);
+}
+
+void _DatumTextButton::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    Q_UNUSED(event);
+    hover = true;
+    update();
+}
+
+void _DatumTextButton::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    Q_UNUSED(event);
+    hover = false;
+    update();
 }
 
 void _DatumTextButton::paint(QPainter *painter,
@@ -251,7 +275,14 @@ void _DatumTextButton::paint(QPainter *painter,
                              QWidget *w)
 {
     painter->setBrush(background);
-    painter->setPen(Qt::NoPen);
+    if (hover)
+    {
+        painter->setPen(QPen(QColor(150, 150, 150), 3));
+    }
+    else
+    {
+        painter->setPen(Qt::NoPen);
+    }
     painter->drawRect(boundingRect());
     QGraphicsTextItem::paint(painter, o, w);
 }

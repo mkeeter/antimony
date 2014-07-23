@@ -40,10 +40,14 @@ public:
     _DatumTextButton(Datum* datum, QString label, QGraphicsItem* parent);
 
 protected:
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget);
 
     Datum* d;
+    bool hover;
     QColor background;
 };
 
@@ -103,7 +107,7 @@ protected:
     QList<InputPort*> inputs;
     QList<OutputPort*> outputs;
     QList<QGraphicsTextItem*> labels;
-    QList<_DatumTextItem*> editors;
+    QList<QGraphicsTextItem*> editors;
     float mask_size;
 };
 
