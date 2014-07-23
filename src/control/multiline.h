@@ -2,7 +2,6 @@
 #define MULTILINE_H
 
 #include <QGraphicsObject>
-#include <QPointer>
 
 #include "control/control.h"
 

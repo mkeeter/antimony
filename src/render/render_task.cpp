@@ -17,7 +17,7 @@
 RenderTask::RenderTask(Datum* datum)
     : QObject(NULL), datum(datum), thread(NULL), current(NULL),
       next(NULL), image(NULL), running(false),
-      canvas(dynamic_cast<App*>(QApplication::instance())->getCanvas())
+      canvas(App::instance()->getCanvas())
 {
     connect(datum, SIGNAL(changed()),
             this, SLOT(onDatumChanged()));
@@ -29,8 +29,7 @@ RenderTask::RenderTask(Datum* datum)
 
 bool RenderTask::accepts(Datum *d)
 {
-    return dynamic_cast<App*>(QApplication::instance()) &&
-           d->getType() == fab::ShapeType;
+    return App::instance() && d->getType() == fab::ShapeType;
 }
 
 void RenderTask::onDatumDeleted()

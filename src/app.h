@@ -17,6 +17,7 @@ public:
      */
     Canvas* getCanvas() const;
 
+    static App* instance();
 private slots:
     void onAbout();
 private:

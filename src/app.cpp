@@ -22,6 +22,11 @@ App::~App()
     NodeManager::manager()->clear();
 }
 
+App* App::instance()
+{
+    return dynamic_cast<App*>(QApplication::instance());
+}
+
 Canvas* App::getCanvas() const
 {
     return window->canvas;

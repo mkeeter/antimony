@@ -18,8 +18,6 @@ void TextLabelControl::drag(QVector3D center, QVector3D delta)
     dragValue("_x", delta.x());
     dragValue("_y", delta.y());
     dragValue("_z", delta.z());
-    prepareGeometryChange();
-    // Nothing to do
 }
 
 void TextLabelControl::paintControl(QPainter *painter)
