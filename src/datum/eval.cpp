@@ -94,7 +94,9 @@ PyObject* EvalDatum::getCurrentValue()
 
 void EvalDatum::setExpr(QString new_expr)
 {
-    if (new_expr != expr)
+    // If the expression has changed or this is the first call to
+    // set_expr, then run update().
+    if (new_expr != expr || !post_init_called)
     {
         expr = new_expr;
         update();
