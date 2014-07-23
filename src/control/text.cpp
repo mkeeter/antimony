@@ -3,6 +3,7 @@
 
 #include "control/text.h"
 #include "ui/canvas.h"
+#include "ui/colors.h"
 
 TextLabelControl::TextLabelControl(QString label, QColor color,
                                    Canvas* canvas, Node* node)
@@ -23,7 +24,7 @@ void TextLabelControl::drag(QVector3D center, QVector3D delta)
 void TextLabelControl::paintControl(QPainter *painter)
 {
     painter->setPen(QPen(color));
-    QColor c(color);
+    QColor c(isSelected() ? Colors::highlight(color) : color);
     c.setAlpha(150);
     painter->setBrush(QBrush(c));
 
