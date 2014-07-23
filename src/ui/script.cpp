@@ -26,11 +26,13 @@ ScriptEditor::ScriptEditor(QWidget *parent) :
     setLineWrapMode(NoWrap);
 
     new SyntaxHighlighter(document());
+    QColor background = Colors::base03;
+    background.setAlpha(150);
     setStyleSheet(QString(
         "QPlainTextEdit {"
-        "    background-color: rgba(0, 43, 54, 150);"
-        "    color: %1;"
-        "}").arg(Colors::base0.name()));
+        "    background-color: %1;"
+        "    color: %2;"
+        "}").arg(background.name(QColor::HexArgb)).arg(Colors::base0.name()));
 
     horizontalScrollBar()->setStyleSheet("QScrollBar {height:0px;}");
     verticalScrollBar()->setStyleSheet("QScrollBar {width:0px;}");
