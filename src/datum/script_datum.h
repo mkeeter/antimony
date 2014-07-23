@@ -38,11 +38,18 @@ protected:
      */
     virtual void modifyGlobalsDict(PyObject* g) override;
 
+    /** On Python error, record line number and traceback.
+     */
+    void onPyError() override;
+
     PyObject* globals;
     PyObject* input_func;
     PyObject* output_func;
 
     QSet<QString> touched;
+
+    int error_lineno;
+    QString error_type;
 };
 
 #endif // SCRIPT_DATUM_H

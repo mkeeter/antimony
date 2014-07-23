@@ -165,3 +165,30 @@ PyObject* ScriptDatum::getCurrentValue()
 
     return out;
 }
+
+void ScriptDatum::onPyError()
+{
+    PyObject *ptype, *pvalue, *ptraceback;
+    PyErr_Fetch(&ptype, &pvalue, &ptraceback);
+
+    if (ptraceback)
+    {
+        PyObject* lineno = PyObject_GetAttrString(ptraceback, "tb_lineno");
+        error_lineno = PyLong_AsLong(lineno);
+        Py_DECREF(lineno);
+    } else {
+        error_lineno = PyLong_AsLong(PyTuple_GetItem(
+                                     PyTuple_GetItem(pvalue, 1), 1));
+    }
+
+    PyObject* name = PyObject_GetAttrString(ptype, "__name__");
+    wchar_t* w = PyUnicode_AsWideCharString(name, NULL);
+    Q_ASSERT(w);
+    error_type = QString::fromWCharArray(w);
+    PyMem_Free(w);
+    Py_DECREF(name);
+
+    Py_XDECREF(ptype);
+    Py_XDECREF(pvalue);
+    Py_XDECREF(ptraceback);
+}

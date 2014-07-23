@@ -45,6 +45,12 @@ protected:
      */
     virtual void modifyGlobalsDict(PyObject* g);
 
+    /** Function called when there's a Python error.
+     *  By default, prints the error.
+     *  This function does not need to call PyErr_Clear().
+     */
+    virtual void onPyError();
+
     QString expr;
 };
 

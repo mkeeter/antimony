@@ -80,7 +80,7 @@ PyObject* EvalDatum::getCurrentValue()
 
         if (PyErr_Occurred())
         {
-            PyErr_Print();
+            onPyError();
             PyErr_Clear();
         }
 
@@ -113,4 +113,9 @@ QString EvalDatum::getString() const
     {
         return expr;
     }
+}
+
+void EvalDatum::onPyError()
+{
+    PyErr_Print();
 }
