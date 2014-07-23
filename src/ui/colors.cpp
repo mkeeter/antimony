@@ -25,7 +25,7 @@ QColor base2("#eee8d5");
 QColor base3("#fdf6e3");
 QColor green("#859900");
 
-static QColor adjust(QColor c, float scale)
+QColor adjust(QColor c, float scale)
 {
     c.setRed(fmax(fmin(c.red()*scale, 255), 0));
     c.setGreen(fmax(fmin(c.green()*scale, 255), 0));

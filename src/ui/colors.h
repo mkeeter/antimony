@@ -24,6 +24,7 @@ extern QColor base2;
 extern QColor base3;
 extern QColor green;
 
+QColor adjust(QColor c, float scale);
 QColor highlight(QColor c);
 QColor dim(QColor c);
 QColor getColor(Datum* d);
