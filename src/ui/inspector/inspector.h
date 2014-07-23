@@ -6,50 +6,11 @@
 #include <QGraphicsProxyWidget>
 #include <QPointer>
 
-class Datum;
 class Control;
 class Node;
 class InputPort;
 class OutputPort;
 class Canvas;
-
-class _DatumTextItem : public QGraphicsTextItem
-{
-    Q_OBJECT
-public:
-    _DatumTextItem(Datum* datum, QGraphicsItem* parent);
-public slots:
-    void onTextChanged();
-    void onDatumChanged();
-signals:
-    void boundsChanged();
-protected:
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-               QWidget *widget);
-
-    Datum* d;
-    QTextDocument* txt;
-    QColor background;
-    QRectF bbox;
-};
-
-class _DatumTextButton : public QGraphicsTextItem
-{
-    Q_OBJECT
-public:
-    _DatumTextButton(Datum* datum, QString label, QGraphicsItem* parent);
-
-protected:
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-               QWidget *widget);
-
-    Datum* d;
-    bool hover;
-    QColor background;
-};
 
 ////////////////////////////////////////////////////////////////////////////////
 

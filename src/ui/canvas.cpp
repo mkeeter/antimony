@@ -9,7 +9,7 @@
 #include "ui/canvas.h"
 #include "ui/port.h"
 #include "ui/connection.h"
-#include "ui/inspector.h"
+#include "ui/inspector/inspector.h"
 #include "ui/depth_image.h"
 
 #include "node/node.h"

@@ -5,21 +5,16 @@
 #include <QPropertyAnimation>
 #include <QGraphicsScene>
 #include <QGraphicsProxyWidget>
-#include <QGraphicsSceneMouseEvent>
 #include <QTimer>
-#include <QTextDocument>
-
-#include "app.h"
 
 #include "ui/canvas.h"
-#include "ui/inspector.h"
-#include "ui/main_window.h"
+#include "ui/inspector/inspector.h"
+#include "ui/inspector/inspector_button.h"
+#include "ui/inspector/inspector_text.h"
 #include "ui/port.h"
 
 #include "datum/datum.h"
-#include "datum/eval.h"
 #include "datum/script_datum.h"
-
 #include "control/control.h"
 #include "node/node.h"
 
@@ -114,11 +109,11 @@ void NodeInspector::populateLists(Node *node)
 
         if (dynamic_cast<ScriptDatum*>(d))
         {
-            editors << new _DatumTextButton(d, "Open script", this);
+            editors << new DatumTextButton(d, "Open script", this);
         }
         else
         {
-            editors << new _DatumTextItem(d, this);
+            editors << new DatumTextItem(d, this);
             connect(editors.back(), SIGNAL(boundsChanged()),
                     this, SLOT(onLayoutChanged()));
         }
@@ -190,112 +185,3 @@ void NodeInspector::onPositionChange()
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-_DatumTextItem::_DatumTextItem(Datum* datum, QGraphicsItem* parent)
-    : QGraphicsTextItem(parent), d(datum), txt(document()),
-      background(Qt::white)
-{
-    setTextInteractionFlags(Qt::TextEditorInteraction);
-    setTextWidth(150);
-    connect(datum, SIGNAL(changed()), this, SLOT(onDatumChanged()));
-    onDatumChanged();
-
-    bbox = boundingRect();
-    connect(txt, SIGNAL(contentsChanged()), this, SLOT(onTextChanged()));
-}
-
-void _DatumTextItem::onDatumChanged()
-{
-    QTextCursor cursor = textCursor();
-    int p = textCursor().position();
-    txt->setPlainText(d->getString());
-    cursor.setPosition(p);
-    setTextCursor(cursor);
-
-    setEnabled(d->canEdit());
-
-    if (d->getValid())
-    {
-        background = Qt::white;
-    }
-    else
-    {
-        background = QColor("#faa");
-    }
-
-}
-
-void _DatumTextItem::onTextChanged()
-{
-    if (bbox != boundingRect())
-    {
-        bbox = boundingRect();
-        emit boundsChanged();
-    }
-
-    EvalDatum* e = dynamic_cast<EvalDatum*>(d);
-    if (e && e->canEdit())
-    {
-        e->setExpr(txt->toPlainText());
-    }
-}
-
-void _DatumTextItem::paint(QPainter* painter,
-                           const QStyleOptionGraphicsItem* o,
-                           QWidget* w)
-{
-    painter->setBrush(background);
-    painter->setPen(Qt::NoPen);
-    painter->drawRect(boundingRect());
-    QGraphicsTextItem::paint(painter, o, w);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-_DatumTextButton::_DatumTextButton(Datum *datum, QString label, QGraphicsItem *parent)
-    : QGraphicsTextItem(parent), d(datum), hover(false), background(Qt::white)
-{
-    setHtml("<center>" + label + "</center>");
-    setTextWidth(150);
-}
-
-void _DatumTextButton::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
-{
-    Q_UNUSED(event);
-    hover = true;
-    update();
-}
-
-void _DatumTextButton::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
-{
-    Q_UNUSED(event);
-    hover = false;
-    update();
-}
-
-void _DatumTextButton::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-    if (event->button() == Qt::LeftButton)
-    {
-        App::instance()->getWindow()->openScript(
-                    dynamic_cast<ScriptDatum*>(d));
-    }
-}
-
-void _DatumTextButton::paint(QPainter *painter,
-                             const QStyleOptionGraphicsItem *o,
-                             QWidget *w)
-{
-    painter->setBrush(background);
-    if (hover)
-    {
-        painter->setPen(QPen(QColor(150, 150, 150), 3));
-    }
-    else
-    {
-        painter->setPen(Qt::NoPen);
-    }
-    painter->drawRect(boundingRect());
-    QGraphicsTextItem::paint(painter, o, w);
-}

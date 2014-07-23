@@ -15,7 +15,7 @@ include(core.pri)
 
 SOURCES += \
     ../src/main.cpp \
-    ../src/ui/inspector.cpp \
+    ../src/ui/inspector/inspector.cpp \
     ../src/ui/main_window.cpp \
     ../src/ui/view_selector.cpp \
     ../src/ui/canvas.cpp \
@@ -37,11 +37,13 @@ SOURCES += \
     ../src/ui/syntax.cpp \
     ../src/ui/script.cpp \
     ../src/control/text.cpp \
-    ../src/control/meta/script_control.cpp
+    ../src/control/meta/script_control.cpp \
+    ../src/ui/inspector/inspector_text.cpp \
+    ../src/ui/inspector/inspector_button.cpp
 
 HEADERS += \
     ../src/ui/main_window.h \
-    ../src/ui/inspector.h \
+    ../src/ui/inspector/inspector.h \
     ../src/ui/view_selector.h \
     ../src/ui/canvas.h \
     ../src/app.h \
@@ -62,7 +64,9 @@ HEADERS += \
     ../src/ui/syntax.h \
     ../src/ui/script.h \
     ../src/control/text.h \
-    ../src/control/meta/script_control.h
+    ../src/control/meta/script_control.h \
+    ../src/ui/inspector/inspector_text.h \
+    ../src/ui/inspector/inspector_button.h
 
 FORMS += \
     ../src/ui/forms/main_window.ui \

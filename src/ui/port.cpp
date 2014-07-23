@@ -4,7 +4,7 @@
 #include <QGraphicsSceneMouseEvent>
 
 #include "ui/port.h"
-#include "ui/inspector.h"
+#include "ui/inspector/inspector.h"
 #include "ui/colors.h"
 #include "ui/connection.h"
 

@@ -9,7 +9,7 @@
 
 #include "ui/canvas.h"
 #include "ui/colors.h"
-#include "ui/inspector.h"
+#include "ui/inspector/inspector.h"
 #include "ui/port.h"
 
 #include <QDebug>
