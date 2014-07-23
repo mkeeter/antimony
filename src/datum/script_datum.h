@@ -21,6 +21,11 @@ public:
 
     virtual PyTypeObject* getType() const override { return Py_None->ob_type; }
     virtual bool hasOutput() const override { return false; }
+
+    /** Returns the line on which an error occurred or -1.
+     */
+    int getErrorLine() const { return error_lineno; }
+
 protected:
     /** Returns True if we can make an input or output datum with this name.
      */
