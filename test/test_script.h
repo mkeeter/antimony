@@ -58,6 +58,10 @@ private slots:
     /** Create a shape output
      */
     void MakeShapeOutput();
+
+    /** Changes the order of input calls to reorder datums.
+     */
+    void ChangeInputOrder();
 };
 
 #endif // TEST_SCRIPT_H

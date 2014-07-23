@@ -194,3 +194,22 @@ void TestScript::MakeShapeOutput()
 
     delete n;
 }
+
+void TestScript::ChangeInputOrder()
+{
+    ScriptNode* n = new ScriptNode("s", "0.0", "0.0", "0.0", "from fab import Shape; input('a', Shape); input('b', Shape);");
+    QVERIFY(n->getDatum("script")->getValid() == true);
+    Datum* a = n->getDatum("a");
+    Datum* b = n->getDatum("b");
+
+    QVERIFY(a);
+    QVERIFY(b);
+    QVERIFY(n->findChildren<ShapeDatum*>().front() == a);
+
+    n->getDatum<ScriptDatum>("script")->setExpr("from fab import Shape; input('b', Shape); input('a', Shape);");
+    QVERIFY(n->getDatum("a") == a);
+    QVERIFY(n->getDatum("b") == b);
+    QVERIFY(n->findChildren<ShapeDatum*>().front() == b);
+
+    delete n;
+}
