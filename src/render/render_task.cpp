@@ -29,7 +29,7 @@ RenderTask::RenderTask(Datum* datum)
 
 bool RenderTask::accepts(Datum *d)
 {
-    return App::instance() && d->getType() == fab::ShapeType;
+    return d->getType() == fab::ShapeType;
 }
 
 void RenderTask::onDatumDeleted()

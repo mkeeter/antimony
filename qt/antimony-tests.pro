@@ -3,6 +3,8 @@ QT += core gui widgets testlib
 CONFIG += testcase
 CONFIG += c++11
 
+DEFINES += ANTIMONY_TESTS
+
 include(fab.pri)
 include(core.pri)
 

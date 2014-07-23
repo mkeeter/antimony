@@ -4,6 +4,8 @@ TARGET = antimony
 TEMPLATE = app
 CONFIG += c++11
 
+DEFINES += ANTIMONY
+
 # Bump optimization up to -O3 in release builds
 QMAKE_CXXFLAGS_RELEASE -= -O2
 QMAKE_CXXFLAGS_RELEASE += -O3
