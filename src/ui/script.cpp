@@ -91,12 +91,17 @@ void ScriptEditor::setWidth(int w) { resize(w, height()); }
 
 void ScriptEditor::setDatum(ScriptDatum *d)
 {
+    if (datum)
+    {
+        disconnect(datum, 0, this, 0);
+    }
     datum = d;
     document()->setPlainText(d->getExpr());
     if (isHidden())
     {
         animateOpen();
     }
+    connect(d, SIGNAL(destroyed()), this, SLOT(animateClose()));
 }
 
 void ScriptEditor::onTextChanged()
