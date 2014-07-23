@@ -7,6 +7,7 @@
 #include <QPointer>
 
 class Control;
+class Datum;
 class Node;
 class InputPort;
 class OutputPort;
@@ -50,6 +51,11 @@ public slots:
     /** Returns a pointer to the Canvas object.
      */
     Canvas* getCanvas() const;
+
+    /** Opens the script editor for the given datum
+     *  (which must be a ScriptDatum).
+     */
+    void openScript(Datum* d) const;
 
 protected:
     /** Returns the width of the largest label.

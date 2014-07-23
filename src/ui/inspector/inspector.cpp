@@ -7,6 +7,9 @@
 #include <QGraphicsProxyWidget>
 #include <QTimer>
 
+#include "app.h"
+#include "ui/main_window.h"
+
 #include "ui/canvas.h"
 #include "ui/inspector/inspector.h"
 #include "ui/inspector/inspector_button.h"
@@ -109,7 +112,9 @@ void NodeInspector::populateLists(Node *node)
 
         if (dynamic_cast<ScriptDatum*>(d))
         {
-            editors << new DatumTextButton(d, "Open script", this);
+            DatumTextButton* b = new DatumTextButton(d, "Open script", this);
+            editors << b;
+            connect(b, SIGNAL(pressed(Datum*)), this, SLOT(openScript(Datum*)));
         }
         else
         {
@@ -185,3 +190,10 @@ void NodeInspector::onPositionChange()
     }
 }
 
+
+void NodeInspector::openScript(Datum *d) const
+{
+    ScriptDatum* s = dynamic_cast<ScriptDatum*>(d);
+    Q_ASSERT(s);
+    App::instance()->getWindow()->openScript(s);
+}

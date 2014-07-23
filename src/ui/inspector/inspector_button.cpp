@@ -3,11 +3,9 @@
 #include <QPainter>
 #include <QGraphicsSceneMouseEvent>
 
-#include "app.h"
 #include "datum/datum.h"
-#include "datum/script_datum.h"
-#include "ui/main_window.h"
 #include "ui/inspector/inspector_button.h"
+#include "ui/inspector/inspector.h"
 
 DatumTextButton::DatumTextButton(Datum *datum, QString label, QGraphicsItem *parent)
     : QGraphicsTextItem(parent), d(datum), hover(false), background(Qt::white)
@@ -34,8 +32,7 @@ void DatumTextButton::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton)
     {
-        App::instance()->getWindow()->openScript(
-                    dynamic_cast<ScriptDatum*>(d));
+        emit(pressed(d));
     }
 }
 

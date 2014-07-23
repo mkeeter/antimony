@@ -10,6 +10,8 @@ class DatumTextButton : public QGraphicsTextItem
     Q_OBJECT
 public:
     DatumTextButton(Datum* datum, QString label, QGraphicsItem* parent);
+signals:
+    void pressed(Datum* d);
 
 protected:
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
