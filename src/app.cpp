@@ -32,6 +32,11 @@ Canvas* App::getCanvas() const
     return window->canvas;
 }
 
+MainWindow* App::getWindow() const
+{
+    return window;
+}
+
 void App::onAbout()
 {
     QMessageBox::about(NULL, "antimony",

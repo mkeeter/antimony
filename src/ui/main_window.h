@@ -5,6 +5,7 @@
 
 class Canvas;
 class ScriptEditor;
+class ScriptDatum;
 
 namespace Ui {
 class MainWindow;
@@ -17,6 +18,8 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
+    void openScript(ScriptDatum* d);
 
 private:
     /** Creates a canvas widget and adds it to the window.

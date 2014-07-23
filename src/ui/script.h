@@ -3,6 +3,7 @@
 
 #include <QPlainTextEdit>
 #include <QPushButton>
+#include <QPointer>
 
 class ResizeButton : public QPushButton
 {
@@ -19,24 +20,32 @@ protected:
 
 ////////////////////////////////////////////////////////////////////////////////
 
+class ScriptDatum;
+
 class ScriptEditor : public QPlainTextEdit
 {
     Q_OBJECT
 public:
     explicit ScriptEditor(QWidget* parent=0);
 
+    // Property to animate width
     void setWidth(int w);
     int getWidth() const;
-
     Q_PROPERTY(int _width READ getWidth WRITE setWidth)
+
+    /** Sets the given datum, opening the script if hidden.
+     */
+    void setDatum(ScriptDatum* d);
 
 public slots:
     void animateOpen();
     void animateClose();
+    void onTextChanged();
 
 protected:
     void makeButtons();
     int baseWidth;
+    QPointer<ScriptDatum> datum;
 };
 
 #endif // SCRIPT_H

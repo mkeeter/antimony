@@ -17,7 +17,14 @@ public:
      */
     Canvas* getCanvas() const;
 
+    /** Helper function to get main window.
+     */
+    MainWindow* getWindow() const;
+
+    /** Helper function to get running instance.
+     */
     static App* instance();
+
 private slots:
     void onAbout();
 private:

@@ -1,5 +1,5 @@
-#ifndef SCRIPT_H
-#define SCRIPT_H
+#ifndef SCRIPT_DATUM_H
+#define SCRIPT_DATUM_H
 
 #include <Python.h>
 
@@ -45,4 +45,4 @@ protected:
     QSet<QString> touched;
 };
 
-#endif // SCRIPT_H
+#endif // SCRIPT_DATUM_H

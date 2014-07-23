@@ -5,11 +5,15 @@
 #include <QPropertyAnimation>
 #include <QGraphicsScene>
 #include <QGraphicsProxyWidget>
+#include <QGraphicsSceneMouseEvent>
 #include <QTimer>
 #include <QTextDocument>
 
+#include "app.h"
+
 #include "ui/canvas.h"
 #include "ui/inspector.h"
+#include "ui/main_window.h"
 #include "ui/port.h"
 
 #include "datum/datum.h"
@@ -250,7 +254,7 @@ void _DatumTextItem::paint(QPainter* painter,
 ////////////////////////////////////////////////////////////////////////////////
 
 _DatumTextButton::_DatumTextButton(Datum *datum, QString label, QGraphicsItem *parent)
-    : QGraphicsTextItem(parent), d(datum), background(Qt::white), hover(false)
+    : QGraphicsTextItem(parent), d(datum), hover(false), background(Qt::white)
 {
     setHtml("<center>" + label + "</center>");
     setTextWidth(150);
@@ -268,6 +272,15 @@ void _DatumTextButton::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     Q_UNUSED(event);
     hover = false;
     update();
+}
+
+void _DatumTextButton::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton)
+    {
+        App::instance()->getWindow()->openScript(
+                    dynamic_cast<ScriptDatum*>(d));
+    }
 }
 
 void _DatumTextButton::paint(QPainter *painter,

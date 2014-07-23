@@ -1,3 +1,5 @@
+#include <Python.h>
+
 #include <QPushButton>
 #include <QGridLayout>
 #include <QScrollBar>
@@ -7,6 +9,8 @@
 #include "ui/script.h"
 #include "ui/syntax.h"
 #include "ui/colors.h"
+
+#include "datum/script_datum.h"
 
 ScriptEditor::ScriptEditor(QWidget *parent) :
     QPlainTextEdit(parent)
@@ -34,8 +38,12 @@ ScriptEditor::ScriptEditor(QWidget *parent) :
 
     makeButtons();
     setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
-    setWidth(300);
-    //hide();
+
+    setWidth(0);
+    hide();
+
+    connect(document(), SIGNAL(contentsChanged()),
+            this, SLOT(onTextChanged()));
 }
 
 void ScriptEditor::makeButtons()
@@ -81,6 +89,24 @@ void ScriptEditor::makeButtons()
 int ScriptEditor::getWidth() const { return width(); }
 void ScriptEditor::setWidth(int w) { resize(w, height()); }
 
+void ScriptEditor::setDatum(ScriptDatum *d)
+{
+    datum = d;
+    document()->setPlainText(d->getExpr());
+    if (isHidden())
+    {
+        animateOpen();
+    }
+}
+
+void ScriptEditor::onTextChanged()
+{
+    if (datum)
+    {
+        datum->setExpr(document()->toPlainText());
+    }
+}
+
 void ScriptEditor::animateOpen()
 {
     QPropertyAnimation* a = new QPropertyAnimation(this, "_width", this);
@@ -93,6 +119,8 @@ void ScriptEditor::animateOpen()
 
 void ScriptEditor::animateClose()
 {
+    datum.clear();
+
     QPropertyAnimation* a = new QPropertyAnimation(this, "_width", this);
     a->setDuration(100);
     a->setStartValue(width());

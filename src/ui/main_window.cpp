@@ -45,6 +45,11 @@ void MainWindow::setShortcuts()
     ui->actionQuit->setShortcuts(QKeySequence::Quit);
 }
 
+void MainWindow::openScript(ScriptDatum *d)
+{
+    script->setDatum(d);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "node/node.h"
