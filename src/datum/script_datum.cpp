@@ -79,6 +79,8 @@ PyObject* ScriptDatum::makeInput(QString name, PyTypeObject *type)
             return NULL;
         }
     }
+    d->setParent(NULL);
+    d->setParent(parent());
 
     // When this input changes, the script datum should update.
     if (connectUpstream(d) && d->getValid())
@@ -125,6 +127,8 @@ PyObject* ScriptDatum::makeOutput(QString name, PyObject *out)
             return NULL;
         }
     }
+    d->setParent(NULL);
+    d->setParent(parent());
 
     dynamic_cast<OutputDatum*>(d)->setNewValue(out);
     return Py_None;
