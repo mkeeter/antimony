@@ -12,7 +12,8 @@ public:
     DatumTextButton(Datum* datum, QString label, QGraphicsItem* parent);
 signals:
     void pressed(Datum* d);
-
+public slots:
+    void redraw() { update(); }
 protected:
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
@@ -22,7 +23,6 @@ protected:
 
     Datum* d;
     bool hover;
-    QColor background;
 };
 
 #endif // INSPECTOR_BUTTON_H

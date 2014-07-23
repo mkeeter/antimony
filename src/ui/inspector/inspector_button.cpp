@@ -8,10 +8,11 @@
 #include "ui/inspector/inspector.h"
 
 DatumTextButton::DatumTextButton(Datum *datum, QString label, QGraphicsItem *parent)
-    : QGraphicsTextItem(parent), d(datum), hover(false), background(Qt::white)
+    : QGraphicsTextItem(parent), d(datum), hover(false)
 {
     setHtml("<center>" + label + "</center>");
     setTextWidth(150);
+    connect(d, SIGNAL(changed()), this, SLOT(redraw()));
 }
 
 void DatumTextButton::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
@@ -40,7 +41,7 @@ void DatumTextButton::paint(QPainter *painter,
                              const QStyleOptionGraphicsItem *o,
                              QWidget *w)
 {
-    painter->setBrush(background);
+    painter->setBrush(d->getValid() ? Qt::white : QColor("#faa"));
     if (hover)
     {
         painter->setPen(QPen(QColor(150, 150, 150), 3));
