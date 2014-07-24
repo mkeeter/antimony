@@ -10,8 +10,8 @@
 
 #include "datum/datum.h"
 
-Port::Port(Datum* d, NodeInspector* inspector) :
-    QGraphicsObject(inspector), datum(d), opacity(1), hover(false)
+Port::Port(Datum* d, Canvas* canvas, QGraphicsItem* parent) :
+    QGraphicsObject(parent), datum(d), canvas(canvas), opacity(1), hover(false)
 {
     setAcceptHoverEvents(true);
 }
@@ -52,14 +52,14 @@ Datum* Port::getDatum() const
 
 ////////////////////////////////////////////////////////////////////////////////
 
-InputPort::InputPort(Datum *d, NodeInspector *inspector)
-    : Port(d, inspector)
+InputPort::InputPort(Datum *d, Canvas *canvas, QGraphicsItem *parent)
+    : Port(d, canvas, parent)
 {
     // Nothing to do here
 }
 
-OutputPort::OutputPort(Datum *d, NodeInspector *inspector)
-    : Port(d, inspector)
+OutputPort::OutputPort(Datum *d, Canvas *canvas, QGraphicsItem *parent)
+    : Port(d, canvas, parent)
 {
     // Nothing to do here
 }
@@ -83,8 +83,7 @@ void OutputPort::mousePressEvent(QGraphicsSceneMouseEvent *event)
     if (event->button() == Qt::LeftButton)
     {
         Link* link = datum->linkFrom();
-        NodeInspector* inspector = dynamic_cast<NodeInspector*>(parentItem());
-        Connection* c = new Connection(link, inspector->getCanvas());
+        Connection* c = new Connection(link, canvas);
         c->setDragPos(mapToScene(event->pos()));
         c->grabMouse();
     }

@@ -5,7 +5,6 @@
 
 #include <QSet>
 #include <QString>
-#include <QMap>
 
 #include "datum/eval.h"
 

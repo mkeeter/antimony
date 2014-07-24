@@ -6,12 +6,13 @@
 
 class NodeInspector;
 class Datum;
+class Canvas;
 
 class Port : public QGraphicsObject
 {
     Q_OBJECT
 public:
-    explicit Port(Datum* d, NodeInspector* inspector);
+    explicit Port(Datum* d, Canvas* canvas, QGraphicsItem* parent);
 
     virtual QRectF boundingRect() const override;
     virtual void paint(QPainter *painter,
@@ -21,6 +22,7 @@ public:
     Datum* getDatum() const;
 protected:
     QPointer<Datum> datum;
+    Canvas* canvas;
     float opacity;
     bool hover;
 };
@@ -29,14 +31,14 @@ class InputPort : public Port
 {
     Q_OBJECT
 public:
-    explicit InputPort(Datum* d, NodeInspector* inspector);
+    explicit InputPort(Datum* d, Canvas* canvas, QGraphicsItem* parent);
 };
 
 class OutputPort : public Port
 {
     Q_OBJECT
 public:
-    explicit OutputPort(Datum* d, NodeInspector* inspector);
+    explicit OutputPort(Datum* d, Canvas* canvas, QGraphicsItem* parent);
 protected:
     virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);

@@ -74,13 +74,13 @@ QPointF Control::datumOutputPosition(Datum *d) const
 {
     if (inspector)
     {
-        for (auto a : inspector->childItems())
+        OutputPort* p = inspector->datumOutputPort(d);
+        if (p)
         {
-            OutputPort* p = dynamic_cast<OutputPort*>(a);
-            if (p && p->getDatum() == d)
-            {
-                return p->mapToScene(p->boundingRect().center());
-            }
+            return (inspector->getMaskSize() *
+                        p->mapToScene(p->boundingRect().center())) +
+                    (1 - inspector->getMaskSize()) *
+                        inspectorPosition();
         }
     }
     return inspectorPosition();
@@ -90,13 +90,13 @@ QPointF Control::datumInputPosition(Datum *d) const
 {
     if (inspector)
     {
-        for (auto a : inspector->childItems())
+        InputPort* p = inspector->datumInputPort(d);
+        if (p)
         {
-            InputPort* p = dynamic_cast<InputPort*>(a);
-            if (p && p->getDatum() == d)
-            {
-                return p->mapToScene(p->boundingRect().center());
-            }
+            return (inspector->getMaskSize() *
+                        p->mapToScene(p->boundingRect().center())) +
+                    (1 - inspector->getMaskSize()) *
+                        inspectorPosition();
         }
     }
     return inspectorPosition();

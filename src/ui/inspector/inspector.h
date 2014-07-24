@@ -9,9 +9,10 @@
 class Control;
 class Datum;
 class Node;
+class Canvas;
+class InspectorRow;
 class InputPort;
 class OutputPort;
-class Canvas;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -27,6 +28,13 @@ public:
     virtual void paint(QPainter *painter,
                        const QStyleOptionGraphicsItem *option,
                        QWidget *widget) override;
+
+    OutputPort* datumOutputPort(Datum *d) const;
+    InputPort* datumInputPort(Datum* d) const;
+
+    float getMaskSize() const;
+    void setMaskSize(float m);
+    Q_PROPERTY(float mask_size READ getMaskSize WRITE setMaskSize)
 
 signals:
     void portPositionChanged();
@@ -66,16 +74,11 @@ protected:
      */
     void populateLists(Node* node);
 
-    float getMaskSize() const;
-    void setMaskSize(float m);
-    Q_PROPERTY(float mask_size READ getMaskSize WRITE setMaskSize)
-
     QPointer<Control> control;
-    QList<InputPort*> inputs;
-    QList<OutputPort*> outputs;
-    QList<QGraphicsTextItem*> labels;
-    QList<QGraphicsTextItem*> editors;
+    QMap<Datum*, InspectorRow*> rows;
     float mask_size;
+
+    friend class InspectorRow;
 };
 
 #endif // INSPECTOR_H
