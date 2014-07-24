@@ -146,7 +146,7 @@ bool ScriptEditor::event(QEvent *event)
 {
      if (event->type() == QEvent::ToolTip) {
          QHelpEvent *helpEvent = static_cast<QHelpEvent*>(event);
-         if (datum->getErrorLine() != -1 &&
+         if (datum && datum->getErrorLine() != -1 &&
              getLineRect(datum->getErrorLine()).contains(helpEvent->pos()))
          {
              QToolTip::showText(helpEvent->globalPos(), datum->getErrorType());
@@ -163,7 +163,7 @@ void ScriptEditor::paintEvent(QPaintEvent *e)
 {
     {
         QPainter p(this->viewport());
-        if (datum->getErrorLine() != -1)
+        if (datum && datum->getErrorLine() != -1)
         {
             highlightError(&p, datum->getErrorLine());
         }
