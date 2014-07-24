@@ -31,7 +31,7 @@ PyObject* OutputDatum::getCurrentValue()
 
 QString OutputDatum::getString() const
 {
-    return "Ouput";
+    return "Output";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
