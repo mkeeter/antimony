@@ -43,6 +43,14 @@ public slots:
     void onTextChanged();
 
 protected:
+    void paintEvent(QPaintEvent *e) override;
+
+    /** Returns the bounding box of the given line
+     *  (zero-indexed).
+     */
+    QRect getLineRect(int lineno) const;
+
+    void highlightError(QPainter* p, int lineno);
     void makeButtons();
     int baseWidth;
     QPointer<ScriptDatum> datum;

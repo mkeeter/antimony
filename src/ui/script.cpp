@@ -5,6 +5,7 @@
 #include <QScrollBar>
 #include <QMouseEvent>
 #include <QPropertyAnimation>
+#include <QPainter>
 
 #include "ui/script.h"
 #include "ui/syntax.h"
@@ -137,6 +138,45 @@ void ScriptEditor::animateClose()
             this, SLOT(hide()));
     connect(a, SIGNAL(finished()),
             parent(), SLOT(update()));
+}
+
+void ScriptEditor::paintEvent(QPaintEvent *e)
+{
+    {
+        QPainter p(this->viewport());
+        if (datum->getErrorLine() != -1)
+        {
+            highlightError(&p, datum->getErrorLine());
+        }
+    }
+    QPlainTextEdit::paintEvent(e);
+}
+
+QRect ScriptEditor::getLineRect(int lineno) const
+{
+    // Find the index of the appropriate newline
+    QString doc = document()->toPlainText();
+    int index = 0;
+    while (--lineno)
+    {
+        index = doc.indexOf("\n", index) + 1;
+    }
+
+    QTextCursor c = textCursor();
+    c.setPosition(index);
+    return cursorRect(c);
+}
+
+void ScriptEditor::highlightError(QPainter *p, int lineno)
+{
+    QRect r = getLineRect(lineno);
+
+    // Fill in the entire line with an error bar
+    QColor err = Colors::red;
+    err.setAlpha(100);
+    p->setBrush(QBrush(err));
+    p->setPen(Qt::NoPen);
+    p->drawRect(0, r.y(), width(), r.height());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
