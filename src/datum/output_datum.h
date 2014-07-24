@@ -12,7 +12,7 @@ public:
     ~OutputDatum();
     void setNewValue(PyObject* p);
     virtual QString getString() const override;
-
+    bool canEdit() const override { return false; }
 protected:
     /** Get the "current" value from new_value.
      */
