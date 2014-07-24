@@ -41,14 +41,14 @@ void DatumTextButton::paint(QPainter *painter,
                              const QStyleOptionGraphicsItem *o,
                              QWidget *w)
 {
-    painter->setBrush(d->getValid() ? Qt::white : QColor("#faa"));
+    painter->setBrush(d->getValid() ? QColor("#eee") : QColor("#faa"));
     if (hover)
     {
         painter->setPen(QPen(QColor(150, 150, 150), 3));
     }
     else
     {
-        painter->setPen(Qt::NoPen);
+        painter->setPen(QPen(QColor(180, 180, 180), 3));
     }
     painter->drawRect(boundingRect());
     QGraphicsTextItem::paint(painter, o, w);
