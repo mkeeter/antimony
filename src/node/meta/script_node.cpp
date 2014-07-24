@@ -21,7 +21,10 @@ ScriptNode::ScriptNode(float x, float y, float z, float scale,
     : ScriptNode(NodeManager::manager()->getName("s"),
                  QString::number(x),
                  QString::number(y),
-                 QString::number(z), "", parent)
+                 QString::number(z),
+                 "from fab import shapes\n\n"
+                 "output('c', shapes.circle(0, 0, 1))",
+                 parent)
 {
     Q_UNUSED(scale);
 }
