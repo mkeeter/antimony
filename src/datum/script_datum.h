@@ -29,6 +29,9 @@ public:
      */
     QString getErrorType() const { return error_type; }
 
+signals:
+    void datumsChanged();
+
 protected:
     /** Returns True if we can make an input or output datum with this name.
      */
@@ -55,6 +58,7 @@ protected:
     PyObject* output_func;
 
     QSet<QString> touched;
+    bool datums_changed;
 
     int error_lineno;
     QString error_type;

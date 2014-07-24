@@ -35,7 +35,15 @@ NodeInspector::NodeInspector(Control* control)
     connect(control, SIGNAL(destroyed()),
             this, SLOT(animateClose()));
 
-    populateLists(control->getNode());
+    Node* n = control->getNode();
+
+    if (n->getDatum<ScriptDatum>("script"))
+    {
+        connect(n->getDatum<ScriptDatum>("script"), SIGNAL(datumsChanged()),
+                this, SLOT(onDatumsChanged()));
+    }
+
+    populateLists(n);
     setZValue(-2);
     setFlag(ItemClipsChildrenToShape);
 
@@ -77,20 +85,36 @@ void NodeInspector::onLayoutChanged()
     float y = 3;
     for (auto row : rows)
     {
+        row->updateLayout();
         row->setPos(0, y);
         y += 6 + row->boundingRect().height();
     }
     prepareGeometryChange();
 }
 
+void NodeInspector::onDatumsChanged()
+{
+    populateLists(control->getNode());
+    onLayoutChanged();
+}
+
 void NodeInspector::populateLists(Node *node)
 {
+    QList<Datum*> not_present = rows.keys();
+
     for (Datum* d : node->findChildren<Datum*>())
     {
-        if (d->parent() == node && !d->objectName().startsWith("_"))
+        if (d->parent() == node && !d->objectName().startsWith("_") && !rows.contains(d))
         {
             rows[d] = new InspectorRow(d, this);
         }
+        not_present.removeAll(d);
+    }
+
+    for (auto d : not_present)
+    {
+        rows[d]->deleteLater();
+        rows.remove(d);
     }
     onLayoutChanged();
 }

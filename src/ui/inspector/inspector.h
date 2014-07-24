@@ -65,6 +65,9 @@ public slots:
      */
     void openScript(Datum* d) const;
 
+    /** When datums are changed, update rows and layout.
+     */
+    void onDatumsChanged();
 protected:
     /** Returns the width of the largest label.
      */

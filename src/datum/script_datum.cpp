@@ -65,6 +65,7 @@ PyObject* ScriptDatum::makeInput(QString name, PyTypeObject *type)
 
     if (d == NULL)
     {
+        datums_changed = true;
         if (type == &PyFloat_Type)
         {
             d = new FloatDatum(name, "0.0", parent());
@@ -117,6 +118,7 @@ PyObject* ScriptDatum::makeOutput(QString name, PyObject *out)
 
     if (d == NULL)
     {
+        datums_changed = true;
         if (out->ob_type == fab::ShapeType)
         {
             d = new ShapeOutputDatum(name, parent());
@@ -148,6 +150,7 @@ PyObject* ScriptDatum::getCurrentValue()
     touched.clear();
     error_lineno = -1;
     error_type = "";
+    datums_changed = false;
 
     PyObject* out = EvalDatum::getCurrentValue();
 
@@ -159,12 +162,17 @@ PyObject* ScriptDatum::getCurrentValue()
         if (d != this && name.size() && name.at(0) != '_' &&
             name != "name" && !touched.contains(name))
         {
+            datums_changed = true;
             delete d;
         }
     }
 
     globals = NULL;
 
+    if (datums_changed)
+    {
+        emit(datumsChanged());
+    }
     return out;
 }
 
