@@ -82,14 +82,20 @@ QRectF NodeInspector::boundingRect() const
 
 void NodeInspector::onLayoutChanged()
 {
-    float y = 3;
-    for (auto row : rows)
+    if (control)
     {
-        row->updateLayout();
-        row->setPos(0, y);
-        y += 6 + row->boundingRect().height();
+        float y = 3;
+        for (Datum* d : control->getNode()->findChildren<Datum*>())
+        {
+            if (rows.contains(d))
+            {
+                rows[d]->updateLayout();
+                rows[d]->setPos(0, y);
+                y += 6 + rows[d]->boundingRect().height();
+            }
+        }
+        prepareGeometryChange();
     }
-    prepareGeometryChange();
 }
 
 void NodeInspector::onDatumsChanged()
