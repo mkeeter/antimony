@@ -6,6 +6,7 @@
 #include <QMouseEvent>
 #include <QPropertyAnimation>
 #include <QPainter>
+#include <QToolTip>
 
 #include "ui/script.h"
 #include "ui/syntax.h"
@@ -109,6 +110,7 @@ void ScriptEditor::setDatum(ScriptDatum *d)
 
 void ScriptEditor::onTextChanged()
 {
+    QToolTip::hideText();
     if (datum)
     {
         datum->setExpr(document()->toPlainText());
@@ -140,6 +142,23 @@ void ScriptEditor::animateClose()
             parent(), SLOT(update()));
 }
 
+bool ScriptEditor::event(QEvent *event)
+{
+     if (event->type() == QEvent::ToolTip) {
+         QHelpEvent *helpEvent = static_cast<QHelpEvent*>(event);
+         if (datum->getErrorLine() != -1 &&
+             getLineRect(datum->getErrorLine()).contains(helpEvent->pos()))
+         {
+             QToolTip::showText(helpEvent->globalPos(), datum->getErrorType());
+         } else {
+             QToolTip::hideText();
+             event->ignore();
+         }
+         return true;
+     }
+     return QPlainTextEdit::event(event);
+}
+
 void ScriptEditor::paintEvent(QPaintEvent *e)
 {
     {
@@ -164,19 +183,18 @@ QRect ScriptEditor::getLineRect(int lineno) const
 
     QTextCursor c = textCursor();
     c.setPosition(index);
-    return cursorRect(c);
+    QRect r = cursorRect(c);
+    return QRect(0, r.y(), width(), r.height());
 }
 
 void ScriptEditor::highlightError(QPainter *p, int lineno)
 {
-    QRect r = getLineRect(lineno);
-
     // Fill in the entire line with an error bar
     QColor err = Colors::red;
     err.setAlpha(100);
     p->setBrush(QBrush(err));
     p->setPen(Qt::NoPen);
-    p->drawRect(0, r.y(), width(), r.height());
+    p->drawRect(getLineRect(lineno));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

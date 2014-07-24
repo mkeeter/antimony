@@ -43,10 +43,14 @@ public slots:
     void onTextChanged();
 
 protected:
+    /** OVerload event to show tooltip on line with error.
+     */
+    bool event(QEvent *event);
+
     void paintEvent(QPaintEvent *e) override;
 
     /** Returns the bounding box of the given line
-     *  (zero-indexed).
+     *  (indexed starting at 1)
      */
     QRect getLineRect(int lineno) const;
 

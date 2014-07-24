@@ -26,6 +26,10 @@ public:
      */
     int getErrorLine() const { return error_lineno; }
 
+    /** Returns the error type or an empty string.
+     */
+    QString getErrorType() const { return error_type; }
+
 protected:
     /** Returns True if we can make an input or output datum with this name.
      */
