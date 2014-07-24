@@ -87,7 +87,10 @@ void NodeInspector::populateLists(Node *node)
 {
     for (Datum* d : node->findChildren<Datum*>())
     {
-        rows[d] = new InspectorRow(d, this);
+        if (d->parent() == node && !d->objectName().startsWith("_"))
+        {
+            rows[d] = new InspectorRow(d, this);
+        }
     }
     onLayoutChanged();
 }
