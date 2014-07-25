@@ -40,7 +40,8 @@ SOURCES += \
     ../src/control/meta/script_control.cpp \
     ../src/ui/inspector/inspector_text.cpp \
     ../src/ui/inspector/inspector_button.cpp \
-    ../src/ui/inspector/inspector_row.cpp
+    ../src/ui/inspector/inspector_row.cpp \
+    ../src/node/serializer.cpp
 
 HEADERS += \
     ../src/ui/main_window.h \
@@ -68,7 +69,8 @@ HEADERS += \
     ../src/control/meta/script_control.h \
     ../src/ui/inspector/inspector_text.h \
     ../src/ui/inspector/inspector_button.h \
-    ../src/ui/inspector/inspector_row.h
+    ../src/ui/inspector/inspector_row.h \
+    ../src/node/serializer.h
 
 FORMS += \
     ../src/ui/forms/main_window.ui \
