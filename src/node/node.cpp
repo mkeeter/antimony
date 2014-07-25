@@ -19,7 +19,7 @@ Node::Node(QString name, QObject* parent) :
         setParent(NodeManager::manager());
         connect(getDatum<NameDatum>("name"),
                 SIGNAL(nameChanged(QString)),
-                dynamic_cast<NodeManager*>(NodeManager::manager()),
+                NodeManager::manager(),
                 SLOT(onNameChange(QString)));
     }
 }
