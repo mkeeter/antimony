@@ -12,6 +12,7 @@ class Node : public QObject
 {
     Q_OBJECT
 public:
+    explicit Node(QObject* parent=NULL);
     explicit Node(QString name, QObject* parent=NULL);
 
     /** Returns a Python proxy that calls getDatum when getattr is called */

@@ -9,8 +9,14 @@
 #include "datum/datum.h"
 #include "datum/name_datum.h"
 
-Node::Node(QString name, QObject* parent) :
-    QObject(parent), control(NULL)
+Node::Node(QObject* parent)
+    : QObject(parent), control(NULL)
+{
+    // Nothing to do here
+}
+
+Node::Node(QString name, QObject* parent)
+    : Node(parent)
 {
     new NameDatum("name", name, this);
 
