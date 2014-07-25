@@ -6,7 +6,7 @@
 #include <QObject>
 #include "node/node.h"
 
-class CircleNode : public Node
+class CircleNode : public _Node<NodeType::CIRCLE>
 {
     Q_OBJECT
 public:

@@ -8,7 +8,7 @@
 
 class Canvas;
 
-class Point3D : public Node
+class Point3D : public _Node<NodeType::POINT3D>
 {
     Q_OBJECT
 public:

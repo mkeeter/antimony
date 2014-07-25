@@ -8,7 +8,7 @@
 
 ScriptNode::ScriptNode(QString name, QString x, QString y, QString z,
                        QString script, QObject* parent)
-    : Node(name, parent)
+    : _Node(name, parent)
 {
     new FloatDatum("_x", x, this);
     new FloatDatum("_y", y, this);

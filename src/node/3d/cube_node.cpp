@@ -5,8 +5,8 @@
 #include "datum/float_datum.h"
 #include "datum/function_datum.h"
 
-CubeNode::CubeNode(QString name, QObject* parent) :
-    Node(name, parent)
+CubeNode::CubeNode(QString name, QObject* parent)
+    : _Node(name, parent)
 {
     // Nothing to do here
 }

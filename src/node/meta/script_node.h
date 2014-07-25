@@ -5,7 +5,7 @@
 #include <QObject>
 #include "node/node.h"
 
-class ScriptNode : public Node
+class ScriptNode : public _Node<NodeType::SCRIPT>
 {
     Q_OBJECT
 public:

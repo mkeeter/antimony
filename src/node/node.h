@@ -4,6 +4,8 @@
 #include <Python.h>
 #include <QObject>
 
+#include "node/node_types.h"
+
 class Control;
 class Datum;
 class Canvas;
@@ -21,6 +23,11 @@ public:
     /** Looks up a particular Datum by name, return NULL otherwise. */
     Datum* getDatum(QString name);
 
+    /** Returns the NodeType, which is set as a templated parameter
+     *  in a virtual function override.
+     */
+    virtual NodeType::NodeType getType() const { return NodeType::BASE; }
+
     /** getDatum plus a dynamic cast.
      */
     template <class T>
@@ -32,5 +39,20 @@ public:
 protected:
     Control* control;
 };
+
+// All nodes should be drived from _Node, so that they are forced to
+// have an associated NodeType.  This prevents edge cases from slipping
+// through the cracks in serialization.
+
+template <NodeType::NodeType T>
+class _Node : public Node
+{
+public:
+    explicit _Node<T>(QString name, QObject* parent=NULL)
+        : Node(name, parent) {}
+
+    NodeType::NodeType getType() const override { return T; }
+};
+
 
 #endif // NODE_H

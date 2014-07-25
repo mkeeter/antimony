@@ -7,7 +7,7 @@
 
 class Point3D;
 
-class CubeNode : public Node
+class CubeNode : public _Node<NodeType::CUBE>
 {
     Q_OBJECT
 public:
