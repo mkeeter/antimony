@@ -11,10 +11,15 @@
 
 #include "cpp/fab.h"
 
-
-ScriptDatum::ScriptDatum(QString name, QString expr, QObject *parent)
+ScriptDatum::ScriptDatum(QString name, QObject *parent)
     : EvalDatum(name, parent), globals(NULL),
       input_func(scriptInput(this)), output_func(scriptOutput(this))
+{
+    // Nothing to do here
+}
+
+ScriptDatum::ScriptDatum(QString name, QString expr, QObject *parent)
+    : ScriptDatum(name, parent)
 {
     setExpr(expr);
 }

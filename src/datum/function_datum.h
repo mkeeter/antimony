@@ -11,6 +11,8 @@ class FunctionDatum : public Datum
 {
     Q_OBJECT
 public:
+    explicit FunctionDatum(QString name, QObject* parent);
+
     explicit FunctionDatum(QString name, QObject* parent,
                            QString f, QList<QString> args);
 
@@ -45,6 +47,7 @@ class ShapeFunctionDatum : public FunctionDatum
 {
     Q_OBJECT
 public:
+    explicit ShapeFunctionDatum(QString name, QObject* parent);
     explicit ShapeFunctionDatum(QString name, QObject* parent,
                                 QString func_name, QList<QString> args);
     DatumType::DatumType getDatumType() const override

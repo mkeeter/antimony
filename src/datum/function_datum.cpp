@@ -4,6 +4,12 @@
 #include "node/node.h"
 #include "cpp/fab.h"
 
+FunctionDatum::FunctionDatum(QString name, QObject* parent)
+    : Datum(name, parent), function(NULL)
+{
+    // Nothing to do here
+}
+
 FunctionDatum::FunctionDatum(QString name, QObject* parent,
                              QString f, QList<QString> args)
     : Datum(name, parent), function_name(f), arguments(args),
@@ -67,6 +73,12 @@ QString FunctionDatum::getString() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+ShapeFunctionDatum::ShapeFunctionDatum(QString name, QObject* parent)
+    : FunctionDatum(name, parent)
+{
+    // Nothing to do here
+}
 
 ShapeFunctionDatum::ShapeFunctionDatum(QString name, QObject* parent,
                                        QString func_name, QList<QString> args)

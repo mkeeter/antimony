@@ -8,6 +8,7 @@ class NameDatum : public EvalDatum
 {
     Q_OBJECT
 public:
+    explicit NameDatum(QString name, QObject *parent = 0);
     explicit NameDatum(QString name, QString expr, QObject *parent = 0);
     virtual PyTypeObject* getType() const override { return &PyUnicode_Type; }
     virtual bool hasOutput() const override { return false; }
