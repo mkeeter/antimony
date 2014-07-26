@@ -12,6 +12,8 @@
 #include "node/meta/script_node.h"
 
 #include "datum/float_datum.h"
+#include "datum/name_datum.h"
+#include "datum/script_datum.h"
 #include "datum/output_datum.h"
 #include "datum/shape_datum.h"
 #include "datum/function_datum.h"
@@ -84,7 +86,21 @@ void SceneDeserializer::deserializeDatum(QDataStream* in, Node* node)
 
     Datum* datum;
 
-    // Switch statement goes here.
+    switch (datum_type)
+    {
+        case DatumType::FLOAT:
+            datum = new FloatDatum(name, node); break;
+        case DatumType::NAME:
+            datum = new NameDatum(name, node); break;
+        case DatumType::SCRIPT:
+            datum = new ScriptDatum(name, node); break;
+        case DatumType::SHAPE:
+            datum = new ShapeDatum(name, node); break;
+        case DatumType::SHAPE_OUTPUT:
+            datum = new ShapeOutputDatum(name, node); break;
+        case DatumType::SHAPE_FUNCTION:
+            datum = new ShapeFunctionDatum(name, node); break;
+    }
 
     EvalDatum* e = dynamic_cast<EvalDatum*>(datum);
     FunctionDatum* f = dynamic_cast<FunctionDatum*>(datum);
@@ -99,6 +115,5 @@ void SceneDeserializer::deserializeDatum(QDataStream* in, Node* node)
         QString function_name;
         QList<QString> function_args;
         *in >> function_name >> function_args;
-
     }
 }
