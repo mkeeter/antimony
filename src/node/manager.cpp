@@ -2,10 +2,12 @@
 
 #include <QApplication>
 #include <QDebug>
+#include <QBuffer>
 
 #include "node/manager.h"
 #include "node/node.h"
 #include "node/proxy.h"
+#include "node/serializer.h"
 
 #include "datum/datum.h"
 #include "datum/name_datum.h"
@@ -106,4 +108,17 @@ void NodeManager::onNameChange(QString new_name)
         }
     }
 
+}
+
+QByteArray NodeManager::getSerializedScene() const
+{
+    QBuffer buffer;
+    buffer.open(QBuffer::WriteOnly);
+
+    QDataStream stream(&buffer);
+    SceneSerializer ss;
+    ss.run(&stream);
+    buffer.seek(0);
+
+    return buffer.data();
 }

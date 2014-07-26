@@ -27,10 +27,13 @@ public:
 
 private slots:
     void onAbout();
+    void onSave();
+    void onSaveAs();
 private:
     void connectActions();
 
     MainWindow* window;
+    QString filename;
 };
 
 #endif // APP_H

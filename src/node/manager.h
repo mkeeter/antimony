@@ -40,6 +40,10 @@ public:
      */
     void clear();
 
+    /** Returns a serialized version of the current scene.
+     */
+    QByteArray getSerializedScene() const;
+
 public slots:
     /** Triggers an update on all EvalDatums that use the new name.
      */

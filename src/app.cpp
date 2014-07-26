@@ -1,5 +1,7 @@
 #include <Python.h>
+
 #include <QMessageBox>
+#include <QFileDialog>
 
 #include "app.h"
 
@@ -53,10 +55,36 @@ void App::onAbout()
             );
 }
 
+void App::onSave()
+{
+    if (filename.isEmpty())
+    {
+        return onSaveAs();
+    }
+
+    QFile file(filename);
+    file.open(QIODevice::WriteOnly);
+    file.write(NodeManager::manager()->getSerializedScene());
+}
+
+void App::onSaveAs()
+{
+    QString f = QFileDialog::getSaveFileName(window, "Save as", "", "*.sb");
+    if (!f.isEmpty())
+    {
+        filename = f;
+        return onSave();
+    }
+}
+
 void App::connectActions()
 {
     connect(window->ui->actionQuit, SIGNAL(triggered()),
             this, SLOT(quit()));
     connect(window->ui->actionAbout, SIGNAL(triggered()),
             this, SLOT(onAbout()));
+    connect(window->ui->actionSave, SIGNAL(triggered()),
+            this, SLOT(onSave()));
+    connect(window->ui->actionSaveAs, SIGNAL(triggered()),
+            this, SLOT(onSaveAs()));
 }
