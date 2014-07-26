@@ -26,8 +26,11 @@ void SceneSerializer::run(QDataStream* out)
 
 void SceneSerializer::serializeNodes(QDataStream* out, QObject* p)
 {
-    *out << quint32(p->findChildren<Node*>().length());
-    for (auto node : p->findChildren<Node*>())
+    auto nodes = p->findChildren<Node*>(QString(),
+                                        Qt::FindDirectChildrenOnly);
+    *out << quint32(nodes.length());
+
+    for (auto node : nodes)
     {
         serializeNode(out, node);
     }
@@ -36,10 +39,15 @@ void SceneSerializer::serializeNodes(QDataStream* out, QObject* p)
 void SceneSerializer::serializeNode(QDataStream* out, Node* node)
 {
     *out << quint32(node->getNodeType());
+
+    // Serialize child nodes first.
     serializeNodes(out, node);
 
     Datum* deferred = NULL;
-    for (auto d : node->findChildren<Datum*>())
+    auto datums = node->findChildren<Datum*>(QString(),
+                                             Qt::FindDirectChildrenOnly);
+    *out << quint32(datums.length());
+    for (auto d : datums)
     {
         if (dynamic_cast<ScriptDatum*>(d))
         {
