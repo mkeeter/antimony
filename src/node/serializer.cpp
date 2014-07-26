@@ -8,6 +8,9 @@
 #include "datum/datum.h"
 #include "datum/eval.h"
 #include "datum/function_datum.h"
+#include "datum/script_datum.h"
+
+#include "node/meta/script_node.h"
 
 SceneSerializer::SceneSerializer(QObject* parent)
     : QObject(parent)
@@ -34,9 +37,25 @@ void SceneSerializer::serializeNode(QDataStream* out, Node* node)
 {
     *out << quint32(node->getNodeType());
     serializeNodes(out, node);
+
+    Datum* deferred = NULL;
     for (auto d : node->findChildren<Datum*>())
     {
-        serializeDatum(out, d);
+        if (dynamic_cast<ScriptDatum*>(d))
+        {
+            Q_ASSERT(deferred == NULL);
+            Q_ASSERT(dynamic_cast<ScriptNode*>(node));
+            deferred = d;
+        }
+        else
+        {
+            serializeDatum(out, d);
+        }
+    }
+
+    if (deferred)
+    {
+        serializeDatum(out, deferred);
     }
 }
 
