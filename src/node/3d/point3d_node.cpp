@@ -5,6 +5,12 @@
 
 #include "datum/float_datum.h"
 
+Point3D::Point3D(QObject* parent)
+    : Node(parent)
+{
+    // Nothing to do here
+}
+
 Point3D::Point3D(QString name, QObject* parent)
     : Node(name, parent)
 {

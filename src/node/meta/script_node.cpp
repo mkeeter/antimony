@@ -6,6 +6,12 @@
 #include "datum/float_datum.h"
 #include "datum/script_datum.h"
 
+ScriptNode::ScriptNode(QObject* parent)
+    : Node(parent)
+{
+    // Nothing to do here
+}
+
 ScriptNode::ScriptNode(QString name, QString x, QString y, QString z,
                        QString script, QObject* parent)
     : Node(name, parent)

@@ -12,6 +12,7 @@ class Point3D : public Node
 {
     Q_OBJECT
 public:
+    explicit Point3D(QObject* parent=NULL);
     explicit Point3D(QString name, QObject* parent=NULL);
     explicit Point3D(QString name, QString x, QString y, QString z,
                      QObject* parent=NULL);

@@ -6,6 +6,12 @@
 #include "datum/float_datum.h"
 #include "datum/function_datum.h"
 
+CircleNode::CircleNode(QObject* parent)
+    : Node(parent)
+{
+    // Nothing to do here
+}
+
 CircleNode::CircleNode(QString name, QObject* parent)
     : Node(name, parent)
 {

@@ -11,7 +11,8 @@ class CubeNode : public Node
 {
     Q_OBJECT
 public:
-    explicit CubeNode(QString name, QObject *parent = 0);
+    explicit CubeNode(QObject* parent=0);
+    explicit CubeNode(QString name, QObject* parent=0);
     explicit CubeNode(float x, float y, float z, float scale,
                       QObject* parent = NULL);
 
