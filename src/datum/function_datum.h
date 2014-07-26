@@ -44,6 +44,8 @@ class ShapeFunctionDatum : public FunctionDatum
 public:
     explicit ShapeFunctionDatum(QString name, QObject* parent,
                                 QString func_name, QList<QString> args);
+    DatumType::DatumType getDatumType() const override
+        { return DatumType::SHAPE_FUNCTION; }
 protected:
     virtual PyObject* getModule() const override;
     virtual PyTypeObject* getType() const override { return fab::ShapeType; }

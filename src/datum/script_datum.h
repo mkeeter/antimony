@@ -29,6 +29,9 @@ public:
      */
     QString getErrorType() const { return error_type; }
 
+    DatumType::DatumType getDatumType() const override
+        { return DatumType::SCRIPT; }
+
 signals:
     void datumsChanged();
 

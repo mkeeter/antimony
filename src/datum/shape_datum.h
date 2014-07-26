@@ -21,6 +21,8 @@ public:
 
     virtual QString getString() const override;
 
+    DatumType::DatumType getDatumType() const override
+        { return DatumType::SHAPE; }
 protected:
     /** Overload function to get the current value; always fails
      *  (because the shape will always come from the input handler)

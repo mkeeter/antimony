@@ -11,6 +11,9 @@ public:
     explicit NameDatum(QString name, QString expr, QObject *parent = 0);
     virtual PyTypeObject* getType() const override { return &PyUnicode_Type; }
     virtual bool hasOutput() const override { return false; }
+    DatumType::DatumType getDatumType() const override
+        { return DatumType::NAME; }
+
 signals:
     void nameChanged(QString new_name);
 public slots:

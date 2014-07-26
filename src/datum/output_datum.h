@@ -29,6 +29,8 @@ class ShapeOutputDatum : public OutputDatum
 public:
     explicit ShapeOutputDatum(QString name, QObject* parent=0);
     virtual PyTypeObject* getType() const override;
+    DatumType::DatumType getDatumType() const override
+        { return DatumType::SHAPE_OUTPUT; }
 };
 
 #endif // OUTPUT_DATUM_H

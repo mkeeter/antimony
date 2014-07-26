@@ -6,6 +6,8 @@
 #include <QList>
 #include <QPointer>
 
+#include "datum/datum_types.h"
+
 class InputHandler;
 class Link;
 
@@ -20,6 +22,11 @@ public:
     PyObject* getValue() const { return value; }
     /** Returns stored valid flag. */
     bool      getValid() const { return valid; }
+
+    /** Returns an enum for this datum's unique type
+     *  (used in serialiation).
+     */
+    virtual DatumType::DatumType getDatumType() const=0;
 
     /** Returns desired Python type
      *
