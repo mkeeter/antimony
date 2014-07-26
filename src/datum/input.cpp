@@ -97,8 +97,7 @@ ShapeInputHandler::ShapeInputHandler(Datum* parent)
 
 PyObject* ShapeInputHandler::getValue() const
 {
-    /** If there are no legitimate inputs, then return an empty shape.
-     */
+    // If there are no legitimate inputs, then return an empty shape.
     if (inputCount() == 0)
     {
         PyObject* globals = Py_BuildValue("{}");
@@ -114,9 +113,8 @@ PyObject* ShapeInputHandler::getValue() const
         return out;
     }
 
-    /** Otherwise, OR together all of the input shapes
-     *  (or return NULL if any of them are invalid)
-     */
+    // Otherwise, OR together all of the input shapes
+    // (or return NULL if any of them are invalid)
     PyObject* out = NULL;
     bool valid = true;
     PyObject* or_function = PyUnicode_FromString("__or__");
