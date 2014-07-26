@@ -16,7 +16,8 @@ public:
     explicit CircleNode(float x, float y, float z, float scale,
                         QObject* parent=0);
 
-    NodeType::NodeType getType() const override { return NodeType::CIRCLE; }
+    NodeType::NodeType getNodeType() const override
+        { return NodeType::CIRCLE; }
 };
 
 #endif // CIRCLE_NODE_H

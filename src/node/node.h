@@ -26,7 +26,7 @@ public:
     /** Returns the NodeType, which is set as a templated parameter
      *  in a virtual function override.
      */
-    virtual NodeType::NodeType getType() const=0;
+    virtual NodeType::NodeType getNodeType() const=0;
 
     /** getDatum plus a dynamic cast.
      */

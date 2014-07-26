@@ -18,7 +18,8 @@ public:
     explicit Point3D(float x, float y, float z, float scale,
                      QObject* parent=NULL);
 
-    NodeType::NodeType getType() const override { return NodeType::POINT3D; }
+    NodeType::NodeType getNodeType() const override
+        { return NodeType::POINT3D; }
 };
 
 #endif // POINT3D_H
