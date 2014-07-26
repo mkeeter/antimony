@@ -22,6 +22,9 @@ public:
 
     virtual QString getString() const override;
 
+    QString getFunctionName() const { return function_name; }
+    QList<QString> getArguments() const { return arguments; }
+
 protected:
     /** Must return a new reference to a module containing the target function.
      */
