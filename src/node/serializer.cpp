@@ -16,25 +16,30 @@ SceneSerializer::SceneSerializer(QObject* parent)
 void SceneSerializer::run(QDataStream* out)
 {
     *out << QString("sb") << quint32(1) << quint32(0);
-    serializeNodes(out);
+    serializeNodes(out, NodeManager::manager());
 }
 
-void SceneSerializer::serializeNodes(QDataStream* out)
+void SceneSerializer::serializeNodes(QDataStream* out, QObject* p)
 {
-    NodeManager* manager = NodeManager::manager();
-    *out << quint32(manager->findChildren<Node*>().length());
-    for (auto node : manager->findChildren<Node*>())
+    *out << quint32(p->findChildren<Node*>().length());
+    for (auto node : p->findChildren<Node*>())
     {
-        serializeNode(node, out);
+        serializeNode(out, node);
     }
 }
 
-
-#include "node/2d/circle_node.h"
-#include "node/3d/cube_node.h"
-#include "node/3d/point3d_node.h"
-#include "node/meta/script_node.h"
-
-void SceneSerializer::serializeNode(Node* node, QDataStream* out)
+void SceneSerializer::serializeNode(QDataStream* out, Node* node)
 {
+    *out << quint32(node->getNodeType());
+    serializeNodes(out, node);
+    for (auto d : node->findChildren<Datum*>())
+    {
+        serializeDatum(out, d);
+    }
 }
+
+void SceneSerializer::serializeDatum(QDataStream* out, Datum* datum)
+{
+    *out << quint32(datum->getDatumType());
+}
+
