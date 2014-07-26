@@ -108,9 +108,9 @@ void NodeInspector::populateLists(Node *node)
 {
     QList<Datum*> not_present = rows.keys();
 
-    for (Datum* d : node->findChildren<Datum*>())
+    for (Datum* d : node->findChildren<Datum*>(QString(), Qt::FindDirectChildrenOnly))
     {
-        if (d->parent() == node && !d->objectName().startsWith("_") && !rows.contains(d))
+        if (!d->objectName().startsWith("_") && !rows.contains(d))
         {
             rows[d] = new InspectorRow(d, this);
         }
