@@ -7,7 +7,7 @@
 #include "datum/function_datum.h"
 
 CircleNode::CircleNode(QString name, QObject* parent)
-    : _Node(name, parent)
+    : Node(name, parent)
 {
     // Nothing to do here
 }

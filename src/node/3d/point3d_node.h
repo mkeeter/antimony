@@ -8,7 +8,7 @@
 
 class Canvas;
 
-class Point3D : public _Node<NodeType::POINT3D>
+class Point3D : public Node
 {
     Q_OBJECT
 public:
@@ -17,6 +17,8 @@ public:
                      QObject* parent=NULL);
     explicit Point3D(float x, float y, float z, float scale,
                      QObject* parent=NULL);
+
+    NodeType::NodeType getType() const override { return NodeType::POINT3D; }
 };
 
 #endif // POINT3D_H

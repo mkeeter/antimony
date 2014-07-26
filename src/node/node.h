@@ -40,19 +40,4 @@ protected:
     Control* control;
 };
 
-// All nodes should be drived from _Node, so that they are forced to
-// have an associated NodeType.  This prevents edge cases from slipping
-// through the cracks in serialization.
-
-template <NodeType::NodeType T>
-class _Node : public Node
-{
-public:
-    explicit _Node<T>(QString name, QObject* parent=NULL)
-        : Node(name, parent) {}
-
-    NodeType::NodeType getType() const override { return T; }
-};
-
-
 #endif // NODE_H

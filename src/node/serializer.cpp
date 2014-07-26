@@ -29,6 +29,12 @@ void SceneSerializer::serializeNodes(QDataStream* out)
     }
 }
 
+
+#include "node/2d/circle_node.h"
+#include "node/3d/cube_node.h"
+#include "node/3d/point3d_node.h"
+#include "node/meta/script_node.h"
+
 void SceneSerializer::serializeNode(Node* node, QDataStream* out)
 {
 }

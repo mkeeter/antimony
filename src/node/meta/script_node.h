@@ -5,7 +5,7 @@
 #include <QObject>
 #include "node/node.h"
 
-class ScriptNode : public _Node<NodeType::SCRIPT>
+class ScriptNode : public Node
 {
     Q_OBJECT
 public:
@@ -13,6 +13,8 @@ public:
                         QString script, QObject* parent=NULL);
     explicit ScriptNode(float x, float y, float z, float scale,
                         QObject* parent=NULL);
+
+    NodeType::NodeType getType() const override { return NodeType::SCRIPT; }
 };
 
 #endif // SCRIPT_NODE_H

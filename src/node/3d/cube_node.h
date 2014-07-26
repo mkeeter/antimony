@@ -7,7 +7,7 @@
 
 class Point3D;
 
-class CubeNode : public _Node<NodeType::CUBE>
+class CubeNode : public Node
 {
     Q_OBJECT
 public:
@@ -15,6 +15,7 @@ public:
     explicit CubeNode(float x, float y, float z, float scale,
                       QObject* parent = NULL);
 
+    NodeType::NodeType getType() const override { return NodeType::CUBE; }
 protected:
     Point3D* a;
     Point3D* b;

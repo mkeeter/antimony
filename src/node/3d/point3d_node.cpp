@@ -6,7 +6,7 @@
 #include "datum/float_datum.h"
 
 Point3D::Point3D(QString name, QObject* parent)
-    : _Node(name, parent)
+    : Node(name, parent)
 {
     // Nothing to do here
 }

@@ -6,7 +6,7 @@
 #include <QObject>
 #include "node/node.h"
 
-class CircleNode : public _Node<NodeType::CIRCLE>
+class CircleNode : public Node
 {
     Q_OBJECT
 public:
@@ -15,6 +15,8 @@ public:
                         QObject* parent=0);
     explicit CircleNode(float x, float y, float z, float scale,
                         QObject* parent=0);
+
+    NodeType::NodeType getType() const override { return NodeType::CIRCLE; }
 };
 
 #endif // CIRCLE_NODE_H

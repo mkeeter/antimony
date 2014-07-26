@@ -6,7 +6,7 @@
 #include "datum/function_datum.h"
 
 CubeNode::CubeNode(QString name, QObject* parent)
-    : _Node(name, parent)
+    : Node(name, parent)
 {
     // Nothing to do here
 }
