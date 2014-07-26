@@ -11,6 +11,11 @@
 #include "node/3d/point3d_node.h"
 #include "node/meta/script_node.h"
 
+#include "datum/float_datum.h"
+#include "datum/output_datum.h"
+#include "datum/shape_datum.h"
+#include "datum/function_datum.h"
+
 SceneDeserializer::SceneDeserializer(QObject* parent)
     : QObject(parent)
 {
@@ -55,5 +60,45 @@ void SceneDeserializer::deserializeNode(QDataStream* in, QObject* p)
             node = new Point3D(p); break;
         case NodeType::SCRIPT:
             node = new ScriptNode(p); break;
+    }
+
+    // Deserialize child nodes.
+    deserializeNodes(in, node);
+
+    quint32 datum_count;
+    *in >> datum_count;
+    for (unsigned d=0; d < datum_count; ++d)
+    {
+        deserializeDatum(in, node);
+    }
+}
+
+void SceneDeserializer::deserializeDatum(QDataStream* in, Node* node)
+{
+    quint32 t;
+    *in >> t;
+    QString name;
+    *in >> name;
+
+    DatumType::DatumType datum_type = static_cast<DatumType::DatumType>(t);
+
+    Datum* datum;
+
+    // Switch statement goes here.
+
+    EvalDatum* e = dynamic_cast<EvalDatum*>(datum);
+    FunctionDatum* f = dynamic_cast<FunctionDatum*>(datum);
+    if (e)
+    {
+        QString expr;
+        *in >> expr;
+        e->setExpr(expr);
+    }
+    else if (f)
+    {
+        QString function_name;
+        QList<QString> function_args;
+        *in >> function_name >> function_args;
+
     }
 }
