@@ -87,6 +87,17 @@ QString SingleInputHandler::getString() const
     return dynamic_cast<Datum*>(in->parent())->getString();
 }
 
+QList<Datum*> SingleInputHandler::getInputDatums() const
+{
+    QList<Datum*> list;
+    if (in)
+    {
+        list << dynamic_cast<Datum*>(in->parent());
+        Q_ASSERT(list.back());
+    }
+    return list;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 ShapeInputHandler::ShapeInputHandler(Datum* parent)
@@ -241,5 +252,18 @@ QString ShapeInputHandler::getString() const
     else
     {
         return QString::number(in.length()) + " inputs";
+    }
+}
+
+QList<Datum*> ShapeInputHandler::getInputDatums() const
+{
+    QList<Datum*> list;
+    for (auto link : in)
+    {
+        if (link)
+        {
+            list << dynamic_cast<Datum*>(link->parent());
+            Q_ASSERT(list.back());
+        }
     }
 }

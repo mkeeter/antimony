@@ -39,6 +39,10 @@ public:
     /** Return a string suitable for diplay in a node viewer.
      */
     virtual QString getString() const=0;
+
+    /** Returns a list of all the datums connected to this input handler.
+     */
+    virtual QList<Datum*> getInputDatums() const=0;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -54,6 +58,7 @@ public:
     virtual bool hasInput() const override;
     virtual void deleteInput(Datum* d) override;
     virtual QString getString() const override;
+    QList<Datum*> getInputDatums() const override;
 protected:
     QPointer<Link> in;
 };
@@ -71,6 +76,7 @@ public:
     virtual bool hasInput() const override;
     virtual void deleteInput(Datum* d) override;
     virtual QString getString() const override;
+    QList<Datum*> getInputDatums() const override;
 protected:
     /** Removes inactive input pointers from the list.
      */

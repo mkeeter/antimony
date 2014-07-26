@@ -35,6 +35,10 @@ private slots:
     /** Attempt to make a recursive link. */
     void RecursiveLink();
 
+    /** Test that datums connected through a link are returned.
+     */
+    void GetInputDatums();
+
     /** Delete a link to a single input handler. */
     void SingleInputLinkDelete();
 

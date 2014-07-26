@@ -132,6 +132,25 @@ void TestDatum::SingleInputLinkDelete()
     delete b;
 }
 
+void TestDatum::GetInputDatums()
+{
+    FloatDatum* a = new FloatDatum("a", "1");
+    FloatDatum* b = new FloatDatum("b", "2");
+    Q_ASSERT(a->getInputDatums().length() == 0);
+    a->addLink(b->linkFrom());
+    Q_ASSERT(a->getInputDatums().length() == 1);
+    Q_ASSERT(a->getInputDatums().front() == b);
+    a->deleteLink(b);
+    Q_ASSERT(a->getInputDatums().length() == 0);
+
+    delete a;
+    delete b;
+
+    NameDatum* n = new NameDatum("n", "omg");
+    Q_ASSERT(n->getInputDatums().length() == 0);
+    delete n;
+}
+
 void TestDatum::NameValidate()
 {
     NameDatum* d;

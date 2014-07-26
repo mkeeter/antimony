@@ -57,6 +57,13 @@ void SceneSerializer::serializeDatum(QDataStream* out, Datum* datum)
         *out << f->getArguments();
     }
 
+    // Save datum and any connections for later
+    // (as connections are serialized separately,
+    // once all of the datums have been written).
     datums << datum;
+    for (auto d : datum->getInputDatums())
+    {
+        connections << QPair<Datum*, Datum*>(d, datum);
+    }
 }
 

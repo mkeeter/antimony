@@ -75,6 +75,11 @@ public:
      *  Returns false if there's a recursive loop.
      */
     bool connectUpstream(Datum* upstream);
+
+    /** Returns a list of datums that are inputs to the input handler.
+     */
+    QList<Datum*> getInputDatums() const;
+
 signals:
     /** Emitted when value, valid, or editable changes.
      */

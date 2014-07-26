@@ -162,3 +162,9 @@ bool Datum::connectUpstream(Datum* upstream)
             upstream, &Datum::onDisconnectRequest, Qt::UniqueConnection);
     return upstream->_upstream.contains(this) ? false : true;
 }
+
+QList<Datum*> Datum::getInputDatums() const
+{
+    return input_handler ? input_handler->getInputDatums()
+                         : QList<Datum*>();
+}
