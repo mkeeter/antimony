@@ -115,5 +115,7 @@ void SceneDeserializer::deserializeDatum(QDataStream* in, Node* node)
         QString function_name;
         QList<QString> function_args;
         *in >> function_name >> function_args;
+        f->setFunctionName(function_name);
+        f->setArguments(function_args);
     }
 }
