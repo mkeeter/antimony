@@ -8,6 +8,7 @@
 #include "node/node.h"
 #include "node/proxy.h"
 #include "node/serializer.h"
+#include "node/deserializer.h"
 
 #include "datum/datum.h"
 #include "datum/name_datum.h"
@@ -118,4 +119,16 @@ QByteArray NodeManager::getSerializedScene() const
     buffer.seek(0);
 
     return buffer.data();
+}
+
+bool NodeManager::deserializeScene(QByteArray in)
+{
+    QBuffer buffer(&in);
+    buffer.open(QBuffer::ReadOnly);
+
+    QDataStream stream(&buffer);
+    SceneDeserializer ss;
+    ss.run(&stream);
+
+    return true;
 }

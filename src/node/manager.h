@@ -44,6 +44,11 @@ public:
      */
     QByteArray getSerializedScene() const;
 
+    /** Deserializes the given scene.
+     *  Returns true on success, false otherwise.
+     */
+    bool deserializeScene(QByteArray in);
+
 public slots:
     /** Triggers an update on all EvalDatums that use the new name.
      */
