@@ -8,22 +8,23 @@
 
 namespace Colors
 {
-QColor yellow("#b58900");
-QColor violet("#6c71c4");
-QColor magenta("#d33682");
-QColor blue("#268bd2");
-QColor base01("#586e75");
-QColor base00("#657b83");
-QColor base03("#002b36");
-QColor base02("#073642");
-QColor orange("#cb4b16");
-QColor red("#dc322f");
-QColor cyan("#2aa198");
-QColor base0("#839496");
-QColor base1("#93a1a1");
-QColor base2("#eee8d5");
-QColor base3("#fdf6e3");
-QColor green("#859900");
+QColor red("#ac4142");
+QColor orange("#d28445");
+QColor yellow("#f4bf75");
+QColor green("#90a959");
+QColor teal("#75b5aa");
+QColor blue("#6a9fb5");
+QColor violet("#aa759f");
+QColor brown("#8f5536");
+
+QColor base00("#151515");
+QColor base01("#202020");
+QColor base02("#303030");
+QColor base03("#505050");
+QColor base04("#b0b0b0");
+QColor base05("#d0d0d0");
+QColor base06("#e0e0e0");
+QColor base07("#f5f5f5");
 
 QColor adjust(QColor c, float scale)
 {
@@ -55,4 +56,4 @@ QColor getColor(Datum *d)
     return red;
 }
 
-}
+} // end of Colors namespace

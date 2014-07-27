@@ -231,11 +231,11 @@ void Control::setDefaultPen(QPainter *painter) const
 {
     if (isSelected() or _hover)
     {
-        painter->setPen(QPen(Colors::base3, 2));
+        painter->setPen(QPen(Colors::base05, 2));
     }
     else
     {
-        painter->setPen(QPen(Colors::dim(Colors::base3), 2));
+        painter->setPen(QPen(Colors::base04, 2));
     }
 }
 
@@ -243,11 +243,11 @@ void Control::setDefaultBrush(QPainter *painter) const
 {
     if (isSelected() or _hover)
     {
-        painter->setBrush(QBrush(Colors::highlight(Colors::base1)));
+        painter->setBrush(QBrush(Colors::base04));
     }
     else
     {
-        painter->setBrush(QBrush(Colors::base1));
+        painter->setBrush(QBrush(Colors::base03));
     }
 }
 

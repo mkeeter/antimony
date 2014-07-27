@@ -16,6 +16,7 @@
 #include "ui/inspector/inspector_text.h"
 #include "ui/inspector/inspector_row.h"
 #include "ui/port.h"
+#include "ui/colors.h"
 
 #include "datum/datum.h"
 #include "datum/script_datum.h"
@@ -131,8 +132,8 @@ void NodeInspector::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    painter->setBrush(QColor("#ddd"));
-    painter->setPen(Qt::NoPen);
+    painter->setBrush(Colors::base01);
+    painter->setPen(QPen(Colors::base02, 2));
     painter->drawRect(boundingRect());
 }
 

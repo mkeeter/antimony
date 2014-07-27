@@ -4,8 +4,8 @@
 #include "ui/inspector/inspector.h"
 #include "ui/inspector/inspector_button.h"
 #include "ui/inspector/inspector_text.h"
-
 #include "ui/port.h"
+#include "ui/colors.h"
 
 #include "datum/datum.h"
 #include "datum/script_datum.h"
@@ -20,6 +20,8 @@ InspectorRow::InspectorRow(Datum* d, NodeInspector* parent)
                             : NULL),
       label(new QGraphicsTextItem(d->objectName(), this))
 {
+    label->setDefaultTextColor(Colors::base04);
+
     if (dynamic_cast<ScriptDatum*>(d))
     {
         editor = new DatumTextButton(d, "Open script", this);

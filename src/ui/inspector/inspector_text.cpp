@@ -6,12 +6,14 @@
 #include <QPainter>
 
 #include "ui/inspector/inspector_text.h"
+#include "ui/colors.h"
+
 #include "datum/datum.h"
 #include "datum/eval.h"
 
 DatumTextItem::DatumTextItem(Datum* datum, QGraphicsItem* parent)
     : QGraphicsTextItem(parent), d(datum), txt(document()),
-      background(Qt::white)
+      background(Colors::base02), border(background)
 {
     setTextInteractionFlags(Qt::TextEditorInteraction);
     setTextWidth(150);
@@ -34,11 +36,20 @@ void DatumTextItem::onDatumChanged()
 
     if (d->getValid())
     {
-        background = Qt::white;
+        border = background;
     }
     else
     {
-        background = QColor("#faa");
+        border = Colors::red;
+    }
+
+    if (d->canEdit())
+    {
+        setDefaultTextColor(Colors::base04);
+    }
+    else
+    {
+        setDefaultTextColor(Colors::base03);
     }
 
 }
@@ -63,7 +74,7 @@ void DatumTextItem::paint(QPainter* painter,
                            QWidget* w)
 {
     painter->setBrush(background);
-    painter->setPen(Qt::NoPen);
+    painter->setPen(QPen(border, 2));
     painter->drawRect(boundingRect());
     QGraphicsTextItem::paint(painter, o, w);
 }

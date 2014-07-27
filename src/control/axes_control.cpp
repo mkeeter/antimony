@@ -2,7 +2,9 @@
 
 #include "control/axes_control.h"
 #include "control/control.h"
+
 #include "ui/canvas.h"
+#include "ui/colors.h"
 
 AxesControl::AxesControl(Canvas* canvas) :
     DummyControl(canvas, NULL)
@@ -30,10 +32,10 @@ void AxesControl::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
             QVector3D(0, 1, 0),
             QVector3D(0, 0, 1)});
 
-    painter->setPen(QPen(Qt::red, 2));
+    painter->setPen(QPen(Colors::red, 2));
     painter->drawLine(pts[0], pts[1]);
-    painter->setPen(QPen(Qt::green, 2));
+    painter->setPen(QPen(Colors::green, 2));
     painter->drawLine(pts[0], pts[2]);
-    painter->setPen(QPen(Qt::blue, 2));
+    painter->setPen(QPen(Colors::blue, 2));
     painter->drawLine(pts[0], pts[3]);
 }

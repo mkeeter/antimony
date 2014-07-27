@@ -22,6 +22,7 @@ protected:
     Datum* d;
     QTextDocument* txt;
     QColor background;
+    QColor border;
     QRectF bbox;
 };
 

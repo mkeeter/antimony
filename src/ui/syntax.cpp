@@ -36,7 +36,7 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* doc) :
     }
 
     QTextCharFormat quote_format;
-    quote_format.setForeground(Colors::cyan);
+    quote_format.setForeground(Colors::teal);
     rules << QPair<QRegExp, QTextCharFormat>(QRegExp("\\\".*\\\""),
                                              quote_format);
     rules << QPair<QRegExp, QTextCharFormat>(QRegExp("\\'.*\\'"),

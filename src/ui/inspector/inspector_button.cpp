@@ -6,6 +6,7 @@
 #include "datum/datum.h"
 #include "ui/inspector/inspector_button.h"
 #include "ui/inspector/inspector.h"
+#include "ui/colors.h"
 
 DatumTextButton::DatumTextButton(Datum *datum, QString label, QGraphicsItem *parent)
     : QGraphicsTextItem(parent), d(datum), hover(false)
@@ -41,15 +42,10 @@ void DatumTextButton::paint(QPainter *painter,
                              const QStyleOptionGraphicsItem *o,
                              QWidget *w)
 {
-    painter->setBrush(d->getValid() ? QColor("#eee") : QColor("#faa"));
-    if (hover)
-    {
-        painter->setPen(QPen(QColor(150, 150, 150), 3));
-    }
-    else
-    {
-        painter->setPen(QPen(QColor(180, 180, 180), 3));
-    }
+    painter->setPen(d->getValid() ? Colors::base02 : Colors::red);
+    painter->setBrush(Colors::base03);
+
+    setDefaultTextColor(hover ? Colors::base05 : Colors::base04);
     painter->drawRect(boundingRect());
     QGraphicsTextItem::paint(painter, o, w);
 }

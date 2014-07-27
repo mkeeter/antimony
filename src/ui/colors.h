@@ -7,22 +7,23 @@ class Datum;
 
 namespace Colors
 {
-extern QColor yellow;
-extern QColor violet;
-extern QColor magenta;
-extern QColor blue;
-extern QColor base01;
-extern QColor base00;
-extern QColor base03;
-extern QColor base02;
-extern QColor orange;
 extern QColor red;
-extern QColor cyan;
-extern QColor base0;
-extern QColor base1;
-extern QColor base2;
-extern QColor base3;
+extern QColor orange;
+extern QColor yellow;
 extern QColor green;
+extern QColor teal;
+extern QColor blue;
+extern QColor violet;
+extern QColor brown;
+
+extern QColor base00;
+extern QColor base01;
+extern QColor base02;
+extern QColor base03;
+extern QColor base04;
+extern QColor base05;
+extern QColor base06;
+extern QColor base07;
 
 QColor adjust(QColor c, float scale);
 QColor highlight(QColor c);
