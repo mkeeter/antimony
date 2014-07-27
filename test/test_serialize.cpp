@@ -5,6 +5,7 @@
 
 #include "test_serialize.h"
 #include "node/2d/circle_node.h"
+#include "node/3d/cube_node.h"
 #include "node/manager.h"
 
 void TestSerialize::SerializeSimpleScene()
@@ -18,6 +19,20 @@ void TestSerialize::SerializeSimpleScene()
     c = NULL;
 
     QCOMPARE(empty, NodeManager::manager()->getSerializedScene());
+
+    NodeManager::manager()->deserializeScene(out);
+    QCOMPARE(out,  NodeManager::manager()->getSerializedScene());
+
+    NodeManager::manager()->clear();
+}
+
+void TestSerialize::SerializeNestedDatum()
+{
+    Node* c = new CubeNode(0, 0, 0, 1);
+    QByteArray out = NodeManager::manager()->getSerializedScene();
+
+    NodeManager::manager()->clear();
+    c = NULL;
 
     NodeManager::manager()->deserializeScene(out);
     QCOMPARE(out,  NodeManager::manager()->getSerializedScene());
