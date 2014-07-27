@@ -27,6 +27,7 @@ public:
 
 private slots:
     void onAbout();
+    void onNew();
     void onSave();
     void onSaveAs();
 private:

@@ -55,6 +55,11 @@ void App::onAbout()
             );
 }
 
+void App::onNew()
+{
+    NodeManager::manager()->clear();
+}
+
 void App::onSave()
 {
     if (filename.isEmpty())
@@ -87,4 +92,6 @@ void App::connectActions()
             this, SLOT(onSave()));
     connect(window->ui->actionSaveAs, SIGNAL(triggered()),
             this, SLOT(onSaveAs()));
+    connect(window->ui->actionNew, SIGNAL(triggered()),
+            this, SLOT(onNew()));
 }
