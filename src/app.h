@@ -30,7 +30,9 @@ private slots:
     void onNew();
     void onSave();
     void onSaveAs();
+    void onOpen();
 private:
+    void setShortcuts();
     void connectActions();
 
     MainWindow* window;

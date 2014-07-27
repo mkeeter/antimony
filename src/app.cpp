@@ -14,6 +14,7 @@
 App::App(int argc, char* argv[]) :
     QApplication(argc, argv), window(new MainWindow)
 {
+    setShortcuts();
     connectActions();
     window->show();
 }
@@ -82,6 +83,28 @@ void App::onSaveAs()
     }
 }
 
+void App::onOpen()
+{
+    QString f = QFileDialog::getOpenFileName(window, "Open", "", "*.sb");
+    if (!f.isEmpty())
+    {
+        filename = f;
+        NodeManager::manager()->clear();
+        QFile file(f);
+        file.open(QIODevice::ReadOnly);
+        NodeManager::manager()->deserializeScene(file.readAll());
+    }
+}
+
+void App::setShortcuts()
+{
+    window->ui->actionNew->setShortcuts(QKeySequence::New);
+    window->ui->actionOpen->setShortcuts(QKeySequence::Open);
+    window->ui->actionSave->setShortcuts(QKeySequence::Save);
+    window->ui->actionSaveAs->setShortcuts(QKeySequence::SaveAs);
+    window->ui->actionQuit->setShortcuts(QKeySequence::Quit);
+}
+
 void App::connectActions()
 {
     connect(window->ui->actionQuit, SIGNAL(triggered()),
@@ -94,4 +117,6 @@ void App::connectActions()
             this, SLOT(onSaveAs()));
     connect(window->ui->actionNew, SIGNAL(triggered()),
             this, SLOT(onNew()));
+    connect(window->ui->actionOpen, SIGNAL(triggered()),
+            this, SLOT(onOpen()));
 }
