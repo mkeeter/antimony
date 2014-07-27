@@ -266,4 +266,5 @@ QList<Datum*> ShapeInputHandler::getInputDatums() const
             Q_ASSERT(list.back());
         }
     }
+    return list;
 }
