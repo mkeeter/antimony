@@ -39,6 +39,7 @@ void SceneSerializer::serializeNodes(QDataStream* out, QObject* p)
 void SceneSerializer::serializeNode(QDataStream* out, Node* node)
 {
     *out << quint32(node->getNodeType());
+    *out << node->objectName();
 
     // Serialize child nodes first.
     serializeNodes(out, node);

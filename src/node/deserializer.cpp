@@ -48,6 +48,8 @@ void SceneDeserializer::deserializeNode(QDataStream* in, QObject* p)
 {
     quint32 t;
     *in >> t;
+    QString node_name;
+    *in >> node_name;
 
     Node* node;
     NodeType::NodeType node_type = static_cast<NodeType::NodeType>(t);
@@ -63,6 +65,7 @@ void SceneDeserializer::deserializeNode(QDataStream* in, QObject* p)
         case NodeType::SCRIPT:
             node = new ScriptNode(p); break;
     }
+    node->setObjectName(node_name);
 
     // Deserialize child nodes.
     deserializeNodes(in, node);
