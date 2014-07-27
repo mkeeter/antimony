@@ -27,6 +27,9 @@ public:
     QString getFunctionName() const { return function_name; }
     QList<QString> getArguments() const { return arguments; }
 
+    void setFunctionName(QString f);
+    void setArguments(QList<QString> args);
+
 protected:
     /** Must return a new reference to a module containing the target function.
      */

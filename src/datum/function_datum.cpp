@@ -72,6 +72,18 @@ QString FunctionDatum::getString() const
     return function_name;
 }
 
+void FunctionDatum::setFunctionName(QString f)
+{
+    function_name = f;
+    update();
+}
+
+void FunctionDatum::setArguments(QList<QString> args)
+{
+    arguments = args;
+    update();
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 ShapeFunctionDatum::ShapeFunctionDatum(QString name, QObject* parent)
