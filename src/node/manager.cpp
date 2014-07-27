@@ -132,3 +132,30 @@ bool NodeManager::deserializeScene(QByteArray in)
 
     return true;
 }
+
+#ifdef ANTIMONY
+
+#include "control/2d/circle_control.h"
+#include "control/3d/cube_control.h"
+#include "control/3d/point3d_control.h"
+#include "control/meta/script_control.h"
+
+void NodeManager::makeControls(Canvas* canvas)
+{
+    for (auto n : findChildren<Node*>(QString(), Qt::FindDirectChildrenOnly))
+    {
+        switch (n->getNodeType())
+        {
+            case NodeType::CIRCLE:
+                new CircleControl(canvas, n); break;
+            case NodeType::CUBE:
+                new CubeControl(canvas, n); break;
+            case NodeType::POINT3D:
+                new Point3DControl(canvas, n); break;
+            case NodeType::SCRIPT:
+                new ScriptControl(canvas, n); break;
+        }
+    }
+}
+
+#endif

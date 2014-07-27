@@ -6,6 +6,7 @@
 
 class NameDatum;
 class Datum;
+class Canvas;
 
 class NodeManager : public QObject
 {
@@ -48,6 +49,12 @@ public:
      *  Returns true on success, false otherwise.
      */
     bool deserializeScene(QByteArray in);
+
+#ifdef ANTIMONY
+    /** Creates controls for top-level nodes.
+     */
+    void makeControls(Canvas* canvas);
+#endif
 
 public slots:
     /** Triggers an update on all EvalDatums that use the new name.

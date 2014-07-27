@@ -93,6 +93,7 @@ void App::onOpen()
         QFile file(f);
         file.open(QIODevice::ReadOnly);
         NodeManager::manager()->deserializeScene(file.readAll());
+        NodeManager::manager()->makeControls(window->canvas);
     }
 }
 
