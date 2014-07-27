@@ -20,8 +20,8 @@ CubeNode::CubeNode(QString name, QObject* parent)
 CubeNode::CubeNode(float x, float y, float z, float scale, QObject *parent)
     : CubeNode(NodeManager::manager()->getName("c"), parent)
 {
-    a = new Point3D(x, y, z, 0, this);
-    b = new Point3D(x + scale, y + scale, z + scale, 0, this);
+    Node* a = new Point3D(x, y, z, 0, this);
+    Node* b = new Point3D(x + scale, y + scale, z + scale, 0, this);
     a->setObjectName("a");
     b->setObjectName("b");
     new ShapeFunctionDatum("shape", this, "cube",
