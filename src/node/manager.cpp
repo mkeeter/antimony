@@ -78,12 +78,9 @@ PyObject* NodeManager::proxyDict(Datum* caller)
 
 void NodeManager::clear()
 {
-    for (auto n : findChildren<Node*>())
+    for (auto n : findChildren<Node*>(QString(), Qt::FindDirectChildrenOnly))
     {
-        if (n->parent() == NULL)
-        {
-            delete n;
-        }
+        delete n;
     }
 }
 
