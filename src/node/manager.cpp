@@ -135,6 +135,8 @@ bool NodeManager::deserializeScene(QByteArray in)
 
 #ifdef ANTIMONY
 
+#include "ui/connection.h"
+
 #include "control/2d/circle_control.h"
 #include "control/3d/cube_control.h"
 #include "control/3d/point3d_control.h"
@@ -155,6 +157,16 @@ void NodeManager::makeControls(Canvas* canvas)
             case NodeType::SCRIPT:
                 new ScriptControl(canvas, n); break;
         }
+    }
+}
+
+#include <QDebug>
+
+void NodeManager::makeConnections(Canvas* canvas)
+{
+    for (auto link : findChildren<Link*>())
+    {
+        new Connection(link, canvas);
     }
 }
 

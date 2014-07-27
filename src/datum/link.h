@@ -12,6 +12,7 @@ class Link : public QObject
 public:
     explicit Link(Datum *parent);
     void setTarget(Datum* d);
+    bool hasTarget() const { return !target.isNull(); }
 protected:
     QPointer<Datum> target;
 

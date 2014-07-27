@@ -32,6 +32,7 @@ void SceneDeserializer::run(QDataStream* in)
     *in >> sb >> version_major >> version_minor;
 
     deserializeNodes(in, NodeManager::manager());
+    deserializeConnections(in);
 }
 
 void SceneDeserializer::deserializeNodes(QDataStream* in, QObject* p)
@@ -120,5 +121,20 @@ void SceneDeserializer::deserializeDatum(QDataStream* in, Node* node)
         *in >> function_name >> function_args;
         f->setFunctionName(function_name);
         f->setArguments(function_args);
+    }
+
+    datums << datum;
+}
+#include <QDebug>
+void SceneDeserializer::deserializeConnections(QDataStream* in)
+{
+    quint32 count;
+    *in >> count;
+
+    for (unsigned i=0; i < count; ++i)
+    {
+        quint32 source_index, target_index;
+        *in >> source_index >> target_index;
+        datums[target_index]->addLink(datums[source_index]->linkFrom());
     }
 }

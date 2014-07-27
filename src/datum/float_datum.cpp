@@ -6,12 +6,11 @@
 FloatDatum::FloatDatum(QString name, QObject* parent)
     : EvalDatum(name, parent)
 {
-    // Nothing to do here
+    input_handler = new SingleInputHandler(this);
 }
 
 FloatDatum::FloatDatum(QString name, QString expr, QObject *parent)
     : FloatDatum(name, parent)
 {
-    input_handler = new SingleInputHandler(this);
     setExpr(expr);
 }

@@ -17,7 +17,8 @@
 
 Connection::Connection(Link* link, Canvas* canvas)
     : QGraphicsObject(), link(link), canvas(canvas),
-      drag_state(NONE), raised_inspector(NULL)
+      drag_state(link->hasTarget() ? CONNECTED : NONE),
+      raised_inspector(NULL)
 {
     setFlags(QGraphicsItem::ItemIsSelectable);
     canvas->scene->addItem(this);

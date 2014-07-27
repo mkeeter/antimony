@@ -18,8 +18,12 @@ protected:
     void deserializeNodes(QDataStream* in, QObject* p);
     void deserializeNode(QDataStream* in, QObject* p);
     void deserializeDatum(QDataStream* in, Node* node);
+    void deserializeConnections(QDataStream* in);
+
     bool failed;
     QString error_message;
+
+    QList<Datum*> datums;
 };
 
 #endif // DESERIALIZER_H

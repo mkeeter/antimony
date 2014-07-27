@@ -22,6 +22,7 @@ void SceneSerializer::run(QDataStream* out)
 {
     *out << QString("sb") << quint32(1) << quint32(0);
     serializeNodes(out, NodeManager::manager());
+    serializeConnections(out);
 }
 
 void SceneSerializer::serializeNodes(QDataStream* out, QObject* p)
@@ -95,3 +96,12 @@ void SceneSerializer::serializeDatum(QDataStream* out, Datum* datum)
     }
 }
 
+void SceneSerializer::serializeConnections(QDataStream* out)
+{
+    *out << quint32(connections.length());
+    for (auto p : connections)
+    {
+        *out << quint32(datums.indexOf(p.first))
+             << quint32(datums.indexOf(p.second));
+    }
+}

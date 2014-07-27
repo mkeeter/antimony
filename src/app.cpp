@@ -21,8 +21,8 @@ App::App(int argc, char* argv[]) :
 
 App::~App()
 {
-    delete window;
     NodeManager::manager()->clear();
+    delete window;
 }
 
 App* App::instance()
@@ -94,6 +94,7 @@ void App::onOpen()
         file.open(QIODevice::ReadOnly);
         NodeManager::manager()->deserializeScene(file.readAll());
         NodeManager::manager()->makeControls(window->canvas);
+        NodeManager::manager()->makeConnections(window->canvas);
     }
 }
 

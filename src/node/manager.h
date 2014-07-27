@@ -54,6 +54,10 @@ public:
     /** Creates controls for top-level nodes.
      */
     void makeControls(Canvas* canvas);
+
+    /** Creates connections (UI elements representing links).
+     */
+    void makeConnections(Canvas* canvas);
 #endif
 
 public slots:

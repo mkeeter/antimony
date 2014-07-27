@@ -18,6 +18,7 @@ protected:
     void serializeNodes(QDataStream* out, QObject* p);
     void serializeNode(QDataStream* out, Node* node);
     void serializeDatum(QDataStream* out, Datum* datum);
+    void serializeConnections(QDataStream* out);
 
     QList<Datum*> datums;
     QList<QPair<Datum*, Datum*>> connections;
