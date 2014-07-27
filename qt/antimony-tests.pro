@@ -17,7 +17,8 @@ SOURCES += \
     ../test/test_fab.cpp \
     ../test/test_script.cpp \
     ../test/test_shape.cpp \
-    ../test/test_function.cpp
+    ../test/test_function.cpp \
+    ../test/test_serialize.cpp \
 
 HEADERS += \
     ../test/test_datum.h \
@@ -27,7 +28,8 @@ HEADERS += \
     ../test/test_fab.h \
     ../test/test_script.h \
     ../test/test_shape.h \
-    ../test/test_function.h
+    ../test/test_function.h \
+    ../test/test_serialize.h \
 
 
 

@@ -16,7 +16,9 @@ SOURCES += \
     ../src/datum/output_datum.cpp \
     ../src/datum/function_datum.cpp \
     ../src/node/2d/circle_node.cpp \
-    ../src/node/3d/cube_node.cpp
+    ../src/node/3d/cube_node.cpp \
+    ../src/node/serializer.cpp \
+    ../src/node/deserializer.cpp \
 
 HEADERS += \
     ../src/datum/datum.h \
@@ -36,7 +38,9 @@ HEADERS += \
     ../src/datum/output_datum.h \
     ../src/datum/function_datum.h \
     ../src/node/2d/circle_node.h \
-    ../src/node/3d/cube_node.h
+    ../src/node/3d/cube_node.h \
+    ../src/node/serializer.h \
+    ../src/node/deserializer.h \
 
 
 INCLUDEPATH += ../src

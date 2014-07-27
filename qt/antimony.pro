@@ -41,8 +41,6 @@ SOURCES += \
     ../src/ui/inspector/inspector_text.cpp \
     ../src/ui/inspector/inspector_button.cpp \
     ../src/ui/inspector/inspector_row.cpp \
-    ../src/node/serializer.cpp \
-    ../src/node/deserializer.cpp \
 
 HEADERS += \
     ../src/ui/main_window.h \

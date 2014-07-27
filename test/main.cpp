@@ -12,6 +12,7 @@
 #include "test_shape.h"
 #include "test_script.h"
 #include "test_function.h"
+#include "test_serialize.h"
 
 int main(int argc, char *argv[])
 {
@@ -59,6 +60,11 @@ int main(int argc, char *argv[])
 
     if (!out) {
         TestFunction t;
+        out = QTest::qExec(&t, argc, argv);
+    }
+
+    if (!out) {
+        TestSerialize t;
         out = QTest::qExec(&t, argc, argv);
     }
 
