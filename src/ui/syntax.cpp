@@ -45,9 +45,9 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* doc) :
     QTextCharFormat num_format;
     num_format.setForeground(Colors::blue);
 
-    rules << QPair<QRegExp, QTextCharFormat>(QRegExp("\\d+"),
+    rules << QPair<QRegExp, QTextCharFormat>(QRegExp("\\b\\d+"),
                                              num_format);
-    rules << QPair<QRegExp, QTextCharFormat>(QRegExp("\\d+\\.\\d*"),
+    rules << QPair<QRegExp, QTextCharFormat>(QRegExp("\\b\\d+\\.\\d*"),
                                              num_format);
 
     QTextCharFormat comment_format;
