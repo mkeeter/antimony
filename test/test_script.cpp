@@ -222,9 +222,12 @@ void TestScript::ShapeUpdate()
     Datum* out = n->getDatum("q");
     QVERIFY(out);
     QVERIFY(out->getValid());
-    QSignalSpy spy(out, SIGNAL(changed()));
+    QSignalSpy outSpy(out, SIGNAL(changed()));
+    QSignalSpy floatSpy(n->getDatum("_z"), SIGNAL(changed()));
+
     dynamic_cast<FloatDatum*>(n->getDatum("_z"))->setExpr("2.0");
-    QCOMPARE(spy.count(), 1);
+    QCOMPARE(floatSpy.count(), 1);
+    QCOMPARE(outSpy.count(), 1);
 
     delete n;
 }

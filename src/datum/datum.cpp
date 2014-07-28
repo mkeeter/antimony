@@ -61,6 +61,13 @@ void Datum::deleteLink(Datum* upstream)
 
 void Datum::update()
 {
+    // Prevent recursive calls
+    // (at the moment, only of concern for ScriptDatums).
+    if (isRecursing())
+    {
+        return;
+    }
+
     // The very first time that update() is called, refresh all other nodes
     // that may refer to this node by name (then never do so again).
     if (!post_init_called)

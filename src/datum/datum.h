@@ -99,6 +99,13 @@ public slots:
     void onDisconnectRequest(Datum* downstream);
 
 protected:
+
+    /** Returns true if the datum is already in an update() call
+     *  When true, update should not be called again.
+     *  (this is only really relevant for ScriptDatums).
+     */
+    virtual bool isRecursing() const { return false; }
+
     /** Find the actual value (through evaluation, lookup, function call)
      *
      *  Must be overloaded by child classes.

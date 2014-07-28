@@ -37,6 +37,11 @@ signals:
     void datumsChanged();
 
 protected:
+
+    /** Returns true if we are already evaluating this datum.
+     */
+    bool isRecursing() const override { return globals; }
+
     /** Returns True if we can make an input or output datum with this name.
      */
     bool isValidName(QString name) const;
