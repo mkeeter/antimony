@@ -60,6 +60,9 @@ public:
 signals:
     void viewChanged();
 
+public slots:
+    void spinTo(float new_yaw, float new_pitch);
+
 protected:
     /** On mouse press, save mouse down position in _click_pos.
      *
@@ -85,11 +88,11 @@ protected:
     void paintEvent(QPaintEvent *event);
 
     // Properties to automatically animate yaw and pitch.
-    void setYaw(float y) { yaw = y; }
+    void setYaw(float y);
     float getYaw() const { return yaw; }
     Q_PROPERTY(float _yaw READ getYaw WRITE setYaw)
 
-    void setPitch(float p) { pitch = p; }
+    void setPitch(float p);
     float getPitch() const { return pitch; }
     Q_PROPERTY(float _pitch READ getPitch WRITE setPitch)
 

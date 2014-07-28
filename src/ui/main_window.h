@@ -20,6 +20,7 @@ public:
     ~MainWindow();
 
     void openScript(ScriptDatum* d);
+    Canvas* getCanvas() const { return canvas; }
 
 private:
     /** Creates a canvas widget and adds it to the window.

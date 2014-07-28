@@ -3,6 +3,7 @@
 #include <QMouseEvent>
 #include <QDebug>
 #include <QGridLayout>
+#include <QPropertyAnimation>
 
 #include <cmath>
 
@@ -150,6 +151,21 @@ float Canvas::getZmin() const
     return zmin;
 }
 
+void Canvas::spinTo(float new_yaw, float new_pitch)
+{
+    QPropertyAnimation* a = new QPropertyAnimation(this, "_yaw", this);
+    a->setDuration(100);
+    a->setStartValue(yaw);
+    a->setEndValue(new_yaw);
+
+    QPropertyAnimation* b = new QPropertyAnimation(this, "_pitch", this);
+    b->setDuration(100);
+    b->setStartValue(pitch);
+    b->setEndValue(new_pitch);
+
+    a->start(QPropertyAnimation::DeleteWhenStopped);
+    b->start(QPropertyAnimation::DeleteWhenStopped);
+}
 
 void Canvas::mousePressEvent(QMouseEvent *event)
 {
@@ -187,6 +203,20 @@ void Canvas::mouseMoveEvent(QMouseEvent *event)
             emit(viewChanged());
         }
     }
+}
+
+void Canvas::setYaw(float y)
+{
+    yaw = y;
+    update();
+    emit(viewChanged());
+}
+
+void Canvas::setPitch(float p)
+{
+    pitch = p;
+    update();
+    emit(viewChanged());
 }
 
 void Canvas::wheelEvent(QWheelEvent *event)
