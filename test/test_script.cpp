@@ -213,3 +213,18 @@ void TestScript::ChangeInputOrder()
 
     delete n;
 }
+
+void TestScript::ShapeUpdate()
+{
+    ScriptNode* n = new ScriptNode("s", "0.0", "0.0", "1.0", "from fab import shapes; output('q', shapes.circle(0, 0, s._z))");
+
+    QVERIFY(n->getDatum("script")->getValid() == true);
+    Datum* out = n->getDatum("q");
+    QVERIFY(out);
+    QVERIFY(out->getValid());
+    QSignalSpy spy(out, SIGNAL(changed()));
+    dynamic_cast<FloatDatum*>(n->getDatum("_z"))->setExpr("2.0");
+    QCOMPARE(spy.count(), 1);
+
+    delete n;
+}

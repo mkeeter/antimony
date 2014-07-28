@@ -62,6 +62,10 @@ private slots:
     /** Changes the order of input calls to reorder datums.
      */
     void ChangeInputOrder();
+
+    /** Make sure that an output shape datum is updated.
+     */
+    void ShapeUpdate();
 };
 
 #endif // TEST_SCRIPT_H
