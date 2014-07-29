@@ -69,8 +69,6 @@ HEADERS += \
     ../src/ui/inspector/inspector_text.h \
     ../src/ui/inspector/inspector_button.h \
     ../src/ui/inspector/inspector_row.h \
-    ../src/node/serializer.h \
-    ../src/node/deserializer.h \
 
 FORMS += \
     ../src/ui/forms/main_window.ui \
