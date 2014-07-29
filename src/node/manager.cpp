@@ -138,6 +138,8 @@ bool NodeManager::deserializeScene(QByteArray in)
 #include "ui/connection.h"
 
 #include "control/2d/circle_control.h"
+#include "control/2d/triangle_control.h"
+#include "control/2d/point2d_control.h"
 #include "control/3d/cube_control.h"
 #include "control/3d/point3d_control.h"
 #include "control/meta/script_control.h"
@@ -150,6 +152,10 @@ void NodeManager::makeControls(Canvas* canvas)
         {
             case NodeType::CIRCLE:
                 new CircleControl(canvas, n); break;
+            case NodeType::TRIANGLE:
+                new TriangleControl(canvas, n); break;
+            case NodeType::POINT2D:
+                new Point2DControl(canvas, n); break;
             case NodeType::CUBE:
                 new CubeControl(canvas, n); break;
             case NodeType::POINT3D:

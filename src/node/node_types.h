@@ -5,6 +5,8 @@ namespace NodeType
 {
     enum NodeType {
         CIRCLE,
+        TRIANGLE,
+        POINT2D,
         CUBE,
         POINT3D,
         SCRIPT,

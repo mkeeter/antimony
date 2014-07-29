@@ -2,7 +2,6 @@
 #define MULTILINE_H
 
 #include <QGraphicsObject>
-
 #include "control/control.h"
 
 class MultiLineControl : public Control
