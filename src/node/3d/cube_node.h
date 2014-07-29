@@ -19,9 +19,6 @@ public:
     NodeType::NodeType getNodeType() const override
         { return NodeType::CUBE; }
 
-protected:
-    Point3D* a;
-    Point3D* b;
 };
 
 #endif // CUBE_NODE_H
