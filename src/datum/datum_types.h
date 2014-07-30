@@ -9,6 +9,7 @@ namespace DatumType
         NAME,
         SCRIPT,
         SHAPE,
+        STRING,
         SHAPE_OUTPUT,
         SHAPE_FUNCTION
     };

@@ -15,8 +15,10 @@ SOURCES += \
     ../src/node/3d/point3d_node.cpp \
     ../src/datum/output_datum.cpp \
     ../src/datum/function_datum.cpp \
+    ../src/datum/string_datum.cpp \
     ../src/node/2d/circle_node.cpp \
     ../src/node/2d/point2d_node.cpp \
+    ../src/node/2d/text_node.cpp \
     ../src/node/2d/triangle_node.cpp \
     ../src/node/3d/cube_node.cpp \
     ../src/node/serializer.cpp \
@@ -35,12 +37,14 @@ HEADERS += \
     ../src/datum/shape_datum.h \
     ../src/datum/float_datum.h \
     ../src/datum/name_datum.h \
+    ../src/datum/string_datum.h \
     ../src/datum/script_datum.h \
     ../src/node/3d/point3d_node.h \
     ../src/datum/output_datum.h \
     ../src/datum/function_datum.h \
     ../src/node/2d/circle_node.h \
     ../src/node/2d/point2d_node.h \
+    ../src/node/2d/text_node.h \
     ../src/node/2d/triangle_node.h \
     ../src/node/3d/cube_node.h \
     ../src/node/serializer.h \
