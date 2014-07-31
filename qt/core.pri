@@ -16,6 +16,9 @@ SOURCES += \
     ../src/node/3d/extrude_node.cpp \
     ../src/node/3d/sphere_node.cpp \
     ../src/node/3d/cylinder_node.cpp \
+    ../src/node/csg/union_node.cpp \
+    ../src/node/csg/difference_node.cpp \
+    ../src/node/csg/intersection_node.cpp \
     ../src/datum/output_datum.cpp \
     ../src/datum/function_datum.cpp \
     ../src/datum/string_datum.cpp \
@@ -46,6 +49,9 @@ HEADERS += \
     ../src/node/3d/sphere_node.h \
     ../src/node/3d/cylinder_node.h \
     ../src/node/3d/extrude_node.h \
+    ../src/node/csg/union_node.h \
+    ../src/node/csg/difference_node.h \
+    ../src/node/csg/intersection_node.h \
     ../src/datum/output_datum.h \
     ../src/datum/function_datum.h \
     ../src/node/2d/circle_node.h \

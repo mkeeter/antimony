@@ -16,6 +16,9 @@
 #include "node/3d/extrude_node.h"
 #include "node/3d/point3d_node.h"
 #include "node/meta/script_node.h"
+#include "node/csg/union_node.h"
+#include "node/csg/intersection_node.h"
+#include "node/csg/difference_node.h"
 
 #include "datum/float_datum.h"
 #include "datum/name_datum.h"
@@ -84,6 +87,12 @@ void SceneDeserializer::deserializeNode(QDataStream* in, QObject* p)
             node = new CylinderNode(p); break;
         case NodeType::EXTRUDE:
             node = new ExtrudeNode(p); break;
+        case NodeType::UNION:
+            node = new UnionNode(p); break;
+        case NodeType::INTERSECTION:
+            node = new IntersectionNode(p); break;
+        case NodeType::DIFFERENCE:
+            node = new DifferenceNode(p); break;
     }
     node->setObjectName(node_name);
 

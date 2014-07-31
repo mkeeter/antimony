@@ -2,6 +2,15 @@ import math
 
 from fab import Shape, Transform
 
+def union(a, b):
+    return a | b
+
+def intersection(a, b):
+    return a & b
+
+def difference(a, b):
+    return a & ~b
+
 def circle(x0, y0, r):
     # sqrt((X-x0)**2 + (Y-y0)**2) - r
     r = abs(r)

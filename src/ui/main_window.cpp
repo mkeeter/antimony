@@ -93,6 +93,9 @@ void MainWindow::addNodeToMenu(QString category, QString name,
 #include "node/2d/point2d_node.h"
 #include "node/2d/triangle_node.h"
 #include "node/2d/text_node.h"
+#include "node/csg/union_node.h"
+#include "node/csg/intersection_node.h"
+#include "node/csg/difference_node.h"
 #include "node/meta/script_node.h"
 
 void MainWindow::populateMenu(QMenu* menu)
@@ -107,5 +110,8 @@ void MainWindow::populateMenu(QMenu* menu)
     addNodeToMenu<Point2D>("2D", "Point", menu, &submenus);
     addNodeToMenu<TriangleNode>("2D", "Triangle", menu, &submenus);
     addNodeToMenu<TextNode>("2D", "Text", menu, &submenus);
+    addNodeToMenu<UnionNode>("CSG", "Union", menu, &submenus);
+    addNodeToMenu<IntersectionNode>("CSG", "Intersection", menu, &submenus);
+    addNodeToMenu<DifferenceNode>("CSG", "Difference", menu, &submenus);
     addNodeToMenu<ScriptNode>("Meta", "Script", menu, &submenus);
 }

@@ -147,6 +147,9 @@ bool NodeManager::deserializeScene(QByteArray in)
 #include "control/3d/extrude_control.h"
 #include "control/3d/point3d_control.h"
 #include "control/meta/script_control.h"
+#include "control/csg/union_control.h"
+#include "control/csg/intersection_control.h"
+#include "control/csg/difference_control.h"
 
 Control* NodeManager::makeControlFor(Canvas* canvas, Node* n)
 {
@@ -172,6 +175,12 @@ Control* NodeManager::makeControlFor(Canvas* canvas, Node* n)
             return new ScriptControl(canvas, n);
         case NodeType::TEXT:
             return new TextControl(canvas, n);
+        case NodeType::UNION:
+            return new UnionControl(canvas, n);
+        case NodeType::INTERSECTION:
+            return new IntersectionControl(canvas, n);
+        case NodeType::DIFFERENCE:
+            return new DifferenceControl(canvas, n);
     }
    Q_ASSERT(false);
    return NULL;

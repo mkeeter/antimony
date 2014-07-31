@@ -31,6 +31,9 @@ SOURCES += \
     ../src/control/2d/circle_control.cpp \
     ../src/control/2d/triangle_control.cpp \
     ../src/control/2d/text_control.cpp \
+    ../src/control/csg/union_control.cpp \
+    ../src/control/csg/intersection_control.cpp \
+    ../src/control/csg/difference_control.cpp \
     ../src/ui/colors.cpp \
     ../src/ui/port.cpp \
     ../src/ui/connection.cpp \
@@ -64,6 +67,9 @@ HEADERS += \
     ../src/control/2d/circle_control.h \
     ../src/control/2d/triangle_control.h \
     ../src/control/2d/text_control.h \
+    ../src/control/csg/union_control.h \
+    ../src/control/csg/intersection_control.h \
+    ../src/control/csg/difference_control.h \
     ../src/ui/colors.h \
     ../src/ui/port.h \
     ../src/ui/connection.h \
