@@ -2,7 +2,7 @@
 #include "ui/colors.h"
 
 ScriptControl::ScriptControl(Canvas *canvas, Node *node)
-    : TextLabelControl("Script", Colors::blue, canvas, node)
+    : TextLabelControl("Script", Colors::green, canvas, node)
 {
     // Nothing to do here
 }
