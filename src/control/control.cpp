@@ -227,15 +227,25 @@ void Control::dragValue(QString name, double delta)
     }
 }
 
+QColor Control::defaultPenColor() const
+{
+    return Colors::base04;
+}
+
+QColor Control::defaultBrushColor() const
+{
+    return Colors::base03;
+}
+
 void Control::setDefaultPen(QPainter *painter) const
 {
     if (isSelected() or _hover)
     {
-        painter->setPen(QPen(Colors::base05, 2));
+        painter->setPen(QPen(Colors::highlight(defaultPenColor()), 2));
     }
     else
     {
-        painter->setPen(QPen(Colors::base04, 2));
+        painter->setPen(QPen(defaultPenColor(), 2));
     }
 }
 
@@ -243,11 +253,11 @@ void Control::setDefaultBrush(QPainter *painter) const
 {
     if (isSelected() or _hover)
     {
-        painter->setBrush(QBrush(Colors::base04));
+        painter->setBrush(QBrush(Colors::highlight(defaultBrushColor())));
     }
     else
     {
-        painter->setBrush(QBrush(Colors::base03));
+        painter->setBrush(QBrush(defaultBrushColor()));
     }
 }
 

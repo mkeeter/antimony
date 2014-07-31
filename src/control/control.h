@@ -115,6 +115,14 @@ protected:
      */
     void dragValue(QString name, double delta);
 
+    /** Returns the color to be used by the default pen.
+     */
+    virtual QColor defaultPenColor() const;
+
+    /** Returns the color to be used by the default brush.
+     */
+    virtual QColor defaultBrushColor() const;
+
     /** Sets the painter pen to a reasonable default value.
      */
     void setDefaultPen(QPainter* painter) const;
