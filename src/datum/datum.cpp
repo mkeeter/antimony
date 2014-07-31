@@ -52,6 +52,16 @@ void Datum::addLink(Link* input)
     input->setTarget(this);
     connect(this, SIGNAL(destroyed()), input, SLOT(deleteLater()));
     connect(input, SIGNAL(destroyed()), this, SLOT(update()));
+
+    // For certain types of datums, making a connection changes behavior
+    // in a way that requires a changed signal to be emitted.  This is
+    // mostly relevant for shape datums, which are only rendered if they
+    // are not used elsewhere in the system.
+    emit(changed());
+    emit(dynamic_cast<Datum*>(input->parent())->changed());
+    connect(input, SIGNAL(destroyed()), this, SIGNAL(changed()));
+    connect(input, SIGNAL(destroyed()),
+            dynamic_cast<Datum*>(input->parent()), SIGNAL(changed()));
 }
 
 void Datum::deleteLink(Datum* upstream)
