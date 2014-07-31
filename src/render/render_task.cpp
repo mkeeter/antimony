@@ -63,10 +63,15 @@ void RenderTask::onWorkerFinished()
     if (image)
     {
         image->deleteLater();
+        image = NULL;
     }
-    image = current->image;
-    image->setParent(this);
-    image->addToCanvas(canvas);
+
+    if (current->image)
+    {
+        image = current->image;
+        image->setParent(this);
+        image->addToCanvas(canvas);
+    }
 
     current->deleteLater();
 }

@@ -14,7 +14,7 @@
 using namespace boost::python;
 
 RenderWorker::RenderWorker(PyObject *s, QMatrix4x4 m2d, QMatrix4x4 m3d)
-    : QObject(NULL), shape(s), m2d(m2d), m3d(m3d)
+    : QObject(NULL), shape(s), m2d(m2d), m3d(m3d), image(NULL)
 {
     Py_INCREF(shape);
 }
@@ -38,14 +38,20 @@ void RenderWorker::render()
              m(2, 3) == 0 && m (3, 3) == 1);
 
 
-    if (isinf(s.bounds.zmin))
+    if (!isinf(s.bounds.xmin) && !isinf(s.bounds.xmax) &&
+        !isinf(s.bounds.xmin) && !isinf(s.bounds.xmax))
     {
-        render2d(s);
+        if (isinf(s.bounds.zmin))
+        {
+            render2d(s);
+        }
+        else
+        {
+            render3d(s);
+        }
     }
-    else
-    {
-        render3d(s);
-    }
+
+    emit(finished());
 }
 
 void RenderWorker::render3d(Shape s)
@@ -71,8 +77,6 @@ void RenderWorker::render3d(Shape s)
 
     image = new RenderImage(&transformed);
     image->moveToThread(QApplication::instance()->thread());
-
-    emit(finished());
 }
 
 void RenderWorker::render2d(Shape s)
@@ -117,6 +121,4 @@ void RenderWorker::render2d(Shape s)
     {
         image->applyGradient(m3d(2,2) > 0);
     }
-
-    emit(finished());
 }
