@@ -12,6 +12,7 @@
 #include "node/2d/point2d_node.h"
 #include "node/3d/cube_node.h"
 #include "node/3d/sphere_node.h"
+#include "node/3d/cylinder_node.h"
 #include "node/3d/point3d_node.h"
 #include "node/meta/script_node.h"
 
@@ -78,6 +79,8 @@ void SceneDeserializer::deserializeNode(QDataStream* in, QObject* p)
             node = new ScriptNode(p); break;
         case NodeType::SPHERE:
             node = new SphereNode(p); break;
+        case NodeType::CYLINDER:
+            node = new CylinderNode(p); break;
     }
     node->setObjectName(node_name);
 
