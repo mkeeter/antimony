@@ -10,6 +10,7 @@ namespace NodeType
         TEXT,
         CUBE,
         CYLINDER,
+        EXTRUDE,
         SPHERE,
         POINT3D,
         SCRIPT,

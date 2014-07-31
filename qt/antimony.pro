@@ -25,6 +25,7 @@ SOURCES += \
     ../src/control/axes_control.cpp \
     ../src/control/3d/point3d_control.cpp \
     ../src/control/3d/sphere_control.cpp \
+    ../src/control/3d/extrude_control.cpp \
     ../src/control/2d/point2d_control.cpp \
     ../src/control/3d/cylinder_control.cpp \
     ../src/control/2d/circle_control.cpp \
@@ -57,6 +58,7 @@ HEADERS += \
     ../src/control/axes_control.h \
     ../src/control/3d/point3d_control.h \
     ../src/control/3d/sphere_control.h \
+    ../src/control/3d/extrude_control.h \
     ../src/control/3d/cylinder_control.h \
     ../src/control/2d/point2d_control.h \
     ../src/control/2d/circle_control.h \
