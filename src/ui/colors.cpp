@@ -1,10 +1,7 @@
 #include <Python.h>
 #include "ui/colors.h"
 
-#include "datum/float_datum.h"
-#include "datum/function_datum.h"
-#include "datum/output_datum.h"
-#include "datum/shape_datum.h"
+#include "datum/datum.h"
 
 namespace Colors
 {
@@ -47,13 +44,17 @@ QColor dim(QColor c)
 
 QColor getColor(Datum *d)
 {
-    if (dynamic_cast<FloatDatum*>(d))
-        return yellow;
-    else if (dynamic_cast<ShapeDatum*>(d) ||
-             dynamic_cast<ShapeFunctionDatum*>(d) ||
-             dynamic_cast<ShapeOutputDatum*>(d))
-        return blue;
-    return red;
+    switch (d->getDatumType())
+    {
+        case DatumType::FLOAT:  return yellow;
+        case DatumType::SHAPE:
+        case DatumType::SHAPE_FUNCTION:
+        case DatumType::SHAPE_OUTPUT:
+                                return blue;
+        case DatumType::STRING:
+                                return brown;
+        default:                return red;
+    }
 }
 
 } // end of Colors namespace
