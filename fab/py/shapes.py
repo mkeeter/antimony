@@ -383,7 +383,7 @@ def repel(part, x, y, z, r):
 
 ################################################################################
 
-def text(text, x, y, height=1, align='CC'):
+def text(text, x, y, height=1, align='LB'):
 
     dx, dy = 0, -1
     text_shape = None
