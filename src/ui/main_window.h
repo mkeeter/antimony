@@ -38,12 +38,12 @@ private:
 
     /** Makes a new object of the given class.
      */
-    template <class N, class C>
+    template <class N>
     void createNew();
 
     /** Adds a particular node to the "Add" menu.
      */
-    template <class N, class C>
+    template <class N>
     void addNodeToMenu(QString category, QString name, QMenu* menu,
                           QMap<QString, QMenu*>* submenus);
 

@@ -13,7 +13,7 @@ TextNode::TextNode(QObject* parent)
 
 TextNode::TextNode(float x, float y, float z, float scale,
                    QObject* parent)
-    : TextNode(parent)
+    : Node(NodeManager::manager()->getName("t"), parent)
 {
     Q_UNUSED(z);
     new FloatDatum("x", QString::number(x), this);

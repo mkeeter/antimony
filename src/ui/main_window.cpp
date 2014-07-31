@@ -53,9 +53,10 @@ void MainWindow::openScript(ScriptDatum *d)
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "node/node.h"
+#include "node/manager.h"
 #include "control/control.h"
 
-template <class N, class C>
+template <class N>
 void MainWindow::createNew()
 {
     QPoint mouse_pos  = canvas->rect().center();
@@ -66,12 +67,12 @@ void MainWindow::createNew()
 
     Node* n = new N(obj_pos.x(), obj_pos.y(), obj_pos.z(),
                     100 / canvas->getScale());
-    Control* c = new C(canvas, n);
+    Control* c = NodeManager::manager()->makeControlFor(canvas, n);
     c->grabMouse();
     c->setClickPos(scene_pos);
 }
 
-template <class N, class C>
+template <class N>
 void MainWindow::addNodeToMenu(QString category, QString name,
                                   QMenu* menu, QMap<QString, QMenu*>* submenus)
 {
@@ -80,7 +81,7 @@ void MainWindow::addNodeToMenu(QString category, QString name,
         (*submenus)[category] = menu->addMenu(category);
     }
     QAction* a = (*submenus)[category]->addAction(name);
-    connect(a, &QAction::triggered, this, &MainWindow::createNew<N, C>);
+    connect(a, &QAction::triggered, this, &MainWindow::createNew<N>);
 }
 
 #include "node/3d/point3d_node.h"
@@ -91,22 +92,14 @@ void MainWindow::addNodeToMenu(QString category, QString name,
 #include "node/2d/text_node.h"
 #include "node/meta/script_node.h"
 
-#include "control/3d/point3d_control.h"
-#include "control/3d/cube_control.h"
-#include "control/2d/circle_control.h"
-#include "control/2d/triangle_control.h"
-#include "control/2d/text_control.h"
-#include "control/2d/point2d_control.h"
-#include "control/meta/script_control.h"
-
 void MainWindow::populateMenu(QMenu* menu)
 {
     QMap<QString, QMenu*> submenus;
-    addNodeToMenu<Point3D, Point3DControl>("3D", "Point", menu, &submenus);
-    addNodeToMenu<CubeNode, CubeControl>("3D", "Cube", menu, &submenus);
-    addNodeToMenu<CircleNode, CircleControl>("2D", "Circle", menu, &submenus);
-    addNodeToMenu<Point2D, Point2DControl>("2D", "Point", menu, &submenus);
-    addNodeToMenu<TriangleNode, TriangleControl>("2D", "Triangle", menu, &submenus);
-    addNodeToMenu<TextNode, TextControl>("2D", "Text", menu, &submenus);
-    addNodeToMenu<ScriptNode, ScriptControl>("Meta", "Script", menu, &submenus);
+    addNodeToMenu<Point3D>("3D", "Point", menu, &submenus);
+    addNodeToMenu<CubeNode>("3D", "Cube", menu, &submenus);
+    addNodeToMenu<CircleNode>("2D", "Circle", menu, &submenus);
+    addNodeToMenu<Point2D>("2D", "Point", menu, &submenus);
+    addNodeToMenu<TriangleNode>("2D", "Triangle", menu, &submenus);
+    addNodeToMenu<TextNode>("2D", "Text", menu, &submenus);
+    addNodeToMenu<ScriptNode>("Meta", "Script", menu, &submenus);
 }

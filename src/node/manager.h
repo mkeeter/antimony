@@ -8,6 +8,7 @@ class NameDatum;
 class Datum;
 class Canvas;
 class Node;
+class Control;
 
 class NodeManager : public QObject
 {
@@ -58,7 +59,7 @@ public:
 
     /** Makes a control for the given node.
      */
-    void makeControlFor(Canvas* canvas, Node* n);
+    Control* makeControlFor(Canvas* canvas, Node* n);
 
     /** Creates connections (UI elements representing links).
      */

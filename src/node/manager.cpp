@@ -145,25 +145,27 @@ bool NodeManager::deserializeScene(QByteArray in)
 #include "control/3d/point3d_control.h"
 #include "control/meta/script_control.h"
 
-void NodeManager::makeControlFor(Canvas* canvas, Node* n)
+Control* NodeManager::makeControlFor(Canvas* canvas, Node* n)
 {
    switch (n->getNodeType())
     {
         case NodeType::CIRCLE:
-            new CircleControl(canvas, n); break;
+            return new CircleControl(canvas, n);
         case NodeType::TRIANGLE:
-            new TriangleControl(canvas, n); break;
+            return new TriangleControl(canvas, n);
         case NodeType::POINT2D:
-            new Point2DControl(canvas, n); break;
+            return new Point2DControl(canvas, n);
         case NodeType::CUBE:
-            new CubeControl(canvas, n); break;
+            return new CubeControl(canvas, n);
         case NodeType::POINT3D:
-            new Point3DControl(canvas, n); break;
+            return new Point3DControl(canvas, n);
         case NodeType::SCRIPT:
-            new ScriptControl(canvas, n); break;
+            return new ScriptControl(canvas, n);
         case NodeType::TEXT:
-            new TextControl(canvas, n); break;
+            return new TextControl(canvas, n);
     }
+   Q_ASSERT(false);
+   return NULL;
 }
 
 void NodeManager::makeControls(Canvas* canvas)
