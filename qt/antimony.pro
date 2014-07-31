@@ -27,6 +27,7 @@ SOURCES += \
     ../src/control/2d/point2d_control.cpp \
     ../src/control/2d/circle_control.cpp \
     ../src/control/2d/triangle_control.cpp \
+    ../src/control/2d/text_control.cpp \
     ../src/ui/colors.cpp \
     ../src/ui/port.cpp \
     ../src/ui/connection.cpp \
@@ -56,6 +57,7 @@ HEADERS += \
     ../src/control/2d/point2d_control.h \
     ../src/control/2d/circle_control.h \
     ../src/control/2d/triangle_control.h \
+    ../src/control/2d/text_control.h \
     ../src/ui/colors.h \
     ../src/ui/port.h \
     ../src/ui/connection.h \

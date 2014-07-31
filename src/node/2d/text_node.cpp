@@ -16,9 +16,9 @@ TextNode::TextNode(float x, float y, float z, float scale,
     : TextNode(parent)
 {
     Q_UNUSED(z);
-    new FloatDatum("_x", QString::number(x), this);
-    new FloatDatum("_y", QString::number(y), this);
+    new FloatDatum("x", QString::number(x), this);
+    new FloatDatum("y", QString::number(y), this);
     new StringDatum("text", "hello", this);
     new FloatDatum("scale", QString::number(scale), this);
-    new ShapeFunctionDatum("shape", this, "text", {"text", "_x", "_y", "scale"});
+    new ShapeFunctionDatum("shape", this, "text", {"text", "x", "y", "scale"});
 }

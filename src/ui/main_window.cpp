@@ -88,12 +88,14 @@ void MainWindow::addNodeToMenu(QString category, QString name,
 #include "node/2d/circle_node.h"
 #include "node/2d/point2d_node.h"
 #include "node/2d/triangle_node.h"
+#include "node/2d/text_node.h"
 #include "node/meta/script_node.h"
 
 #include "control/3d/point3d_control.h"
 #include "control/3d/cube_control.h"
 #include "control/2d/circle_control.h"
 #include "control/2d/triangle_control.h"
+#include "control/2d/text_control.h"
 #include "control/2d/point2d_control.h"
 #include "control/meta/script_control.h"
 
@@ -105,5 +107,6 @@ void MainWindow::populateMenu(QMenu* menu)
     addNodeToMenu<CircleNode, CircleControl>("2D", "Circle", menu, &submenus);
     addNodeToMenu<Point2D, Point2DControl>("2D", "Point", menu, &submenus);
     addNodeToMenu<TriangleNode, TriangleControl>("2D", "Triangle", menu, &submenus);
+    addNodeToMenu<TextNode, TextControl>("2D", "Text", menu, &submenus);
     addNodeToMenu<ScriptNode, ScriptControl>("Meta", "Script", menu, &submenus);
 }
