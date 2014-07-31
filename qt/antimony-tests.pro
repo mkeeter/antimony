@@ -6,7 +6,7 @@ CONFIG += c++11
 DEFINES += ANTIMONY_TESTS
 
 include(fab.pri)
-include(core.pri)
+include(shared.pri)
 
 SOURCES += \
     ../test/main.cpp \
