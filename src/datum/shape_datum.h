@@ -23,6 +23,9 @@ public:
 
     DatumType::DatumType getDatumType() const override
         { return DatumType::SHAPE; }
+
+    bool hasOutput() const override { return false; }
+
 protected:
     /** Overload function to get the current value; always fails
      *  (because the shape will always come from the input handler)

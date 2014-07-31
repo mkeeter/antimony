@@ -9,6 +9,7 @@
 #include "render/render_image.h"
 
 #include "datum/datum.h"
+#include "datum/link.h"
 
 #include "ui/canvas.h"
 
@@ -40,9 +41,28 @@ void RenderTask::onDatumDeleted()
     }
 }
 
+bool RenderTask::hasNoOutput()
+{
+    if (!datum->hasOutput())
+    {
+        clearImage();
+        return false;
+    }
+
+    for (auto link : datum->findChildren<Link*>())
+    {
+        if (link->hasTarget())
+        {
+            clearImage();
+            return false;
+        }
+    }
+    return true;
+}
+
 void RenderTask::onDatumChanged()
 {
-    if (datum->getValid() && datum->getValue())
+    if (datum->getValid() && datum->getValue() && hasNoOutput())
     {
         if (next)
         {
@@ -60,11 +80,7 @@ void RenderTask::onDatumChanged()
 
 void RenderTask::onWorkerFinished()
 {
-    if (image)
-    {
-        image->deleteLater();
-        image = NULL;
-    }
+    clearImage();
 
     if (current->image)
     {
@@ -74,6 +90,15 @@ void RenderTask::onWorkerFinished()
     }
 
     current->deleteLater();
+}
+
+void RenderTask::clearImage()
+{
+    if (image)
+    {
+        image->deleteLater();
+        image = NULL;
+    }
 }
 
 void RenderTask::onThreadFinished()

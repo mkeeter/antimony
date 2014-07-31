@@ -23,10 +23,19 @@ public slots:
     void onThreadFinished();
 
 protected:
+    /** Checks to see if the datum has output.
+     *  If so, returns false and deletes image.
+     */
+    bool hasNoOutput();
+
     /** Starts rendering the task in next.
      *  Moves next to current when starting.
      */
     void startNextRender();
+
+    /** Calls deleteLater on image and sets it to NULL.
+     */
+    void clearImage();
 
     QPointer<Datum> datum;
 
