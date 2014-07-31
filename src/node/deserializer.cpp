@@ -8,6 +8,7 @@
 
 #include "node/2d/circle_node.h"
 #include "node/2d/triangle_node.h"
+#include "node/2d/text_node.h"
 #include "node/2d/point2d_node.h"
 #include "node/3d/cube_node.h"
 #include "node/3d/point3d_node.h"
@@ -64,6 +65,8 @@ void SceneDeserializer::deserializeNode(QDataStream* in, QObject* p)
             node = new CircleNode(p); break;
         case NodeType::TRIANGLE:
             node = new TriangleNode(p); break;
+        case NodeType::TEXT:
+            node = new TextNode(p); break;
         case NodeType::POINT2D:
             node = new Point2D(p); break;
         case NodeType::CUBE:

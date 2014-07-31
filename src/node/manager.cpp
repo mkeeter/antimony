@@ -139,34 +139,40 @@ bool NodeManager::deserializeScene(QByteArray in)
 
 #include "control/2d/circle_control.h"
 #include "control/2d/triangle_control.h"
+#include "control/2d/text_control.h"
 #include "control/2d/point2d_control.h"
 #include "control/3d/cube_control.h"
 #include "control/3d/point3d_control.h"
 #include "control/meta/script_control.h"
 
+void NodeManager::makeControlFor(Canvas* canvas, Node* n)
+{
+   switch (n->getNodeType())
+    {
+        case NodeType::CIRCLE:
+            new CircleControl(canvas, n); break;
+        case NodeType::TRIANGLE:
+            new TriangleControl(canvas, n); break;
+        case NodeType::POINT2D:
+            new Point2DControl(canvas, n); break;
+        case NodeType::CUBE:
+            new CubeControl(canvas, n); break;
+        case NodeType::POINT3D:
+            new Point3DControl(canvas, n); break;
+        case NodeType::SCRIPT:
+            new ScriptControl(canvas, n); break;
+        case NodeType::TEXT:
+            new TextControl(canvas, n); break;
+    }
+}
+
 void NodeManager::makeControls(Canvas* canvas)
 {
     for (auto n : findChildren<Node*>(QString(), Qt::FindDirectChildrenOnly))
     {
-        switch (n->getNodeType())
-        {
-            case NodeType::CIRCLE:
-                new CircleControl(canvas, n); break;
-            case NodeType::TRIANGLE:
-                new TriangleControl(canvas, n); break;
-            case NodeType::POINT2D:
-                new Point2DControl(canvas, n); break;
-            case NodeType::CUBE:
-                new CubeControl(canvas, n); break;
-            case NodeType::POINT3D:
-                new Point3DControl(canvas, n); break;
-            case NodeType::SCRIPT:
-                new ScriptControl(canvas, n); break;
-        }
+        makeControlFor(canvas, n);
     }
 }
-
-#include <QDebug>
 
 void NodeManager::makeConnections(Canvas* canvas)
 {
