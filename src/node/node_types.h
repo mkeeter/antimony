@@ -9,6 +9,7 @@ namespace NodeType
         POINT2D,
         TEXT,
         CUBE,
+        SPHERE,
         POINT3D,
         SCRIPT,
     };

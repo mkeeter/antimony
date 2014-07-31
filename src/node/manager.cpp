@@ -142,6 +142,7 @@ bool NodeManager::deserializeScene(QByteArray in)
 #include "control/2d/text_control.h"
 #include "control/2d/point2d_control.h"
 #include "control/3d/cube_control.h"
+#include "control/3d/sphere_control.h"
 #include "control/3d/point3d_control.h"
 #include "control/meta/script_control.h"
 
@@ -157,6 +158,8 @@ Control* NodeManager::makeControlFor(Canvas* canvas, Node* n)
             return new Point2DControl(canvas, n);
         case NodeType::CUBE:
             return new CubeControl(canvas, n);
+        case NodeType::SPHERE:
+            return new SphereControl(canvas, n);
         case NodeType::POINT3D:
             return new Point3DControl(canvas, n);
         case NodeType::SCRIPT:

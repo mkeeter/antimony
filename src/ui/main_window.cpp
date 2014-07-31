@@ -85,6 +85,7 @@ void MainWindow::addNodeToMenu(QString category, QString name,
 }
 
 #include "node/3d/point3d_node.h"
+#include "node/3d/sphere_node.h"
 #include "node/3d/cube_node.h"
 #include "node/2d/circle_node.h"
 #include "node/2d/point2d_node.h"
@@ -97,6 +98,7 @@ void MainWindow::populateMenu(QMenu* menu)
     QMap<QString, QMenu*> submenus;
     addNodeToMenu<Point3D>("3D", "Point", menu, &submenus);
     addNodeToMenu<CubeNode>("3D", "Cube", menu, &submenus);
+    addNodeToMenu<SphereNode>("3D", "Sphere", menu, &submenus);
     addNodeToMenu<CircleNode>("2D", "Circle", menu, &submenus);
     addNodeToMenu<Point2D>("2D", "Point", menu, &submenus);
     addNodeToMenu<TriangleNode>("2D", "Triangle", menu, &submenus);

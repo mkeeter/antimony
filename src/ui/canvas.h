@@ -57,6 +57,14 @@ public:
 
     QGraphicsScene* scene;
 
+    /** Get yaw (in radians)
+     */
+    float getYaw() const { return yaw; }
+
+    /** Get pitch (in radians)
+     */
+    float getPitch() const { return pitch; }
+
 signals:
     void viewChanged();
 
@@ -89,11 +97,9 @@ protected:
 
     // Properties to automatically animate yaw and pitch.
     void setYaw(float y);
-    float getYaw() const { return yaw; }
     Q_PROPERTY(float _yaw READ getYaw WRITE setYaw)
 
     void setPitch(float p);
-    float getPitch() const { return pitch; }
     Q_PROPERTY(float _pitch READ getPitch WRITE setPitch)
 
     /** Pans the scene rectangle.
