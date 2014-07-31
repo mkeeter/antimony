@@ -384,7 +384,8 @@ def repel(part, x, y, z, r):
 ################################################################################
 
 def text(text, x, y, height=1, align='LB'):
-
+    if text == '':
+        return Shape("f1.0", 0, 0, 0, 0)
     dx, dy = 0, -1
     text_shape = None
 
