@@ -66,18 +66,18 @@ open("src/control/{0}/{1}_control.h".format(category.lower(), name.lower()), 'wb
 
 #include "control/{1}.h"
 
-class {2}Control : public {1}
+class {2}Control : public {3}
 {{
 public:
     explicit {2}Control(Canvas* canvas, Node* node);
 
     void drag(QVector3D center, QVector3D delta) override;
     QPointF inspectorPosition() const override;
-{3}
+{4}
 }};
 
 #endif
-""".format(name.upper(), control_type.lower(), name, {
+""".format(name.upper(), control_type.lower(), name, control_type, {
 "Control":
 """    QRectF bounds() const override;""",
 "MultiLineControl":

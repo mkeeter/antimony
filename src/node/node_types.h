@@ -18,6 +18,7 @@ namespace NodeType
         INTERSECTION,
         DIFFERENCE,
         ATTRACT,
+        REPEL,
         // NODE TYPES
     };
 };

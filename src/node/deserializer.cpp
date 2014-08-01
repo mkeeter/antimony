@@ -20,6 +20,7 @@
 #include "node/csg/intersection_node.h"
 #include "node/csg/difference_node.h"
 #include "node/deform/attract_node.h"
+#include "node/deform/repel_node.h"
 // NODE HEADERS
 
 #include "datum/float_datum.h"
@@ -97,6 +98,8 @@ void SceneDeserializer::deserializeNode(QDataStream* in, QObject* p)
             node = new DifferenceNode(p); break;
         case NodeType::ATTRACT:
             node = new AttractNode(p); break;
+        case NodeType::REPEL:
+            node = new RepelNode(p); break;
         // NODE CASES
     }
     node->setObjectName(node_name);

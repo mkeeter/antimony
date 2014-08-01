@@ -98,6 +98,7 @@ void MainWindow::addNodeToMenu(QString category, QString name,
 #include "node/csg/difference_node.h"
 #include "node/meta/script_node.h"
 #include "node/deform/attract_node.h"
+#include "node/deform/repel_node.h"
 // NODE HEADERS
 
 void MainWindow::populateMenu(QMenu* menu)
@@ -117,5 +118,6 @@ void MainWindow::populateMenu(QMenu* menu)
     addNodeToMenu<DifferenceNode>("CSG", "Difference", menu, &submenus);
     addNodeToMenu<ScriptNode>("Meta", "Script", menu, &submenus);
     addNodeToMenu<AttractNode>("Deform", "Attract", menu, &submenus);
+    addNodeToMenu<RepelNode>("Deform", "Repel", menu, &submenus);
     // NODE CASES
 }
