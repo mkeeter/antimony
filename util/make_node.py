@@ -35,7 +35,7 @@ public:
 
 # Write node source
 open("src/node/{0}/{1}_node.cpp".format(category.lower(), name.lower()), 'wb').write(
-"""#include "node/csg/{0}_node.h"
+"""#include "node/{3}/{0}_node.h"
 #include "node/manager.h"
 
 #include "datum/float_datum.h"
@@ -55,7 +55,7 @@ open("src/node/{0}/{1}_node.cpp".format(category.lower(), name.lower()), 'wb').w
 {{
     #error "Must create relevant datums here"
 }}
-""".format(name.lower(), name, name[0].lower()))
+""".format(name.lower(), name, name[0].lower(), category.lower()))
 
 ################################################################################
 
@@ -77,14 +77,14 @@ public:
 }};
 
 #endif
-""".format(name.upper(), control_type, name, {
+""".format(name.upper(), control_type.lower(), name, {
 "Control":
-"""QRectF bounds() const override;""",
+"""    QRectF bounds() const override;""",
 "MultiLineControl":
-"""QVector<QVector<QVector3D>> lines() const override;""",
+"""    QVector<QVector<QVector3D>> lines() const override;""",
 "DummyControl":
-"""QRectF bounds() const override;""",
-}[control_type])
+"""    QRectF bounds() const override;""",
+}[control_type]))
 
 ################################################################################
 
@@ -95,7 +95,7 @@ open("src/control/{0}/{1}_control.cpp".format(category.lower(), name.lower()), '
 
 #include "ui/canvas.h"
 
-{2}Control:{2}Control(Canvas* canvas, Node* node)
+{2}Control::{2}Control(Canvas* canvas, Node* node)
     : {3}(canvas, node)
 {{
     #error "datums need to be watched"
@@ -119,7 +119,7 @@ QPointF {2}Control::inspectorPosition() const
     #error "bounds is not implemented"
 }}""".format(name),
 'MultiLineControl':
-"""QVector<QVector<QVector3D>> {0}Control::lines() const override
+"""QVector<QVector<QVector3D>> {0}Control::lines() const
 {{
     #error "lines is not implemented"
 }}""".format(name),
@@ -145,7 +145,7 @@ open(main_window_file, "wb").write(
 '''.format(category.lower(), name.lower()) +
         main_window_include
     ).replace(main_window_menu,
-        '''   addNodeToMenu<{0}Node>({1}, {0}, menu, &submenus);
+        '''    addNodeToMenu<{0}Node>("{1}", "{0}", menu, &submenus);
 '''.format(name, category) +
         main_window_menu)
 )
@@ -182,7 +182,7 @@ manager_case = "        // CONTROL CASES"
 manager = open(manager_file, 'rb').read()
 open(manager_file, 'wb').write(
     manager.replace(manager_include,
-        '''#include "control/{0}/{1}_node.h"
+        '''#include "control/{0}/{1}_control.h"
 '''.format(
             category.lower(), name.lower()) +
         manager_include
