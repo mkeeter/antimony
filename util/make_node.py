@@ -3,7 +3,7 @@
 name = raw_input("Node base name (i.e. 'Circle')?  ")
 category = raw_input("Node category (i.e. 'Meta')?  ")
 
-control_types = ["Control", "Dummy", "MultiLine"]
+control_types = ["Control", "DummyControl", "MultiLineControl"]
 control_type = control_types[int(raw_input("Control base class?\n"
     + '\n'.join("%i) %s" % (i + 1,s)
                 for i, s in enumerate(control_types)) + '\n')) - 1]
@@ -11,7 +11,7 @@ control_type = control_types[int(raw_input("Control base class?\n"
 ################################################################################
 
 # Write node header
-open("src/node/{0}/{1}.h".format(category.lower(), name.lower()), 'wb').write(
+open("src/node/{0}/{1}_node.h".format(category.lower(), name.lower()), 'wb').write(
 """#ifndef {0}_NODE
 #define {0}_NODE
 
@@ -34,7 +34,7 @@ public:
 ################################################################################
 
 # Write node source
-open("src/node/{0}/{1}.cpp".format(category.lower(), name.lower(), 'wb')).write(
+open("src/node/{0}/{1}_node.cpp".format(category.lower(), name.lower()), 'wb').write(
 """#include "node/csg/{0}_node.h"
 #include "node/manager.h"
 
@@ -59,23 +59,94 @@ open("src/node/{0}/{1}.cpp".format(category.lower(), name.lower(), 'wb')).write(
 
 ################################################################################
 
+# Write control header
+open("src/control/{0}/{1}_control.h".format(category.lower(), name.lower()), 'wb').write(
+"""#ifndef {0}_CONTROL_H
+#define {0}_CONTROL_H
+
+#include "control/{1}.h"
+
+class {2}Control : public {1}
+{{
+public:
+    explicit {2}Control(Canvas* canvas, Node* node);
+
+    void drag(QVector3D center, QVector3D delta) override;
+    QPointF inspectorPosition() const override;
+{3}
+}};
+
+#endif
+""".format(name.upper(), control_type, name, {
+"Control":
+"""QRectF bounds() const override;""",
+"MultiLineControl":
+"""QVector<QVector<QVector3D>> lines() const override;""",
+"DummyControl":
+"""QRectF bounds() const override;""",
+}[control_type])
+
+################################################################################
+
+# Write control header
+open("src/control/{0}/{1}_control.cpp".format(category.lower(), name.lower()), 'wb').write(
+'''#include <Python.h>
+#include "control/{0}/{1}_control.h"
+
+#include "ui/canvas.h"
+
+{2}Control:{2}Control(Canvas* canvas, Node* node)
+    : {3}(canvas, node)
+{{
+    #error "datums need to be watched"
+}}
+
+void {2}Control::drag(QVector3D c, QVector3D d)
+{{
+    #error "drag is not implemented"
+}}
+
+QPointF {2}Control::inspectorPosition() const
+{{
+    #error "inspectorPosition is not implemented"
+}}
+
+{4}
+'''.format(category, name.lower(), name, control_type, {
+"Control":
+"""QRectF {0}Control::bounds() const
+{{
+    #error "bounds is not implemented"
+}}""".format(name),
+'MultiLineControl':
+"""QVector<QVector<QVector3D>> {0}Control::lines() const override
+{{
+    #error "lines is not implemented"
+}}""".format(name),
+"DummyControl":
+"""QRectF {0}Control::bounds() const
+{{
+    #error "bounds is not implemented"
+}}""".format(name),
+}[control_type]))
+
+################################################################################
+
 # Add node to main window (menus)
 main_window_file = "src/ui/main_window.cpp"
 main_window_include = "// NODE HEADERS"
-main_window_menu = "        // NODE CASES"
+main_window_menu = "    // NODE CASES"
 
 # Update main window
 main_window = open(main_window_file, 'rb').read()
 open(main_window_file, "wb").write(
     main_window.replace(main_window_include,
         '''#include "node/{0}/{1}_node.h"
-        '''.format(
-            category.lower(), name.lower()) +
+'''.format(category.lower(), name.lower()) +
         main_window_include
     ).replace(main_window_menu,
         '''   addNodeToMenu<{0}Node>({1}, {0}, menu, &submenus);
-        '''.format(
-            name, category) +
+'''.format(name, category) +
         main_window_menu)
 )
 
@@ -91,16 +162,14 @@ deserializer = open(deserializer_file, 'rb').read()
 open(deserializer_file, 'wb').write(
     deserializer.replace(deserializer_include,
         '''#include "node/{0}/{1}_node.h"
-        '''.format(
-            category.lower(), name.lower()) +
+'''.format(category.lower(), name.lower()) +
         deserializer_include
     ).replace(
         deserializer_case,
         '''        case NodeType::{0}:
             node = new {1}Node(p); break;
-'''.format(
-            name.upper(), name) +
-        deserializer_cases)
+'''.format(name.upper(), name) +
+        deserializer_case)
 )
 
 ################################################################################
@@ -114,7 +183,7 @@ manager = open(manager_file, 'rb').read()
 open(manager_file, 'wb').write(
     manager.replace(manager_include,
         '''#include "control/{0}/{1}_node.h"
-        '''.format(
+'''.format(
             category.lower(), name.lower()) +
         manager_include
     ).replace(manager_case,
@@ -146,10 +215,10 @@ nodes_source = "    # NODE SOURCES"
 nodes = open(nodes_file, 'rb').read()
 open(nodes_file, 'wb').write(
     nodes.replace(nodes_header,
-        '''    ../src/node/{0}/{1}_node.h
+        '''    ../src/node/{0}/{1}_node.h \\
 '''.format(category.lower(), name.lower()) + nodes_header
     ).replace(nodes_source,
-        '''    ../src/node/{0}/{1}_node.cpp
+        '''    ../src/node/{0}/{1}_node.cpp \\
 '''.format(category.lower(), name.lower())+ nodes_source)
 )
 
@@ -163,10 +232,10 @@ controls_source = "    # CONTROL SOURCES"
 controls = open(controls_file, 'rb').read()
 open(controls_file, 'wb').write(
     controls.replace(controls_header,
-        '''    ../src/control/{0}/{1}_control.h
+        '''    ../src/control/{0}/{1}_control.h \\
 '''.format(category.lower(), name.lower()) + controls_header
     ).replace(controls_source,
-        '''    ../src/control/{0}/{1}_control.cpp
+        '''    ../src/control/{0}/{1}_control.cpp \\
 '''.format(category.lower(), name.lower()) + controls_source)
 )
 
