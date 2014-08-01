@@ -5,7 +5,6 @@
 
 class TextNode : public Node
 {
-    Q_OBJECT
 public:
     explicit TextNode(QObject* parent=0);
     explicit TextNode(float x, float y, float z, float scale,

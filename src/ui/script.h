@@ -7,7 +7,6 @@
 
 class ResizeButton : public QPushButton
 {
-    Q_OBJECT
 public:
     explicit ResizeButton(const QString& text, QWidget* parent=0);
     void mousePressEvent(QMouseEvent *e);

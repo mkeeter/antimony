@@ -8,7 +8,6 @@
 
 class CircleNode : public Node
 {
-    Q_OBJECT
 public:
     explicit CircleNode(QObject* parent=0);
     explicit CircleNode(QString name, QObject* parent=0);

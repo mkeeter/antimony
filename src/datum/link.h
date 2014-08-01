@@ -8,7 +8,6 @@ class Datum;
 
 class Link : public QObject
 {
-    Q_OBJECT
 public:
     explicit Link(Datum *parent);
     void setTarget(Datum* d);

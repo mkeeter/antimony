@@ -9,7 +9,6 @@ class Node;
 
 class TriangleControl : public MultiLineControl
 {
-    Q_OBJECT
 public:
     explicit TriangleControl(Canvas* canvas, Node* node);
     virtual QVector<QVector<QVector3D>> lines() const override;

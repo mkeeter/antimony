@@ -8,7 +8,6 @@
 
 class TextLabelControl : public Control
 {
-    Q_OBJECT
 public:
     explicit TextLabelControl(QString label, QColor color, Canvas* canvas, Node* node);
 

@@ -5,7 +5,6 @@
 
 class SphereNode : public Node
 {
-    Q_OBJECT
 public:
     explicit SphereNode(QObject* parent=0);
     explicit SphereNode(float x, float y, float z, float scale,

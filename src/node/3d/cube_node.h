@@ -9,7 +9,6 @@ class Point3D;
 
 class CubeNode : public Node
 {
-    Q_OBJECT
 public:
     explicit CubeNode(QObject* parent=0);
     explicit CubeNode(QString name, QObject* parent=0);

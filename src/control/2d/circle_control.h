@@ -12,7 +12,6 @@
 
 class _RadiusControl : public MultiLineControl
 {
-    Q_OBJECT
 public:
     explicit _RadiusControl(Canvas* canvas, Node* node, QGraphicsItem* parent);
     virtual QVector<QVector<QVector3D>> lines() const override;
@@ -24,7 +23,6 @@ public:
 
 class CircleControl : public DummyControl
 {
-    Q_OBJECT
 public:
     explicit CircleControl(Canvas* canvas, Node* node);
 

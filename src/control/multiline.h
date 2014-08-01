@@ -6,7 +6,6 @@
 
 class MultiLineControl : public Control
 {
-    Q_OBJECT
 public:
     explicit MultiLineControl(Canvas* canvas, Node* node,
                               QGraphicsItem* parent=0);
