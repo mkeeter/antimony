@@ -55,4 +55,9 @@ HEADERS += \
 
 FORMS += \
     ../src/ui/forms/main_window.ui \
-    ../src/ui/forms/view_selector.ui
+    ../src/ui/forms/view_selector.ui \
+
+macx {
+    QMAKE_INFO_PLIST = ../app/Info.plist
+    ICON = ../app/sb.icns
+}
