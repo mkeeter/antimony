@@ -96,7 +96,7 @@ open(deserializer_file, 'wb').write(
         deserializer_include
     ).replace(
         deserializer_case,
-        '''case NodeType::{0}:
+        '''        case NodeType::{0}:
             node = new {1}Node(p); break;
 '''.format(
             name.upper(), name) +
@@ -118,7 +118,7 @@ open(manager_file, 'wb').write(
             category.lower(), name.lower()) +
         manager_include
     ).replace(manager_case,
-        '''case NodeType::{0}:
+        '''        case NodeType::{0}:
             return new {1}Control(canvas, n);
 '''.format(name.upper(), name) +
         manager_case)
@@ -126,6 +126,19 @@ open(manager_file, 'wb').write(
 
 ################################################################################
 
+types_file = "src/node/node_types.h"
+types_case = "        // NODE TYPES"
+
+types = open(types_file, 'rb').read()
+open(types_file, 'wb').write(
+        types.replace(types_case,
+            '''        {0},
+'''.format(name.upper()) + types_case)
+)
+
+################################################################################
+
+# Add node to nodes.pri
 nodes_file = "qt/nodes.pri"
 nodes_header = "    # NODE HEADERS"
 nodes_source = "    # NODE SOURCES"
@@ -142,6 +155,7 @@ open(nodes_file, 'wb').write(
 
 ################################################################################
 
+# Add control to controls.pri
 controls_file = "qt/controls.pri"
 controls_header = "    # CONTROL HEADERS"
 controls_source = "    # CONTROL SOURCES"

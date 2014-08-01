@@ -16,7 +16,8 @@ namespace NodeType
         SCRIPT,
         UNION,
         INTERSECTION,
-        DIFFERENCE
+        DIFFERENCE,
+        // NODE TYPES
     };
 };
 
