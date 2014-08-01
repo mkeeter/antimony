@@ -150,6 +150,7 @@ bool NodeManager::deserializeScene(QByteArray in)
 #include "control/csg/union_control.h"
 #include "control/csg/intersection_control.h"
 #include "control/csg/difference_control.h"
+// CONTROL HEADERS
 
 Control* NodeManager::makeControlFor(Canvas* canvas, Node* n)
 {
@@ -181,6 +182,7 @@ Control* NodeManager::makeControlFor(Canvas* canvas, Node* n)
             return new IntersectionControl(canvas, n);
         case NodeType::DIFFERENCE:
             return new DifferenceControl(canvas, n);
+        // CONTROL CASES
     }
    Q_ASSERT(false);
    return NULL;

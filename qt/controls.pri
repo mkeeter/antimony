@@ -16,6 +16,7 @@ SOURCES += \
     ../src/control/csg/intersection_control.cpp \
     ../src/control/csg/difference_control.cpp \
     ../src/control/meta/script_control.cpp \
+    # CONTROL SOURCES
 
 HEADERS += \
     ../src/control/control.h \
@@ -35,3 +36,4 @@ HEADERS += \
     ../src/control/csg/intersection_control.h \
     ../src/control/csg/difference_control.h \
     ../src/control/meta/script_control.h \
+    # CONTROL HEADERS
