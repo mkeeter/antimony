@@ -370,8 +370,9 @@ def attract(part, x, y, z, r):
     b = r/math.e
     return move(Shape(
         p.math,
-        part.xmin - b, part.ymin - b, part.zmin - b,
-        part.xmax + b, part.ymax + b, part.zmax + b), x, y, z)
+        part.bounds.xmin - b, part.bounds.ymin - b, part.bounds.zmin - b,
+        part.bounds.xmax + b, part.bounds.ymax + b, part.bounds.zmax + b),
+        x, y, z)
 
 def repel(part, x, y, z, r):
 

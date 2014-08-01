@@ -13,6 +13,7 @@ SOURCES += \
     ../src/node/2d/point2d_node.cpp \
     ../src/node/2d/text_node.cpp \
     ../src/node/2d/triangle_node.cpp \
+    ../src/node/deform/attract_node.cpp \
     # NODE SOURCES
 
 HEADERS += \
@@ -30,5 +31,6 @@ HEADERS += \
     ../src/node/2d/point2d_node.h \
     ../src/node/2d/text_node.h \
     ../src/node/2d/triangle_node.h \
+    ../src/node/deform/attract_node.h \
     # NODE HEADERS
 

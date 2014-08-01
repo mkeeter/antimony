@@ -97,6 +97,7 @@ void MainWindow::addNodeToMenu(QString category, QString name,
 #include "node/csg/intersection_node.h"
 #include "node/csg/difference_node.h"
 #include "node/meta/script_node.h"
+#include "node/deform/attract_node.h"
 // NODE HEADERS
 
 void MainWindow::populateMenu(QMenu* menu)
@@ -115,5 +116,6 @@ void MainWindow::populateMenu(QMenu* menu)
     addNodeToMenu<IntersectionNode>("CSG", "Intersection", menu, &submenus);
     addNodeToMenu<DifferenceNode>("CSG", "Difference", menu, &submenus);
     addNodeToMenu<ScriptNode>("Meta", "Script", menu, &submenus);
+    addNodeToMenu<AttractNode>("Deform", "Attract", menu, &submenus);
     // NODE CASES
 }

@@ -63,6 +63,10 @@ PyObject* FunctionDatum::getCurrentValue()
 
     PyObject* out = success ? PyObject_CallObject(function, args) : NULL;
 
+    if (PyErr_Occurred())
+    {
+        PyErr_Print();
+    }
     Py_DECREF(args);
     return out;
 }
