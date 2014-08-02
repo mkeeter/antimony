@@ -1,12 +1,11 @@
 #ifndef SPHERE_CONTROL_H
 #define SPHERE_CONTROL_H
 
-#include "control/control.h"
-#include "control/multiline.h"
+#include "control/wireframe.h"
 
 class Point3DControl;
 
-class SphereRadiusControl : public MultiLineControl
+class SphereRadiusControl : public WireframeControl
 {
     Q_OBJECT
 public:

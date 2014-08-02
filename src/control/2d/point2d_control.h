@@ -15,7 +15,7 @@ public:
     explicit Point2DControl(Canvas* canvas, Node* node,
                             QGraphicsItem* parent=0);
 
-    QVector<QPair<QVector3D, float>> points() const override; 
+    QVector<QPair<QVector3D, float>> points() const override;
 
     /** Drags the point in x, y, and z.
      */

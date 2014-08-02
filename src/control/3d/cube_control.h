@@ -1,13 +1,13 @@
 #ifndef CUBE_CONTROL_H
 #define CUBE_CONTROL_H
 
-#include "control/multiline.h"
+#include "control/wireframe.h"
 
 class Point3DControl;
 class Canvas;
 class Node;
 
-class CubeControl : public MultiLineControl
+class CubeControl : public WireframeControl
 {
     Q_OBJECT
 public:

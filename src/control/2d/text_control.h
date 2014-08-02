@@ -1,10 +1,9 @@
 #ifndef TEXT_CONTROL_H
 #define TEXT_CONTROL_H
 
-#include "control/control.h"
-#include "control/multiline.h"
+#include "control/wireframe.h"
 
-class _CaretTopControl : public MultiLineControl
+class _CaretTopControl : public WireframeControl
 {
 public:
     explicit _CaretTopControl(Canvas* canvas, Node* node, QGraphicsItem* parent);
@@ -13,7 +12,7 @@ public:
     QVector3D center() const;
 };
 
-class TextControl : public MultiLineControl
+class TextControl : public WireframeControl
 {
 public:
     explicit TextControl(Canvas* canvas, Node* node);

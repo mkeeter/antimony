@@ -2,9 +2,9 @@
 #define CYLINDER_CONTROL_H
 
 #include "control/control.h"
-#include "control/multiline.h"
+#include "control/wireframe.h"
 
-class _CylinderRadiusControl : public MultiLineControl
+class _CylinderRadiusControl : public WireframeControl
 {
 public:
     explicit _CylinderRadiusControl(Canvas* canvas, Node* node, QGraphicsItem* parent);
@@ -12,7 +12,7 @@ public:
     void drag(QVector3D center, QVector3D delta) override;
 };
 
-class _CylinderSpanControl : public MultiLineControl
+class _CylinderSpanControl : public WireframeControl
 {
 public:
     explicit _CylinderSpanControl(Canvas* canvas, Node* node, QGraphicsItem* parent);
@@ -20,7 +20,7 @@ public:
     void drag(QVector3D center, QVector3D delta) override;
 };
 
-class CylinderControl : public MultiLineControl
+class CylinderControl : public WireframeControl
 {
 public:
     explicit CylinderControl(Canvas* canvas, Node* node);

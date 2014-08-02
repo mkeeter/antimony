@@ -2,9 +2,9 @@
 #define EXTRUDE_CONTROL_H
 
 #include "control/control.h"
-#include "control/multiline.h"
+#include "control/wireframe.h"
 
-class _ExtrudeSpanControl : public MultiLineControl
+class _ExtrudeSpanControl : public WireframeControl
 {
 public:
     explicit _ExtrudeSpanControl(Canvas* canvas, Node* node, QGraphicsItem* parent);
@@ -14,7 +14,7 @@ protected:
     QColor defaultPenColor() const override;
 };
 
-class ExtrudeControl : public MultiLineControl
+class ExtrudeControl : public WireframeControl
 {
 public:
     explicit ExtrudeControl(Canvas* canvas, Node* node);

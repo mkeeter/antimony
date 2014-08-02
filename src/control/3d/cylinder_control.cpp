@@ -6,7 +6,7 @@
 #include "ui/canvas.h"
 
 _CylinderRadiusControl::_CylinderRadiusControl(Canvas* canvas, Node* node, QGraphicsItem* parent)
-    : MultiLineControl(canvas, node, parent)
+    : WireframeControl(canvas, node, parent)
 {
     watchDatums({"x", "y", "z0", "z1", "r"});
 }
@@ -40,7 +40,7 @@ void _CylinderRadiusControl::drag(QVector3D c, QVector3D d)
 ////////////////////////////////////////////////////////////////////////////////
 
 _CylinderSpanControl::_CylinderSpanControl(Canvas* canvas, Node* node, QGraphicsItem* parent)
-    : MultiLineControl(canvas, node, parent)
+    : WireframeControl(canvas, node, parent)
 {
     watchDatums({"x", "y", "z0", "z1", "r"});
 }
@@ -72,7 +72,7 @@ void _CylinderSpanControl::drag(QVector3D c, QVector3D d)
 ////////////////////////////////////////////////////////////////////////////////
 
 CylinderControl::CylinderControl(Canvas* canvas, Node* node)
-    : MultiLineControl(canvas, node),
+    : WireframeControl(canvas, node),
       radius(new _CylinderRadiusControl(canvas, node, this)),
       span(new _CylinderSpanControl(canvas, node, this))
 

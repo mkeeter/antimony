@@ -4,7 +4,7 @@
 #include "ui/canvas.h"
 
 RepelControl::RepelControl(Canvas* canvas, Node* node)
-    : MultiLineControl(canvas, node),
+    : WireframeControl(canvas, node),
       radius(new RepelRadiusControl(canvas, node, this))
 {
     watchDatums({"x","y","z","r"});

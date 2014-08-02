@@ -7,7 +7,7 @@
 #include "ui/canvas.h"
 
 TriangleControl::TriangleControl(Canvas* canvas, Node* node)
-    : MultiLineControl(canvas, node),
+    : WireframeControl(canvas, node),
       a(new Point2DControl(canvas, node->findChild<Node*>("a"), this)),
       b(new Point2DControl(canvas, node->findChild<Node*>("b"), this)),
       c(new Point2DControl(canvas, node->findChild<Node*>("c"), this))

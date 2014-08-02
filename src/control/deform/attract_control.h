@@ -1,7 +1,7 @@
 #ifndef ATTRACT_CONTROL_H
 #define ATTRACT_CONTROL_H
 
-#include "control/multiline.h"
+#include "control/wireframe.h"
 #include "control/3d/sphere_control.h"
 
 #include "ui/colors.h"
@@ -17,7 +17,7 @@ protected:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class AttractControl : public MultiLineControl
+class AttractControl : public WireframeControl
 {
 public:
     explicit AttractControl(Canvas* canvas, Node* node);

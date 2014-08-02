@@ -2,7 +2,7 @@
 #include "ui/canvas.h"
 
 _CaretTopControl::_CaretTopControl(Canvas* canvas, Node* node, QGraphicsItem* parent)
-    : MultiLineControl(canvas, node, parent)
+    : WireframeControl(canvas, node, parent)
 {
     watchDatums({"x", "y", "scale"});
 }
@@ -29,7 +29,7 @@ void _CaretTopControl::drag(QVector3D c, QVector3D d)
 ////////////////////////////////////////////////////////////////////////////////
 
 TextControl::TextControl(Canvas* canvas, Node* node)
-    : MultiLineControl(canvas, node),
+    : WireframeControl(canvas, node),
       caret_top(new _CaretTopControl(canvas, node, this))
 {
     watchDatums({"x", "y", "scale"});

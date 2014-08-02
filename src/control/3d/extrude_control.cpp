@@ -7,7 +7,7 @@
 #include "ui/colors.h"
 
 _ExtrudeSpanControl::_ExtrudeSpanControl(Canvas* canvas, Node* node, QGraphicsItem* parent)
-    : MultiLineControl(canvas, node, parent)
+    : WireframeControl(canvas, node, parent)
 {
     watchDatums({"_x", "_y", "z0", "z1", "_scale"});
 }
@@ -44,7 +44,7 @@ QColor _ExtrudeSpanControl::defaultPenColor() const
 ////////////////////////////////////////////////////////////////////////////////
 
 ExtrudeControl::ExtrudeControl(Canvas* canvas, Node* node)
-    : MultiLineControl(canvas, node),
+    : WireframeControl(canvas, node),
       span(new _ExtrudeSpanControl(canvas, node, this))
 
 {

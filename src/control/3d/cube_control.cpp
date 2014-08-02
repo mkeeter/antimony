@@ -7,7 +7,7 @@
 #include "ui/canvas.h"
 
 CubeControl::CubeControl(Canvas* canvas, Node* node)
-    : MultiLineControl(canvas, node),
+    : WireframeControl(canvas, node),
       a(new Point3DControl(canvas, node->findChild<Node*>("a"), this)),
       b(new Point3DControl(canvas, node->findChild<Node*>("b"), this))
 {

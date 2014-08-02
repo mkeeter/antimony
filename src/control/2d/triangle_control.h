@@ -1,13 +1,13 @@
 #ifndef TRIANGLE_CONTROL_H
 #define TRIANGLE_CONTROL_H
 
-#include "control/multiline.h"
+#include "control/wireframe.h"
 
 class Point2DControl;
 class Canvas;
 class Node;
 
-class TriangleControl : public MultiLineControl
+class TriangleControl : public WireframeControl
 {
     Q_OBJECT
 public:

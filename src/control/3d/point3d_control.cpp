@@ -8,7 +8,7 @@
 
 Point3DControl::Point3DControl(Canvas* canvas, Node* node,
                                QGraphicsItem* parent)
-    : Control(canvas, node, parent)
+    : WireframeControl(canvas, node, parent)
 {
     watchDatums({"x","y","z"});
 }
@@ -18,24 +18,10 @@ QVector3D Point3DControl::position() const
     return QVector3D(getValue("x"), getValue("y"), getValue("z"));
 }
 
-QRectF Point3DControl::bounds() const
-{
-    return boundingBox({position()});
-}
 
-void Point3DControl::paintControl(QPainter *painter)
+QVector<QPair<QVector3D, float>> Point3DControl::points() const
 {
-    setDefaultBrush(painter);
-    setDefaultPen(painter);
-    painter->drawPath(shape());
-}
-
-QPainterPath Point3DControl::shape() const
-{
-    QPointF pt = canvas->worldToScene(position());
-    QPainterPath path;
-    path.addEllipse(pt.x() - 5, pt.y() - 5, 10, 10);
-    return path;
+    return {{position(), 5}};
 }
 
 void Point3DControl::drag(QVector3D center, QVector3D delta)

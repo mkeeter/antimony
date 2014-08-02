@@ -1,7 +1,7 @@
 #ifndef REPEL_CONTROL_H
 #define REPEL_CONTROL_H
 
-#include "control/multiline.h"
+#include "control/wireframe.h"
 #include "control/3d/sphere_control.h"
 
 #include "ui/colors.h"
@@ -16,7 +16,7 @@ protected:
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-class RepelControl : public MultiLineControl
+class RepelControl : public WireframeControl
 {
 public:
     explicit RepelControl(Canvas* canvas, Node* node);

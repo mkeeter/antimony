@@ -4,7 +4,7 @@
 #include "ui/canvas.h"
 
 AttractControl::AttractControl(Canvas* canvas, Node* node)
-    : MultiLineControl(canvas, node),
+    : WireframeControl(canvas, node),
       radius(new AttractRadiusControl(canvas, node, this))
 {
     watchDatums({"x","y","z","r"});

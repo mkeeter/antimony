@@ -1,6 +1,5 @@
 SOURCES += \
     ../src/control/control.cpp \
-    ../src/control/multiline.cpp \
     ../src/control/wireframe.cpp \
     ../src/control/text.cpp \
     ../src/control/axes_control.cpp \
@@ -23,7 +22,6 @@ SOURCES += \
 
 HEADERS += \
     ../src/control/control.h \
-    ../src/control/multiline.h \
     ../src/control/wireframe.h \
     ../src/control/text.h \
     ../src/control/axes_control.h \

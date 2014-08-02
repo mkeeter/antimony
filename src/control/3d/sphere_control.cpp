@@ -8,7 +8,7 @@
 #include <cmath>
 
 SphereRadiusControl::SphereRadiusControl(Canvas* canvas, Node* node, QGraphicsItem* parent)
-    : MultiLineControl(canvas, node, parent)
+    : WireframeControl(canvas, node, parent)
 {
     watchDatums({"x","y","z","r"});
 }
