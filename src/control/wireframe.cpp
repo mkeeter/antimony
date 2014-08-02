@@ -55,7 +55,7 @@ QPainterPath WireframeControl::pointPath() const
     {
         QPointF pt = canvas->worldToScene(ptr.first);
         float r = ptr.second;
-        path.addEllipse(QRectF(pt.x() - r, pt.y() - r, r, r));
+        path.addEllipse(QRectF(pt.x() - r, pt.y() - r, 2*r, 2*r));
     }
     return path;
 }

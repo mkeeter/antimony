@@ -2,7 +2,7 @@
 #include "ui/canvas.h"
 
 _RadiusControl::_RadiusControl(Canvas *canvas, Node *node, QGraphicsItem *parent)
-    : MultiLineControl(canvas, node, parent)
+    : WireframeControl(canvas, node, parent)
 {
     watchDatums({"x","y","r"});
 }

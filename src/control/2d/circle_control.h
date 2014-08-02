@@ -7,10 +7,10 @@
 #include <QVector3D>
 
 #include "control/control.h"
-#include "control/multiline.h"
+#include "control/wireframe.h"
 #include "control/2d/point2d_control.h"
 
-class _RadiusControl : public MultiLineControl
+class _RadiusControl : public WireframeControl
 {
     Q_OBJECT
 public:
