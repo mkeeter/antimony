@@ -3,7 +3,7 @@
 name = raw_input("Node base name (i.e. 'Circle')?  ")
 category = raw_input("Node category (i.e. 'Meta')?  ")
 
-control_types = ["Control", "DummyControl", "MultiLineControl"]
+control_types = ["Control", "DummyControl", "WireframeControl"]
 control_type = control_types[int(raw_input("Control base class?\n"
     + '\n'.join("%i) %s" % (i + 1,s)
                 for i, s in enumerate(control_types)) + '\n')) - 1]
@@ -80,7 +80,7 @@ public:
 """.format(name.upper(), control_type.lower(), name, control_type, {
 "Control":
 """    QRectF bounds() const override;""",
-"MultiLineControl":
+"WireframeControl":
 """    QVector<QVector<QVector3D>> lines() const override;""",
 "DummyControl":
 """    QRectF bounds() const override;""",
@@ -118,7 +118,7 @@ QPointF {2}Control::inspectorPosition() const
 {{
     #error "bounds is not implemented"
 }}""".format(name),
-'MultiLineControl':
+'WireframeControl':
 """QVector<QVector<QVector3D>> {0}Control::lines() const
 {{
     #error "lines is not implemented"

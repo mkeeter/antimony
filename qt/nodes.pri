@@ -15,6 +15,7 @@ SOURCES += \
     ../src/node/2d/triangle_node.cpp \
     ../src/node/deform/attract_node.cpp \
     ../src/node/deform/repel_node.cpp \
+    ../src/node/deform/scalex_node.cpp \
     # NODE SOURCES
 
 HEADERS += \
@@ -34,5 +35,6 @@ HEADERS += \
     ../src/node/2d/triangle_node.h \
     ../src/node/deform/attract_node.h \
     ../src/node/deform/repel_node.h \
+    ../src/node/deform/scalex_node.h \
     # NODE HEADERS
 

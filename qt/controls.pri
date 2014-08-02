@@ -18,6 +18,7 @@ SOURCES += \
     ../src/control/meta/script_control.cpp \
     ../src/control/deform/attract_control.cpp \
     ../src/control/deform/repel_control.cpp \
+    ../src/control/deform/scalex_control.cpp \
     # CONTROL SOURCES
 
 HEADERS += \
@@ -40,4 +41,5 @@ HEADERS += \
     ../src/control/meta/script_control.h \
     ../src/control/deform/attract_control.h \
     ../src/control/deform/repel_control.h \
+    ../src/control/deform/scalex_control.h \
     # CONTROL HEADERS

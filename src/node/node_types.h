@@ -19,6 +19,7 @@ namespace NodeType
         DIFFERENCE,
         ATTRACT,
         REPEL,
+        SCALEX,
         // NODE TYPES
     };
 };

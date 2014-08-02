@@ -99,6 +99,7 @@ void MainWindow::addNodeToMenu(QString category, QString name,
 #include "node/meta/script_node.h"
 #include "node/deform/attract_node.h"
 #include "node/deform/repel_node.h"
+#include "node/deform/scalex_node.h"
 // NODE HEADERS
 
 void MainWindow::populateMenu(QMenu* menu)
@@ -119,5 +120,6 @@ void MainWindow::populateMenu(QMenu* menu)
     addNodeToMenu<ScriptNode>("Meta", "Script", menu, &submenus);
     addNodeToMenu<AttractNode>("Deform", "Attract", menu, &submenus);
     addNodeToMenu<RepelNode>("Deform", "Repel", menu, &submenus);
+    addNodeToMenu<ScaleXNode>("Deform", "Scale (X)", menu, &submenus);
     // NODE CASES
 }
