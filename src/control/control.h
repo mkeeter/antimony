@@ -154,6 +154,7 @@ protected:
  */
 class DummyControl : public Control
 {
+    Q_OBJECT
 public:
     explicit DummyControl(Canvas* canvas, Node* node, QGraphicsItem* parent=0);
     void drag(QVector3D center, QVector3D delta) override;

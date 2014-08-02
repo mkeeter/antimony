@@ -10,6 +10,7 @@ class Datum;
 
 class InputHandler : public QObject
 {
+    Q_OBJECT
 public:
     explicit InputHandler(Datum* parent);
 
@@ -48,6 +49,7 @@ public:
 
 class SingleInputHandler : public InputHandler
 {
+    Q_OBJECT
 public:
     SingleInputHandler(Datum* parent);
     PyObject* getValue() const override;
@@ -65,6 +67,7 @@ protected:
 
 class ShapeInputHandler : public InputHandler
 {
+    Q_OBJECT
 public:
     ShapeInputHandler(Datum* parent);
     PyObject* getValue() const override;

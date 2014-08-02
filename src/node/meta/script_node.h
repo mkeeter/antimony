@@ -7,6 +7,7 @@
 
 class ScriptNode : public Node
 {
+    Q_OBJECT
 public:
     explicit ScriptNode(QObject* parent=NULL);
     explicit ScriptNode(QString name, QString x, QString y, QString z,

@@ -10,6 +10,7 @@
 
 class Point2DControl : public Control
 {
+    Q_OBJECT
 public:
     explicit Point2DControl(Canvas* canvas, Node* node,
                             QGraphicsItem* parent=0);

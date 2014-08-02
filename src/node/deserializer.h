@@ -8,6 +8,7 @@ class Node;
 
 class SceneDeserializer : public QObject
 {
+    Q_OBJECT
 public:
     explicit SceneDeserializer(QObject* parent=0);
     void run(QDataStream* in);

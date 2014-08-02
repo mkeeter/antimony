@@ -15,6 +15,7 @@ class DepthImageItem;
 
 class RenderImage : public QObject
 {
+    Q_OBJECT
 public:
     explicit RenderImage(Shape* shape, QObject* parent=0);
     ~RenderImage();

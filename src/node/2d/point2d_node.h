@@ -10,6 +10,7 @@ class Canvas;
 
 class Point2D : public Node
 {
+    Q_OBJECT
 public:
     explicit Point2D(QObject* parent=NULL);
     explicit Point2D(float x, float y, float z, float scale,

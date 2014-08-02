@@ -12,6 +12,7 @@ class Canvas;
 
 class Node : public QObject
 {
+    Q_OBJECT
 public:
     explicit Node(QObject* parent=NULL);
     explicit Node(QString name, QObject* parent=NULL);

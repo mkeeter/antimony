@@ -10,6 +10,7 @@ class Node;
 
 class SceneSerializer : public QObject
 {
+    Q_OBJECT
 public:
     explicit SceneSerializer(QObject* parent=0);
     void run(QDataStream* out);

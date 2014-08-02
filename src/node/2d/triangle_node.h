@@ -5,6 +5,7 @@
 
 class TriangleNode : public Node
 {
+    Q_OBJECT
 public:
     explicit TriangleNode(QObject* parent=0);
     explicit TriangleNode(float x, float y, float z, float scale,

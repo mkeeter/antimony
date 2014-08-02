@@ -5,6 +5,7 @@
 
 class StringDatum : public EvalDatum
 {
+    Q_OBJECT
 public:
     explicit StringDatum(QString name, QObject* parent=0);
     explicit StringDatum(QString name, QString expr, QObject* parent=0);

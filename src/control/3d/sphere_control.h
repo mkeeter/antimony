@@ -8,6 +8,7 @@ class Point3DControl;
 
 class SphereRadiusControl : public MultiLineControl
 {
+    Q_OBJECT
 public:
     explicit SphereRadiusControl(Canvas* canvas, Node* node, QGraphicsItem* parent);
     QVector<QVector<QVector3D>> lines() const override;
