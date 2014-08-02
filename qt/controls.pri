@@ -19,6 +19,7 @@ SOURCES += \
     ../src/control/deform/attract_control.cpp \
     ../src/control/deform/repel_control.cpp \
     ../src/control/deform/scalex_control.cpp \
+    ../src/control/deform/scaley_control.cpp \
     # CONTROL SOURCES
 
 HEADERS += \
@@ -42,4 +43,5 @@ HEADERS += \
     ../src/control/deform/attract_control.h \
     ../src/control/deform/repel_control.h \
     ../src/control/deform/scalex_control.h \
+    ../src/control/deform/scaley_control.h \
     # CONTROL HEADERS

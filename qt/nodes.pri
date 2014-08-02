@@ -16,6 +16,7 @@ SOURCES += \
     ../src/node/deform/attract_node.cpp \
     ../src/node/deform/repel_node.cpp \
     ../src/node/deform/scalex_node.cpp \
+    ../src/node/deform/scaley_node.cpp \
     # NODE SOURCES
 
 HEADERS += \
@@ -36,5 +37,6 @@ HEADERS += \
     ../src/node/deform/attract_node.h \
     ../src/node/deform/repel_node.h \
     ../src/node/deform/scalex_node.h \
+    ../src/node/deform/scaley_node.h \
     # NODE HEADERS
 

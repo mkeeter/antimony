@@ -20,6 +20,7 @@ namespace NodeType
         ATTRACT,
         REPEL,
         SCALEX,
+        SCALEY,
         // NODE TYPES
     };
 };

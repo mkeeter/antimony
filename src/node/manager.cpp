@@ -153,6 +153,7 @@ bool NodeManager::deserializeScene(QByteArray in)
 #include "control/deform/attract_control.h"
 #include "control/deform/repel_control.h"
 #include "control/deform/scalex_control.h"
+#include "control/deform/scaley_control.h"
 // CONTROL HEADERS
 
 Control* NodeManager::makeControlFor(Canvas* canvas, Node* n)
@@ -191,6 +192,8 @@ Control* NodeManager::makeControlFor(Canvas* canvas, Node* n)
             return new RepelControl(canvas, n);
         case NodeType::SCALEX:
             return new ScaleXControl(canvas, n);
+        case NodeType::SCALEY:
+            return new ScaleYControl(canvas, n);
         // CONTROL CASES
     }
    Q_ASSERT(false);
