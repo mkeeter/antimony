@@ -227,6 +227,22 @@ void Control::dragValue(QString name, double delta)
     }
 }
 
+void Control::setValue(QString name, double new_value)
+{
+    Datum* d = node->getDatum(name);
+    Q_ASSERT(d);
+
+    FloatDatum* f = dynamic_cast<FloatDatum*>(d);
+    Q_ASSERT(f);
+
+    bool ok = false;
+    double v = f->getExpr().toFloat(&ok);
+    if (ok)
+    {
+        f->setExpr(QString::number(new_value));
+    }
+}
+
 QColor Control::defaultPenColor() const
 {
     return Colors::base04;

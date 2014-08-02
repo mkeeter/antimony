@@ -102,6 +102,7 @@ void MainWindow::addNodeToMenu(QString category, QString name,
 #include "node/deform/scalex_node.h"
 #include "node/deform/scaley_node.h"
 #include "node/deform/scalez_node.h"
+#include "node/transform/rotatex_node.h"
 // NODE HEADERS
 
 void MainWindow::populateMenu(QMenu* menu)
@@ -125,5 +126,6 @@ void MainWindow::populateMenu(QMenu* menu)
     addNodeToMenu<ScaleXNode>("Deform", "Scale (X)", menu, &submenus);
     addNodeToMenu<ScaleYNode>("Deform", "Scale (Y)", menu, &submenus);
     addNodeToMenu<ScaleZNode>("Deform", "Scale (Z)", menu, &submenus);
+    addNodeToMenu<RotateXNode>("Transform", "Rotate (X)", menu, &submenus);
     // NODE CASES
 }

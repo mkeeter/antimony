@@ -115,6 +115,10 @@ protected:
      */
     void dragValue(QString name, double delta);
 
+    /** Sets a specific datum's value to the given value.
+     */
+    void setValue(QString name, double new_value);
+
     /** Returns the color to be used by the default pen.
      */
     virtual QColor defaultPenColor() const;

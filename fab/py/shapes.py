@@ -258,18 +258,19 @@ def pyramid(x0, x1, y0, y1, z0, z1):
 
 # 3D shapes and operations
 
-def rotate_x(part, angle):
-
+def rotate_x(part, angle, y0=0, z0=0):
+    p = move(part, 0, -y0, -z0)
     angle *= math.pi/180
     ca, sa = math.cos(angle), math.sin(angle)
     nca, nsa = math.cos(-angle), math.sin(-angle)
 
-    return part.map(Transform(
+    return move(p.map(Transform(
         '', '+*f%(ca)gY*f%(sa)gZ'  % locals(),
             '+*f%(nsa)gY*f%(ca)gZ' % locals(),
 
         'X', '+*f%(nca)gY*f%(nsa)gZ' % locals(),
-             '+*f%(sa)gY*f%(nca)gZ' % locals()))
+             '+*f%(sa)gY*f%(nca)gZ' % locals())),
+        0, y0, z0)
 
 def rotate_y(part, angle):
 

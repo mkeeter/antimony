@@ -18,6 +18,7 @@ SOURCES += \
     ../src/node/deform/scalex_node.cpp \
     ../src/node/deform/scaley_node.cpp \
     ../src/node/deform/scalez_node.cpp \
+    ../src/node/transform/rotatex_node.cpp \
     # NODE SOURCES
 
 HEADERS += \
@@ -40,5 +41,6 @@ HEADERS += \
     ../src/node/deform/scalex_node.h \
     ../src/node/deform/scaley_node.h \
     ../src/node/deform/scalez_node.h \
+    ../src/node/transform/rotatex_node.h \
     # NODE HEADERS
 
