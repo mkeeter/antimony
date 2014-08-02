@@ -23,6 +23,7 @@
 #include "node/deform/repel_node.h"
 #include "node/deform/scalex_node.h"
 #include "node/deform/scaley_node.h"
+#include "node/deform/scalez_node.h"
 // NODE HEADERS
 
 #include "datum/float_datum.h"
@@ -106,6 +107,8 @@ void SceneDeserializer::deserializeNode(QDataStream* in, QObject* p)
             node = new ScaleXNode(p); break;
         case NodeType::SCALEY:
             node = new ScaleYNode(p); break;
+        case NodeType::SCALEZ:
+            node = new ScaleZNode(p); break;
         // NODE CASES
     }
     node->setObjectName(node_name);

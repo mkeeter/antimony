@@ -101,6 +101,7 @@ void MainWindow::addNodeToMenu(QString category, QString name,
 #include "node/deform/repel_node.h"
 #include "node/deform/scalex_node.h"
 #include "node/deform/scaley_node.h"
+#include "node/deform/scalez_node.h"
 // NODE HEADERS
 
 void MainWindow::populateMenu(QMenu* menu)
@@ -123,5 +124,6 @@ void MainWindow::populateMenu(QMenu* menu)
     addNodeToMenu<RepelNode>("Deform", "Repel", menu, &submenus);
     addNodeToMenu<ScaleXNode>("Deform", "Scale (X)", menu, &submenus);
     addNodeToMenu<ScaleYNode>("Deform", "Scale (Y)", menu, &submenus);
+    addNodeToMenu<ScaleZNode>("Deform", "Scale (Z)", menu, &submenus);
     // NODE CASES
 }

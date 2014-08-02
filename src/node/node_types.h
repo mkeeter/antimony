@@ -21,6 +21,7 @@ namespace NodeType
         REPEL,
         SCALEX,
         SCALEY,
+        SCALEZ,
         // NODE TYPES
     };
 };
