@@ -10,8 +10,8 @@ class SphereRadiusControl : public MultiLineControl
 {
 public:
     explicit SphereRadiusControl(Canvas* canvas, Node* node, QGraphicsItem* parent);
-    virtual QVector<QVector<QVector3D>> lines() const override;
-    virtual void drag(QVector3D center, QVector3D delta) override;
+    QVector<QVector<QVector3D>> lines() const override;
+    void drag(QVector3D center, QVector3D delta) override;
     QVector3D center() const;
 };
 

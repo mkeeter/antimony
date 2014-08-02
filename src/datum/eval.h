@@ -18,11 +18,11 @@ protected:
 
     /** Overload function to actually get the current value.
      */
-    virtual PyObject* getCurrentValue() override;
+    PyObject* getCurrentValue() override;
 
     /** Returns a string suitable for display in a node viewer.
      */
-    virtual QString getString() const override;
+    QString getString() const override;
 
     /** Validation function called on Python object.
      */

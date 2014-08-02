@@ -8,16 +8,16 @@ class _CylinderRadiusControl : public MultiLineControl
 {
 public:
     explicit _CylinderRadiusControl(Canvas* canvas, Node* node, QGraphicsItem* parent);
-    virtual QVector<QVector<QVector3D>> lines() const override;
-    virtual void drag(QVector3D center, QVector3D delta) override;
+    QVector<QVector<QVector3D>> lines() const override;
+    void drag(QVector3D center, QVector3D delta) override;
 };
 
 class _CylinderSpanControl : public MultiLineControl
 {
 public:
     explicit _CylinderSpanControl(Canvas* canvas, Node* node, QGraphicsItem* parent);
-    virtual QVector<QVector<QVector3D>> lines() const override;
-    virtual void drag(QVector3D center, QVector3D delta) override;
+    QVector<QVector<QVector3D>> lines() const override;
+    void drag(QVector3D center, QVector3D delta) override;
 };
 
 class CylinderControl : public MultiLineControl

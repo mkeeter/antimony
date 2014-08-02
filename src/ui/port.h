@@ -13,10 +13,10 @@ class Port : public QGraphicsObject
 public:
     explicit Port(Datum* d, Canvas* canvas, QGraphicsItem* parent);
 
-    virtual QRectF boundingRect() const override;
-    virtual void paint(QPainter *painter,
-                       const QStyleOptionGraphicsItem *option,
-                       QWidget *widget) override;
+    QRectF boundingRect() const override;
+    void paint(QPainter *painter,
+               const QStyleOptionGraphicsItem *option,
+               QWidget *widget) override;
     void setOpacity(float o) { opacity = o; update(); }
     Datum* getDatum() const;
 protected:

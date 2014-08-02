@@ -11,9 +11,9 @@ class CubeControl : public MultiLineControl
 {
 public:
     explicit CubeControl(Canvas* canvas, Node* node);
-    virtual QVector<QVector<QVector3D>> lines() const override;
-    virtual void drag(QVector3D center, QVector3D delta);
-    virtual QPointF inspectorPosition() const override;
+    QVector<QVector<QVector3D>> lines() const override;
+    void drag(QVector3D center, QVector3D delta) override;
+    QPointF inspectorPosition() const override;
 protected:
     Point3DControl* a;
     Point3DControl* b;

@@ -19,8 +19,8 @@ public:
     PyObject* makeInput(QString name, PyTypeObject* type);
     PyObject* makeOutput(QString name, PyObject* out);
 
-    virtual PyTypeObject* getType() const override { return Py_None->ob_type; }
-    virtual bool hasOutput() const override { return false; }
+    PyTypeObject* getType() const override { return Py_None->ob_type; }
+    bool hasOutput() const override { return false; }
 
     /** Returns the line on which an error occurred or -1.
      */
@@ -48,15 +48,15 @@ protected:
 
     /** Evaluates the script (getting back None) and causing datum creation.
      */
-    virtual PyObject* getCurrentValue() override;
+    PyObject* getCurrentValue() override;
 
     /** Function that returns the desired start token for PyRun_String
      */
-    virtual int getStartToken() const override;
+    int getStartToken() const override;
 
     /** Function that modifies the globals dict before eval is called.
      */
-    virtual void modifyGlobalsDict(PyObject* g) override;
+    void modifyGlobalsDict(PyObject* g) override;
 
     /** On Python error, record line number and traceback.
      */

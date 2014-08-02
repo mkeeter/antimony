@@ -14,8 +14,8 @@ class _RadiusControl : public MultiLineControl
 {
 public:
     explicit _RadiusControl(Canvas* canvas, Node* node, QGraphicsItem* parent);
-    virtual QVector<QVector<QVector3D>> lines() const override;
-    virtual void drag(QVector3D center, QVector3D delta) override;
+    QVector<QVector<QVector3D>> lines() const override;
+    void drag(QVector3D center, QVector3D delta) override;
     QVector3D center() const;
 };
 
@@ -28,13 +28,13 @@ public:
 
     /** Drags the circle in x and y.
      */
-    virtual void drag(QVector3D center, QVector3D delta) override;
+    void drag(QVector3D center, QVector3D delta) override;
 
     /** Returns a position for the inspector.
      */
-    virtual QPointF inspectorPosition() const override;
+    QPointF inspectorPosition() const override;
 
-    virtual QRectF bounds() const override;
+    QRectF bounds() const override;
 
 protected:
     QVector3D position() const;

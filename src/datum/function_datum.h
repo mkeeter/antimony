@@ -19,9 +19,9 @@ public:
 
     /** User editing is always forbidden.
      */
-    virtual bool canEdit() const override { return false; }
+    bool canEdit() const override { return false; }
 
-    virtual QString getString() const override;
+    QString getString() const override;
 
     QString getFunctionName() const { return function_name; }
     QList<QString> getArguments() const { return arguments; }
@@ -36,7 +36,7 @@ protected:
 
     /** Call the desired function using parent datums as arguments.
      */
-    virtual PyObject* getCurrentValue() override;
+    PyObject* getCurrentValue() override;
 
     QString function_name;
     QList<QString> arguments;
@@ -54,8 +54,8 @@ public:
     DatumType::DatumType getDatumType() const override
         { return DatumType::SHAPE_FUNCTION; }
 protected:
-    virtual PyObject* getModule() const override;
-    virtual PyTypeObject* getType() const override { return fab::ShapeType; }
+    PyObject* getModule() const override;
+    PyTypeObject* getType() const override { return fab::ShapeType; }
 };
 
 #endif // FUNCTION_DATUM_H

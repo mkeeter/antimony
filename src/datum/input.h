@@ -50,12 +50,12 @@ class SingleInputHandler : public InputHandler
 {
 public:
     SingleInputHandler(Datum* parent);
-    virtual PyObject* getValue() const override;
-    virtual bool accepts(Link* input) const override;
-    virtual void addInput(Link* input) override;
-    virtual bool hasInput() const override;
-    virtual void deleteInput(Datum* d) override;
-    virtual QString getString() const override;
+    PyObject* getValue() const override;
+    bool accepts(Link* input) const override;
+    void addInput(Link* input) override;
+    bool hasInput() const override;
+    void deleteInput(Datum* d) override;
+    QString getString() const override;
     QList<Datum*> getInputDatums() const override;
 protected:
     QPointer<Link> in;
@@ -67,12 +67,12 @@ class ShapeInputHandler : public InputHandler
 {
 public:
     ShapeInputHandler(Datum* parent);
-    virtual PyObject* getValue() const override;
-    virtual bool accepts(Link* input) const override;
-    virtual void addInput(Link* input) override;
-    virtual bool hasInput() const override;
-    virtual void deleteInput(Datum* d) override;
-    virtual QString getString() const override;
+    PyObject* getValue() const override;
+    bool accepts(Link* input) const override;
+    void addInput(Link* input) override;
+    bool hasInput() const override;
+    void deleteInput(Datum* d) override;
+    QString getString() const override;
     QList<Datum*> getInputDatums() const override;
 protected:
     /** Removes inactive input pointers from the list.

@@ -12,9 +12,9 @@ public:
 
     virtual QPainterPath shape() const;
 
-    virtual QRectF bounds() const override;
+    QRectF bounds() const override;
 
-    virtual void paintControl(QPainter *painter) override;
+    void paintControl(QPainter *painter) override;
 
 protected:
     /** Generates a painter path (in scene coordinates)

@@ -77,19 +77,19 @@ protected:
      *  Left-clicks are saved in scene coordinates; right-clicks
      *  are saved in pixel coordinates.
      */
-    virtual void mousePressEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
 
     /** Pan or spin the view.
      */
-    virtual void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
 
     /** On mouse wheel action, zoom about the mouse cursor.
      */
-    virtual void wheelEvent(QWheelEvent *event) override;
+    void wheelEvent(QWheelEvent *event) override;
 
     /** On delete key press, delete nodes and connections.
      */
-    virtual void keyPressEvent(QKeyEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
 
     /** On paint event, resize depth canvas then call default painter.
      */

@@ -85,27 +85,27 @@ protected:
 
     /** On hover enter, set _hover to true and update.
      */
-    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
 
     /** On hover leave, set _hover to false and update.
      */
-    virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 
     /** On double click, open a node viewer.
      */
-    virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
 
     /** Handle mouse clicks by preparing to drag.
      */
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
 
     /** On mouse release (without drag), select object.
      */
-    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 
     /** On mouse drag, call the virtual function drag.
      */
-    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
 
     /** Called to drag the node around with the mouse.
      */
@@ -133,8 +133,8 @@ protected:
 
     /** Override paint with a function that is safe under node deletion.
      */
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-                       QWidget *widget) override;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+               QWidget *widget) override;
 
     /** This function should be defined by child nodes
      */
@@ -156,7 +156,7 @@ class DummyControl : public Control
 {
 public:
     explicit DummyControl(Canvas* canvas, Node* node, QGraphicsItem* parent=0);
-    virtual void drag(QVector3D center, QVector3D delta) override;
+    void drag(QVector3D center, QVector3D delta) override;
     virtual void paintControl(QPainter *painter);
     virtual QPainterPath shape() const;
 };
