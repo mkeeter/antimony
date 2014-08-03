@@ -24,6 +24,7 @@ namespace NodeType
         SCALEZ,
         ROTATEX,
         ROTATEY,
+        ROTATEZ,
         // NODE TYPES
     };
 };

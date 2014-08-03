@@ -157,6 +157,7 @@ bool NodeManager::deserializeScene(QByteArray in)
 #include "control/deform/scalez_control.h"
 #include "control/transform/rotatex_control.h"
 #include "control/transform/rotatey_control.h"
+#include "control/transform/rotatez_control.h"
 // CONTROL HEADERS
 
 Control* NodeManager::makeControlFor(Canvas* canvas, Node* n)
@@ -203,6 +204,8 @@ Control* NodeManager::makeControlFor(Canvas* canvas, Node* n)
             return new RotateXControl(canvas, n);
         case NodeType::ROTATEY:
             return new RotateYControl(canvas, n);
+        case NodeType::ROTATEZ:
+            return new RotateZControl(canvas, n);
         // CONTROL CASES
     }
    Q_ASSERT(false);
