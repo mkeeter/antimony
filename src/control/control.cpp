@@ -292,6 +292,82 @@ void Control::paint(QPainter *painter,
 
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "control/2d/circle_control.h"
+#include "control/2d/triangle_control.h"
+#include "control/2d/text_control.h"
+#include "control/2d/point2d_control.h"
+#include "control/3d/cube_control.h"
+#include "control/3d/sphere_control.h"
+#include "control/3d/cylinder_control.h"
+#include "control/3d/extrude_control.h"
+#include "control/3d/point3d_control.h"
+#include "control/meta/script_control.h"
+#include "control/csg/union_control.h"
+#include "control/csg/intersection_control.h"
+#include "control/csg/difference_control.h"
+#include "control/deform/attract_control.h"
+#include "control/deform/repel_control.h"
+#include "control/deform/scalex_control.h"
+#include "control/deform/scaley_control.h"
+#include "control/deform/scalez_control.h"
+#include "control/transform/rotatex_control.h"
+#include "control/transform/rotatey_control.h"
+#include "control/transform/rotatez_control.h"
+
+Control* Control::makeControlFor(Canvas* canvas, Node* node)
+{
+   switch (node->getNodeType())
+    {
+        case NodeType::CIRCLE:
+            return new CircleControl(canvas, node);
+        case NodeType::TRIANGLE:
+            return new TriangleControl(canvas, node);
+        case NodeType::POINT2D:
+            return new Point2DControl(canvas, node);
+        case NodeType::CUBE:
+            return new CubeControl(canvas, node);
+        case NodeType::SPHERE:
+            return new SphereControl(canvas, node);
+        case NodeType::CYLINDER:
+            return new CylinderControl(canvas, node);
+        case NodeType::EXTRUDE:
+            return new ExtrudeControl(canvas, node);
+        case NodeType::POINT3D:
+            return new Point3DControl(canvas, node);
+        case NodeType::SCRIPT:
+            return new ScriptControl(canvas, node);
+        case NodeType::TEXT:
+            return new TextControl(canvas, node);
+        case NodeType::UNION:
+            return new UnionControl(canvas, node);
+        case NodeType::INTERSECTION:
+            return new IntersectionControl(canvas, node);
+        case NodeType::DIFFERENCE:
+            return new DifferenceControl(canvas, node);
+        case NodeType::ATTRACT:
+            return new AttractControl(canvas, node);
+        case NodeType::REPEL:
+            return new RepelControl(canvas, node);
+        case NodeType::SCALEX:
+            return new ScaleXControl(canvas, node);
+        case NodeType::SCALEY:
+            return new ScaleYControl(canvas, node);
+        case NodeType::SCALEZ:
+            return new ScaleZControl(canvas, node);
+        case NodeType::ROTATEX:
+            return new RotateXControl(canvas, node);
+        case NodeType::ROTATEY:
+            return new RotateYControl(canvas, node);
+        case NodeType::ROTATEZ:
+            return new RotateZControl(canvas, node);
+        // CONTROL CASES
+    }
+   Q_ASSERT(false);
+   return NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 DummyControl::DummyControl(Canvas *canvas, Node *node, QGraphicsItem *parent)
     : Control(canvas, node, parent)
 {

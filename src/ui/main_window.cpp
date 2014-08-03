@@ -74,7 +74,7 @@ void MainWindow::createNew()
 
     Node* n = f(obj_pos.x(), obj_pos.y(), obj_pos.z(),
                 100 / canvas->getScale(), NULL);
-    Control* c = NodeManager::manager()->makeControlFor(canvas, n);
+    Control* c = Control::makeControlFor(canvas, n);
     c->grabMouse();
     c->setClickPos(scene_pos);
 }

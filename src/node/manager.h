@@ -57,10 +57,6 @@ public:
      */
     void makeControls(Canvas* canvas);
 
-    /** Makes a control for the given node.
-     */
-    Control* makeControlFor(Canvas* canvas, Node* n);
-
     /** Creates connections (UI elements representing links).
      */
     void makeConnections(Canvas* canvas);

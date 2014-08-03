@@ -135,88 +135,15 @@ bool NodeManager::deserializeScene(QByteArray in)
 
 #ifdef ANTIMONY
 
+#include "control/control.h"
 #include "ui/connection.h"
 
-#include "control/2d/circle_control.h"
-#include "control/2d/triangle_control.h"
-#include "control/2d/text_control.h"
-#include "control/2d/point2d_control.h"
-#include "control/3d/cube_control.h"
-#include "control/3d/sphere_control.h"
-#include "control/3d/cylinder_control.h"
-#include "control/3d/extrude_control.h"
-#include "control/3d/point3d_control.h"
-#include "control/meta/script_control.h"
-#include "control/csg/union_control.h"
-#include "control/csg/intersection_control.h"
-#include "control/csg/difference_control.h"
-#include "control/deform/attract_control.h"
-#include "control/deform/repel_control.h"
-#include "control/deform/scalex_control.h"
-#include "control/deform/scaley_control.h"
-#include "control/deform/scalez_control.h"
-#include "control/transform/rotatex_control.h"
-#include "control/transform/rotatey_control.h"
-#include "control/transform/rotatez_control.h"
-// CONTROL HEADERS
-
-Control* NodeManager::makeControlFor(Canvas* canvas, Node* n)
-{
-   switch (n->getNodeType())
-    {
-        case NodeType::CIRCLE:
-            return new CircleControl(canvas, n);
-        case NodeType::TRIANGLE:
-            return new TriangleControl(canvas, n);
-        case NodeType::POINT2D:
-            return new Point2DControl(canvas, n);
-        case NodeType::CUBE:
-            return new CubeControl(canvas, n);
-        case NodeType::SPHERE:
-            return new SphereControl(canvas, n);
-        case NodeType::CYLINDER:
-            return new CylinderControl(canvas, n);
-        case NodeType::EXTRUDE:
-            return new ExtrudeControl(canvas, n);
-        case NodeType::POINT3D:
-            return new Point3DControl(canvas, n);
-        case NodeType::SCRIPT:
-            return new ScriptControl(canvas, n);
-        case NodeType::TEXT:
-            return new TextControl(canvas, n);
-        case NodeType::UNION:
-            return new UnionControl(canvas, n);
-        case NodeType::INTERSECTION:
-            return new IntersectionControl(canvas, n);
-        case NodeType::DIFFERENCE:
-            return new DifferenceControl(canvas, n);
-        case NodeType::ATTRACT:
-            return new AttractControl(canvas, n);
-        case NodeType::REPEL:
-            return new RepelControl(canvas, n);
-        case NodeType::SCALEX:
-            return new ScaleXControl(canvas, n);
-        case NodeType::SCALEY:
-            return new ScaleYControl(canvas, n);
-        case NodeType::SCALEZ:
-            return new ScaleZControl(canvas, n);
-        case NodeType::ROTATEX:
-            return new RotateXControl(canvas, n);
-        case NodeType::ROTATEY:
-            return new RotateYControl(canvas, n);
-        case NodeType::ROTATEZ:
-            return new RotateZControl(canvas, n);
-        // CONTROL CASES
-    }
-   Q_ASSERT(false);
-   return NULL;
-}
 
 void NodeManager::makeControls(Canvas* canvas)
 {
     for (auto n : findChildren<Node*>(QString(), Qt::FindDirectChildrenOnly))
     {
-        makeControlFor(canvas, n);
+        Control::makeControlFor(canvas, n);
     }
 }
 

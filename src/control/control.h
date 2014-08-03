@@ -22,6 +22,10 @@ public:
      */
     explicit Control(Canvas* canvas, Node* node, QGraphicsItem* parent=0);
 
+    /** Makes a control for the given node.
+     */
+    static Control* makeControlFor(Canvas* canvas, Node* n);
+
     /** Finds a bounding box for a set of points in world coordinates.
      *
      *  The returned bounding box is in scene coordinates,
