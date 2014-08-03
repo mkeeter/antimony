@@ -28,3 +28,21 @@ Node* RotateXNode(float x, float y, float z, float scale, QObject* parent=0)
             {"input", "a", "y", "z"});
     return n;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+Node* RotateYNode(float x, float y, float z, float scale, QObject* parent=0)
+{
+    Q_UNUSED(scale);
+
+    Node* n = new Node(NodeType::ROTATEY, parent);
+    new NameDatum("name", NodeManager::manager()->getName("r"), n);
+    new FloatDatum("x", QString::number(x), n);
+    new FloatDatum("_y", QString::number(y), n);
+    new FloatDatum("z", QString::number(z), n);
+    new FloatDatum("a", QString::number(45), n);
+    new ShapeDatum("input", n);
+    new ShapeFunctionDatum("shape", n, "rotate_y",
+            {"input", "a", "x", "z"});
+    return n;
+}

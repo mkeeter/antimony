@@ -116,5 +116,6 @@ void MainWindow::populateMenu(QMenu* menu)
     addNodeToMenu<ScaleYNode>("Deform", "Scale (Y)", menu, &submenus);
     addNodeToMenu<ScaleZNode>("Deform", "Scale (Z)", menu, &submenus);
     addNodeToMenu<RotateXNode>("Transform", "Rotate (X)", menu, &submenus);
+    addNodeToMenu<RotateYNode>("Transform", "Rotate (Y)", menu, &submenus);
     // NODE CASES
 }

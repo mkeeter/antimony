@@ -22,6 +22,7 @@ SOURCES += \
     ../src/control/deform/scaley_control.cpp \
     ../src/control/deform/scalez_control.cpp \
     ../src/control/transform/rotatex_control.cpp \
+    ../src/control/transform/rotatey_control.cpp \
     # CONTROL SOURCES
 
 HEADERS += \
@@ -48,4 +49,5 @@ HEADERS += \
     ../src/control/deform/scaley_control.h \
     ../src/control/deform/scalez_control.h \
     ../src/control/transform/rotatex_control.h \
+    ../src/control/transform/rotatey_control.h \
     # CONTROL HEADERS
