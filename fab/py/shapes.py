@@ -103,17 +103,18 @@ translate = move
 
 ################################################################################
 
-def rotate(part, angle):
-
+def rotate(part, angle, x0=0, y0=0):
+    p = move(part, -x0, -y0, 0)
     angle *= math.pi/180
     ca, sa = math.cos(angle), math.sin(angle)
     nca, nsa = math.cos(-angle), math.sin(-angle)
 
-    return part.map(Transform(
+    return move(p.map(Transform(
         '+*f%(ca)gX*f%(sa)gY'    % locals(),
         '+*f%(nsa)gX*f%(ca)gY'   % locals(),
         '+*f%(nca)gX*f%(nsa)gY'  % locals(),
-        '+*f%(sa)gX*f%(nca)gY'   % locals()))
+        '+*f%(sa)gX*f%(nca)gY'   % locals())),
+        x0, y0, 0)
 
 ################################################################################
 
@@ -272,17 +273,19 @@ def rotate_x(part, angle, y0=0, z0=0):
              '+*f%(sa)gY*f%(nca)gZ' % locals())),
         0, y0, z0)
 
-def rotate_y(part, angle):
+def rotate_y(part, angle, x0=0, z0=0):
 
+    p = move(part, -x0, 0, -z0)
     angle *= math.pi/180
     ca, sa = math.cos(angle), math.sin(angle)
     nca, nsa = math.cos(-angle), math.sin(-angle)
 
-    return part.map(Transform(
+    return move(p.map(Transform(
             '+*f%(ca)gX*f%(sa)gZ'  % locals(), 'Y',
             '+*f%(nsa)gX*f%(ca)gZ' % locals(),
             '+*f%(nca)gX*f%(nsa)gZ' % locals(), 'Y',
-            '+*f%(sa)gX*f%(nca)gZ' % locals()))
+            '+*f%(sa)gX*f%(nca)gZ' % locals())),
+            x0, 0, z0)
 
 rotate_z = rotate
 
