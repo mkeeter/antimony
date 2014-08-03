@@ -10,8 +10,6 @@
 #include "datum/function_datum.h"
 #include "datum/script_datum.h"
 
-#include "node/meta/script_node.h"
-
 SceneSerializer::SceneSerializer(QObject* parent)
     : QObject(parent)
 {
@@ -54,7 +52,7 @@ void SceneSerializer::serializeNode(QDataStream* out, Node* node)
         if (dynamic_cast<ScriptDatum*>(d))
         {
             Q_ASSERT(deferred == NULL);
-            Q_ASSERT(dynamic_cast<ScriptNode*>(node));
+            Q_ASSERT(node->getNodeType() == NodeType::SCRIPT);;
             deferred = d;
         }
         else

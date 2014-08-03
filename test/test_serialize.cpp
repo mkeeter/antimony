@@ -4,15 +4,15 @@
 #include <QSignalSpy>
 
 #include "test_serialize.h"
-#include "node/2d/circle_node.h"
-#include "node/3d/cube_node.h"
+#include "node/2d.h"
+#include "node/3d.h"
 #include "node/manager.h"
 
 void TestSerialize::SerializeSimpleScene()
 {
     QByteArray empty = NodeManager::manager()->getSerializedScene();
 
-    Node* c = new CircleNode("c", "0.0", "0.0", "1.0");
+    Node* c = CircleNode("c", "0.0", "0.0", "1.0");
     QByteArray out = NodeManager::manager()->getSerializedScene();
 
     NodeManager::manager()->clear();
@@ -28,7 +28,7 @@ void TestSerialize::SerializeSimpleScene()
 
 void TestSerialize::SerializeNestedDatum()
 {
-    Node* c = new CubeNode(0, 0, 0, 1);
+    Node* c = CubeNode(0, 0, 0, 1);
     QByteArray out = NodeManager::manager()->getSerializedScene();
 
     NodeManager::manager()->clear();

@@ -9,7 +9,8 @@
 #include "datum/float_datum.h"
 #include "datum/link.h"
 
-#include "node/3d/point3d_node.h"
+#include "node/node.h"
+#include "node/3d.h"
 
 #include "cpp/shape.h"
 
@@ -39,7 +40,7 @@ void TestShape::ShapeOutput()
 
 void TestShape::ShapeInput()
 {
-    Point3D* p = new Point3D("p", "0.0", "0.0", "1.0");
+    Node* p = Point3DNode("p", "0.0", "0.0", "1.0");
     ShapeFunctionDatum* a = new ShapeFunctionDatum("a", p, "circle", {"x","y","z"});
 
     ShapeDatum* d = new ShapeDatum("d");
@@ -56,7 +57,7 @@ void TestShape::ShapeInput()
 
 void TestShape::MultiShapeInput()
 {
-    Point3D* p = new Point3D("p", "0.0", "1.0", "!.0");
+    Node* p = Point3DNode("p", "0.0", "1.0", "!.0");
     ShapeFunctionDatum* a = new ShapeFunctionDatum("a", p, "circle", {"x","x","y"});
     ShapeFunctionDatum* b = new ShapeFunctionDatum("b", p, "circle", {"x","y","z"});
 
@@ -80,7 +81,7 @@ void TestShape::MultiShapeInput()
 
 void TestShape::DeleteInput()
 {
-    Point3D* p = new Point3D("p", "0.0", "1.0", "!.0");
+    Node* p = Point3DNode("p", "0.0", "1.0", "!.0");
     ShapeFunctionDatum* a = new ShapeFunctionDatum("a", p, "circle", {"x","y","z"});
 
     ShapeDatum* d = new ShapeDatum("d");

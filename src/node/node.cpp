@@ -9,24 +9,22 @@
 #include "datum/datum.h"
 #include "datum/name_datum.h"
 
-Node::Node(QObject* parent)
-    : QObject(parent), control(NULL)
+Node::Node(NodeType::NodeType type, QObject* parent)
+    : QObject(parent), type(type), control(NULL)
 {
-    // Nothing to do here
-}
-
-Node::Node(QString name, QObject* parent)
-    : Node(parent)
-{
-    new NameDatum("name", name, this);
-
     if (parent == NULL)
     {
         setParent(NodeManager::manager());
-        connect(getDatum<NameDatum>("name"),
-                SIGNAL(nameChanged(QString)),
-                NodeManager::manager(),
-                SLOT(onNameChange(QString)));
+    }
+}
+
+Node::Node(NodeType::NodeType type, QString name, QObject* parent)
+    : Node(type, parent)
+{
+    new NameDatum("name", name, this);
+    if (parent == NULL)
+    {
+        setParent(NodeManager::manager());
     }
 }
 

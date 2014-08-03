@@ -6,6 +6,7 @@
 class Canvas;
 class ScriptEditor;
 class ScriptDatum;
+class Node;
 
 namespace Ui {
 class MainWindow;
@@ -38,12 +39,12 @@ private:
 
     /** Makes a new object of the given class.
      */
-    template <class N>
+    template <Node* (*f)(float, float, float, float, QObject*)>
     void createNew();
 
     /** Adds a particular node to the "Add" menu.
      */
-    template <class N>
+    template <Node* (*f)(float, float, float, float, QObject*)>
     void addNodeToMenu(QString category, QString name, QMenu* menu,
                           QMap<QString, QMenu*>* submenus);
 

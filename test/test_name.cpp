@@ -6,7 +6,10 @@
 #include "test_name.h"
 
 #include "datum/name_datum.h"
-#include "node/3d/point3d_node.h"
+
+#include "node/node.h"
+#include "node/3d.h"
+
 #include "node/manager.h"
 
 TestName::TestName(QObject *parent) :
@@ -17,28 +20,28 @@ TestName::TestName(QObject *parent) :
 
 void TestName::NodeName()
 {
-    Point3D* p = new Point3D("p", "0", "0", "0");
+    Node* p = Point3DNode("p", "0", "0", "0");
     QVERIFY(NodeManager::manager()->getName("p") == "p0");
     delete p;
 }
 
 void TestName::NameValid()
 {
-    Point3D* p = new Point3D("p0", "0", "0", "0");
+    Node* p = Point3DNode("p0", "0", "0", "0");
     QVERIFY(p->getDatum("name")->getValid());
     delete p;
 }
 
 void TestName::MultiNodeName()
 {
-    Point3D* p = new Point3D("p0", "0", "0", "0");
+    Node* p = Point3DNode("p0", "0", "0", "0");
     QVERIFY(NodeManager::manager()->getName("p") == "p1");
     delete p;
 }
 
 void TestName::Rename()
 {
-    Point3D* p = new Point3D("p0", "0", "0", "0");
+    Node* p = Point3DNode("p0", "0", "0", "0");
     p->getDatum<NameDatum>("name")->setExpr("not_p0");
     QVERIFY(NodeManager::manager()->getName("p") == "p0");
     QVERIFY(p->getDatum<NameDatum>("name")->getValid() == true);
@@ -47,7 +50,7 @@ void TestName::Rename()
 
 void TestName::RenameWithSpaces()
 {
-    Point3D* p = new Point3D("p0", "0", "0", "0");
+    Node* p = Point3DNode("p0", "0", "0", "0");
     p->getDatum<NameDatum>("name")->setExpr("   p0   ");
     QVERIFY(p->getDatum<NameDatum>("name")->getValid() == true);
     QVERIFY(NodeManager::manager()->getName("p") == "p1");

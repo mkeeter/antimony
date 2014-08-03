@@ -56,7 +56,14 @@ void MainWindow::openScript(ScriptDatum *d)
 #include "node/manager.h"
 #include "control/control.h"
 
-template <class N>
+#include "node/2d.h"
+#include "node/3d.h"
+#include "node/csg.h"
+#include "node/meta.h"
+#include "node/transforms.h"
+#include "node/deform.h"
+
+template <Node* (*f)(float, float, float, float, QObject*)>
 void MainWindow::createNew()
 {
     QPoint mouse_pos  = canvas->rect().center();
@@ -65,56 +72,38 @@ void MainWindow::createNew()
 
     QCursor::setPos(canvas->mapToGlobal(mouse_pos));
 
-    Node* n = new N(obj_pos.x(), obj_pos.y(), obj_pos.z(),
-                    100 / canvas->getScale());
+    Node* n = f(obj_pos.x(), obj_pos.y(), obj_pos.z(),
+                100 / canvas->getScale(), NULL);
     Control* c = NodeManager::manager()->makeControlFor(canvas, n);
     c->grabMouse();
     c->setClickPos(scene_pos);
 }
 
-template <class N>
+template <Node* (*f)(float, float, float, float, QObject*)>
 void MainWindow::addNodeToMenu(QString category, QString name,
-                                  QMenu* menu, QMap<QString, QMenu*>* submenus)
+                               QMenu* menu, QMap<QString, QMenu*>* submenus)
 {
     if (!submenus->contains(category))
     {
         (*submenus)[category] = menu->addMenu(category);
     }
     QAction* a = (*submenus)[category]->addAction(name);
-    connect(a, &QAction::triggered, this, &MainWindow::createNew<N>);
+    connect(a, &QAction::triggered, this, &MainWindow::createNew<f>);
 }
 
-#include "node/3d/point3d_node.h"
-#include "node/3d/sphere_node.h"
-#include "node/3d/cylinder_node.h"
-#include "node/3d/extrude_node.h"
-#include "node/3d/cube_node.h"
-#include "node/2d/circle_node.h"
-#include "node/2d/point2d_node.h"
-#include "node/2d/triangle_node.h"
-#include "node/2d/text_node.h"
-#include "node/csg/union_node.h"
-#include "node/csg/intersection_node.h"
-#include "node/csg/difference_node.h"
-#include "node/meta/script_node.h"
-#include "node/deform/attract_node.h"
-#include "node/deform/repel_node.h"
-#include "node/deform/scalex_node.h"
-#include "node/deform/scaley_node.h"
-#include "node/deform/scalez_node.h"
-#include "node/transform/rotatex_node.h"
+
 // NODE HEADERS
 
 void MainWindow::populateMenu(QMenu* menu)
 {
     QMap<QString, QMenu*> submenus;
-    addNodeToMenu<Point3D>("3D", "Point", menu, &submenus);
+    addNodeToMenu<Point3DNode>("3D", "Point", menu, &submenus);
     addNodeToMenu<CubeNode>("3D", "Cube", menu, &submenus);
     addNodeToMenu<SphereNode>("3D", "Sphere", menu, &submenus);
     addNodeToMenu<CylinderNode>("3D", "Cylinder", menu, &submenus);
     addNodeToMenu<ExtrudeNode>("3D", "Extrude", menu, &submenus);
     addNodeToMenu<CircleNode>("2D", "Circle", menu, &submenus);
-    addNodeToMenu<Point2D>("2D", "Point", menu, &submenus);
+    addNodeToMenu<Point2DNode>("2D", "Point", menu, &submenus);
     addNodeToMenu<TriangleNode>("2D", "Triangle", menu, &submenus);
     addNodeToMenu<TextNode>("2D", "Text", menu, &submenus);
     addNodeToMenu<UnionNode>("CSG", "Union", menu, &submenus);

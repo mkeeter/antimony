@@ -7,7 +7,9 @@
 
 #include "datum/datum.h"
 #include "datum/name_datum.h"
-#include "node/3d/point3d_node.h"
+
+#include "node/node.h"
+#include "node/3d.h"
 
 TestProxy::TestProxy(QObject* parent)
     : QObject(parent)
@@ -17,7 +19,7 @@ TestProxy::TestProxy(QObject* parent)
 
 void TestProxy::MakeProxy()
 {
-    Point3D* p = new Point3D("p", "0.0", "1.0", "2.0");
+    Node* p = Point3DNode("p", "0.0", "1.0", "2.0");
     PyObject* proxy = p->proxy();
     QVERIFY(proxy);
     Py_DECREF(proxy);
@@ -26,7 +28,7 @@ void TestProxy::MakeProxy()
 
 void TestProxy::GetValidDatum()
 {
-    Point3D* p = new Point3D("p", "0.0", "1.0", "2.0");
+    Node* p = Point3DNode("p", "0.0", "1.0", "2.0");
     PyObject* proxy = p->proxy();
     PyObject* x = PyObject_GetAttrString(proxy, "x");
     QVERIFY(x == p->getDatum("x")->getValue());
@@ -39,7 +41,7 @@ void TestProxy::GetValidDatum()
 
 void TestProxy::GetInvalidDatum()
 {
-    Point3D* p = new Point3D("p", "not a float", "1.0", "2.0");
+    Node* p = Point3DNode("p", "not a float", "1.0", "2.0");
     PyObject* proxy = p->proxy();
     PyObject* x = PyObject_GetAttrString(proxy, "x");
     QVERIFY(x == NULL);
@@ -51,7 +53,7 @@ void TestProxy::GetInvalidDatum()
 
 void TestProxy::GetNonexistentDatum()
 {
-    Point3D* p = new Point3D("p", "0.0", "1.0", "2.0");
+    Node* p = Point3DNode("p", "0.0", "1.0", "2.0");
     PyObject* proxy = p->proxy();
     PyObject* q = PyObject_GetAttrString(proxy, "q");
     QVERIFY(q == NULL);
@@ -63,8 +65,8 @@ void TestProxy::GetNonexistentDatum()
 
 void TestProxy::DatumNameChange()
 {
-    Point3D* a = new Point3D("a", "0.0", "1.0", "2.0");
-    Point3D* b = new Point3D("b", "a.x", "1.0", "2.0");
+    Node* a = Point3DNode("a", "0.0", "1.0", "2.0");
+    Node* b = Point3DNode("b", "a.x", "1.0", "2.0");
     QVERIFY(b->getDatum("x")->getValid() == true);
     a->getDatum<NameDatum>("name")->setExpr("q");
     QVERIFY(b->getDatum("x")->getValid() == false);

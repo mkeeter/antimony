@@ -6,11 +6,13 @@
 #include "test_function.h"
 #include "datum/function_datum.h"
 #include "datum/float_datum.h"
-#include "node/3d/point3d_node.h"
+
+#include "node/node.h"
+#include "node/3d.h"
 
 void TestFunction::CircleFunction()
 {
-    Point3D* p = new Point3D("p", "0.0", "0.0", "1.0");
+    Node* p = Point3DNode("p", "0.0", "0.0", "1.0");
 
     ShapeFunctionDatum* d = new ShapeFunctionDatum("c", p, "circle", {"x","y","z"});
     QVERIFY(d->getValid());
@@ -20,7 +22,7 @@ void TestFunction::CircleFunction()
 
 void TestFunction::InvalidCircle()
 {
-    Point3D* p = new Point3D("p", "0.0", "0.0", "q.0");
+    Node* p = Point3DNode("p", "0.0", "0.0", "q.0");
 
     ShapeFunctionDatum* d1 = new ShapeFunctionDatum("c1", p, "circle", {"x","y","z"});
     QVERIFY(!d1->getValid());
@@ -33,7 +35,7 @@ void TestFunction::InvalidCircle()
 
 void TestFunction::ChangeInput()
 {
-    Point3D* p = new Point3D("p", "0.0", "0.0", "1.0");
+    Node* p = Point3DNode("p", "0.0", "0.0", "1.0");
 
     ShapeFunctionDatum* d = new ShapeFunctionDatum("c", p, "circle", {"x","y","z"});
     QSignalSpy s(d, SIGNAL(changed()));

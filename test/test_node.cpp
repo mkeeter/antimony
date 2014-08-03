@@ -9,8 +9,9 @@
 #include "datum/float_datum.h"
 #include "datum/function_datum.h"
 
-#include "node/3d/point3d_node.h"
-#include "node/3d/cube_node.h"
+#include "node/node.h"
+#include "node/3d.h"
+#include "node/3d.h"
 
 #include "node/manager.h"
 
@@ -22,7 +23,7 @@ TestNode::TestNode(QObject* parent)
 
 void TestNode::GetDatum()
 {
-    Point3D* p = new Point3D("p", "0", "0", "0");
+    Node* p = Point3DNode("p", "0", "0", "0");
     QVERIFY(p->getDatum<NameDatum>("name"));
     QVERIFY(p->getDatum<NameDatum>("name")->getExpr() == "p");
     delete p;
@@ -30,7 +31,7 @@ void TestNode::GetDatum()
 
 void TestNode::DeleteNode()
 {
-    Point3D* p = new Point3D("p", "0", "0", "0");
+    Node* p = Point3DNode("p", "0", "0", "0");
     QSignalSpy s(p->getDatum("x"), SIGNAL(destroyed()));
     delete p;
     QVERIFY(s.count() == 1);
@@ -38,9 +39,9 @@ void TestNode::DeleteNode()
 
 void TestNode::EvalValid()
 {
-    Point3D* a = new Point3D("p0", "0.0", "1.0", "2.0");
+    Node* a = Point3DNode("p0", "0.0", "1.0", "2.0");
     QVERIFY(a->getDatum("name")->getValid());
-    Point3D* b = new Point3D("p1", "p0.x", "1.0", "2.0");
+    Node* b = Point3DNode("p1", "p0.x", "1.0", "2.0");
     QVERIFY(b->getDatum("x")->getValid() == true);
     QVERIFY(a->getDatum("x")->getValue() == b->getDatum("x")->getValue());
     delete a;
@@ -49,9 +50,9 @@ void TestNode::EvalValid()
 
 void TestNode::NameChangeEval()
 {
-    Point3D* a = new Point3D("old_name", "0.0", "1.0", "2.0");
+    Node* a = Point3DNode("old_name", "0.0", "1.0", "2.0");
     QVERIFY(a->getDatum("name")->getValid());
-    Point3D* b = new Point3D("p1", "new_name.x", "1.0", "2.0");
+    Node* b = Point3DNode("p1", "new_name.x", "1.0", "2.0");
     QVERIFY(b->getDatum("x")->getValid() == false);
     a->getDatum<NameDatum>("name")->setExpr("new_name");
     QVERIFY(b->getDatum("x")->getValid() == true);
@@ -62,9 +63,9 @@ void TestNode::NameChangeEval()
 
 void TestNode::NewNodeCreation()
 {
-    Point3D* a = new Point3D("a", "b.x", "0.0", "0.0");
+    Node* a = Point3DNode("a", "b.x", "0.0", "0.0");
     QVERIFY(a->getDatum("x")->getValid() == false);
-    Point3D* b = new Point3D("b", "0.0", "0.0", "0.0");
+    Node* b = Point3DNode("b", "0.0", "0.0", "0.0");
     QVERIFY(a->getDatum("x")->getValid() == true);
     delete a;
     delete b;
@@ -73,14 +74,14 @@ void TestNode::NewNodeCreation()
 
 void TestNode::DirectRecursiveConnection()
 {
-    Point3D* a = new Point3D("a", "a.x", "0.0", "0.0");
+    Node* a = Point3DNode("a", "a.x", "0.0", "0.0");
     QVERIFY(a->getDatum("x")->getValid() == false);
     delete a;
 }
 
 void TestNode::LoopingRecursiveConnection()
 {
-    Point3D* a = new Point3D("a", "a.y", "a.x", "0.0");
+    Node* a = Point3DNode("a", "a.y", "a.x", "0.0");
     QVERIFY(a->getDatum("x")->getValid() == false);
     QVERIFY(a->getDatum("y")->getValid() == false);
     delete a;
@@ -88,7 +89,7 @@ void TestNode::LoopingRecursiveConnection()
 
 void TestNode::ComplexRecursiveConnection()
 {
-    Point3D* a = new Point3D("a", "0.0", "a.x", "0.0");
+    Node* a = Point3DNode("a", "0.0", "a.x", "0.0");
     QVERIFY(a->getDatum("x")->getValid() == true);
     QVERIFY(a->getDatum("y")->getValid() == true);
 
@@ -101,7 +102,7 @@ void TestNode::ComplexRecursiveConnection()
 
 void TestNode::ModifyRecursiveConnection()
 {
-    Point3D* a = new Point3D("a", "0.0", "0.0", "0.0");
+    Node* a = Point3DNode("a", "0.0", "0.0", "0.0");
     a->getDatum<FloatDatum>("x")->setExpr("a.y");
     a->getDatum<FloatDatum>("y")->setExpr("a.x");
     a->getDatum<FloatDatum>("x")->setExpr("1.0");
@@ -113,7 +114,7 @@ void TestNode::ModifyRecursiveConnection()
 
 void TestNode::TestChildNodes()
 {
-    CubeNode* c = new CubeNode(0.0, 0.0, 0.0, 1.0);
+    Node* c = CubeNode(0.0, 0.0, 0.0, 1.0);
     ShapeFunctionDatum* d = c->getDatum<ShapeFunctionDatum>("shape");
     QVERIFY(d);
     QVERIFY(d->getValid());
