@@ -33,12 +33,12 @@ QColor adjust(QColor c, float scale)
 
 QColor highlight(QColor c)
 {
-    return adjust(c, 1.2);
+    return adjust(c, 1.4);
 }
 
 QColor dim(QColor c)
 {
-    return adjust(c, 1/1.2);
+    return adjust(c, 1/1.4);
 }
 
 
