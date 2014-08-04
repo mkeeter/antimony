@@ -250,7 +250,7 @@ QColor Control::defaultPenColor() const
 
 QColor Control::defaultBrushColor() const
 {
-    return Colors::base03;
+    return Colors::dim(defaultPenColor());
 }
 
 void Control::setDefaultPen(QPainter *painter) const
