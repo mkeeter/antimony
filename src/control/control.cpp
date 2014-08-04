@@ -236,7 +236,7 @@ void Control::setValue(QString name, double new_value)
     Q_ASSERT(f);
 
     bool ok = false;
-    double v = f->getExpr().toFloat(&ok);
+    f->getExpr().toFloat(&ok);
     if (ok)
     {
         f->setExpr(QString::number(new_value));
