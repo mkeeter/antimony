@@ -7,6 +7,7 @@
 #include "node/manager.h"
 
 #include "datum/float_datum.h"
+#include "datum/int_datum.h"
 #include "datum/name_datum.h"
 #include "datum/string_datum.h"
 #include "datum/script_datum.h"
@@ -79,6 +80,8 @@ void SceneDeserializer::deserializeDatum(QDataStream* in, Node* node)
     {
         case DatumType::FLOAT:
             datum = new FloatDatum(name, node); break;
+        case DatumType::INT:
+            datum = new IntDatum(name, node); break;
         case DatumType::NAME:
             datum = new NameDatum(name, node); break;
         case DatumType::STRING:

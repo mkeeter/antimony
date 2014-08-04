@@ -138,7 +138,6 @@ bool NodeManager::deserializeScene(QByteArray in)
 #include "control/control.h"
 #include "ui/connection.h"
 
-
 void NodeManager::makeControls(Canvas* canvas)
 {
     for (auto n : findChildren<Node*>(QString(), Qt::FindDirectChildrenOnly))
