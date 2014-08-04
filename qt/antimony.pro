@@ -10,6 +10,8 @@ DEFINES += ANTIMONY
 QMAKE_CXXFLAGS_RELEASE -= -O2
 QMAKE_CXXFLAGS_RELEASE += -O3
 
+QMAKE_CXXFLAGS += -Werror=switch
+
 include(fab.pri)
 include(shared.pri)
 include(controls.pri)
