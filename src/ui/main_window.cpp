@@ -91,9 +91,6 @@ void MainWindow::addNodeToMenu(QString category, QString name,
     connect(a, &QAction::triggered, this, &MainWindow::createNew<f>);
 }
 
-
-// NODE HEADERS
-
 void MainWindow::populateMenu(QMenu* menu)
 {
     QMap<QString, QMenu*> submenus;
@@ -119,5 +116,6 @@ void MainWindow::populateMenu(QMenu* menu)
     addNodeToMenu<RotateYNode>("Transform", "Rotate (Y)", menu, &submenus);
     addNodeToMenu<RotateZNode>("Transform", "Rotate (Z)", menu, &submenus);
     addNodeToMenu<RecenterNode>("Transform", "Recenter", menu, &submenus);
+    addNodeToMenu<TranslateNode>("Transform", "Translate", menu, &submenus);
     // NODE CASES
 }

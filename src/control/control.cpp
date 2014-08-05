@@ -314,6 +314,7 @@ void Control::paint(QPainter *painter,
 #include "control/transform/rotatey_control.h"
 #include "control/transform/rotatez_control.h"
 #include "control/transform/recenter_control.h"
+#include "control/transform/translate_control.h"
 
 Control* Control::makeControlFor(Canvas* canvas, Node* node)
 {
@@ -363,6 +364,8 @@ Control* Control::makeControlFor(Canvas* canvas, Node* node)
             return new RotateZControl(canvas, node);
         case NodeType::RECENTER:
             return new RecenterControl(canvas, node);
+        case NodeType::TRANSLATE:
+            return new TranslateControl(canvas, node);
         // CONTROL CASES
     }
    Q_ASSERT(false);

@@ -81,3 +81,22 @@ Node* RecenterNode(float x, float y, float z, float scale, QObject* parent=0)
             {"input", "x", "y", "z"});
     return n;
 }
+
+
+Node* TranslateNode(float x, float y, float z, float scale, QObject* parent=0)
+{
+    Node* n = new Node(NodeType::TRANSLATE, parent);
+    new NameDatum("name", NodeManager::manager()->getName("t"), n);
+    new FloatDatum("_x", QString::number(x), n);
+    new FloatDatum("_y", QString::number(y), n);
+    new FloatDatum("_z", QString::number(z), n);
+    new FloatDatum("dx", QString::number(scale), n);
+    new FloatDatum("dy", QString::number(scale), n);
+    new FloatDatum("dz", QString::number(scale), n);
+    new ShapeDatum("input", n);
+    new ShapeFunctionDatum("shape", n, "translate",
+            {"input", "dx", "dy", "dz"});
+
+    return n;
+}
+

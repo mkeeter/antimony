@@ -25,6 +25,7 @@ SOURCES += \
     ../src/control/transform/rotatey_control.cpp \
     ../src/control/transform/rotatez_control.cpp \
     ../src/control/transform/recenter_control.cpp \
+    ../src/control/transform/translate_control.cpp \
     # CONTROL SOURCES
 
 HEADERS += \
@@ -54,4 +55,5 @@ HEADERS += \
     ../src/control/transform/rotatey_control.h \
     ../src/control/transform/rotatez_control.h \
     ../src/control/transform/recenter_control.h \
+    ../src/control/transform/translate_control.h \
     # CONTROL HEADERS
