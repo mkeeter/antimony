@@ -13,7 +13,7 @@ public:
 protected:
     QVector<QVector<QVector3D>> lines() const override;
     QColor defaultPenColor() const override
-        { return Colors::orange; }
+        { return Colors::blue; }
     bool positive;
 };
 
@@ -28,7 +28,7 @@ protected:
     QVector<QVector<QVector3D>> lines() const override;
     QVector<QPair<QVector3D, float>> points() const override;
     QColor defaultPenColor() const override
-        { return Colors::orange; }
+        { return Colors::blue; }
     QVector3D position() const;
 
     ScaleXHandle* positive_handle;

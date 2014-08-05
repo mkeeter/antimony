@@ -14,7 +14,7 @@ public:
 protected:
     QVector3D position() const;
     QColor defaultPenColor() const
-        { return Colors::green; }
+        { return Colors::teal; }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@ public:
 protected:
     QVector3D position() const;
     QColor defaultPenColor() const
-        { return Colors::green; }
+        { return Colors::teal; }
 
     RotateYHandle* handle;
 };

@@ -46,13 +46,13 @@ QColor getColor(Datum *d)
 {
     switch (d->getDatumType())
     {
+        case DatumType::STRING: return brown;
         case DatumType::FLOAT:  return yellow;
+        case DatumType::INT:    return orange;
         case DatumType::SHAPE:
         case DatumType::SHAPE_FUNCTION:
         case DatumType::SHAPE_OUTPUT:
-                                return blue;
-        case DatumType::STRING:
-                                return brown;
+                                return green;
         default:                return red;
     }
 }

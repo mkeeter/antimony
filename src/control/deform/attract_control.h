@@ -12,7 +12,7 @@ public:
     explicit AttractRadiusControl(Canvas* canvas, Node* node, QGraphicsItem* parent)
         : SphereRadiusControl(canvas, node, parent) {}
 protected:
-    QColor defaultPenColor() const override { return Colors::orange; }
+    QColor defaultPenColor() const override { return Colors::blue; }
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ public:
     QVector<QVector<QVector3D>> lines() const override;
 
 protected:
-    QColor defaultPenColor() const override { return Colors::orange; }
+    QColor defaultPenColor() const override { return Colors::blue; }
     AttractRadiusControl* radius;
 };
 

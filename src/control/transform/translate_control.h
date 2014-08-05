@@ -12,7 +12,7 @@ public:
     QVector<QPair<QVector3D, float>> points() const override;
 protected:
     QColor defaultPenColor() const
-        { return Colors::green; }
+        { return Colors::teal; }
     QVector3D position() const;
 };
 
@@ -29,7 +29,7 @@ public:
 protected:
     QVector3D position() const;
     QColor defaultPenColor() const
-        { return Colors::green; }
+        { return Colors::teal; }
 
     TranslateHandle* handle;
 };

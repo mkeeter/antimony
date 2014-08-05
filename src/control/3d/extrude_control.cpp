@@ -38,7 +38,7 @@ void _ExtrudeSpanControl::drag(QVector3D c, QVector3D d)
 
 QColor _ExtrudeSpanControl::defaultPenColor() const
 {
-    return Colors::orange;
+    return Colors::green;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -81,6 +81,6 @@ QPointF ExtrudeControl::inspectorPosition() const
 
 QColor ExtrudeControl::defaultPenColor() const
 {
-    return Colors::orange;
+    return Colors::green;
 }
 
