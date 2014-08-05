@@ -25,6 +25,7 @@ namespace NodeType
         ROTATEX,
         ROTATEY,
         ROTATEZ,
+        RECENTER,
         // NODE TYPES
     };
 };

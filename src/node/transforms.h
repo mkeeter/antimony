@@ -10,4 +10,6 @@ Node* RotateXNode(float x, float y, float z, float scale, QObject* parent=0);
 Node* RotateYNode(float x, float y, float z, float scale, QObject* parent=0);
 Node* RotateZNode(float x, float y, float z, float scale, QObject* parent=0);
 
+Node* RecenterNode(float x, float y, float z, float scale, QObject* parent=0);
+
 #endif

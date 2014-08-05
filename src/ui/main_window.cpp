@@ -118,5 +118,6 @@ void MainWindow::populateMenu(QMenu* menu)
     addNodeToMenu<RotateXNode>("Transform", "Rotate (X)", menu, &submenus);
     addNodeToMenu<RotateYNode>("Transform", "Rotate (Y)", menu, &submenus);
     addNodeToMenu<RotateZNode>("Transform", "Rotate (Z)", menu, &submenus);
+    addNodeToMenu<RecenterNode>("Transform", "Recenter", menu, &submenus);
     // NODE CASES
 }

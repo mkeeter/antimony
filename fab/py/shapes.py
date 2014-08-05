@@ -103,6 +103,23 @@ translate = move
 
 ################################################################################
 
+def recenter(part, x, y, z):
+    if not math.isinf(part.bounds.xmax) and not math.isinf(part.bounds.xmin):
+        dx = x - (part.bounds.xmax + part.bounds.xmin) / 2
+    else:
+        dx = 0
+    if not math.isinf(part.bounds.ymax) and not math.isinf(part.bounds.ymin):
+        dy = y - (part.bounds.ymax + part.bounds.ymin) / 2
+    else:
+        dy = 0
+    if not math.isinf(part.bounds.zmax) and not math.isinf(part.bounds.zmin):
+        dz = z - (part.bounds.zmax + part.bounds.zmin) / 2
+    else:
+        dz = 0
+    return move(part, dx, dy, dz)
+
+################################################################################
+
 def rotate(part, angle, x0=0, y0=0):
     p = move(part, -x0, -y0, 0)
     angle *= math.pi/180
