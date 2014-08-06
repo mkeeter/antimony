@@ -238,6 +238,20 @@ def taper_x_y(part, x0, y0, y1, s0, s1):
         'Y',
         '+f%(x0)g*-Xf%(x0)g/-+*Yf%(ds)gf%(s0y1)gf%(s1y0)gf%(dy)g' % locals()))
 
+def iterate2d(part, i, j, dx, dy):
+    """ Tiles a part in the X and Y directions.
+    """
+
+    if i < 1 or j < 1:
+        raise ValueError("Invalid value for iteration")
+
+    import functools
+    import operator
+    return functools.reduce(operator.or_,
+            [move(functools.reduce(operator.or_,
+                    [move(part, a*dx, 0, 0) for a in range(i)]), 0, b*dy, 0)
+                for b in range(j)])
+
 ################################################################################
 
 def blend(p0, p1, amount):

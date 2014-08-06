@@ -28,6 +28,7 @@ namespace NodeType
         RECENTER,
         TRANSLATE,
         SLIDER,
+        ITERATE2D,
         // NODE TYPES
     };
 };

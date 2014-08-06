@@ -63,6 +63,7 @@ void MainWindow::openScript(ScriptDatum *d)
 #include "node/transforms.h"
 #include "node/deform.h"
 #include "node/variable.h"
+#include "node/iterate.h"
 
 template <Node* (*f)(float, float, float, float, QObject*)>
 void MainWindow::createNew()
@@ -119,5 +120,6 @@ void MainWindow::populateMenu(QMenu* menu)
     addNodeToMenu<RecenterNode>("Transform", "Recenter", menu, &submenus);
     addNodeToMenu<TranslateNode>("Transform", "Translate", menu, &submenus);
     addNodeToMenu<SliderNode>("Variable", "Slider", menu, &submenus);
+    addNodeToMenu<Iterate2DNode>("Iterate", "Iterate (2D)", menu, &submenus);
     // NODE CASES
 }

@@ -10,6 +10,8 @@
 
 Node* SliderNode(float x, float y, float z, float scale, QObject* parent)
 {
+    Q_UNUSED(scale);
+
     Node* n = new Node(NodeType::SLIDER, parent);
     new NameDatum("name", NodeManager::manager()->getName("s"), n);
     new FloatDatum("_x", QString::number(x), n);

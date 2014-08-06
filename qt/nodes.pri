@@ -7,6 +7,7 @@ SOURCES += \
     ../src/node/meta.cpp \
     ../src/node/transforms.cpp \
     ../src/node/variable.cpp \
+    ../src/node/iterate.cpp \
 
 HEADERS += \
     ../src/node/node.h \
@@ -17,4 +18,5 @@ HEADERS += \
     ../src/node/meta.h \
     ../src/node/transforms.h \
     ../src/node/variable.h \
+    ../src/node/iterate.h \
 

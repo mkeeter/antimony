@@ -316,6 +316,7 @@ void Control::paint(QPainter *painter,
 #include "control/transform/recenter_control.h"
 #include "control/transform/translate_control.h"
 #include "control/variable/slider_control.h"
+#include "control/iterate/iterate2d_control.h"
 
 Control* Control::makeControlFor(Canvas* canvas, Node* node)
 {
@@ -369,6 +370,8 @@ Control* Control::makeControlFor(Canvas* canvas, Node* node)
             return new TranslateControl(canvas, node);
         case NodeType::SLIDER:
             return new SliderControl(canvas, node);
+        case NodeType::ITERATE2D:
+            return new Iterate2DControl(canvas, node);
         // CONTROL CASES
     }
    Q_ASSERT(false);

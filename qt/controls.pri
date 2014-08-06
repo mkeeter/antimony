@@ -27,6 +27,7 @@ SOURCES += \
     ../src/control/transform/recenter_control.cpp \
     ../src/control/transform/translate_control.cpp \
     ../src/control/variable/slider_control.cpp \
+    ../src/control/iterate/iterate2d_control.cpp \
     # CONTROL SOURCES
 
 HEADERS += \
@@ -58,4 +59,5 @@ HEADERS += \
     ../src/control/transform/recenter_control.h \
     ../src/control/transform/translate_control.h \
     ../src/control/variable/slider_control.h \
+    ../src/control/iterate/iterate2d_control.h \
     # CONTROL HEADERS
