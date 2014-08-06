@@ -26,6 +26,7 @@ SOURCES += \
     ../src/control/transform/rotatez_control.cpp \
     ../src/control/transform/recenter_control.cpp \
     ../src/control/transform/translate_control.cpp \
+    ../src/control/variable/slider_control.cpp \
     # CONTROL SOURCES
 
 HEADERS += \
@@ -56,4 +57,5 @@ HEADERS += \
     ../src/control/transform/rotatez_control.h \
     ../src/control/transform/recenter_control.h \
     ../src/control/transform/translate_control.h \
+    ../src/control/variable/slider_control.h \
     # CONTROL HEADERS

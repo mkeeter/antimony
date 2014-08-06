@@ -6,6 +6,7 @@ SOURCES += \
     ../src/node/deform.cpp \
     ../src/node/meta.cpp \
     ../src/node/transforms.cpp \
+    ../src/node/variable.cpp \
 
 HEADERS += \
     ../src/node/node.h \
@@ -15,4 +16,5 @@ HEADERS += \
     ../src/node/deform.h \
     ../src/node/meta.h \
     ../src/node/transforms.h \
+    ../src/node/variable.h \
 

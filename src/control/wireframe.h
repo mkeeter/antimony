@@ -17,9 +17,9 @@ public:
      */
     QRectF bounds() const override;
 
-    void paintControl(QPainter* painter) override;
-
 protected:
+
+    void paintControl(QPainter* painter) override;
 
     /** Returns a QPainterPath that draws this shape's lines.
      */
