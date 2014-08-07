@@ -32,6 +32,7 @@ private slots:
     void onSaveAs();
     void onOpen();
 private:
+    void setGlobalStyle();
     void setShortcuts();
     void connectActions();
 

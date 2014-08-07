@@ -8,6 +8,7 @@
 #include "ui_main_window.h"
 #include "ui/main_window.h"
 #include "ui/canvas.h"
+#include "ui/colors.h"
 
 #include "node/manager.h"
 
@@ -15,6 +16,7 @@ App::App(int argc, char* argv[]) :
     QApplication(argc, argv), window(new MainWindow)
 {
     setShortcuts();
+    setGlobalStyle();
     connectActions();
     window->show();
 }
@@ -121,4 +123,15 @@ void App::connectActions()
             this, SLOT(onNew()));
     connect(window->ui->actionOpen, SIGNAL(triggered()),
             this, SLOT(onOpen()));
+}
+
+void App::setGlobalStyle()
+{
+    setStyleSheet(QString(
+            "QToolTip {"
+            "   color: %1;"
+            "background-color: %2;"
+            "border: 1px solid %1;"
+            "}").arg(Colors::base03.name())
+                .arg(Colors::base04.name()));
 }
