@@ -7,6 +7,12 @@
 
 #include "cpp/shape.h"
 
+Shape::Shape()
+    : math(""), bounds(Bounds()), tree(NULL)
+{
+    // Nothing to do here
+}
+
 Shape::Shape(std::string math)
     : Shape(math, Bounds())
 {

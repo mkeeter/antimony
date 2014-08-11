@@ -107,7 +107,7 @@ void App::onOpen()
 void App::onExportSTL()
 {
     Shape s = NodeManager::manager()->getCombinedShape();
-    if (s.math.empty())
+    if (!s.tree)
     {
         QMessageBox::critical(window, "Export error",
                 "<b>Export error:</b><br>"

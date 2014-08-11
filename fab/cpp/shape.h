@@ -13,6 +13,7 @@
 struct Shape
 {
     /* Constructors all throw fab::ParseError if parsing fails. */
+    explicit Shape();
     Shape(std::string math);
     Shape(std::string math, float xmin, float ymin,
               float xmax, float ymax);

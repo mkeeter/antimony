@@ -143,7 +143,6 @@ Shape NodeManager::getCombinedShape()
 
     for (Datum* d : findChildren<Datum*>())
     {
-        qDebug() << d;
         if (d->getType() != fab::ShapeType ||
             !d->hasOutput() || d->hasConnectedLink())
         {
@@ -166,7 +165,7 @@ Shape NodeManager::getCombinedShape()
 
     if (out == NULL)
     {
-        return Shape("");
+        return Shape();
     }
     boost::python::extract<Shape> get_shape(out);
 
