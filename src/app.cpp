@@ -7,6 +7,7 @@
 
 #include "ui_main_window.h"
 #include "ui/main_window.h"
+#include "ui/resolution_dialog.h"
 #include "ui/canvas.h"
 #include "ui/colors.h"
 
@@ -100,6 +101,17 @@ void App::onOpen()
     }
 }
 
+void App::onExportSTL()
+{
+    ResolutionDialog* d = new ResolutionDialog();
+    if (!d->exec())
+    {
+        return;
+    }
+    QString f = QFileDialog::getSaveFileName(window, "Export", "", "*.stl");
+    qDebug() << d->getResolution();
+}
+
 void App::setShortcuts()
 {
     window->ui->actionNew->setShortcuts(QKeySequence::New);
@@ -123,6 +135,8 @@ void App::connectActions()
             this, SLOT(onNew()));
     connect(window->ui->actionOpen, SIGNAL(triggered()),
             this, SLOT(onOpen()));
+    connect(window->ui->actionExportMesh, SIGNAL(triggered()),
+            this, SLOT(onExportSTL()));
 }
 
 void App::setGlobalStyle()

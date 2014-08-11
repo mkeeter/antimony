@@ -35,6 +35,7 @@ SOURCES += \
     ../src/ui/inspector/inspector_text.cpp \
     ../src/ui/inspector/inspector_button.cpp \
     ../src/ui/inspector/inspector_row.cpp \
+    ../src/ui/resolution_dialog.cpp \
 
 HEADERS += \
     ../src/ui/main_window.h \
@@ -54,10 +55,12 @@ HEADERS += \
     ../src/ui/inspector/inspector_text.h \
     ../src/ui/inspector/inspector_button.h \
     ../src/ui/inspector/inspector_row.h \
+    ../src/ui/resolution_dialog.h \
 
 FORMS += \
     ../src/ui/forms/main_window.ui \
     ../src/ui/forms/view_selector.ui \
+    ../src/ui/forms/resolution_dialog.ui \
 
 macx {
     QMAKE_INFO_PLIST = ../app/Info.plist

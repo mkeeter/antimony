@@ -9,6 +9,7 @@ class Datum;
 class Canvas;
 class Node;
 class Control;
+struct Shape;
 
 class NodeManager : public QObject
 {
@@ -51,6 +52,8 @@ public:
      *  Returns true on success, false otherwise.
      */
     bool deserializeScene(QByteArray in);
+
+    Shape getCombinedShape();
 
 #ifdef ANTIMONY
     /** Creates controls for top-level nodes.

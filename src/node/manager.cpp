@@ -1,4 +1,4 @@
-#include <Python.h>
+#include <boost/python.hpp>
 
 #include <QApplication>
 #include <QDebug>
@@ -12,6 +12,9 @@
 
 #include "datum/datum.h"
 #include "datum/name_datum.h"
+
+#include "cpp/shape.h"
+#include "cpp/fab.h"
 
 NodeManager* NodeManager::_manager = NULL;
 
@@ -131,6 +134,41 @@ bool NodeManager::deserializeScene(QByteArray in)
     ss.run(&stream);
 
     return true;
+}
+
+Shape NodeManager::getCombinedShape()
+{
+    PyObject* out = NULL;
+    PyObject* or_function = PyUnicode_FromString("__or__");
+
+    for (Datum* d : findChildren<Datum*>())
+    {
+        if (d->getType() != fab::ShapeType)
+        {
+            continue;
+        }
+
+        if (out == NULL)
+        {
+            out = d->getValue();
+            Py_INCREF(out);
+        }
+        else
+        {
+            PyObject* next = PyObject_CallMethodObjArgs(
+                    out, or_function, d->getValue());
+            Py_DECREF(out);
+            out = next;
+        }
+    }
+
+    boost::python::extract<Shape> get_shape(out);
+
+    Q_ASSERT(get_shape.check());
+    Shape s = get_shape();
+    Py_DECREF(out);
+
+    return s;
 }
 
 #ifdef ANTIMONY
