@@ -4,12 +4,13 @@
 #include <Python.h>
 #include <QObject>
 
+#include "cpp/shape.h"
+
 class NameDatum;
 class Datum;
 class Canvas;
 class Node;
 class Control;
-struct Shape;
 
 class NodeManager : public QObject
 {

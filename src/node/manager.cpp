@@ -143,7 +143,9 @@ Shape NodeManager::getCombinedShape()
 
     for (Datum* d : findChildren<Datum*>())
     {
-        if (d->getType() != fab::ShapeType)
+        qDebug() << d;
+        if (d->getType() != fab::ShapeType ||
+            !d->hasOutput() || d->hasConnectedLink())
         {
             continue;
         }
@@ -156,12 +158,16 @@ Shape NodeManager::getCombinedShape()
         else
         {
             PyObject* next = PyObject_CallMethodObjArgs(
-                    out, or_function, d->getValue());
+                    out, or_function, d->getValue(), NULL);
             Py_DECREF(out);
             out = next;
         }
     }
 
+    if (out == NULL)
+    {
+        return Shape("");
+    }
     boost::python::extract<Shape> get_shape(out);
 
     Q_ASSERT(get_shape.check());

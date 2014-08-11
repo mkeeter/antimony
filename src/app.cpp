@@ -3,6 +3,8 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
+#include <cmath>
+
 #include "app.h"
 
 #include "ui_main_window.h"
@@ -12,6 +14,7 @@
 #include "ui/colors.h"
 
 #include "node/manager.h"
+#include "cpp/shape.h"
 
 App::App(int argc, char* argv[]) :
     QApplication(argc, argv), window(new MainWindow)
@@ -103,6 +106,28 @@ void App::onOpen()
 
 void App::onExportSTL()
 {
+    Shape s = NodeManager::manager()->getCombinedShape();
+    if (s.math.empty())
+    {
+        QMessageBox::critical(window, "Export error",
+                "<b>Export error:</b><br>"
+                "Cannot export without any shapes in the scene.");
+        return;
+    }
+    if (isinf(s.bounds.xmin) || isinf(s.bounds.xmax) ||
+        isinf(s.bounds.ymin) || isinf(s.bounds.ymax) ||
+        isinf(s.bounds.zmin) || isinf(s.bounds.zmax))
+    {
+        QMessageBox::critical(window, "Export error",
+                "<b>Export error:</b><br>"
+                "Some shapes do not have 3D bounds;<br>"
+                "cannot export mesh.");
+        return;
+
+    }
+    qDebug() << s.math.c_str() << s.bounds.xmin << s.bounds.xmax
+                                << s.bounds.ymin << s.bounds.ymax
+                                << s.bounds.zmin << s.bounds.zmax;
     ResolutionDialog* d = new ResolutionDialog();
     if (!d->exec())
     {
