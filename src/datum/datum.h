@@ -46,6 +46,10 @@ public:
      */
     virtual bool hasOutput() const { return true; }
 
+    /** Returns True if this datum is the parent of > 0 connected links.
+     */
+    bool hasConnectedLink() const;
+
     /** Returns True if this Datum can be edited in a viewer.
      */
     virtual bool canEdit() const;

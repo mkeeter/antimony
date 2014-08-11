@@ -69,6 +69,18 @@ void Datum::deleteLink(Datum* upstream)
     input_handler->deleteInput(upstream);
 }
 
+bool Datum::hasConnectedLink() const
+{
+    for (auto link : findChildren<Link*>())
+    {
+        if (link->hasTarget())
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 void Datum::update()
 {
     // Prevent recursive calls

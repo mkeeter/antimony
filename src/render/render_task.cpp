@@ -49,13 +49,10 @@ bool RenderTask::hasNoOutput()
         return false;
     }
 
-    for (auto link : datum->findChildren<Link*>())
+    if (datum->hasConnectedLink())
     {
-        if (link->hasTarget())
-        {
-            clearImage();
-            return false;
-        }
+        clearImage();
+        return false;
     }
     return true;
 }
