@@ -125,16 +125,14 @@ void App::onExportSTL()
         return;
 
     }
-    qDebug() << s.math.c_str() << s.bounds.xmin << s.bounds.xmax
-                                << s.bounds.ymin << s.bounds.ymax
-                                << s.bounds.zmin << s.bounds.zmax;
+
     ResolutionDialog* d = new ResolutionDialog(&s);
     if (!d->exec())
     {
         return;
     }
+
     QString f = QFileDialog::getSaveFileName(window, "Export", "", "*.stl");
-    qDebug() << d->getResolution();
 }
 
 void App::setShortcuts()
