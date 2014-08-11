@@ -128,7 +128,7 @@ void App::onExportSTL()
     qDebug() << s.math.c_str() << s.bounds.xmin << s.bounds.xmax
                                 << s.bounds.ymin << s.bounds.ymax
                                 << s.bounds.zmin << s.bounds.zmax;
-    ResolutionDialog* d = new ResolutionDialog();
+    ResolutionDialog* d = new ResolutionDialog(&s);
     if (!d->exec())
     {
         return;
