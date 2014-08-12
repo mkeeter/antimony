@@ -21,11 +21,14 @@ class RepelControl : public WireframeControl
 public:
     explicit RepelControl(Canvas* canvas, Node* node);
 
+protected:
     void drag(QVector3D center, QVector3D delta) override;
     QPointF inspectorPosition() const override;
     QVector<QVector<QVector3D>> lines() const override;
 
-protected:
+    QPointF baseInputPosition() const override;
+    QPointF baseOutputPosition() const override;
+
     QColor defaultPenColor() const override { return Colors::blue; }
     RepelRadiusControl* radius;
 };
