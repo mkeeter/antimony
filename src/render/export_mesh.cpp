@@ -5,6 +5,7 @@
 
 #include "tree/triangulate.h"
 #include "util/region.h"
+#include "formats/stl.h"
 
 ExportMeshWorker::ExportMeshWorker(Shape s, float resolution)
     : QObject(), shape(s), resolution(resolution)
@@ -45,7 +46,7 @@ void ExportMeshWorker::render()
                 shape.bounds.zmax + dz);
 
     triangulate(shape.tree.get(), r, &verts, &count);
-
+    save_stl(verts, count, "out.stl");
     free_arrays(&r);
     free(verts);
     qDebug() << "Done.";

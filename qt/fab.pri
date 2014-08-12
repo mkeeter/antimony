@@ -12,6 +12,7 @@ SOURCES += \
     ../fab/tree/node/printers.c \
     ../fab/tree/node/results.c \
     ../fab/formats/png.c \
+    ../fab/formats/stl.c \
     ../fab/util/region.c \
     ../fab/cpp/shape.cpp \
     ../fab/cpp/fab.cpp \
@@ -32,6 +33,7 @@ HEADERS += \
     ../fab/tree/node/printers.h \
     ../fab/tree/node/results.h \
     ../fab/formats/png.h \
+    ../fab/formats/stl.h \
     ../fab/util/region.h \
     ../fab/cpp/shape.h \
     ../fab/cpp/fab.h \
