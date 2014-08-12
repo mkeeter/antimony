@@ -76,7 +76,7 @@ SliderControl::SliderControl(Canvas* canvas, Node* node)
 QRectF SliderControl::bounds() const
 {
     QPointF p = position();
-    return QRectF(p.x(), p.y() - 2, 2 * canvas->getScale(), 4);
+    return QRectF(p.x(), p.y() - 5, 2 * canvas->getScale(), 10);
 }
 
 void SliderControl::drag(QVector3D center, QVector3D delta)
@@ -105,9 +105,11 @@ void SliderControl::paintControl(QPainter* painter)
     {
         painter->setBrush(Colors::yellow);
     }
-    painter->drawRect(bounds());
-
     QPointF p = position();
+    QRectF b = bounds();
+
+    painter->drawRect(p.x(), p.y() - 2, b.width(), 4);
+
     if (isSelected() || _hover)
     {
         painter->setBrush(Colors::yellow);
@@ -115,7 +117,11 @@ void SliderControl::paintControl(QPainter* painter)
     {
         painter->setBrush(Colors::dim(Colors::yellow));
     }
-    painter->drawRect(p.x(), p.y(), bounds().width(), 2);
+    painter->drawRect(p.x(), p.y(), b.width(), 2);
+
+    // Draw ends on the bar
+    painter->drawRect(b.left(), b.top(), 4, b.height());
+    painter->drawRect(b.right() - 4, b.top(), 4, b.height());
 }
 
 QPointF SliderControl::inspectorPosition() const
