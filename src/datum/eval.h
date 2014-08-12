@@ -12,6 +12,15 @@ public:
 
     QString getExpr() const { return expr; }
     void setExpr(QString new_expr);
+
+    /** Returns the line on which an error occurred or -1.
+     */
+    int getErrorLine() const { return error_lineno; }
+
+    /** Returns the error type or an empty string.
+     */
+    QString getErrorTraceback() const { return error_traceback; }
+
 protected:
     /** Function called on the string before evaluation.
      */
@@ -52,6 +61,14 @@ protected:
     virtual void onPyError();
 
     QString expr;
+
+    /** The line at which a Python error occurred.
+     */
+    int error_lineno;
+
+    /** The traceback for a Python error
+     */
+    QString error_traceback;
 };
 
 #endif // EVAL_H

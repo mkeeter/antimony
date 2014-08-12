@@ -64,6 +64,9 @@ void EvalDatum::modifyGlobalsDict(PyObject *g)
 
 PyObject* EvalDatum::getCurrentValue()
 {
+    error_lineno = -1;
+    error_traceback = "";
+
     QString e = prepareExpr(expr);
     PyObject* new_value = NULL;
 
@@ -117,5 +120,60 @@ QString EvalDatum::getString() const
 
 void EvalDatum::onPyError()
 {
-    PyErr_Print();
+    PyObject *ptype, *pvalue, *ptraceback;
+    PyErr_Fetch(&ptype, &pvalue, &ptraceback);
+
+    // Extract the error's line number, with special case
+    // for when we aren't given a traceback.
+    if (ptraceback)
+    {
+        PyObject* lineno = PyObject_GetAttrString(ptraceback, "tb_lineno");
+        error_lineno = PyLong_AsLong(lineno);
+        Py_DECREF(lineno);
+    } else {
+        error_lineno = PyLong_AsLong(PyTuple_GetItem(
+                                     PyTuple_GetItem(pvalue, 1), 1));
+    }
+
+    // Call traceback.format_exception on the traceback.
+    PyErr_NormalizeException(&ptype, &pvalue, &ptraceback);
+
+    PyObject* tbmod = PyImport_ImportModule("traceback");
+    Q_ASSERT(tbmod);
+
+    PyObject* format_func = PyObject_GetAttrString(tbmod, "format_exception");
+    Q_ASSERT(format_func);
+
+    if (!ptraceback)
+    {
+        ptraceback = Py_None;
+        Py_INCREF(Py_None);
+    }
+
+    PyObject* args = Py_BuildValue("(OOO)", ptype, pvalue, ptraceback);
+    PyObject* lst = PyObject_CallObject(format_func, args);
+
+    // Concatenate the traceback list into a QString.
+    error_traceback = "";
+    for (int i=0; i < PyList_Size(lst); ++i)
+    {
+        wchar_t* w = PyUnicode_AsWideCharString(
+                PyList_GetItem(lst, i), NULL);
+        Q_ASSERT(w);
+        error_traceback += QString::fromWCharArray(w);
+        PyMem_Free(w);
+    }
+
+    // Chop off the trailing "\n"
+    error_traceback.chop(1);
+
+    // ...and clean up all of the Python objects.
+    Py_DECREF(args);
+    Py_DECREF(tbmod);
+    Py_DECREF(lst);
+    Py_DECREF(format_func);
+
+    Py_XDECREF(ptype);
+    Py_XDECREF(pvalue);
+    Py_XDECREF(ptraceback);
 }

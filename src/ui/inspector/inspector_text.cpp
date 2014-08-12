@@ -4,6 +4,7 @@
 #include <QTextCursor>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
+#include <QToolTip>
 
 #include "ui/inspector/inspector_text.h"
 #include "ui/colors.h"
@@ -52,6 +53,15 @@ void DatumTextItem::onDatumChanged()
         setDefaultTextColor(Colors::base03);
     }
 
+    // Set tooltip if there was a Python evaluation error.
+    if (dynamic_cast<EvalDatum*>(d) && !d->getValid())
+    {
+        setToolTip(dynamic_cast<EvalDatum*>(d)->getErrorTraceback());
+    }
+    else
+    {
+        QToolTip::hideText();
+    }
 }
 
 void DatumTextItem::onTextChanged()
