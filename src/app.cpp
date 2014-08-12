@@ -53,15 +53,15 @@ MainWindow* App::getWindow() const
 void App::onAbout()
 {
     QMessageBox::about(NULL, "antimony",
-            "<b>antimony</b><br><br>"
-            "A non-traditional CAD tool.<br>"
+            "<b>Antimony</b><br><br>"
+            "CAD from a parallel universe.<br>"
             "<a href=\"https://github.com/mkeeter/antimony\">https://github.com/mkeeter/antimony</a><br><br>"
             "© 2013 Matthew Keeter<br>"
             "<a href=\"mailto:matt.j.keeter@gmail.com\">matt.j.keeter@gmail.com</a><br>"
             "_________________________________________________<br><br>"
             "Includes code from <a href=\"https://github.com/mkeeter/kokopelli\">kokopelli</a>, which is <br>"
-            "© 2012-2013 Massachusetts Institute of Technology<br>"
-            "© 2013 Matthew Keeter<br><br>"
+            "© 2012-2013 MIT<br>"
+            "© 2013-2014 Matthew Keeter<br><br>"
             "Inspired by the <a href=\"http://kokompe.cba.mit.edu\">fab modules</a>"
             );
 }
