@@ -138,6 +138,10 @@ void App::onExportSTL()
 
     QString file_name = QFileDialog::getSaveFileName(
             window, "Export", "", "*.stl");
+    if (file_name.isEmpty())
+    {
+        return;
+    }
 
     ExportingDialog* exporting_dialog = new ExportingDialog(window);
 
