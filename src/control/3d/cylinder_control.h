@@ -26,8 +26,8 @@ public:
     explicit CylinderControl(Canvas* canvas, Node* node);
     QVector<QVector<QVector3D>> lines() const override;
     void drag(QVector3D center, QVector3D delta) override;
-    QPointF inspectorPosition() const override;
 protected:
+    QPointF inspectorPosition() const override;
     _CylinderRadiusControl* radius;
     _CylinderSpanControl* span;
 };
