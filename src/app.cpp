@@ -11,6 +11,8 @@
 #include "ui_main_window.h"
 #include "ui/main_window.h"
 #include "ui/resolution_dialog.h"
+#include "ui/exporting_dialog.h"
+
 #include "ui/canvas.h"
 #include "ui/colors.h"
 
@@ -137,8 +139,9 @@ void App::onExportSTL()
     QString file_name = QFileDialog::getSaveFileName(
             window, "Export", "", "*.stl");
 
-    QThread* thread = new QThread();
+    ExportingDialog* exporting_dialog = new ExportingDialog(window);
 
+    QThread* thread = new QThread();
     ExportMeshWorker* worker = new ExportMeshWorker(
             s, resolution_dialog->getResolution(),
             file_name);
@@ -152,13 +155,11 @@ void App::onExportSTL()
             thread, SLOT(deleteLater()));
     connect(thread, SIGNAL(finished()),
             worker, SLOT(deleteLater()));
+    connect(thread, SIGNAL(destroyed()),
+            exporting_dialog, SLOT(accept()));
 
     thread->start();
-    while (!thread->isFinished())
-    {
-        processEvents();
-    }
-    qDebug() << "DONE2";
+    exporting_dialog->exec();
 }
 
 void App::setShortcuts()
