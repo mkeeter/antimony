@@ -52,6 +52,16 @@ QPointF CircleControl::inspectorPosition() const
     return canvas->worldToScene(radius->center());
 }
 
+QPointF CircleControl::baseInputPosition() const
+{
+    return (bounds().bottomLeft() + bounds().topLeft()) / 2;
+}
+
+QPointF CircleControl::baseOutputPosition() const
+{
+    return (bounds().bottomRight() + bounds().topRight()) / 2;
+}
+
 QRectF CircleControl::bounds() const
 {
     return radius->boundingRect();

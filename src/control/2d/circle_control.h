@@ -32,13 +32,15 @@ public:
      */
     void drag(QVector3D center, QVector3D delta) override;
 
+protected:
+    QPointF baseInputPosition() const override;
+    QPointF baseOutputPosition() const override;
+
     /** Returns a position for the inspector.
      */
     QPointF inspectorPosition() const override;
 
     QRectF bounds() const override;
-
-protected:
     QVector3D position() const;
 
     _RadiusControl* radius;
