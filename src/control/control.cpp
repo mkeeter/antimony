@@ -70,6 +70,16 @@ Node* Control::getNode() const
     return node;
 }
 
+QPointF Control::baseOutputPosition() const
+{
+    return inspectorPosition();
+}
+
+QPointF Control::baseInputPosition() const
+{
+    return inspectorPosition();
+}
+
 QPointF Control::datumOutputPosition(Datum *d) const
 {
     if (inspector)
@@ -80,10 +90,10 @@ QPointF Control::datumOutputPosition(Datum *d) const
             return (inspector->getMaskSize() *
                         p->mapToScene(p->boundingRect().center())) +
                     (1 - inspector->getMaskSize()) *
-                        inspectorPosition();
+                        baseOutputPosition();
         }
     }
-    return inspectorPosition();
+    return baseOutputPosition();
 }
 
 QPointF Control::datumInputPosition(Datum *d) const
@@ -96,10 +106,10 @@ QPointF Control::datumInputPosition(Datum *d) const
             return (inspector->getMaskSize() *
                         p->mapToScene(p->boundingRect().center())) +
                     (1 - inspector->getMaskSize()) *
-                        inspectorPosition();
+                        baseInputPosition();
         }
     }
-    return inspectorPosition();
+    return baseInputPosition();
 }
 
 void Control::watchDatums(QVector<QString> datums)
