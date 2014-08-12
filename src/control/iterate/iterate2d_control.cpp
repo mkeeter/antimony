@@ -56,8 +56,10 @@ QVector<QPair<QVector3D, float>> Iterate2DButton::points() const
 
 QVector3D Iterate2DButton::position() const
 {
+    float scale = canvas->getScale();
     QVector3D p = QVector3D(getValue("_x"), getValue("_y"), 0);
-    QVector3D d = axis ? QVector3D(0.2, 0, 0) : QVector3D(0, 0.2, 0);
+    QVector3D d = axis ? QVector3D(15 / scale, 0, 0)
+                       : QVector3D(0, 15 / scale, 0);
     return sign ? p + d : p - d;
 }
 
