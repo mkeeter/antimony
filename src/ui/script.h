@@ -43,7 +43,7 @@ public slots:
     void onTextChanged();
 
 protected:
-    /** OVerload event to show tooltip on line with error.
+    /** Overload event to show tooltip on line with error.
      */
     bool event(QEvent *event);
 
