@@ -2,6 +2,7 @@
 
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QThread>
 
 #include <cmath>
 
@@ -15,6 +16,7 @@
 
 #include "node/manager.h"
 #include "cpp/shape.h"
+#include "render/export_mesh.h"
 
 App::App(int argc, char* argv[]) :
     QApplication(argc, argv), window(new MainWindow)
@@ -133,6 +135,28 @@ void App::onExportSTL()
     }
 
     QString f = QFileDialog::getSaveFileName(window, "Export", "", "*.stl");
+
+    QThread* thread = new QThread();
+
+    ExportMeshWorker* worker = new ExportMeshWorker(
+            s, d->getResolution());
+    worker->moveToThread(thread);
+
+    connect(thread, SIGNAL(started()),
+            worker, SLOT(render()));
+    connect(worker, SIGNAL(finished()),
+            thread, SLOT(quit()));
+    connect(thread, SIGNAL(finished()),
+            thread, SLOT(deleteLater()));
+    connect(thread, SIGNAL(finished()),
+            worker, SLOT(deleteLater()));
+
+    thread->start();
+    while (!thread->isFinished())
+    {
+        processEvents();
+    }
+    qDebug() << "DONE2";
 }
 
 void App::setShortcuts()
