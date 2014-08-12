@@ -22,6 +22,10 @@ class SphereControl : public DummyControl
 public:
     explicit SphereControl(Canvas* canvas, Node* node);
 
+protected:
+    QPointF baseInputPosition() const override;
+    QPointF baseOutputPosition() const override;
+
     void drag(QVector3D center, QVector3D delta) override;
     QPointF inspectorPosition() const override;
     QRectF bounds() const override;

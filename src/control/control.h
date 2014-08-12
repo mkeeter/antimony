@@ -58,6 +58,16 @@ public:
      */
     void setClickPos(QPointF c) { _click_pos = c; }
 
+    /** Returns the input position at which connections should connect
+     *  (if there is no inspector active).
+     */
+    virtual QPointF baseInputPosition() const;
+
+    /** Returns the output position at which connections should connect
+     *  (if there is no inspector active).
+     */
+    virtual QPointF baseOutputPosition() const;
+
     /** Returns a datum's output position (in scene coordinates)
      */
     QPointF datumOutputPosition(Datum* d) const;

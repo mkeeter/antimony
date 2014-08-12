@@ -18,6 +18,9 @@ public:
 
     void paintControl(QPainter *painter) override;
 protected:
+    QPointF baseInputPosition() const override;
+    QPointF baseOutputPosition() const override;
+
     QVector3D position() const;
 
     QString label;

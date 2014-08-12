@@ -22,11 +22,14 @@ class AttractControl : public WireframeControl
 public:
     explicit AttractControl(Canvas* canvas, Node* node);
 
+protected:
+    QPointF baseInputPosition() const override;
+    QPointF baseOutputPosition() const override;
+
     void drag(QVector3D center, QVector3D delta) override;
     QPointF inspectorPosition() const override;
     QVector<QVector<QVector3D>> lines() const override;
 
-protected:
     QColor defaultPenColor() const override { return Colors::blue; }
     AttractRadiusControl* radius;
 };

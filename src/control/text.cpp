@@ -45,6 +45,17 @@ QRectF TextLabelControl::bounds() const
     return br.translated(p);
 }
 
+
+QPointF TextLabelControl::baseInputPosition() const
+{
+    return (bounds().bottomLeft() + bounds().topLeft()) / 2;
+}
+
+QPointF TextLabelControl::baseOutputPosition() const
+{
+    return (bounds().bottomRight() + bounds().topRight()) / 2;
+}
+
 QVector3D TextLabelControl::position() const
 {
     return QVector3D(getValue("_x"), getValue("_y"), getValue("_z"));

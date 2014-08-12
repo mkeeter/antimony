@@ -63,6 +63,17 @@ QPointF SphereControl::inspectorPosition() const
     return canvas->worldToScene(radius->center());
 }
 
+QPointF SphereControl::baseInputPosition() const
+{
+    return (bounds().bottomLeft() + bounds().topLeft()) / 2;
+}
+
+QPointF SphereControl::baseOutputPosition() const
+{
+    return (bounds().bottomRight() + bounds().topRight()) / 2;
+}
+
+
 QRectF SphereControl::bounds() const
 {
     return radius->boundingRect();

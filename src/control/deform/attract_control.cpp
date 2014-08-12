@@ -24,6 +24,16 @@ QPointF AttractControl::inspectorPosition() const
             QVector3D(getValue("x"), getValue("y"), getValue("z")));
 }
 
+QPointF AttractControl::baseInputPosition() const
+{
+    return (bounds().bottomLeft() + bounds().topLeft()) / 2;
+}
+
+QPointF AttractControl::baseOutputPosition() const
+{
+    return (bounds().bottomRight() + bounds().topRight()) / 2;
+}
+
 QVector<QVector<QVector3D>> AttractControl::lines() const
 {
     QVector3D center(getValue("x"), getValue("y"), getValue("z"));
