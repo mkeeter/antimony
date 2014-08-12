@@ -10,7 +10,7 @@ void save_stl(float* verts, unsigned count, const char* filename)
     // 80-character header
     fprintf(stl, "This is a binary STL file made in kokopelli    \n(github.com/mkeeter/kokopelli)\n\n");
 
-    int tris = count / 3;
+    int tris = count / 9;
     for (unsigned i=0; i < sizeof(float); ++i) {
         fputc(((char*)&tris)[i], stl);
     }
@@ -22,7 +22,7 @@ void save_stl(float* verts, unsigned count, const char* filename)
 
         // Write out all of the vertices.
         for (unsigned v=0; v < 9 * sizeof(float); ++v) {
-            fputc(((char*)&verts[t*3])[v], stl);
+            fputc(((char*)&verts[t*9])[v], stl);
         }
 
         fputc(0, stl);
