@@ -1,10 +1,5 @@
-`antimony` is an experimental tool for non-traditional computer-aided design.
-
-![Screenshot](http://mattkeeter.com/projects/antimony/antimony.png)
-
-Models are defined as a directed acyclic graph.  Each graph node performs an operation or transformation on their inputs.
-
-Objects are represented implicitly as mathematical expressions, which can be solved to render solid models.
+*Antimony* is a computer-aided design (CAD) tool from a parallel universe
+in which CAD software evolved from Lisp machines rather than drafting tables
 
 This work is a spiritual successor to [kokopelli](https://github.com/mkeeter/kokopelli)
 by way of [fabserver](http://kokompe.cba.mit.edu).

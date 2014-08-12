@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/fab">
+        <file>py/shapes.py</file>
+    </qresource>
+</RCC>
