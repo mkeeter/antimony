@@ -128,18 +128,20 @@ void App::onExportSTL()
 
     }
 
-    ResolutionDialog* d = new ResolutionDialog(&s);
-    if (!d->exec())
+    ResolutionDialog* resolution_dialog = new ResolutionDialog(&s);
+    if (!resolution_dialog->exec())
     {
         return;
     }
 
-    QString f = QFileDialog::getSaveFileName(window, "Export", "", "*.stl");
+    QString file_name = QFileDialog::getSaveFileName(
+            window, "Export", "", "*.stl");
 
     QThread* thread = new QThread();
 
     ExportMeshWorker* worker = new ExportMeshWorker(
-            s, d->getResolution());
+            s, resolution_dialog->getResolution(),
+            file_name);
     worker->moveToThread(thread);
 
     connect(thread, SIGNAL(started()),

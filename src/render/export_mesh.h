@@ -9,7 +9,7 @@ class ExportMeshWorker : public QObject
 {
     Q_OBJECT
 public:
-    explicit ExportMeshWorker(Shape s, float resolution);
+    explicit ExportMeshWorker(Shape s, float resolution, QString filename);
 public slots:
     void render();
 signals:
@@ -17,6 +17,7 @@ signals:
 protected:
     Shape shape;
     float resolution;
+    QString filename;
 };
 
 #endif
