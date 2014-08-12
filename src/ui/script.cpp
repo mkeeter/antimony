@@ -149,7 +149,8 @@ bool ScriptEditor::event(QEvent *event)
          if (datum && datum->getErrorLine() != -1 &&
              getLineRect(datum->getErrorLine()).contains(helpEvent->pos()))
          {
-             QToolTip::showText(helpEvent->globalPos(), datum->getErrorType());
+             QToolTip::showText(helpEvent->globalPos(),
+                                datum->getErrorTraceback());
          } else {
              QToolTip::hideText();
              event->ignore();

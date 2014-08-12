@@ -198,8 +198,9 @@ void App::setGlobalStyle()
     setStyleSheet(QString(
             "QToolTip {"
             "   color: %1;"
-            "background-color: %2;"
-            "border: 1px solid %1;"
+            "   background-color: %2;"
+            "   border: 1px solid %1;"
+            "   font-family: Courier"
             "}").arg(Colors::base03.name())
                 .arg(Colors::base04.name()));
 }

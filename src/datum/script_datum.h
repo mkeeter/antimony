@@ -22,14 +22,6 @@ public:
     PyTypeObject* getType() const override { return Py_None->ob_type; }
     bool hasOutput() const override { return false; }
 
-    /** Returns the line on which an error occurred or -1.
-     */
-    int getErrorLine() const { return error_lineno; }
-
-    /** Returns the error type or an empty string.
-     */
-    QString getErrorType() const { return error_type; }
-
     DatumType::DatumType getDatumType() const override
         { return DatumType::SCRIPT; }
 
@@ -58,19 +50,12 @@ protected:
      */
     void modifyGlobalsDict(PyObject* g) override;
 
-    /** On Python error, record line number and traceback.
-     */
-    void onPyError() override;
-
     PyObject* globals;
     PyObject* input_func;
     PyObject* output_func;
 
     QSet<QString> touched;
     bool datums_changed;
-
-    int error_lineno;
-    QString error_type;
 };
 
 #endif // SCRIPT_DATUM_H
