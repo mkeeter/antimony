@@ -16,6 +16,9 @@ MainWindow::MainWindow(QWidget *parent) :
     addCanvas();
     addScriptEditor();
     populateMenu(ui->menuAdd);
+
+    // Clear the info label for now.
+    ui->label->setText("");
 }
 
 MainWindow::~MainWindow()
