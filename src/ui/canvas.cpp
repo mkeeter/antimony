@@ -234,6 +234,17 @@ void Canvas::keyPressEvent(QKeyEvent *event)
     {
         QGraphicsView::keyPressEvent(event);
     }
+    else if (event->key() == Qt::Key_Space)
+    {
+        QGraphicsItem* i = scene->itemAt(
+                mapToScene(mapFromGlobal(QCursor::pos())),
+                QTransform());
+        Control* control = dynamic_cast<Control*>(i);
+        if (control)
+        {
+            control->toggleInspector();
+        }
+    }
     else if (event->key() == Qt::Key_Delete)
     {
         for (auto i : scene->selectedItems())
