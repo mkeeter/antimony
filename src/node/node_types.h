@@ -19,6 +19,7 @@ namespace NodeType
         DIFFERENCE,
         OFFSET,
         CLEARANCE,
+        SHELL,
         ATTRACT,
         REPEL,
         SCALEX,

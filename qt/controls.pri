@@ -17,6 +17,7 @@ SOURCES += \
     ../src/control/csg/difference_control.cpp \
     ../src/control/csg/offset_control.cpp \
     ../src/control/csg/clearance_control.cpp \
+    ../src/control/csg/shell_control.cpp \
     ../src/control/meta/script_control.cpp \
     ../src/control/deform/attract_control.cpp \
     ../src/control/deform/repel_control.cpp \
@@ -50,6 +51,7 @@ HEADERS += \
     ../src/control/csg/difference_control.h \
     ../src/control/csg/offset_control.h \
     ../src/control/csg/clearance_control.h \
+    ../src/control/csg/shell_control.h \
     ../src/control/meta/script_control.h \
     ../src/control/deform/attract_control.h \
     ../src/control/deform/repel_control.h \

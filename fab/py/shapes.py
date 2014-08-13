@@ -26,6 +26,11 @@ def offset(a, o):
 def clearance(a, b, o):
     return b | (a & ~offset(b, o))
 
+def shell(a, o):
+    return a & ~offset(a, -o)
+
+################################################################################
+
 def circle(x0, y0, r):
     # sqrt((X-x0)**2 + (Y-y0)**2) - r
     r = abs(r)

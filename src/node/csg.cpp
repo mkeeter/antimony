@@ -74,6 +74,24 @@ Node* OffsetNode(float x, float y, float z, float scale, QObject* parent)
     return n;
 }
 
+Node* ShellNode(float x, float y, float z, float scale, QObject* parent)
+{
+    Q_UNUSED(scale);
+
+    Node* n = new Node(NodeType::SHELL, parent);
+    new NameDatum("name", NodeManager::manager()->getName("d"), n);
+    new FloatDatum("_x", QString::number(x), n);
+    new FloatDatum("_y", QString::number(y), n);
+    new FloatDatum("_z", QString::number(z), n);
+    new ShapeDatum("a", n);
+    new FloatDatum("s", "0.0", n);
+    new ShapeFunctionDatum("shape", n, "shell", {"a", "s"});
+
+    return n;
+}
+
+
+
 Node* ClearanceNode(float x, float y, float z, float scale, QObject* parent)
 {
     Q_UNUSED(scale);
