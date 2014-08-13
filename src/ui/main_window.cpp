@@ -19,6 +19,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Clear the info label for now.
     ui->label->setText("");
+
+    setWindowTitle("antimony");
 }
 
 MainWindow::~MainWindow()
