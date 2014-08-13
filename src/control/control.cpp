@@ -154,6 +154,12 @@ void Control::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 void Control::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
+    if (event->button() != Qt::LeftButton)
+    {
+        event->ignore();
+        return;
+    }
+
     if (parentObject() && dynamic_cast<Control*>(parentObject())->getNode() == node)
     {
         dynamic_cast<Control*>(parentObject())->mouseDoubleClickEvent(event);
@@ -174,15 +180,26 @@ void Control::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 
 void Control::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    _dragged = false;
-    _click_pos = event->pos();
+    if (event->button() == Qt::LeftButton)
+    {
+        _dragged = false;
+        _click_pos = event->pos();
+    }
+    else
+    {
+        event->ignore();
+    }
 }
 
 void Control::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (!_dragged && event->button() == Qt::LeftButton)
+    if (event->button() == Qt::LeftButton && !_dragged)
     {
         setSelected(true);
+    }
+    else
+    {
+        event->ignore();
     }
     ungrabMouse();
 }

@@ -20,6 +20,7 @@ void Iterate2DButton::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     if (event->button() != Qt::LeftButton)
     {
+        event->ignore();
         return;
     }
 

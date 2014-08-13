@@ -208,15 +208,29 @@ ResizeButton::ResizeButton(const QString &text, QWidget *parent)
 
 void ResizeButton::mousePressEvent(QMouseEvent *e)
 {
-    QPushButton::mousePressEvent(e);
-    resizing = true;
-    mx = e->x();
+    if (e->button() == Qt::LeftButton)
+    {
+        QPushButton::mousePressEvent(e);
+        resizing = true;
+        mx = e->x();
+    }
+    else
+    {
+        e->ignore();
+    }
 }
 
 void ResizeButton::mouseReleaseEvent(QMouseEvent *e)
 {
-    QPushButton::mouseReleaseEvent(e);
-    resizing = false;
+    if (e->button() == Qt::LeftButton)
+    {
+        QPushButton::mouseReleaseEvent(e);
+        resizing = false;
+    }
+    else
+    {
+        e->ignore();
+    }
 }
 
 void ResizeButton::mouseMoveEvent(QMouseEvent *e)

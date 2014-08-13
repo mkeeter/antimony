@@ -87,4 +87,8 @@ void OutputPort::mousePressEvent(QGraphicsSceneMouseEvent *event)
         c->setDragPos(mapToScene(event->pos()));
         c->grabMouse();
     }
+    else
+    {
+        event->ignore();
+    }
 }
