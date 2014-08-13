@@ -84,6 +84,10 @@ public:
      */
     void deleteNode();
 
+    /** Toggles the inspector's open/closed state.
+     */
+    void toggleInspector();
+
 protected slots:
     void redraw();
 

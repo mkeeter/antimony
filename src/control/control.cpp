@@ -152,17 +152,11 @@ void Control::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     }
 }
 
-void Control::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+void Control::toggleInspector()
 {
-    if (event->button() != Qt::LeftButton)
-    {
-        event->ignore();
-        return;
-    }
-
     if (parentObject() && dynamic_cast<Control*>(parentObject())->getNode() == node)
     {
-        dynamic_cast<Control*>(parentObject())->mouseDoubleClickEvent(event);
+        dynamic_cast<Control*>(parentObject())->toggleInspector();
     }
     else if (inspector.isNull())
     {
@@ -176,6 +170,17 @@ void Control::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     {
         inspector->animateClose();
     }
+}
+
+void Control::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (event->button() != Qt::LeftButton)
+    {
+        event->ignore();
+        return;
+    }
+
+    toggleInspector();
 }
 
 void Control::mousePressEvent(QGraphicsSceneMouseEvent *event)
