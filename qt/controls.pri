@@ -28,7 +28,6 @@ SOURCES += \
     ../src/control/transform/translate_control.cpp \
     ../src/control/variable/slider_control.cpp \
     ../src/control/iterate/iterate2d_control.cpp \
-    # CONTROL SOURCES
 
 HEADERS += \
     ../src/control/control.h \
@@ -60,4 +59,3 @@ HEADERS += \
     ../src/control/transform/translate_control.h \
     ../src/control/variable/slider_control.h \
     ../src/control/iterate/iterate2d_control.h \
-    # CONTROL HEADERS

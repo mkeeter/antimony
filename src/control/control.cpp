@@ -404,7 +404,6 @@ Control* Control::makeControlFor(Canvas* canvas, Node* node)
             return new SliderControl(canvas, node);
         case NodeType::ITERATE2D:
             return new Iterate2DControl(canvas, node);
-        // CONTROL CASES
     }
    Q_ASSERT(false);
    return NULL;
