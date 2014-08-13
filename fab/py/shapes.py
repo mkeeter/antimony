@@ -236,7 +236,8 @@ def taper_x_y(part, x0, y0, y1, s0, s1):
     return part.map(Transform(
         '+f%(x0)g/*-Xf%(x0)gf%(dy)g-+*Yf%(ds)gf%(s0y1)gf%(s1y0)g' % locals(),
         'Y',
-        '+f%(x0)g*-Xf%(x0)g/-+*Yf%(ds)gf%(s0y1)gf%(s1y0)gf%(dy)g' % locals()))
+        '+f%(x0)g*-Xf%(x0)g/-+*Yf%(ds)gf%(s0y1)gf%(s1y0)gf%(dy)g' % locals(),
+        'Y'))
 
 def iterate2d(part, i, j, dx, dy):
     """ Tiles a part in the X and Y directions.
