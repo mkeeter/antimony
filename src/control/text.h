@@ -18,6 +18,7 @@ public:
 
     void paintControl(QPainter *painter) override;
 protected:
+    virtual QString getLabel() const { return label; }
     QPointF baseInputPosition() const override;
     QPointF baseOutputPosition() const override;
 

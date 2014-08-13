@@ -33,18 +33,17 @@ void TextLabelControl::paintControl(QPainter *painter)
 
     painter->setFont(font);
     painter->setPen(QPen(Qt::white));
-    painter->drawText(b.topLeft() + QPoint(10, 20), label);
+    painter->drawText(b.topLeft() + QPoint(10, 20), getLabel());
 }
 
 QRectF TextLabelControl::bounds() const
 {
     const QPointF p = canvas->worldToScene(position());
-    QRectF br = font_metrics.boundingRect(label);
+    QRectF br = font_metrics.boundingRect(getLabel());
     br.setRight(br.right() + 20);
     br.setBottom(br.bottom() + 20);
     return br.translated(p);
 }
-
 
 QPointF TextLabelControl::baseInputPosition() const
 {
