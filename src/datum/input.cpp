@@ -161,7 +161,7 @@ PyObject* ShapeInputHandler::getValue() const
         else
         {
             PyObject* next = PyObject_CallMethodObjArgs(
-                        out, or_function, source->getValue());
+                        out, or_function, source->getValue(), NULL);
             Py_DECREF(out);
             out = next;
 
