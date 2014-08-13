@@ -3,6 +3,7 @@
 
 #include <QGraphicsObject>
 #include <QPointer>
+#include <QVector3D>
 
 // Forward declarations
 class Canvas;
