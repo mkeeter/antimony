@@ -65,22 +65,48 @@ void InspectorRow::updateLayout()
 {
     float label_width = globalLabelWidth();
     QRectF bbox = boundingRect();
+    bool changed = false;
 
     if (input)
     {
-        input->setPos(0, (bbox.height() - input->boundingRect().height()) / 2);
+        QPointF ipos(0, (bbox.height() - input->boundingRect().height()) / 2);
+        if (input->pos() != ipos)
+        {
+            changed = true;
+            input->setPos(ipos);
+        }
     }
 
-    label->setPos(15 + label_width - label->boundingRect().width(),
-                  (bbox.height() - label->boundingRect().height())/2);
+    QPointF lpos(15 + label_width - label->boundingRect().width(),
+                 (bbox.height() - label->boundingRect().height())/2);
+    if (label->pos() != lpos)
+    {
+        changed = true;
+        label->setPos(lpos);
+    }
 
-    editor->setPos(label_width + 25, 0);
+    QPointF epos(label_width + 25, 0);
+    if (editor->pos() != epos)
+    {
+        changed = true;
+        editor->setPos(epos);
+    }
+
     if (output)
     {
-        output->setPos(bbox.width() - output->boundingRect().width(),
-                       (bbox.height() - output->boundingRect().height()) / 2);
+        QPointF opos(bbox.width() - output->boundingRect().width(),
+                    (bbox.height() - output->boundingRect().height()) / 2);
+        if (output->pos() != opos)
+        {
+            changed = true;
+            output->setPos(opos);
+        }
     }
-    emit(layoutChanged());
+
+    if (changed)
+    {
+        emit(layoutChanged());
+    }
 }
 
 void InspectorRow::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,

@@ -114,6 +114,8 @@ void NodeInspector::populateLists(Node *node)
         if (!d->objectName().startsWith("_") && !rows.contains(d))
         {
             rows[d] = new InspectorRow(d, this);
+            connect(rows[d], SIGNAL(layoutChanged()),
+                    this, SLOT(onLayoutChanged()));
         }
         not_present.removeAll(d);
     }
