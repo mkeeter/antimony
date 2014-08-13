@@ -101,30 +101,37 @@ void MainWindow::addNodeToMenu(QString category, QString name,
 void MainWindow::populateMenu(QMenu* menu)
 {
     QMap<QString, QMenu*> submenus;
+
+    addNodeToMenu<CircleNode>("2D", "Circle", menu, &submenus);
+    addNodeToMenu<Point2DNode>("2D", "Point", menu, &submenus);
+    addNodeToMenu<TriangleNode>("2D", "Triangle", menu, &submenus);
+    addNodeToMenu<TextNode>("2D", "Text", menu, &submenus);
+
     addNodeToMenu<Point3DNode>("3D", "Point", menu, &submenus);
     addNodeToMenu<CubeNode>("3D", "Cube", menu, &submenus);
     addNodeToMenu<SphereNode>("3D", "Sphere", menu, &submenus);
     addNodeToMenu<CylinderNode>("3D", "Cylinder", menu, &submenus);
     addNodeToMenu<ExtrudeNode>("3D", "Extrude", menu, &submenus);
-    addNodeToMenu<CircleNode>("2D", "Circle", menu, &submenus);
-    addNodeToMenu<Point2DNode>("2D", "Point", menu, &submenus);
-    addNodeToMenu<TriangleNode>("2D", "Triangle", menu, &submenus);
-    addNodeToMenu<TextNode>("2D", "Text", menu, &submenus);
+
     addNodeToMenu<UnionNode>("CSG", "Union", menu, &submenus);
     addNodeToMenu<IntersectionNode>("CSG", "Intersection", menu, &submenus);
     addNodeToMenu<DifferenceNode>("CSG", "Difference", menu, &submenus);
-    addNodeToMenu<ScriptNode>("Meta", "Script", menu, &submenus);
-    addNodeToMenu<AttractNode>("Deform", "Attract", menu, &submenus);
-    addNodeToMenu<RepelNode>("Deform", "Repel", menu, &submenus);
-    addNodeToMenu<ScaleXNode>("Deform", "Scale (X)", menu, &submenus);
-    addNodeToMenu<ScaleYNode>("Deform", "Scale (Y)", menu, &submenus);
-    addNodeToMenu<ScaleZNode>("Deform", "Scale (Z)", menu, &submenus);
+
     addNodeToMenu<RotateXNode>("Transform", "Rotate (X)", menu, &submenus);
     addNodeToMenu<RotateYNode>("Transform", "Rotate (Y)", menu, &submenus);
     addNodeToMenu<RotateZNode>("Transform", "Rotate (Z)", menu, &submenus);
     addNodeToMenu<RecenterNode>("Transform", "Recenter", menu, &submenus);
     addNodeToMenu<TranslateNode>("Transform", "Translate", menu, &submenus);
-    addNodeToMenu<SliderNode>("Variable", "Slider", menu, &submenus);
+
     addNodeToMenu<Iterate2DNode>("Iterate", "Iterate (2D)", menu, &submenus);
-    // NODE CASES
+
+    addNodeToMenu<AttractNode>("Deform", "Attract", menu, &submenus);
+    addNodeToMenu<RepelNode>("Deform", "Repel", menu, &submenus);
+    addNodeToMenu<ScaleXNode>("Deform", "Scale (X)", menu, &submenus);
+    addNodeToMenu<ScaleYNode>("Deform", "Scale (Y)", menu, &submenus);
+    addNodeToMenu<ScaleZNode>("Deform", "Scale (Z)", menu, &submenus);
+
+    addNodeToMenu<SliderNode>("Variable", "Slider", menu, &submenus);
+
+    addNodeToMenu<ScriptNode>("Meta", "Script", menu, &submenus);
 }
