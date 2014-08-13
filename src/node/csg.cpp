@@ -57,3 +57,19 @@ Node* UnionNode(float x, float y, float z, float scale, QObject* parent)
     new ShapeFunctionDatum("shape", n, "union", {"a", "b"});
     return n;
 }
+
+Node* OffsetNode(float x, float y, float z, float scale, QObject* parent)
+{
+    Q_UNUSED(scale);
+
+    Node* n = new Node(NodeType::OFFSET, parent);
+    new NameDatum("name", NodeManager::manager()->getName("d"), n);
+    new FloatDatum("_x", QString::number(x), n);
+    new FloatDatum("_y", QString::number(y), n);
+    new FloatDatum("_z", QString::number(z), n);
+    new ShapeDatum("a", n);
+    new FloatDatum("o", "0.0", n);
+    new ShapeFunctionDatum("shape", n, "offset", {"a", "o"});
+
+    return n;
+}

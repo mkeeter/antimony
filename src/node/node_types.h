@@ -17,6 +17,7 @@ namespace NodeType
         UNION,
         INTERSECTION,
         DIFFERENCE,
+        OFFSET,
         ATTRACT,
         REPEL,
         SCALEX,

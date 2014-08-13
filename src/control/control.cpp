@@ -337,6 +337,7 @@ void Control::paint(QPainter *painter,
 #include "control/csg/union_control.h"
 #include "control/csg/intersection_control.h"
 #include "control/csg/difference_control.h"
+#include "control/csg/offset_control.h"
 #include "control/deform/attract_control.h"
 #include "control/deform/repel_control.h"
 #include "control/deform/scalex_control.h"
@@ -380,6 +381,8 @@ Control* Control::makeControlFor(Canvas* canvas, Node* node)
             return new IntersectionControl(canvas, node);
         case NodeType::DIFFERENCE:
             return new DifferenceControl(canvas, node);
+        case NodeType::OFFSET:
+            return new OffsetControl(canvas, node);
         case NodeType::ATTRACT:
             return new AttractControl(canvas, node);
         case NodeType::REPEL:

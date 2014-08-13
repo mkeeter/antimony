@@ -11,6 +11,21 @@ def intersection(a, b):
 def difference(a, b):
     return a & ~b
 
+def offset(a, o):
+    """ Assumes a linear distance field for bounds calculations!
+    """
+    if o < 0:
+        return Shape('-%sf%g' % (a.math, o),
+                a.bounds.xmin, a.bounds.ymin, a.bounds.zmin,
+                a.bounds.xmax, a.bounds.ymax, a.bounds.zmax)
+    else:
+        return Shape('-%sf%g' % (a.math, o),
+                a.bounds.xmin - o, a.bounds.ymin - o, a.bounds.zmin - o,
+                a.bounds.xmax + o, a.bounds.ymax + o, a.bounds.zmax + o)
+
+def clearance(a, b, o):
+    return b | (a & ~offset(b, o))
+
 def circle(x0, y0, r):
     # sqrt((X-x0)**2 + (Y-y0)**2) - r
     r = abs(r)

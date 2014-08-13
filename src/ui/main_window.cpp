@@ -116,6 +116,7 @@ void MainWindow::populateMenu(QMenu* menu)
     addNodeToMenu<UnionNode>("CSG", "Union", menu, &submenus);
     addNodeToMenu<IntersectionNode>("CSG", "Intersection", menu, &submenus);
     addNodeToMenu<DifferenceNode>("CSG", "Difference", menu, &submenus);
+    addNodeToMenu<OffsetNode>("CSG", "Offset", menu, &submenus);
 
     addNodeToMenu<RotateXNode>("Transform", "Rotate (X)", menu, &submenus);
     addNodeToMenu<RotateYNode>("Transform", "Rotate (Y)", menu, &submenus);
