@@ -84,7 +84,9 @@ bool Datum::hasConnectedLink() const
 void Datum::update()
 {
     // Prevent recursive calls
-    // (at the moment, only of concern for ScriptDatums).
+    // (at the moment, only of concern for ScriptDatums, as new
+    //  datum creation causes a name change update which tries
+    //  to recursivey update the script datum).
     if (isRecursing())
     {
         return;

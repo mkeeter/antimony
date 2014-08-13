@@ -144,13 +144,8 @@ PyObject* ScriptDatum::makeOutput(QString name, PyObject *out)
 
 PyObject* ScriptDatum::getCurrentValue()
 {
-    // Prevent nested calls to avoid losing the globals dictionary.
-    // This can occur when a new input is created, at which point it triggers
-    // a name change update to this node (while we're still in getCurrentValue).
-    if (globals)
-    {
-        return NULL;
-    }
+    // Assert that there isn't any recursion going on here.
+    Q_ASSERT(globals == NULL);
 
     touched.clear();
     datums_changed = false;
@@ -159,14 +154,17 @@ PyObject* ScriptDatum::getCurrentValue()
 
     // Look at all of the datums (other than the script datum and other
     // reserved datums), deleting them if they have not been touched.
-    for (auto d : parent()->findChildren<Datum*>())
+    if (out)
     {
-        QString name = d->objectName();
-        if (d != this && name.size() && name.at(0) != '_' &&
-            name != "name" && !touched.contains(name))
+        for (auto d : parent()->findChildren<Datum*>())
         {
-            datums_changed = true;
-            delete d;
+            QString name = d->objectName();
+            if (d != this && name.size() && name.at(0) != '_' &&
+                name != "name" && !touched.contains(name))
+            {
+                datums_changed = true;
+                delete d;
+            }
         }
     }
 
