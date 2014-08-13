@@ -18,6 +18,7 @@ namespace NodeType
         INTERSECTION,
         DIFFERENCE,
         OFFSET,
+        CLEARANCE,
         ATTRACT,
         REPEL,
         SCALEX,

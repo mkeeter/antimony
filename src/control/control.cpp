@@ -328,27 +328,35 @@ void Control::paint(QPainter *painter,
 #include "control/2d/triangle_control.h"
 #include "control/2d/text_control.h"
 #include "control/2d/point2d_control.h"
+
 #include "control/3d/cube_control.h"
 #include "control/3d/sphere_control.h"
 #include "control/3d/cylinder_control.h"
 #include "control/3d/extrude_control.h"
 #include "control/3d/point3d_control.h"
+
 #include "control/meta/script_control.h"
+
 #include "control/csg/union_control.h"
 #include "control/csg/intersection_control.h"
 #include "control/csg/difference_control.h"
 #include "control/csg/offset_control.h"
+#include "control/csg/clearance_control.h"
+
 #include "control/deform/attract_control.h"
 #include "control/deform/repel_control.h"
 #include "control/deform/scalex_control.h"
 #include "control/deform/scaley_control.h"
 #include "control/deform/scalez_control.h"
+
 #include "control/transform/rotatex_control.h"
 #include "control/transform/rotatey_control.h"
 #include "control/transform/rotatez_control.h"
 #include "control/transform/recenter_control.h"
 #include "control/transform/translate_control.h"
+
 #include "control/variable/slider_control.h"
+
 #include "control/iterate/iterate2d_control.h"
 
 Control* Control::makeControlFor(Canvas* canvas, Node* node)
@@ -383,6 +391,8 @@ Control* Control::makeControlFor(Canvas* canvas, Node* node)
             return new DifferenceControl(canvas, node);
         case NodeType::OFFSET:
             return new OffsetControl(canvas, node);
+        case NodeType::CLEARANCE:
+            return new ClearanceControl(canvas, node);
         case NodeType::ATTRACT:
             return new AttractControl(canvas, node);
         case NodeType::REPEL:
