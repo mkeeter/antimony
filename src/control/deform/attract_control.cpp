@@ -1,5 +1,5 @@
 #include <Python.h>
-#include "control/Deform/attract_control.h"
+#include "control/deform/attract_control.h"
 
 #include "ui/canvas.h"
 

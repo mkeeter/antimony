@@ -1,5 +1,5 @@
 #include <Python.h>
-#include "control/Transform/rotatey_control.h"
+#include "control/transform/rotatey_control.h"
 
 #include "ui/canvas.h"
 
