@@ -26,12 +26,14 @@ QPointF RepelControl::inspectorPosition() const
 
 QPointF RepelControl::baseInputPosition() const
 {
-    return (bounds().bottomLeft() + bounds().topLeft()) / 2;
+    return (radius->bounds().bottomLeft() +
+            radius->bounds().topLeft()) / 2;
 }
 
 QPointF RepelControl::baseOutputPosition() const
 {
-    return (bounds().bottomRight() + bounds().topRight()) / 2;
+    return (radius->bounds().bottomRight() +
+            radius->bounds().topRight()) / 2;
 }
 
 QVector<QVector<QVector3D>> RepelControl::lines() const
