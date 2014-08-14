@@ -8,7 +8,7 @@
 TextLabelControl::TextLabelControl(QString label, QColor color,
                                    Canvas* canvas, Node* node)
     : Control(canvas, node), label(label), color(color),
-      font("Courier"), font_metrics(font)
+      font("Courier", 12), font_metrics(font)
 {
     watchDatums({"_x", "_y", "_z"});
 }
