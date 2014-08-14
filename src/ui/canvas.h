@@ -68,6 +68,10 @@ public:
      */
     float getPitch() const { return pitch; }
 
+    /** Returns the viewpoint's center.
+     */
+    QVector3D getCenter() const { return center; }
+
 signals:
     void viewChanged();
 
@@ -111,8 +115,9 @@ protected:
 
     /** Pans the scene rectangle.
      */
-    void pan(QPointF d);
+    void pan(QVector3D d);
 
+    QVector3D center;
     float scale;
 
     /* Pitch and yaw are in radians */
@@ -120,6 +125,7 @@ protected:
     float yaw;
 
     QPointF _click_pos;
+    QVector3D _click_pos_world;
 };
 
 #endif // CANVAS_H

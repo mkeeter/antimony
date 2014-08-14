@@ -48,6 +48,7 @@ QMatrix4x4 Canvas::getMatrix() const
     M.scale(scale, -scale, scale);
     M.rotate(pitch * 180 / M_PI, QVector3D(1, 0, 0));
     M.rotate(yaw  *  180 / M_PI, QVector3D(0, 0, 1));
+    M.translate(-center.x(), -center.y(), -center.z());
 
     return M;
 }
@@ -59,6 +60,7 @@ QMatrix4x4 Canvas::getTransformMatrix() const
     // Remember that these operations are applied in reverse order.
     M.rotate(pitch * 180 / M_PI, QVector3D(1, 0, 0));
     M.rotate(yaw  *  180 / M_PI, QVector3D(0, 0, 1));
+    M.translate(-center.x(), -center.y(), -center.z());
 
     return M;
 }
@@ -180,6 +182,7 @@ void Canvas::mousePressEvent(QMouseEvent *event)
         if (event->button() == Qt::LeftButton)
         {
             _click_pos = mapToScene(event->pos());
+            _click_pos_world = sceneToWorld(_click_pos);
         }
         else
         {
@@ -195,7 +198,7 @@ void Canvas::mouseMoveEvent(QMouseEvent *event)
     {
         if (event->buttons() == Qt::LeftButton)
         {
-            pan(_click_pos - mapToScene(event->pos()));
+            pan(_click_pos_world - sceneToWorld(mapToScene(event->pos())));
         }
         else if (event->buttons() == Qt::RightButton)
         {
@@ -229,7 +232,7 @@ void Canvas::wheelEvent(QWheelEvent *event)
     QVector3D a = sceneToWorld(mapToScene(event->pos()));
     scale *= pow(1.001, -event->delta());
     QVector3D b = sceneToWorld(mapToScene(event->pos()));
-    pan(worldToScene(a - b));
+    pan(a - b);
     emit(viewChanged());
 }
 
@@ -268,9 +271,11 @@ void Canvas::keyPressEvent(QKeyEvent *event)
     }
 }
 
-void Canvas::pan(QPointF d)
+void Canvas::pan(QVector3D d)
 {
-    setSceneRect(sceneRect().translated(d));
+    center += d;
+    update();
+    emit(viewChanged());
 }
 
 #include <iostream>
