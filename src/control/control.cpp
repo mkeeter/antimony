@@ -336,6 +336,7 @@ void Control::paint(QPainter *painter,
 #include "control/3d/point3d_control.h"
 
 #include "control/meta/script_control.h"
+#include "control/meta/equation_control.h"
 
 #include "control/csg/union_control.h"
 #include "control/csg/intersection_control.h"
@@ -382,6 +383,8 @@ Control* Control::makeControlFor(Canvas* canvas, Node* node)
             return new Point3DControl(canvas, node);
         case NodeType::SCRIPT:
             return new ScriptControl(canvas, node);
+        case NodeType::EQUATION:
+            return new EquationControl(canvas, node);
         case NodeType::TEXT:
             return new TextControl(canvas, node);
         case NodeType::UNION:

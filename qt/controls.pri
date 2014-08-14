@@ -19,6 +19,7 @@ SOURCES += \
     ../src/control/csg/clearance_control.cpp \
     ../src/control/csg/shell_control.cpp \
     ../src/control/meta/script_control.cpp \
+    ../src/control/meta/equation_control.cpp \
     ../src/control/deform/attract_control.cpp \
     ../src/control/deform/repel_control.cpp \
     ../src/control/deform/scalex_control.cpp \
@@ -53,6 +54,7 @@ HEADERS += \
     ../src/control/csg/clearance_control.h \
     ../src/control/csg/shell_control.h \
     ../src/control/meta/script_control.h \
+    ../src/control/meta/equation_control.h \
     ../src/control/deform/attract_control.h \
     ../src/control/deform/repel_control.h \
     ../src/control/deform/scalex_control.h \

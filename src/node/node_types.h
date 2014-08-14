@@ -14,6 +14,7 @@ namespace NodeType
         SPHERE,
         POINT3D,
         SCRIPT,
+        EQUATION,
         UNION,
         INTERSECTION,
         DIFFERENCE,

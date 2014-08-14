@@ -10,6 +10,7 @@ SOURCES += \
     ../fab/tree/node/node_c.c \
     ../fab/tree/node/opcodes.c \
     ../fab/tree/node/printers.c \
+    ../fab/tree/node/printers_ss.cpp \
     ../fab/tree/node/results.c \
     ../fab/formats/png.c \
     ../fab/formats/stl.c \
@@ -31,6 +32,7 @@ HEADERS += \
     ../fab/tree/node/node.h \
     ../fab/tree/node/opcodes.h \
     ../fab/tree/node/printers.h \
+    ../fab/tree/node/printers_ss.h \
     ../fab/tree/node/results.h \
     ../fab/formats/png.h \
     ../fab/formats/stl.h \

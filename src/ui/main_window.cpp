@@ -137,4 +137,5 @@ void MainWindow::populateMenu(QMenu* menu)
     addNodeToMenu<SliderNode>("Variable", "Slider", menu, &submenus);
 
     addNodeToMenu<ScriptNode>("Meta", "Script", menu, &submenus);
+    addNodeToMenu<EquationNode>("Meta", "Show equation", menu, &submenus);
 }

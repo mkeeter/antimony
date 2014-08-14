@@ -29,6 +29,9 @@ def clearance(a, b, o):
 def shell(a, o):
     return a & ~offset(a, -o)
 
+def buffer(a):
+    return a
+
 ################################################################################
 
 def circle(x0, y0, r):
