@@ -7,7 +7,7 @@ static std::string add_pss(Node* n)
 {
     std::stringstream ss;
     ss << "(" << print_node_ss(n->lhs) << "+"
-              << print_node_ss(n->rhs);
+              << print_node_ss(n->rhs) << ")";
     return ss.str();
 }
 
@@ -15,7 +15,7 @@ static std::string sub_pss(Node* n)
 {
     std::stringstream ss;
     ss << "(" << print_node_ss(n->lhs) << "-"
-              << print_node_ss(n->rhs);
+              << print_node_ss(n->rhs) << ")";
     return ss.str();
 }
 
@@ -23,7 +23,7 @@ static std::string mul_pss(Node* n)
 {
     std::stringstream ss;
     ss << "(" << print_node_ss(n->lhs) << "*"
-              << print_node_ss(n->rhs);
+              << print_node_ss(n->rhs) << ")";
     return ss.str();
 }
 
@@ -31,7 +31,7 @@ static std::string div_pss(Node* n)
 {
     std::stringstream ss;
     ss << "(" << print_node_ss(n->lhs) << "/"
-              << print_node_ss(n->rhs);
+              << print_node_ss(n->rhs) << ")";
     return ss.str();
 }
 
@@ -39,7 +39,7 @@ static std::string min_pss(Node* n)
 {
     std::stringstream ss;
     ss << "min(" << print_node_ss(n->lhs) << ", "
-              << print_node_ss(n->rhs);
+              << print_node_ss(n->rhs) << ")";
     return ss.str();
 }
 
@@ -47,7 +47,7 @@ static std::string max_pss(Node* n)
 {
     std::stringstream ss;
     ss << "max(" << print_node_ss(n->lhs) << ", "
-              << print_node_ss(n->rhs);
+              << print_node_ss(n->rhs) << ")";
     return ss.str();
 }
 
@@ -55,7 +55,7 @@ static std::string pow_pss(Node* n)
 {
     std::stringstream ss;
     ss << "pow(" << print_node_ss(n->lhs) << ", "
-              << print_node_ss(n->rhs);
+              << print_node_ss(n->rhs) << ")";
     return ss.str();
 }
 
