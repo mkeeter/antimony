@@ -25,8 +25,8 @@
 
 //////////////////////////////////////////r/////////////////////////////////////
 
-NodeInspector::NodeInspector(Control* control)
-    : control(control)
+NodeInspector::NodeInspector(Control* control, bool show_hidden)
+    : control(control), show_hidden(show_hidden)
 {
     connect(control, SIGNAL(inspectorPositionChanged()),
             this, SLOT(onPositionChange()));
@@ -111,7 +111,8 @@ void NodeInspector::populateLists(Node *node)
 
     for (Datum* d : node->findChildren<Datum*>(QString(), Qt::FindDirectChildrenOnly))
     {
-        if (!d->objectName().startsWith("_") && !rows.contains(d))
+        if ((show_hidden || !d->objectName().startsWith("_"))
+                && !rows.contains(d))
         {
             rows[d] = new InspectorRow(d, this);
             connect(rows[d], SIGNAL(layoutChanged()),

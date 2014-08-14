@@ -87,7 +87,7 @@ public:
 
     /** Toggles the inspector's open/closed state.
      */
-    void toggleInspector();
+    void toggleInspector(bool show_hidden=false);
 
 protected slots:
     void redraw();

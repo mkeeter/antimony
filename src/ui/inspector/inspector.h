@@ -21,7 +21,7 @@ class NodeInspector : public QGraphicsObject
     Q_OBJECT
 
 public:
-    explicit NodeInspector(Control* control);
+    explicit NodeInspector(Control* control, bool show_hidden=false);
 
     QRectF boundingRect() const override;
 
@@ -80,6 +80,7 @@ protected:
     QPointer<Control> control;
     QMap<Datum*, InspectorRow*> rows;
     float mask_size;
+    bool show_hidden;
 
     friend class InspectorRow;
 };

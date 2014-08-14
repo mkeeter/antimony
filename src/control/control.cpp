@@ -152,7 +152,7 @@ void Control::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     }
 }
 
-void Control::toggleInspector()
+void Control::toggleInspector(bool show_hidden)
 {
     if (parentObject() && dynamic_cast<Control*>(parentObject())->getNode() == node)
     {
@@ -160,7 +160,7 @@ void Control::toggleInspector()
     }
     else if (inspector.isNull())
     {
-        inspector = new NodeInspector(this);
+        inspector = new NodeInspector(this, show_hidden);
         connect(inspector, SIGNAL(portPositionChanged()),
                 this, SIGNAL(portPositionChanged()));
         connect(inspector, SIGNAL(destroyed()),
@@ -180,7 +180,7 @@ void Control::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
         return;
     }
 
-    toggleInspector();
+    toggleInspector(event->modifiers() & Qt::ShiftModifier);
 }
 
 void Control::mousePressEvent(QGraphicsSceneMouseEvent *event)
