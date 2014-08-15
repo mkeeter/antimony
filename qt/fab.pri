@@ -44,6 +44,12 @@ HEADERS += \
 INCLUDEPATH += ../fab
 DEFINES += '_STATIC_= '
 
+linux {
+    QMAKE_CFLAGS += -std=gnu99
+    QMAKE_CXXFLAGS += $$system(/usr/bin/python3-config --includes)
+    LIBS += -lpng
+}
+
 macx {
     LIBS += -L/usr/local/lib -lpng
     INCLUDEPATH += /usr/local/include/libpng16/

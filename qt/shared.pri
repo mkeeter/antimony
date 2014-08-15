@@ -27,3 +27,9 @@ macx {
     LIBS += -L/usr/local/lib -lboost_python3
     QMAKE_CXXFLAGS += -isystem/usr/local/include
 }
+
+linux {
+    QMAKE_CXXFLAGS += $$system(/usr/bin/python3-config --includes)
+    QMAKE_LFLAGS   += $$system(/usr/bin/python3-config --ldflags)
+    LIBS += -lboost_python-py34 -lpython3.4m
+}
