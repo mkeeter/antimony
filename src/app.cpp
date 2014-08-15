@@ -20,7 +20,7 @@
 #include "cpp/shape.h"
 #include "render/export_mesh.h"
 
-App::App(int argc, char* argv[]) :
+App::App(int& argc, char** argv) :
     QApplication(argc, argv), window(new MainWindow)
 {
     setShortcuts();

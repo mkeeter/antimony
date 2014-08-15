@@ -10,7 +10,7 @@ class App : public QApplication
 {
     Q_OBJECT
 public:
-    explicit App(int argc, char *argv[]);
+    explicit App(int& argc, char **argv);
     ~App();
 
     /** Helper function to get Canvas widget.
