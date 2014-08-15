@@ -1,5 +1,5 @@
 #include <Python.h>
-#include "control/Deform/repel_control.h"
+#include "control/deform/repel_control.h"
 
 #include "ui/canvas.h"
 
