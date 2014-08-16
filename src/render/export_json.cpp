@@ -42,7 +42,7 @@ void ExportJSONWorker::writeColor(Shape* shape, QTextStream* out)
 {
     Q_UNUSED(shape);
     // You can have any color you like, as long as it's white.
-    *out << "    \"bounds\": {\n";
+    *out << "    \"color\": {\n";
     *out << "      \"R\": \"f255\",\n";
     *out << "      \"G\": \"f255\",\n";
     *out << "      \"B\": \"f255\"\n";
