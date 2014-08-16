@@ -57,7 +57,7 @@ void App::onAbout()
             "<b>Antimony</b><br><br>"
             "CAD from a parallel universe.<br>"
             "<a href=\"https://github.com/mkeeter/antimony\">https://github.com/mkeeter/antimony</a><br><br>"
-            "© 2013 Matthew Keeter<br>"
+            "© 2013-2014 Matthew Keeter<br>"
             "<a href=\"mailto:matt.j.keeter@gmail.com\">matt.j.keeter@gmail.com</a><br>"
             "_________________________________________________<br><br>"
             "Includes code from <a href=\"https://github.com/mkeeter/kokopelli\">kokopelli</a>, which is <br>"
