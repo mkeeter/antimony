@@ -19,6 +19,7 @@
 #include "node/manager.h"
 #include "cpp/shape.h"
 #include "render/export_mesh.h"
+#include "render/export_json.h"
 
 App::App(int& argc, char** argv) :
     QApplication(argc, argv), window(new MainWindow)
@@ -166,6 +167,47 @@ void App::onExportSTL()
     exporting_dialog->exec();
 }
 
+void App::onExportJSON()
+{
+    QMap<QString, Shape> s = NodeManager::manager()->getShapes();
+    if (s.isEmpty())
+    {
+        QMessageBox::critical(window, "Export error",
+                "<b>Export error:</b><br>"
+                "Cannot export without any shapes in the scene.");
+        return;
+    }
+
+    QString file_name = QFileDialog::getSaveFileName(
+            window, "Export JSON", "", "*.json");
+    if (file_name.isEmpty())
+    {
+        return;
+    }
+
+    ExportingDialog* exporting_dialog = new ExportingDialog(window);
+
+    QThread* thread = new QThread();
+    ExportJSONWorker* worker = new ExportJSONWorker(s, file_name);
+    worker->moveToThread(thread);
+
+    connect(thread, SIGNAL(started()),
+            worker, SLOT(run()));
+    connect(worker, SIGNAL(finished()),
+            thread, SLOT(quit()));
+    connect(thread, SIGNAL(finished()),
+            thread, SLOT(deleteLater()));
+    connect(thread, SIGNAL(finished()),
+            worker, SLOT(deleteLater()));
+    connect(thread, SIGNAL(destroyed()),
+            exporting_dialog, SLOT(accept()));
+
+    thread->start();
+    exporting_dialog->exec();
+}
+
+
+
 void App::setShortcuts()
 {
     window->ui->actionNew->setShortcuts(QKeySequence::New);
@@ -191,6 +233,8 @@ void App::connectActions()
             this, SLOT(onOpen()));
     connect(window->ui->actionExportMesh, SIGNAL(triggered()),
             this, SLOT(onExportSTL()));
+    connect(window->ui->actionExportJSON, SIGNAL(triggered()),
+            this, SLOT(onExportJSON()));
 }
 
 void App::setGlobalStyle()
