@@ -24,7 +24,7 @@ struct Shape
     /** Returns a new shape with re-mapped coordinates and bounds. */
     Shape map(Transform t) const;
 
-    const std::string math;
+    std::string math;
     Bounds bounds;
 
     std::shared_ptr<MathTree> tree;

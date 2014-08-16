@@ -32,6 +32,7 @@ private slots:
     void onSaveAs();
     void onOpen();
     void onExportSTL();
+    void onExportJSON();
 private:
     void setGlobalStyle();
     void setShortcuts();
