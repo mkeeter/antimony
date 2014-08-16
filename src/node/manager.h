@@ -54,7 +54,13 @@ public:
      */
     bool deserializeScene(QByteArray in);
 
+    /** Returns the union of all unconnected shapes in the scene.
+     */
     Shape getCombinedShape();
+
+    /** Returns a map of name -> shape for all unconnected shapes.
+     */
+    QMap<QString, Shape> getShapes();
 
 #ifdef ANTIMONY
     /** Creates controls for top-level nodes.

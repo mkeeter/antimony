@@ -176,6 +176,29 @@ Shape NodeManager::getCombinedShape()
     return s;
 }
 
+QMap<QString, Shape> NodeManager::getShapes()
+{
+    QMap<QString, Shape> out;
+    for (Datum* d : findChildren<Datum*>())
+    {
+        if (d->getType() != fab::ShapeType ||
+            !d->hasOutput() || d->hasConnectedLink())
+        {
+            continue;
+        }
+        boost::python::extract<Shape> get_shape(d->getValue());
+
+        Q_ASSERT(get_shape.check());
+
+        Datum* name = dynamic_cast<Node*>(d->parent())->getDatum("name");
+        wchar_t* w = PyUnicode_AsWideCharString(name->getValue(), 0);
+        Q_ASSERT(w);
+        out[QString::fromWCharArray(w)] = get_shape();
+        PyMem_Free(w);
+    }
+    return out;
+}
+
 #ifdef ANTIMONY
 
 #include "control/control.h"
