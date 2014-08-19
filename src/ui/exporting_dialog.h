@@ -9,7 +9,6 @@ class ExportingDialog;
 
 class ExportingDialog : public QDialog
 {
-    Q_OBJECT
 public:
     explicit ExportingDialog(QWidget* parent=0);
 protected:

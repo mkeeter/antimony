@@ -5,7 +5,6 @@
 
 class SyntaxHighlighter : public QSyntaxHighlighter
 {
-    Q_OBJECT
 public:
     explicit SyntaxHighlighter(QTextDocument* doc);
     void highlightBlock(const QString& text) override;
