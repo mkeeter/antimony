@@ -94,7 +94,7 @@ void TestShape::DeleteInput()
     delete link;
 
     QVERIFY(d->getValid() == true);
-    QVERIFY(s.count() > 0);
+    QVERIFY(s.count() == 1);
 
     delete p;
     delete d;

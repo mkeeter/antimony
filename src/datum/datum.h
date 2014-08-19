@@ -89,6 +89,10 @@ signals:
      */
     void changed();
 
+    /** Emitted when connections change.
+     */
+    void connectionChanged();
+
     /** Emitted to request upstream datums to disconnect.
      */
     void disconnectFrom(Datum *me);

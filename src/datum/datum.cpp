@@ -57,11 +57,12 @@ void Datum::addLink(Link* input)
     // in a way that requires a changed signal to be emitted.  This is
     // mostly relevant for shape datums, which are only rendered if they
     // are not used elsewhere in the system.
-    emit(changed());
-    emit(dynamic_cast<Datum*>(input->parent())->changed());
-    connect(input, SIGNAL(destroyed()), this, SIGNAL(changed()));
+    emit(connectionChanged());
+    emit(dynamic_cast<Datum*>(input->parent())->connectionChanged());
+    connect(input, SIGNAL(destroyed()), this, SIGNAL(connectionChanged()));
     connect(input, SIGNAL(destroyed()),
-            dynamic_cast<Datum*>(input->parent()), SIGNAL(changed()));
+            dynamic_cast<Datum*>(input->parent()),
+            SIGNAL(connectionChanged()));
 }
 
 void Datum::deleteLink(Datum* upstream)

@@ -22,6 +22,8 @@ RenderTask::RenderTask(Datum* datum)
 {
     connect(datum, SIGNAL(changed()),
             this, SLOT(onDatumChanged()));
+    connect(datum, SIGNAL(connectionChanged()),
+            this, SLOT(onDatumChanged()));
     connect(datum, SIGNAL(destroyed()),
             this, SLOT(onDatumDeleted()));
     connect(canvas, SIGNAL(viewChanged()),
