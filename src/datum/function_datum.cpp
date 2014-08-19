@@ -76,14 +76,9 @@ QString FunctionDatum::getString() const
     return function_name;
 }
 
-void FunctionDatum::setFunctionName(QString f)
+void FunctionDatum::setFunction(QString f, QList<QString> args)
 {
     function_name = f;
-    update();
-}
-
-void FunctionDatum::setArguments(QList<QString> args)
-{
     arguments = args;
     update();
 }
