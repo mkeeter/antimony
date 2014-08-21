@@ -19,6 +19,7 @@ class OutputPort;
 class NodeInspector : public QGraphicsObject
 {
     Q_OBJECT
+
 public:
     explicit NodeInspector(Control* control, bool show_hidden=false);
 

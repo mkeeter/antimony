@@ -5,6 +5,7 @@
 
 class EquationControl : public TextLabelControl
 {
+    Q_OBJECT
 public:
     explicit EquationControl(Canvas* canvas, Node* node);
 protected:

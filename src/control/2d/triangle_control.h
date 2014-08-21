@@ -9,6 +9,7 @@ class Node;
 
 class TriangleControl : public WireframeControl
 {
+    Q_OBJECT
 public:
     explicit TriangleControl(Canvas* canvas, Node* node);
     QVector<QVector<QVector3D>> lines() const override;

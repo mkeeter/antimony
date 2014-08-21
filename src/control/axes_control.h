@@ -7,6 +7,7 @@ class Canvas;
 
 class AxesControl : public DummyControl
 {
+    Q_OBJECT
 public:
     explicit AxesControl(Canvas* canvas);
 

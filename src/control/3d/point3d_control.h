@@ -10,6 +10,7 @@
 
 class Point3DControl : public WireframeControl
 {
+    Q_OBJECT
 public:
     explicit Point3DControl(Canvas* canvas, Node* node,
                             QGraphicsItem* parent=0);

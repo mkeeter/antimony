@@ -9,6 +9,7 @@ class Node;
 
 class CubeControl : public WireframeControl
 {
+    Q_OBJECT
 public:
     explicit CubeControl(Canvas* canvas, Node* node);
     QVector<QVector<QVector3D>> lines() const override;
