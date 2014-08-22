@@ -10,7 +10,6 @@ class Canvas;
 
 class Port : public QGraphicsObject
 {
-    Q_OBJECT
 public:
     explicit Port(Datum* d, Canvas* canvas, QGraphicsItem* parent);
 
@@ -29,14 +28,12 @@ protected:
 
 class InputPort : public Port
 {
-    Q_OBJECT
 public:
     explicit InputPort(Datum* d, Canvas* canvas, QGraphicsItem* parent);
 };
 
 class OutputPort : public Port
 {
-    Q_OBJECT
 public:
     explicit OutputPort(Datum* d, Canvas* canvas, QGraphicsItem* parent);
 protected:
