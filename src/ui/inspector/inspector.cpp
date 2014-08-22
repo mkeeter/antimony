@@ -226,3 +226,22 @@ void NodeInspector::openScript(Datum *d) const
     Q_ASSERT(s);
     App::instance()->getWindow()->openScript(s);
 }
+
+void NodeInspector::focusNext(DatumTextItem* prev)
+{
+    bool next = false;
+
+    prev->clearFocus();
+    for (auto row : rows)
+    {
+        if (prev == row->editor)
+        {
+            next = true;
+        }
+        else if (next && dynamic_cast<DatumTextItem*>(row->editor))
+        {
+            row->editor->setFocus();
+            return;
+        }
+    }
+}

@@ -15,9 +15,14 @@ public slots:
     void onDatumChanged();
 signals:
     void boundsChanged();
+    void tabPressed(DatumTextItem* item);
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget);
+
+    /** Filter tab events to shift focus to next text panel on tab.
+     */
+    bool eventFilter(QObject* obj, QEvent* event);
 
     Datum* d;
     QTextDocument* txt;
