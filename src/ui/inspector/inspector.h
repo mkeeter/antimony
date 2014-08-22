@@ -13,6 +13,7 @@ class Canvas;
 class InspectorRow;
 class InputPort;
 class OutputPort;
+class DatumTextItem;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -63,6 +64,14 @@ public slots:
     /** When datums are changed, update rows and layout.
      */
     void onDatumsChanged();
+
+    /** Change focus to the next text item.
+     */
+    void focusNext(DatumTextItem* prev);
+
+    /** Change focus to the previous text item.
+     */
+    void focusPrev(DatumTextItem* prev);
 protected:
     /** Returns a pointer to the Canvas object.
      */

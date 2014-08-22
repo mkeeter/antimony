@@ -5,6 +5,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 #include <QToolTip>
+#include <QKeyEvent>
 
 #include "ui/inspector/inspector_text.h"
 #include "ui/colors.h"
@@ -23,6 +24,8 @@ DatumTextItem::DatumTextItem(Datum* datum, QGraphicsItem* parent)
 
     bbox = boundingRect();
     connect(txt, SIGNAL(contentsChanged()), this, SLOT(onTextChanged()));
+
+    installEventFilter(this);
 }
 
 void DatumTextItem::onDatumChanged()
@@ -87,4 +90,32 @@ void DatumTextItem::paint(QPainter* painter,
     painter->setPen(QPen(border, 2));
     painter->drawRect(boundingRect());
     QGraphicsTextItem::paint(painter, o, w);
+}
+
+bool DatumTextItem::eventFilter(QObject* obj, QEvent* event)
+{
+    if (obj == this)
+    {
+        if (event->type() == QEvent::KeyPress)
+        {
+            QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+            if (keyEvent->key() == Qt::Key_Tab)
+            {
+                emit tabPressed(this);
+                return true;
+            }
+            else if (keyEvent->key() == Qt::Key_Backtab)
+            {
+                emit shiftTabPressed(this);
+                return true;
+            }
+            else if (keyEvent->key() == Qt::Key_Return)
+            {
+                emit returnPressed();
+                return true;
+            }
+        }
+        return false;
+    }
+    return DatumTextItem::eventFilter(obj, event);
 }

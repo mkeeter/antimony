@@ -226,3 +226,51 @@ void NodeInspector::openScript(Datum *d) const
     Q_ASSERT(s);
     App::instance()->getWindow()->openScript(s);
 }
+
+void NodeInspector::focusNext(DatumTextItem* prev)
+{
+    bool next = false;
+
+    prev->clearFocus();
+
+    for (Datum* d : control->getNode()->findChildren<Datum*>())
+    {
+        if (rows.contains(d))
+        {
+            auto row = rows[d];
+            if (prev == row->editor)
+            {
+                next = true;
+            }
+            else if (next && dynamic_cast<DatumTextItem*>(row->editor))
+            {
+                row->editor->setFocus();
+                return;
+            }
+        }
+    }
+}
+
+void NodeInspector::focusPrev(DatumTextItem* next)
+{
+    InspectorRow* prev = NULL;
+
+    next->clearFocus();
+
+    for (Datum* d : control->getNode()->findChildren<Datum*>())
+    {
+        if (rows.contains(d))
+        {
+            auto row = rows[d];
+            if (next == row->editor)
+            {
+                if (prev)
+                {
+                    prev->editor->setFocus();
+                }
+                return;
+            }
+            prev = row;
+        }
+    }
+}

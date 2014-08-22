@@ -33,6 +33,15 @@ InspectorRow::InspectorRow(Datum* d, NodeInspector* parent)
         editor = new DatumTextItem(d, this);
         connect(editor, SIGNAL(boundsChanged()),
                 this, SLOT(updateLayout()));
+        connect(dynamic_cast<DatumTextItem*>(editor),
+                &DatumTextItem::tabPressed,
+                parent, &NodeInspector::focusNext);
+        connect(dynamic_cast<DatumTextItem*>(editor),
+                &DatumTextItem::shiftTabPressed,
+                parent, &NodeInspector::focusPrev);
+        connect(dynamic_cast<DatumTextItem*>(editor),
+                &DatumTextItem::returnPressed,
+                parent, &NodeInspector::animateClose);
     }
 }
 
