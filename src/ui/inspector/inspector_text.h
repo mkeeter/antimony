@@ -16,6 +16,7 @@ public slots:
 signals:
     void boundsChanged();
     void tabPressed(DatumTextItem* item);
+    void returnPressed();
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget);

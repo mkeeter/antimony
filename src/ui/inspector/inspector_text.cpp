@@ -104,6 +104,11 @@ bool DatumTextItem::eventFilter(QObject* obj, QEvent* event)
                 emit tabPressed(this);
                 return true;
             }
+            else if (keyEvent->key() == Qt::Key_Return)
+            {
+                emit returnPressed();
+                return true;
+            }
         }
         return false;
     }

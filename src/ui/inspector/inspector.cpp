@@ -232,16 +232,21 @@ void NodeInspector::focusNext(DatumTextItem* prev)
     bool next = false;
 
     prev->clearFocus();
-    for (auto row : rows)
+
+    for (Datum* d : control->getNode()->findChildren<Datum*>())
     {
-        if (prev == row->editor)
+        if (rows.contains(d))
         {
-            next = true;
-        }
-        else if (next && dynamic_cast<DatumTextItem*>(row->editor))
-        {
-            row->editor->setFocus();
-            return;
+            auto row = rows[d];
+            if (prev == row->editor)
+            {
+                next = true;
+            }
+            else if (next && dynamic_cast<DatumTextItem*>(row->editor))
+            {
+                row->editor->setFocus();
+                return;
+            }
         }
     }
 }

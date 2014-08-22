@@ -36,6 +36,9 @@ InspectorRow::InspectorRow(Datum* d, NodeInspector* parent)
         connect(dynamic_cast<DatumTextItem*>(editor),
                 &DatumTextItem::tabPressed,
                 parent, &NodeInspector::focusNext);
+        connect(dynamic_cast<DatumTextItem*>(editor),
+                &DatumTextItem::returnPressed,
+                parent, &NodeInspector::animateClose);
     }
 }
 
