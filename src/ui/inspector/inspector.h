@@ -55,10 +55,6 @@ public slots:
      */
     void onPositionChange();
 
-    /** Returns a pointer to the Canvas object.
-     */
-    Canvas* getCanvas() const;
-
     /** Opens the script editor for the given datum
      *  (which must be a ScriptDatum).
      */
@@ -68,6 +64,10 @@ public slots:
      */
     void onDatumsChanged();
 protected:
+    /** Returns a pointer to the Canvas object.
+     */
+    Canvas* getCanvas() const;
+
     /** Returns the width of the largest label.
      */
     float labelWidth() const;
