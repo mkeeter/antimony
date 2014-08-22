@@ -72,6 +72,10 @@ public slots:
     /** Change focus to the next text item.
      */
     void focusNext(DatumTextItem* prev);
+
+    /** Change focus to the previous text item.
+     */
+    void focusPrev(DatumTextItem* prev);
 protected:
     /** Returns the width of the largest label.
      */

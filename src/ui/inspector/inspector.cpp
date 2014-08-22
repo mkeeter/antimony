@@ -250,3 +250,27 @@ void NodeInspector::focusNext(DatumTextItem* prev)
         }
     }
 }
+
+void NodeInspector::focusPrev(DatumTextItem* next)
+{
+    InspectorRow* prev = NULL;
+
+    next->clearFocus();
+
+    for (Datum* d : control->getNode()->findChildren<Datum*>())
+    {
+        if (rows.contains(d))
+        {
+            auto row = rows[d];
+            if (next == row->editor)
+            {
+                if (prev)
+                {
+                    prev->editor->setFocus();
+                }
+                return;
+            }
+            prev = row;
+        }
+    }
+}
