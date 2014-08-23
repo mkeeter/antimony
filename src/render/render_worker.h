@@ -13,7 +13,7 @@ class RenderWorker : public QObject
 {
     Q_OBJECT
 public:
-    explicit RenderWorker(PyObject* s, QMatrix4x4 m2d, QMatrix4x4 m3d);
+    explicit RenderWorker(PyObject* s, QMatrix4x4 matrix);
     ~RenderWorker();
 
 public slots:
@@ -25,7 +25,7 @@ protected:
     void render3d(Shape s);
 
     PyObject* shape;
-    QMatrix4x4 m2d, m3d;
+    QMatrix4x4 matrix;
     RenderImage* image;
 
     friend class RenderTask;

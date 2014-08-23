@@ -13,8 +13,8 @@
 
 using namespace boost::python;
 
-RenderWorker::RenderWorker(PyObject *s, QMatrix4x4 m2d, QMatrix4x4 m3d)
-    : QObject(NULL), shape(s), m2d(m2d), m3d(m3d), image(NULL)
+RenderWorker::RenderWorker(PyObject *s, QMatrix4x4 matrix)
+    : QObject(NULL), shape(s), matrix(matrix), image(NULL)
 {
     Py_INCREF(shape);
 }
@@ -33,17 +33,12 @@ void RenderWorker::render()
 
     Q_ASSERT(!(isinf(s.bounds.zmin) ^ isinf(s.bounds.zmax)));
 
-    QMatrix4x4 m = isinf(s.bounds.zmin) ? m2d : m3d;
-    Q_ASSERT(m(0, 3) == 0 && m(1, 3) == 0 &&
-             m(2, 3) == 0 && m (3, 3) == 1);
-
-
     if (!isinf(s.bounds.xmin) && !isinf(s.bounds.xmax) &&
         !isinf(s.bounds.xmin) && !isinf(s.bounds.xmax))
     {
         if (isinf(s.bounds.zmin))
         {
-            render2d(s);
+            // No 2D rendering for now.
         }
         else
         {
@@ -56,7 +51,7 @@ void RenderWorker::render()
 
 void RenderWorker::render3d(Shape s)
 {
-    QMatrix4x4 mf = m3d.inverted();
+    QMatrix4x4 mf = matrix.inverted();
     QMatrix4x4 mi = mf.inverted();
 
     Transform T = Transform(
@@ -82,6 +77,8 @@ void RenderWorker::render3d(Shape s)
 
 void RenderWorker::render2d(Shape s)
 {
+    /* NO ADMITTANCE BEYOND THIS POINT UNTIL SEWER PIPE IS REPAIRED */
+    /*
     QMatrix4x4 mf = m2d.inverted();
     QMatrix4x4 mi = mf.inverted();
 
@@ -123,4 +120,5 @@ void RenderWorker::render2d(Shape s)
     {
         image->applyGradient(m3d(2,2) > 0);
     }
+    */
 }

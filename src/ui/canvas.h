@@ -20,7 +20,6 @@ public:
      *  (translation is handled by the QGraphicsView)
      */
     QMatrix4x4 getMatrix() const;
-    QMatrix4x4 getMatrix2D() const;
 
     /** Transforms points from world to scene coordinates.
      */
