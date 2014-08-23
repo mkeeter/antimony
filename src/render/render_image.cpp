@@ -10,21 +10,21 @@
 
 #include "formats/png.h"
 
-RenderImage::RenderImage(Shape* shape, QObject* parent)
-    : QObject(parent), bounds(shape->bounds),
-      depth(shape->bounds.xmax - shape->bounds.xmin,
-            shape->bounds.ymax - shape->bounds.ymin,
+RenderImage::RenderImage(Bounds b, QVector3D pos, float scale)
+    : QObject(), bounds(b), pos(pos), scale(scale),
+      depth((b.xmax - b.xmin) * scale,
+            (b.ymax - b.ymin) * scale,
             QImage::Format_RGB32)
 {
-    render(shape);
+    // Nothing to do here
+    // (render() must be called explicity)
 }
 
 RenderImage::~RenderImage()
 {
     for (auto p = pixmaps.begin(); p != pixmaps.end(); ++p)
     {
-        p.key()->scene->removeItem(p.value());
-        delete p.value();
+        p.value()->deleteLater();
     }
 }
 
@@ -45,7 +45,8 @@ void RenderImage::render(Shape *shape)
     Region r = (Region) {
             .imin=0, .jmin=0, .kmin=0,
             .ni=(uint32_t)depth.width(), .nj=(uint32_t)depth.height(),
-            .nk=uint32_t(shape->bounds.zmax - shape->bounds.zmin)
+            .nk=uint32_t(fmax(1, (shape->bounds.zmax -
+                                  shape->bounds.zmin) * scale))
     };
 
     build_arrays(&r, shape->bounds.xmin, shape->bounds.ymin, shape->bounds.zmin,
@@ -62,7 +63,8 @@ void RenderImage::render(Shape *shape)
             uint8_t pix = depth8_rows[j][i];
             if (pix)
             {
-                depth.setPixel(i, j, pix | (pix << 8) | (pix << 16));
+                depth.setPixel(i, depth.height() - j - 1,
+                               pix | (pix << 8) | (pix << 16));
             }
         }
     }
@@ -97,14 +99,11 @@ void RenderImage::applyGradient(bool direction)
 
 void RenderImage::addToCanvas(Canvas *canvas)
 {
-    DepthImageItem* pix = new DepthImageItem(bounds.zmin, bounds.zmax, depth, canvas);
-    pix->setPos(bounds.xmin, bounds.ymin);
+    DepthImageItem* pix = new DepthImageItem(pos,
+            QVector3D(bounds.xmax - bounds.xmin,
+                      bounds.ymax - bounds.ymin,
+                      bounds.zmax - bounds.zmin), depth, canvas);
     canvas->scene->addItem(pix);
     pixmaps[canvas] = pix;
 }
 
-void RenderImage::setZ(float zmin, float zmax)
-{
-    bounds.zmin = zmin;
-    bounds.zmax = zmax;
-}

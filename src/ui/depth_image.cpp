@@ -7,16 +7,26 @@
 #include "ui/depth_image.h"
 #include "ui/canvas.h"
 
-DepthImageItem::DepthImageItem(float zmin, float zmax, QImage depth,
+DepthImageItem::DepthImageItem(QVector3D pos, QVector3D size, QImage depth,
                                Canvas* canvas)
-    : QGraphicsItem(), zmin(zmin), zmax(zmax), depth(depth), canvas(canvas)
+    : QGraphicsObject(), pos(pos), size(size), depth(depth), canvas(canvas)
 {
+    connect(canvas, &Canvas::viewChanged, this, &DepthImageItem::reposition);
+    reposition();
     setZValue(-20);
+}
+
+void DepthImageItem::reposition()
+{
+    setPos(canvas->worldToScene(pos));
+    prepareGeometryChange();
 }
 
 QRectF DepthImageItem::boundingRect() const
 {
-    return QRectF(0, 0, depth.width(), depth.height());
+    return QRectF(0, 0,
+                  size.x() * canvas->getScale(),
+                  size.y() * canvas->getScale());
 }
 
 void DepthImageItem::paint(QPainter *painter,
@@ -37,18 +47,21 @@ void DepthImageItem::paint(QPainter *painter,
     const float czmax = canvas->getZmax();
     const float czmin = canvas->getZmin();
 
+    const float zmax = (canvas->getTransformMatrix() * pos).z();
+    const float zmin = zmax - size.z();
+
     const int s = (zmax - zmin) / (czmax - czmin) * 0xff;
     const int o = (zmin - czmin) / (czmax - czmin) * 0xff;
     {
         QPainter p(&depth_);
 
-        // Apply scale
+        // Apply pixel scale
         QImage scale(depth.width(), depth.height(), depth.format());
         scale.fill(s | (s << 8) | (s << 16));
         p.setCompositionMode(QPainter::CompositionMode_Multiply);
         p.drawImage(0, 0, scale);
 
-        // Apply offset
+        // Apply pixel offset
         QImage offset(depth.width(), depth.height(), depth.format());
         offset.fill(o | (o << 8) | (o << 16));
         p.setCompositionMode(QPainter::CompositionMode_Plus);
@@ -61,5 +74,9 @@ void DepthImageItem::paint(QPainter *painter,
     }
 
     painter->setCompositionMode(QPainter::CompositionMode_Lighten);
-    painter->drawImage(0, 0, depth_);
+    painter->drawImage(
+            QRectF(0, 0,
+                   size.x() * canvas->getScale(),
+                   size.y() * canvas->getScale()),
+            depth_);
 }

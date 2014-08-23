@@ -13,8 +13,10 @@
 
 using namespace boost::python;
 
-RenderWorker::RenderWorker(PyObject *s, QMatrix4x4 m2d, QMatrix4x4 m3d)
-    : QObject(NULL), shape(s), m2d(m2d), m3d(m3d), image(NULL)
+RenderWorker::RenderWorker(PyObject *s, QMatrix4x4 matrix,
+                           float scale, int refinement)
+    : QObject(NULL), shape(s), matrix(matrix),
+      scale(scale), refinement(refinement), image(NULL)
 {
     Py_INCREF(shape);
 }
@@ -22,6 +24,13 @@ RenderWorker::RenderWorker(PyObject *s, QMatrix4x4 m2d, QMatrix4x4 m3d)
 RenderWorker::~RenderWorker()
 {
     Py_DECREF(shape);
+}
+
+RenderWorker* RenderWorker::getNext() const
+{
+    return refinement
+        ? new RenderWorker(shape, matrix, scale*2, refinement - 1)
+        : NULL;
 }
 
 void RenderWorker::render()
@@ -32,11 +41,6 @@ void RenderWorker::render()
     Shape s = get_shape();
 
     Q_ASSERT(!(isinf(s.bounds.zmin) ^ isinf(s.bounds.zmax)));
-
-    QMatrix4x4 m = isinf(s.bounds.zmin) ? m2d : m3d;
-    Q_ASSERT(m(0, 3) == 0 && m(1, 3) == 0 &&
-             m(2, 3) == 0 && m (3, 3) == 1);
-
 
     if (!isinf(s.bounds.xmin) && !isinf(s.bounds.xmax) &&
         !isinf(s.bounds.xmin) && !isinf(s.bounds.xmax))
@@ -56,7 +60,56 @@ void RenderWorker::render()
 
 void RenderWorker::render3d(Shape s)
 {
-    QMatrix4x4 mf = m3d.inverted();
+    Transform T = getTransform(matrix);
+    Shape transformed = s.map(T);
+
+    image = new RenderImage(
+            transformed.bounds,
+            matrix.inverted() * QVector3D(transformed.bounds.xmin,
+                                          transformed.bounds.ymax,
+                                          transformed.bounds.zmax),
+            scale);
+    image->render(&transformed);
+    image->moveToThread(QApplication::instance()->thread());
+}
+
+void RenderWorker::render2d(Shape s)
+{
+    QMatrix4x4 matrix_flat = matrix;
+    matrix_flat(0, 2) = 0;
+    matrix_flat(1, 2) = 0;
+    matrix_flat(2, 0) = 0;
+    matrix_flat(2, 1) = 0;
+    matrix_flat(2, 2) = 1;
+
+    Shape s_flat(s.math, s.bounds.xmin, s.bounds.ymin, 0,
+                         s.bounds.xmax, s.bounds.ymax, 0);
+
+    Transform T_flat = getTransform(matrix_flat);
+    Shape transformed = s_flat.map(T_flat);
+
+    // Render the flattened shape, but with bounds equivalent to the shape's
+    // position in a 3D bounding box.
+    Bounds b3d = Bounds(s.bounds.xmin, s.bounds.ymin, 0,
+                        s.bounds.xmax, s.bounds.ymax, 0.0001).
+                 map(getTransform(matrix));
+    image = new RenderImage(
+            b3d,
+            matrix.inverted() *
+                QVector3D(b3d.xmin, b3d.ymax, b3d.zmax),
+            scale);
+    image->render(&transformed);
+    image->moveToThread(QApplication::instance()->thread());
+
+    if (matrix(1,2))
+    {
+        image->applyGradient(matrix(2,2) > 0);
+    }
+}
+
+Transform RenderWorker::getTransform(QMatrix4x4 m)
+{
+    QMatrix4x4 mf = m.inverted();
     QMatrix4x4 mi = mf.inverted();
 
     Transform T = Transform(
@@ -73,52 +126,5 @@ void RenderWorker::render3d(Shape s)
                 (boost::format("++*Xf%g*Yf%g*Zf%g") %
                     mi(2,0) % mi(2,1) % mi(2,2)).str());
 
-    Shape transformed = s.map(T);
-
-    image = new RenderImage(&transformed);
-    image->moveToThread(QApplication::instance()->thread());
-}
-
-void RenderWorker::render2d(Shape s)
-{
-    QMatrix4x4 mf = m2d.inverted();
-    QMatrix4x4 mi = mf.inverted();
-
-    Transform T(
-                (boost::format("+*Xf%g*Yf%g") %
-                    mf(0,0) % mf(0,1)).str(),
-                (boost::format("+*Xf%g*Yf%g") %
-                    mf(1,0) % mf(1,1)).str(),
-                "Z",
-                (boost::format("+*Xf%g*Yf%g") %
-                    mi(0,0) % mi(0,1)).str(),
-                (boost::format("+*Xf%g*Yf%g") %
-                    mi(1,0) % mi(1,1)).str(),
-                "Z");
-
-    Shape transformed = s.map(T);
-    transformed.bounds.zmin = 0;
-    transformed.bounds.zmax = 1;
-
-    image = new RenderImage(&transformed);
-    image->moveToThread(QApplication::instance()->thread());
-
-    // Figure out the z bounds for the image using the full transform
-    // (not the fake y-scaling transform)
-    Bounds bz = Bounds(s.bounds.xmin, s.bounds.ymin, 0,
-                       s.bounds.xmax, s.bounds.ymax, 1);
-    Bounds bzt =  bz.map(Transform(
-                         "X", "Y", "Z",
-                (boost::format("++*Xf%g*Yf%g*Zf%g") %
-                    m3d(0,0) % m3d(0,1) % m3d(0,2)).str(),
-                (boost::format("++*Xf%g*Yf%g*Zf%g") %
-                    m3d(1,0) % m3d(1,1) % m3d(1,2)).str(),
-                (boost::format("++*Xf%g*Yf%g*Zf%g") %
-                    m3d(2,0) % m3d(2,1) % m3d(2,2)).str()));
-
-    image->setZ(bzt.zmin, bzt.zmax);
-    if (m3d(1,2))
-    {
-        image->applyGradient(m3d(2,2) > 0);
-    }
+    return T;
 }

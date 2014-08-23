@@ -67,8 +67,10 @@ void RenderTask::onDatumChanged()
         {
             next->deleteLater();
         }
-        next = new RenderWorker(datum->getValue(), canvas->getMatrix2D(),
-                                canvas->getMatrix());
+        next = new RenderWorker(datum->getValue(),
+                                canvas->getTransformMatrix(),
+                                canvas->getScale() / (1 << 4),
+                                4);
 
         if (!running)
         {
@@ -86,6 +88,11 @@ void RenderTask::onWorkerFinished()
         image = current->image;
         image->setParent(this);
         image->addToCanvas(canvas);
+    }
+
+    if (!next)
+    {
+        next = current->getNext();
     }
 
     current->deleteLater();

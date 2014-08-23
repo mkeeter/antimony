@@ -47,17 +47,17 @@ QMatrix4x4 Canvas::getMatrix() const
     return M;
 }
 
-QMatrix4x4 Canvas::getMatrix2D() const
+QMatrix4x4 Canvas::getTransformMatrix() const
 {
     QMatrix4x4 M;
 
     // Remember that these operations are applied in reverse order.
-    M.scale(scale, -scale*cos(pitch), scale);
+    M.rotate(pitch * 180 / M_PI, QVector3D(1, 0, 0));
     M.rotate(yaw  *  180 / M_PI, QVector3D(0, 0, 1));
 
     return M;
-
 }
+
 
 QPointF Canvas::worldToScene(QVector3D v) const
 {
@@ -131,7 +131,7 @@ float Canvas::getZmax() const
         DepthImageItem* p = dynamic_cast<DepthImageItem*>(i);
         if (p)
         {
-            zmax = fmax(zmax, p->zmax);
+            zmax = fmax(zmax, (getTransformMatrix() * p->pos).z());
         }
     }
     return zmax;
@@ -145,7 +145,7 @@ float Canvas::getZmin() const
         DepthImageItem* p = dynamic_cast<DepthImageItem*>(i);
         if (p)
         {
-            zmin = fmin(zmin, p->zmin);
+            zmin = fmin(zmin, (getTransformMatrix() * p->pos).z() - p->size.z());
         }
     }
     return zmin;
