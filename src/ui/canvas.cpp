@@ -28,7 +28,6 @@ Canvas::Canvas(QWidget* parent)
 {
     setScene(scene);
     setStyleSheet("QGraphicsView { border-style: none; }");
-    setBackgroundBrush(Qt::black);
 
     setSceneRect(-width()/2, -height()/2, width(), height());
     setRenderHints(QPainter::Antialiasing);
@@ -276,6 +275,12 @@ void Canvas::pan(QPointF d)
 
 #include <iostream>
 #include <QTime>
+
+void Canvas::drawBackground(QPainter* painter, const QRectF& rect)
+{
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
 
 void Canvas::paintEvent(QPaintEvent *event)
 {

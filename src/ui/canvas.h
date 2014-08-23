@@ -94,6 +94,10 @@ protected:
      */
     void keyPressEvent(QKeyEvent *event) override;
 
+    /** Draws shaded panels in the background.
+     */
+    void drawBackground(QPainter* painter, const QRectF& rect) override;
+
     /** On paint event, resize depth canvas then call default painter.
      */
     void paintEvent(QPaintEvent *event);
