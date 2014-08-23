@@ -82,7 +82,7 @@ void RenderWorker::render2d(Shape s)
     // Render the flattened shape, but with bounds equivalent to the shape's
     // position in a 3D bounding box.
     Bounds b3d = Bounds(s.bounds.xmin, s.bounds.ymin, 0,
-                        s.bounds.xmax, s.bounds.ymax, 1).
+                        s.bounds.xmax, s.bounds.ymax, 0.0001).
                  map(getTransform(matrix));
     image = new RenderImage(
             b3d,
