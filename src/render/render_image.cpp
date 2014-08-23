@@ -16,7 +16,8 @@ RenderImage::RenderImage(Shape* shape, QObject* parent)
             shape->bounds.ymax - shape->bounds.ymin,
             QImage::Format_RGB32)
 {
-    render(shape);
+    // Nothing to do here
+    // (render() must be called explicitly)
 }
 
 RenderImage::~RenderImage()
