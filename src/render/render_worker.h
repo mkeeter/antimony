@@ -6,6 +6,7 @@
 #include <QMatrix4x4>
 
 #include "cpp/shape.h"
+#include "cpp/transform.h"
 
 class RenderImage;
 
@@ -23,6 +24,10 @@ signals:
 protected:
     void render2d(Shape s);
     void render3d(Shape s);
+
+    /** Returns a Transform object that applies the given matrix.
+     */
+    static Transform getTransform(QMatrix4x4 m);
 
     PyObject* shape;
     QMatrix4x4 matrix;

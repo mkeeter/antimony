@@ -51,30 +51,14 @@ void RenderWorker::render()
 
 void RenderWorker::render3d(Shape s)
 {
-    QMatrix4x4 mf = matrix.inverted();
-    QMatrix4x4 mi = mf.inverted();
-
-    Transform T = Transform(
-                (boost::format("++*Xf%g*Yf%g*Zf%g") %
-                    mf(0,0) % mf(0,1) % mf(0,2)).str(),
-                (boost::format("++*Xf%g*Yf%g*Zf%g") %
-                    mf(1,0) % mf(1,1) % mf(1,2)).str(),
-                (boost::format("++*Xf%g*Yf%g*Zf%g") %
-                    mf(2,0) % mf(2,1) % mf(2,2)).str(),
-                (boost::format("++*Xf%g*Yf%g*Zf%g") %
-                    mi(0,0) % mi(0,1) % mi(0,2)).str(),
-                (boost::format("++*Xf%g*Yf%g*Zf%g") %
-                    mi(1,0) % mi(1,1) % mi(1,2)).str(),
-                (boost::format("++*Xf%g*Yf%g*Zf%g") %
-                    mi(2,0) % mi(2,1) % mi(2,2)).str());
-
+    Transform T = getTransform(matrix);
     Shape transformed = s.map(T);
 
     image = new RenderImage(
             transformed.bounds,
-            mf * QVector3D(transformed.bounds.xmin,
-                           transformed.bounds.ymax,
-                           transformed.bounds.zmax),
+            matrix.inverted() * QVector3D(transformed.bounds.xmin,
+                                          transformed.bounds.ymax,
+                                          transformed.bounds.zmax),
             scale / 4);
     image->render(&transformed);
     image->moveToThread(QApplication::instance()->thread());
@@ -126,4 +110,26 @@ void RenderWorker::render2d(Shape s)
         image->applyGradient(m3d(2,2) > 0);
     }
     */
+}
+
+Transform RenderWorker::getTransform(QMatrix4x4 m)
+{
+    QMatrix4x4 mf = m.inverted();
+    QMatrix4x4 mi = mf.inverted();
+
+    Transform T = Transform(
+                (boost::format("++*Xf%g*Yf%g*Zf%g") %
+                    mf(0,0) % mf(0,1) % mf(0,2)).str(),
+                (boost::format("++*Xf%g*Yf%g*Zf%g") %
+                    mf(1,0) % mf(1,1) % mf(1,2)).str(),
+                (boost::format("++*Xf%g*Yf%g*Zf%g") %
+                    mf(2,0) % mf(2,1) % mf(2,2)).str(),
+                (boost::format("++*Xf%g*Yf%g*Zf%g") %
+                    mi(0,0) % mi(0,1) % mi(0,2)).str(),
+                (boost::format("++*Xf%g*Yf%g*Zf%g") %
+                    mi(1,0) % mi(1,1) % mi(1,2)).str(),
+                (boost::format("++*Xf%g*Yf%g*Zf%g") %
+                    mi(2,0) % mi(2,1) % mi(2,2)).str());
+
+    return T;
 }
