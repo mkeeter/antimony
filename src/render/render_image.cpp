@@ -63,7 +63,8 @@ void RenderImage::render(Shape *shape)
             uint8_t pix = depth8_rows[j][i];
             if (pix)
             {
-                depth.setPixel(i, j, pix | (pix << 8) | (pix << 16));
+                depth.setPixel(i, depth.height() - j - 1,
+                               pix | (pix << 8) | (pix << 16));
             }
         }
     }

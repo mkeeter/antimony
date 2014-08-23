@@ -72,8 +72,8 @@ void RenderWorker::render3d(Shape s)
 
     image = new RenderImage(
             transformed.bounds,
-            mi * QVector3D(transformed.bounds.xmin,
-                           transformed.bounds.ymin,
+            mf * QVector3D(transformed.bounds.xmin,
+                           transformed.bounds.ymax,
                            transformed.bounds.zmin),
             scale);
     image->render(&transformed);
