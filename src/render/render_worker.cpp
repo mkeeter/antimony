@@ -13,8 +13,10 @@
 
 using namespace boost::python;
 
-RenderWorker::RenderWorker(PyObject *s, QMatrix4x4 matrix, float scale)
-    : QObject(NULL), shape(s), matrix(matrix), scale(scale), image(NULL)
+RenderWorker::RenderWorker(PyObject *s, QMatrix4x4 matrix,
+                           float scale, int refinement)
+    : QObject(NULL), shape(s), matrix(matrix),
+      scale(scale), refinement(refinement), image(NULL)
 {
     Py_INCREF(shape);
 }
@@ -22,6 +24,13 @@ RenderWorker::RenderWorker(PyObject *s, QMatrix4x4 matrix, float scale)
 RenderWorker::~RenderWorker()
 {
     Py_DECREF(shape);
+}
+
+RenderWorker* RenderWorker::getNext() const
+{
+    return refinement
+        ? new RenderWorker(shape, matrix, scale*2, refinement - 1)
+        : NULL;
 }
 
 void RenderWorker::render()
@@ -59,7 +68,7 @@ void RenderWorker::render3d(Shape s)
             matrix.inverted() * QVector3D(transformed.bounds.xmin,
                                           transformed.bounds.ymax,
                                           transformed.bounds.zmax),
-            scale / 4);
+            scale);
     image->render(&transformed);
     image->moveToThread(QApplication::instance()->thread());
 }
@@ -88,7 +97,7 @@ void RenderWorker::render2d(Shape s)
             b3d,
             matrix.inverted() *
                 QVector3D(b3d.xmin, b3d.ymax, b3d.zmax),
-            scale / 4);
+            scale);
     image->render(&transformed);
     image->moveToThread(QApplication::instance()->thread());
 
