@@ -13,8 +13,8 @@
 
 using namespace boost::python;
 
-RenderWorker::RenderWorker(PyObject *s, QMatrix4x4 matrix)
-    : QObject(NULL), shape(s), matrix(matrix), image(NULL)
+RenderWorker::RenderWorker(PyObject *s, QMatrix4x4 matrix, float scale)
+    : QObject(NULL), shape(s), matrix(matrix), scale(scale), image(NULL)
 {
     Py_INCREF(shape);
 }
@@ -74,7 +74,8 @@ void RenderWorker::render3d(Shape s)
             transformed.bounds,
             mi * QVector3D(transformed.bounds.xmin,
                            transformed.bounds.ymin,
-                           transformed.bounds.zmin));
+                           transformed.bounds.zmin),
+            scale);
     image->render(&transformed);
     image->moveToThread(QApplication::instance()->thread());
 }

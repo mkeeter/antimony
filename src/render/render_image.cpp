@@ -10,10 +10,10 @@
 
 #include "formats/png.h"
 
-RenderImage::RenderImage(Bounds b, QVector3D pos)
-    : QObject(), bounds(b), pos(pos),
-      depth(b.xmax - b.xmin,
-            b.ymax - b.ymin,
+RenderImage::RenderImage(Bounds b, QVector3D pos, float scale)
+    : QObject(), bounds(b), pos(pos), scale(scale),
+      depth((b.xmax - b.xmin) * scale,
+            (b.ymax - b.ymin) * scale,
             QImage::Format_RGB32)
 {
     // Nothing to do here
@@ -46,7 +46,7 @@ void RenderImage::render(Shape *shape)
     Region r = (Region) {
             .imin=0, .jmin=0, .kmin=0,
             .ni=(uint32_t)depth.width(), .nj=(uint32_t)depth.height(),
-            .nk=uint32_t(shape->bounds.zmax - shape->bounds.zmin)
+            .nk=uint32_t((shape->bounds.zmax - shape->bounds.zmin) * scale)
     };
 
     build_arrays(&r, shape->bounds.xmin, shape->bounds.ymin, shape->bounds.zmin,

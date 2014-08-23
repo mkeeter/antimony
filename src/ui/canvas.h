@@ -21,6 +21,10 @@ public:
      */
     QMatrix4x4 getMatrix() const;
 
+    /** Returns a transform matrix (without pixel scale applied)
+     */
+    QMatrix4x4 getTransformMatrix() const;
+
     /** Transforms points from world to scene coordinates.
      */
     QPointF worldToScene(QVector3D v) const;

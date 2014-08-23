@@ -47,6 +47,18 @@ QMatrix4x4 Canvas::getMatrix() const
     return M;
 }
 
+QMatrix4x4 Canvas::getTransformMatrix() const
+{
+    QMatrix4x4 M;
+
+    // Remember that these operations are applied in reverse order.
+    M.rotate(pitch * 180 / M_PI, QVector3D(1, 0, 0));
+    M.rotate(yaw  *  180 / M_PI, QVector3D(0, 0, 1));
+
+    return M;
+}
+
+
 QPointF Canvas::worldToScene(QVector3D v) const
 {
     QMatrix4x4 M = getMatrix();

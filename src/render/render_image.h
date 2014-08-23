@@ -18,7 +18,7 @@ class RenderImage : public QObject
 {
     Q_OBJECT
 public:
-    explicit RenderImage(Bounds b, QVector3D pos);
+    explicit RenderImage(Bounds b, QVector3D pos, float scale);
     ~RenderImage();
     void render(Shape* shape);
     void applyGradient(bool direction);
@@ -28,6 +28,8 @@ public:
 protected:
     Bounds bounds;
     QVector3D pos;
+    float scale;
+
     QImage depth;
     QMap<Canvas*, DepthImageItem*> pixmaps;
 };
