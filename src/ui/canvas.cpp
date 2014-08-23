@@ -4,11 +4,11 @@
 #include <QDebug>
 #include <QGridLayout>
 #include <QPropertyAnimation>
+#include <QGLWidget>
 
 #include <cmath>
 
 #include "ui/canvas.h"
-#include "ui/glcanvas.h"
 #include "ui/port.h"
 #include "ui/connection.h"
 #include "ui/inspector/inspector.h"
@@ -36,7 +36,7 @@ Canvas::Canvas(QWidget* parent)
     QGLFormat format;
     format.setVersion(2, 1);
     format.setSampleBuffers(true);
-    setViewport(new GLCanvas(format, this));
+    setViewport(new QGLWidget(format, this));
 
     new AxesControl(this);
 }
