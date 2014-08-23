@@ -10,14 +10,14 @@
 
 #include "formats/png.h"
 
-RenderImage::RenderImage(Shape* shape, QObject* parent)
-    : QObject(parent), bounds(shape->bounds),
-      depth(shape->bounds.xmax - shape->bounds.xmin,
-            shape->bounds.ymax - shape->bounds.ymin,
+RenderImage::RenderImage(Bounds b, QObject* parent)
+    : QObject(parent), bounds(b),
+      depth(b.xmax - b.xmin,
+            b.ymax - b.ymin,
             QImage::Format_RGB32)
 {
     // Nothing to do here
-    // (render() must be called explicitly)
+    // (render() must be called explicity)
 }
 
 RenderImage::~RenderImage()

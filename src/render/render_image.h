@@ -17,7 +17,7 @@ class RenderImage : public QObject
 {
     Q_OBJECT
 public:
-    explicit RenderImage(Shape* shape, QObject* parent=0);
+    explicit RenderImage(Bounds b, QObject* parent=0);
     ~RenderImage();
     void render(Shape* shape);
     void applyGradient(bool direction);

@@ -75,7 +75,7 @@ void RenderWorker::render3d(Shape s)
 
     Shape transformed = s.map(T);
 
-    image = new RenderImage(&transformed);
+    image = new RenderImage(transformed.bounds);
     image->render(&transformed);
     image->moveToThread(QApplication::instance()->thread());
 }
@@ -101,7 +101,7 @@ void RenderWorker::render2d(Shape s)
     transformed.bounds.zmin = 0;
     transformed.bounds.zmax = 1;
 
-    image = new RenderImage(&transformed);
+    image = new RenderImage(transformed.bounds);
     image->render(&transformed);
     image->moveToThread(QApplication::instance()->thread());
 
