@@ -1,4 +1,4 @@
-QT += core gui widgets
+QT += core gui widgets opengl
 
 TARGET = antimony
 TEMPLATE = app
@@ -23,6 +23,7 @@ SOURCES += \
     ../src/ui/canvas.cpp \
     ../src/ui/colors.cpp \
     ../src/ui/connection.cpp \
+    ../src/ui/glcanvas.cpp \
     ../src/ui/port.cpp \
     ../src/ui/view_selector.cpp \
     ../src/render/render_task.cpp \
@@ -44,6 +45,7 @@ HEADERS += \
     ../src/ui/main_window.h \
     ../src/ui/view_selector.h \
     ../src/ui/canvas.h \
+    ../src/ui/glcanvas.h \
     ../src/app.h \
     ../src/ui/colors.h \
     ../src/ui/port.h \

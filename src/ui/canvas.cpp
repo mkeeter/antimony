@@ -8,6 +8,7 @@
 #include <cmath>
 
 #include "ui/canvas.h"
+#include "ui/glcanvas.h"
 #include "ui/port.h"
 #include "ui/connection.h"
 #include "ui/inspector/inspector.h"
@@ -31,6 +32,11 @@ Canvas::Canvas(QWidget* parent)
 
     setSceneRect(-width()/2, -height()/2, width(), height());
     setRenderHints(QPainter::Antialiasing);
+
+    QGLFormat format;
+    format.setVersion(2, 1);
+    format.setSampleBuffers(true);
+    setViewport(new GLCanvas(format, this));
 
     new AxesControl(this);
 }
