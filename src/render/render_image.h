@@ -26,8 +26,16 @@ public:
     void setZ(float zmin, float zmax);
 
 protected:
+    /** Bounds assigned to output DepthImageItem
+     *  (these may disagree with bounds on shape in render,
+     *   but are only used for the output image.) */
     Bounds bounds;
+
+    /** Corner position of output DepthImageItem
+     *  (in scene coordinates) */
     QVector3D pos;
+
+    /** Scale in pixels per unit */
     float scale;
 
     QImage depth;
