@@ -75,7 +75,7 @@ void RenderWorker::render3d(Shape s)
             mf * QVector3D(transformed.bounds.xmin,
                            transformed.bounds.ymax,
                            transformed.bounds.zmin),
-            scale);
+            scale / 4);
     image->render(&transformed);
     image->moveToThread(QApplication::instance()->thread());
 }

@@ -19,11 +19,14 @@ DepthImageItem::DepthImageItem(QVector3D pos, QVector3D size, QImage depth,
 void DepthImageItem::reposition()
 {
     setPos(canvas->worldToScene(pos));
+    prepareGeometryChange();
 }
 
 QRectF DepthImageItem::boundingRect() const
 {
-    return QRectF(0, 0, depth.width(), depth.height());
+    return QRectF(0, 0,
+                  size.x() * canvas->getScale(),
+                  size.y() * canvas->getScale());
 }
 
 void DepthImageItem::paint(QPainter *painter,
@@ -73,5 +76,9 @@ void DepthImageItem::paint(QPainter *painter,
     }
 
     painter->setCompositionMode(QPainter::CompositionMode_Lighten);
-    painter->drawImage(0, 0, depth_);
+    painter->drawImage(
+            QRectF(0, 0,
+                   size.x() * canvas->getScale(),
+                   size.y() * canvas->getScale()),
+            depth_);
 }
