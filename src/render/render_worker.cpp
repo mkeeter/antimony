@@ -70,7 +70,11 @@ void RenderWorker::render3d(Shape s)
 
     Shape transformed = s.map(T);
 
-    image = new RenderImage(transformed.bounds);
+    image = new RenderImage(
+            transformed.bounds,
+            mi * QVector3D(transformed.bounds.xmin,
+                           transformed.bounds.ymin,
+                           transformed.bounds.zmin));
     image->render(&transformed);
     image->moveToThread(QApplication::instance()->thread());
 }

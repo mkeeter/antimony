@@ -10,8 +10,8 @@
 
 #include "formats/png.h"
 
-RenderImage::RenderImage(Bounds b, QObject* parent)
-    : QObject(parent), bounds(b),
+RenderImage::RenderImage(Bounds b, QVector3D pos)
+    : QObject(), bounds(b), pos(pos),
       depth(b.xmax - b.xmin,
             b.ymax - b.ymin,
             QImage::Format_RGB32)
@@ -98,8 +98,10 @@ void RenderImage::applyGradient(bool direction)
 
 void RenderImage::addToCanvas(Canvas *canvas)
 {
-    DepthImageItem* pix = new DepthImageItem(bounds.zmin, bounds.zmax, depth, canvas);
-    pix->setPos(bounds.xmin, bounds.ymin);
+    DepthImageItem* pix = new DepthImageItem(pos,
+            QVector3D(bounds.xmax - bounds.xmin,
+                      bounds.ymax - bounds.ymin,
+                      bounds.zmax - bounds.zmin), depth, canvas);
     canvas->scene->addItem(pix);
     pixmaps[canvas] = pix;
 }

@@ -1,19 +1,28 @@
 #ifndef DEPTH_IMAGE_H
 #define DEPTH_IMAGE_H
 
-#include <QGraphicsItem>
+#include <QGraphicsObject>
 #include <QImage>
+#include <QVector3D>
 
 class Canvas;
 
-class DepthImageItem : public QGraphicsItem
+class DepthImageItem : public QGraphicsObject
 {
+    Q_OBJECT
 public:
-    DepthImageItem(float zmin, float zmax, QImage depth, Canvas* canvas);
+    DepthImageItem(QVector3D pos, QVector3D size, QImage depth, Canvas* canvas);
     QRectF boundingRect() const;
 
-    float zmin;
-    float zmax;
+    /** Position of lower-left corner (in original scene units) */
+    QVector3D pos;
+
+    /** Scale (in rotated scene coordinates) */
+    QVector3D size;
+
+public slots:
+    void reposition();
+
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 

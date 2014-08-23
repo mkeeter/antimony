@@ -7,11 +7,18 @@
 #include "ui/depth_image.h"
 #include "ui/canvas.h"
 
-DepthImageItem::DepthImageItem(float zmin, float zmax, QImage depth,
+DepthImageItem::DepthImageItem(QVector3D pos, QVector3D size, QImage depth,
                                Canvas* canvas)
-    : QGraphicsItem(), zmin(zmin), zmax(zmax), depth(depth), canvas(canvas)
+    : QGraphicsObject(), pos(pos), size(size), depth(depth), canvas(canvas)
 {
+    connect(canvas, &Canvas::viewChanged, this, &DepthImageItem::reposition);
+    reposition();
     setZValue(-20);
+}
+
+void DepthImageItem::reposition()
+{
+    setPos(canvas->worldToScene(pos));
 }
 
 QRectF DepthImageItem::boundingRect() const
@@ -36,6 +43,11 @@ void DepthImageItem::paint(QPainter *painter,
 
     const float czmax = canvas->getZmax();
     const float czmin = canvas->getZmin();
+
+    const QVector3D p = canvas->getMatrix() * pos;
+
+    const float zmax = p.z();
+    const float zmin = zmax - size.z();
 
     const int s = (zmax - zmin) / (czmax - czmin) * 0xff;
     const int o = (zmin - czmin) / (czmax - czmin) * 0xff;

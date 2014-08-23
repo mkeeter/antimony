@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QImage>
 #include <QGraphicsPixmapItem>
+#include <QVector3D>
 
 #include <cstdint>
 
@@ -17,7 +18,7 @@ class RenderImage : public QObject
 {
     Q_OBJECT
 public:
-    explicit RenderImage(Bounds b, QObject* parent=0);
+    explicit RenderImage(Bounds b, QVector3D pos);
     ~RenderImage();
     void render(Shape* shape);
     void applyGradient(bool direction);
@@ -26,6 +27,7 @@ public:
 
 protected:
     Bounds bounds;
+    QVector3D pos;
     QImage depth;
     QMap<Canvas*, DepthImageItem*> pixmaps;
 };
