@@ -54,13 +54,13 @@ void DepthImageItem::paint(QPainter *painter,
     {
         QPainter p(&depth_);
 
-        // Apply scale
+        // Apply pixel scale
         QImage scale(depth.width(), depth.height(), depth.format());
         scale.fill(s | (s << 8) | (s << 16));
         p.setCompositionMode(QPainter::CompositionMode_Multiply);
         p.drawImage(0, 0, scale);
 
-        // Apply offset
+        // Apply pixel offset
         QImage offset(depth.width(), depth.height(), depth.format());
         offset.fill(o | (o << 8) | (o << 16));
         p.setCompositionMode(QPainter::CompositionMode_Plus);
