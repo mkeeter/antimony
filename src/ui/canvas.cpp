@@ -131,7 +131,7 @@ float Canvas::getZmax() const
         DepthImageItem* p = dynamic_cast<DepthImageItem*>(i);
         if (p)
         {
-            zmax = fmax(zmax, (getMatrix() * p->pos).z());
+            zmax = fmax(zmax, (getTransformMatrix() * p->pos).z());
         }
     }
     return zmax;
@@ -145,7 +145,7 @@ float Canvas::getZmin() const
         DepthImageItem* p = dynamic_cast<DepthImageItem*>(i);
         if (p)
         {
-            zmin = fmin(zmin, (getMatrix() * p->pos).z() - p->size.z());
+            zmin = fmin(zmin, (getTransformMatrix() * p->pos).z() - p->size.z());
         }
     }
     return zmin;
