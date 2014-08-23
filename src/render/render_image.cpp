@@ -24,8 +24,7 @@ RenderImage::~RenderImage()
 {
     for (auto p = pixmaps.begin(); p != pixmaps.end(); ++p)
     {
-        p.key()->scene->removeItem(p.value());
-        delete p.value();
+        p.value()->deleteLater();
     }
 }
 
