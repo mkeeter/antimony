@@ -47,9 +47,7 @@ void DepthImageItem::paint(QPainter *painter,
     const float czmax = canvas->getZmax();
     const float czmin = canvas->getZmin();
 
-    const QVector3D p = canvas->getMatrix() * pos;
-
-    const float zmax = p.z();
+    const float zmax = (canvas->getMatrix() * pos).z();
     const float zmin = zmax - size.z();
 
     const int s = (zmax - zmin) / (czmax - czmin) * 0xff;
