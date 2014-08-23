@@ -23,7 +23,6 @@ public:
     void render(Shape* shape);
     void applyGradient(bool direction);
     void addToCanvas(Canvas* canvas);
-    void setZ(float zmin, float zmax);
 
 protected:
     /** Bounds assigned to output DepthImageItem

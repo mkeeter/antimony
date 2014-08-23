@@ -38,7 +38,7 @@ void RenderWorker::render()
     {
         if (isinf(s.bounds.zmin))
         {
-            // No 2D rendering for now.
+            render2d(s);
         }
         else
         {
@@ -66,50 +66,36 @@ void RenderWorker::render3d(Shape s)
 
 void RenderWorker::render2d(Shape s)
 {
-    /* NO ADMITTANCE BEYOND THIS POINT UNTIL SEWER PIPE IS REPAIRED */
-    /*
-    QMatrix4x4 mf = m2d.inverted();
-    QMatrix4x4 mi = mf.inverted();
+    QMatrix4x4 matrix_flat = matrix;
+    matrix_flat(0, 2) = 0;
+    matrix_flat(1, 2) = 0;
+    matrix_flat(2, 0) = 0;
+    matrix_flat(2, 1) = 0;
+    matrix_flat(2, 2) = 1;
 
-    Transform T(
-                (boost::format("+*Xf%g*Yf%g") %
-                    mf(0,0) % mf(0,1)).str(),
-                (boost::format("+*Xf%g*Yf%g") %
-                    mf(1,0) % mf(1,1)).str(),
-                "Z",
-                (boost::format("+*Xf%g*Yf%g") %
-                    mi(0,0) % mi(0,1)).str(),
-                (boost::format("+*Xf%g*Yf%g") %
-                    mi(1,0) % mi(1,1)).str(),
-                "Z");
+    Shape s_flat(s.math, s.bounds.xmin, s.bounds.ymin, 0,
+                         s.bounds.xmax, s.bounds.ymax, 0);
 
-    Shape transformed = s.map(T);
-    transformed.bounds.zmin = 0;
-    transformed.bounds.zmax = 1;
+    Transform T_flat = getTransform(matrix_flat);
+    Shape transformed = s_flat.map(T_flat);
 
-    image = new RenderImage(transformed.bounds);
+    // Render the flattened shape, but with bounds equivalent to the shape's
+    // position in a 3D bounding box.
+    Bounds b3d = Bounds(s.bounds.xmin, s.bounds.ymin, 0,
+                        s.bounds.xmax, s.bounds.ymax, 1).
+                 map(getTransform(matrix));
+    image = new RenderImage(
+            b3d,
+            matrix.inverted() *
+                QVector3D(b3d.xmin, b3d.ymax, b3d.zmax),
+            scale / 4);
     image->render(&transformed);
     image->moveToThread(QApplication::instance()->thread());
 
-    // Figure out the z bounds for the image using the full transform
-    // (not the fake y-scaling transform)
-    Bounds bz = Bounds(s.bounds.xmin, s.bounds.ymin, 0,
-                       s.bounds.xmax, s.bounds.ymax, 1);
-    Bounds bzt =  bz.map(Transform(
-                         "X", "Y", "Z",
-                (boost::format("++*Xf%g*Yf%g*Zf%g") %
-                    m3d(0,0) % m3d(0,1) % m3d(0,2)).str(),
-                (boost::format("++*Xf%g*Yf%g*Zf%g") %
-                    m3d(1,0) % m3d(1,1) % m3d(1,2)).str(),
-                (boost::format("++*Xf%g*Yf%g*Zf%g") %
-                    m3d(2,0) % m3d(2,1) % m3d(2,2)).str()));
-
-    image->setZ(bzt.zmin, bzt.zmax);
-    if (m3d(1,2))
+    if (matrix(1,2))
     {
-        image->applyGradient(m3d(2,2) > 0);
+        image->applyGradient(matrix(2,2) > 0);
     }
-    */
 }
 
 Transform RenderWorker::getTransform(QMatrix4x4 m)

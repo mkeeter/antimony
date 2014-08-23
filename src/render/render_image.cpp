@@ -108,8 +108,3 @@ void RenderImage::addToCanvas(Canvas *canvas)
     pixmaps[canvas] = pix;
 }
 
-void RenderImage::setZ(float zmin, float zmax)
-{
-    bounds.zmin = zmin;
-    bounds.zmax = zmax;
-}
