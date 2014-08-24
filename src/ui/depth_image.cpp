@@ -117,6 +117,18 @@ void DepthImageItem::paint(QPainter *painter,
     glBindTexture(GL_TEXTURE_2D, depth_tex);
     glUniform1i(depth_loc, 0);
 
+    const float zmin_global = canvas->getZmin();
+    const float dz_global = canvas->getZmax() - zmin_global;
+
+    const float dz = size.z();
+    const float zmin = (canvas->getTransformMatrix() * pos).z() - dz;
+
+    // Set z values for depth blending.
+    glUniform1f(shader.uniformLocation("dz_local"), dz);
+    glUniform1f(shader.uniformLocation("zmin_local"), zmin);
+    glUniform1f(shader.uniformLocation("dz_global"), dz_global);
+    glUniform1f(shader.uniformLocation("zmin_global"), zmin_global);
+
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     vertices.release();
     shader.release();
