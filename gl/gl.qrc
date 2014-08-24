@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="gl/">
+        <file>quad.frag</file>
+        <file>quad.vert</file>
+    </qresource>
+</RCC>

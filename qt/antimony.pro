@@ -69,6 +69,9 @@ FORMS += \
     ../src/ui/forms/resolution_dialog.ui \
     ../src/ui/forms/exporting_dialog.ui \
 
+RESOURCES += \
+    ../gl/gl.qrc \
+
 macx {
     QMAKE_INFO_PLIST = ../app/Info.plist
     ICON = ../app/sb.icns

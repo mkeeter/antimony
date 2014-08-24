@@ -3,9 +3,13 @@
 #include <QPainter>
 #include <QDebug>
 #include <QStyleOptionGraphicsItem>
+#include <QGLWidget>
 
 #include "ui/depth_image.h"
 #include "ui/canvas.h"
+
+QGLShaderProgram DepthImageItem::shader;
+QGLBuffer DepthImageItem::vertices;
 
 DepthImageItem::DepthImageItem(QVector3D pos, QVector3D size, QImage depth,
                                Canvas* canvas)
@@ -14,6 +18,31 @@ DepthImageItem::DepthImageItem(QVector3D pos, QVector3D size, QImage depth,
     connect(canvas, &Canvas::viewChanged, this, &DepthImageItem::reposition);
     reposition();
     setZValue(-20);
+    initializeGL();
+}
+
+void DepthImageItem::initializeGL()
+{
+    initializeGLFunctions();
+
+    if (!shader.shaders().length())
+    {
+        float vbuf[] = {
+             0,  0,
+             0,  1,
+             1,  0,
+             1,  1};
+        vertices.create();
+        vertices.bind();
+        vertices.allocate(vbuf, sizeof(vbuf));
+        vertices.release();
+
+        qDebug() << "Compiling shaders!";
+        shader.addShaderFromSourceFile(QGLShader::Vertex, ":/gl/quad.vert");
+        shader.addShaderFromSourceFile(QGLShader::Fragment, ":/gl/quad.frag");
+        shader.link();
+        qDebug() << shader.log();
+    }
 }
 
 void DepthImageItem::reposition()
@@ -35,6 +64,27 @@ void DepthImageItem::paint(QPainter *painter,
 {
     Q_UNUSED(option);
     Q_UNUSED(widget);
+
+    shader.bind();
+    vertices.bind();
+
+    const GLuint vp = shader.attributeLocation("vertex_position");
+    const GLuint offset_loc = shader.uniformLocation("offset");
+    const GLuint width_loc = shader.uniformLocation("width");
+    const GLuint height_loc = shader.uniformLocation("height");
+
+    glEnableVertexAttribArray(vp);
+    glVertexAttribPointer(vp, 2, GL_FLOAT, false,
+                          2 * sizeof(GLfloat), 0);
+
+    glUniform2f(offset_loc, 0, 0);
+    glUniform1f(width_loc, 0.1);
+    glUniform1f(height_loc, 0.1);
+
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 8);
+    vertices.release();
+    shader.release();
+    /*
 
     if (depth.height() == 0)
     {
@@ -79,4 +129,5 @@ void DepthImageItem::paint(QPainter *painter,
                    size.x() * canvas->getScale(),
                    size.y() * canvas->getScale()),
             depth_);
+    */
 }
