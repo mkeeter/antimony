@@ -83,6 +83,8 @@ void DepthImageItem::paint(QPainter *painter,
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
+    glEnable(GL_DEPTH_TEST);
+
     shader.bind();
     vertices.bind();
 
@@ -118,6 +120,9 @@ void DepthImageItem::paint(QPainter *painter,
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     vertices.release();
     shader.release();
+
+    glEnable(GL_DEPTH_TEST);
+
     /*
 
     if (depth.height() == 0)
