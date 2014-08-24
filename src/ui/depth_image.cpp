@@ -21,6 +21,11 @@ DepthImageItem::DepthImageItem(QVector3D pos, QVector3D size, QImage depth,
     initializeGL();
 }
 
+DepthImageItem::~DepthImageItem()
+{
+    glDeleteTextures(1, &depth_tex);
+}
+
 void DepthImageItem::initializeGL()
 {
     initializeGLFunctions();
