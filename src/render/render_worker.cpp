@@ -66,7 +66,7 @@ void RenderWorker::render3d(Shape s)
     image = new RenderImage(
             transformed.bounds,
             matrix.inverted() * QVector3D(transformed.bounds.xmin,
-                                          transformed.bounds.ymax,
+                                          transformed.bounds.ymin,
                                           transformed.bounds.zmax),
             scale);
     image->render(&transformed);
@@ -96,7 +96,7 @@ void RenderWorker::render2d(Shape s)
     image = new RenderImage(
             b3d,
             matrix.inverted() *
-                QVector3D(b3d.xmin, b3d.ymax, b3d.zmax),
+                QVector3D(b3d.xmin, b3d.ymin, b3d.zmax),
             scale);
     image->render(&transformed);
     image->moveToThread(QApplication::instance()->thread());

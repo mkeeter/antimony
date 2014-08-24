@@ -278,6 +278,8 @@ void Canvas::pan(QPointF d)
 
 void Canvas::drawBackground(QPainter* painter, const QRectF& rect)
 {
+    Q_UNUSED(painter);
+    Q_UNUSED(rect);
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

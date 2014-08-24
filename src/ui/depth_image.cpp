@@ -37,11 +37,9 @@ void DepthImageItem::initializeGL()
         vertices.allocate(vbuf, sizeof(vbuf));
         vertices.release();
 
-        qDebug() << "Compiling shaders!";
         shader.addShaderFromSourceFile(QGLShader::Vertex, ":/gl/quad.vert");
         shader.addShaderFromSourceFile(QGLShader::Fragment, ":/gl/quad.frag");
         shader.link();
-        qDebug() << shader.log();
     }
 }
 
@@ -77,9 +75,18 @@ void DepthImageItem::paint(QPainter *painter,
     glVertexAttribPointer(vp, 2, GL_FLOAT, false,
                           2 * sizeof(GLfloat), 0);
 
-    glUniform2f(offset_loc, 0, 0);
-    glUniform1f(width_loc, 0.1);
-    glUniform1f(height_loc, 0.1);
+    QPointF corner = canvas->mapFromScene(canvas->worldToScene(pos).toPoint());
+    glUniform2f(
+            offset_loc,
+            2*(corner.x() - canvas->width()/2) / canvas->width(),
+            -2*(corner.y() - canvas->height()/2) / canvas->height());
+
+    glUniform1f(
+            width_loc,
+            2*(size.x() * canvas->getScale()) / canvas->width());
+    glUniform1f(
+            height_loc,
+            2*(size.y() * canvas->getScale()) / canvas->height());
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 8);
     vertices.release();

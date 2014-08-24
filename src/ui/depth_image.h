@@ -14,7 +14,8 @@ class DepthImageItem : public QGraphicsObject, protected QGLFunctions
 {
     Q_OBJECT
 public:
-    DepthImageItem(QVector3D pos, QVector3D size, QImage depth, Canvas* canvas);
+    DepthImageItem(QVector3D pos, QVector3D size,
+                   QImage depth, Canvas* canvas);
     QRectF boundingRect() const;
 
     /** Position of lower-left corner (in original scene units) */
