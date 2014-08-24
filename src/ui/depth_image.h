@@ -34,6 +34,8 @@ protected:
     QImage depth;
     Canvas* canvas;
 
+    GLuint depth_tex;
+
     static QGLShaderProgram shader;
     static QGLBuffer vertices;
 };

@@ -41,6 +41,21 @@ void DepthImageItem::initializeGL()
         shader.addShaderFromSourceFile(QGLShader::Fragment, ":/gl/quad.frag");
         shader.link();
     }
+
+    glGenTextures(1, &depth_tex);
+    glBindTexture(GL_TEXTURE_2D, depth_tex);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexImage2D(
+            GL_TEXTURE_2D, 0,   /* target, level */
+            GL_RGBA8,           /* format */
+            depth.width(), depth.height(), 0, /* width, height border */
+            GL_RGBA, GL_UNSIGNED_BYTE,   /* Data format */
+            depth.bits()        /* Input data */
+    );
 }
 
 void DepthImageItem::reposition()
@@ -66,27 +81,34 @@ void DepthImageItem::paint(QPainter *painter,
     shader.bind();
     vertices.bind();
 
+    // Load vertices into shader
     const GLuint vp = shader.attributeLocation("vertex_position");
-    const GLuint offset_loc = shader.uniformLocation("offset");
-    const GLuint width_loc = shader.uniformLocation("width");
-    const GLuint height_loc = shader.uniformLocation("height");
-
     glEnableVertexAttribArray(vp);
     glVertexAttribPointer(vp, 2, GL_FLOAT, false,
                           2 * sizeof(GLfloat), 0);
 
+    // Load image's screen position into shader
+    const GLuint offset_loc = shader.uniformLocation("offset");
     QPointF corner = canvas->mapFromScene(canvas->worldToScene(pos).toPoint());
     glUniform2f(
             offset_loc,
             2*(corner.x() - canvas->width()/2) / canvas->width(),
             -2*(corner.y() - canvas->height()/2) / canvas->height());
 
+    // Load image's width and height into shader
+    const GLuint width_loc = shader.uniformLocation("width");
+    const GLuint height_loc = shader.uniformLocation("height");
     glUniform1f(
             width_loc,
             2*(size.x() * canvas->getScale()) / canvas->width());
     glUniform1f(
             height_loc,
             2*(size.y() * canvas->getScale()) / canvas->height());
+
+    const GLuint depth_loc = shader.uniformLocation("depth_tex");
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, depth_tex);
+    glUniform1i(depth_loc, 0);
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 8);
     vertices.release();
