@@ -115,7 +115,7 @@ void DepthImageItem::paint(QPainter *painter,
     glBindTexture(GL_TEXTURE_2D, depth_tex);
     glUniform1i(depth_loc, 0);
 
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 8);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     vertices.release();
     shader.release();
     /*
