@@ -12,6 +12,7 @@
 
 #include "datum/datum.h"
 #include "datum/eval.h"
+#include "ui/syntax.h"
 
 DatumTextItem::DatumTextItem(Datum* datum, QGraphicsItem* parent)
     : QGraphicsTextItem(parent), d(datum), txt(document()),
@@ -25,6 +26,7 @@ DatumTextItem::DatumTextItem(Datum* datum, QGraphicsItem* parent)
     bbox = boundingRect();
     connect(txt, SIGNAL(contentsChanged()), this, SLOT(onTextChanged()));
 
+    new SyntaxHighlighter(document());
     installEventFilter(this);
 }
 
