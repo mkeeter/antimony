@@ -2,8 +2,8 @@
 
 #include <QPushButton>
 #include <QGridLayout>
-#include <QScrollBar>
 #include <QMouseEvent>
+#include <QSplitter>
 #include <QPropertyAnimation>
 #include <QPainter>
 #include <QToolTip>
@@ -28,23 +28,19 @@ ScriptEditor::ScriptEditor(QWidget *parent) :
     setLineWrapMode(NoWrap);
 
     new SyntaxHighlighter(document());
-    QColor background = Colors::base01;
-    background.setAlpha(150);
     setStyleSheet(QString(
         "QPlainTextEdit {"
         "    background-color: %1;"
         "    color: %2;"
-        "}").arg(background.name(QColor::HexArgb)).arg(Colors::base04.name()));
+        "}").arg(Colors::base01.name()).arg(Colors::base04.name()));
 
-    horizontalScrollBar()->setStyleSheet("QScrollBar {height:0px;}");
-    verticalScrollBar()->setStyleSheet("QScrollBar {width:0px;}");
     setMouseTracking(true);
 
     makeButtons();
     setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
 
-    setWidth(0);
-    hide();
+    //setWidth(0);
+    //hide();
 
     connect(document(), SIGNAL(contentsChanged()),
             this, SLOT(onTextChanged()));
@@ -90,8 +86,18 @@ void ScriptEditor::makeButtons()
     setLayout(grid);
 }
 
-int ScriptEditor::getWidth() const { return width(); }
-void ScriptEditor::setWidth(int w) { resize(w, height()); }
+int ScriptEditor::getWidth() const {
+    return dynamic_cast<QSplitter*>(parent())->sizes()[0];
+}
+void ScriptEditor::setWidth(int w) {
+    QList<int> sizes;
+    auto splitter = dynamic_cast<QSplitter*>(parent());
+    sizes << w;
+    sizes << splitter->width() - w;
+    splitter->setSizes(sizes);
+    splitter->update();
+}
+
 
 void ScriptEditor::setDatum(ScriptDatum *d)
 {

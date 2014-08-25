@@ -23,14 +23,6 @@ public:
     Canvas* getCanvas() const { return canvas; }
 
 private:
-    /** Creates a canvas widget and adds it to the window.
-     */
-    void addCanvas();
-
-    /** Create a script editor widget and add it to the window.
-     */
-    void addScriptEditor();
-
     /** Sets up main keyboard shortcuts
      *  (because Qt Designer doesn't have a good way to do so)
      */
