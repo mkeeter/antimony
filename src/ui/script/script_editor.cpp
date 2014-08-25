@@ -7,6 +7,8 @@
 #include <QTextCursor>
 #include <QHelpEvent>
 #include <QToolTip>
+#include <QMarginsF>
+#include <QGraphicsSceneMouseEvent>
 
 #include "datum/script_datum.h"
 
@@ -50,7 +52,7 @@ void ScriptEditorItem::onTextChanged()
 
 void ScriptEditorItem::onDatumChanged()
 {
-    if (datum && !datum->getValue())
+    if (datum && !datum->getValid())
     {
         setToolTip(datum->getErrorTraceback());
     }
@@ -78,8 +80,64 @@ void ScriptEditorItem::paint(QPainter* painter,
     painter->setPen(Colors::base04);
     painter->drawRect(boundingRect());
 
-    highlightError(painter, 0);
+    if (datum && datum->getErrorLine() != -1)
+    {
+        highlightError(painter, datum->getErrorLine());
+    }
+
     QGraphicsTextItem::paint(painter, o, w);
+    paintButtons(painter);
+}
+
+QRectF ScriptEditorItem::closeButton() const
+{
+    auto br = boundingRect();
+    return QRectF(br.width() - 20 - border, -border, 20, 20);
+}
+
+QRectF ScriptEditorItem::moveButton() const
+{
+    auto br = closeButton();
+    br.moveLeft(br.left() - br.width());
+    return br;
+}
+
+void ScriptEditorItem::paintButtons(QPainter* p)
+{
+    auto close = closeButton();
+    p->setPen(QPen(Colors::base07, 4));
+
+    int offset = 6;
+    p->drawLine(close.bottomLeft() + QPointF(offset, -offset),
+                close.topRight() - QPointF(offset, -offset));
+    p->drawLine(close.topLeft() + QPointF(offset, offset),
+                close.bottomRight() - QPointF(offset, offset));
+
+    offset /= 1.41;
+    p->setPen(QPen(Colors::base07, 3));
+    auto move = moveButton() - QMarginsF(offset, offset, offset, offset);
+    p->drawEllipse(move);
+}
+
+void ScriptEditorItem::mousePressEvent(QGraphicsSceneMouseEvent* e)
+{
+    qDebug() << closeButton() << e->pos();
+    if (closeButton().contains(e->pos()))
+    {
+        qDebug() << "Deleting oneself";
+        e->accept();
+        deleteLater();
+    }
+    else
+    {
+        QGraphicsTextItem::mousePressEvent(e);
+    }
+}
+
+void ScriptEditorItem::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
+{
+    qDebug() << e->pos();
+    QGraphicsTextItem::mouseMoveEvent(e);
 }
 
 void ScriptEditorItem::highlightError(QPainter* p, int lineno)
@@ -90,7 +148,6 @@ void ScriptEditorItem::highlightError(QPainter* p, int lineno)
     p->setBrush(QBrush(err));
     p->setPen(Qt::NoPen);
     p->drawRect(getLineRect(lineno));
-    qDebug() << getLineRect(lineno);
 }
 
 QRectF ScriptEditorItem::getLineRect(int lineno) const
@@ -99,5 +156,5 @@ QRectF ScriptEditorItem::getLineRect(int lineno) const
     QRectF br = QGraphicsTextItem::boundingRect();
 
     float line_height = br.height() / line_count;
-    return QRectF(0, line_height * lineno, br.width(), line_height);
+    return QRectF(0, line_height * lineno - 1.5*border, br.width(), line_height);
 }
