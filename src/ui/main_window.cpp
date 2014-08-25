@@ -16,8 +16,6 @@ MainWindow::MainWindow(QWidget *parent) :
     canvas = ui->canvas;
     script = ui->script;
     populateMenu(ui->menuAdd);
-    ui->splitter->setHandleWidth(0);
-    ui->splitter->setOpaqueResize(1);
 
     setWindowTitle("antimony");
 }

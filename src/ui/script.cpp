@@ -87,15 +87,25 @@ void ScriptEditor::makeButtons()
 }
 
 int ScriptEditor::getWidth() const {
-    return dynamic_cast<QSplitter*>(parent())->sizes()[0];
+    return width();
 }
+
 void ScriptEditor::setWidth(int w) {
-    QList<int> sizes;
-    auto splitter = dynamic_cast<QSplitter*>(parent());
-    sizes << w;
-    sizes << splitter->width() - w;
-    splitter->setSizes(sizes);
-    splitter->update();
+    int stretch = 0.5 + 128 * (
+            1 / (dynamic_cast<QWidget*>(parent())->width() / float(w) - 1));
+    if (stretch == 0)
+    {
+        stretch = 1;
+    }
+    else if (stretch < 0)
+    {
+        stretch = 255;
+    }
+    QSizePolicy sp = sizePolicy();
+    sp.setHorizontalStretch(stretch);
+    setSizePolicy(sp);
+    updateGeometry();
+    dynamic_cast<QWidget*>(parent())->update();
 }
 
 
