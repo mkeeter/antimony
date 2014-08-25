@@ -6,6 +6,7 @@
 
 #include "ui/main_window.h"
 #include "ui/canvas.h"
+#include "ui/script/script_editor.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -34,7 +35,7 @@ void MainWindow::setShortcuts()
 
 void MainWindow::openScript(ScriptDatum *d)
 {
-    //script->setDatum(d);
+    new ScriptEditorItem(d, ui->canvas);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

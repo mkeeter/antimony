@@ -38,6 +38,7 @@ SOURCES += \
     ../src/ui/inspector/inspector_row.cpp \
     ../src/ui/resolution_dialog.cpp \
     ../src/ui/exporting_dialog.cpp \
+    ../src/ui/script/script_editor.cpp \
 
 HEADERS += \
     ../src/ui/main_window.h \
@@ -60,6 +61,7 @@ HEADERS += \
     ../src/ui/inspector/inspector_row.h \
     ../src/ui/resolution_dialog.h \
     ../src/ui/exporting_dialog.h \
+    ../src/ui/script/script_editor.h \
 
 FORMS += \
     ../src/ui/forms/main_window.ui \
