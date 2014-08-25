@@ -39,8 +39,8 @@ ScriptEditor::ScriptEditor(QWidget *parent) :
     makeButtons();
     setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
 
-    //setWidth(0);
-    //hide();
+    setWidth(0);
+    hide();
 
     connect(document(), SIGNAL(contentsChanged()),
             this, SLOT(onTextChanged()));
