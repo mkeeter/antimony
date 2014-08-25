@@ -9,7 +9,7 @@ public:
     explicit SyntaxHighlighter(QTextDocument* doc);
     void highlightBlock(const QString& text) override;
 protected:
-    QList<QPair<QRegExp, QTextCharFormat>> rules;
+    static QList<QPair<QRegExp, QTextCharFormat>> rules;
 };
 
 #endif // SYNTAX_H
