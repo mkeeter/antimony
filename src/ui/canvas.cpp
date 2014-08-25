@@ -60,7 +60,6 @@ QMatrix4x4 Canvas::getTransformMatrix() const
     // Remember that these operations are applied in reverse order.
     M.rotate(pitch * 180 / M_PI, QVector3D(1, 0, 0));
     M.rotate(yaw  *  180 / M_PI, QVector3D(0, 0, 1));
-    M.translate(-center.x(), -center.y(), -center.z());
 
     return M;
 }
