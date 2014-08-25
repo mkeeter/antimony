@@ -43,19 +43,27 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* doc) :
     }
 
     QTextCharFormat quote_format;
-    quote_format.setForeground(Colors::teal);
+    quote_format.setForeground(Colors::brown);
     rules << QPair<QRegExp, QTextCharFormat>(QRegExp("\\\".*\\\""),
                                              quote_format);
     rules << QPair<QRegExp, QTextCharFormat>(QRegExp("\\'.*\\'"),
                                              quote_format);
 
-    QTextCharFormat num_format;
-    num_format.setForeground(Colors::blue);
-
+    QTextCharFormat int_format;
+    int_format.setForeground(Colors::orange);
+    rules << QPair<QRegExp, QTextCharFormat>(QRegExp("\\b-\\d+"),
+                                             int_format);
     rules << QPair<QRegExp, QTextCharFormat>(QRegExp("\\b\\d+"),
-                                             num_format);
+                                             int_format);
+
+    QTextCharFormat float_format;
+    float_format.setForeground(Colors::yellow);
     rules << QPair<QRegExp, QTextCharFormat>(QRegExp("\\b\\d+\\.\\d*"),
-                                             num_format);
+                                             float_format);
+    rules << QPair<QRegExp, QTextCharFormat>(QRegExp("\\b\\d+\\.\\d*e\\d+"),
+                                             float_format);
+    rules << QPair<QRegExp, QTextCharFormat>(QRegExp("\\b\\d+e\\d+"),
+                                             float_format);
 
     QTextCharFormat comment_format;
     comment_format.setForeground(Colors::base01);
