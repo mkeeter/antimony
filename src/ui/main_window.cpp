@@ -6,7 +6,6 @@
 
 #include "ui/main_window.h"
 #include "ui/canvas.h"
-#include "ui/script.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -14,7 +13,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     canvas = ui->canvas;
-    script = ui->script;
     populateMenu(ui->menuAdd);
 
     setWindowTitle("antimony");
@@ -36,7 +34,7 @@ void MainWindow::setShortcuts()
 
 void MainWindow::openScript(ScriptDatum *d)
 {
-    script->setDatum(d);
+    //script->setDatum(d);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
