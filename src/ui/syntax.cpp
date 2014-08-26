@@ -41,21 +41,24 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* doc) :
     rules << QPair<QRegularExpression, QTextCharFormat>(
             QRegularExpression("\\'.*\\'"), quote_format);
 
+    // String that can be prepended to a regex to make it detect negative
+    // numbers (but not subtraction).  Note that a closing parenthesis is
+    // needed and the desired number is the last match group.
+    QString neg = "(^|\\*\\*|[(+\\-=*\\/])([+\\-\\s]*";
+
     QTextCharFormat int_format;
     int_format.setForeground(Colors::orange);
     rules << QPair<QRegularExpression, QTextCharFormat>(
-            QRegularExpression("\\b-\\d+"), int_format);
-    rules << QPair<QRegularExpression, QTextCharFormat>(
-            QRegularExpression("\\b\\d+"), int_format);
+            QRegularExpression(neg + "\\b\\d+\\b)"), int_format);
 
     QTextCharFormat float_format;
     float_format.setForeground(Colors::yellow);
     rules << QPair<QRegularExpression, QTextCharFormat>(
-            QRegularExpression("\\b\\d+\\.\\d*"), float_format);
+            QRegularExpression(neg + "\\b\\d+\\.\\d*)"), float_format);
     rules << QPair<QRegularExpression, QTextCharFormat>(
-            QRegularExpression("\\b\\d+\\.\\d*e\\d+"), float_format);
+            QRegularExpression(neg + "\\b\\d+\\.\\d*e\\d+)"), float_format);
     rules << QPair<QRegularExpression, QTextCharFormat>(
-            QRegularExpression("\\b\\d+e\\d+"), float_format);
+            QRegularExpression(neg + "\\b\\d+e\\d+)"), float_format);
 
     QTextCharFormat comment_format;
     comment_format.setForeground(Colors::base01);
@@ -72,8 +75,9 @@ void SyntaxHighlighter::highlightBlock(const QString& text)
         while (iter.hasNext())
         {
             auto match = iter.next();
-            setFormat(match.capturedStart(),
-                      match.capturedLength(),
+            auto index = match.lastCapturedIndex();
+            setFormat(match.capturedStart(index),
+                      match.capturedLength(index),
                       r.second);
         }
     }
