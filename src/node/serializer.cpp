@@ -6,7 +6,7 @@
 #include "node/node.h"
 
 #include "datum/datum.h"
-#include "datum/eval.h"
+#include "datum/eval_datum.h"
 #include "datum/function_datum.h"
 #include "datum/script_datum.h"
 

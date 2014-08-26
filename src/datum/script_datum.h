@@ -6,7 +6,7 @@
 #include <QSet>
 #include <QString>
 
-#include "datum/eval.h"
+#include "datum/eval_datum.h"
 
 class ScriptDatum : public EvalDatum
 {

@@ -1,6 +1,6 @@
 SOURCES += \
     ../src/datum/datum.cpp \
-    ../src/datum/eval.cpp \
+    ../src/datum/eval_datum.cpp \
     ../src/datum/shape_datum.cpp \
     ../src/datum/float_datum.cpp \
     ../src/datum/int_datum.cpp \
@@ -12,7 +12,7 @@ SOURCES += \
 
 HEADERS += \
     ../src/datum/datum.h \
-    ../src/datum/eval.h \
+    ../src/datum/eval_datum.h \
     ../src/datum/shape_datum.h \
     ../src/datum/float_datum.h \
     ../src/datum/int_datum.h \

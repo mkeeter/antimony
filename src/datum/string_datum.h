@@ -1,7 +1,7 @@
 #ifndef STRING_DATUM_H
 #define STRING_DATUM_H
 
-#include "datum/eval.h"
+#include "datum/eval_datum.h"
 
 class StringDatum : public EvalDatum
 {

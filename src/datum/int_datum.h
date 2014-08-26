@@ -2,7 +2,7 @@
 #define INT_DATUM_H
 
 #include <Python.h>
-#include "datum/eval.h"
+#include "datum/eval_datum.h"
 
 class IntDatum : public EvalDatum
 {
