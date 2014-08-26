@@ -39,8 +39,7 @@ ScriptEditorItem::ScriptEditorItem(ScriptDatum* datum, Canvas* canvas)
     connect(datum, SIGNAL(destroyed()),
             this, SLOT(deleteLater()));
 
-    setPlainText(datum->getExpr());
-    onDatumChanged(); // update tooltip
+    onDatumChanged(); // update tooltip and text
 }
 
 void ScriptEditorItem::onTextChanged()
@@ -57,9 +56,17 @@ void ScriptEditorItem::onTextChanged()
 
 void ScriptEditorItem::onDatumChanged()
 {
-    if (datum && !datum->getValid())
+    if (datum)
     {
-        setToolTip(datum->getErrorTraceback());
+        if (!datum->getValid())
+        {
+            setToolTip(datum->getErrorTraceback());
+        }
+
+        if (datum->getExpr() != document()->toPlainText())
+        {
+            document()->setPlainText(datum->getExpr());
+        }
     }
     else
     {
