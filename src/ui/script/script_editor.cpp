@@ -63,6 +63,10 @@ void ScriptEditorItem::onDatumChanged()
         {
             setToolTip(datum->getErrorTraceback());
         }
+        else
+        {
+            QToolTip::hideText();
+        }
 
         if (datum->getExpr() != document()->toPlainText())
         {
