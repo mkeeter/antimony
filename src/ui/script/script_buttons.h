@@ -25,4 +25,18 @@ protected:
     friend class ScriptEditorItem;
 };
 
+class ScriptEditorMoveButton : public ScriptEditorButton
+{
+public:
+    explicit ScriptEditorMoveButton(QGraphicsItem* parent);
+protected:
+    void paint(QPainter* painter,
+               const QStyleOptionGraphicsItem* o,
+               QWidget* w) override;
+    void mousePressEvent(QGraphicsSceneMouseEvent* e);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent* e);
+
+    friend class ScriptEditorItem;
+};
+
 #endif

@@ -7,7 +7,6 @@
 #include <QTextCursor>
 #include <QHelpEvent>
 #include <QToolTip>
-#include <QMarginsF>
 
 #include "datum/script_datum.h"
 
@@ -19,7 +18,8 @@
 
 ScriptEditorItem::ScriptEditorItem(ScriptDatum* datum, Canvas* canvas)
     : QGraphicsTextItem("HELLO WORLD"), datum(datum), border(10),
-      close(new ScriptEditorCloseButton(this))
+      close(new ScriptEditorCloseButton(this)),
+      move(new ScriptEditorMoveButton(this))
 {
     QFont font;
     font.setFamily("Courier");
@@ -52,6 +52,7 @@ void ScriptEditorItem::onTextChanged()
     }
     close->setPos(boundingRect().topRight() -
                   QPointF(close->boundingRect().width(), 0));
+    move->setPos(close->pos() - QPointF(move->boundingRect().width(), 0));
 }
 
 void ScriptEditorItem::onDatumChanged()

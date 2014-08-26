@@ -2,6 +2,7 @@
 
 #include <QPainter>
 #include <QGraphicsSceneMouseEvent>
+#include <QMarginsF>
 
 #include "ui/script/script_buttons.h"
 #include "ui/colors.h"
@@ -49,10 +50,43 @@ void ScriptEditorCloseButton::mousePressEvent(QGraphicsSceneMouseEvent* e)
         parentObject()->deleteLater();
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+ScriptEditorMoveButton::ScriptEditorMoveButton(QGraphicsItem* parent)
+    : ScriptEditorButton(parent)
+{
+    // Nothing to do here
+}
+
+void ScriptEditorMoveButton::paint(QPainter* p,
+                                    const QStyleOptionGraphicsItem* o,
+                                    QWidget* w)
+{
+    Q_UNUSED(o);
+    Q_UNUSED(w);
+
+    int offset = 6 / 1.41;
+
+    auto br = boundingRect() - QMarginsF(offset, offset, offset, offset);
+    p->setPen(QPen(Colors::base07, 3));
+
+    p->drawEllipse(br);
+}
+
+void ScriptEditorMoveButton::mousePressEvent(QGraphicsSceneMouseEvent* e)
+{
+    Q_UNUSED(e);
+    // Nothing to do here, just need an event handler to grab the mouse
+}
+
+void ScriptEditorMoveButton::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
+{
+    auto p = dynamic_cast<QGraphicsItem*>(parentObject());
+    p->setPos(p->pos() + e->pos() - e->lastPos());
+}
+
 /*
  *
- *    offset /= 1.41;
-    p->setPen(QPen(Colors::base07, 3));
-    auto move = moveButton() - QMarginsF(offset, offset, offset, offset);
-    p->drawEllipse(move);
+
     */

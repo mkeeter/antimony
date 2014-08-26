@@ -34,6 +34,7 @@ protected:
     QPointer<ScriptDatum> datum;
     int border;
     ScriptEditorCloseButton* close;
+    ScriptEditorMoveButton* move;
 };
 
 #endif
