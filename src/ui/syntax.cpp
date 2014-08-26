@@ -3,16 +3,9 @@
 #include "ui/syntax.h"
 #include "ui/colors.h"
 
-QList<QPair<QRegExp, QTextCharFormat>> SyntaxHighlighter::rules;
-
 SyntaxHighlighter::SyntaxHighlighter(QTextDocument* doc) :
     QSyntaxHighlighter(doc)
 {
-    if (rules.length())
-    {
-        return;
-    }
-
     PyObject* kwmod = PyImport_ImportModule("keyword");
     PyObject* kwlist = PyObject_GetAttrString(kwmod, "kwlist");
 
@@ -26,8 +19,6 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* doc) :
         wchar_t* w = PyUnicode_AsWideCharString(kw, NULL);
         keywords << QString::fromWCharArray(w);
         PyMem_Free(w);
-
-        Py_DECREF(kw);
     }
 
     Py_DECREF(kwlist);
