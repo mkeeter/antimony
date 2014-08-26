@@ -29,50 +29,52 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* doc) :
     kw_format.setForeground(Colors::green);
     for (auto k : keywords)
     {
-        rules << QPair<QRegExp, QTextCharFormat>(QRegExp("\\b" + k + "\\b"),
-                                                 kw_format);
+        rules << QPair<QRegularExpression, QTextCharFormat>(
+                QRegularExpression("\\b" + k + "\\b"),
+                kw_format);
     }
 
     QTextCharFormat quote_format;
     quote_format.setForeground(Colors::brown);
-    rules << QPair<QRegExp, QTextCharFormat>(QRegExp("\\\".*\\\""),
-                                             quote_format);
-    rules << QPair<QRegExp, QTextCharFormat>(QRegExp("\\'.*\\'"),
-                                             quote_format);
+    rules << QPair<QRegularExpression, QTextCharFormat>(
+            QRegularExpression("\\\".*\\\""), quote_format);
+    rules << QPair<QRegularExpression, QTextCharFormat>(
+            QRegularExpression("\\'.*\\'"), quote_format);
 
     QTextCharFormat int_format;
     int_format.setForeground(Colors::orange);
-    rules << QPair<QRegExp, QTextCharFormat>(QRegExp("\\b-\\d+"),
-                                             int_format);
-    rules << QPair<QRegExp, QTextCharFormat>(QRegExp("\\b\\d+"),
-                                             int_format);
+    rules << QPair<QRegularExpression, QTextCharFormat>(
+            QRegularExpression("\\b-\\d+"), int_format);
+    rules << QPair<QRegularExpression, QTextCharFormat>(
+            QRegularExpression("\\b\\d+"), int_format);
 
     QTextCharFormat float_format;
     float_format.setForeground(Colors::yellow);
-    rules << QPair<QRegExp, QTextCharFormat>(QRegExp("\\b\\d+\\.\\d*"),
-                                             float_format);
-    rules << QPair<QRegExp, QTextCharFormat>(QRegExp("\\b\\d+\\.\\d*e\\d+"),
-                                             float_format);
-    rules << QPair<QRegExp, QTextCharFormat>(QRegExp("\\b\\d+e\\d+"),
-                                             float_format);
+    rules << QPair<QRegularExpression, QTextCharFormat>(
+            QRegularExpression("\\b\\d+\\.\\d*"), float_format);
+    rules << QPair<QRegularExpression, QTextCharFormat>(
+            QRegularExpression("\\b\\d+\\.\\d*e\\d+"), float_format);
+    rules << QPair<QRegularExpression, QTextCharFormat>(
+            QRegularExpression("\\b\\d+e\\d+"), float_format);
 
     QTextCharFormat comment_format;
     comment_format.setForeground(Colors::base01);
 
-    rules << QPair<QRegExp, QTextCharFormat>(QRegExp("#.*"),
-                                             comment_format);
+    rules << QPair<QRegularExpression, QTextCharFormat>(
+            QRegularExpression("#.*"), comment_format);
 }
 
 void SyntaxHighlighter::highlightBlock(const QString& text)
 {
     for (auto r : rules)
     {
-        int index = r.first.indexIn(text);
-        while (index >= 0)
+        auto iter = r.first.globalMatch(text);
+        while (iter.hasNext())
         {
-            int length = r.first.matchedLength();
-            setFormat(index, length, r.second);
-            index = r.first.indexIn(text, index + length);
+            auto match = iter.next();
+            setFormat(match.capturedStart(),
+                      match.capturedLength(),
+                      r.second);
         }
     }
 }
