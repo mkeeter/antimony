@@ -8,17 +8,18 @@
 #include <QHelpEvent>
 #include <QToolTip>
 #include <QMarginsF>
-#include <QGraphicsSceneMouseEvent>
 
 #include "datum/script_datum.h"
 
 #include "ui/canvas.h"
 #include "ui/script/script_editor.h"
+#include "ui/script/script_buttons.h"
 #include "ui/syntax.h"
 #include "ui/colors.h"
 
 ScriptEditorItem::ScriptEditorItem(ScriptDatum* datum, Canvas* canvas)
-    : QGraphicsTextItem("HELLO WORLD"), datum(datum), border(10)
+    : QGraphicsTextItem("HELLO WORLD"), datum(datum), border(10),
+      close(new ScriptEditorCloseButton(this))
 {
     QFont font;
     font.setFamily("Courier");
@@ -39,6 +40,7 @@ ScriptEditorItem::ScriptEditorItem(ScriptDatum* datum, Canvas* canvas)
             this, SLOT(deleteLater()));
 
     setPlainText(datum->getExpr());
+    onDatumChanged(); // update tooltip
 }
 
 void ScriptEditorItem::onTextChanged()
@@ -48,6 +50,8 @@ void ScriptEditorItem::onTextChanged()
     {
         datum->setExpr(document()->toPlainText());
     }
+    close->setPos(boundingRect().topRight() -
+                  QPointF(close->boundingRect().width(), 0));
 }
 
 void ScriptEditorItem::onDatumChanged()
@@ -76,6 +80,9 @@ void ScriptEditorItem::paint(QPainter* painter,
                              const QStyleOptionGraphicsItem* o,
                              QWidget* w)
 {
+    Q_UNUSED(o);
+    Q_UNUSED(w);
+
     painter->setBrush(Colors::base02);
     painter->setPen(Colors::base04);
     painter->drawRect(boundingRect());
@@ -86,58 +93,6 @@ void ScriptEditorItem::paint(QPainter* painter,
     }
 
     QGraphicsTextItem::paint(painter, o, w);
-    paintButtons(painter);
-}
-
-QRectF ScriptEditorItem::closeButton() const
-{
-    auto br = boundingRect();
-    return QRectF(br.width() - 20 - border, -border, 20, 20);
-}
-
-QRectF ScriptEditorItem::moveButton() const
-{
-    auto br = closeButton();
-    br.moveLeft(br.left() - br.width());
-    return br;
-}
-
-void ScriptEditorItem::paintButtons(QPainter* p)
-{
-    auto close = closeButton();
-    p->setPen(QPen(Colors::base07, 4));
-
-    int offset = 6;
-    p->drawLine(close.bottomLeft() + QPointF(offset, -offset),
-                close.topRight() - QPointF(offset, -offset));
-    p->drawLine(close.topLeft() + QPointF(offset, offset),
-                close.bottomRight() - QPointF(offset, offset));
-
-    offset /= 1.41;
-    p->setPen(QPen(Colors::base07, 3));
-    auto move = moveButton() - QMarginsF(offset, offset, offset, offset);
-    p->drawEllipse(move);
-}
-
-void ScriptEditorItem::mousePressEvent(QGraphicsSceneMouseEvent* e)
-{
-    qDebug() << closeButton() << e->pos();
-    if (closeButton().contains(e->pos()))
-    {
-        qDebug() << "Deleting oneself";
-        e->accept();
-        deleteLater();
-    }
-    else
-    {
-        QGraphicsTextItem::mousePressEvent(e);
-    }
-}
-
-void ScriptEditorItem::mouseMoveEvent(QGraphicsSceneMouseEvent* e)
-{
-    qDebug() << e->pos();
-    QGraphicsTextItem::mouseMoveEvent(e);
 }
 
 void ScriptEditorItem::highlightError(QPainter* p, int lineno)

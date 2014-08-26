@@ -39,6 +39,7 @@ SOURCES += \
     ../src/ui/resolution_dialog.cpp \
     ../src/ui/exporting_dialog.cpp \
     ../src/ui/script/script_editor.cpp \
+    ../src/ui/script/script_buttons.cpp \
 
 HEADERS += \
     ../src/ui/main_window.h \
@@ -62,6 +63,7 @@ HEADERS += \
     ../src/ui/resolution_dialog.h \
     ../src/ui/exporting_dialog.h \
     ../src/ui/script/script_editor.h \
+    ../src/ui/script/script_buttons.h \
 
 FORMS += \
     ../src/ui/forms/main_window.ui \
