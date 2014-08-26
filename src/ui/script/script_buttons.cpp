@@ -34,7 +34,7 @@ void ScriptEditorCloseButton::paint(QPainter* p,
     Q_UNUSED(w);
 
     auto br = boundingRect();
-    p->setPen(QPen(Colors::base07, 4));
+    p->setPen(QPen(Colors::base06, 3));
 
     int offset = 6;
     p->drawLine(br.bottomLeft() + QPointF(offset, -offset),
@@ -69,7 +69,7 @@ void ScriptEditorMoveButton::paint(QPainter* p,
     int offset = 6 / 1.41;
 
     auto br = boundingRect() - QMarginsF(offset, offset, offset, offset);
-    p->setPen(QPen(Colors::base07, 3));
+    p->setPen(QPen(Colors::base06, 2));
 
     p->drawEllipse(br);
 }
