@@ -32,13 +32,14 @@ SOURCES += \
     ../src/render/export_json.cpp \
     ../src/ui/depth_image.cpp \
     ../src/ui/syntax.cpp \
-    ../src/ui/script.cpp \
     ../src/ui/inspector/inspector.cpp \
     ../src/ui/inspector/inspector_text.cpp \
     ../src/ui/inspector/inspector_button.cpp \
     ../src/ui/inspector/inspector_row.cpp \
     ../src/ui/resolution_dialog.cpp \
     ../src/ui/exporting_dialog.cpp \
+    ../src/ui/script/script_editor.cpp \
+    ../src/ui/script/script_buttons.cpp \
 
 HEADERS += \
     ../src/ui/main_window.h \
@@ -55,13 +56,14 @@ HEADERS += \
     ../src/render/export_json.h \
     ../src/ui/depth_image.h \
     ../src/ui/syntax.h \
-    ../src/ui/script.h \
     ../src/ui/inspector/inspector.h \
     ../src/ui/inspector/inspector_text.h \
     ../src/ui/inspector/inspector_button.h \
     ../src/ui/inspector/inspector_row.h \
     ../src/ui/resolution_dialog.h \
     ../src/ui/exporting_dialog.h \
+    ../src/ui/script/script_editor.h \
+    ../src/ui/script/script_buttons.h \
 
 FORMS += \
     ../src/ui/forms/main_window.ui \

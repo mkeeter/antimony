@@ -4,7 +4,6 @@
 #include <QMainWindow>
 
 class Canvas;
-class ScriptEditor;
 class ScriptDatum;
 class Node;
 
@@ -45,7 +44,6 @@ private:
 
     Ui::MainWindow *ui;
     Canvas* canvas;
-    ScriptEditor* script;
 
     friend class App;
 };

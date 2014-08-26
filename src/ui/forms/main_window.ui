@@ -22,22 +22,6 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="ScriptEditor" name="script">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-        <horstretch>128</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="verticalScrollBarPolicy">
-       <enum>Qt::ScrollBarAlwaysOff</enum>
-      </property>
-      <property name="horizontalScrollBarPolicy">
-       <enum>Qt::ScrollBarAlwaysOff</enum>
-      </property>
-     </widget>
-    </item>
-    <item>
      <widget class="Canvas" name="canvas">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -133,11 +117,6 @@
   </action>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>ScriptEditor</class>
-   <extends>QPlainTextEdit</extends>
-   <header>../src/ui/script.h</header>
-  </customwidget>
   <customwidget>
    <class>Canvas</class>
    <extends>QGraphicsView</extends>
