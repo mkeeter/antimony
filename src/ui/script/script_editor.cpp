@@ -40,6 +40,7 @@ ScriptEditorItem::ScriptEditorItem(ScriptDatum* datum, Canvas* canvas)
             this, SLOT(deleteLater()));
 
     onDatumChanged(); // update tooltip and text
+    setZValue(3);
 }
 
 void ScriptEditorItem::onTextChanged()
