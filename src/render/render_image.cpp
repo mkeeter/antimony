@@ -14,7 +14,8 @@ RenderImage::RenderImage(Bounds b, QVector3D pos, float scale)
     : QObject(), bounds(b), pos(pos), scale(scale),
       depth((b.xmax - b.xmin) * scale,
             (b.ymax - b.ymin) * scale,
-            QImage::Format_RGB32)
+            QImage::Format_RGB32),
+      shaded(depth.width(), depth.height(), depth.format())
 {
     // Nothing to do here
     // (render() must be called explicity)
@@ -32,15 +33,18 @@ void RenderImage::render(Shape *shape)
 {
     depth.fill(0x000000);
 
-    uint8_t* depth8(new uint8_t[depth.width() * depth.height()]);
-    uint8_t** depth8_rows(new uint8_t*[depth.height()]);
+    uint8_t* d8(new uint8_t[depth.width() * depth.height()]);
+    uint8_t** d8_rows(new uint8_t*[depth.height()]);
+    uint8_t (*s8)[3] = new uint8_t[depth.width() * depth.height()][3];
+    uint8_t (**s8_rows)[3] = new decltype(s8)[depth.height()];
 
     for (int i=0; i < depth.height(); ++i)
     {
-        depth8_rows[i] = depth8 + (depth.width() * i);
+        d8_rows[i] = d8 + (depth.width() * i);
+        s8_rows[i] = s8 + (depth.width() * i);
     }
-    memset(depth8, 0, depth.width() * depth.height());
-
+    memset(d8, 0, depth.width() * depth.height());
+    memset(s8, 0, depth.width() * depth.height() * 3);
 
     Region r = (Region) {
             .imin=0, .jmin=0, .kmin=0,
@@ -52,7 +56,8 @@ void RenderImage::render(Shape *shape)
     build_arrays(&r, shape->bounds.xmin, shape->bounds.ymin, shape->bounds.zmin,
                      shape->bounds.xmax, shape->bounds.ymax, shape->bounds.zmax);
     int halt=0;
-    render8(shape->tree.get(), r, depth8_rows, &halt);
+    render8(shape->tree.get(), r, d8_rows, &halt);
+    shaded8(shape->tree.get(), r, d8_rows, s8_rows, &halt);
 
     free_arrays(&r);
 
@@ -60,17 +65,22 @@ void RenderImage::render(Shape *shape)
     {
         for (int i=0; i < depth.width(); ++i)
         {
-            uint8_t pix = depth8_rows[j][i];
+            uint8_t pix = d8_rows[j][i];
+            uint8_t* norm = s8_rows[j][i];
             if (pix)
             {
                 depth.setPixel(i, depth.height() - j - 1,
                                pix | (pix << 8) | (pix << 16));
+                shaded.setPixel(i, depth.height() - j - 1,
+                        norm[0] | (norm[1] << 8) | (norm[2] << 16));
             }
         }
     }
 
-    delete [] depth8;
-    delete [] depth8_rows;
+    delete [] s8;
+    delete [] s8_rows;
+    delete [] d8;
+    delete [] d8_rows;
 
 }
 

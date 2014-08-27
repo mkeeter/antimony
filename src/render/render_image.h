@@ -38,6 +38,7 @@ protected:
     float scale;
 
     QImage depth;
+    QImage shaded;
     QMap<Canvas*, DepthImageItem*> pixmaps;
 };
 
