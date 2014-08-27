@@ -3,8 +3,8 @@
 #include "ui/syntax.h"
 #include "ui/colors.h"
 
-SyntaxHighlighter::SyntaxHighlighter(QTextDocument* doc) :
-    QSyntaxHighlighter(doc)
+SyntaxHighlighter::SyntaxHighlighter(QTextDocument* doc)
+    : QSyntaxHighlighter(doc)
 {
     PyObject* kwmod = PyImport_ImportModule("keyword");
     PyObject* kwlist = PyObject_GetAttrString(kwmod, "kwlist");
@@ -76,9 +76,15 @@ void SyntaxHighlighter::highlightBlock(const QString& text)
         {
             auto match = iter.next();
             auto index = match.lastCapturedIndex();
+            QTextCharFormat format = r.second;
+            if (dim)
+            {
+                format.setForeground(
+                        Colors::adjust(format.foreground().color(), 0.6));
+            }
             setFormat(match.capturedStart(index),
                       match.capturedLength(index),
-                      r.second);
+                      format);
         }
     }
 }

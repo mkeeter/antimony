@@ -16,7 +16,8 @@
 
 DatumTextItem::DatumTextItem(Datum* datum, QGraphicsItem* parent)
     : QGraphicsTextItem(parent), d(datum), txt(document()),
-      background(Colors::base02), border(background)
+      background(Colors::base02), border(background),
+      highlighter(new SyntaxHighlighter(document()))
 {
     setTextInteractionFlags(Qt::TextEditorInteraction);
     setTextWidth(150);
@@ -26,12 +27,22 @@ DatumTextItem::DatumTextItem(Datum* datum, QGraphicsItem* parent)
     bbox = boundingRect();
     connect(txt, SIGNAL(contentsChanged()), this, SLOT(onTextChanged()));
 
-    new SyntaxHighlighter(document());
     installEventFilter(this);
 }
 
 void DatumTextItem::onDatumChanged()
 {
+    if (d->canEdit())
+    {
+        setDefaultTextColor(Colors::base04);
+        highlighter->dim = false;
+    }
+    else
+    {
+        setDefaultTextColor(Colors::base03);
+        highlighter->dim = true;
+    }
+
     QTextCursor cursor = textCursor();
     int p = textCursor().position();
     txt->setPlainText(d->getString());
@@ -47,15 +58,6 @@ void DatumTextItem::onDatumChanged()
     else
     {
         border = Colors::red;
-    }
-
-    if (d->canEdit())
-    {
-        setDefaultTextColor(Colors::base04);
-    }
-    else
-    {
-        setDefaultTextColor(Colors::base03);
     }
 
     // Set tooltip if there was a Python evaluation error.

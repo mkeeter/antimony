@@ -4,6 +4,7 @@
 #include <QGraphicsTextItem>
 
 class Datum;
+class SyntaxHighlighter;
 
 class DatumTextItem : public QGraphicsTextItem
 {
@@ -31,6 +32,8 @@ protected:
     QColor background;
     QColor border;
     QRectF bbox;
+
+    SyntaxHighlighter* highlighter;
 };
 
 #endif // INSPECTOR_TEXT_H
