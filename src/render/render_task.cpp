@@ -70,7 +70,7 @@ void RenderTask::onDatumChanged()
         next = new RenderWorker(datum->getValue(),
                                 canvas->getTransformMatrix(),
                                 canvas->getScale() / (1 << 4),
-                                4);
+                                5);
 
         if (!running)
         {
