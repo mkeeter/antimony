@@ -6,19 +6,15 @@
 
 #include "ui/main_window.h"
 #include "ui/canvas.h"
-#include "ui/script.h"
+#include "ui/script/script_editor.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    addCanvas();
-    addScriptEditor();
+    canvas = ui->canvas;
     populateMenu(ui->menuAdd);
-
-    // Clear the info label for now.
-    ui->label->setText("");
 
     setWindowTitle("antimony");
 }
@@ -26,19 +22,6 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
-}
-
-void MainWindow::addCanvas()
-{
-    canvas = new Canvas(this);
-    ui->gridLayout->addWidget(canvas, 0, 0);
-    canvas->lower();
-}
-
-void MainWindow::addScriptEditor()
-{
-    script = new ScriptEditor(this);
-    ui->gridLayout->addWidget(script, 0, 0);
 }
 
 void MainWindow::setShortcuts()
@@ -52,7 +35,7 @@ void MainWindow::setShortcuts()
 
 void MainWindow::openScript(ScriptDatum *d)
 {
-    script->setDatum(d);
+    new ScriptEditorItem(d, ui->canvas);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

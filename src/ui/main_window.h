@@ -4,7 +4,6 @@
 #include <QMainWindow>
 
 class Canvas;
-class ScriptEditor;
 class ScriptDatum;
 class Node;
 
@@ -23,14 +22,6 @@ public:
     Canvas* getCanvas() const { return canvas; }
 
 private:
-    /** Creates a canvas widget and adds it to the window.
-     */
-    void addCanvas();
-
-    /** Create a script editor widget and add it to the window.
-     */
-    void addScriptEditor();
-
     /** Sets up main keyboard shortcuts
      *  (because Qt Designer doesn't have a good way to do so)
      */
@@ -53,7 +44,6 @@ private:
 
     Ui::MainWindow *ui;
     Canvas* canvas;
-    ScriptEditor* script;
 
     friend class App;
 };

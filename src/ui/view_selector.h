@@ -1,30 +1,51 @@
 #ifndef VIEW_SELECTOR_H
 #define VIEW_SELECTOR_H
 
-#include <QWidget>
+#include <QGraphicsObject>
 
-namespace Ui {
-class ViewSelector;
-}
+class Canvas;
 
-class ViewSelector : public QWidget
+class ViewSelectorButton : public QGraphicsObject
 {
     Q_OBJECT
 public:
-    explicit ViewSelector(QWidget *parent = 0);
-    ~ViewSelector();
+    explicit ViewSelectorButton(QString label, QPointF pos,
+                                QGraphicsItem* parent);
+signals:
+    void mouseEnter(QString label);
+    void mouseLeave();
+    void pressed();
+protected:
+    void hoverEnterEvent(QGraphicsSceneHoverEvent* event);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent* event);
+    void mousePressEvent(QGraphicsSceneMouseEvent* event);
+
+    QRectF boundingRect() const override;
+
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+               QWidget *widget);
+
+    QString label;
+};
+
+class ViewSelector : public QGraphicsTextItem
+{
+    Q_OBJECT
+public:
+    explicit ViewSelector(Canvas* canvas);
 
 public slots:
+    void setLabel(QString label);
+    void clearLabel();
+
     void onTopPressed();
     void onFrontPressed();
     void onLeftPressed();
     void onRightPressed();
     void onBackPressed();
     void onBottomPressed();
-protected:
+signals:
     void spinTo(float pitch, float yaw);
-private:
-    Ui::ViewSelector *ui;
 };
 
 #endif // VIEW_SELECTOR_H

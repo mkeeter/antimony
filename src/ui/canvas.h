@@ -9,6 +9,7 @@ class Node;
 class Control;
 class InputPort;
 class NodeInspector;
+class ViewSelector;
 
 class Canvas : public QGraphicsView
 {
@@ -68,6 +69,10 @@ public:
      */
     float getPitch() const { return pitch; }
 
+    /** Returns the viewpoint's center.
+     */
+    QVector3D getCenter() const { return center; }
+
 signals:
     void viewChanged();
 
@@ -94,6 +99,10 @@ protected:
      */
     void keyPressEvent(QKeyEvent *event) override;
 
+    /** Draws shaded panels in the background.
+     */
+    void drawBackground(QPainter* painter, const QRectF& rect) override;
+
     /** On paint event, resize depth canvas then call default painter.
      */
     void paintEvent(QPaintEvent *event);
@@ -101,14 +110,18 @@ protected:
     // Properties to automatically animate yaw and pitch.
     void setYaw(float y);
     Q_PROPERTY(float _yaw READ getYaw WRITE setYaw)
-
     void setPitch(float p);
     Q_PROPERTY(float _pitch READ getPitch WRITE setPitch)
 
     /** Pans the scene rectangle.
      */
-    void pan(QPointF d);
+    void pan(QVector3D d);
 
+    /** On resize, reposition the view selector menu
+     */
+    void resizeEvent(QResizeEvent* e);
+
+    QVector3D center;
     float scale;
 
     /* Pitch and yaw are in radians */
@@ -116,6 +129,8 @@ protected:
     float yaw;
 
     QPointF _click_pos;
+    QVector3D _click_pos_world;
+    ViewSelector* view_selector;
 };
 
 #endif // CANVAS_H

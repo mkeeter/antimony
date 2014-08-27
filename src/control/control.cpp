@@ -33,6 +33,9 @@ Control::Control(Canvas* canvas, Node* node, QGraphicsItem* parent)
     connect(canvas, SIGNAL(viewChanged()),
             this, SIGNAL(portPositionChanged()));
 
+    connect(canvas, &Canvas::viewChanged,
+            this, &Control::redraw);
+
     if (node)
     {
         connect(node, SIGNAL(destroyed()), this, SLOT(deleteLater()));
@@ -124,9 +127,9 @@ void Control::watchDatums(QVector<QString> datums)
 
 void Control::redraw()
 {
+    prepareGeometryChange();
     if (node)
     {
-        prepareGeometryChange();
         emit(inspectorPositionChanged());
         emit(portPositionChanged());
     }
