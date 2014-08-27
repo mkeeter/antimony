@@ -67,7 +67,6 @@ HEADERS += \
 
 FORMS += \
     ../src/ui/forms/main_window.ui \
-    ../src/ui/forms/view_selector.ui \
     ../src/ui/forms/resolution_dialog.ui \
     ../src/ui/forms/exporting_dialog.ui \
 
