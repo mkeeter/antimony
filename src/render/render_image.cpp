@@ -107,6 +107,11 @@ void RenderImage::applyGradient(bool direction)
     }
 }
 
+void RenderImage::setNormals(float xy, float z)
+{
+    shaded.fill((int(z * 255) << 16) | int(xy * 255));
+}
+
 void RenderImage::addToCanvas(Canvas *canvas)
 {
     DepthImageItem* pix = new DepthImageItem(pos,

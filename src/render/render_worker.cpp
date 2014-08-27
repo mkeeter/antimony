@@ -105,6 +105,10 @@ void RenderWorker::render2d(Shape s)
     {
         image->applyGradient(matrix(2,2) > 0);
     }
+
+    image->setNormals(
+        sqrt(pow(matrix(0,2),2) + pow(matrix(1,2),2)),
+        matrix(2,2));
 }
 
 Transform RenderWorker::getTransform(QMatrix4x4 m)

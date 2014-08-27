@@ -24,6 +24,11 @@ public:
     void applyGradient(bool direction);
     void addToCanvas(Canvas* canvas);
 
+    /** Sets the normals in the shaded image.
+     *  (used for 2D image shading).
+     */
+    void setNormals(float xy, float z);
+
 protected:
     /** Bounds assigned to output DepthImageItem
      *  (these may disagree with bounds on shape in render,
