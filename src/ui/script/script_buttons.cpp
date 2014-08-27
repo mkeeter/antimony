@@ -2,7 +2,6 @@
 
 #include <QPainter>
 #include <QGraphicsSceneMouseEvent>
-#include <QMarginsF>
 
 #include "ui/script/script_buttons.h"
 #include "ui/colors.h"
@@ -68,10 +67,10 @@ void ScriptEditorMoveButton::paint(QPainter* p,
 
     int offset = 6 / 1.41;
 
-    auto br = boundingRect() - QMarginsF(offset, offset, offset, offset);
+    auto br = boundingRect();
     p->setPen(QPen(Colors::base06, 2));
-
-    p->drawEllipse(br);
+    p->drawEllipse(br.left() + offset, br.top() + offset,
+                   br.width() - 2*offset, br.height() - 2*offset);
 }
 
 void ScriptEditorMoveButton::mousePressEvent(QGraphicsSceneMouseEvent* e)
