@@ -15,7 +15,7 @@ class DepthImageItem : public QGraphicsObject, protected QGLFunctions
     Q_OBJECT
 public:
     DepthImageItem(QVector3D pos, QVector3D size,
-                   QImage depth, Canvas* canvas);
+                   QImage depth, QImage shaded, Canvas* canvas);
     ~DepthImageItem();
     QRectF boundingRect() const;
 
@@ -33,9 +33,11 @@ protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
     QImage depth;
+    QImage shaded;
     Canvas* canvas;
 
     GLuint depth_tex;
+    GLuint shaded_tex;
 
     static QGLShaderProgram shader;
     static QGLBuffer vertices;

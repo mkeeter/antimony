@@ -112,7 +112,7 @@ void RenderImage::addToCanvas(Canvas *canvas)
     DepthImageItem* pix = new DepthImageItem(pos,
             QVector3D(bounds.xmax - bounds.xmin,
                       bounds.ymax - bounds.ymin,
-                      bounds.zmax - bounds.zmin), depth, canvas);
+                      bounds.zmax - bounds.zmin), depth, shaded, canvas);
     canvas->scene->addItem(pix);
     pixmaps[canvas] = pix;
 }
