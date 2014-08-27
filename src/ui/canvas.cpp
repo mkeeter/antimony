@@ -19,12 +19,13 @@
 
 #include "control/control.h"
 #include "control/axes_control.h"
+#include "ui/view_selector.h"
 
 #include "datum/datum.h"
 
 Canvas::Canvas(QWidget* parent)
     : QGraphicsView(parent), scene(new QGraphicsScene(parent)),
-      scale(100), pitch(0), yaw(0)
+      scale(100), pitch(0), yaw(0), view_selector(new ViewSelector(this))
 {
     setScene(scene);
     setStyleSheet("QGraphicsView { border-style: none; }");
@@ -38,6 +39,13 @@ Canvas::Canvas(QWidget* parent)
     setViewport(new QGLWidget(format, this));
 
     new AxesControl(this);
+}
+
+void Canvas::resizeEvent(QResizeEvent* e)
+{
+    Q_UNUSED(e);
+    view_selector->setPos(width()/2 - 70, -height()/2 + 70);
+    setSceneRect(-width()/2, -height()/2, width(), height());
 }
 
 QMatrix4x4 Canvas::getMatrix() const
