@@ -204,16 +204,19 @@ void get_normals8(MathTree* tree,
 
 _STATIC_
 void shade_pixels8(unsigned count, float (*normals)[3],
-                   unsigned* is, unsigned* js, uint8_t** out)
+                   unsigned* is, unsigned* js, uint8_t (**out)[3])
 {
     for (int a=0; a < count; ++a)
     {
-        out[js[a]][is[a]] = normals[a][2] * 255;
+        for (int b=0; b < 3; ++b)
+        {
+            out[js[a]][is[a]][b] = fabs(normals[a][b]) * 255;
+        }
     }
 }
 
 void shaded8(struct MathTree_ *tree, Region region, uint8_t **depth,
-             uint8_t** out, volatile int *halt)
+             uint8_t (**out)[3], volatile int *halt)
 {
     float *X = malloc(MIN_VOLUME*sizeof(float)),
           *Y = malloc(MIN_VOLUME*sizeof(float)),

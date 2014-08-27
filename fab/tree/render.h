@@ -21,7 +21,7 @@ void render8(struct MathTree_* tree, Region region,
              uint8_t** img, volatile int* halt);
 
 void shaded8(struct MathTree_* tree, Region region, uint8_t** depth,
-             uint8_t** out, volatile int* halt);
+             uint8_t (**out)[3], volatile int* halt);
 
 /** @brief Recursively renders a tree
     @param tree Target tree
