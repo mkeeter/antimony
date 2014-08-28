@@ -34,7 +34,6 @@ RenderImage::~RenderImage()
 
 void RenderImage::halt()
 {
-    qDebug() << "Setting halt flag!";
     halt_flag = true;
 }
 
