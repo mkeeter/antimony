@@ -8,7 +8,7 @@
 
 #include "node/manager.h"
 
-#include "render/render_task.h"
+#include "render/render_worker.h"
 
 Datum::Datum(QString name, QObject* parent)
     : QObject(parent), value(NULL), valid(false), input_handler(NULL),
@@ -168,9 +168,9 @@ void Datum::postInit()
     // If we're running the antimony app (not the test suite) and this is a
     // function that outputs a shape object, make a RenderTask for it.
 #ifdef ANTIMONY
-    if (RenderTask::accepts(this))
+    if (RenderWorker::accepts(this))
     {
-        new RenderTask(this);
+        new RenderWorker(this);
     }
 #endif
 }
