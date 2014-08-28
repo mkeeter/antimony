@@ -86,7 +86,7 @@ void RenderWorker::onTaskFinished()
 {
     clearImage();
 
-    if (current->image)
+    if (current->image && hasNoOutput())
     {
         image = current->image;
         image->setParent(this);
