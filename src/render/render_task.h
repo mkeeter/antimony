@@ -22,6 +22,9 @@ public slots:
     void onWorkerFinished();
     void onThreadFinished();
 
+signals:
+    void abort();
+
 protected:
     /** Checks to see if the datum has output.
      *  If so, returns false and deletes image.

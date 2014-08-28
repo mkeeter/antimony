@@ -69,6 +69,7 @@ void RenderWorker::render3d(Shape s)
                                           transformed.bounds.ymin,
                                           transformed.bounds.zmax),
             scale);
+    connect(this, SIGNAL(halt()), image, SLOT(halt()));
     image->render(&transformed);
     image->moveToThread(QApplication::instance()->thread());
 }
@@ -98,6 +99,7 @@ void RenderWorker::render2d(Shape s)
             matrix.inverted() *
                 QVector3D(b3d.xmin, b3d.ymin, b3d.zmax),
             scale);
+    connect(this, SIGNAL(halt()), image, SLOT(halt()));
     image->render(&transformed);
     image->moveToThread(QApplication::instance()->thread());
 

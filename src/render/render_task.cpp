@@ -67,6 +67,9 @@ void RenderTask::onDatumChanged()
         {
             next->deleteLater();
         }
+        // Tell in-progress renders to abort.
+        emit(abort());
+
         next = new RenderWorker(datum->getValue(),
                                 canvas->getTransformMatrix(),
                                 canvas->getScale() / (1 << 4),
@@ -138,6 +141,10 @@ void RenderTask::startNextRender()
 
     thread = new QThread();
     current->moveToThread(thread);
+
+    // Halt rendering when the abort signal is emitted.
+    connect(this, SIGNAL(abort()),
+            current, SIGNAL(halt()));
 
     running = true;
 

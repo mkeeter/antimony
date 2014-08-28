@@ -23,6 +23,7 @@ public slots:
     void render();
 signals:
     void finished();
+    void halt();
 protected:
     void render2d(Shape s);
     void render3d(Shape s);

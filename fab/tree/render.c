@@ -33,8 +33,11 @@ void region16(MathTree* tree, Region region, uint16_t** img);
 
 ////////////////////////////////////////////////////////////////////////////////
 void render8(MathTree* tree, Region region,
-             uint8_t** img, volatile int* halt)
+             uint8_t** img, volatile int* halt,
+             void (*callback)())
 {
+    if (callback)   (*callback)();
+
     // Special interrupt system, set asynchronously by on high
     if (*halt)  return;
 
@@ -88,8 +91,8 @@ void render8(MathTree* tree, Region region,
 
         bisect(region, &A, &B);
 
-        render8(tree, B, img, halt);
-        render8(tree, A, img, halt);
+        render8(tree, B, img, halt, callback);
+        render8(tree, A, img, halt, callback);
     }
 
 #if PRUNE
@@ -216,7 +219,8 @@ void shade_pixels8(unsigned count, float (*normals)[3],
 }
 
 void shaded8(struct MathTree_ *tree, Region region, uint8_t **depth,
-             uint8_t (**out)[3], volatile int *halt)
+             uint8_t (**out)[3], volatile int *halt,
+             void (*callback)())
 {
     float *X = malloc(MIN_VOLUME*sizeof(float)),
           *Y = malloc(MIN_VOLUME*sizeof(float)),
@@ -232,6 +236,8 @@ void shaded8(struct MathTree_ *tree, Region region, uint8_t **depth,
     unsigned count = 0;
     for (unsigned j=0; j < region.nj && !*halt; ++j)
     {
+        if (callback)   (*callback)();
+
         for (unsigned i=0; i < region.ni && !*halt; ++i)
         {
             // Load this pixel into the set of pixels to render

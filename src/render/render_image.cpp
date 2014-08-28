@@ -1,5 +1,7 @@
 #include <Python.h>
 
+#include <QCoreApplication>
+
 #include "render/render_image.h"
 #include "ui/canvas.h"
 #include "ui/depth_image.h"
@@ -15,7 +17,8 @@ RenderImage::RenderImage(Bounds b, QVector3D pos, float scale)
       depth((b.xmax - b.xmin) * scale,
             (b.ymax - b.ymin) * scale,
             QImage::Format_RGB32),
-      shaded(depth.width(), depth.height(), depth.format())
+      shaded(depth.width(), depth.height(), depth.format()),
+      halt_flag(0)
 {
     // Nothing to do here
     // (render() must be called explicity)
@@ -27,6 +30,17 @@ RenderImage::~RenderImage()
     {
         p.value()->deleteLater();
     }
+}
+
+void RenderImage::halt()
+{
+    qDebug() << "Setting halt flag!";
+    halt_flag = true;
+}
+
+static void processEvents()
+{
+    QCoreApplication::processEvents();
 }
 
 void RenderImage::render(Shape *shape)
@@ -55,9 +69,8 @@ void RenderImage::render(Shape *shape)
 
     build_arrays(&r, shape->bounds.xmin, shape->bounds.ymin, shape->bounds.zmin,
                      shape->bounds.xmax, shape->bounds.ymax, shape->bounds.zmax);
-    int halt=0;
-    render8(shape->tree.get(), r, d8_rows, &halt);
-    shaded8(shape->tree.get(), r, d8_rows, s8_rows, &halt);
+    render8(shape->tree.get(), r, d8_rows, &halt_flag, &processEvents);
+    shaded8(shape->tree.get(), r, d8_rows, s8_rows, &halt_flag, &processEvents);
 
     free_arrays(&r);
 
