@@ -11,15 +11,14 @@ uniform float dz_global;
 
 vec4 shade(vec4 norm)
 {
-    vec3 base3 = vec3(0.99, 0.96, 0.89);
-    vec3 base2 = vec3(0.92, 0.91, 0.83);
-    vec3 base00 = vec3(0.40, 0.48, 0.51);
+    vec3 light = vec3(0.99, 0.96, 0.89);
+    vec3 dark = vec3(0.20, 0.25, 0.3);
 
-    float a = dot(norm.xyz, vec3(0.0, 0.0, 1.0));
+    float a = dot(norm.xyz, vec3(0.57, 0.57, 0.57));
     float b = dot(norm.xyz, vec3(-0.57, -0.57, 0.57));
 
-    return vec4((a*base2 + (1-a)*base00)*0.5 +
-                (b*base3 + (1-b)*base00)*0.5, 1);
+    return vec4((a*light + (1-a)*dark)*0.65 +
+                (b*light + (1-b)*dark)*0.65, 1);
 }
 
 void main() {
