@@ -19,7 +19,7 @@ public:
 public slots:
     void onDatumChanged();
     void onDatumDeleted();
-    void onWorkerFinished();
+    void onTaskFinished();
     void onThreadFinished();
 
 signals:

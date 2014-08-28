@@ -82,7 +82,7 @@ void RenderWorker::onDatumChanged()
     }
 }
 
-void RenderWorker::onWorkerFinished()
+void RenderWorker::onTaskFinished()
 {
     clearImage();
 
