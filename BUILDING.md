@@ -36,3 +36,9 @@ make -j8
 ./antimony
 ```
 
+If the top menu bar is not appearing in Ubuntu with a non-Unity
+desktop environment (e.g. `gnome-session-flashback`), run
+```
+sudo apt-get remove appmenu-qt5
+```
+to make it appear.
