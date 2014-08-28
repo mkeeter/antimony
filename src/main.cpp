@@ -20,6 +20,5 @@ int main(int argc, char *argv[])
         out = a.exec();
     }
 
-    Py_Finalize();
     return out;
 }
