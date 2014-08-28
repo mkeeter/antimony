@@ -152,7 +152,7 @@ void RenderWorker::startNextRender()
             current, SLOT(render()));
 
     connect(current, SIGNAL(finished()),
-            this, SLOT(onWorkerFinished()));
+            this, SLOT(onTaskFinished()));
 
     connect(current, SIGNAL(destroyed()),
             thread, SLOT(quit()));

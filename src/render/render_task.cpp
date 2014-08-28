@@ -53,6 +53,7 @@ void RenderTask::render()
         {
             render3d(s);
         }
+        image->moveToThread(QApplication::instance()->thread());
     }
 
     emit(finished());
@@ -71,7 +72,6 @@ void RenderTask::render3d(Shape s)
             scale);
     connect(this, SIGNAL(halt()), image, SLOT(halt()));
     image->render(&transformed);
-    image->moveToThread(QApplication::instance()->thread());
 }
 
 void RenderTask::render2d(Shape s)
@@ -101,7 +101,6 @@ void RenderTask::render2d(Shape s)
             scale);
     connect(this, SIGNAL(halt()), image, SLOT(halt()));
     image->render(&transformed);
-    image->moveToThread(QApplication::instance()->thread());
 
     if (matrix(1,2))
     {
