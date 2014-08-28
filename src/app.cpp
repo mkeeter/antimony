@@ -128,7 +128,6 @@ void App::onExportSTL()
                 "Some shapes do not have 3D bounds;<br>"
                 "cannot export mesh.");
         return;
-
     }
 
     ResolutionDialog* resolution_dialog = new ResolutionDialog(&s);
@@ -205,8 +204,6 @@ void App::onExportJSON()
     thread->start();
     exporting_dialog->exec();
 }
-
-
 
 void App::setShortcuts()
 {
