@@ -1,44 +1,55 @@
-#ifndef RENDER_WORKER_H
-#define RENDER_WORKER_H
+#ifndef RENDER_TASK_H
+#define RENDER_TASK_H
 
-#include <Python.h>
 #include <QObject>
-#include <QMatrix4x4>
+#include <QPointer>
+#include <QThread>
 
-#include "cpp/shape.h"
-#include "cpp/transform.h"
-
+class Datum;
+class RenderTask;
 class RenderImage;
+class Canvas;
 
 class RenderWorker : public QObject
 {
     Q_OBJECT
 public:
-    explicit RenderWorker(PyObject* s, QMatrix4x4 matrix,
-                          float scale, int refinement);
-    ~RenderWorker();
-
-    RenderWorker* getNext() const;
+    explicit RenderWorker(Datum* datum);
+    static bool accepts(Datum* d);
 public slots:
-    void render();
+    void onDatumChanged();
+    void onDatumDeleted();
+    void onWorkerFinished();
+    void onThreadFinished();
+
 signals:
-    void finished();
+    void abort();
+
 protected:
-    void render2d(Shape s);
-    void render3d(Shape s);
-
-    /** Returns a Transform object that applies the given matrix.
+    /** Checks to see if the datum has output.
+     *  If so, returns false and deletes image.
      */
-    static Transform getTransform(QMatrix4x4 m);
+    bool hasNoOutput();
 
-    PyObject* shape;
-    QMatrix4x4 matrix;
-    float scale;
-    int refinement;
+    /** Starts rendering the task in next.
+     *  Moves next to current when starting.
+     */
+    void startNextRender();
 
+    /** Calls deleteLater on image and sets it to NULL.
+     */
+    void clearImage();
+
+    QPointer<Datum> datum;
+
+    QThread* thread;
+    RenderTask* current;
+    RenderTask* next;
     RenderImage* image;
 
-    friend class RenderTask;
+    bool running;
+
+    Canvas* canvas;
 };
 
-#endif // RENDER_WORKER_H
+#endif // RENDER_TASK_H

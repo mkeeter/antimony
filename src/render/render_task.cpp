@@ -1,159 +1,136 @@
-#include <Python.h>
+#include <boost/python.hpp>
+#include <boost/format.hpp>
 
+#include <QApplication>
 #include <QDebug>
-
-#include "app.h"
+#include <QTime>
 
 #include "render/render_task.h"
-#include "render/render_worker.h"
 #include "render/render_image.h"
 
-#include "datum/datum.h"
-#include "datum/link.h"
+#include "cpp/shape.h"
+#include "cpp/transform.h"
 
-#include "ui/canvas.h"
+using namespace boost::python;
 
-#include "cpp/fab.h"
-
-RenderTask::RenderTask(Datum* datum)
-    : QObject(NULL), datum(datum), thread(NULL), current(NULL),
-      next(NULL), image(NULL), running(false),
-      canvas(App::instance()->getCanvas())
+RenderTask::RenderTask(PyObject *s, QMatrix4x4 matrix,
+                           float scale, int refinement)
+    : QObject(NULL), shape(s), matrix(matrix),
+      scale(scale), refinement(refinement), image(NULL)
 {
-    connect(datum, SIGNAL(changed()),
-            this, SLOT(onDatumChanged()));
-    connect(datum, SIGNAL(connectionChanged()),
-            this, SLOT(onDatumChanged()));
-    connect(datum, SIGNAL(destroyed()),
-            this, SLOT(onDatumDeleted()));
-    connect(canvas, SIGNAL(viewChanged()),
-            this, SLOT(onDatumChanged()));
+    Py_INCREF(shape);
 }
 
-bool RenderTask::accepts(Datum *d)
+RenderTask::~RenderTask()
 {
-    return d->getType() == fab::ShapeType;
+    Py_DECREF(shape);
 }
 
-void RenderTask::onDatumDeleted()
+RenderTask* RenderTask::getNext() const
 {
-    if (!running)
-    {
-        deleteLater();
-    }
+    return refinement
+        ? new RenderTask(shape, matrix, scale*2, refinement - 1)
+        : NULL;
 }
 
-bool RenderTask::hasNoOutput()
+void RenderTask::render()
 {
-    if (!datum->hasOutput())
-    {
-        clearImage();
-        return false;
-    }
+    extract<Shape> get_shape(shape);
 
-    if (datum->hasConnectedLink())
-    {
-        clearImage();
-        return false;
-    }
-    return true;
-}
+    Q_ASSERT(get_shape.check());
+    Shape s = get_shape();
 
-void RenderTask::onDatumChanged()
-{
-    if (datum->getValid() && datum->getValue() && hasNoOutput())
+    Q_ASSERT(!(isinf(s.bounds.zmin) ^ isinf(s.bounds.zmax)));
+
+    if (!isinf(s.bounds.xmin) && !isinf(s.bounds.xmax) &&
+        !isinf(s.bounds.xmin) && !isinf(s.bounds.xmax))
     {
-        if (next)
+        if (isinf(s.bounds.zmin))
         {
-            next->deleteLater();
+            render2d(s);
         }
-        next = new RenderWorker(datum->getValue(),
-                                canvas->getTransformMatrix(),
-                                canvas->getScale() / (1 << 4),
-                                4);
-
-        if (!running)
+        else
         {
-            startNextRender();
+            render3d(s);
         }
     }
+
+    emit(finished());
 }
 
-void RenderTask::onWorkerFinished()
+void RenderTask::render3d(Shape s)
 {
-    clearImage();
+    Transform T = getTransform(matrix);
+    Shape transformed = s.map(T);
 
-    if (current->image)
-    {
-        image = current->image;
-        image->setParent(this);
-        image->addToCanvas(canvas);
-    }
-
-    if (!next)
-    {
-        next = current->getNext();
-    }
-
-    current->deleteLater();
+    image = new RenderImage(
+            transformed.bounds,
+            matrix.inverted() * QVector3D(transformed.bounds.xmin,
+                                          transformed.bounds.ymin,
+                                          transformed.bounds.zmax),
+            scale);
+    connect(this, SIGNAL(halt()), image, SLOT(halt()));
+    image->render(&transformed);
+    image->moveToThread(QApplication::instance()->thread());
 }
 
-void RenderTask::clearImage()
+void RenderTask::render2d(Shape s)
 {
-    if (image)
+    QMatrix4x4 matrix_flat = matrix;
+    matrix_flat(0, 2) = 0;
+    matrix_flat(1, 2) = 0;
+    matrix_flat(2, 0) = 0;
+    matrix_flat(2, 1) = 0;
+    matrix_flat(2, 2) = 1;
+
+    Shape s_flat(s.math, s.bounds.xmin, s.bounds.ymin, 0,
+                         s.bounds.xmax, s.bounds.ymax, 0);
+
+    Transform T_flat = getTransform(matrix_flat);
+    Shape transformed = s_flat.map(T_flat);
+
+    // Render the flattened shape, but with bounds equivalent to the shape's
+    // position in a 3D bounding box.
+    Bounds b3d = Bounds(s.bounds.xmin, s.bounds.ymin, 0,
+                        s.bounds.xmax, s.bounds.ymax, 0.0001).
+                 map(getTransform(matrix));
+    image = new RenderImage(
+            b3d,
+            matrix.inverted() *
+                QVector3D(b3d.xmin, b3d.ymin, b3d.zmax),
+            scale);
+    connect(this, SIGNAL(halt()), image, SLOT(halt()));
+    image->render(&transformed);
+    image->moveToThread(QApplication::instance()->thread());
+
+    if (matrix(1,2))
     {
-        image->deleteLater();
-        image = NULL;
+        image->applyGradient(matrix(2,2) > 0);
     }
+
+    image->setNormals(
+        sqrt(pow(matrix(0,2),2) + pow(matrix(1,2),2)),
+        matrix(2,2));
 }
 
-void RenderTask::onThreadFinished()
+Transform RenderTask::getTransform(QMatrix4x4 m)
 {
-    running = false;
+    QMatrix4x4 mf = m.inverted();
+    QMatrix4x4 mi = mf.inverted();
 
-    // If the datum which we're rendering has been deleted, clean up
-    // and call deleteLater on oneself.
-    if (datum.isNull())
-    {
-        if (next)
-        {
-            next->deleteLater();
-        }
-        deleteLater();
-    }
+    Transform T = Transform(
+                (boost::format("++*Xf%g*Yf%g*Zf%g") %
+                    mf(0,0) % mf(0,1) % mf(0,2)).str(),
+                (boost::format("++*Xf%g*Yf%g*Zf%g") %
+                    mf(1,0) % mf(1,1) % mf(1,2)).str(),
+                (boost::format("++*Xf%g*Yf%g*Zf%g") %
+                    mf(2,0) % mf(2,1) % mf(2,2)).str(),
+                (boost::format("++*Xf%g*Yf%g*Zf%g") %
+                    mi(0,0) % mi(0,1) % mi(0,2)).str(),
+                (boost::format("++*Xf%g*Yf%g*Zf%g") %
+                    mi(1,0) % mi(1,1) % mi(1,2)).str(),
+                (boost::format("++*Xf%g*Yf%g*Zf%g") %
+                    mi(2,0) % mi(2,1) % mi(2,2)).str());
 
-    // If there's a new worker to render, then start doing so.
-    else if (next)
-    {
-        startNextRender();
-    }
-}
-
-void RenderTask::startNextRender()
-{
-    Q_ASSERT(!running);
-
-    current = next;
-    next = NULL;
-
-    thread = new QThread();
-    current->moveToThread(thread);
-
-    running = true;
-
-    connect(thread, SIGNAL(started()),
-            current, SLOT(render()));
-
-    connect(current, SIGNAL(finished()),
-            this, SLOT(onWorkerFinished()));
-
-    connect(current, SIGNAL(destroyed()),
-            thread, SLOT(quit()));
-
-    connect(thread, SIGNAL(finished()),
-            this, SLOT(onThreadFinished()));
-    connect(thread, SIGNAL(finished()),
-            thread, SLOT(deleteLater()));
-
-    thread->start();
+    return T;
 }

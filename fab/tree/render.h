@@ -18,10 +18,12 @@ struct MathTree_;
     @param halt Flag to abort (if *halt becomes true)
 */
 void render8(struct MathTree_* tree, Region region,
-             uint8_t** img, volatile int* halt);
+             uint8_t** img, volatile int* halt,
+             void (*callback)());
 
 void shaded8(struct MathTree_* tree, Region region, uint8_t** depth,
-             uint8_t** out, volatile int* halt);
+             uint8_t (**out)[3], volatile int* halt,
+             void (*callback)());
 
 /** @brief Recursively renders a tree
     @param tree Target tree
