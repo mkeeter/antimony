@@ -56,6 +56,22 @@ bool Connection::areDatumsValid() const
             (drag_state != CONNECTED || link->target);
 }
 
+bool Connection::areNodesValid() const
+{
+    return areDatumsValid() &&
+        dynamic_cast<Node*>(startDatum()->parent()) &&
+            (drag_state != CONNECTED ||
+             dynamic_cast<Node*>(endDatum()->parent()));
+}
+
+bool Connection::areControlsValid() const
+{
+    return areNodesValid() &&
+        canvas->getControl(startNode()) &&
+        (drag_state != CONNECTED ||
+         canvas->getControl(endNode()));
+}
+
 Datum* Connection::startDatum() const
 {
     Datum* d = dynamic_cast<Datum*>(link->parent());
@@ -157,6 +173,14 @@ void Connection::paint(QPainter *painter,
     if (isSelected() || drag_state == VALID)
     {
         color = Colors::highlight(color);
+    }
+
+    bool faded = (!startControl()->showConnections() &&
+                  !endControl()->showConnections() &&
+                  !isSelected());
+    if (faded)
+    {
+        color = QColor(color.red(), color.green(), color.blue(), 100);
     }
 
     painter->setPen(QPen(color, 4));
