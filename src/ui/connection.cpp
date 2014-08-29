@@ -33,7 +33,7 @@ Connection::Connection(Link* link, Canvas* canvas)
 
 void Connection::onPortPositionChanged()
 {
-    if (areDatumsValid())
+    if (areControlsValid())
     {
         prepareGeometryChange();
     }
@@ -41,7 +41,7 @@ void Connection::onPortPositionChanged()
 
 QRectF Connection::boundingRect() const
 {
-    return areDatumsValid() ? path().boundingRect() : QRectF();
+    return areControlsValid() ? path().boundingRect() : QRectF();
 }
 
 QPainterPath Connection::shape() const
@@ -158,7 +158,7 @@ void Connection::paint(QPainter *painter,
                        const QStyleOptionGraphicsItem *option,
                        QWidget *widget)
 {
-    if (!areDatumsValid())
+    if (!areControlsValid())
     {
         return;
     }
