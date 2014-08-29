@@ -36,7 +36,7 @@ public:
 
     /** This is the mandatory function made safe from Node deletion.
      */
-    virtual QRectF boundingRect() const;
+    QRectF boundingRect() const override;
 
     /** This function is overloaded by children to return bounds.
      */
