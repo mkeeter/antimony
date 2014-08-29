@@ -16,8 +16,7 @@
 
 DatumTextItem::DatumTextItem(Datum* datum, QGraphicsItem* parent)
     : QGraphicsTextItem(parent), d(datum), txt(document()),
-      background(Colors::base02), border(background),
-      highlighter(new SyntaxHighlighter(document()))
+      background(Colors::base02), border(background)
 {
     setTextInteractionFlags(Qt::TextEditorInteraction);
     setTextWidth(150);
@@ -35,12 +34,10 @@ void DatumTextItem::onDatumChanged()
     if (d->canEdit())
     {
         setDefaultTextColor(Colors::base04);
-        highlighter->dim = false;
     }
     else
     {
         setDefaultTextColor(Colors::base03);
-        highlighter->dim = true;
     }
 
     QTextCursor cursor = textCursor();
