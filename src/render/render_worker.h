@@ -15,6 +15,8 @@ class RenderWorker : public QObject
     Q_OBJECT
 public:
     explicit RenderWorker(Datum* datum);
+    ~RenderWorker();
+
     static bool accepts(Datum* d);
 public slots:
     void onDatumChanged();

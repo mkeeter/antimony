@@ -32,6 +32,14 @@ RenderWorker::RenderWorker(Datum* datum)
             this, SLOT(onDatumChanged()));
 }
 
+RenderWorker::~RenderWorker()
+{
+    if (depth_image)
+    {
+        depth_image->deleteLater();
+    }
+}
+
 bool RenderWorker::accepts(Datum *d)
 {
     return d->getType() == fab::ShapeType;
