@@ -260,10 +260,29 @@ void Control::dragValue(QString name, double delta)
     Q_ASSERT(f);
 
     bool ok = false;
-    double v = f->getExpr().toFloat(&ok);
+    QString s = f->getExpr();
+    double v = s.toFloat(&ok);
     if (ok)
     {
         f->setExpr(QString::number(v + delta));
+    }
+    else if (s.count('+') == 1)
+    {
+        v = s.split('+').back().toFloat(&ok);
+        if (ok)
+        {
+            f->setExpr(s.split('+').front() + "+ " +
+                       QString::number(v + delta));
+        }
+    }
+    else if (s.count('-') == 1)
+    {
+        v = s.split('-').back().toFloat(&ok);
+        if (ok)
+        {
+            f->setExpr(s.split('-').front() + "- " +
+                       QString::number(v + delta));
+        }
     }
 }
 
