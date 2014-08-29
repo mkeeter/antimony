@@ -85,6 +85,10 @@ protected:
      */
     void populateLists(Node* node);
 
+    /** Override mousePressEvent to prevent clicks from passing through.
+     */
+    void mousePressEvent(QGraphicsSceneMouseEvent*) override {}
+
     QPointer<Control> control;
     QMap<Datum*, InspectorRow*> rows;
     float mask_size;
