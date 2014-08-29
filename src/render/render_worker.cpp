@@ -55,6 +55,11 @@ void RenderWorker::onDatumDeleted()
 
 bool RenderWorker::hasNoOutput()
 {
+    if (!datum)
+    {
+        return false;
+    }
+
     if (!datum->hasOutput())
     {
         clearImage();
