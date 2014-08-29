@@ -89,6 +89,10 @@ public:
      */
     void toggleInspector(bool show_hidden=false);
 
+    /** Returns True if we should be drawing connections.
+     */
+    bool showConnections() const;
+
 protected slots:
     void redraw();
 
@@ -97,7 +101,6 @@ signals:
     void portPositionChanged();
 
 protected:
-
     /** Mark a set of datums as causing a re-render when changed.
      */
     void watchDatums(QVector<QString> datums);

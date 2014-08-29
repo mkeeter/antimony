@@ -32,13 +32,21 @@ protected:
     /** Checks that start and end (if not dragging) datums are valid
      */
     bool areDatumsValid() const;
+    bool areNodesValid() const;
+    bool areControlsValid() const;
 
+    /** Look up start and end datums.
+     */
     Datum* startDatum() const;
     Datum* endDatum() const;
 
+    /** Look up start and end nodes.
+     */
     Node* startNode() const;
     Node* endNode() const;
 
+    /** Look up start and end controls.
+     */
     Control* startControl() const;
     Control* endControl() const;
 
@@ -58,9 +66,18 @@ protected:
                const QStyleOptionGraphicsItem *option,
                QWidget *widget);
 
+    /** While the connection is open-ended, check for target ports.
+     */
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 
+    /** On mouse release, connect to an available port if not already connected.
+     */
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+
+    /** Check for mouse hover.
+     */
+    void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 
     QPointer<Link> link;
     Canvas* canvas;
@@ -69,6 +86,7 @@ protected:
     enum { NONE, VALID, INVALID, CONNECTED } drag_state;
 
     NodeInspector* raised_inspector;
+    bool hover;
 };
 
 #endif // CONNECTION_H

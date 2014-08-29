@@ -18,9 +18,10 @@
 Connection::Connection(Link* link, Canvas* canvas)
     : QGraphicsObject(), link(link), canvas(canvas),
       drag_state(link->hasTarget() ? CONNECTED : NONE),
-      raised_inspector(NULL)
+      raised_inspector(NULL), hover(false)
 {
     setFlags(QGraphicsItem::ItemIsSelectable);
+    setAcceptHoverEvents(true);
     canvas->scene->addItem(this);
     setZValue(2);
     connect(startControl(), &Control::portPositionChanged,
@@ -54,6 +55,22 @@ bool Connection::areDatumsValid() const
 {
     return link && dynamic_cast<Datum*>(link->parent()) &&
             (drag_state != CONNECTED || link->target);
+}
+
+bool Connection::areNodesValid() const
+{
+    return areDatumsValid() &&
+        dynamic_cast<Node*>(startDatum()->parent()) &&
+            (drag_state != CONNECTED ||
+             dynamic_cast<Node*>(endDatum()->parent()));
+}
+
+bool Connection::areControlsValid() const
+{
+    return areNodesValid() &&
+        canvas->getControl(startNode()) &&
+        (drag_state != CONNECTED ||
+         canvas->getControl(endNode()));
 }
 
 Datum* Connection::startDatum() const
@@ -159,6 +176,15 @@ void Connection::paint(QPainter *painter,
         color = Colors::highlight(color);
     }
 
+    bool faded = (!startControl()->showConnections() &&
+                  !endControl()->showConnections() &&
+                  !isSelected());
+    if (faded)
+    {
+        color = QColor(color.red(), color.green(), color.blue(),
+                       hover ? 150 : 100);
+    }
+
     painter->setPen(QPen(color, 4));
     painter->drawPath(path());
 }
@@ -224,4 +250,24 @@ void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     }
 
     prepareGeometryChange();
+}
+
+void Connection::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    Q_UNUSED(event);
+    if (!hover)
+    {
+        hover = true;
+        update();
+    }
+}
+
+void Connection::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    Q_UNUSED(event);
+    if (hover)
+    {
+        hover = false;
+        update();
+    }
 }

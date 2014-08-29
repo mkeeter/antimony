@@ -175,6 +175,11 @@ void Control::toggleInspector(bool show_hidden)
     }
 }
 
+bool Control::showConnections() const
+{
+    return _hover || inspector || isSelected();
+}
+
 void Control::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->button() != Qt::LeftButton)
