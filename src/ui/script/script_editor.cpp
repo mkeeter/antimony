@@ -13,7 +13,7 @@
 #include "ui/canvas.h"
 #include "ui/script/script_editor.h"
 #include "ui/script/script_buttons.h"
-#include "ui/syntax.h"
+#include "ui/script/syntax.h"
 #include "ui/colors.h"
 
 ScriptEditorItem::ScriptEditorItem(ScriptDatum* datum, Canvas* canvas)

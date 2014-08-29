@@ -1,6 +1,6 @@
 #include <Python.h>
 
-#include "ui/syntax.h"
+#include "ui/script/syntax.h"
 #include "ui/colors.h"
 
 SyntaxHighlighter::SyntaxHighlighter(QTextDocument* doc)

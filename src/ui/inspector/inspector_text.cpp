@@ -12,7 +12,6 @@
 
 #include "datum/datum.h"
 #include "datum/eval_datum.h"
-#include "ui/syntax.h"
 
 DatumTextItem::DatumTextItem(Datum* datum, QGraphicsItem* parent)
     : QGraphicsTextItem(parent), d(datum), txt(document()),

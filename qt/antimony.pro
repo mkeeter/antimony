@@ -31,7 +31,7 @@ SOURCES += \
     ../src/render/export_mesh.cpp \
     ../src/render/export_json.cpp \
     ../src/ui/depth_image.cpp \
-    ../src/ui/syntax.cpp \
+    ../src/ui/script/syntax.cpp \
     ../src/ui/inspector/inspector.cpp \
     ../src/ui/inspector/inspector_text.cpp \
     ../src/ui/inspector/inspector_button.cpp \
@@ -55,7 +55,7 @@ HEADERS += \
     ../src/render/export_mesh.h \
     ../src/render/export_json.h \
     ../src/ui/depth_image.h \
-    ../src/ui/syntax.h \
+    ../src/ui/script/syntax.h \
     ../src/ui/inspector/inspector.h \
     ../src/ui/inspector/inspector_text.h \
     ../src/ui/inspector/inspector_button.h \
