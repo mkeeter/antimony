@@ -27,8 +27,12 @@ protected:
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
                QWidget* widget) override;
 
+    /** Draws a red rectangle about the input line.
+     */
     void highlightError(QPainter* p, int lineno);
 
+    /** Returns a bounding rectangle for the given line.
+     */
     QRectF getLineRect(int lineno) const;
 
     QPointer<ScriptDatum> datum;
