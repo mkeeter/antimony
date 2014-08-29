@@ -178,7 +178,7 @@ void App::onExportJSON()
     }
 
     QString file_name = QFileDialog::getSaveFileName(
-            window, "Export JSON", "", "*.json");
+            window, "Export JSON", "", "*.f");
     if (file_name.isEmpty())
     {
         return;

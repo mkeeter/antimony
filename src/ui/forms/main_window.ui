@@ -112,7 +112,7 @@
   </action>
   <action name="actionExportJSON">
    <property name="text">
-    <string>JSON</string>
+    <string>JSON (.f)</string>
    </property>
   </action>
  </widget>
