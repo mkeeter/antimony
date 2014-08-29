@@ -33,6 +33,16 @@ RenderTask* RenderTask::getNext() const
         : NULL;
 }
 
+bool RenderTask::hasFinishedRender() const
+{
+    return image && (image->halt_flag == 0);
+}
+
+DepthImageItem* RenderTask::getDepthImage(Canvas* canvas)
+{
+    return image->addToCanvas(canvas);
+}
+
 void RenderTask::render()
 {
     extract<Shape> get_shape(shape);

@@ -8,6 +8,8 @@
 #include "render/render_worker.h"
 #include "render/render_image.h"
 
+#include "ui/depth_image.h"
+
 #include "datum/datum.h"
 #include "datum/link.h"
 
@@ -17,7 +19,7 @@
 
 RenderWorker::RenderWorker(Datum* datum)
     : QObject(NULL), datum(datum), thread(NULL), current(NULL),
-      next(NULL), image(NULL), running(false),
+      next(NULL), depth_image(NULL), running(false),
       canvas(App::instance()->getCanvas())
 {
     connect(datum, SIGNAL(changed()),
@@ -84,13 +86,15 @@ void RenderWorker::onDatumChanged()
 
 void RenderWorker::onTaskFinished()
 {
-    clearImage();
-
-    if (current->image && hasNoOutput())
+    if (!hasNoOutput())
     {
-        image = current->image;
-        image->setParent(this);
-        image->addToCanvas(canvas);
+        clearImage();
+    }
+
+    if (current->hasFinishedRender() && hasNoOutput())
+    {
+        clearImage();
+        depth_image = current->getDepthImage(canvas);
     }
 
     if (!next)
@@ -103,10 +107,10 @@ void RenderWorker::onTaskFinished()
 
 void RenderWorker::clearImage()
 {
-    if (image)
+    if (depth_image)
     {
-        image->deleteLater();
-        image = NULL;
+        depth_image->deleteLater();
+        depth_image = NULL;
     }
 }
 
@@ -142,11 +146,11 @@ void RenderWorker::startNextRender()
     thread = new QThread();
     current->moveToThread(thread);
 
+    running = true;
+
     // Halt rendering when the abort signal is emitted.
     connect(this, SIGNAL(abort()),
             current, SIGNAL(halt()));
-
-    running = true;
 
     connect(thread, SIGNAL(started()),
             current, SLOT(render()));

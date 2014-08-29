@@ -9,6 +9,8 @@
 #include "cpp/transform.h"
 
 class RenderImage;
+class DepthImageItem;
+class Canvas;
 
 class RenderTask : public QObject
 {
@@ -19,6 +21,15 @@ public:
     ~RenderTask();
 
     RenderTask* getNext() const;
+
+    /** Returns True if image is not NULL and was not halted mid-render.
+     */
+    bool hasFinishedRender() const;
+
+    /** Constructs a depth image in the given canvas and returns it.
+     */
+    DepthImageItem* getDepthImage(Canvas* canvas);
+
 public slots:
     void render();
 signals:

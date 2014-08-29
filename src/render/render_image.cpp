@@ -24,14 +24,6 @@ RenderImage::RenderImage(Bounds b, QVector3D pos, float scale)
     // (render() must be called explicity)
 }
 
-RenderImage::~RenderImage()
-{
-    for (auto p = pixmaps.begin(); p != pixmaps.end(); ++p)
-    {
-        p.value()->deleteLater();
-    }
-}
-
 void RenderImage::halt()
 {
     halt_flag = true;
@@ -124,13 +116,11 @@ void RenderImage::setNormals(float xy, float z)
     shaded.fill((int(z * 255) << 16) | int(xy * 255));
 }
 
-void RenderImage::addToCanvas(Canvas *canvas)
+DepthImageItem* RenderImage::addToCanvas(Canvas *canvas)
 {
-    DepthImageItem* pix = new DepthImageItem(pos,
+    return new DepthImageItem(pos,
             QVector3D(bounds.xmax - bounds.xmin,
                       bounds.ymax - bounds.ymin,
                       bounds.zmax - bounds.zmin), depth, shaded, canvas);
-    canvas->scene->addItem(pix);
-    pixmaps[canvas] = pix;
 }
 

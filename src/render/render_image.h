@@ -19,10 +19,9 @@ class RenderImage : public QObject
     Q_OBJECT
 public:
     explicit RenderImage(Bounds b, QVector3D pos, float scale);
-    ~RenderImage();
     void render(Shape* shape);
     void applyGradient(bool direction);
-    void addToCanvas(Canvas* canvas);
+    DepthImageItem* addToCanvas(Canvas* canvas);
 
     /** Sets the normals in the shaded image.
      *  (used for 2D image shading).
@@ -47,9 +46,11 @@ protected:
 
     QImage depth;
     QImage shaded;
-    QMap<Canvas*, DepthImageItem*> pixmaps;
 
+    /** Used to halt render operations; set by the halt() slot. */
     int halt_flag;
+
+    friend class RenderTask;
 };
 
 #endif // RENDER_IMAGE_H

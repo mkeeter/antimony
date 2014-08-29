@@ -7,7 +7,7 @@
 
 class Datum;
 class RenderTask;
-class RenderImage;
+class DepthImageItem;
 class Canvas;
 
 class RenderWorker : public QObject
@@ -45,7 +45,7 @@ protected:
     QThread* thread;
     RenderTask* current;
     RenderTask* next;
-    RenderImage* image;
+    DepthImageItem* depth_image;
 
     bool running;
 

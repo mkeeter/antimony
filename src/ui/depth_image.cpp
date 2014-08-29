@@ -21,6 +21,7 @@ DepthImageItem::DepthImageItem(QVector3D pos, QVector3D size,
     reposition();
     setZValue(-20);
     initializeGL();
+    canvas->scene->addItem(this);
 }
 
 DepthImageItem::~DepthImageItem()
