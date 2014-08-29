@@ -44,7 +44,7 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* doc)
     // String that can be prepended to a regex to make it detect negative
     // numbers (but not subtraction).  Note that a closing parenthesis is
     // needed and the desired number is the last match group.
-    QString neg = "(^|\\*\\*|[(+\\-=*\\/])([+\\-\\s]*";
+    QString neg = "(^|\\*\\*|[(+\\-=*\\/,])([+\\-\\s]*";
 
     QTextCharFormat int_format;
     int_format.setForeground(Colors::orange);
