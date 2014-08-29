@@ -18,9 +18,10 @@
 Connection::Connection(Link* link, Canvas* canvas)
     : QGraphicsObject(), link(link), canvas(canvas),
       drag_state(link->hasTarget() ? CONNECTED : NONE),
-      raised_inspector(NULL)
+      raised_inspector(NULL), hover(false)
 {
     setFlags(QGraphicsItem::ItemIsSelectable);
+    setAcceptHoverEvents(true);
     canvas->scene->addItem(this);
     setZValue(2);
     connect(startControl(), &Control::portPositionChanged,
@@ -180,7 +181,8 @@ void Connection::paint(QPainter *painter,
                   !isSelected());
     if (faded)
     {
-        color = QColor(color.red(), color.green(), color.blue(), 100);
+        color = QColor(color.red(), color.green(), color.blue(),
+                       hover ? 150 : 100);
     }
 
     painter->setPen(QPen(color, 4));
@@ -248,4 +250,24 @@ void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     }
 
     prepareGeometryChange();
+}
+
+void Connection::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    Q_UNUSED(event);
+    if (!hover)
+    {
+        hover = true;
+        update();
+    }
+}
+
+void Connection::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    Q_UNUSED(event);
+    if (hover)
+    {
+        hover = false;
+        update();
+    }
 }

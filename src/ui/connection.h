@@ -74,6 +74,11 @@ protected:
      */
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
+    /** Check for mouse hover.
+     */
+    void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
+
     QPointer<Link> link;
     Canvas* canvas;
     QPointF drag_pos;
@@ -81,6 +86,7 @@ protected:
     enum { NONE, VALID, INVALID, CONNECTED } drag_state;
 
     NodeInspector* raised_inspector;
+    bool hover;
 };
 
 #endif // CONNECTION_H
