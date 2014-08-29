@@ -260,6 +260,10 @@ void Canvas::keyPressEvent(QKeyEvent *event)
             control->toggleInspector();
         }
     }
+    else if (event->key() == Qt::Key_Alt)
+    {
+        hideUI();
+    }
     else if (event->key() == Qt::Key_Delete)
     {
         for (auto i : scene->selectedItems())
@@ -274,6 +278,55 @@ void Canvas::keyPressEvent(QKeyEvent *event)
             {
                 conn->getLink()->deleteLater();
             }
+        }
+    }
+}
+
+void Canvas::keyReleaseEvent(QKeyEvent *event)
+{
+    if (scene->focusItem())
+    {
+        QGraphicsView::keyPressEvent(event);
+    }
+    else if (event->key() == Qt::Key_Alt)
+    {
+        showUI();
+    }
+}
+
+void Canvas::hideUI()
+{
+
+    for (auto i : scene->items())
+    {
+        Control* control = dynamic_cast<Control*>(i);
+        Connection* conn = dynamic_cast<Connection*>(i);
+        AxesControl* ax = dynamic_cast<AxesControl*>(i);
+        if (control && !ax)
+        {
+            control->hide();
+        }
+        else if (conn)
+        {
+            conn->hide();
+        }
+    }
+}
+
+void Canvas::showUI()
+{
+
+    for (auto i : scene->items())
+    {
+        Control* control = dynamic_cast<Control*>(i);
+        Connection* conn = dynamic_cast<Connection*>(i);
+        if (control)
+        {
+            control->show();
+        }
+        else if (conn)
+        {
+            conn->show();
         }
     }
 }

@@ -99,6 +99,10 @@ protected:
      */
     void keyPressEvent(QKeyEvent *event) override;
 
+    /** On key release, show UI if it was alt.
+     */
+    void keyReleaseEvent(QKeyEvent *event) override;
+
     /** Draws shaded panels in the background.
      */
     void drawBackground(QPainter* painter, const QRectF& rect) override;
@@ -120,6 +124,14 @@ protected:
     /** On resize, reposition the view selector menu
      */
     void resizeEvent(QResizeEvent* e);
+
+    /** Hides all Control and Connection UI elements.
+     */
+    void hideUI();
+
+    /** Shows all Control and Connection UI elements.
+     */
+    void showUI();
 
     QVector3D center;
     float scale;
