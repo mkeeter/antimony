@@ -4,6 +4,7 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QMatrix4x4>
+#include <QPointer>
 
 class Node;
 class Control;
@@ -139,6 +140,8 @@ protected:
     /* Pitch and yaw are in radians */
     float pitch;
     float yaw;
+
+    QPointer<Control> raised;
 
     QPointF _click_pos;
     QVector3D _click_pos_world;
