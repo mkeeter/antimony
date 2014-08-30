@@ -186,13 +186,18 @@ void Canvas::spinTo(float new_yaw, float new_pitch)
 void Canvas::mousePressEvent(QMouseEvent *event)
 {
     // Find all controls that are under the mouse.
-    auto controls = items(event->pos());
-    for (auto i : controls)
+    QList<Control*> controls;
+    for (auto i : items(event->pos()))
     {
-        if (!dynamic_cast<Control*>(i) ||
-            !(i->flags() & QGraphicsItem::ItemIsSelectable))
+        while (i->parentItem())
         {
-            controls.removeAll(i);
+            i = i->parentItem();
+        }
+
+        if (dynamic_cast<Control*>(i) &&
+            !dynamic_cast<AxesControl*>(i))
+        {
+            controls << dynamic_cast<Control*>(i);
         }
     }
 
