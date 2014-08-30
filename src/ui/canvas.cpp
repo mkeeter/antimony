@@ -5,11 +5,13 @@
 #include <QGridLayout>
 #include <QPropertyAnimation>
 #include <QGLWidget>
+#include <QMenu>
 
 #include <cmath>
 
 #include "ui/canvas.h"
 #include "ui/port.h"
+#include "ui/main_window.h"
 #include "ui/connection.h"
 #include "ui/inspector/inspector.h"
 #include "ui/depth_image.h"
@@ -279,6 +281,18 @@ void Canvas::keyPressEvent(QKeyEvent *event)
                 conn->getLink()->deleteLater();
             }
         }
+    }
+    else if (event->key() == Qt::Key_A &&
+                (event->modifiers() & Qt::ShiftModifier))
+    {
+        QMenu* m = new QMenu(this);
+
+        auto window = dynamic_cast<MainWindow*>(parent()->parent());
+        Q_ASSERT(window);
+        window->populateMenu(m, false);
+
+        m->exec(QCursor::pos());
+        m->deleteLater();
     }
 }
 

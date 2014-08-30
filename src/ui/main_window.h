@@ -21,6 +21,10 @@ public:
     void openScript(ScriptDatum* d);
     Canvas* getCanvas() const { return canvas; }
 
+    /** Populate a menu with all of the widgets.
+     */
+    void populateMenu(QMenu* menu, bool recenter=true);
+
 private:
     /** Sets up main keyboard shortcuts
      *  (because Qt Designer doesn't have a good way to do so)
@@ -29,18 +33,19 @@ private:
 
     /** Makes a new object of the given class.
      */
-    template <Node* (*f)(float, float, float, float, QObject*)>
+    template <Node* (*f)(float, float, float, float, QObject*), bool recenter>
     void createNew();
 
     /** Adds a particular node to the "Add" menu.
      */
-    template <Node* (*f)(float, float, float, float, QObject*)>
+    template <Node* (*f)(float, float, float, float, QObject*), bool recenter>
     void addNodeToMenu(QString category, QString name, QMenu* menu,
-                          QMap<QString, QMenu*>* submenus);
+                       QMap<QString, QMenu*>* submenus);
 
     /** Populate a menu with all of the widgets.
      */
-    void populateMenu(QMenu* menu);
+    template <bool recenter>
+    void _populateMenu(QMenu* menu);
 
     Ui::MainWindow *ui;
     Canvas* canvas;
