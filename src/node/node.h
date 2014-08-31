@@ -21,12 +21,12 @@ public:
     PyObject* proxy();
 
     /** Looks up a particular Datum by name, return NULL otherwise. */
-    Datum* getDatum(QString name);
+    Datum* getDatum(QString name) const;
 
     /** getDatum plus a dynamic cast.
      */
     template <class T>
-    T* getDatum(QString name)
+    T* getDatum(QString name) const
     {
         return dynamic_cast<T*>(getDatum(name));
     }
@@ -34,6 +34,14 @@ public:
     /** Returns the NodeType of this node (used in creating Controls)
      */
     NodeType::NodeType getNodeType() const { return type; }
+
+    /** Get this node's name.
+     */
+    QString getName() const;
+
+    /** Returns a human-readable type name.
+     */
+    QString getType() const;
 
 protected:
     const NodeType::NodeType type;
