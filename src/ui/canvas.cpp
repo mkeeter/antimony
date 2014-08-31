@@ -185,33 +185,45 @@ void Canvas::spinTo(float new_yaw, float new_pitch)
 
 void Canvas::mousePressEvent(QMouseEvent *event)
 {
-    // Find all controls that are under the mouse.
-    QList<Control*> controls;
-    for (auto i : items(event->pos()))
+    // On right-click, show a menu of items to raise.
+    if (event->button() == Qt::RightButton)
     {
-        while (i->parentItem())
+        auto menu = new QMenu(this);
+        QSet<Control*> used;
+        for (auto i : items(event->pos()))
         {
-            i = i->parentItem();
-        }
+            while (i->parentItem())
+            {
+                i = i->parentItem();
+            }
 
-        if (dynamic_cast<Control*>(i) &&
-            !dynamic_cast<AxesControl*>(i))
+            auto c = dynamic_cast<Control*>(i);
+
+            if (c && !used.contains(c) && !dynamic_cast<AxesControl*>(i))
+            {
+                auto n = c->getNode();
+                auto a = new QAction(
+                        n->getName() + " (" + n->getType() + ")", menu);
+                a->setData(QVariant::fromValue(i));
+                menu->addAction(a);
+                used << c;
+            }
+        }
+        if (!menu->isEmpty())
         {
-            controls << dynamic_cast<Control*>(i);
+            QAction* chosen = menu->exec(QCursor::pos());
+            if (chosen)
+            {
+                if (raised)
+                {
+                    raised->setZValue(1);
+                }
+                raised = static_cast<Control*>(
+                        chosen->data().value<QGraphicsItem*>());
+                raised->setZValue(1.1);
+            }
         }
-    }
-
-    int index = controls.length()
-        ? (controls.indexOf(raised) + 1) % controls.length()
-        : -1;
-    if (raised)
-    {
-        raised->setZValue(1);
-    }
-    if (index >= 0)
-    {
-        raised = dynamic_cast<Control*>(controls[index]);
-        raised->setZValue(1.1);
+        menu->deleteLater();
     }
 
     QGraphicsView::mousePressEvent(event);
