@@ -66,8 +66,7 @@ void fab::postInit()
 {
     PyObject* shapes_module = PyModule_New("shapes");
 
-    PyObject* fab_str = PyUnicode_FromString("fab");
-    PyObject* fab = PyImport_Import(fab_str);
+    PyObject* fab = PyImport_ImportModule("fab");
 
     ShapeType = (PyTypeObject*)PyObject_GetAttrString(fab, "Shape");
 
@@ -84,6 +83,5 @@ void fab::postInit()
 
     PyObject_SetAttrString(fab, "shapes", shapes_module);
 
-    Py_DECREF(fab_str);
     Py_DECREF(fab);
 }
