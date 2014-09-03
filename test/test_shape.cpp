@@ -12,7 +12,7 @@
 #include "node/node.h"
 #include "node/3d.h"
 
-#include "cpp/shape.h"
+#include "fab/types/shape.h"
 
 TestShape::TestShape(QObject* parent)
     : QObject(parent)
