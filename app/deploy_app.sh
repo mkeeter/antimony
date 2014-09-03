@@ -25,3 +25,6 @@ cd ../MacOS
 install_name_tool -change /usr/local/Frameworks/Python.framework/Versions/3.4/Python \
                          @executable_path/../Frameworks/Python.framework/Versions/3.4/Python \
                          antimony
+
+cd ../../..
+cp -r fab antimony.app/Contents/Frameworks/Python.framework/Versions/3.4/lib/python3.4/fab

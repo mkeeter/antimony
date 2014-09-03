@@ -56,3 +56,11 @@ macx {
     INCLUDEPATH += /usr/local/include/libpng15/
     INCLUDEPATH += /usr/local/include/libpng16/
 }
+
+
+# Copy the py/fab directory when building the application
+copyfab.commands = $(COPY_DIR) $$PWD/../py/fab $$OUT_PWD
+first.depends = $(first) copyfab
+export(first.depends)
+export(copyfab.commands)
+QMAKE_EXTRA_TARGETS += first copyfab

@@ -16,7 +16,7 @@ namespace fab
      */
     void preInit();
 
-    /** Evaluates shapes.py and adds to the fab module.
+    /** Loads the fab module in Python's namespace.
      *
      *  Must be called after Py_Initialize().
      */

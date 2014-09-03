@@ -1,6 +1,6 @@
 import math
 
-from fab import Shape, Transform
+from fab.types import Shape, Transform
 
 def union(a, b):
     return a | b
