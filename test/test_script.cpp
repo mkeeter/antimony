@@ -117,7 +117,7 @@ void TestScript::ChangeFloatInput()
 void TestScript::CheckShapeInput()
 {
     Node* n;
-    n = ScriptNode("s", "0.0", "0.0", "0.0", "from fab import Shape;input('q', Shape)");
+    n = ScriptNode("s", "0.0", "0.0", "0.0", "from fab.types import Shape;input('q', Shape)");
     QVERIFY(n->getDatum("q") != NULL);
     QVERIFY(n->getDatum<ShapeDatum>("q"));
     delete n;
@@ -126,17 +126,17 @@ void TestScript::CheckShapeInput()
 void TestScript::InvalidInputNames()
 {
     Node* n;
-    n = ScriptNode("s", "0.0", "0.0", "0.0", "from fab import Shape;input('', Shape)");
+    n = ScriptNode("s", "0.0", "0.0", "0.0", "from fab.types import Shape;input('', Shape)");
     QVERIFY(n->getDatum("script")->getValid() == false);
     delete n;
 
-    n = ScriptNode("s", "0.0", "0.0", "0.0", "from fab import Shape;input('_reserved', Shape)");
+    n = ScriptNode("s", "0.0", "0.0", "0.0", "from fab.types import Shape;input('_reserved', Shape)");
     QVERIFY(n->getDatum("script")->getValid() == false);
     QVERIFY(n->getDatum("_reserved") == NULL);
     delete n;
 
     n = ScriptNode("s", "0.0", "0.0", "0.0",
-                       "from fab import Shape;input('dupe', Shape);input('dupe', Shape)");
+                       "from fab.types import Shape;input('dupe', Shape);input('dupe', Shape)");
     QVERIFY(n->getDatum("script")->getValid() == false);
     QVERIFY(n->getDatum("dupe") != NULL);
     delete n;
@@ -150,7 +150,7 @@ void TestScript::AddThenRemoveDatum()
     QVERIFY(n->getDatum("x") != NULL);
     QVERIFY(n->getDatum<FloatDatum>("x"));
 
-    d->setExpr("from fab import Shape; input('x', Shape)");
+    d->setExpr("from fab.types import Shape; input('x', Shape)");
     QVERIFY(n->getDatum("x") != NULL);
     QVERIFY(n->getDatum<ShapeDatum>("x"));
 
@@ -198,7 +198,7 @@ void TestScript::MakeShapeOutput()
 
 void TestScript::ChangeInputOrder()
 {
-    Node* n = ScriptNode("s", "0.0", "0.0", "0.0", "from fab import Shape; input('a', Shape); input('b', Shape);");
+    Node* n = ScriptNode("s", "0.0", "0.0", "0.0", "from fab.types import Shape; input('a', Shape); input('b', Shape);");
     QVERIFY(n->getDatum("script")->getValid() == true);
     Datum* a = n->getDatum("a");
     Datum* b = n->getDatum("b");
@@ -207,7 +207,7 @@ void TestScript::ChangeInputOrder()
     QVERIFY(b);
     QVERIFY(n->findChildren<ShapeDatum*>().front() == a);
 
-    n->getDatum<ScriptDatum>("script")->setExpr("from fab import Shape; input('b', Shape); input('a', Shape);");
+    n->getDatum<ScriptDatum>("script")->setExpr("from fab.types import Shape; input('b', Shape); input('a', Shape);");
     QVERIFY(n->getDatum("a") == a);
     QVERIFY(n->getDatum("b") == b);
     QVERIFY(n->findChildren<ShapeDatum*>().front() == b);

@@ -2,7 +2,7 @@
 
 #include "datum/function_datum.h"
 #include "node/node.h"
-#include "cpp/fab.h"
+#include "fab/fab.h"
 
 FunctionDatum::FunctionDatum(QString name, QObject* parent)
     : Datum(name, parent), function(NULL)
@@ -100,12 +100,10 @@ ShapeFunctionDatum::ShapeFunctionDatum(QString name, QObject* parent,
 
 PyObject* ShapeFunctionDatum::getModule() const
 {
-    PyObject* fab_str = PyUnicode_FromString("fab");
-    PyObject* fab = PyImport_Import(fab_str);
+    PyObject* fab = PyImport_ImportModule("fab");
 
     PyObject* shapes = PyObject_GetAttrString(fab, "shapes");
     Py_DECREF(fab);
-    Py_DECREF(fab_str);
 
     return shapes;
 }

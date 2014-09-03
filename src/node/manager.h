@@ -4,7 +4,7 @@
 #include <Python.h>
 #include <QObject>
 
-#include "cpp/shape.h"
+#include "fab/types/shape.h"
 
 class NameDatum;
 class Datum;

@@ -4,8 +4,8 @@
 
 #include "tree/tree.h"
 #include "tree/parser.h"
-#include "cpp/shape.h"
-#include "cpp/fab.h"
+#include "fab/types/shape.h"
+#include "fab/fab.h"
 
 #include "test_fab.h"
 

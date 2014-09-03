@@ -4,9 +4,9 @@
 #include <QString>
 #include <QTextStream>
 
-#include "cpp/fab.h"
-#include "cpp/shape.h"
-#include "cpp/transform.h"
+#include "fab/fab.h"
+#include "fab/types/shape.h"
+#include "fab/types/transform.h"
 
 using namespace boost::python;
 
@@ -16,7 +16,7 @@ void fab::onParseError(const fab::ParseError &e)
     PyErr_SetString(PyExc_RuntimeError, "Failed to parse math expression");
 }
 
-BOOST_PYTHON_MODULE(fab)
+BOOST_PYTHON_MODULE(_fabtypes)
 {
     class_<Bounds>("Bounds", init<>())
             .def(init<float, float, float, float>())
@@ -59,31 +59,12 @@ PyTypeObject* fab::ShapeType = NULL;
 
 void fab::preInit()
 {
-    PyImport_AppendInittab("fab", PyInit_fab);
+    PyImport_AppendInittab("_fabtypes", PyInit__fabtypes);
 }
 
+#include <QDebug>
 void fab::postInit()
 {
-    PyObject* shapes_module = PyModule_New("shapes");
-
-    PyObject* fab_str = PyUnicode_FromString("fab");
-    PyObject* fab = PyImport_Import(fab_str);
-
-    ShapeType = (PyTypeObject*)PyObject_GetAttrString(fab, "Shape");
-
-    QFile shapes_file(":fab/py/shapes.py");
-    shapes_file.open(QFile::ReadOnly | QFile::Text);
-    QString shapes_txt = QTextStream(&shapes_file).readAll();
-
-    // Evaluate shapes.py, using the shapes module as the globals dict
-    PyObject* dict = PyModule_GetDict(shapes_module);
-    PyDict_SetItemString(dict, "__builtins__", PyEval_GetBuiltins());
-    PyRun_String(shapes_txt.toStdString().c_str(), Py_file_input,
-                 dict, dict);
-    assert(PyErr_Occurred() == NULL);
-
-    PyObject_SetAttrString(fab, "shapes", shapes_module);
-
-    Py_DECREF(fab_str);
-    Py_DECREF(fab);
+    PyObject* fabtypes = PyImport_ImportModule("_fabtypes");
+    ShapeType = (PyTypeObject*)PyObject_GetAttrString(fabtypes, "Shape");
 }

@@ -5,8 +5,8 @@
 #include <QObject>
 #include <QMatrix4x4>
 
-#include "cpp/shape.h"
-#include "cpp/transform.h"
+#include "fab/types/shape.h"
+#include "fab/types/transform.h"
 
 class RenderImage;
 class DepthImageItem;

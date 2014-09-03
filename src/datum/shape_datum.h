@@ -3,7 +3,7 @@
 
 #include <Python.h>
 #include "datum/datum.h"
-#include "cpp/fab.h"
+#include "fab/fab.h"
 
 class ShapeDatum : public Datum
 {

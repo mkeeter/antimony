@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "cpp/shape.h"
+#include "fab/types/shape.h"
 
 class ExportMeshWorker : public QObject
 {

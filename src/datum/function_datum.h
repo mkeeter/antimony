@@ -5,7 +5,7 @@
 #include <QObject>
 
 #include "datum/datum.h"
-#include "cpp/fab.h"
+#include "fab/fab.h"
 
 class FunctionDatum : public Datum
 {

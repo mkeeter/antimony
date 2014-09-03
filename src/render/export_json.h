@@ -5,7 +5,7 @@
 #include <QTextStream>
 #include <QMap>
 
-#include "cpp/shape.h"
+#include "fab/types/shape.h"
 
 class ExportJSONWorker : public QObject
 {

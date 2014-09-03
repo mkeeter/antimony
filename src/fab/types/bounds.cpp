@@ -1,8 +1,8 @@
 #include <cstdlib>
 #include <cmath>
 
-#include "cpp/bounds.h"
-#include "cpp/fab.h"
+#include "fab/types/bounds.h"
+#include "fab/fab.h"
 
 #include "tree/tree.h"
 #include "tree/parser.h"
