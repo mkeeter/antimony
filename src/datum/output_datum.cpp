@@ -1,6 +1,6 @@
 #include <Python.h>
 #include "datum/output_datum.h"
-#include "cpp/fab.h"
+#include "fab/fab.h"
 
 OutputDatum::OutputDatum(QString name, QObject* parent)
     : Datum(name, parent), new_value(NULL)

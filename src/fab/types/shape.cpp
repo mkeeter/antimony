@@ -5,7 +5,7 @@
 #include "tree/tree.h"
 #include "tree/parser.h"
 
-#include "cpp/shape.h"
+#include "fab/types/shape.h"
 
 Shape::Shape()
     : math(""), bounds(Bounds()), tree(NULL)

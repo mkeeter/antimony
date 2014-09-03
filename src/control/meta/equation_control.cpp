@@ -4,7 +4,7 @@
 
 #include "node/node.h"
 #include "datum/datum.h"
-#include "cpp/shape.h"
+#include "fab/types/shape.h"
 #include "tree/node/printers_ss.h"
 
 #include "ui/colors.h"

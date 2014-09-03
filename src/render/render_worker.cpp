@@ -15,7 +15,7 @@
 
 #include "ui/canvas.h"
 
-#include "cpp/fab.h"
+#include "fab/fab.h"
 
 RenderWorker::RenderWorker(Datum* datum)
     : QObject(NULL), datum(datum), thread(NULL), current(NULL),

@@ -9,7 +9,7 @@
 #include "node/node.h"
 #include "node/manager.h"
 
-#include "cpp/fab.h"
+#include "fab/fab.h"
 
 ScriptDatum::ScriptDatum(QString name, QObject *parent)
     : EvalDatum(name, parent), globals(NULL),

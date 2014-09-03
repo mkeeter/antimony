@@ -6,7 +6,7 @@
 #include "ui/canvas.h"
 #include "ui/depth_image.h"
 
-#include "cpp/shape.h"
+#include "fab/types/shape.h"
 #include "util/region.h"
 #include "tree/render.h"
 

@@ -8,7 +8,7 @@
 
 #include <cstdint>
 
-#include "cpp/bounds.h"
+#include "fab/types/bounds.h"
 
 struct Shape;
 class Canvas;

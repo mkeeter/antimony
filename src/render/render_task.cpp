@@ -8,8 +8,8 @@
 #include "render/render_task.h"
 #include "render/render_image.h"
 
-#include "cpp/shape.h"
-#include "cpp/transform.h"
+#include "fab/types/shape.h"
+#include "fab/types/transform.h"
 
 using namespace boost::python;
 

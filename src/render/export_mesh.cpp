@@ -1,7 +1,7 @@
 #include <QDebug>
 
 #include "render/export_mesh.h"
-#include "cpp/shape.h"
+#include "fab/types/shape.h"
 
 #include "tree/triangulate.h"
 #include "util/region.h"

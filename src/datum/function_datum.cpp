@@ -2,7 +2,7 @@
 
 #include "datum/function_datum.h"
 #include "node/node.h"
-#include "cpp/fab.h"
+#include "fab/fab.h"
 
 FunctionDatum::FunctionDatum(QString name, QObject* parent)
     : Datum(name, parent), function(NULL)

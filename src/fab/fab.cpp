@@ -4,9 +4,9 @@
 #include <QString>
 #include <QTextStream>
 
-#include "cpp/fab.h"
-#include "cpp/shape.h"
-#include "cpp/transform.h"
+#include "fab/fab.h"
+#include "fab/types/shape.h"
+#include "fab/types/transform.h"
 
 using namespace boost::python;
 

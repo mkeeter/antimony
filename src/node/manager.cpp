@@ -14,8 +14,8 @@
 #include "datum/datum.h"
 #include "datum/name_datum.h"
 
-#include "cpp/shape.h"
-#include "cpp/fab.h"
+#include "fab/types/shape.h"
+#include "fab/fab.h"
 
 NodeManager* NodeManager::_manager = NULL;
 

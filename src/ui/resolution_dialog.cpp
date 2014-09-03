@@ -1,6 +1,6 @@
 #include "ui_resolution_dialog.h"
 #include "ui/resolution_dialog.h"
-#include "cpp/shape.h"
+#include "fab/types/shape.h"
 
 ResolutionDialog::ResolutionDialog(Shape* shape, QWidget* parent)
     : QDialog(parent), shape(shape), ui(new Ui::ResolutionDialog)
