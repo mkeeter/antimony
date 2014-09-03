@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     fab::preInit();
     Py_Initialize();
     fab::postInit();
-    //PyRun_InteractiveLoop(stdin, "<stdin>");
+    PyRun_InteractiveLoop(stdin, "<stdin>");
 
     int out;
     {
