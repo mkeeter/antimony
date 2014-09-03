@@ -7,6 +7,7 @@
 
 class ShapeDatum : public Datum
 {
+    Q_OBJECT
 public:
     explicit ShapeDatum(QString name, QObject* parent=0);
 

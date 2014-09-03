@@ -6,6 +6,7 @@
 
 class IntDatum : public EvalDatum
 {
+    Q_OBJECT
 public:
     explicit IntDatum(QString name, QObject* parent=0);
     explicit IntDatum(QString name, QString expr, QObject *parent = 0);
