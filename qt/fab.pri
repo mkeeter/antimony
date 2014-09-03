@@ -54,6 +54,7 @@ linux {
 
 macx {
     LIBS += -L/usr/local/lib -lpng
+    INCLUDEPATH += /usr/local/include/libpng15/
     INCLUDEPATH += /usr/local/include/libpng16/
 }
 

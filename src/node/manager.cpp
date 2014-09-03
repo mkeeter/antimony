@@ -2,6 +2,7 @@
 
 #include <QApplication>
 #include <QDebug>
+#include <QDataStream>
 #include <QBuffer>
 
 #include "node/manager.h"
