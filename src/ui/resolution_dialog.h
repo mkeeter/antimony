@@ -22,6 +22,7 @@ protected:
 
     Shape* shape;
     Ui::ResolutionDialog* ui;
+    bool z_bounded;
 };
 
 #endif

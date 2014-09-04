@@ -20,6 +20,7 @@
 #include "fab/types/shape.h"
 #include "render/export_mesh.h"
 #include "render/export_json.h"
+#include "render/export_bitmap.h"
 
 App::App(int& argc, char** argv) :
     QApplication(argc, argv), window(new MainWindow)
@@ -202,7 +203,7 @@ void App::onExportHeightmap()
     ExportingDialog* exporting_dialog = new ExportingDialog(window);
 
     QThread* thread = new QThread();
-    ExportMeshWorker* worker = new ExportMeshWorker(
+    ExportBitmapWorker* worker = new ExportBitmapWorker(
             s, resolution_dialog->getResolution(),
             file_name);
     worker->moveToThread(thread);

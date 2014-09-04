@@ -50,7 +50,7 @@ void ExportBitmapWorker::render()
     uint16_t* d16(new uint16_t[r.ni * r.nj]);
     uint16_t** d16_rows(new uint16_t*[r.nj]);
 
-    for (int i=0; i < r.nj; ++i)
+    for (unsigned i=0; i < r.nj; ++i)
     {
         d16_rows[i] = d16 + (r.ni * i);
     }
