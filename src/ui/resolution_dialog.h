@@ -13,7 +13,8 @@ class ResolutionDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit ResolutionDialog(Shape* s, QWidget* parent=0);
+    explicit ResolutionDialog(Shape* s, long max_voxels=(1<<22),
+                              QWidget* parent=0);
     float getResolution() const;
 protected slots:
     void onValueChanged(int i);
