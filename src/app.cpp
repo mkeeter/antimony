@@ -212,7 +212,8 @@ void App::onExportHeightmap()
         return;
     }
 
-    ResolutionDialog* resolution_dialog = new ResolutionDialog(&s);
+    // Make a ResolutionDialog for 2D export
+    ResolutionDialog* resolution_dialog = new ResolutionDialog(&s, true);
     if (!resolution_dialog->exec())
     {
         return;
