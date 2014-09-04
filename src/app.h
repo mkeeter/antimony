@@ -32,6 +32,7 @@ private slots:
     void onSaveAs();
     void onOpen();
     void onExportSTL();
+    void onExportHeightmap();
     void onExportJSON();
 private:
     void setGlobalStyle();

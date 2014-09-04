@@ -13,15 +13,15 @@ class ResolutionDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit ResolutionDialog(Shape* s, QWidget* parent=0);
+    explicit ResolutionDialog(Shape* s, bool is_2d=false,
+                              long max_voxels=(1<<22), QWidget* parent=0);
     float getResolution() const;
 protected slots:
     void onValueChanged(int i);
 protected:
-    int startResolution() const;
-
     Shape* shape;
     Ui::ResolutionDialog* ui;
+    bool z_bounded;
 };
 
 #endif

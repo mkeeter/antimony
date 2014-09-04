@@ -58,6 +58,7 @@
     </property>
     <addaction name="actionExportMesh"/>
     <addaction name="actionExportJSON"/>
+    <addaction name="actionExportHeightmap"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -113,6 +114,11 @@
   <action name="actionExportJSON">
    <property name="text">
     <string>JSON (.f)</string>
+   </property>
+  </action>
+  <action name="actionExportHeightmap">
+   <property name="text">
+    <string>Height-map (.png)</string>
    </property>
   </action>
  </widget>

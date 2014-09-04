@@ -1,11 +1,11 @@
 #include <QDebug>
 
 #include "render/export_mesh.h"
-#include "fab/types/shape.h"
 
-#include "tree/triangulate.h"
-#include "util/region.h"
-#include "formats/stl.h"
+#include "fab/types/shape.h"
+#include "fab/formats/stl.h"
+#include "fab/tree/triangulate.h"
+#include "fab/util/region.h"
 
 ExportMeshWorker::ExportMeshWorker(Shape s, float resolution, QString filename)
     : QObject(), shape(s), resolution(resolution), filename(filename)
