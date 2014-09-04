@@ -61,6 +61,12 @@ void ExportBitmapWorker::render()
 
     float bounds[6] = {r.X[0], r.Y[0], r.Z[0],
                        r.X[r.ni], r.Y[r.nj], r.Z[r.nk]};
+
+    // Flip rows before saving image
+    for (unsigned i=0; i < r.nj; ++i)
+    {
+        d16_rows[r.nj - i - 1] = d16 + (r.ni * i);
+    }
     save_png16L(filename.toStdString().c_str(), r.ni, r.nj,
                 bounds, d16_rows);
 
