@@ -55,7 +55,7 @@ void ExportBitmapWorker::render()
         d16_rows[i] = d16 + (r.ni * i);
     }
 
-    memset(d16, 0, r.ni * r.nj);
+    memset(d16, 0, 2 * r.ni * r.nj);
     int halt_flag = 0;
     render16(shape.tree.get(), r, d16_rows, &halt_flag);
 
