@@ -19,8 +19,6 @@ public:
 protected slots:
     void onValueChanged(int i);
 protected:
-    int startResolution() const;
-
     Shape* shape;
     Ui::ResolutionDialog* ui;
     bool z_bounded;

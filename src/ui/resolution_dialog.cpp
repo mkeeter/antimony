@@ -12,7 +12,6 @@ ResolutionDialog::ResolutionDialog(Shape* shape, long max_voxels,
     ui->setupUi(this);
     connect(ui->export_res, SIGNAL(valueChanged(int)),
             this, SLOT(onValueChanged(int)));
-    ui->export_res->setValue(startResolution());
 
     if (z_bounded)
     {
@@ -20,22 +19,15 @@ ResolutionDialog::ResolutionDialog(Shape* shape, long max_voxels,
                        (shape->bounds.ymax - shape->bounds.ymin) *
                        (shape->bounds.zmax - shape->bounds.zmin);
         ui->export_res->setMaximum(pow(max_voxels / volume, 1/3.));
+        ui->export_res->setValue(ui->export_res->maximum() / 2.52);
     }
     else
     {
         float area = (shape->bounds.xmax - shape->bounds.xmin) *
                      (shape->bounds.ymax - shape->bounds.ymin);
         ui->export_res->setMaximum(pow(max_voxels / area, 1/2.));
+        ui->export_res->setValue(ui->export_res->maximum() / 4);
     }
-}
-
-int ResolutionDialog::startResolution() const
-{
-    return std::min(std::min(
-                64 / (shape->bounds.xmax - shape->bounds.xmin),
-                64 / (shape->bounds.ymax - shape->bounds.ymin)),
-                z_bounded ? 64 / (shape->bounds.zmax - shape->bounds.zmin)
-                          : 1000);
 }
 
 void ResolutionDialog::onValueChanged(int i)
