@@ -29,6 +29,7 @@ SOURCES += \
     ../src/render/render_worker.cpp \
     ../src/render/render_image.cpp \
     ../src/render/export_mesh.cpp \
+    ../src/render/export_bitmap.cpp \
     ../src/render/export_json.cpp \
     ../src/ui/depth_image.cpp \
     ../src/ui/script/syntax.cpp \
@@ -53,6 +54,7 @@ HEADERS += \
     ../src/render/render_worker.h \
     ../src/render/render_image.h \
     ../src/render/export_mesh.h \
+    ../src/render/export_bitmap.h \
     ../src/render/export_json.h \
     ../src/ui/depth_image.h \
     ../src/ui/script/syntax.h \

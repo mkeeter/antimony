@@ -166,6 +166,62 @@ void App::onExportSTL()
     exporting_dialog->exec();
 }
 
+void App::onExportHeightmap()
+{
+    Shape s = NodeManager::manager()->getCombinedShape();
+    if (!s.tree)
+    {
+        QMessageBox::critical(window, "Export error",
+                "<b>Export error:</b><br>"
+                "Cannot export without any shapes in the scene.");
+        return;
+    }
+    if (isinf(s.bounds.xmin) || isinf(s.bounds.xmax) ||
+        isinf(s.bounds.ymin) || isinf(s.bounds.ymax))
+    {
+        QMessageBox::critical(window, "Export error",
+                "<b>Export error:</b><br>"
+                "Some shapes do not have 2D bounds;<br>"
+                "cannot export mesh.");
+        return;
+    }
+
+    ResolutionDialog* resolution_dialog = new ResolutionDialog(&s);
+    if (!resolution_dialog->exec())
+    {
+        return;
+    }
+
+    QString file_name = QFileDialog::getSaveFileName(
+            window, "Export .png", "", "*.png");
+    if (file_name.isEmpty())
+    {
+        return;
+    }
+
+    ExportingDialog* exporting_dialog = new ExportingDialog(window);
+
+    QThread* thread = new QThread();
+    ExportMeshWorker* worker = new ExportMeshWorker(
+            s, resolution_dialog->getResolution(),
+            file_name);
+    worker->moveToThread(thread);
+
+    connect(thread, SIGNAL(started()),
+            worker, SLOT(render()));
+    connect(worker, SIGNAL(finished()),
+            thread, SLOT(quit()));
+    connect(thread, SIGNAL(finished()),
+            thread, SLOT(deleteLater()));
+    connect(thread, SIGNAL(finished()),
+            worker, SLOT(deleteLater()));
+    connect(thread, SIGNAL(destroyed()),
+            exporting_dialog, SLOT(accept()));
+
+    thread->start();
+    exporting_dialog->exec();
+}
+
 void App::onExportJSON()
 {
     QMap<QString, Shape> s = NodeManager::manager()->getShapes();
@@ -230,6 +286,8 @@ void App::connectActions()
             this, SLOT(onOpen()));
     connect(window->ui->actionExportMesh, SIGNAL(triggered()),
             this, SLOT(onExportSTL()));
+    connect(window->ui->actionExportHeightmap, SIGNAL(triggered()),
+            this, SLOT(onExportHeightmap()));
     connect(window->ui->actionExportJSON, SIGNAL(triggered()),
             this, SLOT(onExportJSON()));
 }
