@@ -169,6 +169,31 @@ void App::onExportSTL()
 
 void App::onExportHeightmap()
 {
+    {
+        QMap<QString, Shape> shapes = NodeManager::manager()->getShapes();
+        bool has_2d = false;
+        bool has_3d = false;
+        for (auto s=shapes.begin(); s != shapes.end(); ++s)
+        {
+            if (isinf(s->bounds.zmin) || isinf(s->bounds.zmax))
+            {
+                has_2d = true;
+            }
+            else
+            {
+                has_3d = true;
+            }
+        }
+
+        if (has_2d && has_3d)
+        {
+            QMessageBox::critical(window, "Export error",
+                    "<b>Export error:</b><br>"
+                    "Cannot export with a mix of 2D and 3D shapes in the scene.");
+            return;
+        }
+    }
+
     Shape s = NodeManager::manager()->getCombinedShape();
     if (!s.tree)
     {
