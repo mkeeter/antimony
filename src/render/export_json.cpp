@@ -3,9 +3,11 @@
 #include <cmath>
 
 #include "render/export_json.h"
+#include "tree/node/printers_ss.h"
 
-ExportJSONWorker::ExportJSONWorker(QMap<QString, Shape> s, QString filename)
-    : QObject(), shapes(s), filename(filename)
+ExportJSONWorker::ExportJSONWorker(QMap<QString, Shape> s, QString filename,
+                                   bool format)
+    : QObject(), shapes(s), filename(filename), format(format)
 {
     // Nothing to do here.
 }
@@ -49,6 +51,23 @@ void ExportJSONWorker::writeColor(Shape* shape, QTextStream* out)
     *out << "    }\n";
 }
 
+void ExportJSONWorker::writeBody(Shape* shape, QTextStream* out)
+{
+    *out << "    \"body\": {\n";
+    if (format == EXPORT_JSON_INFIX)
+    {
+        *out << "      \"format\": \"infix\",\n";
+        *out << "      \"string\": \""
+             << print_node_ss(shape->tree->head).c_str();
+    } else if (format == EXPORT_JSON_PREFIX) {
+        *out << "      \"format\": \"prefix\",\n";
+        *out << "      \"string\": \""
+             << shape->math.c_str();
+    }
+
+    *out << "\"\n    },\n";
+}
+
 void ExportJSONWorker::run()
 {
     QFile output_file(filename);
@@ -59,7 +78,7 @@ void ExportJSONWorker::run()
     for (auto s=shapes.begin(); s != shapes.end(); ++s)
     {
         out << "  \"" << s.key() << "\": {\n";
-        out << "    \"body\": \"" << s.value().math.c_str() << "\",\n";
+        writeBody(&s.value(), &out);
         writeBounds(&s.value(), &out);
         writeColor(&s.value(), &out);
         out << "  }";

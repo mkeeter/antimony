@@ -272,8 +272,10 @@ void App::onExportJSON()
 
     ExportingDialog* exporting_dialog = new ExportingDialog(window);
 
+    // Prepare to export (in infix notation)
     QThread* thread = new QThread();
-    ExportJSONWorker* worker = new ExportJSONWorker(s, file_name);
+    ExportJSONWorker* worker = new ExportJSONWorker(
+            s, file_name, EXPORT_JSON_INFIX);
     worker->moveToThread(thread);
 
     connect(thread, SIGNAL(started()),
