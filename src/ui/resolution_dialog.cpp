@@ -4,7 +4,7 @@
 #include "ui/resolution_dialog.h"
 #include "fab/types/shape.h"
 
-ResolutionDialog::ResolutionDialog(Shape* shape, bool is_2d, long max_voxels,
+ResolutionDialog::ResolutionDialog(Shape* shape, bool dimensions, long max_voxels,
                                    QWidget* parent)
     : QDialog(parent), shape(shape), ui(new Ui::ResolutionDialog),
       z_bounded(!isinf(shape->bounds.zmax) && !isinf(shape->bounds.zmin))
@@ -13,7 +13,7 @@ ResolutionDialog::ResolutionDialog(Shape* shape, bool is_2d, long max_voxels,
     connect(ui->export_res, SIGNAL(valueChanged(int)),
             this, SLOT(onValueChanged(int)));
 
-    if (is_2d || !z_bounded)
+    if (dimensions == RESOLUTION_DIALOG_2D || !z_bounded)
     {
         float area = (shape->bounds.xmax - shape->bounds.xmin) *
                      (shape->bounds.ymax - shape->bounds.ymin);
