@@ -170,6 +170,7 @@ void App::onExportSTL()
 
 void App::onExportHeightmap()
 {
+    // Verify that we are not mixing 2D and 3D shapes.
     {
         QMap<QString, Shape> shapes = NodeManager::manager()->getShapes();
         bool has_2d = false;
