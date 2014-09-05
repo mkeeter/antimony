@@ -1,5 +1,6 @@
 #include <boost/python.hpp>
 
+#include <QCoreApplication>
 #include <QFile>
 #include <QString>
 #include <QTextStream>
@@ -67,4 +68,10 @@ void fab::postInit()
 {
     PyObject* fabtypes = PyImport_ImportModule("_fabtypes");
     ShapeType = (PyTypeObject*)PyObject_GetAttrString(fabtypes, "Shape");
+
+    // Modify the default search path to include the application's directory
+    // (as this doesn't happen on Linux by default)
+    QString d = QCoreApplication::applicationDirPath();
+    PyList_Insert(PySys_GetObject("path"), 0,
+                  PyUnicode_FromString(d.toStdString().c_str()));
 }
