@@ -23,6 +23,10 @@ public:
     /** Returns stored valid flag. */
     bool      getValid() const { return valid; }
 
+    /** Looks up a child (for use in hierarchical datums).
+     */
+    Datum* getDatum(QString name="");
+
     /** Returns an enum for this datum's unique type
      *  (used in serialiation).
      */

@@ -42,19 +42,28 @@ Datum* Node::getDatum(QString name) const
 {
     QStringList s = name.split(".");
 
-    if (s.length() == 1)
+    // Search child nodes from a node with this name.
+    Node* n = findChild<Node*>(s.front());
+    if (n)
     {
-        return findChild<Datum*>(s.back());
+        s.pop_front();
+        return n->getDatum(s.join("."));
     }
-    else
+
+    // Otherwise, search for datums with this name.
+    Datum* d = findChild<Datum*>(s.front());
+    if (d)
     {
-        Node* n = findChild<Node*>(s.front());
-        if (n)
-        {
-            s.pop_front();
-            return n->getDatum(s.join("."));
-        }
+        s.pop_front();
+        return d->getDatum(s.join("."));
     }
+
+    // Attempt to look up a hidden node or datum.
+    if (!name.startsWith("_"))
+    {
+        return getDatum("_" + name);
+    }
+
     return NULL;
 }
 

@@ -1,6 +1,7 @@
 #include <Python.h>
 
 #include <QDebug>
+#include <QStringList>
 
 #include "datum/datum.h"
 #include "datum/input.h"
@@ -20,6 +21,30 @@ Datum::Datum(QString name, QObject* parent)
 Datum::~Datum()
 {
     Py_XDECREF(value);
+}
+
+Datum* Datum::getDatum(QString name)
+{
+    if (name == "")
+    {
+        return this;
+    }
+
+    QStringList s = name.split(".");
+    Datum* d = findChild<Datum*>(s.front());
+    if (d)
+    {
+        s.pop_front();
+        return d->getDatum(s.join("."));
+    }
+
+    // Attempt to look up a hidden datum.
+    if (!name.startsWith("_"))
+    {
+        return getDatum("_" + name);
+    }
+
+    return NULL;
 }
 
 bool Datum::hasInputValue() const
