@@ -38,10 +38,10 @@ void DepthImageItem::initializeGL()
     if (!shader.shaders().length())
     {
         float vbuf[] = {
-             0,  0,
-             0,  1,
-             1,  0,
-             1,  1};
+             -1, -1,
+             -1,  1,
+              1, -1,
+              1,  1};
         vertices.create();
         vertices.bind();
         vertices.allocate(vbuf, sizeof(vbuf));
@@ -129,10 +129,10 @@ void DepthImageItem::paint(QPainter *painter,
     const GLuint height_loc = shader.uniformLocation("height");
     glUniform1f(
             width_loc,
-            2*(size.x() * canvas->getScale()) / canvas->width());
+            (size.x() * canvas->getScale()) / canvas->width());
     glUniform1f(
             height_loc,
-            2*(size.y() * canvas->getScale()) / canvas->height());
+            (size.y() * canvas->getScale()) / canvas->height());
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, depth_tex);
