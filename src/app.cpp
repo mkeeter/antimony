@@ -68,6 +68,29 @@ void App::onAbout()
             );
 }
 
+void App::onControls()
+{
+    QMessageBox::information(NULL, "Controls",
+            "<b>Controls</b><br><br>"
+            "<table>"
+            "<tr><td>Left-click:"
+            "<td style=\"padding-left:15px;\"> pan or select object"
+            "<tr><td>Right-click:"
+            "<td style=\"padding-left:15px;\"> rotate"
+            "<tr><td>Scroll:"
+            "<td style=\"padding-left:15px;\"> zoom"
+            "<tr><td>Delete:"
+            "<td style=\"padding-left:15px;\"> delete object"
+            "<tr><td>Double-click:"
+            "<td style=\"padding-left:15px;vertical-align:middle\" rowspan=\"2\">toggle inspector"
+            "<tr><td>Spacebar:"
+            "<tr><td>Shift+A:"
+            "<td style=\"padding-left:15px;\"> open <i>Add</i> menu"
+            "<tr><td>Alt:"
+            "<td style=\"padding-left:15px;\"> Hide UI"
+    );
+}
+
 void App::onNew()
 {
     NodeManager::manager()->clear();
@@ -308,6 +331,8 @@ void App::connectActions()
             this, SLOT(quit()));
     connect(window->ui->actionAbout, SIGNAL(triggered()),
             this, SLOT(onAbout()));
+    connect(window->ui->actionControls, SIGNAL(triggered()),
+            this, SLOT(onControls()));
     connect(window->ui->actionSave, SIGNAL(triggered()),
             this, SLOT(onSave()));
     connect(window->ui->actionSaveAs, SIGNAL(triggered()),

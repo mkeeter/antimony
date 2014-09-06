@@ -65,6 +65,7 @@
      <string>Help</string>
     </property>
     <addaction name="actionAbout"/>
+    <addaction name="actionControls"/>
    </widget>
    <widget class="QMenu" name="menuAdd">
     <property name="title">
@@ -119,6 +120,11 @@
   <action name="actionExportHeightmap">
    <property name="text">
     <string>Height-map (.png)</string>
+   </property>
+  </action>
+  <action name="actionControls">
+   <property name="text">
+    <string>Controls</string>
    </property>
   </action>
  </widget>

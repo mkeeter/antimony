@@ -27,6 +27,7 @@ public:
 
 private slots:
     void onAbout();
+    void onControls();
     void onNew();
     void onSave();
     void onSaveAs();
