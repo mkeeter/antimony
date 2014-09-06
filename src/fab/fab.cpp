@@ -73,14 +73,14 @@ void fab::postInit()
     // Modify the default search path to include the application's directory
     // (as this doesn't happen on Linux by default)
     QString d = QCoreApplication::applicationDirPath();
-#ifdef Q_OS_MAC
+#if defined Q_OS_MAC
     QStringList path = d.split("/");
     for (int i=0; i < 3; ++i)
         path.removeLast();
     d = path.join("/");
     PyList_Insert(PySys_GetObject("path"), 0,
                   PyUnicode_FromString(d.toStdString().c_str()));
-#elif Q_OS_LINUX
+#elif defined Q_OS_LINUX
     PyList_Insert(PySys_GetObject("path"), 0,
                   PyUnicode_FromString(d.toStdString().c_str()));
 #endif
