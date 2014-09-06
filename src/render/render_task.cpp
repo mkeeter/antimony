@@ -76,9 +76,10 @@ void RenderTask::render3d(Shape s)
 
     image = new RenderImage(
             transformed.bounds,
-            matrix.inverted() * QVector3D(transformed.bounds.xmin,
-                                          transformed.bounds.ymin,
-                                          transformed.bounds.zmax),
+            matrix.inverted() * QVector3D(
+                (transformed.bounds.xmin + transformed.bounds.xmax)/2,
+                (transformed.bounds.ymin + transformed.bounds.ymax)/2,
+                (transformed.bounds.zmin + transformed.bounds.zmax)/2),
             scale);
     connect(this, SIGNAL(halt()), image, SLOT(halt()));
     image->render(&transformed);
@@ -107,7 +108,9 @@ void RenderTask::render2d(Shape s)
     image = new RenderImage(
             b3d,
             matrix.inverted() *
-                QVector3D(b3d.xmin, b3d.ymin, b3d.zmax),
+                QVector3D((b3d.xmin + b3d.xmax)/2,
+                          (b3d.ymin + b3d.ymax)/2,
+                          (b3d.zmin + b3d.zmax)/2),
             scale);
     connect(this, SIGNAL(halt()), image, SLOT(halt()));
     image->render(&transformed);

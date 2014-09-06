@@ -11,5 +11,6 @@ void main() {
     gl_Position = vec4(vertex_position.x * width  + offset.x,
                        vertex_position.y * height + offset.y,
                        0.0f, 1.0f);
-    texture_coord = vec2(vertex_position.x, 1 - vertex_position.y);
+    texture_coord = vec2(0.5f + vertex_position.x/2.0f,
+                         0.5f - vertex_position.y/2.0f);
 }

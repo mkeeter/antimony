@@ -38,10 +38,10 @@ void DepthImageItem::initializeGL()
     if (!shader.shaders().length())
     {
         float vbuf[] = {
-             0,  0,
-             0,  1,
-             1,  0,
-             1,  1};
+             -1, -1,
+             -1,  1,
+              1, -1,
+              1,  1};
         vertices.create();
         vertices.bind();
         vertices.allocate(vbuf, sizeof(vbuf));
