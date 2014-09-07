@@ -82,3 +82,17 @@ Node* TriangleNode(float x, float y, float z, float scale, QObject* parent)
     return n;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+Node* RectangleNode(float x, float y, float z, float scale, QObject* parent)
+{
+    Q_UNUSED(z);
+
+    Node* n = new Node(NodeType::RECTANGLE, parent);
+    new NameDatum("name", NodeManager::manager()->getName("r"), n);
+    Point2DNode(x, y, 0, 0, n)->setObjectName("a");
+    Point2DNode(x + scale, y + scale, 0, 0, n)->setObjectName("b");
+    new ShapeFunctionDatum("shape", n, "rectangle",
+            {"a.x","b.x","a.y","b.y"});
+    return n;
+}

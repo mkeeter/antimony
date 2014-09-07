@@ -353,6 +353,7 @@ void Control::paint(QPainter *painter,
 #include "control/2d/triangle_control.h"
 #include "control/2d/text_control.h"
 #include "control/2d/point2d_control.h"
+#include "control/2d/rectangle_control.h"
 
 #include "control/3d/cube_control.h"
 #include "control/3d/sphere_control.h"
@@ -396,6 +397,8 @@ Control* Control::makeControlFor(Canvas* canvas, Node* node)
             return new TriangleControl(canvas, node);
         case NodeType::POINT2D:
             return new Point2DControl(canvas, node);
+        case NodeType::RECTANGLE:
+            return new RectangleControl(canvas, node);
         case NodeType::CUBE:
             return new CubeControl(canvas, node);
         case NodeType::SPHERE:

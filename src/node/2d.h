@@ -16,4 +16,6 @@ Node* TextNode(float x, float y, float z, float scale, QObject* parent=0);
 
 Node* TriangleNode(float x, float y, float z, float scale, QObject* parent=0);
 
+Node* RectangleNode(float x, float y, float z, float scale, QObject* parent=0);
+
 #endif

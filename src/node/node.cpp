@@ -75,6 +75,7 @@ QString Node::getType() const
         case NodeType::CIRCLE:      return "Circle";
         case NodeType::TRIANGLE:    return "Triangle";
         case NodeType::POINT2D:     return "Point (2D)";
+        case NodeType::RECTANGLE:   return "Rectangle";
         case NodeType::TEXT:        return "Text";
         case NodeType::CUBE:        return "Cube";
         case NodeType::CYLINDER:    return "Cylinder";

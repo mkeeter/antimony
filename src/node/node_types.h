@@ -7,6 +7,7 @@ namespace NodeType
         CIRCLE,
         TRIANGLE,
         POINT2D,
+        RECTANGLE,
         TEXT,
         CUBE,
         CYLINDER,

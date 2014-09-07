@@ -95,6 +95,7 @@ void MainWindow::_populateMenu(QMenu* menu)
     addNodeToMenu<CircleNode, recenter>("2D", "Circle", menu, &submenus);
     addNodeToMenu<Point2DNode, recenter>("2D", "Point", menu, &submenus);
     addNodeToMenu<TriangleNode, recenter>("2D", "Triangle", menu, &submenus);
+    addNodeToMenu<RectangleNode, recenter>("2D", "Rectangle", menu, &submenus);
     addNodeToMenu<TextNode, recenter>("2D", "Text", menu, &submenus);
 
     addNodeToMenu<Point3DNode, recenter>("3D", "Point", menu, &submenus);
