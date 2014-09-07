@@ -14,6 +14,7 @@ SOURCES += \
     ../src/control/2d/text_control.cpp \
     ../src/control/2d/rectangle_control.cpp \
     ../src/control/csg/union_control.cpp \
+    ../src/control/csg/blend_control.cpp \
     ../src/control/csg/intersection_control.cpp \
     ../src/control/csg/difference_control.cpp \
     ../src/control/csg/offset_control.cpp \
@@ -50,6 +51,7 @@ HEADERS += \
     ../src/control/2d/text_control.h \
     ../src/control/2d/rectangle_control.h \
     ../src/control/csg/union_control.h \
+    ../src/control/csg/blend_control.h \
     ../src/control/csg/intersection_control.h \
     ../src/control/csg/difference_control.h \
     ../src/control/csg/offset_control.h \

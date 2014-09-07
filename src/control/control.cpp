@@ -365,6 +365,7 @@ void Control::paint(QPainter *painter,
 #include "control/meta/equation_control.h"
 
 #include "control/csg/union_control.h"
+#include "control/csg/blend_control.h"
 #include "control/csg/intersection_control.h"
 #include "control/csg/difference_control.h"
 #include "control/csg/offset_control.h"
@@ -417,6 +418,8 @@ Control* Control::makeControlFor(Canvas* canvas, Node* node)
             return new TextControl(canvas, node);
         case NodeType::UNION:
             return new UnionControl(canvas, node);
+        case NodeType::BLEND:
+            return new BlendControl(canvas, node);
         case NodeType::INTERSECTION:
             return new IntersectionControl(canvas, node);
         case NodeType::DIFFERENCE:

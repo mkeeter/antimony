@@ -105,6 +105,8 @@ void MainWindow::_populateMenu(QMenu* menu)
     addNodeToMenu<ExtrudeNode, recenter>("3D", "Extrude", menu, &submenus);
 
     addNodeToMenu<UnionNode, recenter>("CSG", "Union", menu, &submenus);
+    addNodeToMenu<BlendNode, recenter>("CSG", "Blend", menu, &submenus);
+    addNodeToMenu<IntersectionNode, recenter>("CSG", "Intersection", menu, &submenus);
     addNodeToMenu<IntersectionNode, recenter>("CSG", "Intersection", menu, &submenus);
     addNodeToMenu<DifferenceNode, recenter>("CSG", "Difference", menu, &submenus);
     addNodeToMenu<OffsetNode, recenter>("CSG", "Offset", menu, &submenus);

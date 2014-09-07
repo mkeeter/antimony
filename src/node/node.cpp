@@ -85,6 +85,7 @@ QString Node::getType() const
         case NodeType::SCRIPT:      return "Script";
         case NodeType::EQUATION:    return "Equation";
         case NodeType::UNION:       return "Union";
+        case NodeType::BLEND:       return "Blend";
         case NodeType::INTERSECTION: return "Intersection";
         case NodeType::DIFFERENCE:  return "Difference";
         case NodeType::OFFSET:      return "Offset";

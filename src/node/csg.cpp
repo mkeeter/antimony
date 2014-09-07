@@ -58,6 +58,22 @@ Node* UnionNode(float x, float y, float z, float scale, QObject* parent)
     return n;
 }
 
+Node* BlendNode(float x, float y, float z, float scale, QObject* parent)
+{
+    Q_UNUSED(scale);
+
+    Node* n = new Node(NodeType::BLEND, parent);
+    new NameDatum("name", NodeManager::manager()->getName("b"), n);
+    new FloatDatum("_x", QString::number(x), n);
+    new FloatDatum("_y", QString::number(y), n);
+    new FloatDatum("_z", QString::number(z), n);
+    new ShapeDatum("a", n);
+    new ShapeDatum("b", n);
+    new FloatDatum("q", "0.1", n);
+    new ShapeFunctionDatum("shape", n, "blend", {"a", "b", "q"});
+    return n;
+}
+
 Node* OffsetNode(float x, float y, float z, float scale, QObject* parent)
 {
     Q_UNUSED(scale);

@@ -17,6 +17,7 @@ namespace NodeType
         SCRIPT,
         EQUATION,
         UNION,
+        BLEND,
         INTERSECTION,
         DIFFERENCE,
         OFFSET,
