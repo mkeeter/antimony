@@ -12,6 +12,11 @@ QMAKE_CXXFLAGS_RELEASE += -O3
 
 QMAKE_CXXFLAGS += -Werror=switch
 
+GITREV = $$system(git log --pretty=format:'%h' -n 1)
+GITDIFF = $$system(git diff --quiet --exit-code || echo "+")
+
+QMAKE_CXXFLAGS += "-D'GITREV=\"$${GITREV}$${GITDIFF}\"'"
+
 include(fab.pri)
 include(shared.pri)
 include(controls.pri)

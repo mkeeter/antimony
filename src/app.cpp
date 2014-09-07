@@ -22,6 +22,11 @@
 #include "render/export_json.h"
 #include "render/export_bitmap.h"
 
+#ifndef GITREV
+#warning "Git revision not defined!"
+#define GITREV "???"
+#endif
+
 App::App(int& argc, char** argv) :
     QApplication(argc, argv), window(new MainWindow)
 {
@@ -64,7 +69,9 @@ void App::onAbout()
             "Includes code from <a href=\"https://github.com/mkeeter/kokopelli\">kokopelli</a>, which is <br>"
             "© 2012-2013 MIT<br>"
             "© 2013-2014 Matthew Keeter<br><br>"
-            "Inspired by the <a href=\"http://kokompe.cba.mit.edu\">fab modules</a>"
+            "Inspired by the <a href=\"http://kokompe.cba.mit.edu\">fab modules</a><br>"
+            "_________________________________________________<br><br>"
+            "Git revision: " GITREV
             );
 }
 
