@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include <QGraphicsSceneMouseEvent>
+#include <QRegularExpression>
 
 #include "control/control.h"
 #include "node/node.h"
@@ -265,22 +266,19 @@ void Control::dragValue(QString name, double delta)
     if (ok)
     {
         f->setExpr(QString::number(v + delta));
+        return;
     }
-    else if (s.count('+') == 1)
+
+    QRegularExpression regex(
+        "(.*[+\\-]\\s*)(\\d*(\\.\\d*|)(e\\d+(\\.\\d*|)|))"
+    );
+    auto match= regex.match(s);
+    if (match.isValid())
     {
-        v = s.split('+').back().toFloat(&ok);
+        v = match.captured(2).toFloat(&ok);
         if (ok)
         {
-            f->setExpr(s.split('+').front() + "+ " +
-                       QString::number(v + delta));
-        }
-    }
-    else if (s.count('-') == 1)
-    {
-        v = s.split('-').back().toFloat(&ok);
-        if (ok)
-        {
-            f->setExpr(s.split('-').front() + "- " +
+            f->setExpr(match.captured(1) +
                        QString::number(v + delta));
         }
     }
