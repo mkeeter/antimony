@@ -107,7 +107,6 @@ void MainWindow::_populateMenu(QMenu* menu)
     addNodeToMenu<UnionNode, recenter>("CSG", "Union", menu, &submenus);
     addNodeToMenu<BlendNode, recenter>("CSG", "Blend", menu, &submenus);
     addNodeToMenu<IntersectionNode, recenter>("CSG", "Intersection", menu, &submenus);
-    addNodeToMenu<IntersectionNode, recenter>("CSG", "Intersection", menu, &submenus);
     addNodeToMenu<DifferenceNode, recenter>("CSG", "Difference", menu, &submenus);
     addNodeToMenu<OffsetNode, recenter>("CSG", "Offset", menu, &submenus);
     addNodeToMenu<ClearanceNode, recenter>("CSG", "Clearance", menu, &submenus);
