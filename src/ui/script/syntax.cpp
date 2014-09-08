@@ -76,15 +76,9 @@ void SyntaxHighlighter::highlightBlock(const QString& text)
         {
             auto match = iter.next();
             auto index = match.lastCapturedIndex();
-            QTextCharFormat format = r.second;
-            if (dim)
-            {
-                format.setForeground(
-                        Colors::adjust(format.foreground().color(), 0.6));
-            }
             setFormat(match.capturedStart(index),
                       match.capturedLength(index),
-                      format);
+                      r.second);
         }
     }
 }

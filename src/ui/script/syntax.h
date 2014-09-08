@@ -9,7 +9,6 @@ class SyntaxHighlighter : public QSyntaxHighlighter
 public:
     explicit SyntaxHighlighter(QTextDocument* doc);
     void highlightBlock(const QString& text) override;
-    bool dim;
 protected:
     QList<QPair<QRegularExpression, QTextCharFormat>> rules;
 };
