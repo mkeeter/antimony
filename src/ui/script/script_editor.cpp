@@ -45,6 +45,7 @@ ScriptEditorItem::ScriptEditorItem(ScriptDatum* datum, Canvas* canvas)
 
 void ScriptEditorItem::onTextChanged()
 {
+    setToolTip("");
     QToolTip::hideText();
     if (datum)
     {
@@ -65,6 +66,7 @@ void ScriptEditorItem::onDatumChanged()
         }
         else
         {
+            setToolTip("");
             QToolTip::hideText();
         }
 
@@ -75,6 +77,7 @@ void ScriptEditorItem::onDatumChanged()
     }
     else
     {
+        setToolTip("");
         QToolTip::hideText();
     }
 }

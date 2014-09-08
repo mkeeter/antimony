@@ -63,6 +63,7 @@ void DatumTextItem::onDatumChanged()
     }
     else
     {
+        setToolTip("");
         QToolTip::hideText();
     }
 }
