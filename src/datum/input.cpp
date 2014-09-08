@@ -115,8 +115,9 @@ PyObject* ShapeInputHandler::getValue() const
         PyDict_SetItemString(globals, "__builtins__", PyEval_GetBuiltins());
         PyObject* locals = Py_BuildValue("{}");
 
-        PyObject* out = PyRun_String("__import__('fab').types.Shape('f1.0')",
-                                     Py_eval_input, globals, locals);
+        PyObject* out = PyRun_String(
+                "__import__('fab').types.Shape('f1.0', 0, 0, 0, 0, 0, 0)",
+               Py_eval_input, globals, locals);
 
         Py_DECREF(globals);
         Py_DECREF(locals);
@@ -241,11 +242,12 @@ void ShapeInputHandler::deleteInput(Datum *d)
 
 QString ShapeInputHandler::getString() const
 {
-    if (in.length() == 0)
+    int count = inputCount();
+    if (count == 0)
     {
         return QString("No inputs.");
     }
-    else if (in.length() == 1)
+    else if (count == 1)
     {
         return QString("1 input.");
     }

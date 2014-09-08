@@ -66,6 +66,7 @@ protected:
 
 class ShapeInputHandler : public InputHandler
 {
+    Q_OBJECT
 public:
     ShapeInputHandler(Datum* parent);
     PyObject* getValue() const override;
@@ -75,11 +76,11 @@ public:
     void deleteInput(Datum* d) override;
     QString getString() const override;
     QList<Datum*> getInputDatums() const override;
-protected:
+public slots:
     /** Removes inactive input pointers from the list.
      */
     void prune();
-
+protected:
     /** Count the number of (live) inputs to this handler.
      */
     int inputCount() const;
