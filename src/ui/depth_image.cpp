@@ -146,7 +146,7 @@ void DepthImageItem::paint(QPainter *painter,
     const float dz_global = canvas->getZmax() - zmin_global;
 
     const float dz = size.z();
-    const float zmin = (canvas->getTransformMatrix() * pos).z() - dz;
+    const float zmin = (canvas->getTransformMatrix() * pos).z() - dz/2;
 
     // Set z values for depth blending.
     glUniform1f(shader.uniformLocation("dz_local"), dz);
