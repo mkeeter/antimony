@@ -22,6 +22,8 @@ Linux
 -----
 Tested on a clean Xubuntu 14.04 virtual machine:
 ```
+sudo apt-get install build-essential
+sudo apt-get install libpng-dev
 sudo apt-get install qt5-default qt5-qmake
 sudo apt-get install python3-dev
 sudo apt-get install libboost-all-dev
