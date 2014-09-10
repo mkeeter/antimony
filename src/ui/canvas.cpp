@@ -307,7 +307,8 @@ void Canvas::keyPressEvent(QKeyEvent *event)
     {
         hideUI();
     }
-    else if (event->key() == Qt::Key_Delete)
+    else if (event->key() == Qt::Key_Delete ||
+             event->key() == Qt::Key_Backspace)
     {
         for (auto i : scene->selectedItems())
         {
