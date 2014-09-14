@@ -176,9 +176,10 @@ void Connection::paint(QPainter *painter,
         color = Colors::highlight(color);
     }
 
-    bool faded = (!startControl()->showConnections() &&
-                  !endControl()->showConnections() &&
-                  !isSelected());
+    bool faded = drag_state == CONNECTED &&
+                 !startControl()->showConnections() &&
+                 !endControl()->showConnections() &&
+                 !isSelected();
     if (faded)
     {
         color = QColor(color.red(), color.green(), color.blue(),

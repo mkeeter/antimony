@@ -29,13 +29,13 @@ protected:
 class InputPort : public Port
 {
 public:
-    explicit InputPort(Datum* d, Canvas* canvas, QGraphicsItem* parent);
+    explicit InputPort(Datum* d, Canvas* canvas, QGraphicsItem* parent=NULL);
 };
 
 class OutputPort : public Port
 {
 public:
-    explicit OutputPort(Datum* d, Canvas* canvas, QGraphicsItem* parent);
+    explicit OutputPort(Datum* d, Canvas* canvas, QGraphicsItem* parent=NULL);
 protected:
     virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);

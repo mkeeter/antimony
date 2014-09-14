@@ -10,6 +10,8 @@ class Canvas;
 class Datum;
 class Node;
 class NodeInspector;
+class InputPort;
+class OutputPort;
 
 class Control : public QGraphicsObject
 {
@@ -157,6 +159,18 @@ protected:
      */
     void setDefaultBrush(QPainter* painter) const;
 
+    /** Clears existing free-floating input and output ports.
+     */
+    void clearPorts();
+
+    /** Create free-floating input and output ports.
+     */
+    void makePorts();
+
+    /** Reposition ports in the correct space.
+     */
+    void positionPorts();
+
     /** Override paint with a function that is safe under node deletion.
      */
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
@@ -169,6 +183,9 @@ protected:
     Canvas* canvas;
     QPointer<Node> node;
     QPointer<NodeInspector> inspector;
+
+    QList<InputPort*> inputs;
+    QList<OutputPort*> outputs;
 
     bool _hover;
     bool _dragged;

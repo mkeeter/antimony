@@ -41,6 +41,7 @@ Control::Control(Canvas* canvas, Node* node, QGraphicsItem* parent)
     {
         connect(node, SIGNAL(destroyed()), this, SLOT(deleteLater()));
     }
+    makePorts();
 }
 
 QRectF Control::boundingRect() const
@@ -116,6 +117,55 @@ QPointF Control::datumInputPosition(Datum *d) const
     return baseInputPosition();
 }
 
+void Control::clearPorts()
+{
+    for (auto p : inputs)
+        p->deleteLater();
+    for (auto p : outputs)
+        p->deleteLater();
+    inputs.clear();
+    outputs.clear();
+}
+
+void Control::makePorts()
+{
+    clearPorts();
+    for (Datum* d : node->findChildren<Datum*>(QString(),
+                Qt::FindDirectChildrenOnly))
+    {
+        if (d->hasInput())
+            inputs << new InputPort(d, canvas);
+        if (d->hasOutput())
+            outputs << new OutputPort(d, canvas);
+    }
+
+    positionPorts();
+    for (auto i : inputs)
+        canvas->scene->addItem(i);
+    for (auto o : outputs)
+        canvas->scene->addItem(o);
+}
+
+void Control::positionPorts()
+{
+    QPointF p = baseInputPosition();
+    const float step = 15;
+    float y = -inputs.length()/2.0f * step;
+    for (auto i : inputs)
+    {
+        i->setPos(p.x() - 25, p.y() + y + 5);
+        y += step;
+    }
+
+    p = baseOutputPosition();
+    y = -outputs.length()/2.0f * step;
+    for (auto o : outputs)
+    {
+        o->setPos(p.x() + 15, p.y() + y + 5);
+        y += step;
+    }
+}
+
 void Control::watchDatums(QVector<QString> datums)
 {
     for (auto n : datums)
@@ -129,6 +179,7 @@ void Control::watchDatums(QVector<QString> datums)
 void Control::redraw()
 {
     prepareGeometryChange();
+    positionPorts();
     if (node)
     {
         emit(inspectorPositionChanged());
