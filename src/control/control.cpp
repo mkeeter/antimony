@@ -87,6 +87,15 @@ QPointF Control::baseInputPosition() const
 
 QPointF Control::datumOutputPosition(Datum *d) const
 {
+    QPointF out = baseOutputPosition();
+    for (auto o : outputs)
+    {
+        if (d == o->getDatum())
+        {
+            out = o->mapToScene(o->boundingRect().center());
+        }
+    }
+
     if (inspector)
     {
         OutputPort* p = inspector->datumOutputPort(d);
@@ -94,15 +103,23 @@ QPointF Control::datumOutputPosition(Datum *d) const
         {
             return (inspector->getMaskSize() *
                         p->mapToScene(p->boundingRect().center())) +
-                    (1 - inspector->getMaskSize()) *
-                        baseOutputPosition();
+                    (1 - inspector->getMaskSize()) * out;
         }
     }
-    return baseOutputPosition();
+
+    return out;
 }
 
 QPointF Control::datumInputPosition(Datum *d) const
 {
+    QPointF in = baseInputPosition();
+    for (auto i : inputs)
+    {
+        if (d == i->getDatum())
+        {
+            in = i->mapToScene(i->boundingRect().center());
+        }
+    }
     if (inspector)
     {
         InputPort* p = inspector->datumInputPort(d);
@@ -110,11 +127,10 @@ QPointF Control::datumInputPosition(Datum *d) const
         {
             return (inspector->getMaskSize() *
                         p->mapToScene(p->boundingRect().center())) +
-                    (1 - inspector->getMaskSize()) *
-                        baseInputPosition();
+                    (1 - inspector->getMaskSize()) * in;
         }
     }
-    return baseInputPosition();
+    return in;
 }
 
 void Control::clearPorts()
