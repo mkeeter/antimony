@@ -19,6 +19,9 @@ public:
                QWidget *widget) override;
     Datum* getDatum() const;
 
+    void clearToolTip();
+    void showToolTip();
+
     void fadeOut();
     void fadeIn();
 protected:
@@ -35,13 +38,13 @@ protected:
 class InputPort : public Port
 {
 public:
-    explicit InputPort(Datum* d, Canvas* canvas, QGraphicsItem* parent=NULL);
+    explicit InputPort(Datum* d, Canvas* canvas, QGraphicsItem* parent);
 };
 
 class OutputPort : public Port
 {
 public:
-    explicit OutputPort(Datum* d, Canvas* canvas, QGraphicsItem* parent=NULL);
+    explicit OutputPort(Datum* d, Canvas* canvas, QGraphicsItem* parent);
 protected:
     virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);

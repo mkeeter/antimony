@@ -208,7 +208,14 @@ void Connection::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
     raised_inspector = insp;
 
-    InputPort* target = canvas->getInputPortAt(event->pos());
+    InputPort* old_target = target;
+    target = canvas->getInputPortAt(event->pos());
+    if (old_target != target)
+    {
+        if (old_target) old_target->clearToolTip();
+        if (target)     target->showToolTip();
+    }
+
     if (target && target->getDatum()->acceptsLink(link))
     {
         drag_state = VALID;

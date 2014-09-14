@@ -9,6 +9,8 @@
 #include "ui/inspector/inspector.h"
 #include "ui/colors.h"
 #include "ui/connection.h"
+#include "ui/canvas.h"
+#include "control/control.h"
 
 #include "datum/datum.h"
 
@@ -78,6 +80,24 @@ Datum* Port::getDatum() const
     return datum;
 }
 
+void Port::showToolTip()
+{
+    auto control = dynamic_cast<Control*>(parentItem());
+    if (control)
+    {
+        auto canvas = control->getCanvas();
+        QToolTip::showText(
+                canvas->mapToGlobal(canvas->mapFromScene(
+                    mapToScene(boundingRect().center()))),
+                datum->objectName());
+    }
+}
+
+void Port::clearToolTip()
+{
+    QToolTip::showText(QPoint(), "");
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 InputPort::InputPort(Datum *d, Canvas *canvas, QGraphicsItem *parent)
@@ -95,6 +115,7 @@ OutputPort::OutputPort(Datum *d, Canvas *canvas, QGraphicsItem *parent)
 void OutputPort::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event);
+    showToolTip();
     hover = true;
     update();
 }
@@ -102,6 +123,7 @@ void OutputPort::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 void OutputPort::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event);
+    clearToolTip();
     hover = false;
     update();
 }
