@@ -150,10 +150,15 @@ void Control::makePorts()
                 Qt::FindDirectChildrenOnly))
     {
         if (d->hasInput())
-            inputs << new InputPort(d, canvas, this);
+            inputs << new InputPort(d, canvas);
         if (d->hasOutput())
-            outputs << new OutputPort(d, canvas, this);
+            outputs << new OutputPort(d, canvas);
     }
+
+    for (auto i : inputs)
+        canvas->scene->addItem(i);
+    for (auto o : outputs)
+        canvas->scene->addItem(o);
 
     positionPorts();
 }

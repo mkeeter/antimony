@@ -9,15 +9,18 @@
 #include "ui/inspector/inspector.h"
 #include "ui/colors.h"
 #include "ui/connection.h"
-#include "ui/canvas.h"
-#include "control/control.h"
 
 #include "datum/datum.h"
 
-Port::Port(Datum* d, Canvas* canvas, QGraphicsItem* parent) :
-    QGraphicsObject(parent), datum(d), canvas(canvas), _opacity(1), hover(false)
+Port::Port(Datum* d, Canvas* canvas, QGraphicsItem* parent)
+    : QGraphicsObject(parent), datum(d), canvas(canvas),
+      label(new QGraphicsTextItem(datum->objectName(), this)),
+      _opacity(1), hover(false)
 {
     setAcceptHoverEvents(true);
+    label->setPos(12, -12);
+    label->setDefaultTextColor(Colors::base07);
+    label->hide();
 }
 
 QRectF Port::boundingRect() const
@@ -80,22 +83,15 @@ Datum* Port::getDatum() const
     return datum;
 }
 
+#include <QDebug>
 void Port::showToolTip()
 {
-    auto control = dynamic_cast<Control*>(parentItem());
-    if (control)
-    {
-        auto canvas = control->getCanvas();
-        QToolTip::showText(
-                canvas->mapToGlobal(canvas->mapFromScene(
-                    mapToScene(boundingRect().center()))),
-                datum->objectName());
-    }
+    label->show();
 }
 
-void Port::clearToolTip()
+void Port::hideToolTip()
 {
-    QToolTip::showText(QPoint(), "");
+    label->hide();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -103,8 +99,22 @@ void Port::clearToolTip()
 InputPort::InputPort(Datum *d, Canvas *canvas, QGraphicsItem *parent)
     : Port(d, canvas, parent)
 {
-    // Nothing to do here
+    label->setPos(-2 - label->boundingRect().width(), -12);
 }
+
+void InputPort::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    Q_UNUSED(event);
+    showToolTip();
+}
+
+void InputPort::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    Q_UNUSED(event);
+    hideToolTip();
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 OutputPort::OutputPort(Datum *d, Canvas *canvas, QGraphicsItem *parent)
     : Port(d, canvas, parent)
@@ -123,7 +133,7 @@ void OutputPort::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 void OutputPort::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event);
-    clearToolTip();
+    hideToolTip();
     hover = false;
     update();
 }
