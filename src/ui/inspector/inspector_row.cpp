@@ -53,18 +53,6 @@ QRectF InspectorRow::boundingRect() const
     return QRectF(0, 0, width, height);
 }
 
-void InspectorRow::setPortOpacity(float o)
-{
-    if (input)
-    {
-        input->setOpacity(o);
-    }
-    if (output)
-    {
-        output->setOpacity(o);
-    }
-}
-
 float InspectorRow::globalLabelWidth() const
 {
    return dynamic_cast<NodeInspector*>(parentObject())->labelWidth();

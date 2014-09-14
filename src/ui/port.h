@@ -17,12 +17,18 @@ public:
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,
                QWidget *widget) override;
-    void setOpacity(float o) { opacity = o; update(); }
     Datum* getDatum() const;
+
+    void fadeOut();
+    void fadeIn();
 protected:
+    void setOpacity(float o);
+    float getOpacity() const { return _opacity; }
+    Q_PROPERTY(float opacity READ getOpacity write setOpacity);
+
     QPointer<Datum> datum;
     Canvas* canvas;
-    float opacity;
+    float _opacity;
     bool hover;
 };
 

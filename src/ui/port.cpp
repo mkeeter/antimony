@@ -2,6 +2,8 @@
 
 #include <QPainter>
 #include <QGraphicsSceneMouseEvent>
+#include <QPropertyAnimation>
+#include <QToolTip>
 
 #include "ui/port.h"
 #include "ui/inspector/inspector.h"
@@ -11,7 +13,7 @@
 #include "datum/datum.h"
 
 Port::Port(Datum* d, Canvas* canvas, QGraphicsItem* parent) :
-    QGraphicsObject(parent), datum(d), canvas(canvas), opacity(1), hover(false)
+    QGraphicsObject(parent), datum(d), canvas(canvas), _opacity(1), hover(false)
 {
     setAcceptHoverEvents(true);
 }
@@ -19,6 +21,32 @@ Port::Port(Datum* d, Canvas* canvas, QGraphicsItem* parent) :
 QRectF Port::boundingRect() const
 {
     return QRectF(0, 0, 10, 10);
+}
+
+void Port::setOpacity(float o)
+{
+    _opacity = o;
+    if (o == 0) hide();
+    else        show();
+    update();
+}
+
+void Port::fadeIn()
+{
+    QPropertyAnimation* a = new QPropertyAnimation(this, "opacity", this);
+    a->setDuration(100);
+    a->setStartValue(0);
+    a->setEndValue(1);
+    a->start(QPropertyAnimation::DeleteWhenStopped);
+}
+
+void Port::fadeOut()
+{
+    QPropertyAnimation* a = new QPropertyAnimation(this, "opacity", this);
+    a->setDuration(100);
+    a->setStartValue(1);
+    a->setEndValue(0);
+    a->start(QPropertyAnimation::DeleteWhenStopped);
 }
 
 void Port::paint(QPainter *painter,
@@ -38,7 +66,7 @@ void Port::paint(QPainter *painter,
     {
         color = Colors::highlight(color);
     }
-    color.setAlpha(opacity*255);
+    color.setAlpha(_opacity*255);
     painter->setBrush(color);
 
     painter->setPen(Qt::NoPen);

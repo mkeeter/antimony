@@ -203,7 +203,6 @@ void NodeInspector::setMaskSize(float m)
 
     for (auto row : rows)
     {
-        row->setPortOpacity(mask_size);
         row->updateLayout();
     }
     onLayoutChanged();
