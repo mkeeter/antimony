@@ -170,7 +170,7 @@ void Control::positionPorts()
     float y = -inputs.length()/2.0f * step;
     for (auto i : inputs)
     {
-        i->setPos(p.x() - 25, p.y() + y + 5);
+        i->setPos(QPointF(p.x() - 25, p.y() + y + 5));
         y += step;
     }
 
@@ -178,7 +178,7 @@ void Control::positionPorts()
     y = -outputs.length()/2.0f * step;
     for (auto o : outputs)
     {
-        o->setPos(p.x() + 15, p.y() + y + 5);
+        o->setPos(QPointF(p.x() + 15, p.y() + y + 5));
         y += step;
     }
 }
