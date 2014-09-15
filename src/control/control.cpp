@@ -1,7 +1,5 @@
 #include <Python.h>
 
-#include <algorithm>
-
 #include <QGraphicsSceneMouseEvent>
 #include <QRegularExpression>
 
