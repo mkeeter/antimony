@@ -106,7 +106,8 @@ QPointF Control::datumOutputPosition(Datum *d) const
     {
         if (d == o->getDatum())
         {
-            out = o->mapToScene(o->boundingRect().center());
+            float p = o->getOpacity();
+            out = out*(1-p) + p*o->mapToScene(o->boundingRect().center());
         }
     }
 
@@ -131,7 +132,8 @@ QPointF Control::datumInputPosition(Datum *d) const
     {
         if (d == i->getDatum())
         {
-            in = i->mapToScene(i->boundingRect().center());
+            float p = i->getOpacity();
+            in = in*(1-p) + p*i->mapToScene(i->boundingRect().center());
         }
     }
     if (inspector)

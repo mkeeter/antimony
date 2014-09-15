@@ -25,6 +25,10 @@ public:
     void showToolTip();
     void setPos(QPointF pos);
 
+    void setOpacity(float o);
+    float getOpacity() const { return _opacity; }
+    Q_PROPERTY(float opacity READ getOpacity WRITE setOpacity);
+
 public slots:
     void setVisible(bool v);
     void setVisibleG(bool v);
@@ -32,10 +36,6 @@ public slots:
 protected:
     void fadeOut();
     void fadeIn();
-
-    void setOpacity(float o);
-    float getOpacity() const { return _opacity; }
-    Q_PROPERTY(float opacity READ getOpacity WRITE setOpacity);
 
     QPointer<Datum> datum;
     Canvas* canvas;
