@@ -27,6 +27,7 @@ public:
 
 public slots:
     void setVisible(bool v);
+    void setVisibleG(bool v);
 
 protected:
     void fadeOut();

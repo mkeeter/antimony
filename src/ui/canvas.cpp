@@ -337,6 +337,12 @@ void Canvas::keyPressEvent(QKeyEvent *event)
         m->exec(QCursor::pos());
         m->deleteLater();
     }
+    else if (event->key() == Qt::Key_S &&
+                (event->modifiers() & Qt::ShiftModifier))
+    {
+        ports_visible = !ports_visible;
+        emit(showPorts(ports_visible));
+    }
 }
 
 void Canvas::keyReleaseEvent(QKeyEvent *event)

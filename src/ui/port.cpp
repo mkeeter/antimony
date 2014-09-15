@@ -23,6 +23,14 @@ Port::Port(Datum* d, Canvas* canvas, QGraphicsItem* parent)
     setAcceptHoverEvents(true);
     canvas->scene->addItem(label);
     label->hide();
+
+    // Free-floating ports can have visibility toggled.
+    if (!parent)
+    {
+        connect(canvas, &Canvas::showPorts,
+                this, &Port::setVisibleG);
+    }
+
     if (!(visible && visible_g))
     {
         hide();
@@ -45,6 +53,20 @@ void Port::setVisible(bool v)
 {
     bool was_visible = visible && visible_g;
     visible = v;
+    bool now_visible = visible && visible_g;
+    if (now_visible != was_visible)
+    {
+        if (now_visible)
+            fadeIn();
+        else
+            fadeOut();
+    }
+}
+
+void Port::setVisibleG(bool v)
+{
+    bool was_visible = visible && visible_g;
+    visible_g = v;
     bool now_visible = visible && visible_g;
     if (now_visible != was_visible)
     {
