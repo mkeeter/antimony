@@ -18,7 +18,7 @@
 Connection::Connection(Link* link, Canvas* canvas)
     : QGraphicsObject(), link(link), canvas(canvas),
       drag_state(link->hasTarget() ? CONNECTED : NONE),
-      raised_inspector(NULL), hover(false)
+      raised_inspector(NULL), target(NULL), hover(false)
 {
     setFlags(QGraphicsItem::ItemIsSelectable);
     setAcceptHoverEvents(true);
@@ -208,7 +208,11 @@ void Connection::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
     raised_inspector = insp;
 
+    if (target)
+        target->hideToolTip();
     target = canvas->getInputPortAt(event->pos());
+    if (target)
+        target->showToolTip();
 
     if (target && target->getDatum()->acceptsLink(link))
     {
