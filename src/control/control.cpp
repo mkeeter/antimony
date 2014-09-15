@@ -11,10 +11,9 @@
 #include "ui/inspector/inspector.h"
 #include "ui/port.h"
 
-#include <QDebug>
-
 #include "datum/datum.h"
 #include "datum/float_datum.h"
+#include "datum/script_datum.h"
 
 Control::Control(Canvas* canvas, Node* node, QGraphicsItem* parent)
     : QGraphicsObject(parent), canvas(canvas), node(node), inspector(NULL),
@@ -35,11 +34,28 @@ Control::Control(Canvas* canvas, Node* node, QGraphicsItem* parent)
     connect(canvas, &Canvas::viewChanged,
             this, &Control::redraw);
 
+    // If there is a script datum available, hook into the
+    // datumsChanged signal to recreate ports.
+    ScriptDatum* script = node->getDatum<ScriptDatum>("script");
+    if (script)
+    {
+        connect(script, SIGNAL(datumsChanged()),
+                this, SLOT(onDatumsChanged()));
+    }
+
     if (node)
     {
         connect(node, SIGNAL(destroyed()), this, SLOT(deleteLater()));
     }
-    makePorts();
+    if (!parentObject() || dynamic_cast<Control*>(parentObject())->getNode() != node)
+    {
+        makePorts();
+    }
+}
+
+Control::~Control()
+{
+    clearPorts();
 }
 
 QRectF Control::boundingRect() const
@@ -202,6 +218,18 @@ void Control::redraw()
     }
 }
 
+void Control::onDatumsChanged()
+{
+    makePorts();
+    if (inspector)
+    {
+        for (auto i : inputs)
+            i->hide();
+        for (auto o : outputs)
+            o->hide();
+    }
+}
+
 void Control::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event);
@@ -243,9 +271,15 @@ void Control::toggleInspector(bool show_hidden)
     else
     {
         for (auto i : inputs)
+        {
+            i->show();
             i->fadeIn();
+        }
         for (auto o : outputs)
+        {
+            o->show();
             o->fadeIn();
+        }
         inspector->animateClose();
     }
 }

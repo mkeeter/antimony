@@ -25,6 +25,10 @@ public:
      */
     explicit Control(Canvas* canvas, Node* node, QGraphicsItem* parent=0);
 
+    /** Destructor for Control.
+     */
+    virtual ~Control();
+
     /** Makes a control for the given node.
      */
     static Control* makeControlFor(Canvas* canvas, Node* n);
@@ -97,6 +101,7 @@ public:
 
 protected slots:
     void redraw();
+    void onDatumsChanged();
 
 signals:
     void inspectorPositionChanged();
