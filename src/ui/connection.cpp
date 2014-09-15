@@ -240,6 +240,8 @@ void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
     ungrabMouse();
 
+    if (target)
+        target->hideToolTip();
     InputPort* target = canvas->getInputPortAt(event->pos());
     Datum* datum = target ? target->getDatum() : NULL;
     if (target && datum->acceptsLink(link))
