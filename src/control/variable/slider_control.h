@@ -32,6 +32,8 @@ protected:
     void paintControl(QPainter* painter) override;
     QPointF inspectorPosition() const override;
 
+    QPointF baseInputPosition() const override;
+
     SliderHandle* handle;
 };
 
