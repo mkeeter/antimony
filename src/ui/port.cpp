@@ -9,18 +9,26 @@
 #include "ui/inspector/inspector.h"
 #include "ui/colors.h"
 #include "ui/connection.h"
+#include "ui/canvas.h"
+#include "ui/tooltip.h"
 
 #include "datum/datum.h"
 
 Port::Port(Datum* d, Canvas* canvas, QGraphicsItem* parent)
     : QGraphicsObject(parent), datum(d), canvas(canvas),
-      label(new QGraphicsTextItem(datum->objectName(), this)),
+      label(new ToolTipItem(datum->objectName())),
       _opacity(1), hover(false)
 {
     setAcceptHoverEvents(true);
-    label->setPos(12, -12);
-    label->setDefaultTextColor(Colors::base07);
+    canvas->scene->addItem(label);
     label->hide();
+}
+
+Port::~Port()
+{
+    // As the label isn't a child widget, we have to delete it.
+    if (label)
+        label->deleteLater();
 }
 
 QRectF Port::boundingRect() const
@@ -83,7 +91,13 @@ Datum* Port::getDatum() const
     return datum;
 }
 
-#include <QDebug>
+void Port::setPos(QPointF pos)
+{
+    QPointF p = mapToScene(boundingRect().center());
+    label->setPos(p + label_offset);
+    QGraphicsItem::setPos(pos);
+}
+
 void Port::showToolTip()
 {
     label->show();
@@ -99,6 +113,7 @@ void Port::hideToolTip()
 InputPort::InputPort(Datum *d, Canvas *canvas, QGraphicsItem *parent)
     : Port(d, canvas, parent)
 {
+    label_offset = QPointF(-12 - label->boundingRect().width(), -12);
     label->setPos(-2 - label->boundingRect().width(), -12);
 }
 
@@ -119,7 +134,7 @@ void InputPort::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 OutputPort::OutputPort(Datum *d, Canvas *canvas, QGraphicsItem *parent)
     : Port(d, canvas, parent)
 {
-    // Nothing to do here
+    label_offset = QPointF(12, -12);
 }
 
 void OutputPort::hoverEnterEvent(QGraphicsSceneHoverEvent *event)

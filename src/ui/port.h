@@ -12,6 +12,7 @@ class Port : public QGraphicsObject
 {
 public:
     explicit Port(Datum* d, Canvas* canvas, QGraphicsItem* parent);
+    virtual ~Port();
 
     QRectF boundingRect() const override;
     void paint(QPainter *painter,
@@ -21,6 +22,7 @@ public:
 
     void hideToolTip();
     void showToolTip();
+    void setPos(QPointF pos);
 
     void fadeOut();
     void fadeIn();
@@ -31,8 +33,9 @@ protected:
 
     QPointer<Datum> datum;
     Canvas* canvas;
-    QGraphicsTextItem* label;
+    QPointer<QGraphicsTextItem> label;
 
+    QPointF label_offset;
     float _opacity;
     bool hover;
 };
