@@ -106,6 +106,7 @@ protected slots:
 signals:
     void inspectorPositionChanged();
     void portPositionChanged();
+    void showPorts(bool v);
 
 protected:
     /** Mark a set of datums as causing a re-render when changed.

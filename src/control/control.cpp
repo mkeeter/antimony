@@ -170,9 +170,17 @@ void Control::makePorts()
     }
 
     for (auto i : inputs)
+    {
         canvas->scene->addItem(i);
+        connect(this, SIGNAL(showPorts(bool)),
+                i, SLOT(setVisible(bool)));
+    }
     for (auto o : outputs)
+    {
         canvas->scene->addItem(o);
+        connect(this, SIGNAL(showPorts(bool)),
+                o, SLOT(setVisible(bool)));
+    }
 
     positionPorts();
 }
@@ -258,10 +266,7 @@ void Control::toggleInspector(bool show_hidden)
     }
     else if (inspector.isNull())
     {
-        for (auto i : inputs)
-            i->fadeOut();
-        for (auto o : outputs)
-            o->fadeOut();
+        emit(showPorts(false));
         inspector = new NodeInspector(this, show_hidden);
         connect(inspector, SIGNAL(portPositionChanged()),
                 this, SIGNAL(portPositionChanged()));
@@ -270,16 +275,7 @@ void Control::toggleInspector(bool show_hidden)
     }
     else
     {
-        for (auto i : inputs)
-        {
-            i->show();
-            i->fadeIn();
-        }
-        for (auto o : outputs)
-        {
-            o->show();
-            o->fadeIn();
-        }
+        emit(showPorts(true));
         inspector->animateClose();
     }
 }

@@ -17,7 +17,7 @@
 Port::Port(Datum* d, Canvas* canvas, QGraphicsItem* parent)
     : QGraphicsObject(parent), datum(d), canvas(canvas),
       label(new ToolTipItem(datum->objectName())),
-      _opacity(1), hover(false)
+      _opacity(1), hover(false), visible(true)
 {
     setAcceptHoverEvents(true);
     canvas->scene->addItem(label);
@@ -36,6 +36,19 @@ QRectF Port::boundingRect() const
     return QRectF(0, 0, 10, 10);
 }
 
+void Port::setVisible(bool v)
+{
+    bool was_visible = visible;
+    visible = v;
+    if (visible != was_visible)
+    {
+        if (visible)
+            fadeIn();
+        else
+            fadeOut();
+    }
+}
+
 void Port::setOpacity(float o)
 {
     _opacity = o;
@@ -46,6 +59,7 @@ void Port::setOpacity(float o)
 
 void Port::fadeIn()
 {
+    show();
     QPropertyAnimation* a = new QPropertyAnimation(this, "opacity", this);
     a->setDuration(100);
     a->setStartValue(0);

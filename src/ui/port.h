@@ -10,6 +10,7 @@ class Canvas;
 
 class Port : public QGraphicsObject
 {
+    Q_OBJECT
 public:
     explicit Port(Datum* d, Canvas* canvas, QGraphicsItem* parent);
     virtual ~Port();
@@ -24,12 +25,16 @@ public:
     void showToolTip();
     void setPos(QPointF pos);
 
+public slots:
+    void setVisible(bool v);
+
+protected:
     void fadeOut();
     void fadeIn();
-protected:
+
     void setOpacity(float o);
     float getOpacity() const { return _opacity; }
-    Q_PROPERTY(float opacity READ getOpacity write setOpacity);
+    Q_PROPERTY(float opacity READ getOpacity WRITE setOpacity);
 
     QPointer<Datum> datum;
     Canvas* canvas;
@@ -38,6 +43,8 @@ protected:
     QPointF label_offset;
     float _opacity;
     bool hover;
+
+    bool visible;
 };
 
 class InputPort : public Port
