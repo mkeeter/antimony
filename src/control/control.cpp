@@ -210,9 +210,9 @@ void Control::watchDatums(QVector<QString> datums)
 void Control::redraw()
 {
     prepareGeometryChange();
-    positionPorts();
     if (node)
     {
+        positionPorts();
         emit(inspectorPositionChanged());
         emit(portPositionChanged());
     }
