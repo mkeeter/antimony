@@ -100,7 +100,9 @@ void Port::setPos(QPointF pos)
 
 void Port::showToolTip()
 {
-    label->show();
+    // Only show tooltips for free-floating ports.
+    if (!parentItem())
+        label->show();
 }
 
 void Port::hideToolTip()
