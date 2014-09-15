@@ -47,6 +47,8 @@ Control::Control(Canvas* canvas, Node* node, QGraphicsItem* parent)
     {
         connect(node, SIGNAL(destroyed()), this, SLOT(deleteLater()));
     }
+
+    // If this control has a node of its very own, make ports.
     if (!parentObject() || dynamic_cast<Control*>(parentObject())->getNode() != node)
     {
         makePorts();
