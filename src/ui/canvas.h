@@ -80,6 +80,10 @@ signals:
 public slots:
     void spinTo(float new_yaw, float new_pitch);
 
+    /** Called to turn ports on or off.
+     */
+    void togglePorts(bool visible);
+
 protected:
     /** On mouse press, save mouse down position in _click_pos.
      *

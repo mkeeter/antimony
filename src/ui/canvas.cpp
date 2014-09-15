@@ -183,6 +183,11 @@ void Canvas::spinTo(float new_yaw, float new_pitch)
     b->start(QPropertyAnimation::DeleteWhenStopped);
 }
 
+void Canvas::togglePorts(bool visible)
+{
+    qDebug() << visible;
+}
+
 void Canvas::mousePressEvent(QMouseEvent *event)
 {
     // On right-click, show a menu of items to raise.

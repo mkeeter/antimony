@@ -37,7 +37,6 @@ private slots:
     void onExportJSON();
 private:
     void setGlobalStyle();
-    void setShortcuts();
     void connectActions();
 
     MainWindow* window;
