@@ -45,6 +45,7 @@ protected:
     bool hover;
 
     bool visible;
+    bool visible_g;
 };
 
 class InputPort : public Port

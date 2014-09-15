@@ -27,7 +27,8 @@
 
 Canvas::Canvas(QWidget* parent)
     : QGraphicsView(parent), scene(new QGraphicsScene(parent)),
-      scale(100), pitch(0), yaw(0), view_selector(new ViewSelector(this))
+      scale(100), pitch(0), yaw(0), view_selector(new ViewSelector(this)),
+      ports_visible(true)
 {
     setScene(scene);
     setStyleSheet("QGraphicsView { border-style: none; }");
@@ -181,11 +182,6 @@ void Canvas::spinTo(float new_yaw, float new_pitch)
 
     a->start(QPropertyAnimation::DeleteWhenStopped);
     b->start(QPropertyAnimation::DeleteWhenStopped);
-}
-
-void Canvas::togglePorts(bool visible)
-{
-    qDebug() << visible;
 }
 
 void Canvas::mousePressEvent(QMouseEvent *event)

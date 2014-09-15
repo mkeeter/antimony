@@ -17,11 +17,16 @@
 Port::Port(Datum* d, Canvas* canvas, QGraphicsItem* parent)
     : QGraphicsObject(parent), datum(d), canvas(canvas),
       label(new ToolTipItem(datum->objectName())),
-      _opacity(1), hover(false), visible(true)
+      _opacity(1), hover(false), visible(true),
+      visible_g(canvas->arePortsVisible())
 {
     setAcceptHoverEvents(true);
     canvas->scene->addItem(label);
     label->hide();
+    if (!(visible && visible_g))
+    {
+        hide();
+    }
 }
 
 Port::~Port()
@@ -38,11 +43,12 @@ QRectF Port::boundingRect() const
 
 void Port::setVisible(bool v)
 {
-    bool was_visible = visible;
+    bool was_visible = visible && visible_g;
     visible = v;
-    if (visible != was_visible)
+    bool now_visible = visible && visible_g;
+    if (now_visible != was_visible)
     {
-        if (visible)
+        if (now_visible)
             fadeIn();
         else
             fadeOut();

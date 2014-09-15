@@ -74,15 +74,13 @@ public:
      */
     QVector3D getCenter() const { return center; }
 
+    bool arePortsVisible() const { return ports_visible; }
 signals:
     void viewChanged();
+    void showPorts(bool);
 
 public slots:
     void spinTo(float new_yaw, float new_pitch);
-
-    /** Called to turn ports on or off.
-     */
-    void togglePorts(bool visible);
 
 protected:
     /** On mouse press, save mouse down position in _click_pos.
@@ -150,6 +148,8 @@ protected:
     QPointF _click_pos;
     QVector3D _click_pos_world;
     ViewSelector* view_selector;
+
+    bool ports_visible;
 };
 
 #endif // CANVAS_H
