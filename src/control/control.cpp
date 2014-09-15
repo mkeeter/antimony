@@ -149,9 +149,9 @@ void Control::makePorts()
     for (Datum* d : node->findChildren<Datum*>(QString(),
                 Qt::FindDirectChildrenOnly))
     {
-        if (d->hasInput())
+        if (d->hasInput() && !d->objectName().startsWith("_"))
             inputs << new InputPort(d, canvas);
-        if (d->hasOutput())
+        if (d->hasOutput() && !d->objectName().startsWith("_"))
             outputs << new OutputPort(d, canvas);
     }
 
