@@ -1,7 +1,5 @@
 #include <Python.h>
 
-#include <algorithm>
-
 #include <QGraphicsSceneMouseEvent>
 #include <QRegularExpression>
 
@@ -13,14 +11,13 @@
 #include "ui/inspector/inspector.h"
 #include "ui/port.h"
 
-#include <QDebug>
-
 #include "datum/datum.h"
 #include "datum/float_datum.h"
+#include "datum/script_datum.h"
 
 Control::Control(Canvas* canvas, Node* node, QGraphicsItem* parent)
     : QGraphicsObject(parent), canvas(canvas), node(node), inspector(NULL),
-      _hover(false), _dragged(false)
+      _hover(false), _dragged(false), init_called(false)
 {
     setFlags(QGraphicsItem::ItemIsSelectable |
              QGraphicsItem::ItemIgnoresTransformations);
@@ -37,10 +34,36 @@ Control::Control(Canvas* canvas, Node* node, QGraphicsItem* parent)
     connect(canvas, &Canvas::viewChanged,
             this, &Control::redraw);
 
+    // If there is a script datum available, hook into the
+    // datumsChanged signal to recreate ports.
+    ScriptDatum* script = node->getDatum<ScriptDatum>("script");
+    if (script)
+    {
+        connect(script, SIGNAL(datumsChanged()),
+                this, SLOT(onDatumsChanged()));
+    }
+
     if (node)
     {
         connect(node, SIGNAL(destroyed()), this, SLOT(deleteLater()));
     }
+
+    // If this control has a node of its very own, make ports.
+    if (!parentObject() || dynamic_cast<Control*>(parentObject())->getNode() != node)
+    {
+        makePorts();
+    }
+}
+
+Control::~Control()
+{
+    clearPorts();
+}
+
+void Control::init()
+{
+    positionPorts();
+    emit(showPorts(true));
 }
 
 QRectF Control::boundingRect() const
@@ -86,6 +109,16 @@ QPointF Control::baseInputPosition() const
 
 QPointF Control::datumOutputPosition(Datum *d) const
 {
+    QPointF out = baseOutputPosition();
+    for (auto o : outputs)
+    {
+        if (d == o->getDatum())
+        {
+            float p = o->getOpacity();
+            out = out*(1-p) + p*o->mapToScene(o->boundingRect().center());
+        }
+    }
+
     if (inspector)
     {
         OutputPort* p = inspector->datumOutputPort(d);
@@ -93,15 +126,24 @@ QPointF Control::datumOutputPosition(Datum *d) const
         {
             return (inspector->getMaskSize() *
                         p->mapToScene(p->boundingRect().center())) +
-                    (1 - inspector->getMaskSize()) *
-                        baseOutputPosition();
+                    (1 - inspector->getMaskSize()) * out;
         }
     }
-    return baseOutputPosition();
+
+    return out;
 }
 
 QPointF Control::datumInputPosition(Datum *d) const
 {
+    QPointF in = baseInputPosition();
+    for (auto i : inputs)
+    {
+        if (d == i->getDatum())
+        {
+            float p = i->getOpacity();
+            in = in*(1-p) + p*i->mapToScene(i->boundingRect().center());
+        }
+    }
     if (inspector)
     {
         InputPort* p = inspector->datumInputPort(d);
@@ -109,11 +151,68 @@ QPointF Control::datumInputPosition(Datum *d) const
         {
             return (inspector->getMaskSize() *
                         p->mapToScene(p->boundingRect().center())) +
-                    (1 - inspector->getMaskSize()) *
-                        baseInputPosition();
+                    (1 - inspector->getMaskSize()) * in;
         }
     }
-    return baseInputPosition();
+    return in;
+}
+
+void Control::clearPorts()
+{
+    for (auto p : inputs)
+        p->deleteLater();
+    for (auto p : outputs)
+        p->deleteLater();
+    inputs.clear();
+    outputs.clear();
+}
+
+void Control::makePorts()
+{
+    clearPorts();
+    for (Datum* d : node->findChildren<Datum*>(QString(),
+                Qt::FindDirectChildrenOnly))
+    {
+        if (d->hasInput() && !d->objectName().startsWith("_"))
+            inputs << new InputPort(d, canvas);
+        if (d->hasOutput() && !d->objectName().startsWith("_"))
+            outputs << new OutputPort(d, canvas);
+    }
+
+    for (auto i : inputs)
+    {
+        canvas->scene->addItem(i);
+        connect(this, SIGNAL(showPorts(bool)),
+                i, SLOT(setVisible(bool)));
+    }
+    for (auto o : outputs)
+    {
+        canvas->scene->addItem(o);
+        connect(this, SIGNAL(showPorts(bool)),
+                o, SLOT(setVisible(bool)));
+    }
+
+    positionPorts();
+}
+
+void Control::positionPorts()
+{
+    QPointF p = baseInputPosition();
+    const float step = 15;
+    float y = -inputs.length()/2.0f * step;
+    for (auto i : inputs)
+    {
+        i->setPos(QPointF(p.x() - 25, p.y() + y + 5));
+        y += step;
+    }
+
+    p = baseOutputPosition();
+    y = -outputs.length()/2.0f * step;
+    for (auto o : outputs)
+    {
+        o->setPos(QPointF(p.x() + 15, p.y() + y + 5));
+        y += step;
+    }
 }
 
 void Control::watchDatums(QVector<QString> datums)
@@ -131,8 +230,21 @@ void Control::redraw()
     prepareGeometryChange();
     if (node)
     {
+        positionPorts();
         emit(inspectorPositionChanged());
         emit(portPositionChanged());
+    }
+}
+
+void Control::onDatumsChanged()
+{
+    makePorts();
+    if (inspector)
+    {
+        for (auto i : inputs)
+            i->hide();
+        for (auto o : outputs)
+            o->hide();
     }
 }
 
@@ -164,6 +276,7 @@ void Control::toggleInspector(bool show_hidden)
     }
     else if (inspector.isNull())
     {
+        emit(showPorts(false));
         inspector = new NodeInspector(this, show_hidden);
         connect(inspector, SIGNAL(portPositionChanged()),
                 this, SIGNAL(portPositionChanged()));
@@ -172,6 +285,7 @@ void Control::toggleInspector(bool show_hidden)
     }
     else
     {
+        emit(showPorts(true));
         inspector->animateClose();
     }
 }
@@ -340,6 +454,12 @@ void Control::paint(QPainter *painter,
 {
     Q_UNUSED(option);
     Q_UNUSED(widget);
+
+    if (!init_called)
+    {
+        init();
+        init_called = true;
+    }
 
     if (node)
     {

@@ -30,7 +30,7 @@
 App::App(int& argc, char** argv) :
     QApplication(argc, argv), window(new MainWindow)
 {
-    setShortcuts();
+    window->setShortcuts();
     setGlobalStyle();
     connectActions();
     window->show();
@@ -321,15 +321,6 @@ void App::onExportJSON()
 
     thread->start();
     exporting_dialog->exec();
-}
-
-void App::setShortcuts()
-{
-    window->ui->actionNew->setShortcuts(QKeySequence::New);
-    window->ui->actionOpen->setShortcuts(QKeySequence::Open);
-    window->ui->actionSave->setShortcuts(QKeySequence::Save);
-    window->ui->actionSaveAs->setShortcuts(QKeySequence::SaveAs);
-    window->ui->actionQuit->setShortcuts(QKeySequence::Quit);
 }
 
 void App::connectActions()

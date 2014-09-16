@@ -20,7 +20,6 @@ public:
     QGraphicsTextItem* editor;
     QRectF boundingRect() const;
 
-    void setPortOpacity(float o);
 public slots:
     void updateLayout();
 

@@ -128,3 +128,9 @@ QPointF SliderControl::inspectorPosition() const
 {
     return QPointF(bounds().right(), bounds().center().y());
 }
+
+
+QPointF SliderControl::baseInputPosition() const
+{
+    return QPointF(bounds().left(), bounds().center().y());
+}

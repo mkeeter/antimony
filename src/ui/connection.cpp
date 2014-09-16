@@ -18,7 +18,7 @@
 Connection::Connection(Link* link, Canvas* canvas)
     : QGraphicsObject(), link(link), canvas(canvas),
       drag_state(link->hasTarget() ? CONNECTED : NONE),
-      raised_inspector(NULL), hover(false)
+      raised_inspector(NULL), target(NULL), hover(false)
 {
     setFlags(QGraphicsItem::ItemIsSelectable);
     setAcceptHoverEvents(true);
@@ -176,9 +176,10 @@ void Connection::paint(QPainter *painter,
         color = Colors::highlight(color);
     }
 
-    bool faded = (!startControl()->showConnections() &&
-                  !endControl()->showConnections() &&
-                  !isSelected());
+    bool faded = drag_state == CONNECTED &&
+                 !startControl()->showConnections() &&
+                 !endControl()->showConnections() &&
+                 !isSelected();
     if (faded)
     {
         color = QColor(color.red(), color.green(), color.blue(),
@@ -207,7 +208,12 @@ void Connection::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
     raised_inspector = insp;
 
-    InputPort* target = canvas->getInputPortAt(event->pos());
+    if (target)
+        target->hideToolTip();
+    target = canvas->getInputPortAt(event->pos());
+    if (target)
+        target->showToolTip();
+
     if (target && target->getDatum()->acceptsLink(link))
     {
         drag_state = VALID;
@@ -234,6 +240,8 @@ void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
     ungrabMouse();
 
+    if (target)
+        target->hideToolTip();
     InputPort* target = canvas->getInputPortAt(event->pos());
     Datum* datum = target ? target->getDatum() : NULL;
     if (target && datum->acceptsLink(link))

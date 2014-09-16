@@ -12,6 +12,7 @@ class Datum;
 class Control;
 class Node;
 class NodeInspector;
+class InputPort;
 
 class Connection : public QGraphicsObject
 {
@@ -86,6 +87,7 @@ protected:
     enum { NONE, VALID, INVALID, CONNECTED } drag_state;
 
     NodeInspector* raised_inspector;
+    InputPort* target;
     bool hover;
 };
 

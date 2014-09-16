@@ -10,6 +10,8 @@ class Canvas;
 class Datum;
 class Node;
 class NodeInspector;
+class InputPort;
+class OutputPort;
 
 class Control : public QGraphicsObject
 {
@@ -22,6 +24,10 @@ public:
      *  parent is a parent Control (as nested controls are allowed)
      */
     explicit Control(Canvas* canvas, Node* node, QGraphicsItem* parent=0);
+
+    /** Destructor for Control.
+     */
+    virtual ~Control();
 
     /** Makes a control for the given node.
      */
@@ -95,12 +101,18 @@ public:
 
 protected slots:
     void redraw();
+    void onDatumsChanged();
 
 signals:
     void inspectorPositionChanged();
     void portPositionChanged();
+    void showPorts(bool v);
 
 protected:
+    /** Helper function that will be called after derived class constructor.
+     */
+    void init();
+
     /** Mark a set of datums as causing a re-render when changed.
      */
     void watchDatums(QVector<QString> datums);
@@ -157,6 +169,18 @@ protected:
      */
     void setDefaultBrush(QPainter* painter) const;
 
+    /** Clears existing free-floating input and output ports.
+     */
+    void clearPorts();
+
+    /** Create free-floating input and output ports.
+     */
+    void makePorts();
+
+    /** Reposition ports in the correct space.
+     */
+    void positionPorts();
+
     /** Override paint with a function that is safe under node deletion.
      */
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
@@ -170,9 +194,14 @@ protected:
     QPointer<Node> node;
     QPointer<NodeInspector> inspector;
 
+    QList<InputPort*> inputs;
+    QList<OutputPort*> outputs;
+
     bool _hover;
     bool _dragged;
     QPointF _click_pos;
+
+    bool init_called;
 };
 
 

@@ -74,8 +74,10 @@ public:
      */
     QVector3D getCenter() const { return center; }
 
+    bool arePortsVisible() const { return ports_visible; }
 signals:
     void viewChanged();
+    void showPorts(bool);
 
 public slots:
     void spinTo(float new_yaw, float new_pitch);
@@ -146,6 +148,8 @@ protected:
     QPointF _click_pos;
     QVector3D _click_pos_world;
     ViewSelector* view_selector;
+
+    bool ports_visible;
 };
 
 #endif // CANVAS_H
