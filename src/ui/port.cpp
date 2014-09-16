@@ -17,7 +17,7 @@
 Port::Port(Datum* d, Canvas* canvas, QGraphicsItem* parent)
     : QGraphicsObject(parent), datum(d), canvas(canvas),
       label(new ToolTipItem(datum->objectName())),
-      _opacity(1), hover(false), visible(true),
+      _opacity(1), hover(false), visible(parent ? true : false),
       visible_g(parent ? true : canvas->arePortsVisible())
 {
     setAcceptHoverEvents(true);

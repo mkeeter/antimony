@@ -109,6 +109,10 @@ signals:
     void showPorts(bool v);
 
 protected:
+    /** Helper function that will be called after derived class constructor.
+     */
+    void init();
+
     /** Mark a set of datums as causing a re-render when changed.
      */
     void watchDatums(QVector<QString> datums);
@@ -196,6 +200,8 @@ protected:
     bool _hover;
     bool _dragged;
     QPointF _click_pos;
+
+    bool init_called;
 };
 
 

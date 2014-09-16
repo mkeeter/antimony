@@ -17,7 +17,7 @@
 
 Control::Control(Canvas* canvas, Node* node, QGraphicsItem* parent)
     : QGraphicsObject(parent), canvas(canvas), node(node), inspector(NULL),
-      _hover(false), _dragged(false)
+      _hover(false), _dragged(false), init_called(false)
 {
     setFlags(QGraphicsItem::ItemIsSelectable |
              QGraphicsItem::ItemIgnoresTransformations);
@@ -58,6 +58,12 @@ Control::Control(Canvas* canvas, Node* node, QGraphicsItem* parent)
 Control::~Control()
 {
     clearPorts();
+}
+
+void Control::init()
+{
+    positionPorts();
+    emit(showPorts(true));
 }
 
 QRectF Control::boundingRect() const
@@ -448,6 +454,12 @@ void Control::paint(QPainter *painter,
 {
     Q_UNUSED(option);
     Q_UNUSED(widget);
+
+    if (!init_called)
+    {
+        init();
+        init_called = true;
+    }
 
     if (node)
     {
