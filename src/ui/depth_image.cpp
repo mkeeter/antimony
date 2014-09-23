@@ -5,6 +5,8 @@
 #include <QStyleOptionGraphicsItem>
 #include <QGLWidget>
 
+#include "app.h"
+#include "main_window.h"
 #include "ui/depth_image.h"
 #include "ui/canvas.h"
 
@@ -111,7 +113,10 @@ void DepthImageItem::paint(QPainter *painter,
     Q_UNUSED(widget);
 
     vertices.bind();
-    paintHeightmap();
+    if (App::instance()->getWindow()->isShaded())
+        paintShaded();
+    else
+        paintHeightmap();
     vertices.release();
 }
 
