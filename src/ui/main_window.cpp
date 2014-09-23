@@ -14,6 +14,11 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     canvas = ui->canvas;
+
+    QActionGroup* view_actions = new QActionGroup(this);
+    view_actions->addAction(ui->actionShaded);
+    view_actions->addAction(ui->actionHeightmap);
+    view_actions->setExclusive(true);
     populateMenu(ui->menuAdd);
 
     setWindowTitle("antimony");
