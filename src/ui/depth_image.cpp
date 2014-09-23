@@ -48,7 +48,7 @@ void DepthImageItem::initializeGL()
         vertices.release();
 
         shader.addShaderFromSourceFile(QGLShader::Vertex, ":/gl/quad.vert");
-        shader.addShaderFromSourceFile(QGLShader::Fragment, ":/gl/quad.frag");
+        shader.addShaderFromSourceFile(QGLShader::Fragment, ":/gl/shaded.frag");
         shader.link();
     }
 
