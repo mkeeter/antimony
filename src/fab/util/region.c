@@ -13,6 +13,8 @@ void build_arrays(Region* const R,
                   const float xmin, const float ymin, const float zmin,
                   const float xmax, const float ymax, const float zmax)
 {
+    const bool has_z = (zmax != zmin) && !isinf(zmax) && !isinf(zmin);
+
     R->X = malloc((R->ni+1)*sizeof(float));
     for (int i = 0; i <= R->ni; ++i)
         R->X[i] = xmin*(R->ni - i)/(float)R->ni + xmax*i/(float)R->ni;
@@ -23,11 +25,12 @@ void build_arrays(Region* const R,
 
     R->Z = malloc((R->nk+1)*sizeof(float));
     for (int k = 0; k <= R->nk; ++k)
-        R->Z[k] = zmin*(R->nk - k)/(float)R->nk + zmax*k/(float)R->nk;
+        R->Z[k] = has_z ? zmin*(R->nk - k)/(float)R->nk + zmax*k/(float)R->nk
+                        : 0;
 
     R->L = malloc((R->nk+1)*sizeof(uint16_t));
     for (int h = 0; h <= R->nk; ++h)
-        R->L[h] = (zmax == zmin ) ? 65535 : (65535 * h) / (R->nk);
+        R->L[h] = has_z ? (65535 * h) / (R->nk) : 65535;
 }
 
 void free_arrays(Region* const R)
