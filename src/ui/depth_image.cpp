@@ -110,13 +110,9 @@ void DepthImageItem::paint(QPainter *painter,
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    glEnable(GL_DEPTH_TEST);
     vertices.bind();
-
-    paintShaded();
-
+    paintHeightmap();
     vertices.release();
-    glDisable(GL_DEPTH_TEST);
 }
 
 void DepthImageItem::loadSharedShaderVariables(QGLShaderProgram* shader)
@@ -166,6 +162,7 @@ void DepthImageItem::loadSharedShaderVariables(QGLShaderProgram* shader)
 
 void DepthImageItem::paintShaded()
 {
+    glEnable(GL_DEPTH_TEST);
     loadSharedShaderVariables(&shaded_shader);
 
     glActiveTexture(GL_TEXTURE0 + 1);
@@ -174,4 +171,17 @@ void DepthImageItem::paintShaded()
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     shaded_shader.release();
+    glDisable(GL_DEPTH_TEST);
+}
+
+void DepthImageItem::paintHeightmap()
+{
+    glEnable(GL_BLEND);
+    glBlendEquation(GL_MAX);
+    loadSharedShaderVariables(&height_shader);
+
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    height_shader.release();
+
+    glDisable(GL_BLEND);
 }
