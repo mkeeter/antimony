@@ -8,7 +8,8 @@
 #include "ui/depth_image.h"
 #include "ui/canvas.h"
 
-QGLShaderProgram DepthImageItem::shader;
+QGLShaderProgram DepthImageItem::shaded_shader;
+QGLShaderProgram DepthImageItem::height_shader;
 QGLBuffer DepthImageItem::vertices;
 
 DepthImageItem::DepthImageItem(QVector3D pos, QVector3D size,
@@ -35,7 +36,7 @@ void DepthImageItem::initializeGL()
     initializeGLFunctions();
 
     // Global initialization for shared static member variables
-    if (!shader.shaders().length())
+    if (!shaded_shader.shaders().length())
     {
         float vbuf[] = {
              -1, -1,
@@ -47,9 +48,13 @@ void DepthImageItem::initializeGL()
         vertices.allocate(vbuf, sizeof(vbuf));
         vertices.release();
 
-        shader.addShaderFromSourceFile(QGLShader::Vertex, ":/gl/quad.vert");
-        shader.addShaderFromSourceFile(QGLShader::Fragment, ":/gl/shaded.frag");
-        shader.link();
+        shaded_shader.addShaderFromSourceFile(QGLShader::Vertex, ":/gl/quad.vert");
+        shaded_shader.addShaderFromSourceFile(QGLShader::Fragment, ":/gl/shaded.frag");
+        shaded_shader.link();
+
+        height_shader.addShaderFromSourceFile(QGLShader::Vertex, ":/gl/quad.vert");
+        height_shader.addShaderFromSourceFile(QGLShader::Fragment, ":/gl/height.frag");
+        height_shader.link();
     }
 
     glGenTextures(1, &depth_tex);
@@ -107,17 +112,17 @@ void DepthImageItem::paint(QPainter *painter,
 
     glEnable(GL_DEPTH_TEST);
 
-    shader.bind();
+    shaded_shader.bind();
     vertices.bind();
 
     // Load vertices into shader
-    const GLuint vp = shader.attributeLocation("vertex_position");
+    const GLuint vp = shaded_shader.attributeLocation("vertex_position");
     glEnableVertexAttribArray(vp);
     glVertexAttribPointer(vp, 2, GL_FLOAT, false,
                           2 * sizeof(GLfloat), 0);
 
     // Load image's screen position into shader
-    const GLuint offset_loc = shader.uniformLocation("offset");
+    const GLuint offset_loc = shaded_shader.uniformLocation("offset");
     QPointF corner = canvas->mapFromScene(canvas->worldToScene(pos).toPoint());
     glUniform2f(
             offset_loc,
@@ -125,8 +130,8 @@ void DepthImageItem::paint(QPainter *painter,
             -2*(corner.y() - canvas->height()/2) / canvas->height());
 
     // Load image's width and height into shader
-    const GLuint width_loc = shader.uniformLocation("width");
-    const GLuint height_loc = shader.uniformLocation("height");
+    const GLuint width_loc = shaded_shader.uniformLocation("width");
+    const GLuint height_loc = shaded_shader.uniformLocation("height");
     glUniform1f(
             width_loc,
             (size.x() * canvas->getScale()) / canvas->width());
@@ -136,11 +141,11 @@ void DepthImageItem::paint(QPainter *painter,
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, depth_tex);
-    glUniform1i(shader.uniformLocation("depth_tex"), 0);
+    glUniform1i(shaded_shader.uniformLocation("depth_tex"), 0);
 
     glActiveTexture(GL_TEXTURE0 + 1);
     glBindTexture(GL_TEXTURE_2D, shaded_tex);
-    glUniform1i(shader.uniformLocation("shaded_tex"), 1);
+    glUniform1i(shaded_shader.uniformLocation("shaded_tex"), 1);
 
     const float zmin_global = canvas->getZmin();
     const float dz_global = canvas->getZmax() - zmin_global;
@@ -149,14 +154,14 @@ void DepthImageItem::paint(QPainter *painter,
     const float zmin = (canvas->getTransformMatrix() * pos).z() - dz/2;
 
     // Set z values for depth blending.
-    glUniform1f(shader.uniformLocation("dz_local"), dz);
-    glUniform1f(shader.uniformLocation("zmin_local"), zmin);
-    glUniform1f(shader.uniformLocation("dz_global"), dz_global);
-    glUniform1f(shader.uniformLocation("zmin_global"), zmin_global);
+    glUniform1f(shaded_shader.uniformLocation("dz_local"), dz);
+    glUniform1f(shaded_shader.uniformLocation("zmin_local"), zmin);
+    glUniform1f(shaded_shader.uniformLocation("dz_global"), dz_global);
+    glUniform1f(shaded_shader.uniformLocation("zmin_global"), zmin_global);
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     vertices.release();
-    shader.release();
+    shaded_shader.release();
 
     glDisable(GL_DEPTH_TEST);
 }

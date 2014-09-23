@@ -39,7 +39,8 @@ protected:
     GLuint depth_tex;
     GLuint shaded_tex;
 
-    static QGLShaderProgram shader;
+    static QGLShaderProgram height_shader;
+    static QGLShaderProgram shaded_shader;
     static QGLBuffer vertices;
 };
 
