@@ -14,8 +14,8 @@ void main() {
     float fd_local = depth.r * dz_local + zmin_local;
     float fd_global = (fd_local - zmin_global) / dz_global;
 
-    if (depth.r == 0)
-        fd_global = 0;
+    if (depth.r == 0.0f)
+        fd_global = 0.0f;
 
     gl_FragColor = vec4(fd_global, fd_global, fd_global, 1.0f);
 }
