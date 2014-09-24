@@ -30,6 +30,13 @@ public slots:
 
 protected:
     void initializeGL();
+    void paintShaded();
+    void paintHeightmap();
+
+    /** Loads variables that are shared between height-map and shaded shaders.
+     */
+    void loadSharedShaderVariables(QGLShaderProgram* shader);
+
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
     QImage depth;
@@ -39,7 +46,8 @@ protected:
     GLuint depth_tex;
     GLuint shaded_tex;
 
-    static QGLShaderProgram shader;
+    static QGLShaderProgram height_shader;
+    static QGLShaderProgram shaded_shader;
     static QGLBuffer vertices;
 };
 

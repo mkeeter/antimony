@@ -8,12 +8,23 @@
 #include "ui/canvas.h"
 #include "ui/script/script_editor.h"
 
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     canvas = ui->canvas;
+
+    QActionGroup* view_actions = new QActionGroup(this);
+    view_actions->addAction(ui->actionShaded);
+    view_actions->addAction(ui->actionHeightmap);
+    view_actions->setExclusive(true);
+    connect(ui->actionShaded, SIGNAL(triggered()),
+            canvas->scene, SLOT(invalidate()));
+    connect(ui->actionHeightmap, SIGNAL(triggered()),
+            canvas->scene, SLOT(invalidate()));
+
     populateMenu(ui->menuAdd);
 
     setWindowTitle("antimony");
@@ -36,6 +47,11 @@ void MainWindow::setShortcuts()
 void MainWindow::openScript(ScriptDatum *d)
 {
     new ScriptEditorItem(d, ui->canvas);
+}
+
+bool MainWindow::isShaded() const
+{
+    return ui->actionShaded->isChecked();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

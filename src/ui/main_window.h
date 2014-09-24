@@ -25,6 +25,10 @@ public:
      */
     void populateMenu(QMenu* menu, bool recenter=true);
 
+    /** Returns True if the Shaded option is checked.
+     */
+    bool isShaded() const;
+
 private:
     /** Sets up main keyboard shortcuts
      *  (because Qt Designer doesn't have a good way to do so)
