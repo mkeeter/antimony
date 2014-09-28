@@ -367,14 +367,16 @@ void Canvas::hideUI()
         Control* control = dynamic_cast<Control*>(i);
         Connection* conn = dynamic_cast<Connection*>(i);
         AxesControl* ax = dynamic_cast<AxesControl*>(i);
+        NodeInspector* inspector = dynamic_cast<NodeInspector*>(i);
+        Port* p = dynamic_cast<Port*>(i);
         if (control && !ax)
-        {
             control->hide();
-        }
         else if (conn)
-        {
             conn->hide();
-        }
+        else if (inspector)
+            inspector->hide();
+        else if (p)
+            p->hide();
     }
 }
 
@@ -385,14 +387,16 @@ void Canvas::showUI()
     {
         Control* control = dynamic_cast<Control*>(i);
         Connection* conn = dynamic_cast<Connection*>(i);
+        NodeInspector* inspector = dynamic_cast<NodeInspector*>(i);
+        Port* p = dynamic_cast<Port*>(i);
         if (control)
-        {
             control->show();
-        }
         else if (conn)
-        {
             conn->show();
-        }
+        else if (inspector)
+            inspector->show();
+        else if (p)
+            p->show();
     }
 }
 
