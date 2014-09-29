@@ -25,6 +25,11 @@ Datum::~Datum()
 
 Datum* Datum::getDatum(QString name)
 {
+    return const_cast<Datum*>(const_cast<const Datum*>(this)->getDatum(name));
+}
+
+const Datum* Datum::getDatum(QString name) const
+{
     if (name == "")
     {
         return this;
@@ -45,11 +50,6 @@ Datum* Datum::getDatum(QString name)
     }
 
     return NULL;
-}
-
-const Datum* Datum::getDatum(QString name) const
-{
-    return const_cast<Datum*>(this)->getDatum(name);
 }
 
 bool Datum::hasInputValue() const
