@@ -26,6 +26,7 @@ public:
     /** Looks up a child (for use in hierarchical datums).
      */
     Datum* getDatum(QString name="");
+    const Datum* getDatum(QString name="") const;
 
     /** Returns an enum for this datum's unique type
      *  (used in serialiation).

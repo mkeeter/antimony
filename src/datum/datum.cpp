@@ -47,6 +47,11 @@ Datum* Datum::getDatum(QString name)
     return NULL;
 }
 
+const Datum* Datum::getDatum(QString name) const
+{
+    return const_cast<Datum*>(this)->getDatum(name);
+}
+
 bool Datum::hasInputValue() const
 {
     return input_handler != NULL && input_handler->hasInput();
