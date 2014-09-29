@@ -40,7 +40,8 @@ HEADERS += \
     ../src/fab/types/shape.h \
     ../src/fab/fab.h \
     ../src/fab/types/bounds.h \
-    ../src/fab/types/transform.h
+    ../src/fab/types/transform.h \
+    ../src/fab/types/vec3.h \
 
 INCLUDEPATH += ../src/fab
 DEFINES += '_STATIC_= '

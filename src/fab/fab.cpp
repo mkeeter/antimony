@@ -8,6 +8,7 @@
 
 #include "fab/fab.h"
 #include "fab/types/shape.h"
+#include "fab/types/vec3.h"
 #include "fab/types/transform.h"
 
 using namespace boost::python;
@@ -41,7 +42,6 @@ BOOST_PYTHON_MODULE(_fabtypes)
             .def(self | self)
             .def(~self);
 
-
     class_<Transform>("Transform",
         init<std::string, std::string, std::string, std::string>())
             .def(init<std::string, std::string, std::string,
@@ -53,11 +53,17 @@ BOOST_PYTHON_MODULE(_fabtypes)
             .def_readonly("y_reverse", &Transform::y_reverse)
             .def_readonly("z_reverse", &Transform::z_reverse);
 
+    class_<Vec3>("Vec3", init<float, float, float>())
+            .def_readonly("x", &Vec3::x)
+            .def_readonly("y", &Vec3::y)
+            .def_readonly("z", &Vec3::z);
+
     register_exception_translator<fab::ParseError>(fab::onParseError);
 }
 
 
 PyTypeObject* fab::ShapeType = NULL;
+PyTypeObject* fab::Vec3Type = NULL;
 
 void fab::preInit()
 {
@@ -69,6 +75,7 @@ void fab::postInit()
 {
     PyObject* fabtypes = PyImport_ImportModule("_fabtypes");
     ShapeType = (PyTypeObject*)PyObject_GetAttrString(fabtypes, "Shape");
+    Vec3Type = (PyTypeObject*)PyObject_GetAttrString(fabtypes, "Vec3");
 
     // Modify the default search path to include the application's directory
     // (as this doesn't happen on Linux by default)

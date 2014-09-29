@@ -25,6 +25,7 @@ namespace fab
     void postInit();
 
     extern PyTypeObject* ShapeType;
+    extern PyTypeObject* Vec3Type;
 }
 
 #endif // FAB_H
