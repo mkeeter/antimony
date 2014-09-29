@@ -48,6 +48,10 @@ public:
      */
     InputPort* getInputPortAt(QPointF pos) const;
 
+    /** Returns the nearest input port.
+     */
+    InputPort* getInputPortNear(QPointF pos) const;
+
     /** Finds an inspector at the given position (or NULL)
      */
     NodeInspector* getInspectorAt(QPointF pos) const;

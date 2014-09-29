@@ -20,7 +20,10 @@ Connection::Connection(Link* link, Canvas* canvas)
       drag_state(link->hasTarget() ? CONNECTED : NONE),
       raised_inspector(NULL), target(NULL), hover(false)
 {
-    setFlags(QGraphicsItem::ItemIsSelectable);
+    setFlags(QGraphicsItem::ItemIsSelectable|
+             QGraphicsItem::ItemIsFocusable);
+
+    setFocus();
     setAcceptHoverEvents(true);
     canvas->scene->addItem(this);
     setZValue(2);
@@ -197,7 +200,8 @@ void Connection::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         return;
     }
 
-    NodeInspector* insp = canvas->getInspectorAt(event->pos());
+    drag_pos = event->pos();
+    NodeInspector* insp = canvas->getInspectorAt(drag_pos);
     if (raised_inspector)
     {
         raised_inspector->setZValue(-2);
@@ -208,9 +212,14 @@ void Connection::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
     raised_inspector = insp;
 
+    checkDragTarget();
+}
+
+void Connection::checkDragTarget()
+{
     if (target)
         target->hideToolTip();
-    target = canvas->getInputPortAt(event->pos());
+    target = canvas->getInputPortAt(drag_pos);
     if (target)
         target->showToolTip();
 
@@ -227,7 +236,6 @@ void Connection::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         drag_state = NONE;
     }
     prepareGeometryChange();
-    drag_pos = event->pos();
 }
 
 void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
@@ -239,10 +247,12 @@ void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     }
 
     ungrabMouse();
+    clearFocus();
+    setFlags(QGraphicsItem::ItemIsSelectable);
 
     if (target)
         target->hideToolTip();
-    InputPort* target = canvas->getInputPortAt(event->pos());
+    InputPort* target = canvas->getInputPortAt(drag_pos);
     Datum* datum = target ? target->getDatum() : NULL;
     if (target && datum->acceptsLink(link))
     {
@@ -278,4 +288,18 @@ void Connection::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
         hover = false;
         update();
     }
+}
+
+void Connection::keyPressEvent(QKeyEvent* event)
+{
+    if (event->key() == Qt::Key_Shift)
+    {
+        Port* p = canvas->getInputPortNear(drag_pos);
+        if (p)
+        {
+            drag_pos = p->mapToScene(p->boundingRect().center());
+            prepareGeometryChange();
+        }
+    }
+    checkDragTarget();
 }

@@ -127,6 +127,29 @@ InputPort* Canvas::getInputPortAt(QPointF pos) const
     return NULL;
 }
 
+InputPort* Canvas::getInputPortNear(QPointF pos) const
+{
+    float distance = INFINITY;
+    InputPort* port = NULL;
+
+    for (auto i : scene->items())
+    {
+        InputPort* p = dynamic_cast<InputPort*>(i);
+        if (p)
+        {
+            QPointF delta = p->mapToScene(p->boundingRect().center()) - pos;
+            float d = QPointF::dotProduct(delta, delta);
+            if (d < distance)
+            {
+                distance = d;
+                port = p;
+            }
+        }
+    }
+
+    return port;
+}
+
 NodeInspector* Canvas::getInspectorAt(QPointF pos) const
 {
     for (auto i : scene->items(pos))

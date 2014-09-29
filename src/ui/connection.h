@@ -30,11 +30,20 @@ public slots:
 
 protected:
 
+    /** On shift key press, snap to the nearest node.
+     */
+    void keyPressEvent(QKeyEvent *event) override;
+
     /** Checks that start and end (if not dragging) datums are valid
      */
     bool areDatumsValid() const;
     bool areNodesValid() const;
     bool areControlsValid() const;
+
+    /** Checks to see whether we're on a valid port
+     *  (and adjust drag_state accordingly).
+     */
+    void checkDragTarget();
 
     /** Look up start and end datums.
      */
