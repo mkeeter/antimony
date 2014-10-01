@@ -48,6 +48,9 @@ private slots:
     /** Check name validation. */
     void NameValidate();
 
+    /** Tests basic properties of a hierarchical datum */
+    void Hierarchy();
+
 };
 
 #endif // TEST_DATUM_H

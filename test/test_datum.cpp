@@ -6,6 +6,7 @@
 #include "test_datum.h"
 #include "datum/float_datum.h"
 #include "datum/name_datum.h"
+#include "datum/vec3_datum.h"
 
 void TestDatum::FloatValid()
 {
@@ -185,4 +186,18 @@ void TestDatum::NameValidate()
     d = new NameDatum("a", "a'12");
     QVERIFY(d->getValid() == false);
     delete d;
+}
+
+void TestDatum::Hierarchy()
+{
+    auto v3 = new Vec3Datum("v3", "1.0", "2.0", "3.0");
+    QVERIFY(v3->getValid() == true);
+
+    auto v3b = new Vec3Datum("v3", "1.0", "1.0", "1.0");
+    auto link = v3b->linkFrom();
+
+    QVERIFY(v3->acceptsLink(link));
+
+    delete v3;
+    delete v3b;
 }
