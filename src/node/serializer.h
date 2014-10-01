@@ -16,6 +16,7 @@ public:
     void run(QDataStream* out);
 protected:
     void serializeNodes(QDataStream* out, QObject* p);
+    void serializeDatums(QDataStream* out, QObject* p);
     void serializeNode(QDataStream* out, Node* node);
     void serializeDatum(QDataStream* out, Datum* datum);
     void serializeConnections(QDataStream* out);

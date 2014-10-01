@@ -9,6 +9,7 @@
 #include "datum/eval_datum.h"
 #include "datum/function_datum.h"
 #include "datum/script_datum.h"
+#include "datum/vec3_datum.h"
 
 SceneSerializer::SceneSerializer(QObject* parent)
     : QObject(parent)
@@ -32,6 +33,18 @@ void SceneSerializer::serializeNodes(QDataStream* out, QObject* p)
     for (auto node : nodes)
     {
         serializeNode(out, node);
+    }
+}
+
+void SceneSerializer::serializeDatums(QDataStream* out, QObject* p)
+{
+    auto datums = p->findChildren<Datum*>(QString(),
+                                          Qt::FindDirectChildrenOnly);
+    *out << quint32(datums.length());
+
+    for (auto datum : datums)
+    {
+        serializeDatum(out, datum);
     }
 }
 
@@ -82,6 +95,10 @@ void SceneSerializer::serializeDatum(QDataStream* out, Datum* datum)
     {
         *out << f->getFunctionName();
         *out << f->getArguments();
+    }
+    else if (auto v3 = dynamic_cast<Vec3Datum*>(datum))
+    {
+        serializeDatums(out, v3);
     }
 
     // Save datum and any connections for later

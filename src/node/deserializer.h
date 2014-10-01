@@ -17,7 +17,8 @@ public:
 protected:
     void deserializeNodes(QDataStream* in, QObject* p);
     void deserializeNode(QDataStream* in, QObject* p);
-    void deserializeDatum(QDataStream* in, Node* node);
+    void deserializeDatums(QDataStream* in, QObject* p);
+    void deserializeDatum(QDataStream* in, QObject* p);
     void deserializeConnections(QDataStream* in);
 
     bool failed;

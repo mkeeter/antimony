@@ -12,7 +12,8 @@ namespace DatumType
         SHAPE,
         STRING,
         SHAPE_OUTPUT,
-        SHAPE_FUNCTION
+        SHAPE_FUNCTION,
+        VEC3
     };
 }
 

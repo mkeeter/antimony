@@ -68,6 +68,16 @@ bool Datum::acceptsLink(Link* upstream)
     {
         return false;
     }
+    else if (Datum* d = dynamic_cast<Datum*>(parent()))
+    {
+        if (d->input_handler && d->input_handler->hasInput())
+            return false;
+    }
+
+    for (auto d : findChildren<Datum*>())
+        if (d->input_handler && d->input_handler->hasInput())
+            return false;
+
     return input_handler->accepts(upstream);
 }
 

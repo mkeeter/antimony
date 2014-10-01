@@ -14,6 +14,7 @@
 #include "datum/output_datum.h"
 #include "datum/shape_datum.h"
 #include "datum/function_datum.h"
+#include "datum/vec3_datum.h"
 
 SceneDeserializer::SceneDeserializer(QObject* parent)
     : QObject(parent)
@@ -30,6 +31,14 @@ void SceneDeserializer::run(QDataStream* in)
 
     deserializeNodes(in, NodeManager::manager());
     deserializeConnections(in);
+}
+
+void SceneDeserializer::deserializeDatums(QDataStream* in, QObject* p)
+{
+    quint32 count;
+    *in >> count;
+    for (unsigned i=0; i < count; ++i)
+        deserializeDatum(in, p);
 }
 
 void SceneDeserializer::deserializeNodes(QDataStream* in, QObject* p)
@@ -65,7 +74,7 @@ void SceneDeserializer::deserializeNode(QDataStream* in, QObject* p)
     }
 }
 
-void SceneDeserializer::deserializeDatum(QDataStream* in, Node* node)
+void SceneDeserializer::deserializeDatum(QDataStream* in, QObject* p)
 {
     quint32 t;
     *in >> t;
@@ -79,25 +88,28 @@ void SceneDeserializer::deserializeDatum(QDataStream* in, Node* node)
     switch (datum_type)
     {
         case DatumType::FLOAT:
-            datum = new FloatDatum(name, node); break;
+            datum = new FloatDatum(name, p); break;
         case DatumType::INT:
-            datum = new IntDatum(name, node); break;
+            datum = new IntDatum(name, p); break;
         case DatumType::NAME:
-            datum = new NameDatum(name, node); break;
+            datum = new NameDatum(name, p); break;
         case DatumType::STRING:
-            datum = new StringDatum(name, node); break;
+            datum = new StringDatum(name, p); break;
         case DatumType::SCRIPT:
-            datum = new ScriptDatum(name, node); break;
+            datum = new ScriptDatum(name, p); break;
         case DatumType::SHAPE:
-            datum = new ShapeDatum(name, node); break;
+            datum = new ShapeDatum(name, p); break;
         case DatumType::SHAPE_OUTPUT:
-            datum = new ShapeOutputDatum(name, node); break;
+            datum = new ShapeOutputDatum(name, p); break;
         case DatumType::SHAPE_FUNCTION:
-            datum = new ShapeFunctionDatum(name, node); break;
+            datum = new ShapeFunctionDatum(name, p); break;
+        case DatumType::VEC3:
+            datum = new Vec3Datum(name, p); break;
     }
 
     EvalDatum* e = dynamic_cast<EvalDatum*>(datum);
     FunctionDatum* f = dynamic_cast<FunctionDatum*>(datum);
+    Vec3Datum* v3 = dynamic_cast<Vec3Datum*>(datum);
     if (e)
     {
         QString expr;
@@ -110,6 +122,9 @@ void SceneDeserializer::deserializeDatum(QDataStream* in, Node* node)
         QList<QString> function_args;
         *in >> function_name >> function_args;
         f->setFunction(function_name, function_args);
+    } else if (v3)
+    {
+        deserializeDatums(in, datum);
     }
 
     datums << datum;

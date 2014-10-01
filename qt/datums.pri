@@ -9,6 +9,7 @@ SOURCES += \
     ../src/datum/output_datum.cpp \
     ../src/datum/function_datum.cpp \
     ../src/datum/string_datum.cpp \
+    ../src/datum/vec3_datum.cpp \
 
 HEADERS += \
     ../src/datum/datum.h \
@@ -21,4 +22,5 @@ HEADERS += \
     ../src/datum/output_datum.h \
     ../src/datum/function_datum.h \
     ../src/datum/string_datum.h \
+    ../src/datum/vec3_datum.h \
 
