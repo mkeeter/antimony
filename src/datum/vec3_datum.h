@@ -21,6 +21,8 @@ public:
         { return DatumType::VEC3; }
 
 protected:
+    bool areChildrenValid() const;
+
     PyObject* getCurrentValue();
 };
 

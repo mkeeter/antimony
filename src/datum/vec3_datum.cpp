@@ -26,7 +26,21 @@ QString Vec3Datum::getString() const
                           getDatum("x")->getString() + ")";
 }
 
+bool Vec3Datum::areChildrenValid() const
+{
+    return findChild<FloatDatum*>("x")->getValid() &&
+           findChild<FloatDatum*>("y")->getValid() &&
+           findChild<FloatDatum*>("z")->getValid();
+}
+
 PyObject* Vec3Datum::getCurrentValue()
 {
-    return NULL;
+    return areChildrenValid()
+        ? PyObject_CallFunctionObjArgs(
+            (PyObject*)getType(),
+            findChild<Datum*>("x")->getValue(),
+            findChild<Datum*>("y")->getValue(),
+            findChild<Datum*>("z")->getValue(),
+            NULL)
+        : NULL;
 }
