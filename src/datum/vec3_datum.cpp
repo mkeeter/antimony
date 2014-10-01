@@ -2,21 +2,22 @@
 
 #include "datum/float_datum.h"
 #include "datum/vec3_datum.h"
-
+#include "datum/input.h"
 
 Vec3Datum::Vec3Datum(QString name, QObject* parent)
     : Datum(name, parent)
 {
-    // Nothing to do here
+    input_handler = new SingleInputHandler(this);
 }
 
 Vec3Datum::Vec3Datum(QString name, QString x, QString y, QString z,
                      QObject *parent)
-    : Datum(name, parent)
+    : Vec3Datum(name, parent)
 {
     new FloatDatum("x", x, this);
     new FloatDatum("y", y, this);
     new FloatDatum("z", z, this);
+    update();
 }
 
 QString Vec3Datum::getString() const
