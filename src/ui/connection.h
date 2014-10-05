@@ -34,6 +34,14 @@ protected:
      */
     void keyPressEvent(QKeyEvent *event) override;
 
+    /** On shift key release, stop snapping
+     */
+    void keyReleaseEvent(QKeyEvent* event) override;
+
+    /** Updates snap_pos.
+     */
+    void updateSnap();
+
     /** Checks that start and end (if not dragging) datums are valid
      */
     bool areDatumsValid() const;
@@ -94,6 +102,9 @@ protected:
     QPointF drag_pos;
 
     enum { NONE, VALID, INVALID, CONNECTED } drag_state;
+
+    QPointF snap_pos;
+    bool snapping;
 
     NodeInspector* raised_inspector;
     InputPort* target;

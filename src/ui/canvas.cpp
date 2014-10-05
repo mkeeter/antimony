@@ -127,7 +127,7 @@ InputPort* Canvas::getInputPortAt(QPointF pos) const
     return NULL;
 }
 
-InputPort* Canvas::getInputPortNear(QPointF pos) const
+InputPort* Canvas::getInputPortNear(QPointF pos, Link* link) const
 {
     float distance = INFINITY;
     InputPort* port = NULL;
@@ -135,7 +135,7 @@ InputPort* Canvas::getInputPortNear(QPointF pos) const
     for (auto i : scene->items())
     {
         InputPort* p = dynamic_cast<InputPort*>(i);
-        if (p)
+        if (p && (link == NULL || p->getDatum()->acceptsLink(link)))
         {
             QPointF delta = p->mapToScene(p->boundingRect().center()) - pos;
             float d = QPointF::dotProduct(delta, delta);

@@ -18,7 +18,8 @@
 Connection::Connection(Link* link, Canvas* canvas)
     : QGraphicsObject(), link(link), canvas(canvas),
       drag_state(link->hasTarget() ? CONNECTED : NONE),
-      raised_inspector(NULL), target(NULL), hover(false)
+      snapping(false), raised_inspector(NULL), target(NULL),
+      hover(false)
 {
     setFlags(QGraphicsItem::ItemIsSelectable|
              QGraphicsItem::ItemIsFocusable);
@@ -135,7 +136,7 @@ QPointF Connection::endPos() const
     }
     else
     {
-        return drag_pos;
+        return snapping ? snap_pos : drag_pos;
     }
 }
 
@@ -196,46 +197,37 @@ void Connection::paint(QPainter *painter,
 void Connection::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     if (drag_state == CONNECTED)
-    {
         return;
-    }
 
     drag_pos = event->pos();
-    NodeInspector* insp = canvas->getInspectorAt(drag_pos);
+    if (snapping)
+        updateSnap();
+
     if (raised_inspector)
-    {
         raised_inspector->setZValue(-2);
-    }
+    NodeInspector* insp = canvas->getInspectorAt(drag_pos);
     if (insp)
-    {
         insp->setZValue(-1.9);
-    }
     raised_inspector = insp;
 
     checkDragTarget();
+    prepareGeometryChange();
 }
 
 void Connection::checkDragTarget()
 {
     if (target)
         target->hideToolTip();
-    target = canvas->getInputPortAt(drag_pos);
+    target = canvas->getInputPortAt(endPos());
     if (target)
         target->showToolTip();
 
     if (target && target->getDatum()->acceptsLink(link))
-    {
         drag_state = VALID;
-    }
     else if (target)
-    {
         drag_state = INVALID;
-    }
     else
-    {
         drag_state = NONE;
-    }
-    prepareGeometryChange();
 }
 
 void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
@@ -252,7 +244,7 @@ void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
     if (target)
         target->hideToolTip();
-    InputPort* target = canvas->getInputPortAt(drag_pos);
+    InputPort* target = canvas->getInputPortAt(endPos());
     Datum* datum = target ? target->getDatum() : NULL;
     if (target && datum->acceptsLink(link))
     {
@@ -290,16 +282,30 @@ void Connection::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     }
 }
 
+void Connection::updateSnap()
+{
+    if (Port* p = canvas->getInputPortNear(drag_pos, link))
+    {
+        snap_pos = p->mapToScene(p->boundingRect().center());
+    }
+}
+
 void Connection::keyPressEvent(QKeyEvent* event)
 {
     if (event->key() == Qt::Key_Shift)
     {
-        Port* p = canvas->getInputPortNear(drag_pos);
-        if (p)
-        {
-            drag_pos = p->mapToScene(p->boundingRect().center());
-            prepareGeometryChange();
-        }
+        snapping = true;
+        updateSnap();
+        checkDragTarget();
+        prepareGeometryChange();
     }
-    checkDragTarget();
+}
+
+void Connection::keyReleaseEvent(QKeyEvent* event)
+{
+    if (event->key() == Qt::Key_Shift)
+    {
+        snapping = false;
+        prepareGeometryChange();
+    }
 }

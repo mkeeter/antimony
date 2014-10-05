@@ -11,6 +11,7 @@ class Control;
 class InputPort;
 class NodeInspector;
 class ViewSelector;
+class Link;
 
 class Canvas : public QGraphicsView
 {
@@ -49,8 +50,9 @@ public:
     InputPort* getInputPortAt(QPointF pos) const;
 
     /** Returns the nearest input port.
+     *  If link is given, only return input ports that accept it.
      */
-    InputPort* getInputPortNear(QPointF pos) const;
+    InputPort* getInputPortNear(QPointF pos, Link* link=NULL) const;
 
     /** Finds an inspector at the given position (or NULL)
      */
