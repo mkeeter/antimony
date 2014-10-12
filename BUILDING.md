@@ -4,7 +4,7 @@ Tested on Mac OS X 10.9.4 with [homebrew](http://brew.sh/) already installed:
 ```
 brew install libpng
 brew install python3
-brew install --c++11 --with-python3 boost
+brew install --with-python3 boost-python
 brew install qt5
 
 git clone https://github.com/mkeeter/antimony
