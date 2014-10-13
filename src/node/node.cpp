@@ -79,6 +79,7 @@ QString Node::getType() const
         case NodeType::TEXT:        return "Text";
         case NodeType::CUBE:        return "Cube";
         case NodeType::CYLINDER:    return "Cylinder";
+        case NodeType::CONE:        return "Cone";
         case NodeType::EXTRUDE:     return "Extrude";
         case NodeType::SPHERE:      return "Sphere";
         case NodeType::POINT3D:     return "Point (3D)";

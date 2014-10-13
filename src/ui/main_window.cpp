@@ -118,6 +118,7 @@ void MainWindow::_populateMenu(QMenu* menu)
     addNodeToMenu<CubeNode, recenter>("3D", "Cube", menu, &submenus);
     addNodeToMenu<SphereNode, recenter>("3D", "Sphere", menu, &submenus);
     addNodeToMenu<CylinderNode, recenter>("3D", "Cylinder", menu, &submenus);
+    addNodeToMenu<ConeNode, recenter>("3D", "Cone", menu, &submenus);
     addNodeToMenu<ExtrudeNode, recenter>("3D", "Extrude", menu, &submenus);
 
     addNodeToMenu<UnionNode, recenter>("CSG", "Union", menu, &submenus);

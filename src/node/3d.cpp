@@ -106,3 +106,18 @@ Node* SphereNode(float x, float y, float z, float scale, QObject* parent)
     new ShapeFunctionDatum("shape", n, "sphere", {"x", "y", "z", "r"});
     return n;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+Node* ConeNode(float x, float y, float z, float scale, QObject* parent)
+{
+    Node* n = new Node(NodeType::CONE, parent);
+    new NameDatum("name", NodeManager::manager()->getName("c"), n);
+    new FloatDatum("x", QString::number(x), n);
+    new FloatDatum("y", QString::number(y), n);
+    new FloatDatum("z0", QString::number(z), n);
+    new FloatDatum("z1", QString::number(z + scale), n);
+    new FloatDatum("r", QString::number(scale), n);
+    new ShapeFunctionDatum("shape", n, "cone", {"x", "y", "z0", "z1", "r"});
+    return n;
+}

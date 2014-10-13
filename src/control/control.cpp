@@ -478,6 +478,7 @@ void Control::paint(QPainter *painter,
 #include "control/3d/cube_control.h"
 #include "control/3d/sphere_control.h"
 #include "control/3d/cylinder_control.h"
+#include "control/3d/cone_control.h"
 #include "control/3d/extrude_control.h"
 #include "control/3d/point3d_control.h"
 
@@ -526,6 +527,8 @@ Control* Control::makeControlFor(Canvas* canvas, Node* node)
             return new SphereControl(canvas, node);
         case NodeType::CYLINDER:
             return new CylinderControl(canvas, node);
+        case NodeType::CONE:
+            return new ConeControl(canvas, node);
         case NodeType::EXTRUDE:
             return new ExtrudeControl(canvas, node);
         case NodeType::POINT3D:

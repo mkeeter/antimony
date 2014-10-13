@@ -19,4 +19,6 @@ Node* Point3DNode(float x, float y, float z, float scale, QObject* parent=0);
 
 Node* SphereNode(float x, float y, float z, float scale, QObject* parent=0);
 
+Node* ConeNode(float x, float y, float z, float scale, QObject* parent=0);
+
 #endif

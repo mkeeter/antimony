@@ -11,6 +11,7 @@ namespace NodeType
         TEXT,
         CUBE,
         CYLINDER,
+        CONE,
         EXTRUDE,
         SPHERE,
         POINT3D,

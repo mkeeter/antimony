@@ -8,6 +8,7 @@ SOURCES += \
     ../src/control/3d/extrude_control.cpp \
     ../src/control/3d/cube_control.cpp \
     ../src/control/3d/cylinder_control.cpp \
+    ../src/control/3d/cone_control.cpp \
     ../src/control/2d/point2d_control.cpp \
     ../src/control/2d/circle_control.cpp \
     ../src/control/2d/triangle_control.cpp \
@@ -44,6 +45,7 @@ HEADERS += \
     ../src/control/3d/sphere_control.h \
     ../src/control/3d/extrude_control.h \
     ../src/control/3d/cylinder_control.h \
+    ../src/control/3d/cone_control.h \
     ../src/control/3d/cube_control.h \
     ../src/control/2d/point2d_control.h \
     ../src/control/2d/circle_control.h \
