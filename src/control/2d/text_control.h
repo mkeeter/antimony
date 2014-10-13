@@ -20,6 +20,8 @@ public:
     void drag(QVector3D center, QVector3D delta) override;
     QPointF inspectorPosition() const override;
 protected:
+    QPointF baseInputPosition() const override;
+    QPointF baseOutputPosition() const override;
     _CaretTopControl* caret_top;
 };
 

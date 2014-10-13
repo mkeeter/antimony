@@ -63,3 +63,19 @@ QPointF TextControl::inspectorPosition() const
                 getValue("x") + getValue("scale")/4,
                 getValue("y"), 0));
 }
+
+QPointF TextControl::baseInputPosition() const
+{
+    return canvas->worldToScene(QVector3D(
+                getValue("x"),
+                getValue("y") + getValue("scale")/2, 0));
+
+}
+
+QPointF TextControl::baseOutputPosition() const
+{
+    return canvas->worldToScene(QVector3D(
+                getValue("x"),
+                getValue("y") + getValue("scale")/2, 0));
+
+}
