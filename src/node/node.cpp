@@ -100,6 +100,9 @@ QString Node::getType() const
         case NodeType::ROTATEX:     return "Rotate (X)";
         case NodeType::ROTATEY:     return "Rotate (Y)";
         case NodeType::ROTATEZ:     return "Rotate (Z)";
+        case NodeType::REFLECTX:    return "Reflect (X)";
+        case NodeType::REFLECTY:    return "Reflect (Y)";
+        case NodeType::REFLECTZ:    return "Reflect (Z)";
         case NodeType::RECENTER:    return "Re-center";
         case NodeType::TRANSLATE:   return "Translate";
         case NodeType::SLIDER:      return "Slider";

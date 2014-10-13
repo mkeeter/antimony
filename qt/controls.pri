@@ -31,6 +31,9 @@ SOURCES += \
     ../src/control/transform/rotatex_control.cpp \
     ../src/control/transform/rotatey_control.cpp \
     ../src/control/transform/rotatez_control.cpp \
+    ../src/control/transform/reflectx_control.cpp \
+    ../src/control/transform/reflecty_control.cpp \
+    ../src/control/transform/reflectz_control.cpp \
     ../src/control/transform/recenter_control.cpp \
     ../src/control/transform/translate_control.cpp \
     ../src/control/variable/slider_control.cpp \
@@ -69,6 +72,9 @@ HEADERS += \
     ../src/control/transform/rotatex_control.h \
     ../src/control/transform/rotatey_control.h \
     ../src/control/transform/rotatez_control.h \
+    ../src/control/transform/reflectx_control.h \
+    ../src/control/transform/reflecty_control.h \
+    ../src/control/transform/reflectz_control.h \
     ../src/control/transform/recenter_control.h \
     ../src/control/transform/translate_control.h \
     ../src/control/variable/slider_control.h \

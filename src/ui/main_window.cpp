@@ -132,6 +132,9 @@ void MainWindow::_populateMenu(QMenu* menu)
     addNodeToMenu<RotateXNode, recenter>("Transform", "Rotate (X)", menu, &submenus);
     addNodeToMenu<RotateYNode, recenter>("Transform", "Rotate (Y)", menu, &submenus);
     addNodeToMenu<RotateZNode, recenter>("Transform", "Rotate (Z)", menu, &submenus);
+    addNodeToMenu<ReflectXNode, recenter>("Transform", "Reflect (X)", menu, &submenus);
+    addNodeToMenu<ReflectYNode, recenter>("Transform", "Reflect (Y)", menu, &submenus);
+    addNodeToMenu<ReflectZNode, recenter>("Transform", "Reflect (Z)", menu, &submenus);
     addNodeToMenu<RecenterNode, recenter>("Transform", "Recenter", menu, &submenus);
     addNodeToMenu<TranslateNode, recenter>("Transform", "Translate", menu, &submenus);
 

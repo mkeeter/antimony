@@ -502,6 +502,9 @@ void Control::paint(QPainter *painter,
 #include "control/transform/rotatex_control.h"
 #include "control/transform/rotatey_control.h"
 #include "control/transform/rotatez_control.h"
+#include "control/transform/reflectx_control.h"
+#include "control/transform/reflecty_control.h"
+#include "control/transform/reflectz_control.h"
 #include "control/transform/recenter_control.h"
 #include "control/transform/translate_control.h"
 
@@ -569,6 +572,12 @@ Control* Control::makeControlFor(Canvas* canvas, Node* node)
             return new RotateYControl(canvas, node);
         case NodeType::ROTATEZ:
             return new RotateZControl(canvas, node);
+        case NodeType::REFLECTX:
+            return new ReflectXControl(canvas, node);
+        case NodeType::REFLECTY:
+            return new ReflectYControl(canvas, node);
+        case NodeType::REFLECTZ:
+            return new ReflectZControl(canvas, node);
         case NodeType::RECENTER:
             return new RecenterControl(canvas, node);
         case NodeType::TRANSLATE:

@@ -67,6 +67,57 @@ Node* RotateZNode(float x, float y, float z, float scale, QObject* parent=0)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+Node* ReflectXNode(float x, float y, float z, float scale, QObject* parent=0)
+{
+    Q_UNUSED(scale);
+
+    Node* n = new Node(NodeType::REFLECTX, parent);
+    new NameDatum("name", NodeManager::manager()->getName("r"), n);
+    new FloatDatum("x", QString::number(x), n);
+    new FloatDatum("_y", QString::number(y), n);
+    new FloatDatum("_z", QString::number(z), n);
+    new ShapeDatum("input", n);
+    new ShapeFunctionDatum("shape", n, "reflect_x",
+            {"input", "x"});
+    return n;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+Node* ReflectYNode(float x, float y, float z, float scale, QObject* parent)
+{
+    Q_UNUSED(scale);
+
+    Node* n = new Node(NodeType::REFLECTY, parent);
+    new NameDatum("name", NodeManager::manager()->getName("r"), n);
+    new FloatDatum("_x", QString::number(x), n);
+    new FloatDatum("y", QString::number(y), n);
+    new FloatDatum("_z", QString::number(z), n);
+    new ShapeDatum("input", n);
+    new ShapeFunctionDatum("shape", n, "reflect_y",
+            {"input", "y"});
+    return n;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+Node* ReflectZNode(float x, float y, float z, float scale, QObject* parent=0)
+{
+    Q_UNUSED(scale);
+
+    Node* n = new Node(NodeType::REFLECTZ, parent);
+    new NameDatum("name", NodeManager::manager()->getName("r"), n);
+    new FloatDatum("_x", QString::number(x), n);
+    new FloatDatum("_y", QString::number(y), n);
+    new FloatDatum("z", QString::number(z), n);
+    new ShapeDatum("input", n);
+    new ShapeFunctionDatum("shape", n, "reflect_z",
+            {"input", "z"});
+    return n;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 Node* RecenterNode(float x, float y, float z, float scale, QObject* parent=0)
 {
     Q_UNUSED(scale);

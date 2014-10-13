@@ -171,6 +171,12 @@ def reflect_y(part, y0=0):
         '', '-*f2f%gY' % y0,
         '', '-*f2f%gY' % y0))
 
+def reflect_z(part, z0=0):
+    # Z' = 2*z0-Z
+    return part.map(Transform(
+        '', '', '-*f2f%gZ' % z0,
+        '', '', '-*f2f%gZ' % z0))
+
 def reflect_xy(part):
     return part.map(Transform(
         'Y', 'X', 'Y', 'X'))
