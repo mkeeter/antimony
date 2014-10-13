@@ -136,9 +136,9 @@ Datum* Port::getDatum() const
 
 void Port::setPos(QPointF pos)
 {
+    QGraphicsItem::setPos(pos);
     QPointF p = mapToScene(boundingRect().center());
     label->setPos(p + label_offset);
-    QGraphicsItem::setPos(pos);
 }
 
 void Port::showToolTip()
