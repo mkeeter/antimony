@@ -314,11 +314,11 @@ void Canvas::wheelEvent(QWheelEvent *event)
 
 void Canvas::keyPressEvent(QKeyEvent *event)
 {
-    if (scene->focusItem())
-    {
-        QGraphicsView::keyPressEvent(event);
-    }
-    else if (event->key() == Qt::Key_Space)
+    QGraphicsView::keyPressEvent(event);
+    if (event->isAccepted())
+        return;
+
+    if (event->key() == Qt::Key_Space)
     {
         QGraphicsItem* i = scene->itemAt(
                 mapToScene(mapFromGlobal(QCursor::pos())),
@@ -332,23 +332,6 @@ void Canvas::keyPressEvent(QKeyEvent *event)
     else if (event->key() == Qt::Key_Alt)
     {
         hideUI();
-    }
-    else if (event->key() == Qt::Key_Delete ||
-             event->key() == Qt::Key_Backspace)
-    {
-        for (auto i : scene->selectedItems())
-        {
-            Control* control = dynamic_cast<Control*>(i);
-            Connection* conn = dynamic_cast<Connection*>(i);
-            if (control)
-            {
-                control->deleteNode();
-            }
-            else if (conn)
-            {
-                conn->getLink()->deleteLater();
-            }
-        }
     }
     else if (event->key() == Qt::Key_A &&
                 (event->modifiers() & Qt::ShiftModifier))

@@ -186,6 +186,10 @@ protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget) override;
 
+    /** On delete or backspace, delete node.
+     */
+    void keyPressEvent(QKeyEvent* event) override;
+
     /** This function should be defined by child nodes
      */
     virtual void paintControl(QPainter* painter)=0;

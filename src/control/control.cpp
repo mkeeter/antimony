@@ -20,7 +20,8 @@ Control::Control(Canvas* canvas, Node* node, QGraphicsItem* parent)
       _hover(false), _dragged(false), init_called(false)
 {
     setFlags(QGraphicsItem::ItemIsSelectable |
-             QGraphicsItem::ItemIgnoresTransformations);
+             QGraphicsItem::ItemIgnoresTransformations |
+             QGraphicsItem::ItemIsFocusable);
     setAcceptHoverEvents(true);
 
     if (parent == NULL)
@@ -464,6 +465,19 @@ void Control::paint(QPainter *painter,
     if (node)
     {
         paintControl(painter);
+    }
+}
+
+void Control::keyPressEvent(QKeyEvent* event)
+{
+    if (event->key() == Qt::Key_Delete ||
+        event->key() == Qt::Key_Backspace)
+    {
+        deleteNode();
+    }
+    else
+    {
+        event->ignore();
     }
 }
 

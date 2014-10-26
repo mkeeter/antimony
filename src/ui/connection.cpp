@@ -240,7 +240,6 @@ void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
     ungrabMouse();
     clearFocus();
-    setFlags(QGraphicsItem::ItemIsSelectable);
 
     if (target)
         target->hideToolTip();
@@ -292,12 +291,21 @@ void Connection::updateSnap()
 
 void Connection::keyPressEvent(QKeyEvent* event)
 {
-    if (event->key() == Qt::Key_Shift)
+    if (event->key() == Qt::Key_Shift && drag_state != CONNECTED)
     {
         snapping = true;
         updateSnap();
         checkDragTarget();
         prepareGeometryChange();
+    }
+    else if (event->key() == Qt::Key_Delete ||
+             event->key() == Qt::Key_Backspace)
+    {
+        getLink()->deleteLater();
+    }
+    else
+    {
+        event->ignore();
     }
 }
 
