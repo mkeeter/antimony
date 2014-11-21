@@ -15,9 +15,18 @@ int main(int argc, char *argv[])
     // Initialize our fab Python package and the Python interpreter
     fab::preInit();
     Py_Initialize();
-    fab::postInit();
 
-    //PyRun_InteractiveLoop(stdin, "<stdin>");
+
+    // Modify the default search path to include the application's directory
+    // (as this doesn't happen on Linux by default)
+    QString d = QCoreApplication::applicationDirPath();
+#if defined Q_OS_MAC
+    QStringList path = d.split("/");
+    for (int i=0; i < 3; ++i)
+        path.removeLast();
+    d = path.join("/");
+#endif
+    fab::postInit(d.toStdString().c_str());
 
     return a.exec();
 }

@@ -1,11 +1,5 @@
 #include <boost/python.hpp>
 
-#include <QCoreApplication>
-#include <QFile>
-#include <QString>
-#include <QTextStream>
-#include <QStringList>
-
 #include "fab/fab.h"
 #include "fab/types/shape.h"
 #include "fab/types/transform.h"
@@ -64,25 +58,12 @@ void fab::preInit()
     PyImport_AppendInittab("_fabtypes", PyInit__fabtypes);
 }
 
-#include <QDebug>
-void fab::postInit()
+void fab::postInit(const char* path_dir)
 {
     PyObject* fabtypes = PyImport_ImportModule("_fabtypes");
     ShapeType = (PyTypeObject*)PyObject_GetAttrString(fabtypes, "Shape");
 
     // Modify the default search path to include the application's directory
     // (as this doesn't happen on Linux by default)
-    QString d = QCoreApplication::applicationDirPath();
-#if defined Q_OS_MAC
-    QStringList path = d.split("/");
-    for (int i=0; i < 3; ++i)
-        path.removeLast();
-    d = path.join("/");
-    PyList_Insert(PySys_GetObject("path"), 0,
-                  PyUnicode_FromString(d.toStdString().c_str()));
-#elif defined Q_OS_LINUX
-    PyList_Insert(PySys_GetObject("path"), 0,
-                  PyUnicode_FromString(d.toStdString().c_str()));
-#endif
-
+    PyList_Insert(PySys_GetObject("path"), 0, PyUnicode_FromString(path_dir));
 }
