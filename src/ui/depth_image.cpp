@@ -5,7 +5,7 @@
 #include <QStyleOptionGraphicsItem>
 #include <QGLWidget>
 
-#include "app.h"
+#include "app/app.h"
 #include "main_window.h"
 #include "ui/depth_image.h"
 #include "ui/canvas.h"

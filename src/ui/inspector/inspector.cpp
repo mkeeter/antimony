@@ -7,7 +7,7 @@
 #include <QGraphicsProxyWidget>
 #include <QTimer>
 
-#include "app.h"
+#include "app/app.h"
 #include "ui/main_window.h"
 
 #include "ui/canvas.h"

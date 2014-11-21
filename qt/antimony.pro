@@ -22,8 +22,8 @@ include(shared.pri)
 include(controls.pri)
 
 SOURCES += \
-    ../src/main.cpp \
-    ../src/app.cpp \
+    ../src/app/main.cpp \
+    ../src/app/app.cpp \
     ../src/ui/main_window.cpp \
     ../src/ui/canvas.cpp \
     ../src/ui/colors.cpp \
@@ -52,7 +52,7 @@ HEADERS += \
     ../src/ui/main_window.h \
     ../src/ui/view_selector.h \
     ../src/ui/canvas.h \
-    ../src/app.h \
+    ../src/app/app.h \
     ../src/ui/colors.h \
     ../src/ui/port.h \
     ../src/ui/connection.h \

@@ -2,7 +2,7 @@
 
 #include <QDebug>
 
-#include "app.h"
+#include "app/app.h"
 
 #include "render/render_task.h"
 #include "render/render_worker.h"
