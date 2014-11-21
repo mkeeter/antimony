@@ -7,8 +7,8 @@
 
 #include "graph/datum/datums/name_datum.h"
 #include "graph/datum/datums/float_datum.h"
-#include "graph/datum/types/shape_datum.h"
-#include "graph/datum/types/function_datum.h"
+#include "graph/datum/datums/shape_input_datum.h"
+#include "graph/datum/datums/shape_function_datum.h"
 #include "graph/datum/datums/string_datum.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -22,8 +22,8 @@ Node* DifferenceNode(float x, float y, float z, float scale, QObject* parent)
     new FloatDatum("_x", QString::number(x), n);
     new FloatDatum("_y", QString::number(y), n);
     new FloatDatum("_z", QString::number(z), n);
-    new ShapeDatum("a", n);
-    new ShapeDatum("b", n);
+    new ShapeInputDatum("a", n);
+    new ShapeInputDatum("b", n);
     new ShapeFunctionDatum("shape", n, "difference", {"a", "b"});
     return n;
 }
@@ -37,8 +37,8 @@ Node* IntersectionNode(float x, float y, float z, float scale, QObject* parent)
     new FloatDatum("_x", QString::number(x), n);
     new FloatDatum("_y", QString::number(y), n);
     new FloatDatum("_z", QString::number(z), n);
-    new ShapeDatum("a", n);
-    new ShapeDatum("b", n);
+    new ShapeInputDatum("a", n);
+    new ShapeInputDatum("b", n);
     new ShapeFunctionDatum("shape", n, "intersection", {"a", "b"});
     return n;
 }
@@ -52,8 +52,8 @@ Node* UnionNode(float x, float y, float z, float scale, QObject* parent)
     new FloatDatum("_x", QString::number(x), n);
     new FloatDatum("_y", QString::number(y), n);
     new FloatDatum("_z", QString::number(z), n);
-    new ShapeDatum("a", n);
-    new ShapeDatum("b", n);
+    new ShapeInputDatum("a", n);
+    new ShapeInputDatum("b", n);
     new ShapeFunctionDatum("shape", n, "union", {"a", "b"});
     return n;
 }
@@ -67,8 +67,8 @@ Node* BlendNode(float x, float y, float z, float scale, QObject* parent)
     new FloatDatum("_x", QString::number(x), n);
     new FloatDatum("_y", QString::number(y), n);
     new FloatDatum("_z", QString::number(z), n);
-    new ShapeDatum("a", n);
-    new ShapeDatum("b", n);
+    new ShapeInputDatum("a", n);
+    new ShapeInputDatum("b", n);
     new FloatDatum("q", "0.1", n);
     new ShapeFunctionDatum("shape", n, "blend", {"a", "b", "q"});
     return n;
@@ -83,7 +83,7 @@ Node* OffsetNode(float x, float y, float z, float scale, QObject* parent)
     new FloatDatum("_x", QString::number(x), n);
     new FloatDatum("_y", QString::number(y), n);
     new FloatDatum("_z", QString::number(z), n);
-    new ShapeDatum("a", n);
+    new ShapeInputDatum("a", n);
     new FloatDatum("o", "0.0", n);
     new ShapeFunctionDatum("shape", n, "offset", {"a", "o"});
 
@@ -99,7 +99,7 @@ Node* ShellNode(float x, float y, float z, float scale, QObject* parent)
     new FloatDatum("_x", QString::number(x), n);
     new FloatDatum("_y", QString::number(y), n);
     new FloatDatum("_z", QString::number(z), n);
-    new ShapeDatum("a", n);
+    new ShapeInputDatum("a", n);
     new FloatDatum("s", "0.0", n);
     new ShapeFunctionDatum("shape", n, "shell", {"a", "s"});
 
@@ -117,8 +117,8 @@ Node* ClearanceNode(float x, float y, float z, float scale, QObject* parent)
     new FloatDatum("_x", QString::number(x), n);
     new FloatDatum("_y", QString::number(y), n);
     new FloatDatum("_z", QString::number(z), n);
-    new ShapeDatum("a", n);
-    new ShapeDatum("b", n);
+    new ShapeInputDatum("a", n);
+    new ShapeInputDatum("b", n);
     new FloatDatum("o", "0.0", n);
     new ShapeFunctionDatum("shape", n, "clearance", {"a", "b", "o"});
 

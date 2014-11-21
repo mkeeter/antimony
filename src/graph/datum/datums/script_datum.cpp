@@ -1,8 +1,8 @@
 #include <Python.h>
 
 #include "graph/datum/wrapper.h"
-#include "graph/datum/types/shape_datum.h"
-#include "graph/datum/types/output_datum.h"
+#include "graph/datum/datums/shape_input_datum.h"
+#include "graph/datum/datums/shape_output_datum.h"
 #include "graph/datum/datums/script_datum.h"
 #include "graph/datum/datums/float_datum.h"
 
@@ -77,7 +77,7 @@ PyObject* ScriptDatum::makeInput(QString name, PyTypeObject *type)
         }
         else if (type == fab::ShapeType)
         {
-            d = new ShapeDatum(name, parent());
+            d = new ShapeInputDatum(name, parent());
         }
         else
         {

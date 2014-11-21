@@ -7,8 +7,8 @@
 
 #include "graph/datum/datums/name_datum.h"
 #include "graph/datum/datums/float_datum.h"
-#include "graph/datum/types/shape_datum.h"
-#include "graph/datum/types/function_datum.h"
+#include "graph/datum/datums/shape_input_datum.h"
+#include "graph/datum/datums/shape_function_datum.h"
 #include "graph/datum/datums/string_datum.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -57,7 +57,7 @@ Node* ExtrudeNode(float x, float y, float z, float scale, QObject* parent)
     new FloatDatum("z0", QString::number(z), n);
     new FloatDatum("z1", QString::number(z + scale), n);
     new FloatDatum("_scale", QString::number(scale/8), n);
-    new ShapeDatum("input", n);
+    new ShapeInputDatum("input", n);
     new ShapeFunctionDatum("shape", n, "extrude_z", {"input","z0","z1"});
     return n;
 }

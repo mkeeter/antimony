@@ -7,8 +7,8 @@
 
 #include "graph/datum/datums/name_datum.h"
 #include "graph/datum/datums/float_datum.h"
-#include "graph/datum/types/shape_datum.h"
-#include "graph/datum/types/function_datum.h"
+#include "graph/datum/datums/shape_input_datum.h"
+#include "graph/datum/datums/shape_function_datum.h"
 #include "graph/datum/datums/string_datum.h"
 #include "graph/datum/datums/script_datum.h"
 
@@ -52,7 +52,7 @@ Node* EquationNode(float x, float y, float z, float scale,
     new FloatDatum("_x", QString::number(x), n);
     new FloatDatum("_y", QString::number(y), n);
     new FloatDatum("_z", QString::number(z), n);
-    new ShapeDatum("a", n);
+    new ShapeInputDatum("a", n);
     new ShapeFunctionDatum("shape", n, "buffer", {"a"});
 
     return n;

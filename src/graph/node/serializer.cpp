@@ -7,7 +7,7 @@
 
 #include "graph/datum/datum.h"
 #include "graph/datum/types/eval_datum.h"
-#include "graph/datum/types/function_datum.h"
+#include "graph/datum/datums/shape_function_datum.h"
 #include "graph/datum/datums/script_datum.h"
 
 SceneSerializer::SceneSerializer(QObject* parent)

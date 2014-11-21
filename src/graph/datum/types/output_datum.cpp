@@ -1,6 +1,5 @@
 #include <Python.h>
 #include "graph/datum/types/output_datum.h"
-#include "fab/fab.h"
 
 OutputDatum::OutputDatum(QString name, QObject* parent)
     : Datum(name, parent), new_value(NULL)
@@ -32,17 +31,4 @@ PyObject* OutputDatum::getCurrentValue()
 QString OutputDatum::getString() const
 {
     return "Output";
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-ShapeOutputDatum::ShapeOutputDatum(QString name, QObject* parent)
-    : OutputDatum(name, parent)
-{
-    // Nothing to do here
-}
-
-PyTypeObject* ShapeOutputDatum::getType() const
-{
-    return fab::ShapeType;
 }

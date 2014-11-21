@@ -119,7 +119,7 @@ void TestScript::CheckShapeInput()
     Node* n;
     n = ScriptNode("s", "0.0", "0.0", "0.0", "from fab.types import Shape;input('q', Shape)");
     QVERIFY(n->getDatum("q") != NULL);
-    QVERIFY(n->getDatum<ShapeDatum>("q"));
+    QVERIFY(n->getDatum<ShapeInputDatum>("q"));
     delete n;
 }
 
@@ -152,7 +152,7 @@ void TestScript::AddThenRemoveDatum()
 
     d->setExpr("from fab.types import Shape; input('x', Shape)");
     QVERIFY(n->getDatum("x") != NULL);
-    QVERIFY(n->getDatum<ShapeDatum>("x"));
+    QVERIFY(n->getDatum<ShapeInputDatum>("x"));
 
     d->setExpr("input('q', float)");
     QVERIFY(n->getDatum("x") == NULL);
@@ -205,12 +205,12 @@ void TestScript::ChangeInputOrder()
 
     QVERIFY(a);
     QVERIFY(b);
-    QVERIFY(n->findChildren<ShapeDatum*>().front() == a);
+    QVERIFY(n->findChildren<ShapeInputDatum*>().front() == a);
 
     n->getDatum<ScriptDatum>("script")->setExpr("from fab.types import Shape; input('b', Shape); input('a', Shape);");
     QVERIFY(n->getDatum("a") == a);
     QVERIFY(n->getDatum("b") == b);
-    QVERIFY(n->findChildren<ShapeDatum*>().front() == b);
+    QVERIFY(n->findChildren<ShapeInputDatum*>().front() == b);
 
     delete n;
 }

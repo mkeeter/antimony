@@ -7,8 +7,8 @@
 
 #include "graph/datum/datums/name_datum.h"
 #include "graph/datum/datums/float_datum.h"
-#include "graph/datum/types/shape_datum.h"
-#include "graph/datum/types/function_datum.h"
+#include "graph/datum/datums/shape_input_datum.h"
+#include "graph/datum/datums/shape_function_datum.h"
 #include "graph/datum/datums/string_datum.h"
 
 ////////////////////////////////////////////////////////////////////////////////

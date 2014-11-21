@@ -9,10 +9,10 @@ namespace DatumType
         INT,
         NAME,
         SCRIPT,
-        SHAPE,
         STRING,
         SHAPE_OUTPUT,
-        SHAPE_FUNCTION
+        SHAPE_FUNCTION,
+        SHAPE_INPUT,
     };
 }
 

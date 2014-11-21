@@ -8,8 +8,8 @@
 #include "graph/datum/datums/name_datum.h"
 #include "graph/datum/datums/float_datum.h"
 #include "graph/datum/datums/int_datum.h"
-#include "graph/datum/types/shape_datum.h"
-#include "graph/datum/types/function_datum.h"
+#include "graph/datum/datums/shape_input_datum.h"
+#include "graph/datum/datums/shape_function_datum.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -25,7 +25,7 @@ Node* Iterate2DNode(float x, float y, float z, float scale, QObject* parent)
     new IntDatum("j", "2", n);
     new FloatDatum("dx", QString::number(scale), n);
     new FloatDatum("dy", QString::number(scale), n);
-    new ShapeDatum("input", n);
+    new ShapeInputDatum("input", n);
     new ShapeFunctionDatum("shape", n, "iterate2d",
             {"input", "i", "j", "dx", "dy"});
 

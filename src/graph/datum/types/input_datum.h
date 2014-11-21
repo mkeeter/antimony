@@ -1,29 +1,20 @@
-#ifndef SHAPE_DATUM_H
-#define SHAPE_DATUM_H
+#ifndef INPUT_DATUM_H
+#define INPUT_DATUM_H
 
 #include <Python.h>
 #include "graph/datum/datum.h"
-#include "fab/fab.h"
 
-class ShapeDatum : public Datum
+class InputDatum : public Datum
 {
     Q_OBJECT
 public:
-    explicit ShapeDatum(QString name, QObject* parent=0);
-
-    /** Returns the python Shape class.
-     */
-    PyTypeObject* getType() const override { return fab::ShapeType; }
+    explicit InputDatum(QString name, QObject* parent=0);
 
     /** User editing is always forbidden.
      */
     bool canEdit() const override { return false; }
 
     QString getString() const override;
-
-    DatumType::DatumType getDatumType() const override
-        { return DatumType::SHAPE; }
-
     bool hasOutput() const override { return false; }
 
 protected:
@@ -31,7 +22,6 @@ protected:
      *  (because the shape will always come from the input handler)
      */
     PyObject* getCurrentValue() override { return NULL; }
-
 };
 
-#endif // SHAPE_DATUM_H
+#endif // INPUT_DATUM_H

@@ -18,15 +18,15 @@ private slots:
      */
     void ShapeOutput();
 
-    /** Put an input into a ShapeDatum and make sure it works.
+    /** Put an input into a ShapeInputDatum and make sure it works.
      */
     void ShapeInput();
 
-    /** Put multiple inputs into a ShapeDatum; they should be OR'ed.
+    /** Put multiple inputs into a ShapeInputDatum; they should be OR'ed.
      */
     void MultiShapeInput();
 
-    /** Put multiple inputs into a ShapeDatum, then delete them.
+    /** Put multiple inputs into a ShapeInputDatum, then delete them.
      */
     void DeleteInput();
 };

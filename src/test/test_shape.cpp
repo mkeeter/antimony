@@ -22,7 +22,7 @@ TestShape::TestShape(QObject* parent)
 
 void TestShape::MakeEmptyShape()
 {
-    ShapeDatum* d = new ShapeDatum("s");
+    ShapeInputDatum* d = new ShapeDatum("s");
     QVERIFY(d->getValid());
     delete d;
 }
@@ -43,7 +43,7 @@ void TestShape::ShapeInput()
     Node* p = Point3DNode("p", "0.0", "0.0", "1.0");
     ShapeFunctionDatum* a = new ShapeFunctionDatum("a", p, "circle", {"x","y","z"});
 
-    ShapeDatum* d = new ShapeDatum("d");
+    ShapeInputDatum* d = new ShapeDatum("d");
     Link* link = a->linkFrom();
     QVERIFY(d->acceptsLink(link));
 
@@ -61,7 +61,7 @@ void TestShape::MultiShapeInput()
     ShapeFunctionDatum* a = new ShapeFunctionDatum("a", p, "circle", {"x","x","y"});
     ShapeFunctionDatum* b = new ShapeFunctionDatum("b", p, "circle", {"x","y","z"});
 
-    ShapeDatum* d = new ShapeDatum("d");
+    ShapeInputDatum* d = new ShapeDatum("d");
     Link* la = a->linkFrom();
     Link* lb = b->linkFrom();
 
@@ -84,7 +84,7 @@ void TestShape::DeleteInput()
     Node* p = Point3DNode("p", "0.0", "1.0", "!.0");
     ShapeFunctionDatum* a = new ShapeFunctionDatum("a", p, "circle", {"x","y","z"});
 
-    ShapeDatum* d = new ShapeDatum("d");
+    ShapeInputDatum* d = new ShapeDatum("d");
     Link* link = a->linkFrom();
 
     d->addLink(link);

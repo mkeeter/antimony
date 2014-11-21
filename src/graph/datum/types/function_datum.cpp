@@ -2,7 +2,6 @@
 
 #include "graph/datum/types/function_datum.h"
 #include "graph/node/node.h"
-#include "fab/fab.h"
 
 FunctionDatum::FunctionDatum(QString name, QObject* parent)
     : Datum(name, parent), function(NULL)
@@ -82,29 +81,3 @@ void FunctionDatum::setFunction(QString f, QList<QString> args)
     arguments = args;
     update();
 }
-
-////////////////////////////////////////////////////////////////////////////////
-
-ShapeFunctionDatum::ShapeFunctionDatum(QString name, QObject* parent)
-    : FunctionDatum(name, parent)
-{
-    // Nothing to do here
-}
-
-ShapeFunctionDatum::ShapeFunctionDatum(QString name, QObject* parent,
-                                       QString func_name, QList<QString> args)
-    : FunctionDatum(name, parent, func_name, args)
-{
-    update();
-}
-
-PyObject* ShapeFunctionDatum::getModule() const
-{
-    PyObject* fab = PyImport_ImportModule("fab");
-
-    PyObject* shapes = PyObject_GetAttrString(fab, "shapes");
-    Py_DECREF(fab);
-
-    return shapes;
-}
-

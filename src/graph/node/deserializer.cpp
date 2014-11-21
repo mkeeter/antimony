@@ -11,9 +11,9 @@
 #include "graph/datum/datums/name_datum.h"
 #include "graph/datum/datums/string_datum.h"
 #include "graph/datum/datums/script_datum.h"
-#include "graph/datum/types/output_datum.h"
-#include "graph/datum/types/shape_datum.h"
-#include "graph/datum/types/function_datum.h"
+#include "graph/datum/datums/shape_output_datum.h"
+#include "graph/datum/datums/shape_input_datum.h"
+#include "graph/datum/datums/shape_function_datum.h"
 
 SceneDeserializer::SceneDeserializer(QObject* parent)
     : QObject(parent)
@@ -88,8 +88,8 @@ void SceneDeserializer::deserializeDatum(QDataStream* in, Node* node)
             datum = new StringDatum(name, node); break;
         case DatumType::SCRIPT:
             datum = new ScriptDatum(name, node); break;
-        case DatumType::SHAPE:
-            datum = new ShapeDatum(name, node); break;
+        case DatumType::SHAPE_INPUT:
+            datum = new ShapeInputDatum(name, node); break;
         case DatumType::SHAPE_OUTPUT:
             datum = new ShapeOutputDatum(name, node); break;
         case DatumType::SHAPE_FUNCTION:
