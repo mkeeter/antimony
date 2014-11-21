@@ -8,10 +8,10 @@
 #include "ui/port.h"
 #include "ui/inspector/inspector.h"
 
-#include "datum/datum.h"
-#include "datum/link.h"
+#include "graph/datum/datum.h"
+#include "graph/datum/link.h"
 
-#include "node/node.h"
+#include "graph/node/node.h"
 
 #include "control/control.h"
 

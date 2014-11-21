@@ -3,7 +3,7 @@
 #include "control/2d/rectangle_control.h"
 #include "control/2d/point2d_control.h"
 
-#include "node/node.h"
+#include "graph/node/node.h"
 #include "ui/canvas.h"
 
 RectangleControl::RectangleControl(Canvas* canvas, Node* node)

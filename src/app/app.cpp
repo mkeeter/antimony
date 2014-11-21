@@ -16,7 +16,7 @@
 #include "ui/canvas.h"
 #include "ui/colors.h"
 
-#include "node/manager.h"
+#include "graph/node/manager.h"
 #include "fab/types/shape.h"
 #include "render/export_mesh.h"
 #include "render/export_json.h"

@@ -5,8 +5,8 @@
 #include "control/iterate/iterate2d_control.h"
 #include "ui/canvas.h"
 
-#include "node/node.h"
-#include "datum/int_datum.h"
+#include "graph/node/node.h"
+#include "graph/datum/datums/int_datum.h"
 
 Iterate2DButton::Iterate2DButton(Canvas* canvas, Node* node,
                                  bool axis, bool sign, QGraphicsItem* parent)

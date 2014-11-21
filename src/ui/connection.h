@@ -4,7 +4,7 @@
 #include <QGraphicsObject>
 #include <QPointer>
 
-#include "datum/link.h"
+#include "graph/datum/link.h"
 
 class Link;
 class Canvas;

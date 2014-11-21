@@ -10,8 +10,8 @@
 
 #include "ui/depth_image.h"
 
-#include "datum/datum.h"
-#include "datum/link.h"
+#include "graph/datum/datum.h"
+#include "graph/datum/link.h"
 
 #include "ui/canvas.h"
 

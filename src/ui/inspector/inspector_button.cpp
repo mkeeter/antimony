@@ -3,7 +3,7 @@
 #include <QPainter>
 #include <QGraphicsSceneMouseEvent>
 
-#include "datum/datum.h"
+#include "graph/datum/datum.h"
 #include "ui/inspector/inspector_button.h"
 #include "ui/inspector/inspector.h"
 #include "ui/colors.h"

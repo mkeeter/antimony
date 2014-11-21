@@ -8,7 +8,7 @@
 #include <QHelpEvent>
 #include <QToolTip>
 
-#include "datum/script_datum.h"
+#include "graph/datum/datums/script_datum.h"
 
 #include "ui/canvas.h"
 #include "ui/script/script_editor.h"

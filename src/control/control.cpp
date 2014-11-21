@@ -4,16 +4,16 @@
 #include <QRegularExpression>
 
 #include "control/control.h"
-#include "node/node.h"
+#include "graph/node/node.h"
 
 #include "ui/canvas.h"
 #include "ui/colors.h"
 #include "ui/inspector/inspector.h"
 #include "ui/port.h"
 
-#include "datum/datum.h"
-#include "datum/float_datum.h"
-#include "datum/script_datum.h"
+#include "graph/datum/datum.h"
+#include "graph/datum/datums/float_datum.h"
+#include "graph/datum/datums/script_datum.h"
 
 Control::Control(Canvas* canvas, Node* node, QGraphicsItem* parent)
     : QGraphicsObject(parent), canvas(canvas), node(node), inspector(NULL),

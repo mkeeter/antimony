@@ -12,7 +12,7 @@
 #include "ui/canvas.h"
 #include "ui/tooltip.h"
 
-#include "datum/datum.h"
+#include "graph/datum/datum.h"
 
 Port::Port(Datum* d, Canvas* canvas, QGraphicsItem* parent)
     : QGraphicsObject(parent), datum(d), canvas(canvas),

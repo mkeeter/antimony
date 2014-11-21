@@ -1,7 +1,7 @@
 #include <Python.h>
 #include "ui/colors.h"
 
-#include "datum/datum.h"
+#include "graph/datum/datum.h"
 
 namespace Colors
 {

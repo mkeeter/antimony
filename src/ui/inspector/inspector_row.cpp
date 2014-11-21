@@ -7,8 +7,8 @@
 #include "ui/port.h"
 #include "ui/colors.h"
 
-#include "datum/datum.h"
-#include "datum/script_datum.h"
+#include "graph/datum/datum.h"
+#include "graph/datum/datums/script_datum.h"
 
 InspectorRow::InspectorRow(Datum* d, NodeInspector* parent)
     : QGraphicsObject(static_cast<QGraphicsItem*>(parent)),

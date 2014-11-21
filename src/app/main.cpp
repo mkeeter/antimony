@@ -16,7 +16,6 @@ int main(int argc, char *argv[])
     fab::preInit();
     Py_Initialize();
 
-
     // Modify the default search path to include the application's directory
     // (as this doesn't happen on Linux by default)
     QString d = QCoreApplication::applicationDirPath();

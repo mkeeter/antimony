@@ -3,7 +3,7 @@
 #include "control/3d/cube_control.h"
 #include "control/3d/point3d_control.h"
 
-#include "node/node.h"
+#include "graph/node/node.h"
 #include "ui/canvas.h"
 
 CubeControl::CubeControl(Canvas* canvas, Node* node)
