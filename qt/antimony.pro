@@ -2,7 +2,7 @@ QT += core gui widgets opengl
 
 TARGET = antimony
 TEMPLATE = app
-CONFIG += c++11
+CONFIG += c++11 object_parallel_to_source
 
 DEFINES += ANTIMONY
 
