@@ -3,7 +3,7 @@
 #include "control/2d/triangle_control.h"
 #include "control/2d/point2d_control.h"
 
-#include "node/node.h"
+#include "graph/node/node.h"
 #include "ui/canvas.h"
 
 TriangleControl::TriangleControl(Canvas* canvas, Node* node)

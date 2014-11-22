@@ -1,5 +1,5 @@
 SOURCES += \
-    ../src/fab/tree/eval_c.c \
+    ../src/fab/tree/eval.c \
     ../src/fab/tree/render.c \
     ../src/fab/tree/tree.c \
     ../src/fab/tree/parser.c \

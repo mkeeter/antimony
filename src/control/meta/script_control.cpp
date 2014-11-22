@@ -2,8 +2,8 @@
 
 #include "control/meta/script_control.h"
 
-#include "node/node.h"
-#include "datum/datum.h"
+#include "graph/node/node.h"
+#include "graph/datum/datum.h"
 
 #include "ui/colors.h"
 

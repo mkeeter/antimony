@@ -7,7 +7,7 @@
 #include <QGraphicsProxyWidget>
 #include <QTimer>
 
-#include "app.h"
+#include "app/app.h"
 #include "ui/main_window.h"
 
 #include "ui/canvas.h"
@@ -18,10 +18,10 @@
 #include "ui/port.h"
 #include "ui/colors.h"
 
-#include "datum/datum.h"
-#include "datum/script_datum.h"
+#include "graph/datum/datum.h"
+#include "graph/datum/datums/script_datum.h"
 #include "control/control.h"
-#include "node/node.h"
+#include "graph/node/node.h"
 
 //////////////////////////////////////////r/////////////////////////////////////
 

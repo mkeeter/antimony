@@ -2,8 +2,8 @@
 
 #include "control/meta/equation_control.h"
 
-#include "node/node.h"
-#include "datum/datum.h"
+#include "graph/node/node.h"
+#include "graph/datum/datum.h"
 #include "fab/types/shape.h"
 #include "tree/node/printers_ss.h"
 

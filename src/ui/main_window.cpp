@@ -56,18 +56,18 @@ bool MainWindow::isShaded() const
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "node/node.h"
-#include "node/manager.h"
+#include "graph/node/node.h"
+#include "graph/node/manager.h"
 #include "control/control.h"
 
-#include "node/2d.h"
-#include "node/3d.h"
-#include "node/csg.h"
-#include "node/meta.h"
-#include "node/transforms.h"
-#include "node/deform.h"
-#include "node/variable.h"
-#include "node/iterate.h"
+#include "graph/node/nodes/2d.h"
+#include "graph/node/nodes/3d.h"
+#include "graph/node/nodes/csg.h"
+#include "graph/node/nodes/meta.h"
+#include "graph/node/nodes/transforms.h"
+#include "graph/node/nodes/deform.h"
+#include "graph/node/nodes/variable.h"
+#include "graph/node/nodes/iterate.h"
 
 template <Node* (*f)(float, float, float, float, QObject*), bool recenter>
 void MainWindow::createNew()

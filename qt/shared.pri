@@ -2,22 +2,22 @@ include(datums.pri)
 include(nodes.pri)
 
 SOURCES += \
-    ../src/node/manager.cpp \
-    ../src/node/proxy.cpp \
-    ../src/datum/input.cpp \
-    ../src/datum/link.cpp \
-    ../src/datum/wrapper.cpp \
-    ../src/node/serializer.cpp \
-    ../src/node/deserializer.cpp \
+    ../src/graph/node/manager.cpp \
+    ../src/graph/node/proxy.cpp \
+    ../src/graph/datum/input.cpp \
+    ../src/graph/datum/link.cpp \
+    ../src/graph/datum/wrapper.cpp \
+    ../src/graph/node/serializer.cpp \
+    ../src/graph/node/deserializer.cpp \
 
 HEADERS += \
-    ../src/node/manager.h \
-    ../src/node/proxy.h \
-    ../src/datum/input.h \
-    ../src/datum/link.h \
-    ../src/datum/wrapper.h \
-    ../src/node/serializer.h \
-    ../src/node/deserializer.h \
+    ../src/graph/node/manager.h \
+    ../src/graph/node/proxy.h \
+    ../src/graph/datum/input.h \
+    ../src/graph/datum/link.h \
+    ../src/graph/datum/wrapper.h \
+    ../src/graph/node/serializer.h \
+    ../src/graph/node/deserializer.h \
 
 INCLUDEPATH += ../src
 

@@ -2,7 +2,7 @@
 
 #include <QDebug>
 
-#include "app.h"
+#include "app/app.h"
 
 #include "render/render_task.h"
 #include "render/render_worker.h"
@@ -10,8 +10,8 @@
 
 #include "ui/depth_image.h"
 
-#include "datum/datum.h"
-#include "datum/link.h"
+#include "graph/datum/datum.h"
+#include "graph/datum/link.h"
 
 #include "ui/canvas.h"
 

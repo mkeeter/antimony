@@ -16,14 +16,14 @@
 #include "ui/inspector/inspector.h"
 #include "ui/depth_image.h"
 
-#include "node/node.h"
-#include "datum/link.h"
+#include "graph/node/node.h"
+#include "graph/datum/link.h"
 
 #include "control/control.h"
 #include "control/axes_control.h"
 #include "ui/view_selector.h"
 
-#include "datum/datum.h"
+#include "graph/datum/datum.h"
 
 Canvas::Canvas(QWidget* parent)
     : QGraphicsView(parent), scene(new QGraphicsScene(parent)),

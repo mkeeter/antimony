@@ -1,7 +1,6 @@
 #include <Python.h>
 
 #include "control/wireframe.h"
-#include "node/node.h"
 #include "ui/canvas.h"
 
 WireframeControl::WireframeControl(Canvas* canvas, Node* node,

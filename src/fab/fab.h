@@ -18,11 +18,9 @@ namespace fab
 
     /** Loads the fab module in Python's namespace.
      *
-     *  Must be called after Py_Initialize() and the application
-     *  is created (as it uses QCoreApplication to set the working
-     *  directory).
+     *  path_dir is added to Python's search path.
      */
-    void postInit();
+    void postInit(const char* path_dir);
 
     extern PyTypeObject* ShapeType;
 }

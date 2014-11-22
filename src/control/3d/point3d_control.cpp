@@ -2,7 +2,7 @@
 
 #include <QPainter>
 
-#include "node/node.h"
+#include "graph/node/node.h"
 #include "ui/canvas.h"
 #include "control/3d/point3d_control.h"
 
