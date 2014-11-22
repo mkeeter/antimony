@@ -26,8 +26,15 @@
 //////////////////////////////////////////r/////////////////////////////////////
 
 NodeInspector::NodeInspector(Control* control, bool show_hidden)
-    : control(control), show_hidden(show_hidden)
+    : control(control), show_hidden(show_hidden),
+      title(new QGraphicsTextItem(control->getNode()->getType(), this))
 {
+    title->setPos(6, 3);
+    title->setDefaultTextColor(Colors::base06);
+    auto f = title->font();
+    f.setBold(true);
+    title->setFont(f);
+
     connect(control, SIGNAL(inspectorPositionChanged()),
             this, SLOT(onPositionChange()));
     connect(control->getCanvas(), SIGNAL(viewChanged()),
@@ -70,8 +77,8 @@ float NodeInspector::labelWidth() const
 
 QRectF NodeInspector::boundingRect() const
 {
-    float height = 0;
-    float width = 0;
+    float height = title->boundingRect().height() + 6;
+    float width = title->boundingRect().width() + 12;
 
     for (auto row : rows)
     {
@@ -85,7 +92,7 @@ void NodeInspector::onLayoutChanged()
 {
     if (control)
     {
-        float y = 3;
+        float y = 3 + title->boundingRect().height() + 6;
         for (Datum* d : control->getNode()->findChildren<Datum*>())
         {
             if (rows.contains(d))
@@ -136,8 +143,21 @@ void NodeInspector::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     Q_UNUSED(widget);
 
     painter->setBrush(Colors::base01);
-    painter->setPen(QPen(Colors::base02, 2));
-    painter->drawRect(boundingRect());
+    painter->setPen(Qt::NoPen);
+    painter->drawRoundedRect(boundingRect(), 10, 10);
+
+    painter->setBrush(Colors::base03);
+    QRectF br = title->boundingRect();
+    br.setWidth(boundingRect().width());
+    br.setHeight(br.height() + 3);
+    painter->drawRoundedRect(br, 10, 10);
+    br.setHeight(br.height()/2);
+    br.moveTop(br.height());
+    painter->drawRect(br);
+
+    painter->setBrush(Qt::NoBrush);
+    painter->setPen(QPen(Colors::base03, 2));
+    painter->drawRoundedRect(boundingRect(), 10, 10);
 }
 
 InputPort* NodeInspector::datumInputPort(Datum *d) const

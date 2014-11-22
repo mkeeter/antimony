@@ -93,6 +93,7 @@ protected:
     QMap<Datum*, InspectorRow*> rows;
     float mask_size;
     bool show_hidden;
+    QGraphicsTextItem* title;
 
     friend class InspectorRow;
 };
