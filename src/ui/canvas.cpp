@@ -61,6 +61,14 @@ void Canvas::mouseMoveEvent(QMouseEvent* event)
     }
 }
 
+void Canvas::wheelEvent(QWheelEvent* event)
+{
+    QPointF a = mapToScene(event->pos());
+    auto s = pow(1.001, -event->delta());
+    scale(s, s);
+    auto d = a - mapToScene(event->pos());
+    setSceneRect(sceneRect().translated(d.x(), d.y()));
+}
 
 #if 0
 InputPort* Canvas::getInputPortAt(QPointF pos) const

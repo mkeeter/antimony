@@ -44,6 +44,10 @@ protected:
      */
     void mouseMoveEvent(QMouseEvent* event) override;
 
+    /*  When the scroll wheel is rolled, zoom about the cursor.
+     */
+    void wheelEvent(QWheelEvent* event) override;
+
     /** On delete key press, delete nodes and connections.
      */
     void keyPressEvent(QKeyEvent *event) override;
