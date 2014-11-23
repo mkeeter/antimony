@@ -136,6 +136,12 @@ void Canvas::keyPressEvent(QKeyEvent *event)
 
 void Canvas::drawBackground(QPainter* painter, const QRectF& rect)
 {
-    painter->setBrush(QColor(200, 200, 200));
+    painter->setBrush(Colors::base00);
     painter->drawRect(rect);
+
+    const int d = 20;
+    painter->setPen(Colors::base03);
+    for (int i = int(rect.left() / d) * d; i < rect.right(); i += d)
+        for (int j = int(rect.top() / d) * d; j < rect.bottom(); j += d)
+            painter->drawPoint(i, j);
 }
