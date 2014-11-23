@@ -36,6 +36,14 @@ public:
     QGraphicsScene* scene;
 
 protected:
+    /** On mouse press, save click position (for panning).
+     */
+    void mousePressEvent(QMouseEvent* event) override;
+
+    /* On mouse drag, pan the scene (if left-click).
+     */
+    void mouseMoveEvent(QMouseEvent* event) override;
+
     /** On delete key press, delete nodes and connections.
      */
     void keyPressEvent(QKeyEvent *event) override;
@@ -47,6 +55,8 @@ protected:
     /** Pans the scene rectangle.
      */
     void pan(QVector3D d);
+
+    QPointF click_pos;
 };
 
 #endif // CANVAS_H

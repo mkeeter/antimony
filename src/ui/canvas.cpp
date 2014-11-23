@@ -23,9 +23,8 @@ Canvas::Canvas(QWidget* parent)
     : QGraphicsView(parent)
 {
     setStyleSheet("QGraphicsView { border-style: none; }");
-
-    setSceneRect(-width()/2, -height()/2, width(), height());
     setRenderHints(QPainter::Antialiasing);
+    setSceneRect(-width()/2, -height()/2, width(), height());
 
     QGLFormat format;
     format.setVersion(2, 1);
@@ -43,7 +42,28 @@ void Canvas::setScene(QGraphicsScene* s)
 {
     QGraphicsView::setScene(s);
     scene = s;
+
+    scene->addItem(new QGraphicsRectItem(0, 0, 20, 20));
+    scene->addItem(new QGraphicsRectItem(200, 0, 20, 20));
 }
+
+void Canvas::mousePressEvent(QMouseEvent* event)
+{
+    QGraphicsView::mousePressEvent(event);
+    if (!event->isAccepted() && event->button() == Qt::LeftButton)
+        click_pos = mapToScene(event->pos());
+}
+
+void Canvas::mouseMoveEvent(QMouseEvent* event)
+{
+    QGraphicsView::mouseMoveEvent(event);
+    if (scene->mouseGrabberItem() == NULL && event->buttons() == Qt::LeftButton)
+    {
+        auto d = click_pos - mapToScene(event->pos());
+        setSceneRect(sceneRect().translated(d.x(), d.y()));
+    }
+}
+
 
 #if 0
 InputPort* Canvas::getInputPortAt(QPointF pos) const
@@ -119,8 +139,6 @@ void Canvas::keyPressEvent(QKeyEvent *event)
 
 void Canvas::drawBackground(QPainter* painter, const QRectF& rect)
 {
-    Q_UNUSED(painter);
-    Q_UNUSED(rect);
-    glClearColor(0.0, 0.0, 0.0, 0.0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    painter->setBrush(QColor(200, 200, 200));
+    painter->drawRect(rect);
 }
