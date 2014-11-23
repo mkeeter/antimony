@@ -12,12 +12,12 @@
 
 InspectorRow::InspectorRow(Datum* d, NodeInspector* parent)
     : QGraphicsObject(static_cast<QGraphicsItem*>(parent)),
-      input(d->hasInput() ? new InputPort(d, parent->getCanvas(),
-                                          static_cast<QGraphicsItem*>(this))
-                          : NULL),
-      output(d->hasOutput() ? new OutputPort(d, parent->getCanvas(),
-                                             static_cast<QGraphicsItem*>(this))
-                            : NULL),
+      input(d->hasInput()
+                ? new InputPort(d, static_cast<QGraphicsItem*>(this))
+                : NULL),
+      output(d->hasOutput()
+                ? new OutputPort(d, static_cast<QGraphicsItem*>(this))
+                : NULL),
       label(new QGraphicsTextItem(d->objectName(), this))
 {
     label->setDefaultTextColor(Colors::base04);
@@ -39,9 +39,6 @@ InspectorRow::InspectorRow(Datum* d, NodeInspector* parent)
         connect(dynamic_cast<DatumTextItem*>(editor),
                 &DatumTextItem::shiftTabPressed,
                 parent, &NodeInspector::focusPrev);
-        connect(dynamic_cast<DatumTextItem*>(editor),
-                &DatumTextItem::returnPressed,
-                parent, &NodeInspector::animateClose);
     }
 }
 

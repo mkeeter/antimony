@@ -5,17 +5,18 @@
 #include <QPropertyAnimation>
 #include <QToolTip>
 
+#include "app/app.h"
+
 #include "ui/port.h"
 #include "ui/inspector/inspector.h"
 #include "ui/colors.h"
 #include "ui/connection.h"
-#include "ui/canvas.h"
 #include "ui/tooltip.h"
 
 #include "graph/datum/datum.h"
 
-Port::Port(Datum* d, Canvas* canvas, QGraphicsItem* parent)
-    : QGraphicsObject(parent), datum(d), canvas(canvas), hover(false)
+Port::Port(Datum* d, QGraphicsItem* parent)
+    : QGraphicsObject(parent), datum(d), hover(false)
 {
     setAcceptHoverEvents(true);
 }
@@ -33,15 +34,11 @@ void Port::paint(QPainter *painter,
     Q_UNUSED(widget);
 
     if (datum.isNull())
-    {
         return;
-    }
 
     QColor color = Colors::getColor(datum);
     if (hover)
-    {
         color = Colors::highlight(color);
-    }
     painter->setBrush(color);
 
     painter->setPen(Qt::NoPen);
@@ -55,26 +52,27 @@ Datum* Port::getDatum() const
 
 ////////////////////////////////////////////////////////////////////////////////
 
-InputPort::InputPort(Datum *d, Canvas *canvas, QGraphicsItem *parent)
-    : Port(d, canvas, parent)
+InputPort::InputPort(Datum *d, QGraphicsItem *parent)
+    : Port(d, parent)
 {
     // Nothing to do here
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-OutputPort::OutputPort(Datum *d, Canvas *canvas, QGraphicsItem *parent)
-    : Port(d, canvas, parent)
+OutputPort::OutputPort(Datum *d, QGraphicsItem *parent)
+    : Port(d, parent)
 {
     // Nothing to do here
 }
 
 void OutputPort::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+#if 0
     if (event->button() == Qt::LeftButton)
     {
         Link* link = datum->linkFrom();
-        Connection* c = new Connection(link, canvas);
+        Connection* c = new Connection(link, App::instance()->getCanvas());
         c->setDragPos(mapToScene(event->pos()));
         c->grabMouse();
     }
@@ -82,7 +80,9 @@ void OutputPort::mousePressEvent(QGraphicsSceneMouseEvent *event)
     {
         event->ignore();
     }
+#endif
 }
+
 void OutputPort::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 {
     hover = true;

@@ -2,10 +2,7 @@
 
 #include <QDebug>
 
-#include <QPropertyAnimation>
 #include <QGraphicsScene>
-#include <QGraphicsProxyWidget>
-#include <QTimer>
 
 #include "app/app.h"
 #include "ui/main_window.h"
@@ -20,14 +17,12 @@
 
 #include "graph/datum/datum.h"
 #include "graph/datum/datums/script_datum.h"
-#include "control/control.h"
 #include "graph/node/node.h"
 
 //////////////////////////////////////////r/////////////////////////////////////
 
-NodeInspector::NodeInspector(Control* control, bool show_hidden)
-    : control(control), show_hidden(show_hidden),
-      title(new QGraphicsTextItem(control->getNode()->getType(), this))
+NodeInspector::NodeInspector(Node* node)
+    : node(node), title(new QGraphicsTextItem(node->getType(), this))
 {
     title->setPos(6, 3);
     title->setDefaultTextColor(Colors::base06);
@@ -35,34 +30,16 @@ NodeInspector::NodeInspector(Control* control, bool show_hidden)
     f.setBold(true);
     title->setFont(f);
 
-    connect(control, SIGNAL(inspectorPositionChanged()),
-            this, SLOT(onPositionChange()));
-    connect(control->getCanvas(), SIGNAL(viewChanged()),
-            this, SLOT(onPositionChange()));
-
-    connect(control, SIGNAL(destroyed()),
-            this, SLOT(animateClose()));
-
-    Node* n = control->getNode();
-
-    if (n->getDatum<ScriptDatum>("script"))
+    if (node->getDatum<ScriptDatum>("script"))
     {
-        connect(n->getDatum<ScriptDatum>("script"), SIGNAL(datumsChanged()),
+        connect(node->getDatum<ScriptDatum>("script"), SIGNAL(datumsChanged()),
                 this, SLOT(onDatumsChanged()));
     }
 
-    populateLists(n);
+    populateLists(node);
     setZValue(-2);
-    setFlag(ItemClipsChildrenToShape);
 
-    onPositionChange();
-    control->scene()->addItem(this);
-    animateOpen();
-}
-
-Canvas* NodeInspector::getCanvas() const
-{
-    return control->getCanvas();
+    App::instance()->getCanvas()->scene->addItem(this);
 }
 
 float NodeInspector::labelWidth() const
@@ -85,15 +62,15 @@ QRectF NodeInspector::boundingRect() const
         height += row->boundingRect().height() + 6;
         width = fmax(width, row->boundingRect().width());
     }
-    return QRectF(0, 0, width*mask_size, height*mask_size);
+    return QRectF(0, 0, width, height);
 }
 
 void NodeInspector::onLayoutChanged()
 {
-    if (control)
+    if (node)
     {
         float y = 3 + title->boundingRect().height() + 6;
-        for (Datum* d : control->getNode()->findChildren<Datum*>())
+        for (Datum* d : node->findChildren<Datum*>())
         {
             if (rows.contains(d))
             {
@@ -108,7 +85,7 @@ void NodeInspector::onLayoutChanged()
 
 void NodeInspector::onDatumsChanged()
 {
-    populateLists(control->getNode());
+    populateLists(node);
     onLayoutChanged();
 }
 
@@ -116,10 +93,10 @@ void NodeInspector::populateLists(Node *node)
 {
     QList<Datum*> not_present = rows.keys();
 
-    for (Datum* d : node->findChildren<Datum*>(QString(), Qt::FindDirectChildrenOnly))
+    for (Datum* d : node->findChildren<Datum*>(
+                QString(), Qt::FindDirectChildrenOnly))
     {
-        if ((show_hidden || !d->objectName().startsWith("_"))
-                && !rows.contains(d))
+        if (!d->objectName().startsWith("_") && !rows.contains(d))
         {
             rows[d] = new InspectorRow(d, this);
             connect(rows[d], SIGNAL(layoutChanged()),
@@ -192,59 +169,14 @@ OutputPort* NodeInspector::datumOutputPort(Datum *d) const
     return NULL;
 }
 
-void NodeInspector::animateClose()
-{
-    // Take focus away from text entry box to prevent graphical artifacts
-    QPropertyAnimation* a = new QPropertyAnimation(this, "mask_size", this);
-    a->setDuration(100);
-    a->setStartValue(1);
-    a->setEndValue(0);
-    connect(a, SIGNAL(finished()), this, SLOT(deleteLater()));
-    a->start(QPropertyAnimation::DeleteWhenStopped);
-}
-
-void NodeInspector::animateOpen()
-{
-    QPropertyAnimation* a = new QPropertyAnimation(this, "mask_size", this);
-    a->setDuration(100);
-    a->setStartValue(0);
-    a->setEndValue(1);
-    a->start(QPropertyAnimation::DeleteWhenStopped);
-}
-
-float NodeInspector::getMaskSize() const
-{
-    return mask_size;
-}
-
-void NodeInspector::setMaskSize(float m)
-{
-    mask_size = m;
-
-    for (auto row : rows)
-    {
-        row->updateLayout();
-    }
-    onLayoutChanged();
-    prepareGeometryChange();
-    emit portPositionChanged();
-}
-
-void NodeInspector::onPositionChange()
-{
-    if (control)
-    {
-        setPos(control->inspectorPosition());
-    }
-}
-
-
+#if 0
 void NodeInspector::openScript(Datum *d) const
 {
     ScriptDatum* s = dynamic_cast<ScriptDatum*>(d);
     Q_ASSERT(s);
     App::instance()->getWindow()->openScript(s);
 }
+#endif
 
 void NodeInspector::focusNext(DatumTextItem* prev)
 {
@@ -252,7 +184,7 @@ void NodeInspector::focusNext(DatumTextItem* prev)
 
     prev->clearFocus();
 
-    for (Datum* d : control->getNode()->findChildren<Datum*>())
+    for (Datum* d : node->findChildren<Datum*>())
     {
         if (rows.contains(d))
         {
@@ -276,7 +208,7 @@ void NodeInspector::focusPrev(DatumTextItem* next)
 
     next->clearFocus();
 
-    for (Datum* d : control->getNode()->findChildren<Datum*>())
+    for (Datum* d : node->findChildren<Datum*>())
     {
         if (rows.contains(d))
         {

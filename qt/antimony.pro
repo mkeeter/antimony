@@ -27,12 +27,12 @@ SOURCES += \
     ../src/ui/main_window.cpp \
     ../src/ui/canvas.cpp \
     ../src/ui/colors.cpp \
-    #../src/ui/port.cpp \
+    ../src/ui/inspector/inspector.cpp \
+    ../src/ui/inspector/inspector_text.cpp \
+    ../src/ui/inspector/inspector_button.cpp \
+    ../src/ui/inspector/inspector_row.cpp \
+    ../src/ui/port.cpp \
     #../src/ui/script/syntax.cpp \
-    #../src/ui/inspector/inspector.cpp \
-    #../src/ui/inspector/inspector_text.cpp \
-    #../src/ui/inspector/inspector_button.cpp \
-    #../src/ui/inspector/inspector_row.cpp \
     #../src/ui/resolution_dialog.cpp \
     #../src/ui/exporting_dialog.cpp \
     #../src/ui/tooltip.cpp \
@@ -53,8 +53,12 @@ HEADERS += \
     ../src/ui/canvas.h \
     ../src/app/app.h \
     ../src/ui/colors.h \
+    ../src/ui/inspector/inspector.h \
+    ../src/ui/inspector/inspector_text.h \
+    ../src/ui/inspector/inspector_button.h \
+    ../src/ui/inspector/inspector_row.h \
+    ../src/ui/port.h \
     #../src/ui/view_selector.h \
-    #../src/ui/port.h \
     #../src/ui/connection.h \
     #../src/render/render_task.h \
     #../src/render/render_worker.h \
@@ -64,10 +68,6 @@ HEADERS += \
     #../src/render/export_json.h \
     #../src/ui/depth_image.h \
     #../src/ui/script/syntax.h \
-    #../src/ui/inspector/inspector.h \
-    #../src/ui/inspector/inspector_text.h \
-    #../src/ui/inspector/inspector_button.h \
-    #../src/ui/inspector/inspector_row.h \
     #../src/ui/resolution_dialog.h \
     #../src/ui/exporting_dialog.h \
     #../src/ui/tooltip.h \
