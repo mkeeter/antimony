@@ -98,6 +98,7 @@ void App::onControls()
     );
 }
 
+#if 0
 void App::onNew()
 {
     NodeManager::manager()->clear();
@@ -322,6 +323,7 @@ void App::onExportJSON()
     thread->start();
     exporting_dialog->exec();
 }
+#endif
 
 void App::connectActions()
 {
@@ -331,6 +333,7 @@ void App::connectActions()
             this, SLOT(onAbout()));
     connect(window->ui->actionControls, SIGNAL(triggered()),
             this, SLOT(onControls()));
+#if 0
     connect(window->ui->actionSave, SIGNAL(triggered()),
             this, SLOT(onSave()));
     connect(window->ui->actionSaveAs, SIGNAL(triggered()),
@@ -345,6 +348,7 @@ void App::connectActions()
             this, SLOT(onExportHeightmap()));
     connect(window->ui->actionExportJSON, SIGNAL(triggered()),
             this, SLOT(onExportJSON()));
+#endif
 }
 
 void App::setGlobalStyle()

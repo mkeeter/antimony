@@ -28,6 +28,7 @@ public:
 private slots:
     void onAbout();
     void onControls();
+#if 0
     void onNew();
     void onSave();
     void onSaveAs();
@@ -35,6 +36,7 @@ private slots:
     void onExportSTL();
     void onExportHeightmap();
     void onExportJSON();
+#endif
 private:
     void setGlobalStyle();
     void connectActions();

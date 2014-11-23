@@ -19,7 +19,7 @@ QMAKE_CXXFLAGS += "-D'GITREV=\"$${GITREV}$${GITDIFF}\"'"
 
 include(fab.pri)
 include(shared.pri)
-include(controls.pri)
+# include(controls.pri)
 
 SOURCES += \
     ../src/app/main.cpp \
@@ -27,52 +27,52 @@ SOURCES += \
     ../src/ui/main_window.cpp \
     ../src/ui/canvas.cpp \
     ../src/ui/colors.cpp \
-    ../src/ui/connection.cpp \
-    ../src/ui/port.cpp \
-    ../src/ui/view_selector.cpp \
-    ../src/render/render_task.cpp \
-    ../src/render/render_worker.cpp \
-    ../src/render/render_image.cpp \
-    ../src/render/export_mesh.cpp \
-    ../src/render/export_bitmap.cpp \
-    ../src/render/export_json.cpp \
-    ../src/ui/depth_image.cpp \
-    ../src/ui/script/syntax.cpp \
-    ../src/ui/inspector/inspector.cpp \
-    ../src/ui/inspector/inspector_text.cpp \
-    ../src/ui/inspector/inspector_button.cpp \
-    ../src/ui/inspector/inspector_row.cpp \
-    ../src/ui/resolution_dialog.cpp \
-    ../src/ui/exporting_dialog.cpp \
-    ../src/ui/tooltip.cpp \
-    ../src/ui/script/script_editor.cpp \
-    ../src/ui/script/script_buttons.cpp \
+    #../src/ui/port.cpp \
+    #../src/ui/script/syntax.cpp \
+    #../src/ui/inspector/inspector.cpp \
+    #../src/ui/inspector/inspector_text.cpp \
+    #../src/ui/inspector/inspector_button.cpp \
+    #../src/ui/inspector/inspector_row.cpp \
+    #../src/ui/resolution_dialog.cpp \
+    #../src/ui/exporting_dialog.cpp \
+    #../src/ui/tooltip.cpp \
+    #../src/ui/script/script_editor.cpp \
+    #../src/ui/script/script_buttons.cpp \
+    #../src/ui/connection.cpp \
+    #../src/render/render_task.cpp \
+    #../src/render/render_worker.cpp \
+    #../src/render/render_image.cpp \
+    #../src/render/export_mesh.cpp \
+    #../src/render/export_bitmap.cpp \
+    #../src/render/export_json.cpp \
+    #../src/ui/view_selector.cpp \
+    #../src/ui/depth_image.cpp \
 
 HEADERS += \
     ../src/ui/main_window.h \
-    ../src/ui/view_selector.h \
     ../src/ui/canvas.h \
     ../src/app/app.h \
     ../src/ui/colors.h \
-    ../src/ui/port.h \
-    ../src/ui/connection.h \
-    ../src/render/render_task.h \
-    ../src/render/render_worker.h \
-    ../src/render/render_image.h \
-    ../src/render/export_mesh.h \
-    ../src/render/export_bitmap.h \
-    ../src/render/export_json.h \
-    ../src/ui/depth_image.h \
-    ../src/ui/script/syntax.h \
-    ../src/ui/inspector/inspector.h \
-    ../src/ui/inspector/inspector_text.h \
-    ../src/ui/inspector/inspector_button.h \
-    ../src/ui/inspector/inspector_row.h \
-    ../src/ui/resolution_dialog.h \
-    ../src/ui/exporting_dialog.h \
-    ../src/ui/tooltip.h \
-    ../src/ui/script/script_editor.h \
-    ../src/ui/script/script_buttons.h \
+    #../src/ui/view_selector.h \
+    #../src/ui/port.h \
+    #../src/ui/connection.h \
+    #../src/render/render_task.h \
+    #../src/render/render_worker.h \
+    #../src/render/render_image.h \
+    #../src/render/export_mesh.h \
+    #../src/render/export_bitmap.h \
+    #../src/render/export_json.h \
+    #../src/ui/depth_image.h \
+    #../src/ui/script/syntax.h \
+    #../src/ui/inspector/inspector.h \
+    #../src/ui/inspector/inspector_text.h \
+    #../src/ui/inspector/inspector_button.h \
+    #../src/ui/inspector/inspector_row.h \
+    #../src/ui/resolution_dialog.h \
+    #../src/ui/exporting_dialog.h \
+    #../src/ui/tooltip.h \
+    #../src/ui/script/script_editor.h \
+    #../src/ui/script/script_buttons.h \
 
 FORMS += \
     ../src/ui/forms/main_window.ui \

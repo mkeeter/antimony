@@ -168,10 +168,12 @@ void Datum::postInit()
     // If we're running the antimony app (not the test suite) and this is a
     // function that outputs a shape object, make a RenderTask for it.
 #ifdef ANTIMONY
+#if 0
     if (RenderWorker::accepts(this))
     {
         new RenderWorker(this);
     }
+#endif
 #endif
 }
 

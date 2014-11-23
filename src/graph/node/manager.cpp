@@ -201,7 +201,7 @@ QMap<QString, Shape> NodeManager::getShapes()
 }
 
 #ifdef ANTIMONY
-
+#if 0
 #include "control/control.h"
 #include "ui/connection.h"
 
@@ -220,5 +220,6 @@ void NodeManager::makeConnections(Canvas* canvas)
         new Connection(link, canvas);
     }
 }
+#endif
 
 #endif

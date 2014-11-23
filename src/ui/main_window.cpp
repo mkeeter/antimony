@@ -15,17 +15,20 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     canvas = ui->canvas;
+    canvas->setScene(new QGraphicsScene);
 
     QActionGroup* view_actions = new QActionGroup(this);
     view_actions->addAction(ui->actionShaded);
     view_actions->addAction(ui->actionHeightmap);
     view_actions->setExclusive(true);
+#if 0
     connect(ui->actionShaded, SIGNAL(triggered()),
             canvas->scene, SLOT(invalidate()));
     connect(ui->actionHeightmap, SIGNAL(triggered()),
             canvas->scene, SLOT(invalidate()));
 
     populateMenu(ui->menuAdd);
+#endif
 
     setWindowTitle("antimony");
 }
@@ -44,6 +47,7 @@ void MainWindow::setShortcuts()
     ui->actionQuit->setShortcuts(QKeySequence::Quit);
 }
 
+#if 0
 void MainWindow::openScript(ScriptDatum *d)
 {
     new ScriptEditorItem(d, ui->canvas);
@@ -164,3 +168,4 @@ void MainWindow::populateMenu(QMenu* menu, bool recenter)
     }
 
 }
+#endif
