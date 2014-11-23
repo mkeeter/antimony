@@ -37,11 +37,6 @@ void Canvas::setScene(QGraphicsScene* s)
 {
     QGraphicsView::setScene(s);
     scene = s;
-
-    scene->addRect(0, 0, 200, 60, QPen(Colors::base03, 2), QColor(Colors::base01));
-    scene->addRect(0, 0, 200, 10, Qt::NoPen, QColor(Colors::base03));
-    scene->addRect(300, 200, 250, 80, QPen(Colors::base03, 2), QColor(Colors::base01));
-    scene->addRect(300, 200, 250, 10, Qt::NoPen, QColor(Colors::base03));
 }
 
 void Canvas::mousePressEvent(QMouseEvent* event)

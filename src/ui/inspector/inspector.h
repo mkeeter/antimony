@@ -59,11 +59,8 @@ public slots:
     /** Change focus to the previous text item.
      */
     void focusPrev(DatumTextItem* prev);
-protected:
-    /** Returns a pointer to the Canvas object.
-     */
-    Canvas* getCanvas() const;
 
+protected:
     /** Returns the width of the largest label.
      */
     float labelWidth() const;

@@ -7,6 +7,7 @@
 #include "ui/main_window.h"
 #include "ui/canvas.h"
 #include "ui/script/script_editor.h"
+#include "ui/inspector/inspector.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -26,9 +27,9 @@ MainWindow::MainWindow(QWidget *parent) :
             canvas->scene, SLOT(invalidate()));
     connect(ui->actionHeightmap, SIGNAL(triggered()),
             canvas->scene, SLOT(invalidate()));
+#endif
 
     populateMenu(ui->menuAdd);
-#endif
 
     setWindowTitle("antimony");
 }
@@ -57,12 +58,11 @@ bool MainWindow::isShaded() const
 {
     return ui->actionShaded->isChecked();
 }
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "graph/node/node.h"
-#include "graph/node/manager.h"
-#include "control/control.h"
 
 #include "graph/node/nodes/2d.h"
 #include "graph/node/nodes/3d.h"
@@ -80,18 +80,16 @@ void MainWindow::createNew()
         ? canvas->rect().center()
         : canvas->mapFromGlobal(QCursor::pos());
     QPointF scene_pos = canvas->mapToScene(mouse_pos);
-    QVector3D obj_pos = canvas->sceneToWorld(scene_pos);
 
     if (recenter)
     {
         QCursor::setPos(canvas->mapToGlobal(mouse_pos));
     }
 
-    Node* n = f(obj_pos.x(), obj_pos.y(), obj_pos.z(),
-                100 / canvas->getScale(), NULL);
-    Control* c = Control::makeControlFor(canvas, n);
-    c->grabMouse();
-    c->setClickPos(scene_pos);
+    Node* n = f(0, 0, 0, 10, NULL);
+    //Node* n = f(obj_pos.x(), obj_pos.y(), obj_pos.z(),
+    //            100 / canvas->getScale(), NULL);
+    new NodeInspector(n);
 }
 
 template <Node* (*f)(float, float, float, float, QObject*),
@@ -168,4 +166,3 @@ void MainWindow::populateMenu(QMenu* menu, bool recenter)
     }
 
 }
-#endif
