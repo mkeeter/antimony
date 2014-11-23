@@ -24,7 +24,7 @@
 NodeInspector::NodeInspector(Node* node)
     : node(node), title(new QGraphicsTextItem(node->getType(), this))
 {
-    title->setPos(6, 3);
+    title->setPos(6, 2);
     title->setDefaultTextColor(Colors::base06);
     auto f = title->font();
     f.setBold(true);
@@ -54,12 +54,12 @@ float NodeInspector::labelWidth() const
 
 QRectF NodeInspector::boundingRect() const
 {
-    float height = title->boundingRect().height() + 6;
+    float height = title->boundingRect().height() + 4;
     float width = title->boundingRect().width() + 12;
 
     for (auto row : rows)
     {
-        height += row->boundingRect().height() + 6;
+        height += row->boundingRect().height() + 4;
         width = fmax(width, row->boundingRect().width());
     }
     return QRectF(0, 0, width, height);
@@ -69,14 +69,14 @@ void NodeInspector::onLayoutChanged()
 {
     if (node)
     {
-        float y = 3 + title->boundingRect().height() + 6;
+        float y = 2 + title->boundingRect().height() + 4;
         for (Datum* d : node->findChildren<Datum*>())
         {
             if (rows.contains(d))
             {
                 rows[d]->updateLayout();
                 rows[d]->setPos(0, y);
-                y += 6 + rows[d]->boundingRect().height();
+                y += 4 + rows[d]->boundingRect().height();
             }
         }
         prepareGeometryChange();
@@ -121,20 +121,20 @@ void NodeInspector::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 
     painter->setBrush(Colors::base01);
     painter->setPen(Qt::NoPen);
-    painter->drawRoundedRect(boundingRect(), 10, 10);
+    painter->drawRoundedRect(boundingRect(), 8, 8);
 
     painter->setBrush(Colors::base03);
     QRectF br = title->boundingRect();
     br.setWidth(boundingRect().width());
-    br.setHeight(br.height() + 3);
-    painter->drawRoundedRect(br, 10, 10);
+    br.setHeight(br.height() + 2);
+    painter->drawRoundedRect(br, 8, 8);
     br.setHeight(br.height()/2);
     br.moveTop(br.height());
     painter->drawRect(br);
 
     painter->setBrush(Qt::NoBrush);
     painter->setPen(QPen(Colors::base03, 2));
-    painter->drawRoundedRect(boundingRect(), 10, 10);
+    painter->drawRoundedRect(boundingRect(), 8, 8);
 }
 
 InputPort* NodeInspector::datumInputPort(Datum *d) const
