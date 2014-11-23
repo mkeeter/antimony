@@ -63,7 +63,7 @@ void InspectorRow::updateLayout()
 
     if (input)
     {
-        QPointF ipos(0, (bbox.height() - input->boundingRect().height()) / 2);
+        QPointF ipos(1, (bbox.height() - input->boundingRect().height()) / 2);
         if (input->pos() != ipos)
         {
             changed = true;
@@ -88,7 +88,7 @@ void InspectorRow::updateLayout()
 
     if (output)
     {
-        QPointF opos(bbox.width() - output->boundingRect().width(),
+        QPointF opos(bbox.width() - output->boundingRect().width() - 1,
                     (bbox.height() - output->boundingRect().height()) / 2);
         if (output->pos() != opos)
         {
