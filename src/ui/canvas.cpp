@@ -2,18 +2,13 @@
 
 #include <QMouseEvent>
 #include <QDebug>
-#include <QGridLayout>
-#include <QPropertyAnimation>
 #include <QGLWidget>
 #include <QMenu>
 
 #include <cmath>
 
 #include "ui/canvas.h"
-#include "ui/port.h"
-#include "ui/main_window.h"
-#include "ui/connection.h"
-#include "ui/inspector/inspector.h"
+#include "ui/colors.h"
 
 #include "graph/node/node.h"
 #include "graph/datum/datum.h"
