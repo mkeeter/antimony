@@ -24,6 +24,10 @@
 NodeInspector::NodeInspector(Node* node)
     : node(node), title(new QGraphicsTextItem(node->getType(), this))
 {
+    setFlags(QGraphicsItem::ItemIsMovable |
+             QGraphicsItem::ItemIsSelectable |
+             QGraphicsItem::ItemIsFocusable);
+
     title->setPos(6, 2);
     title->setDefaultTextColor(Colors::base06);
     auto f = title->font();
@@ -133,7 +137,10 @@ void NodeInspector::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     painter->drawRect(br);
 
     painter->setBrush(Qt::NoBrush);
-    painter->setPen(QPen(Colors::base03, 2));
+    if (isSelected())
+        painter->setPen(QPen(Colors::base05, 2));
+    else
+        painter->setPen(QPen(Colors::base03, 2));
     painter->drawRoundedRect(boundingRect(), 8, 8);
 }
 
