@@ -25,13 +25,13 @@ SOURCES += \
     ../src/app/main.cpp \
     ../src/app/app.cpp \
     ../src/ui/main_window.cpp \
-    ../src/ui/canvas.cpp \
     ../src/ui/colors.cpp \
-    ../src/ui/inspector/inspector.cpp \
-    ../src/ui/inspector/inspector_text.cpp \
-    ../src/ui/inspector/inspector_button.cpp \
-    ../src/ui/inspector/inspector_row.cpp \
-    ../src/ui/port.cpp \
+    ../src/ui/canvas/canvas.cpp \
+    ../src/ui/canvas/inspector/inspector.cpp \
+    ../src/ui/canvas/inspector/inspector_text.cpp \
+    ../src/ui/canvas/inspector/inspector_button.cpp \
+    ../src/ui/canvas/inspector/inspector_row.cpp \
+    ../src/ui/canvas/port.cpp \
     #../src/ui/script/syntax.cpp \
     #../src/ui/resolution_dialog.cpp \
     #../src/ui/exporting_dialog.cpp \
@@ -50,14 +50,14 @@ SOURCES += \
 
 HEADERS += \
     ../src/ui/main_window.h \
-    ../src/ui/canvas.h \
     ../src/app/app.h \
     ../src/ui/colors.h \
-    ../src/ui/inspector/inspector.h \
-    ../src/ui/inspector/inspector_text.h \
-    ../src/ui/inspector/inspector_button.h \
-    ../src/ui/inspector/inspector_row.h \
-    ../src/ui/port.h \
+    ../src/ui/canvas/canvas.h \
+    ../src/ui/canvas/inspector/inspector.h \
+    ../src/ui/canvas/inspector/inspector_text.h \
+    ../src/ui/canvas/inspector/inspector_button.h \
+    ../src/ui/canvas/inspector/inspector_row.h \
+    ../src/ui/canvas/port.h \
     #../src/ui/view_selector.h \
     #../src/ui/connection.h \
     #../src/render/render_task.h \

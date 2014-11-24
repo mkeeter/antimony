@@ -7,7 +7,7 @@
 #include <QToolTip>
 #include <QKeyEvent>
 
-#include "ui/inspector/inspector_text.h"
+#include "ui/canvas/inspector/inspector_text.h"
 #include "ui/colors.h"
 
 #include "graph/datum/datum.h"

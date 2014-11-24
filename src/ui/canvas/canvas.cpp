@@ -7,7 +7,7 @@
 
 #include <cmath>
 
-#include "ui/canvas.h"
+#include "ui/canvas/canvas.h"
 #include "ui/colors.h"
 
 #include "graph/node/node.h"

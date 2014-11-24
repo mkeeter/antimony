@@ -4,8 +4,9 @@
 #include <QGraphicsSceneMouseEvent>
 
 #include "graph/datum/datum.h"
-#include "ui/inspector/inspector_button.h"
-#include "ui/inspector/inspector.h"
+
+#include "ui/canvas/inspector/inspector_button.h"
+#include "ui/canvas/inspector/inspector.h"
 #include "ui/colors.h"
 
 DatumTextButton::DatumTextButton(Datum *datum, QString label, QGraphicsItem *parent)

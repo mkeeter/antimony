@@ -7,11 +7,11 @@
 
 #include "app/app.h"
 
-#include "ui/port.h"
-#include "ui/inspector/inspector.h"
+#include "ui/canvas/port.h"
+#include "ui/canvas/inspector/inspector.h"
+#include "ui/canvas/connection.h"
+
 #include "ui/colors.h"
-#include "ui/connection.h"
-#include "ui/tooltip.h"
 
 #include "graph/datum/datum.h"
 

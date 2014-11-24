@@ -1,10 +1,11 @@
 #include <Python.h>
 
-#include "ui/inspector/inspector_row.h"
-#include "ui/inspector/inspector.h"
-#include "ui/inspector/inspector_button.h"
-#include "ui/inspector/inspector_text.h"
-#include "ui/port.h"
+#include "ui/canvas/inspector/inspector_row.h"
+#include "ui/canvas/inspector/inspector.h"
+#include "ui/canvas/inspector/inspector_button.h"
+#include "ui/canvas/inspector/inspector_text.h"
+#include "ui/canvas/port.h"
+
 #include "ui/colors.h"
 
 #include "graph/datum/datum.h"
