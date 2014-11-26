@@ -27,10 +27,14 @@ Connection::Connection(Link* link)
     setAcceptHoverEvents(true);
 
     setZValue(2);
+    connect(link, SIGNAL(destroyed()), this, SLOT(deleteLater()));
+}
+
+void Connection::makeSceneConnections()
+{
+    Q_ASSERT(scene());
     connect(startInspector(), &NodeInspector::portPositionChanged,
             this, &Connection::onPortPositionChanged);
-
-    connect(link, SIGNAL(destroyed()), this, SLOT(deleteLater()));
 }
 
 void Connection::onPortPositionChanged()

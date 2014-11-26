@@ -24,6 +24,7 @@ Connection* GraphScene::makeUIfor(Link* link)
 {
     auto c = new Connection(link);
     addItem(c);
+    c->makeSceneConnections();
     return c;
 }
 

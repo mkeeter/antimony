@@ -22,6 +22,10 @@ public:
     QPainterPath shape() const;
     void setDragPos(QPointF p) { drag_pos = p; }
 
+    /* Makes connections between inspector port signals and redraw.
+     */
+    void makeSceneConnections();
+
     Link* getLink() const { return link; }
 
 public slots:
