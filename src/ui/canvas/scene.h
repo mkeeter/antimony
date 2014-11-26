@@ -17,6 +17,9 @@ public:
     NodeInspector* makeUIfor(Node* n);
     Connection* makeUIfor(Link* link);
 
+    template <class T>
+    T* getItemAt(QPointF pos);
+
     NodeInspector* getInspector(Node* n);
     NodeInspector* getInspectorAt(QPointF pos);
     InputPort* getInputPortAt(QPointF pos);

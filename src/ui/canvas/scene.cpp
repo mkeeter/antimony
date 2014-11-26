@@ -40,19 +40,23 @@ NodeInspector* GraphScene::getInspector(Node* node)
     return NULL;
 }
 
-NodeInspector* GraphScene::getInspectorAt(QPointF pos)
+template <class T>
+T* GraphScene::getItemAt(QPointF pos)
 {
     for (auto i : items(pos))
-    {
-        NodeInspector* p = dynamic_cast<NodeInspector*>(i);
-        if (p)
+        if (auto p = dynamic_cast<T*>(i))
             return p;
-    }
     return NULL;
+}
+
+NodeInspector* GraphScene::getInspectorAt(QPointF pos)
+{
+    return getItemAt<NodeInspector>(pos);
 }
 
 InputPort* GraphScene::getInputPortAt(QPointF pos)
 {
+    return getItemAt<InputPort>(pos);
     for (auto i : items(pos))
     {
         auto p = dynamic_cast<InputPort*>(i);
