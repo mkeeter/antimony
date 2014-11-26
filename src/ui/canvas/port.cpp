@@ -68,16 +68,13 @@ OutputPort::OutputPort(Datum *d, QGraphicsItem *parent)
 
 void OutputPort::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-#if 0
     if (event->button() == Qt::LeftButton)
     {
-        Link* link = datum->linkFrom();
-        Connection* c = new Connection(link, App::instance()->getCanvas());
+        Connection* c = App::instance()->newLink(datum->linkFrom());
         c->setDragPos(mapToScene(event->pos()));
         c->grabMouse();
     }
     else
-#endif
     {
         event->ignore();
     }

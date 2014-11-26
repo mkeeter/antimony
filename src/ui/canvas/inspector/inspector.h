@@ -1,6 +1,8 @@
 #ifndef INSPECTOR_H
 #define INSPECTOR_H
 
+#include "graph/node/node.h"
+
 #include <QWidget>
 #include <QLineEdit>
 #include <QPointer>
@@ -30,8 +32,13 @@ public:
                const QStyleOptionGraphicsItem *option,
                QWidget *widget) override;
 
+    Node* getNode();
+
     OutputPort* datumOutputPort(Datum *d) const;
     InputPort* datumInputPort(Datum* d) const;
+
+    QPointF datumOutputPosition(Datum* d) const;
+    QPointF datumInputPosition(Datum* d) const;
 
 signals:
     void portPositionChanged();
@@ -61,6 +68,10 @@ public slots:
     void focusPrev(DatumTextItem* prev);
 
 protected:
+    /** On delete or backspace, delete node.
+     */
+    void keyPressEvent(QKeyEvent* event) override;
+
     /** Returns the width of the largest label.
      */
     float labelWidth() const;
@@ -68,10 +79,6 @@ protected:
     /** Fills in the grid from the source node.
      */
     void populateLists(Node* node);
-
-    /** Override mousePressEvent to prevent clicks from passing through.
-     */
-    void mousePressEvent(QGraphicsSceneMouseEvent*) override {}
 
     QPointer<Node> node;
     QMap<Datum*, InspectorRow*> rows;

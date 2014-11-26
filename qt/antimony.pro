@@ -33,13 +33,13 @@ SOURCES += \
     ../src/ui/canvas/inspector/inspector_button.cpp \
     ../src/ui/canvas/inspector/inspector_row.cpp \
     ../src/ui/canvas/port.cpp \
+    ../src/ui/canvas/connection.cpp \
     #../src/ui/script/syntax.cpp \
     #../src/ui/resolution_dialog.cpp \
     #../src/ui/exporting_dialog.cpp \
     #../src/ui/tooltip.cpp \
     #../src/ui/script/script_editor.cpp \
     #../src/ui/script/script_buttons.cpp \
-    #../src/ui/connection.cpp \
     #../src/render/render_task.cpp \
     #../src/render/render_worker.cpp \
     #../src/render/render_image.cpp \
@@ -60,8 +60,8 @@ HEADERS += \
     ../src/ui/canvas/inspector/inspector_button.h \
     ../src/ui/canvas/inspector/inspector_row.h \
     ../src/ui/canvas/port.h \
+    ../src/ui/canvas/connection.h \
     #../src/ui/view_selector.h \
-    #../src/ui/connection.h \
     #../src/render/render_task.h \
     #../src/render/render_worker.h \
     #../src/render/render_image.h \

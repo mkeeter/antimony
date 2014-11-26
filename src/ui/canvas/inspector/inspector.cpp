@@ -3,6 +3,7 @@
 #include <QDebug>
 
 #include <QPainter>
+#include <QKeyEvent>
 #include <QGraphicsScene>
 
 #include "ui/main_window.h"
@@ -39,9 +40,18 @@ NodeInspector::NodeInspector(Node* node)
         connect(node->getDatum<ScriptDatum>("script"), SIGNAL(datumsChanged()),
                 this, SLOT(onDatumsChanged()));
     }
+    connect(node, &Node::destroyed, this, &NodeInspector::deleteLater);
 
     populateLists(node);
     setZValue(-2);
+}
+
+void NodeInspector::keyPressEvent(QKeyEvent* event)
+{
+    if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace)
+        node->deleteLater();
+    else
+        event->ignore();
 }
 
 float NodeInspector::labelWidth() const
@@ -172,6 +182,25 @@ OutputPort* NodeInspector::datumOutputPort(Datum *d) const
         }
     }
     return NULL;
+}
+
+Node* NodeInspector::getNode()
+{
+    return node;
+}
+
+QPointF NodeInspector::datumOutputPosition(Datum* d) const
+{
+    OutputPort* p = datumOutputPort(d);
+    Q_ASSERT(p);
+    return p->mapToScene(p->boundingRect().center());
+}
+
+QPointF NodeInspector::datumInputPosition(Datum* d) const
+{
+    InputPort* p = datumInputPort(d);
+    Q_ASSERT(p);
+    return p->mapToScene(p->boundingRect().center());
 }
 
 #if 0

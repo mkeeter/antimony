@@ -7,18 +7,17 @@
 #include "graph/datum/link.h"
 
 class Link;
-class Canvas;
 class Datum;
-class Control;
 class Node;
-class NodeInspector;
 class InputPort;
+class GraphScene;
+class NodeInspector;
 
 class Connection : public QGraphicsObject
 {
     Q_OBJECT
 public:
-    explicit Connection(Link* link, Canvas* canvas);
+    explicit Connection(Link* link);
     QRectF boundingRect() const;
     QPainterPath shape() const;
     void setDragPos(QPointF p) { drag_pos = p; }
@@ -29,6 +28,7 @@ public slots:
     void onPortPositionChanged();
 
 protected:
+    GraphScene* gscene() const;
 
     /** On shift key press, snap to the nearest node.
      */
@@ -46,7 +46,7 @@ protected:
      */
     bool areDatumsValid() const;
     bool areNodesValid() const;
-    bool areControlsValid() const;
+    bool areInspectorsValid() const;
 
     /** Checks to see whether we're on a valid port
      *  (and adjust drag_state accordingly).
@@ -65,8 +65,8 @@ protected:
 
     /** Look up start and end controls.
      */
-    Control* startControl() const;
-    Control* endControl() const;
+    NodeInspector* startInspector() const;
+    NodeInspector* endInspector() const;
 
     /** Returns starting position in scene coordinates.
      */
@@ -98,7 +98,6 @@ protected:
     void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 
     QPointer<Link> link;
-    Canvas* canvas;
     QPointF drag_pos;
 
     enum { NONE, VALID, INVALID, CONNECTED } drag_state;
@@ -106,7 +105,6 @@ protected:
     QPointF snap_pos;
     bool snapping;
 
-    NodeInspector* raised_inspector;
     InputPort* target;
     bool hover;
 };

@@ -363,3 +363,8 @@ void App::newNode(Node* n)
 {
     scene->makeUIfor(n);
 }
+
+Connection* App::newLink(Link* link)
+{
+    return scene->makeUIfor(link);
+}

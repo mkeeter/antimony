@@ -1,51 +1,54 @@
 #include <Python.h>
 
 #include <QGraphicsSceneMouseEvent>
+#include <QKeyEvent>
+#include <QPainter>
 
-#include "ui/connection.h"
-#include "ui/canvas.h"
+#include "ui/canvas/connection.h"
+#include "ui/canvas/scene.h"
+#include "ui/canvas/port.h"
+#include "ui/canvas/inspector/inspector.h"
 #include "ui/colors.h"
-#include "ui/port.h"
-#include "ui/inspector/inspector.h"
 
 #include "graph/datum/datum.h"
 #include "graph/datum/link.h"
 
 #include "graph/node/node.h"
 
-#include "control/control.h"
-
-Connection::Connection(Link* link, Canvas* canvas)
-    : QGraphicsObject(), link(link), canvas(canvas),
+Connection::Connection(Link* link)
+    : QGraphicsObject(), link(link),
       drag_state(link->hasTarget() ? CONNECTED : NONE),
-      snapping(false), raised_inspector(NULL), target(NULL),
-      hover(false)
+      snapping(false), target(NULL), hover(false)
 {
     setFlags(QGraphicsItem::ItemIsSelectable|
              QGraphicsItem::ItemIsFocusable);
 
     setFocus();
     setAcceptHoverEvents(true);
-    canvas->scene->addItem(this);
+
     setZValue(2);
-    connect(startControl(), &Control::portPositionChanged,
+    connect(startInspector(), &NodeInspector::portPositionChanged,
             this, &Connection::onPortPositionChanged);
 
     connect(link, SIGNAL(destroyed()), this, SLOT(deleteLater()));
-    connect(this, SIGNAL(destroyed()), canvas, SLOT(update()));
 }
 
 void Connection::onPortPositionChanged()
 {
-    if (areControlsValid())
+    if (areInspectorsValid())
     {
         prepareGeometryChange();
     }
 }
 
+GraphScene* Connection::gscene() const
+{
+    return static_cast<GraphScene*>(scene());
+}
+
 QRectF Connection::boundingRect() const
 {
-    return areControlsValid() ? path().boundingRect() : QRectF();
+    return areInspectorsValid() ? path().boundingRect() : QRectF();
 }
 
 QPainterPath Connection::shape() const
@@ -69,12 +72,12 @@ bool Connection::areNodesValid() const
              dynamic_cast<Node*>(endDatum()->parent()));
 }
 
-bool Connection::areControlsValid() const
+bool Connection::areInspectorsValid() const
 {
     return areNodesValid() &&
-        canvas->getControl(startNode()) &&
+        gscene()->getInspector(startNode()) &&
         (drag_state != CONNECTED ||
-         canvas->getControl(endNode()));
+         gscene()->getInspector(endNode()));
 }
 
 Datum* Connection::startDatum() const
@@ -106,33 +109,32 @@ Node* Connection::endNode() const
     return n;
 }
 
-Control* Connection::startControl() const
+NodeInspector* Connection::startInspector() const
 {
-    Control* c = canvas->getControl(startNode());
-    Q_ASSERT(c);
-    return c;
+    NodeInspector* i = gscene()->getInspector(startNode());
+    Q_ASSERT(i);
+    return i;
 }
 
-
-Control* Connection::endControl() const
+NodeInspector* Connection::endInspector() const
 {
     Q_ASSERT(drag_state == CONNECTED);
-    Control* c = canvas->getControl(endNode());
-    Q_ASSERT(c);
-    return c;
+    NodeInspector* i = gscene()->getInspector(endNode());
+    Q_ASSERT(i);
+    return i;
 }
 
 QPointF Connection::startPos() const
 {
-    Q_ASSERT(startControl());
-    return startControl()->datumOutputPosition(startDatum());
+    Q_ASSERT(startInspector());
+    return startInspector()->datumOutputPosition(startDatum());
 }
 
 QPointF Connection::endPos() const
 {
     if (drag_state == CONNECTED)
     {
-        return endControl()->datumInputPosition(endDatum());
+        return endInspector()->datumInputPosition(endDatum());
     }
     else
     {
@@ -162,7 +164,7 @@ void Connection::paint(QPainter *painter,
                        const QStyleOptionGraphicsItem *option,
                        QWidget *widget)
 {
-    if (!areControlsValid())
+    if (!areInspectorsValid())
     {
         return;
     }
@@ -180,16 +182,6 @@ void Connection::paint(QPainter *painter,
         color = Colors::highlight(color);
     }
 
-    bool faded = drag_state == CONNECTED &&
-                 !startControl()->showConnections() &&
-                 !endControl()->showConnections() &&
-                 !isSelected();
-    if (faded)
-    {
-        color = QColor(color.red(), color.green(), color.blue(),
-                       hover ? 150 : 100);
-    }
-
     painter->setPen(QPen(color, 4));
     painter->drawPath(path());
 }
@@ -203,12 +195,7 @@ void Connection::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     if (snapping)
         updateSnap();
 
-    if (raised_inspector)
-        raised_inspector->setZValue(-2);
-    NodeInspector* insp = canvas->getInspectorAt(drag_pos);
-    if (insp)
-        insp->setZValue(-1.9);
-    raised_inspector = insp;
+    gscene()->raiseInspectorAt(drag_pos);
 
     checkDragTarget();
     prepareGeometryChange();
@@ -216,11 +203,7 @@ void Connection::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void Connection::checkDragTarget()
 {
-    if (target)
-        target->hideToolTip();
-    target = canvas->getInputPortAt(endPos());
-    if (target)
-        target->showToolTip();
+    target = gscene()->getInputPortAt(endPos());
 
     if (target && target->getDatum()->acceptsLink(link))
         drag_state = VALID;
@@ -241,16 +224,14 @@ void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     ungrabMouse();
     clearFocus();
 
-    if (target)
-        target->hideToolTip();
-    InputPort* target = canvas->getInputPortAt(endPos());
+    InputPort* target = gscene()->getInputPortAt(endPos());
     Datum* datum = target ? target->getDatum() : NULL;
     if (target && datum->acceptsLink(link))
     {
         datum->addLink(link);
         drag_state = CONNECTED;
 
-        connect(endControl(), &Control::portPositionChanged,
+        connect(endInspector(), &NodeInspector::portPositionChanged,
                 this, &Connection::onPortPositionChanged);
     }
     else
@@ -283,7 +264,7 @@ void Connection::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 void Connection::updateSnap()
 {
-    if (Port* p = canvas->getInputPortNear(drag_pos, link))
+    if (Port* p = gscene()->getInputPortNear(drag_pos, link))
     {
         snap_pos = p->mapToScene(p->boundingRect().center());
     }

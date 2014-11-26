@@ -6,6 +6,8 @@
 class MainWindow;
 class GraphScene;
 class Node;
+class Link;
+class Connection;
 
 class App : public QApplication
 {
@@ -23,6 +25,11 @@ public:
     /*  Creates UI elements for a new Node and adds them to scenes.
      */
     void newNode(Node* n);
+
+    /*
+     * Create UI elements for a new link, returning the associated Connection.
+     */
+    Connection* newLink(Link* link);
 
 public slots:
     /*  Opens a new MainWindow with a Canvas as its central widget.
