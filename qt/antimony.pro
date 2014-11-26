@@ -27,6 +27,7 @@ SOURCES += \
     ../src/ui/main_window.cpp \
     ../src/ui/colors.cpp \
     ../src/ui/canvas/canvas.cpp \
+    ../src/ui/canvas/scene.cpp \
     ../src/ui/canvas/inspector/inspector.cpp \
     ../src/ui/canvas/inspector/inspector_text.cpp \
     ../src/ui/canvas/inspector/inspector_button.cpp \
@@ -53,6 +54,7 @@ HEADERS += \
     ../src/app/app.h \
     ../src/ui/colors.h \
     ../src/ui/canvas/canvas.h \
+    ../src/ui/canvas/scene.h \
     ../src/ui/canvas/inspector/inspector.h \
     ../src/ui/canvas/inspector/inspector_text.h \
     ../src/ui/canvas/inspector/inspector_button.h \

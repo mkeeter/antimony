@@ -77,10 +77,10 @@ void OutputPort::mousePressEvent(QGraphicsSceneMouseEvent *event)
         c->grabMouse();
     }
     else
+#endif
     {
         event->ignore();
     }
-#endif
 }
 
 void OutputPort::hoverEnterEvent(QGraphicsSceneHoverEvent* event)

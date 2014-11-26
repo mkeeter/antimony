@@ -8,6 +8,7 @@
 #include "ui/main_window.h"
 
 #include "ui/canvas/canvas.h"
+#include "ui/canvas/scene.h"
 #include "ui/canvas/inspector/inspector.h"
 #include "ui/canvas/inspector/inspector_button.h"
 #include "ui/canvas/inspector/inspector_text.h"
@@ -44,7 +45,7 @@ NodeInspector::NodeInspector(Node* node)
     populateLists(node);
     setZValue(-2);
 
-    App::instance()->getCanvas()->scene->addItem(this);
+    App::instance()->getScene()->addItem(this);
 }
 
 float NodeInspector::labelWidth() const

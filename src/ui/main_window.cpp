@@ -3,20 +3,14 @@
 #include <QKeySequence>
 
 #include "ui_main_window.h"
-
 #include "ui/main_window.h"
-#include "ui/canvas.h"
-#include "ui/script/script_editor.h"
-#include "ui/inspector/inspector.h"
-
+#include "ui/canvas/inspector/inspector.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    canvas = ui->canvas;
-    canvas->setScene(new QGraphicsScene);
 
     QActionGroup* view_actions = new QActionGroup(this);
     view_actions->addAction(ui->actionShaded);
@@ -76,6 +70,7 @@ bool MainWindow::isShaded() const
 template <Node* (*f)(float, float, float, float, QObject*), bool recenter>
 void MainWindow::createNew()
 {
+#if 0
     QPoint mouse_pos = recenter
         ? canvas->rect().center()
         : canvas->mapFromGlobal(QCursor::pos());
@@ -85,6 +80,7 @@ void MainWindow::createNew()
     {
         QCursor::setPos(canvas->mapToGlobal(mouse_pos));
     }
+#endif
 
     Node* n = f(0, 0, 0, 10, NULL);
     //Node* n = f(obj_pos.x(), obj_pos.y(), obj_pos.z(),

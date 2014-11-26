@@ -5,6 +5,7 @@
 
 class MainWindow;
 class Canvas;
+class GraphScene;
 
 class App : public QApplication
 {
@@ -13,13 +14,7 @@ public:
     explicit App(int& argc, char **argv);
     ~App();
 
-    /** Helper function to get Canvas widget.
-     */
-    Canvas* getCanvas() const;
-
-    /** Helper function to get main window.
-     */
-    MainWindow* getWindow() const;
+    GraphScene* getScene() const { return scene; }
 
     /** Helper function to get running instance.
      */
@@ -38,10 +33,12 @@ private slots:
     void onExportJSON();
 #endif
 private:
+    void newCanvasWindow();
+
     void setGlobalStyle();
     void connectActions();
 
-    MainWindow* window;
+    GraphScene* scene;
     QString filename;
 };
 

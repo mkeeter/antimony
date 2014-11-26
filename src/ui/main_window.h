@@ -18,9 +18,6 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void openScript(ScriptDatum* d);
-    Canvas* getCanvas() const { return canvas; }
-
     /** Populate a menu with all of the widgets.
      */
     void populateMenu(QMenu* menu, bool recenter=true);
@@ -52,9 +49,6 @@ private:
     void _populateMenu(QMenu* menu);
 
     Ui::MainWindow *ui;
-    Canvas* canvas;
-
-    friend class App;
 };
 
 #endif // MAIN_WINDOW_H

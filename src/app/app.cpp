@@ -8,12 +8,12 @@
 
 #include "app.h"
 
-#include "ui_main_window.h"
-#include "ui/main_window.h"
-#include "ui/resolution_dialog.h"
-#include "ui/exporting_dialog.h"
+#include "ui/dialogs/resolution_dialog.h"
+#include "ui/dialogs/exporting_dialog.h"
 
-#include "ui/canvas.h"
+#include "ui/canvas/canvas.h"
+#include "ui/main_window.h"
+#include "ui/canvas/scene.h"
 #include "ui/colors.h"
 
 #include "graph/node/manager.h"
@@ -28,33 +28,21 @@
 #endif
 
 App::App(int& argc, char** argv) :
-    QApplication(argc, argv), window(new MainWindow)
+    QApplication(argc, argv), scene(new GraphScene())
 {
-    window->setShortcuts();
     setGlobalStyle();
-    connectActions();
-    window->show();
+    newCanvasWindow();
 }
 
 App::~App()
 {
+    scene->deleteLater();
     NodeManager::manager()->clear();
-    delete window;
 }
 
 App* App::instance()
 {
     return dynamic_cast<App*>(QApplication::instance());
-}
-
-Canvas* App::getCanvas() const
-{
-    return window->canvas;
-}
-
-MainWindow* App::getWindow() const
-{
-    return window;
 }
 
 void App::onAbout()
@@ -327,13 +315,13 @@ void App::onExportJSON()
 
 void App::connectActions()
 {
+#if 0
     connect(window->ui->actionQuit, SIGNAL(triggered()),
             this, SLOT(quit()));
     connect(window->ui->actionAbout, SIGNAL(triggered()),
             this, SLOT(onAbout()));
     connect(window->ui->actionControls, SIGNAL(triggered()),
             this, SLOT(onControls()));
-#if 0
     connect(window->ui->actionSave, SIGNAL(triggered()),
             this, SLOT(onSave()));
     connect(window->ui->actionSaveAs, SIGNAL(triggered()),
@@ -361,4 +349,11 @@ void App::setGlobalStyle()
             "   font-family: Courier"
             "}").arg(Colors::base03.name())
                 .arg(Colors::base04.name()));
+}
+
+void App::newCanvasWindow()
+{
+    auto m = new MainWindow();
+    m->setCentralWidget(new Canvas(scene));
+    m->show();
 }
