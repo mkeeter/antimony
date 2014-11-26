@@ -40,9 +40,7 @@ void Connection::makeSceneConnections()
 void Connection::onPortPositionChanged()
 {
     if (areInspectorsValid())
-    {
         prepareGeometryChange();
-    }
 }
 
 GraphScene* Connection::gscene() const
@@ -57,9 +55,7 @@ QRectF Connection::boundingRect() const
 
 QPainterPath Connection::shape() const
 {
-    QPainterPathStroker stroker;
-    stroker.setWidth(4);
-    return stroker.createStroke(path());
+    return QPainterPathStroker(QPen(4)).createStroke(path());
 }
 
 bool Connection::areDatumsValid() const
@@ -168,23 +164,17 @@ void Connection::paint(QPainter *painter,
                        const QStyleOptionGraphicsItem *option,
                        QWidget *widget)
 {
-    if (!areInspectorsValid())
-    {
-        return;
-    }
-
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
+    if (!areInspectorsValid())
+        return;
+
     QColor color = Colors::getColor(startDatum());
     if (drag_state == INVALID)
-    {
         color = Colors::red;
-    }
     if (isSelected() || drag_state == VALID)
-    {
         color = Colors::highlight(color);
-    }
 
     painter->setPen(QPen(color, 4));
     painter->drawPath(path());
@@ -221,9 +211,7 @@ void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsObject::mouseReleaseEvent(event);
     if (drag_state == CONNECTED)
-    {
         return;
-    }
 
     ungrabMouse();
     clearFocus();
@@ -269,9 +257,7 @@ void Connection::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 void Connection::updateSnap()
 {
     if (Port* p = gscene()->getInputPortNear(drag_pos, link))
-    {
         snap_pos = p->mapToScene(p->boundingRect().center());
-    }
 }
 
 void Connection::keyPressEvent(QKeyEvent* event)
@@ -286,7 +272,7 @@ void Connection::keyPressEvent(QKeyEvent* event)
     else if (event->key() == Qt::Key_Delete ||
              event->key() == Qt::Key_Backspace)
     {
-        getLink()->deleteLater();
+        link->deleteLater();
     }
     else
     {
