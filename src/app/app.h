@@ -24,9 +24,15 @@ public:
      */
     void newNode(Node* n);
 
+public slots:
+    /*  Opens a new MainWindow with a Canvas as its central widget.
+     */
+    void newCanvasWindow();
+
 private slots:
     void onAbout();
     void onControls();
+
 #if 0
     void onNew();
     void onSave();
@@ -37,9 +43,6 @@ private slots:
     void onExportJSON();
 #endif
 private:
-    /*  Opens a new MainWindow with a Canvas as its central widget.
-     */
-    void newCanvasWindow();
 
     void setGlobalStyle();
     void connectActions();

@@ -18,6 +18,9 @@ MainWindow::MainWindow(QWidget *parent) :
     view_actions->addAction(ui->actionShaded);
     view_actions->addAction(ui->actionHeightmap);
     view_actions->setExclusive(true);
+
+    connect(ui->actionNewCanvas, &QAction::triggered,
+            App::instance(), &App::newCanvasWindow);
 #if 0
     connect(ui->actionShaded, SIGNAL(triggered()),
             canvas->scene, SLOT(invalidate()));

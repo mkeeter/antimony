@@ -69,10 +69,26 @@
     <addaction name="actionHeightmap"/>
     <addaction name="actionShaded"/>
    </widget>
+   <widget class="QMenu" name="menuWindow">
+    <property name="title">
+     <string>Window</string>
+    </property>
+    <widget class="QMenu" name="menuPresets">
+     <property name="title">
+      <string>Presets</string>
+     </property>
+     <addaction name="actionFourPane"/>
+    </widget>
+    <addaction name="actionNewCanvas"/>
+    <addaction name="actionNewViewport"/>
+    <addaction name="separator"/>
+    <addaction name="menuPresets"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuAdd"/>
    <addaction name="menuView"/>
    <addaction name="menuExport"/>
+   <addaction name="menuWindow"/>
    <addaction name="menuHelp"/>
   </widget>
   <action name="actionNew">
@@ -142,6 +158,21 @@
    </property>
    <property name="text">
     <string>Shaded</string>
+   </property>
+  </action>
+  <action name="actionNewCanvas">
+   <property name="text">
+    <string>New graph window</string>
+   </property>
+  </action>
+  <action name="actionNewViewport">
+   <property name="text">
+    <string>New 3D window</string>
+   </property>
+  </action>
+  <action name="actionFourPane">
+   <property name="text">
+    <string>Four-pane</string>
    </property>
   </action>
  </widget>
