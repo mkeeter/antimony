@@ -1,7 +1,9 @@
 #include <Python.h>
 
 #include <QKeySequence>
+#include <QDebug>
 
+#include "app/app.h"
 #include "ui_main_window.h"
 #include "ui/main_window.h"
 #include "ui/canvas/inspector/inspector.h"
@@ -70,6 +72,7 @@ bool MainWindow::isShaded() const
 template <Node* (*f)(float, float, float, float, QObject*), bool recenter>
 void MainWindow::createNew()
 {
+    qDebug() << this;
 #if 0
     QPoint mouse_pos = recenter
         ? canvas->rect().center()
@@ -83,6 +86,8 @@ void MainWindow::createNew()
 #endif
 
     Node* n = f(0, 0, 0, 10, NULL);
+    App::instance()->newNode(n);
+
     //Node* n = f(obj_pos.x(), obj_pos.y(), obj_pos.z(),
     //            100 / canvas->getScale(), NULL);
     new NodeInspector(n);

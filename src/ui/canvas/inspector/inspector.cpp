@@ -2,13 +2,11 @@
 
 #include <QDebug>
 
+#include <QPainter>
 #include <QGraphicsScene>
 
-#include "app/app.h"
 #include "ui/main_window.h"
 
-#include "ui/canvas/canvas.h"
-#include "ui/canvas/scene.h"
 #include "ui/canvas/inspector/inspector.h"
 #include "ui/canvas/inspector/inspector_button.h"
 #include "ui/canvas/inspector/inspector_text.h"
@@ -21,7 +19,7 @@
 #include "graph/datum/datums/script_datum.h"
 #include "graph/node/node.h"
 
-//////////////////////////////////////////r/////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 NodeInspector::NodeInspector(Node* node)
     : node(node), title(new QGraphicsTextItem(node->getType(), this))
@@ -44,8 +42,6 @@ NodeInspector::NodeInspector(Node* node)
 
     populateLists(node);
     setZValue(-2);
-
-    App::instance()->getScene()->addItem(this);
 }
 
 float NodeInspector::labelWidth() const

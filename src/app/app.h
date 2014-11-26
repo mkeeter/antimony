@@ -4,8 +4,8 @@
 #include <QApplication>
 
 class MainWindow;
-class Canvas;
 class GraphScene;
+class Node;
 
 class App : public QApplication
 {
@@ -20,6 +20,10 @@ public:
      */
     static App* instance();
 
+    /*  Creates UI elements for a new Node and adds them to scenes.
+     */
+    void newNode(Node* n);
+
 private slots:
     void onAbout();
     void onControls();
@@ -33,6 +37,8 @@ private slots:
     void onExportJSON();
 #endif
 private:
+    /*  Opens a new MainWindow with a Canvas as its central widget.
+     */
     void newCanvasWindow();
 
     void setGlobalStyle();

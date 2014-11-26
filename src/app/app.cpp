@@ -16,6 +16,7 @@
 #include "ui/canvas/scene.h"
 #include "ui/colors.h"
 
+#include "graph/node/node.h"
 #include "graph/node/manager.h"
 #include "fab/types/shape.h"
 #include "render/export_mesh.h"
@@ -356,4 +357,9 @@ void App::newCanvasWindow()
     auto m = new MainWindow();
     m->setCentralWidget(new Canvas(scene));
     m->show();
+}
+
+void App::newNode(Node* n)
+{
+    scene->makeUIfor(n);
 }
