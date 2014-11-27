@@ -285,6 +285,7 @@ void Connection::keyReleaseEvent(QKeyEvent* event)
     if (event->key() == Qt::Key_Shift)
     {
         snapping = false;
+        checkDragTarget();
         prepareGeometryChange();
     }
 }

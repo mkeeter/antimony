@@ -73,6 +73,7 @@ void OutputPort::mousePressEvent(QGraphicsSceneMouseEvent *event)
         Connection* c = App::instance()->newLink(datum->linkFrom());
         c->setDragPos(mapToScene(event->pos()));
         c->grabMouse();
+        c->setFocus();
     }
     else
     {
