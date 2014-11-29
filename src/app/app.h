@@ -3,8 +3,8 @@
 
 #include <QApplication>
 
-class MainWindow;
 class GraphScene;
+class ViewportScene;
 class Node;
 class Link;
 class Connection;
@@ -16,25 +16,31 @@ public:
     explicit App(int& argc, char **argv);
     ~App();
 
-    GraphScene* getScene() const { return scene; }
-
-    /** Helper function to get running instance.
+    /*
+     *  Helper function to get running instance.
      */
     static App* instance();
 
-    /*  Creates UI elements for a new Node and adds them to scenes.
+    /*
+     *  Creates UI elements for a new Node and adds them to scenes.
      */
     void newNode(Node* n);
 
     /*
-     * Create UI elements for a new link, returning the associated Connection.
+     *  Create UI elements for a new link, returning the associated Connection.
      */
     Connection* newLink(Link* link);
 
 public slots:
-    /*  Opens a new MainWindow with a Canvas as its central widget.
+    /*
+     *  Opens a new MainWindow with a Canvas as its central widget.
      */
     void newCanvasWindow();
+
+    /*
+     *  Opens a new MainWindow with a Viewport as its central widget.
+     */
+    void newViewportWindow();
 
 private slots:
     void onAbout();
@@ -54,7 +60,8 @@ private:
     void setGlobalStyle();
     void connectActions();
 
-    GraphScene* scene;
+    GraphScene* graph_scene;
+    ViewportScene* view_scene;
     QString filename;
 };
 

@@ -21,6 +21,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionNewCanvas, &QAction::triggered,
             App::instance(), &App::newCanvasWindow);
+    connect(ui->actionNewViewport, &QAction::triggered,
+            App::instance(), &App::newViewportWindow);
 #if 0
     connect(ui->actionShaded, SIGNAL(triggered()),
             canvas->scene, SLOT(invalidate()));

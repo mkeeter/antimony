@@ -14,6 +14,9 @@
 #include "ui/canvas/canvas.h"
 #include "ui/main_window.h"
 #include "ui/canvas/scene.h"
+
+#include "ui/viewport/viewport.h"
+#include "ui/viewport/scene.h"
 #include "ui/colors.h"
 
 #include "graph/node/node.h"
@@ -29,7 +32,9 @@
 #endif
 
 App::App(int& argc, char** argv) :
-    QApplication(argc, argv), scene(new GraphScene())
+    QApplication(argc, argv),
+    graph_scene(new GraphScene()),
+    view_scene(new ViewportScene())
 {
     setGlobalStyle();
     newCanvasWindow();
@@ -37,7 +42,8 @@ App::App(int& argc, char** argv) :
 
 App::~App()
 {
-    scene->deleteLater();
+    graph_scene->deleteLater();
+    view_scene->deleteLater();
     NodeManager::manager()->clear();
 }
 
@@ -355,16 +361,23 @@ void App::setGlobalStyle()
 void App::newCanvasWindow()
 {
     auto m = new MainWindow();
-    m->setCentralWidget(scene->newCanvas());
+    m->setCentralWidget(graph_scene->newCanvas());
+    m->show();
+}
+
+void App::newViewportWindow()
+{
+    auto m = new MainWindow();
+    m->setCentralWidget(view_scene->newViewport());
     m->show();
 }
 
 void App::newNode(Node* n)
 {
-    scene->makeUIfor(n);
+    graph_scene->makeUIfor(n);
 }
 
 Connection* App::newLink(Link* link)
 {
-    return scene->makeUIfor(link);
+    return graph_scene->makeUIfor(link);
 }
