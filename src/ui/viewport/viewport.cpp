@@ -9,26 +9,22 @@
 
 #include <cmath>
 
-#include "ui/canvas.h"
-#include "ui/port.h"
-#include "ui/main_window.h"
-#include "ui/connection.h"
-#include "ui/inspector/inspector.h"
-#include "ui/depth_image.h"
+#include "ui/viewport/viewport.h"
+#include "ui/viewport/depth_image.h"
+#include "ui/viewport/view_selector.h"
 
+#include "ui/main_window.h"
+
+#include "graph/datum/datum.h"
 #include "graph/node/node.h"
 #include "graph/datum/link.h"
 
 #include "control/control.h"
 #include "control/axes_control.h"
-#include "ui/view_selector.h"
 
-#include "graph/datum/datum.h"
-
-Canvas::Canvas(QGraphicsScene* scene, QWidget* parent)
+Viewport::Viewport(QWidget* parent)
     : QGraphicsView(parent), scene(new QGraphicsScene(parent)),
-      scale(100), pitch(0), yaw(0), view_selector(new ViewSelector(this)),
-      ports_visible(true)
+      scale(100), pitch(0), yaw(0), view_selector(new ViewSelector(this))
 {
     setScene(scene);
     setStyleSheet("QGraphicsView { border-style: none; }");
@@ -40,18 +36,19 @@ Canvas::Canvas(QGraphicsScene* scene, QWidget* parent)
     format.setVersion(2, 1);
     format.setSampleBuffers(true);
     setViewport(new QGLWidget(format, this));
-
+#if 0
     new AxesControl(this);
+#endif
 }
 
-void Canvas::resizeEvent(QResizeEvent* e)
+void Viewport::resizeEvent(QResizeEvent* e)
 {
     Q_UNUSED(e);
     view_selector->setPos(width()/2 - 70, -height()/2 + 70);
     setSceneRect(-width()/2, -height()/2, width(), height());
 }
 
-QMatrix4x4 Canvas::getMatrix() const
+QMatrix4x4 Viewport::getMatrix() const
 {
     QMatrix4x4 M;
 
@@ -64,7 +61,7 @@ QMatrix4x4 Canvas::getMatrix() const
     return M;
 }
 
-QMatrix4x4 Canvas::getTransformMatrix() const
+QMatrix4x4 Viewport::getTransformMatrix() const
 {
     QMatrix4x4 M;
 
@@ -76,31 +73,30 @@ QMatrix4x4 Canvas::getTransformMatrix() const
 }
 
 
-QPointF Canvas::worldToScene(QVector3D v) const
+QPointF Viewport::worldToScene(QVector3D v) const
 {
     QMatrix4x4 M = getMatrix();
     QVector3D w = M * v;
     return QPointF(w.x(), w.y());
 }
 
-QVector<QPointF> Canvas::worldToScene(QVector<QVector3D> v) const
+QVector<QPointF> Viewport::worldToScene(QVector<QVector3D> v) const
 {
     QVector<QPointF> out;
     for (auto p : v)
-    {
         out << worldToScene(p);
-    }
     return out;
 }
 
-QVector3D Canvas::sceneToWorld(QPointF p) const
+QVector3D Viewport::sceneToWorld(QPointF p) const
 {
     QMatrix4x4 M = getMatrix().inverted();
     return M * QVector3D(p.x(), p.y(), 0);
 }
 
-Control* Canvas::getControl(Node* node) const
+Control* Viewport::getControl(Node* node) const
 {
+#if 0
     for (auto i : items())
     {
         Control* c = dynamic_cast<Control*>(i);
@@ -111,65 +107,16 @@ Control* Canvas::getControl(Node* node) const
             return c;
         }
     }
+#endif
     return NULL;
 }
 
-InputPort* Canvas::getInputPortAt(QPointF pos) const
-{
-    for (auto i : scene->items(pos))
-    {
-        InputPort* p = dynamic_cast<InputPort*>(i);
-        if (p)
-        {
-            return p;
-        }
-    }
-    return NULL;
-}
-
-InputPort* Canvas::getInputPortNear(QPointF pos, Link* link) const
-{
-    float distance = INFINITY;
-    InputPort* port = NULL;
-
-    for (auto i : scene->items())
-    {
-        InputPort* p = dynamic_cast<InputPort*>(i);
-        if (p && (link == NULL || p->getDatum()->acceptsLink(link)))
-        {
-            QPointF delta = p->mapToScene(p->boundingRect().center()) - pos;
-            float d = QPointF::dotProduct(delta, delta);
-            if (d < distance)
-            {
-                distance = d;
-                port = p;
-            }
-        }
-    }
-
-    return port;
-}
-
-NodeInspector* Canvas::getInspectorAt(QPointF pos) const
-{
-    for (auto i : scene->items(pos))
-    {
-        NodeInspector* p = dynamic_cast<NodeInspector*>(i);
-        if (p)
-        {
-            return p;
-        }
-    }
-    return NULL;
-}
-
-float Canvas::getZmax() const
+float Viewport::getZmax() const
 {
     float zmax = -INFINITY;
     for (auto i : scene->items())
     {
-        DepthImageItem* p = dynamic_cast<DepthImageItem*>(i);
-        if (p)
+        if (DepthImageItem* p = dynamic_cast<DepthImageItem*>(i))
         {
             zmax = fmax(zmax, (getTransformMatrix() * p->pos).z() +
                                 p->size.z()/2);
@@ -178,13 +125,12 @@ float Canvas::getZmax() const
     return zmax;
 }
 
-float Canvas::getZmin() const
+float Viewport::getZmin() const
 {
     float zmin = INFINITY;
     for (auto i : scene->items())
     {
-        DepthImageItem* p = dynamic_cast<DepthImageItem*>(i);
-        if (p)
+        if (DepthImageItem* p = dynamic_cast<DepthImageItem*>(i))
         {
             zmin = fmin(zmin, (getTransformMatrix() * p->pos).z() -
                                 p->size.z()/2);
@@ -193,7 +139,7 @@ float Canvas::getZmin() const
     return zmin;
 }
 
-void Canvas::spinTo(float new_yaw, float new_pitch)
+void Viewport::spinTo(float new_yaw, float new_pitch)
 {
     QPropertyAnimation* a = new QPropertyAnimation(this, "_yaw", this);
     a->setDuration(100);
@@ -209,7 +155,7 @@ void Canvas::spinTo(float new_yaw, float new_pitch)
     b->start(QPropertyAnimation::DeleteWhenStopped);
 }
 
-void Canvas::mousePressEvent(QMouseEvent *event)
+void Viewport::mousePressEvent(QMouseEvent *event)
 {
     // On right-click, show a menu of items to raise.
     if (event->button() == Qt::RightButton)
@@ -223,8 +169,8 @@ void Canvas::mousePressEvent(QMouseEvent *event)
                 i = i->parentItem();
             }
 
+#if 0
             auto c = dynamic_cast<Control*>(i);
-
             if (c && !used.contains(c) && !dynamic_cast<AxesControl*>(i))
             {
                 auto n = c->getNode();
@@ -234,6 +180,7 @@ void Canvas::mousePressEvent(QMouseEvent *event)
                 menu->addAction(a);
                 used << c;
             }
+#endif
         }
         if (!menu->isEmpty())
         {
@@ -267,7 +214,7 @@ void Canvas::mousePressEvent(QMouseEvent *event)
     }
 }
 
-void Canvas::mouseMoveEvent(QMouseEvent *event)
+void Viewport::mouseMoveEvent(QMouseEvent *event)
 {
     QGraphicsView::mouseMoveEvent(event);
     if (scene->mouseGrabberItem() == NULL)
@@ -289,21 +236,21 @@ void Canvas::mouseMoveEvent(QMouseEvent *event)
     }
 }
 
-void Canvas::setYaw(float y)
+void Viewport::setYaw(float y)
 {
     yaw = y;
     update();
     emit(viewChanged());
 }
 
-void Canvas::setPitch(float p)
+void Viewport::setPitch(float p)
 {
     pitch = p;
     update();
     emit(viewChanged());
 }
 
-void Canvas::wheelEvent(QWheelEvent *event)
+void Viewport::wheelEvent(QWheelEvent *event)
 {
     QVector3D a = sceneToWorld(mapToScene(event->pos()));
     scale *= pow(1.001, -event->delta());
@@ -312,24 +259,13 @@ void Canvas::wheelEvent(QWheelEvent *event)
     emit(viewChanged());
 }
 
-void Canvas::keyPressEvent(QKeyEvent *event)
+void Viewport::keyPressEvent(QKeyEvent *event)
 {
     QGraphicsView::keyPressEvent(event);
     if (event->isAccepted())
         return;
 
-    if (event->key() == Qt::Key_Space)
-    {
-        QGraphicsItem* i = scene->itemAt(
-                mapToScene(mapFromGlobal(QCursor::pos())),
-                QTransform());
-        Control* control = dynamic_cast<Control*>(i);
-        if (control)
-        {
-            control->toggleInspector();
-        }
-    }
-    else if (event->key() == Qt::Key_Alt)
+    if (event->key() == Qt::Key_Alt)
     {
         hideUI();
     }
@@ -345,89 +281,50 @@ void Canvas::keyPressEvent(QKeyEvent *event)
         m->exec(QCursor::pos());
         m->deleteLater();
     }
-    else if (event->key() == Qt::Key_S &&
-                (event->modifiers() & Qt::ShiftModifier))
-    {
-        ports_visible = !ports_visible;
-        emit(showPorts(ports_visible));
-    }
 }
 
-void Canvas::keyReleaseEvent(QKeyEvent *event)
+void Viewport::keyReleaseEvent(QKeyEvent *event)
 {
-    if (scene->focusItem())
-    {
-        QGraphicsView::keyPressEvent(event);
-    }
-    else if (event->key() == Qt::Key_Alt)
-    {
+    QGraphicsView::keyPressEvent(event);
+    if (event->isAccepted())
+        return;
+
+    if (event->key() == Qt::Key_Alt)
         showUI();
-    }
 }
 
-void Canvas::hideUI()
+void Viewport::hideUI()
 {
-
+#if 0
     for (auto i : scene->items())
     {
-        Control* control = dynamic_cast<Control*>(i);
-        Connection* conn = dynamic_cast<Connection*>(i);
-        AxesControl* ax = dynamic_cast<AxesControl*>(i);
-        NodeInspector* inspector = dynamic_cast<NodeInspector*>(i);
-        Port* p = dynamic_cast<Port*>(i);
-        if (control && !ax)
-            control->hide();
-        else if (conn)
-            conn->hide();
-        else if (inspector)
-            inspector->hide();
-        else if (p)
-            p->hide();
+        Control* c = dynamic_cast<Control*>(i);
+        if (c && !dynamic_cast<AxesControl*>(i))
+            c->hide();
     }
+#endif
 }
 
-void Canvas::showUI()
+void Viewport::showUI()
 {
-
+#if 0
     for (auto i : scene->items())
-    {
-        Control* control = dynamic_cast<Control*>(i);
-        Connection* conn = dynamic_cast<Connection*>(i);
-        NodeInspector* inspector = dynamic_cast<NodeInspector*>(i);
-        Port* p = dynamic_cast<Port*>(i);
-        if (control)
+        if (Control* control = dynamic_cast<Control*>(i))
             control->show();
-        else if (conn)
-            conn->show();
-        else if (inspector)
-            inspector->show();
-        else if (p)
-            p->show();
-    }
+#endif
 }
 
-void Canvas::pan(QVector3D d)
+void Viewport::pan(QVector3D d)
 {
     center += d;
     update();
     emit(viewChanged());
 }
 
-#include <iostream>
-#include <QTime>
-
-void Canvas::drawBackground(QPainter* painter, const QRectF& rect)
+void Viewport::drawBackground(QPainter* painter, const QRectF& rect)
 {
     Q_UNUSED(painter);
     Q_UNUSED(rect);
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-
-void Canvas::paintEvent(QPaintEvent *event)
-{
-    QTime timer;
-    timer.start();
-    QGraphicsView::paintEvent(event);
-    //std::cout << timer.elapsed() << std::endl;
 }

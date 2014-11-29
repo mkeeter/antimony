@@ -2,8 +2,8 @@
 
 #include <QGraphicsSceneMouseEvent>
 
-#include "ui/canvas.h"
-#include "ui/view_selector.h"
+#include "ui/viewport/viewport.h"
+#include "ui/viewport/view_selector.h"
 #include "ui/colors.h"
 
 ViewSelectorButton::ViewSelectorButton(QString label, QPointF pos,
@@ -52,7 +52,7 @@ void ViewSelectorButton::paint(QPainter *painter,
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ViewSelector::ViewSelector(Canvas* canvas)
+ViewSelector::ViewSelector(Viewport* viewport)
     : QGraphicsTextItem()
 {
     QVector<ViewSelectorButton*> buttons;
@@ -83,9 +83,9 @@ ViewSelector::ViewSelector(Canvas* canvas)
 
     setDefaultTextColor(Colors::base04);
 
-    canvas->scene->addItem(this);
+    viewport->scene->addItem(this);
     connect(this, SIGNAL(spinTo(float,float)),
-            canvas, SLOT(spinTo(float,float)));
+            viewport, SLOT(spinTo(float,float)));
 }
 
 void ViewSelector::setLabel(QString label)

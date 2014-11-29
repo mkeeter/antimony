@@ -6,10 +6,9 @@
 #include <QVector3D>
 
 // Forward declarations
-class Canvas;
+class Viewport;
 class Datum;
 class Node;
-class NodeInspector;
 class InputPort;
 class OutputPort;
 
@@ -19,11 +18,11 @@ class Control : public QGraphicsObject
 public:
     /** A control is a UI representation of a Node.
      *
-     *  canvas is the Canvas object on which to draw.
+     *  viewport is the Viewport object on which to draw.
      *  node is the target Node (or None in special cases)
      *  parent is a parent Control (as nested controls are allowed)
      */
-    explicit Control(Canvas* canvas, Node* node, QGraphicsItem* parent=0);
+    explicit Control(Viewport* viewport, Node* node, QGraphicsItem* parent=0);
 
     /** Destructor for Control.
      */
@@ -31,7 +30,7 @@ public:
 
     /** Makes a control for the given node.
      */
-    static Control* makeControlFor(Canvas* canvas, Node* n);
+    static Control* makeControlFor(Viewport* viewport, Node* n);
 
     /** Finds a bounding box for a set of points in world coordinates.
      *
@@ -55,10 +54,6 @@ public:
     /** Returns the desired editor point (in scene coordinates)
      */
     virtual QPointF inspectorPosition() const { return QPointF(); }
-
-    /** Returns the canvas object in which this control is drawn.
-     */
-    Canvas* getCanvas() { return canvas;}
 
     /** Sets _click_pos
      *  (used when creating a new control so that dragging works).
@@ -194,12 +189,8 @@ protected:
      */
     virtual void paintControl(QPainter* painter)=0;
 
-    Canvas* canvas;
+    Viewport* viewport;
     QPointer<Node> node;
-    QPointer<NodeInspector> inspector;
-
-    QList<InputPort*> inputs;
-    QList<OutputPort*> outputs;
 
     bool _hover;
     bool _dragged;
@@ -214,7 +205,7 @@ protected:
 class DummyControl : public Control
 {
 public:
-    explicit DummyControl(Canvas* canvas, Node* node, QGraphicsItem* parent=0);
+    explicit DummyControl(Viewport* viewport, Node* node, QGraphicsItem* parent=0);
     void drag(QVector3D center, QVector3D delta) override;
     virtual void paintControl(QPainter *painter);
     virtual QPainterPath shape() const;

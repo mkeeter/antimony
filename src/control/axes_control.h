@@ -3,12 +3,12 @@
 
 #include "control/control.h"
 
-class Canvas;
+class Viewport;
 
 class AxesControl : public DummyControl
 {
 public:
-    explicit AxesControl(Canvas* canvas);
+    explicit AxesControl(Viewport* viewport);
 
     /** Return the bounding rectangle in screen coordinates.
      */

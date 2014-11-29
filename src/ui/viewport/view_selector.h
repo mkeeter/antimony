@@ -3,7 +3,7 @@
 
 #include <QGraphicsObject>
 
-class Canvas;
+class Viewport;
 
 class ViewSelectorButton : public QGraphicsObject
 {
@@ -32,7 +32,7 @@ class ViewSelector : public QGraphicsTextItem
 {
     Q_OBJECT
 public:
-    explicit ViewSelector(Canvas* canvas);
+    explicit ViewSelector(Viewport* viewport);
 
 public slots:
     void setLabel(QString label);

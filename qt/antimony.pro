@@ -32,8 +32,11 @@ SOURCES += \
     ../src/ui/canvas/inspector/inspector_text.cpp \
     ../src/ui/canvas/inspector/inspector_button.cpp \
     ../src/ui/canvas/inspector/inspector_row.cpp \
-    ../src/ui/canvas/port.cpp \
     ../src/ui/canvas/connection.cpp \
+    ../src/ui/canvas/port.cpp \
+    ../src/ui/viewport/viewport.cpp \
+    ../src/ui/viewport/view_selector.cpp \
+    ../src/ui/viewport/depth_image.cpp \
     #../src/ui/script/syntax.cpp \
     #../src/ui/resolution_dialog.cpp \
     #../src/ui/exporting_dialog.cpp \
@@ -46,8 +49,6 @@ SOURCES += \
     #../src/render/export_mesh.cpp \
     #../src/render/export_bitmap.cpp \
     #../src/render/export_json.cpp \
-    #../src/ui/view_selector.cpp \
-    #../src/ui/depth_image.cpp \
 
 HEADERS += \
     ../src/ui/main_window.h \
@@ -61,6 +62,9 @@ HEADERS += \
     ../src/ui/canvas/inspector/inspector_row.h \
     ../src/ui/canvas/port.h \
     ../src/ui/canvas/connection.h \
+    ../src/ui/viewport/viewport.h \
+    ../src/ui/viewport/view_selector.h \
+    ../src/ui/viewport/depth_image.h \
     #../src/ui/view_selector.h \
     #../src/render/render_task.h \
     #../src/render/render_worker.h \

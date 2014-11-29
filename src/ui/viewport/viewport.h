@@ -1,5 +1,5 @@
-#ifndef CANVAS_H
-#define CANVAS_H
+#ifndef VIEWPORT_H
+#define VIEWPORT_H
 
 #include <QGraphicsView>
 #include <QGraphicsScene>
@@ -13,14 +13,13 @@ class NodeInspector;
 class ViewSelector;
 class Link;
 
-class Canvas : public QGraphicsView
+class Viewport : public QGraphicsView
 {
     Q_OBJECT
 public:
-    explicit Canvas(QWidget* parent=0);
+    explicit Viewport(QWidget* parent=0);
 
-    /** Returns our scale + rotation transform matrix.
-     *  (translation is handled by the QGraphicsView)
+    /** Returns our scale + rotation +translate transform matrix.
      */
     QMatrix4x4 getMatrix() const;
 
@@ -45,19 +44,6 @@ public:
      */
     Control* getControl(Node* node) const;
 
-    /** Finds an input port at the given position (or NULL)
-     */
-    InputPort* getInputPortAt(QPointF pos) const;
-
-    /** Returns the nearest input port.
-     *  If link is given, only return input ports that accept it.
-     */
-    InputPort* getInputPortNear(QPointF pos, Link* link=NULL) const;
-
-    /** Finds an inspector at the given position (or NULL)
-     */
-    NodeInspector* getInspectorAt(QPointF pos) const;
-
     /** Gets the minimum z position of a DepthImageItem.
      */
     float getZmin() const;
@@ -65,8 +51,6 @@ public:
     /** Gets the maximum z position of a DepthImageItem.
      */
     float getZmax() const;
-
-    QGraphicsScene* scene;
 
     /** Get yaw (in radians)
      */
@@ -80,7 +64,7 @@ public:
      */
     QVector3D getCenter() const { return center; }
 
-    bool arePortsVisible() const { return ports_visible; }
+    QGraphicsScene* scene;
 signals:
     void viewChanged();
     void showPorts(bool);
@@ -104,7 +88,7 @@ protected:
      */
     void wheelEvent(QWheelEvent *event) override;
 
-    /** On delete key press, delete nodes and connections.
+    /** On delete key press, delete nodes.
      */
     void keyPressEvent(QKeyEvent *event) override;
 
@@ -112,19 +96,9 @@ protected:
      */
     void keyReleaseEvent(QKeyEvent *event) override;
 
-    /** Draws shaded panels in the background.
+    /** Clear the background (color and depth buffers)
      */
     void drawBackground(QPainter* painter, const QRectF& rect) override;
-
-    /** On paint event, resize depth canvas then call default painter.
-     */
-    void paintEvent(QPaintEvent *event);
-
-    // Properties to automatically animate yaw and pitch.
-    void setYaw(float y);
-    Q_PROPERTY(float _yaw READ getYaw WRITE setYaw)
-    void setPitch(float p);
-    Q_PROPERTY(float _pitch READ getPitch WRITE setPitch)
 
     /** Pans the scene rectangle.
      */
@@ -134,18 +108,22 @@ protected:
      */
     void resizeEvent(QResizeEvent* e);
 
-    /** Hides all Control and Connection UI elements.
+    /** Hides all Control UI elements.
      */
     void hideUI();
 
-    /** Shows all Control and Connection UI elements.
+    /** Shows all Control UI elements.
      */
     void showUI();
 
     QVector3D center;
     float scale;
 
-    /* Pitch and yaw are in radians */
+    // Properties to automatically animate yaw and pitch (in radians)
+    void setYaw(float y);
+    Q_PROPERTY(float _yaw READ getYaw WRITE setYaw)
+    void setPitch(float p);
+    Q_PROPERTY(float _pitch READ getPitch WRITE setPitch)
     float pitch;
     float yaw;
 
@@ -154,8 +132,6 @@ protected:
     QPointF _click_pos;
     QVector3D _click_pos_world;
     ViewSelector* view_selector;
-
-    bool ports_visible;
 };
 
-#endif // CANVAS_H
+#endif // VIEWPORT_H

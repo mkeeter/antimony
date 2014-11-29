@@ -8,14 +8,14 @@
 #include <QtOpenGL/QGLShaderProgram>
 #include <QtOpenGL/QGLBuffer>
 
-class Canvas;
+class Viewport;
 
 class DepthImageItem : public QGraphicsObject, protected QGLFunctions
 {
     Q_OBJECT
 public:
     DepthImageItem(QVector3D pos, QVector3D size,
-                   QImage depth, QImage shaded, Canvas* canvas);
+                   QImage depth, QImage shaded, Viewport* viewport);
     ~DepthImageItem();
     QRectF boundingRect() const;
 
@@ -41,7 +41,7 @@ protected:
 
     QImage depth;
     QImage shaded;
-    Canvas* canvas;
+    Viewport* viewport;
 
     GLuint depth_tex;
     GLuint shaded_tex;

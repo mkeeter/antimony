@@ -6,9 +6,9 @@
 #include <QGLWidget>
 
 #include "app/app.h"
-#include "main_window.h"
-#include "ui/depth_image.h"
-#include "ui/canvas.h"
+#include "ui/main_window.h"
+#include "ui/viewport/depth_image.h"
+#include "ui/viewport/viewport.h"
 
 QGLShaderProgram DepthImageItem::shaded_shader;
 QGLShaderProgram DepthImageItem::height_shader;
@@ -16,15 +16,15 @@ QGLBuffer DepthImageItem::vertices;
 
 DepthImageItem::DepthImageItem(QVector3D pos, QVector3D size,
                                QImage depth, QImage shaded,
-                               Canvas* canvas)
+                               Viewport* viewport)
     : QGraphicsObject(), pos(pos), size(size), depth(depth), shaded(shaded),
-      canvas(canvas)
+      viewport(viewport)
 {
-    connect(canvas, &Canvas::viewChanged, this, &DepthImageItem::reposition);
+    connect(viewport, &Viewport::viewChanged, this, &DepthImageItem::reposition);
     reposition();
     setZValue(-20);
     initializeGL();
-    canvas->scene->addItem(this);
+    viewport->scene->addItem(this);
 }
 
 DepthImageItem::~DepthImageItem()
@@ -93,15 +93,15 @@ void DepthImageItem::initializeGL()
 
 void DepthImageItem::reposition()
 {
-    setPos(canvas->worldToScene(pos));
+    setPos(viewport->worldToScene(pos));
     prepareGeometryChange();
 }
 
 QRectF DepthImageItem::boundingRect() const
 {
-    return QRectF(0, -size.y() * canvas->getScale(),
-                  size.x() * canvas->getScale(),
-                  size.y() * canvas->getScale());
+    return QRectF(0, -size.y() * viewport->getScale(),
+                  size.x() * viewport->getScale(),
+                  size.y() * viewport->getScale());
 }
 
 void DepthImageItem::paint(QPainter *painter,
@@ -113,9 +113,11 @@ void DepthImageItem::paint(QPainter *painter,
     Q_UNUSED(widget);
 
     vertices.bind();
+#if 0
     if (App::instance()->getWindow()->isShaded())
         paintShaded();
     else
+#endif
         paintHeightmap();
     vertices.release();
 }
@@ -132,31 +134,31 @@ void DepthImageItem::loadSharedShaderVariables(QGLShaderProgram* shader)
 
     // Load image's screen position into shader
     const GLuint offset_loc = shader->uniformLocation("offset");
-    QPointF corner = canvas->mapFromScene(canvas->worldToScene(pos).toPoint());
+    QPointF corner = viewport->mapFromScene(viewport->worldToScene(pos).toPoint());
     glUniform2f(
             offset_loc,
-            2*(corner.x() - canvas->width()/2) / canvas->width(),
-            -2*(corner.y() - canvas->height()/2) / canvas->height());
+            2*(corner.x() - viewport->width()/2) / viewport->width(),
+            -2*(corner.y() - viewport->height()/2) / viewport->height());
 
     // Load image's width and height into shader
     const GLuint width_loc = shader->uniformLocation("width");
     const GLuint height_loc = shader->uniformLocation("height");
     glUniform1f(
             width_loc,
-            (size.x() * canvas->getScale()) / canvas->width());
+            (size.x() * viewport->getScale()) / viewport->width());
     glUniform1f(
             height_loc,
-            (size.y() * canvas->getScale()) / canvas->height());
+            (size.y() * viewport->getScale()) / viewport->height());
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, depth_tex);
     glUniform1i(shader->uniformLocation("depth_tex"), 0);
 
-    const float zmin_global = canvas->getZmin();
-    const float dz_global = canvas->getZmax() - zmin_global;
+    const float zmin_global = viewport->getZmin();
+    const float dz_global = viewport->getZmax() - zmin_global;
 
     const float dz = size.z();
-    const float zmin = (canvas->getTransformMatrix() * pos).z() - dz/2;
+    const float zmin = (viewport->getTransformMatrix() * pos).z() - dz/2;
 
     // Set z values for depth blending.
     glUniform1f(shader->uniformLocation("dz_local"), dz);
