@@ -22,8 +22,8 @@
 #include "control/control.h"
 #include "control/axes_control.h"
 
-Viewport::Viewport(QWidget* parent)
-    : QGraphicsView(parent), scene(new QGraphicsScene(parent)),
+Viewport::Viewport(QGraphicsScene* scene, QWidget* parent)
+    : QGraphicsView(parent), scene(scene),
       scale(100), pitch(0), yaw(0), view_selector(new ViewSelector(this))
 {
     setScene(scene);
@@ -160,6 +160,7 @@ void Viewport::mousePressEvent(QMouseEvent *event)
     // On right-click, show a menu of items to raise.
     if (event->button() == Qt::RightButton)
     {
+#if 0
         auto menu = new QMenu(this);
         QSet<Control*> used;
         for (auto i : items(event->pos()))
@@ -169,7 +170,6 @@ void Viewport::mousePressEvent(QMouseEvent *event)
                 i = i->parentItem();
             }
 
-#if 0
             auto c = dynamic_cast<Control*>(i);
             if (c && !used.contains(c) && !dynamic_cast<AxesControl*>(i))
             {
@@ -180,7 +180,6 @@ void Viewport::mousePressEvent(QMouseEvent *event)
                 menu->addAction(a);
                 used << c;
             }
-#endif
         }
         if (!menu->isEmpty())
         {
@@ -197,6 +196,7 @@ void Viewport::mousePressEvent(QMouseEvent *event)
             }
         }
         menu->deleteLater();
+#endif
     }
 
     QGraphicsView::mousePressEvent(event);

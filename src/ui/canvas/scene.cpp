@@ -1,6 +1,7 @@
 #include <Python.h>
 
 #include "ui/canvas/scene.h"
+#include "ui/canvas/canvas.h"
 #include "ui/canvas/connection.h"
 #include "ui/canvas/inspector/inspector.h"
 #include "ui/canvas/port.h"
@@ -11,6 +12,11 @@ GraphScene::GraphScene(QObject* parent)
     : QGraphicsScene(parent)
 {
     // Nothing to do here
+}
+
+Canvas* GraphScene::newCanvas()
+{
+    return new Canvas(this);
 }
 
 NodeInspector* GraphScene::makeUIfor(Node* n)

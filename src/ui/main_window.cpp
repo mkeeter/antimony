@@ -93,7 +93,6 @@ void MainWindow::createNew()
 
     //Node* n = f(obj_pos.x(), obj_pos.y(), obj_pos.z(),
     //            100 / canvas->getScale(), NULL);
-    new NodeInspector(n);
 }
 
 template <Node* (*f)(float, float, float, float, QObject*),
@@ -161,12 +160,7 @@ void MainWindow::_populateMenu(QMenu* menu)
 void MainWindow::populateMenu(QMenu* menu, bool recenter)
 {
     if (recenter)
-    {
         _populateMenu<true>(menu);
-    }
     else
-    {
         _populateMenu<false>(menu);
-    }
-
 }

@@ -19,7 +19,7 @@ QMAKE_CXXFLAGS += "-D'GITREV=\"$${GITREV}$${GITDIFF}\"'"
 
 include(fab.pri)
 include(shared.pri)
-# include(controls.pri)
+include(controls.pri)
 
 SOURCES += \
     ../src/app/main.cpp \
@@ -35,6 +35,7 @@ SOURCES += \
     ../src/ui/canvas/connection.cpp \
     ../src/ui/canvas/port.cpp \
     ../src/ui/viewport/viewport.cpp \
+    ../src/ui/viewport/scene.cpp \
     ../src/ui/viewport/view_selector.cpp \
     ../src/ui/viewport/depth_image.cpp \
     #../src/ui/script/syntax.cpp \
@@ -63,6 +64,7 @@ HEADERS += \
     ../src/ui/canvas/port.h \
     ../src/ui/canvas/connection.h \
     ../src/ui/viewport/viewport.h \
+    ../src/ui/viewport/scene.h \
     ../src/ui/viewport/view_selector.h \
     ../src/ui/viewport/depth_image.h \
     #../src/ui/view_selector.h \

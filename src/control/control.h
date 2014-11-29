@@ -1,82 +1,46 @@
 #ifndef CONTROL_H
 #define CONTROL_H
 
-#include <QGraphicsObject>
+#include <QObject>
 #include <QPointer>
 #include <QVector3D>
+#include <QMatrix4x4>
+#include <QPainter>
 
 // Forward declarations
-class Viewport;
 class Datum;
 class Node;
-class InputPort;
-class OutputPort;
 
-class Control : public QGraphicsObject
+class Control : public QObject
 {
     Q_OBJECT
 public:
     /** A control is a UI representation of a Node.
      *
-     *  viewport is the Viewport object on which to draw.
-     *  node is the target Node (or None in special cases)
+     *  node is the target Node (or NULL in special cases)
      *  parent is a parent Control (as nested controls are allowed)
      */
-    explicit Control(Viewport* viewport, Node* node, QGraphicsItem* parent=0);
+    explicit Control(Node* node, QObject* parent=0);
 
-    /** Destructor for Control.
-     */
-    virtual ~Control();
-
+#if 0
     /** Makes a control for the given node.
      */
     static Control* makeControlFor(Viewport* viewport, Node* n);
-
-    /** Finds a bounding box for a set of points in world coordinates.
-     *
-     *  The returned bounding box is in scene coordinates,
-     *  as is the padding argument.
-     */
-    QRectF boundingBox(QVector<QVector3D> points, int padding=10) const;
-
-    /** This is the mandatory function made safe from Node deletion.
-     */
-    QRectF boundingRect() const override;
+#endif
 
     /** This function is overloaded by children to return bounds.
      */
-    virtual QRectF bounds() const=0;
+    virtual QRectF bounds(QMatrix4x4 m) const=0;
+
+    /*
+     *  Equivalent to QGraphicsObject::shape
+     *  By default, returns the bounding rect
+     */
+    virtual QPainterPath shape(QMatrix4x4 m) const;
 
     /** Returns this control's relevant node.
      */
     Node* getNode() const;
-
-    /** Returns the desired editor point (in scene coordinates)
-     */
-    virtual QPointF inspectorPosition() const { return QPointF(); }
-
-    /** Sets _click_pos
-     *  (used when creating a new control so that dragging works).
-     */
-    void setClickPos(QPointF c) { _click_pos = c; }
-
-    /** Returns the input position at which connections should connect
-     *  (if there is no inspector active).
-     */
-    virtual QPointF baseInputPosition() const;
-
-    /** Returns the output position at which connections should connect
-     *  (if there is no inspector active).
-     */
-    virtual QPointF baseOutputPosition() const;
-
-    /** Returns a datum's output position (in scene coordinates)
-     */
-    QPointF datumOutputPosition(Datum* d) const;
-
-    /** Returns a datum's input position (in scene coordinates)
-     */
-    QPointF datumInputPosition(Datum* d) const;
 
     /** Gets the value of a specific datum (which must be a double).
      */
@@ -86,59 +50,21 @@ public:
      */
     void deleteNode();
 
-    /** Toggles the inspector's open/closed state.
+    /** This function should be defined by child nodes
      */
-    void toggleInspector(bool show_hidden=false);
-
-    /** Returns True if we should be drawing connections.
-     */
-    bool showConnections() const;
-
-protected slots:
-    void redraw();
-    void onDatumsChanged();
-
-signals:
-    void inspectorPositionChanged();
-    void portPositionChanged();
-    void showPorts(bool v);
-
-protected:
-    /** Helper function that will be called after derived class constructor.
-     */
-    void init();
-
-    /** Mark a set of datums as causing a re-render when changed.
-     */
-    void watchDatums(QVector<QString> datums);
-
-    /** On hover enter, set _hover to true and update.
-     */
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
-
-    /** On hover leave, set _hover to false and update.
-     */
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
-
-    /** On double click, open a node viewer.
-     */
-    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
-
-    /** Handle mouse clicks by preparing to drag.
-     */
-    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
-
-    /** On mouse release (without drag), select object.
-     */
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
-
-    /** On mouse drag, call the virtual function drag.
-     */
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+    virtual void paint(QMatrix4x4 m, bool highlight, QPainter* painter)=0;
 
     /** Called to drag the node around with the mouse.
      */
     virtual void drag(QVector3D center, QVector3D delta)=0;
+
+signals:
+    void redraw();
+
+protected:
+    /** Mark a set of datums as causing a re-render when changed.
+     */
+    void watchDatums(QVector<QString> datums);
 
     /** Attempts to drag a particular datum's value.
      */
@@ -158,57 +84,14 @@ protected:
 
     /** Sets the painter pen to a reasonable default value.
      */
-    void setDefaultPen(QPainter* painter) const;
+    void setDefaultPen(bool highlight, QPainter* painter) const;
 
     /** Sets the painter brush to a reasonable value.
      */
-    void setDefaultBrush(QPainter* painter) const;
+    void setDefaultBrush(bool highlight, QPainter* painter) const;
 
-    /** Clears existing free-floating input and output ports.
-     */
-    void clearPorts();
-
-    /** Create free-floating input and output ports.
-     */
-    void makePorts();
-
-    /** Reposition ports in the correct space.
-     */
-    void positionPorts();
-
-    /** Override paint with a function that is safe under node deletion.
-     */
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-               QWidget *widget) override;
-
-    /** On delete or backspace, delete node.
-     */
-    void keyPressEvent(QKeyEvent* event) override;
-
-    /** This function should be defined by child nodes
-     */
-    virtual void paintControl(QPainter* painter)=0;
-
-    Viewport* viewport;
     QPointer<Node> node;
-
-    bool _hover;
-    bool _dragged;
-    QPointF _click_pos;
-
-    bool init_called;
 };
 
-
-/** A DummyControl is non-interactive by default and below all other controls.
- */
-class DummyControl : public Control
-{
-public:
-    explicit DummyControl(Viewport* viewport, Node* node, QGraphicsItem* parent=0);
-    void drag(QVector3D center, QVector3D delta) override;
-    virtual void paintControl(QPainter *painter);
-    virtual QPainterPath shape() const;
-};
 
 #endif // CONTROL_H

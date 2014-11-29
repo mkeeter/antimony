@@ -17,7 +17,7 @@ class Viewport : public QGraphicsView
 {
     Q_OBJECT
 public:
-    explicit Viewport(QWidget* parent=0);
+    explicit Viewport(QGraphicsScene* scene, QWidget* parent=0);
 
     /** Returns our scale + rotation +translate transform matrix.
      */

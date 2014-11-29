@@ -21,6 +21,11 @@ QRectF AxesControl::boundingRect() const
             QVector3D(0, 0, 1)});
 }
 
+QRectF AxesControl::bounds(QMatrix4x4 m) const
+{
+#error "Not yet implemented"
+}
+
 void AxesControl::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(option);

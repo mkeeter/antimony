@@ -4,216 +4,39 @@
 #include <QRegularExpression>
 
 #include "control/control.h"
-#include "graph/node/node.h"
 
-#include "ui/canvas.h"
+#include "ui/viewport/viewport.h"
 #include "ui/colors.h"
-#include "ui/inspector/inspector.h"
-#include "ui/port.h"
 
+#include "graph/node/node.h"
 #include "graph/datum/datum.h"
 #include "graph/datum/datums/float_datum.h"
 #include "graph/datum/datums/script_datum.h"
 
-Control::Control(Canvas* canvas, Node* node, QGraphicsItem* parent)
-    : QGraphicsObject(parent), canvas(canvas), node(node), inspector(NULL),
-      _hover(false), _dragged(false), init_called(false)
+Control::Control(Node* node, QObject* parent)
+    : QObject(parent), node(node)
 {
-    setFlags(QGraphicsItem::ItemIsSelectable |
-             QGraphicsItem::ItemIgnoresTransformations |
-             QGraphicsItem::ItemIsFocusable);
-    setAcceptHoverEvents(true);
-
+#if 0
     if (parent == NULL)
     {
         canvas->scene->addItem(this);
     }
-    setZValue(1);
-    connect(canvas, SIGNAL(viewChanged()),
-            this, SIGNAL(portPositionChanged()));
-
-    connect(canvas, &Canvas::viewChanged,
-            this, &Control::redraw);
-
-    // If there is a script datum available, hook into the
-    // datumsChanged signal to recreate ports.
-    ScriptDatum* script = node->getDatum<ScriptDatum>("script");
-    if (script)
-    {
-        connect(script, SIGNAL(datumsChanged()),
-                this, SLOT(onDatumsChanged()));
-    }
+#endif
 
     if (node)
-    {
         connect(node, SIGNAL(destroyed()), this, SLOT(deleteLater()));
-    }
-
-    // If this control has a node of its very own, make ports.
-    if (!parentObject() || dynamic_cast<Control*>(parentObject())->getNode() != node)
-    {
-        makePorts();
-    }
 }
 
-Control::~Control()
+QPainterPath Control::shape(QMatrix4x4 m) const
 {
-    clearPorts();
-}
-
-void Control::init()
-{
-    positionPorts();
-    emit(showPorts(true));
-}
-
-QRectF Control::boundingRect() const
-{
-    return node ? bounds() : QRectF();
-}
-
-QRectF Control::boundingBox(QVector<QVector3D> points, int padding) const
-{
-    float xmin =  INFINITY;
-    float xmax = -INFINITY;
-    float ymin =  INFINITY;
-    float ymax = -INFINITY;
-
-    for (auto p : points)
-    {
-        QPointF o = canvas->worldToScene(p);
-        if (o.x() < xmin)   xmin = o.x();
-        if (o.x() > xmax)   xmax = o.x();
-        if (o.y() < ymin)   ymin = o.y();
-        if (o.y() > ymax)   ymax = o.y();
-    }
-
-    return QRectF(xmin - padding, ymin - padding,
-                  xmax - xmin + 2*padding,
-                  ymax - ymin + 2*padding);
+    QPainterPath p;
+    p.addRect(bounds(m));
+    return p;
 }
 
 Node* Control::getNode() const
 {
     return node;
-}
-
-QPointF Control::baseOutputPosition() const
-{
-    return inspectorPosition();
-}
-
-QPointF Control::baseInputPosition() const
-{
-    return inspectorPosition();
-}
-
-QPointF Control::datumOutputPosition(Datum *d) const
-{
-    QPointF out = baseOutputPosition();
-    for (auto o : outputs)
-    {
-        if (d == o->getDatum())
-        {
-            float p = o->getOpacity();
-            out = out*(1-p) + p*o->mapToScene(o->boundingRect().center());
-        }
-    }
-
-    if (inspector)
-    {
-        OutputPort* p = inspector->datumOutputPort(d);
-        if (p)
-        {
-            return (inspector->getMaskSize() *
-                        p->mapToScene(p->boundingRect().center())) +
-                    (1 - inspector->getMaskSize()) * out;
-        }
-    }
-
-    return out;
-}
-
-QPointF Control::datumInputPosition(Datum *d) const
-{
-    QPointF in = baseInputPosition();
-    for (auto i : inputs)
-    {
-        if (d == i->getDatum())
-        {
-            float p = i->getOpacity();
-            in = in*(1-p) + p*i->mapToScene(i->boundingRect().center());
-        }
-    }
-    if (inspector)
-    {
-        InputPort* p = inspector->datumInputPort(d);
-        if (p)
-        {
-            return (inspector->getMaskSize() *
-                        p->mapToScene(p->boundingRect().center())) +
-                    (1 - inspector->getMaskSize()) * in;
-        }
-    }
-    return in;
-}
-
-void Control::clearPorts()
-{
-    for (auto p : inputs)
-        p->deleteLater();
-    for (auto p : outputs)
-        p->deleteLater();
-    inputs.clear();
-    outputs.clear();
-}
-
-void Control::makePorts()
-{
-    clearPorts();
-    for (Datum* d : node->findChildren<Datum*>(QString(),
-                Qt::FindDirectChildrenOnly))
-    {
-        if (d->hasInput() && !d->objectName().startsWith("_"))
-            inputs << new InputPort(d, canvas);
-        if (d->hasOutput() && !d->objectName().startsWith("_"))
-            outputs << new OutputPort(d, canvas);
-    }
-
-    for (auto i : inputs)
-    {
-        canvas->scene->addItem(i);
-        connect(this, SIGNAL(showPorts(bool)),
-                i, SLOT(setVisible(bool)));
-    }
-    for (auto o : outputs)
-    {
-        canvas->scene->addItem(o);
-        connect(this, SIGNAL(showPorts(bool)),
-                o, SLOT(setVisible(bool)));
-    }
-
-    positionPorts();
-}
-
-void Control::positionPorts()
-{
-    QPointF p = baseInputPosition();
-    const float step = 15;
-    float y = -inputs.length()/2.0f * step;
-    for (auto i : inputs)
-    {
-        i->setPos(QPointF(p.x() - 25, p.y() + y + 5));
-        y += step;
-    }
-
-    p = baseOutputPosition();
-    y = -outputs.length()/2.0f * step;
-    for (auto o : outputs)
-    {
-        o->setPos(QPointF(p.x() + 15, p.y() + y + 5));
-        y += step;
-    }
 }
 
 void Control::watchDatums(QVector<QString> datums)
@@ -222,126 +45,8 @@ void Control::watchDatums(QVector<QString> datums)
     {
         Datum* d = node->getDatum(n);
         Q_ASSERT(d);
-        connect(d, SIGNAL(changed()), this, SLOT(redraw()));
+        connect(d, &Datum::changed, this, &Control::redraw);
     }
-}
-
-void Control::redraw()
-{
-    prepareGeometryChange();
-    if (node)
-    {
-        positionPorts();
-        emit(inspectorPositionChanged());
-        emit(portPositionChanged());
-    }
-}
-
-void Control::onDatumsChanged()
-{
-    makePorts();
-    if (inspector)
-    {
-        for (auto i : inputs)
-            i->hide();
-        for (auto o : outputs)
-            o->hide();
-    }
-}
-
-void Control::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
-{
-    Q_UNUSED(event);
-    if (!_hover)
-    {
-        _hover = true;
-        update();
-    }
-}
-
-void Control::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
-{
-    Q_UNUSED(event);
-    if (_hover)
-    {
-        _hover = false;
-        update();
-    }
-}
-
-void Control::toggleInspector(bool show_hidden)
-{
-    if (parentObject() && dynamic_cast<Control*>(parentObject())->getNode() == node)
-    {
-        dynamic_cast<Control*>(parentObject())->toggleInspector();
-    }
-    else if (inspector.isNull())
-    {
-        emit(showPorts(false));
-        inspector = new NodeInspector(this, show_hidden);
-        connect(inspector, SIGNAL(portPositionChanged()),
-                this, SIGNAL(portPositionChanged()));
-        connect(inspector, SIGNAL(destroyed()),
-                this, SIGNAL(portPositionChanged()));
-    }
-    else
-    {
-        emit(showPorts(true));
-        inspector->animateClose();
-    }
-}
-
-bool Control::showConnections() const
-{
-    return _hover || inspector || isSelected();
-}
-
-void Control::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
-{
-    if (event->button() != Qt::LeftButton)
-    {
-        event->ignore();
-        return;
-    }
-
-    toggleInspector(event->modifiers() & Qt::ShiftModifier);
-}
-
-void Control::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-    if (event->button() == Qt::LeftButton)
-    {
-        _dragged = false;
-        _click_pos = event->pos();
-    }
-    else
-    {
-        event->ignore();
-    }
-}
-
-void Control::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
-{
-    if (event->button() == Qt::LeftButton && !_dragged)
-    {
-        setSelected(true);
-    }
-    else
-    {
-        event->ignore();
-    }
-    ungrabMouse();
-}
-
-void Control::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
-{
-    QVector3D p0 = canvas->sceneToWorld(_click_pos);
-    QVector3D p1 = canvas->sceneToWorld(event->pos());
-
-    drag(p1, p1 - p0);
-    canvas->update();
-    _click_pos = event->pos();
-    _dragged = true;
 }
 
 double Control::getValue(QString name) const
@@ -357,14 +62,10 @@ double Control::getValue(QString name) const
 
 void Control::deleteNode()
 {
-    if (parentObject())
-    {
-        dynamic_cast<Control*>(parentObject())->deleteNode();
-    }
+    if (parent())
+        dynamic_cast<Control*>(parent())->deleteNode();
     else
-    {
         node->deleteLater();
-    }
 }
 
 void Control::dragValue(QString name, double delta)
@@ -410,9 +111,7 @@ void Control::setValue(QString name, double new_value)
     bool ok = false;
     f->getExpr().toFloat(&ok);
     if (ok)
-    {
         f->setExpr(QString::number(new_value));
-    }
 }
 
 QColor Control::defaultPenColor() const
@@ -425,63 +124,25 @@ QColor Control::defaultBrushColor() const
     return Colors::dim(defaultPenColor());
 }
 
-void Control::setDefaultPen(QPainter *painter) const
+void Control::setDefaultPen(bool highlight, QPainter *painter) const
 {
-    if (isSelected() or _hover)
-    {
+    if (highlight)
         painter->setPen(QPen(Colors::highlight(defaultPenColor()), 2));
-    }
     else
-    {
         painter->setPen(QPen(defaultPenColor(), 2));
-    }
 }
 
-void Control::setDefaultBrush(QPainter *painter) const
+void Control::setDefaultBrush(bool highlight, QPainter *painter) const
 {
-    if (isSelected() or _hover)
-    {
+    if (highlight)
         painter->setBrush(QBrush(Colors::highlight(defaultBrushColor())));
-    }
     else
-    {
         painter->setBrush(QBrush(defaultBrushColor()));
-    }
-}
-
-void Control::paint(QPainter *painter,
-                    const QStyleOptionGraphicsItem *option,
-                    QWidget *widget)
-{
-    Q_UNUSED(option);
-    Q_UNUSED(widget);
-
-    if (!init_called)
-    {
-        init();
-        init_called = true;
-    }
-
-    if (node)
-    {
-        paintControl(painter);
-    }
-}
-
-void Control::keyPressEvent(QKeyEvent* event)
-{
-    if (event->key() == Qt::Key_Delete ||
-        event->key() == Qt::Key_Backspace)
-    {
-        deleteNode();
-    }
-    else
-    {
-        event->ignore();
-    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+#if 0
 
 #include "control/2d/circle_control.h"
 #include "control/2d/triangle_control.h"
@@ -605,30 +266,4 @@ Control* Control::makeControlFor(Canvas* canvas, Node* node)
    return NULL;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-DummyControl::DummyControl(Canvas *canvas, Node *node, QGraphicsItem *parent)
-    : Control(canvas, node, parent)
-{
-    setFlag(QGraphicsItem::ItemIsSelectable, false);
-    setAcceptHoverEvents(false);
-}
-
-void DummyControl::drag(QVector3D center, QVector3D delta)
-{
-    Q_UNUSED(center);
-    Q_UNUSED(delta);
-
-    // A DummyControl should never be dragged.
-    Q_ASSERT(false);
-}
-
-QPainterPath DummyControl::shape() const
-{
-    return QPainterPath();
-}
-
-void DummyControl::paintControl(QPainter *painter)
-{
-    Q_UNUSED(painter);
-}
+#endif

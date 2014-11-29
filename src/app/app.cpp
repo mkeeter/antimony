@@ -355,7 +355,7 @@ void App::setGlobalStyle()
 void App::newCanvasWindow()
 {
     auto m = new MainWindow();
-    m->setCentralWidget(new Canvas(scene));
+    m->setCentralWidget(scene->newCanvas());
     m->show();
 }
 

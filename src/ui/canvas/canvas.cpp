@@ -65,57 +65,6 @@ void Canvas::wheelEvent(QWheelEvent* event)
     setSceneRect(sceneRect().translated(d.x(), d.y()));
 }
 
-#if 0
-InputPort* Canvas::getInputPortAt(QPointF pos) const
-{
-    for (auto i : scene->items(pos))
-    {
-        InputPort* p = dynamic_cast<InputPort*>(i);
-        if (p)
-        {
-            return p;
-        }
-    }
-    return NULL;
-}
-
-InputPort* Canvas::getInputPortNear(QPointF pos, Link* link) const
-{
-    float distance = INFINITY;
-    InputPort* port = NULL;
-
-    for (auto i : scene->items())
-    {
-        InputPort* p = dynamic_cast<InputPort*>(i);
-        if (p && (link == NULL || p->getDatum()->acceptsLink(link)))
-        {
-            QPointF delta = p->mapToScene(p->boundingRect().center()) - pos;
-            float d = QPointF::dotProduct(delta, delta);
-            if (d < distance)
-            {
-                distance = d;
-                port = p;
-            }
-        }
-    }
-
-    return port;
-}
-
-NodeInspector* Canvas::getInspectorAt(QPointF pos) const
-{
-    for (auto i : scene->items(pos))
-    {
-        NodeInspector* p = dynamic_cast<NodeInspector*>(i);
-        if (p)
-        {
-            return p;
-        }
-    }
-    return NULL;
-}
-#endif
-
 void Canvas::keyPressEvent(QKeyEvent *event)
 {
     QGraphicsView::keyPressEvent(event);

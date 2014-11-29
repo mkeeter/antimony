@@ -18,21 +18,6 @@ public:
 
     void setScene(QGraphicsScene* s);
 
-#if 0
-    /** Finds an input port at the given position (or NULL)
-     */
-    InputPort* getInputPortAt(QPointF pos) const;
-
-    /** Returns the nearest input port.
-     *  If link is given, only return input ports that accept it.
-     */
-    InputPort* getInputPortNear(QPointF pos, Link* link=NULL) const;
-
-    /** Finds an inspector at the given position (or NULL)
-     */
-    NodeInspector* getInspectorAt(QPointF pos) const;
-#endif
-
     QGraphicsScene* scene;
 
 protected:
