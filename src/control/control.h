@@ -15,20 +15,16 @@ class Control : public QObject
 {
     Q_OBJECT
 public:
-    /** A control is a UI representation of a Node.
+    /*
+     *  A control is a UI representation of a Node.
      *
      *  node is the target Node (or NULL in special cases)
      *  parent is a parent Control (as nested controls are allowed)
      */
     explicit Control(Node* node, QObject* parent=0);
 
-#if 0
-    /** Makes a control for the given node.
-     */
-    static Control* makeControlFor(Viewport* viewport, Node* n);
-#endif
-
-    /** This function is overloaded by children to return bounds.
+    /*
+     *  This function is overloaded by children to return bounds.
      */
     virtual QRectF bounds(QMatrix4x4 m) const=0;
 

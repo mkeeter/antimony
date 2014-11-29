@@ -30,11 +30,12 @@ public:
     Viewport* newViewport();
 
     /*
-     *  Creates one or more Controls and DepthImageItems for this node.
+     *  Creates Controls and DepthImageItems for this node.
      */
     Control* makeUIfor(Node* n);
 
 protected:
+
     /*
      *  Creates a ControlProxy that represents the given Control
      *  in the given QGraphicsScene.
@@ -52,8 +53,14 @@ protected:
      */
     void prune();
 
+    /*
+     *  Makes a new control for the given node
+     *  (hardcoded against the node's type code)
+     */
+    Control* makeControlFor(Node* n) const;
+
     QMap<QPointer<Viewport>, QGraphicsScene*> scenes;
-    QMap<QPointer<Node>, Control*> nodes;
+    QMap<QPointer<Node>, Control*> controls;
 };
 
 #endif // VIEWPORT_SCENE_H
