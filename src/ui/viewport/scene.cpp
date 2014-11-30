@@ -46,6 +46,8 @@ void ViewportScene::makeProxyFor(Control* c, Viewport* v)
 {
     auto p = new ControlProxy(c, v);
     scenes[v]->addItem(p);
+    connect(v, &Viewport::viewChanged,
+            p, &ControlProxy::redraw);
 }
 
 void ViewportScene::makeRenderWorkersFor(Node* n, Viewport* v)
