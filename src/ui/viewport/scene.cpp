@@ -71,12 +71,16 @@ void ViewportScene::prune()
     scenes = new_scenes;
 }
 
-Control* ViewportScene::makeControlFor(Node* n) const
-{
-    return NULL;
-}
 
 ////////////////////////////////////////////////////////////////////////////////
+
+#include "control/2d/point2d_control.h"
+
+Control* ViewportScene::makeControlFor(Node* n) const
+{
+    Q_ASSERT(n->getNodeType() == NodeType::POINT2D);
+    return new Point2DControl(n);
+}
 
 #if 0
 

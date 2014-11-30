@@ -11,16 +11,14 @@
 class Point2DControl : public WireframeControl
 {
 public:
-    explicit Point2DControl(Canvas* canvas, Node* node,
-                            QGraphicsItem* parent=0);
+    explicit Point2DControl(Node* node, QObject* parent=0);
 
     QVector<QPair<QVector3D, float>> points() const override;
 
-    /** Drags the point in x, y, and z.
+    /*
+     *  Drags the point in x and y.
      */
     void drag(QVector3D center, QVector3D delta) override;
-
-    QPointF inspectorPosition() const override;
 
 protected:
     QVector3D position() const;
