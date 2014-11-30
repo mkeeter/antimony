@@ -375,6 +375,7 @@ void App::newViewportWindow()
 void App::newNode(Node* n)
 {
     graph_scene->makeUIfor(n);
+    view_scene->makeUIfor(n);
 }
 
 Connection* App::newLink(Link* link)

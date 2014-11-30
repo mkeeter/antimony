@@ -6,28 +6,27 @@
 class WireframeControl : public Control
 {
 public:
-    explicit WireframeControl(Canvas* canvas, Node* node,
-                              QGraphicsItem* parent=0);
+    explicit WireframeControl(Node* node, QObject* parent=0);
 
     /** The selection region for this shape is given by its line and points.
      */
-    QPainterPath shape() const override;
+    QPainterPath shape(QMatrix4x4 m) const override;
 
     /** The bounds are simply the bounds of the combined painter paths.
      */
-    QRectF bounds() const override;
+    QRectF bounds(QMatrix4x4 m) const override;
 
 protected:
 
-    void paintControl(QPainter* painter) override;
+    void paint(QMatrix4x4 m, bool highlight, QPainter* painter) override;
 
     /** Returns a QPainterPath that draws this shape's lines.
      */
-    QPainterPath linePath() const;
+    QPainterPath linePath(QMatrix4x4 m) const;
 
     /** Returns a QPainterPath that draws this shape's circles.
      */
-    QPainterPath pointPath() const;
+    QPainterPath pointPath(QMatrix4x4 m) const;
 
     /** Returns a list of lines to draw.
      *  (must be overloaded in derived classes).

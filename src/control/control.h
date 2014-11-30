@@ -23,17 +23,6 @@ public:
      */
     explicit Control(Node* node, QObject* parent=0);
 
-    /*
-     *  This function is overloaded by children to return bounds.
-     */
-    virtual QRectF bounds(QMatrix4x4 m) const=0;
-
-    /*
-     *  Equivalent to QGraphicsObject::shape
-     *  By default, returns the bounding rect
-     */
-    virtual QPainterPath shape(QMatrix4x4 m) const;
-
     /** Returns this control's relevant node.
      */
     Node* getNode() const;
@@ -45,6 +34,17 @@ public:
     /** Calls deleteLater on the top-level node.
      */
     void deleteNode();
+
+    /*
+     *  This function is overloaded by children to return bounds.
+     */
+    virtual QRectF bounds(QMatrix4x4 m) const=0;
+
+    /*
+     *  Equivalent to QGraphicsObject::shape
+     *  By default, returns the bounding rect
+     */
+    virtual QPainterPath shape(QMatrix4x4 m) const;
 
     /** This function should be defined by child nodes
      */

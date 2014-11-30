@@ -1,58 +1,51 @@
-#include <Python.h>
-
 #include "control/wireframe.h"
-#include "ui/canvas.h"
 
-WireframeControl::WireframeControl(Canvas* canvas, Node* node,
-                                   QGraphicsItem* parent)
-    : Control(canvas, node, parent)
+WireframeControl::WireframeControl(Node* node, QObject* parent)
+    : Control(node, parent)
 {
     // Nothing to do here
 }
 
-QPainterPath WireframeControl::shape() const
+QPainterPath WireframeControl::shape(QMatrix4x4 m) const
 {
     QPainterPathStroker stroker;
     stroker.setWidth(4);
-    QPainterPath path = stroker.createStroke(linePath());
-    path.addPath(pointPath());
+    QPainterPath path = stroker.createStroke(linePath(m));
+    path.addPath(pointPath(m));
     return path;
 }
 
-QRectF WireframeControl::bounds() const
+QRectF WireframeControl::bounds(QMatrix4x4 m) const
 {
-    return shape().boundingRect();
+    return shape(m).boundingRect();
 }
 
-void WireframeControl::paintControl(QPainter* painter)
+void WireframeControl::paint(QMatrix4x4 m, bool highlight, QPainter* painter)
 {
-    setDefaultPen(painter);
-    painter->drawPath(linePath());
-    setDefaultBrush(painter);
-    painter->drawPath(pointPath());
+    setDefaultPen(highlight, painter);
+    painter->drawPath(linePath(m));
+    setDefaultBrush(highlight, painter);
+    painter->drawPath(pointPath(m));
 }
 
-QPainterPath WireframeControl::linePath() const
+QPainterPath WireframeControl::linePath(QMatrix4x4 m) const
 {
     QPainterPath path;
     for (auto line : lines())
     {
-        auto pts = canvas->worldToScene(line);
-        path.moveTo(pts.front());
-        for (auto pt : pts)
-        {
-            path.lineTo(pt);
-        }
+        path.moveTo((m*line.front()).toPointF());
+        for (auto pt : line)
+            path.lineTo((m*pt).toPointF());
     }
     return path;
 }
 
-QPainterPath WireframeControl::pointPath() const
+QPainterPath WireframeControl::pointPath(QMatrix4x4 m) const
 {
     QPainterPath path;
     for (auto ptr : points())
     {
-        QPointF pt = canvas->worldToScene(ptr.first);
+        QPointF pt = (m*ptr.first).toPointF();
         float r = ptr.second;
         path.addEllipse(QRectF(pt.x() - r, pt.y() - r, 2*r, 2*r));
     }

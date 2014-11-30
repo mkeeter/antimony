@@ -1,7 +1,7 @@
 SOURCES += \
     ../src/control/control.cpp \
     ../src/control/proxy.cpp \
-    #../src/control/wireframe.cpp \
+    ../src/control/wireframe.cpp \
     #../src/control/text.cpp \
     #../src/control/axes_control.cpp \
     #../src/control/3d/point3d_control.cpp \
