@@ -100,6 +100,11 @@ protected:
      */
     void drawBackground(QPainter* painter, const QRectF& rect) override;
 
+    /*
+     *  Draws the x, y, z axes.
+     */
+    void drawForeground(QPainter* painter, const QRectF& rect) override;
+
     /** Pans the scene rectangle.
      */
     void pan(QVector3D d);

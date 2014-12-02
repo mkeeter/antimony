@@ -1,5 +1,7 @@
 #include <Python.h>
 
+#include <algorithm>
+
 #include <QMouseEvent>
 #include <QDebug>
 #include <QGridLayout>
@@ -14,6 +16,7 @@
 #include "ui/viewport/view_selector.h"
 
 #include "ui/main_window.h"
+#include "ui/colors.h"
 
 #include "graph/datum/datum.h"
 #include "graph/node/node.h"
@@ -231,6 +234,7 @@ void Viewport::mouseMoveEvent(QMouseEvent *event)
 
             _click_pos = event->pos();
             update();
+            scene->invalidate(QRect(),QGraphicsScene::ForegroundLayer);
             emit(viewChanged());
         }
     }
@@ -240,6 +244,7 @@ void Viewport::setYaw(float y)
 {
     yaw = y;
     update();
+    scene->invalidate(QRect(),QGraphicsScene::ForegroundLayer);
     emit(viewChanged());
 }
 
@@ -247,6 +252,7 @@ void Viewport::setPitch(float p)
 {
     pitch = p;
     update();
+    scene->invalidate(QRect(),QGraphicsScene::ForegroundLayer);
     emit(viewChanged());
 }
 
@@ -318,13 +324,43 @@ void Viewport::pan(QVector3D d)
 {
     center += d;
     update();
+    scene->invalidate(QRect(),QGraphicsScene::ForegroundLayer);
     emit(viewChanged());
 }
 
 void Viewport::drawBackground(QPainter* painter, const QRectF& rect)
 {
+    qDebug() << "drawn";
     Q_UNUSED(painter);
     Q_UNUSED(rect);
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void Viewport::drawForeground(QPainter* painter, const QRectF& rect)
+{
+    qDebug() << "f";
+    Q_UNUSED(rect);
+
+    auto m = getMatrix();
+    QVector3D o = m * QVector3D(0, 0, 0);
+    QVector3D x = m * QVector3D(1, 0, 0);
+    QVector3D y = m * QVector3D(0, 1, 0);
+    QVector3D z = m * QVector3D(0, 0, 1);
+
+    QList<QPair<QVector3D, QColor>> pts = {
+        {x, Colors::red},
+        {y, Colors::green},
+        {z, Colors::blue}};
+
+    // Sort the axes to fake proper z clipping
+    std::sort(pts.begin(), pts.end(),
+            [](QPair<QVector3D, QColor> a, QPair<QVector3D, QColor> b)
+            { return a.first.z() < b.first.z(); });
+
+    for (auto p : pts)
+    {
+        painter->setPen(QPen(p.second, 2));
+        painter->drawLine(o.toPointF(), p.first.toPointF());
+    }
 }
