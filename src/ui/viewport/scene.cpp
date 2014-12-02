@@ -48,6 +48,9 @@ void ViewportScene::makeProxyFor(Control* c, Viewport* v)
     scenes[v]->addItem(p);
     connect(v, &Viewport::viewChanged,
             p, &ControlProxy::redraw);
+
+    for (auto f : c->findChildren<Control*>("", Qt::FindDirectChildrenOnly))
+        makeProxyFor(f, v);
 }
 
 void ViewportScene::makeRenderWorkersFor(Node* n, Viewport* v)
