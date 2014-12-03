@@ -1,10 +1,8 @@
 #include <Python.h>
 #include "control/transform/reflectz_control.h"
 
-#include "ui/canvas.h"
-
-ReflectZControl::ReflectZControl(Canvas* canvas, Node* node)
-    : WireframeControl(canvas, node)
+ReflectZControl::ReflectZControl(Node* node, QObject* parent)
+    : WireframeControl(node, parent)
 {
     watchDatums({"_x","_y","z"});
 }
@@ -20,11 +18,6 @@ void ReflectZControl::drag(QVector3D c, QVector3D d)
 QVector3D ReflectZControl::position() const
 {
     return QVector3D(getValue("_x"), getValue("_y"), getValue("z"));
-}
-
-QPointF ReflectZControl::inspectorPosition() const
-{
-    return canvas->worldToScene(position());
 }
 
 QVector<QVector<QVector3D>> ReflectZControl::lines() const

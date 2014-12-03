@@ -330,7 +330,6 @@ void Viewport::pan(QVector3D d)
 
 void Viewport::drawBackground(QPainter* painter, const QRectF& rect)
 {
-    qDebug() << "drawn";
     Q_UNUSED(painter);
     Q_UNUSED(rect);
     glClearColor(0.0, 0.0, 0.0, 0.0);
@@ -339,7 +338,6 @@ void Viewport::drawBackground(QPainter* painter, const QRectF& rect)
 
 void Viewport::drawForeground(QPainter* painter, const QRectF& rect)
 {
-    qDebug() << "f";
     Q_UNUSED(rect);
 
     auto m = getMatrix();

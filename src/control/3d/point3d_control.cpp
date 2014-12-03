@@ -3,12 +3,10 @@
 #include <QPainter>
 
 #include "graph/node/node.h"
-#include "ui/canvas.h"
 #include "control/3d/point3d_control.h"
 
-Point3DControl::Point3DControl(Canvas* canvas, Node* node,
-                               QGraphicsItem* parent)
-    : WireframeControl(canvas, node, parent)
+Point3DControl::Point3DControl(Node* node, QObject* parent)
+    : WireframeControl(node, parent)
 {
     watchDatums({"x","y","z"});
 }
@@ -32,7 +30,3 @@ void Point3DControl::drag(QVector3D center, QVector3D delta)
     dragValue("z", delta.z());
 }
 
-QPointF Point3DControl::inspectorPosition() const
-{
-    return canvas->worldToScene(position());
-}

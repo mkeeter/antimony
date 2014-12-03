@@ -7,10 +7,9 @@
 class ReflectYControl : public WireframeControl
 {
 public:
-    explicit ReflectYControl(Canvas* canvas, Node* node);
+    explicit ReflectYControl(Node* node, QObject* parent=NULL);
 
     void drag(QVector3D center, QVector3D delta) override;
-    QPointF inspectorPosition() const override;
     QVector<QVector<QVector3D>> lines() const override;
 
 protected:

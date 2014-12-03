@@ -4,12 +4,11 @@
 #include "control/3d/point3d_control.h"
 
 #include "graph/node/node.h"
-#include "ui/canvas.h"
 
-CubeControl::CubeControl(Canvas* canvas, Node* node)
-    : WireframeControl(canvas, node),
-      a(new Point3DControl(canvas, node->findChild<Node*>("a"), this)),
-      b(new Point3DControl(canvas, node->findChild<Node*>("b"), this))
+CubeControl::CubeControl(Node* node, QObject* parent)
+    : WireframeControl(node, parent),
+      a(new Point3DControl(node->findChild<Node*>("a"), this)),
+      b(new Point3DControl(node->findChild<Node*>("b"), this))
 {
     watchDatums({"a.x","a.y","a.z","b.x","b.y","b.z"});
 }
@@ -40,10 +39,3 @@ void CubeControl::drag(QVector3D center, QVector3D delta)
     b->drag(center, delta);
 }
 
-QPointF CubeControl::inspectorPosition() const
-{
-    return canvas->worldToScene(QVector3D(
-            b->getValue("x"),
-            a->getValue("y"),
-            a->getValue("z")));
-}

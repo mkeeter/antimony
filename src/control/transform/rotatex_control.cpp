@@ -1,37 +1,34 @@
 #include <Python.h>
 #include "control/transform/rotatex_control.h"
 
-#include "ui/canvas.h"
-
-RotateXHandle::RotateXHandle(Canvas* canvas, Node* node,
-                             QGraphicsItem* parent)
-    : WireframeControl(canvas, node, parent)
+_RotateXHandle::_RotateXHandle(Node* node, QObject* parent)
+    : WireframeControl(node, parent)
 {
     watchDatums({"_x","y","z","a"});
 }
 
-void RotateXHandle::drag(QVector3D center, QVector3D delta)
+void _RotateXHandle::drag(QVector3D center, QVector3D delta)
 {
     Q_UNUSED(delta);
     QVector3D d = center - position();
     setValue("a", atan2(d.z(), d.y()) * 180 / M_PI);
 }
 
-QVector<QPair<QVector3D, float>> RotateXHandle::points() const
+QVector<QPair<QVector3D, float>> _RotateXHandle::points() const
 {
     float angle = getValue("a") * M_PI / 180;
     return {{position() + QVector3D(0, cos(angle), sin(angle)), 5}};
 }
 
-QVector3D RotateXHandle::position() const
+QVector3D _RotateXHandle::position() const
 {
     return QVector3D(getValue("_x"), getValue("y"), getValue("z"));
 }
 ////////////////////////////////////////////////////////////////////////////////
 
-RotateXControl::RotateXControl(Canvas* canvas, Node* node)
-    : WireframeControl(canvas, node),
-      handle(new RotateXHandle(canvas, node, this))
+RotateXControl::RotateXControl(Node* node, QObject* parent)
+    : WireframeControl(node, parent),
+      handle(new _RotateXHandle(node, this))
 {
     watchDatums({"_x","y","z","a"});
 }
@@ -47,11 +44,6 @@ void RotateXControl::drag(QVector3D c, QVector3D d)
 QVector3D RotateXControl::position() const
 {
     return QVector3D(getValue("_x"), getValue("y"), getValue("z"));
-}
-
-QPointF RotateXControl::inspectorPosition() const
-{
-    return canvas->worldToScene(position());
 }
 
 QVector<QVector<QVector3D>> RotateXControl::lines() const

@@ -1,37 +1,34 @@
 #include <Python.h>
 #include "control/transform/rotatey_control.h"
 
-#include "ui/canvas.h"
-
-RotateYHandle::RotateYHandle(Canvas* canvas, Node* node,
-                             QGraphicsItem* parent)
-    : WireframeControl(canvas, node, parent)
+_RotateYHandle::_RotateYHandle(Node* node, QObject* parent)
+    : WireframeControl(node, parent)
 {
     watchDatums({"x","_y","z","a"});
 }
 
-void RotateYHandle::drag(QVector3D center, QVector3D delta)
+void _RotateYHandle::drag(QVector3D center, QVector3D delta)
 {
     Q_UNUSED(delta);
     QVector3D d = center - position();
     setValue("a", atan2(d.z(), d.x()) * 180 / M_PI);
 }
 
-QVector<QPair<QVector3D, float>> RotateYHandle::points() const
+QVector<QPair<QVector3D, float>> _RotateYHandle::points() const
 {
     float angle = getValue("a") * M_PI / 180;
     return {{position() + QVector3D(cos(angle), 0, sin(angle)), 5}};
 }
 
-QVector3D RotateYHandle::position() const
+QVector3D _RotateYHandle::position() const
 {
     return QVector3D(getValue("x"), getValue("_y"), getValue("z"));
 }
 ////////////////////////////////////////////////////////////////////////////////
 
-RotateYControl::RotateYControl(Canvas* canvas, Node* node)
-    : WireframeControl(canvas, node),
-      handle(new RotateYHandle(canvas, node, this))
+RotateYControl::RotateYControl(Node* node, QObject* parent)
+    : WireframeControl(node, parent),
+      handle(new _RotateYHandle(node, this))
 {
     watchDatums({"x","_y","z","a"});
 }
@@ -47,11 +44,6 @@ void RotateYControl::drag(QVector3D c, QVector3D d)
 QVector3D RotateYControl::position() const
 {
     return QVector3D(getValue("x"), getValue("_y"), getValue("z"));
-}
-
-QPointF RotateYControl::inspectorPosition() const
-{
-    return canvas->worldToScene(position());
 }
 
 QVector<QVector<QVector3D>> RotateYControl::lines() const

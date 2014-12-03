@@ -90,7 +90,7 @@ void MainWindow::createNew()
     }
 #endif
 
-    Node* n = f(0, 0, 0, 10, NULL);
+    Node* n = f(0, 0, 0, 1, NULL);
     App::instance()->newNode(n);
 
     //Node* n = f(obj_pos.x(), obj_pos.y(), obj_pos.z(),

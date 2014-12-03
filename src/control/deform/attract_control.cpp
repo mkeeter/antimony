@@ -1,11 +1,9 @@
 #include <Python.h>
 #include "control/deform/attract_control.h"
 
-#include "ui/canvas.h"
-
-AttractControl::AttractControl(Canvas* canvas, Node* node)
-    : WireframeControl(canvas, node),
-      radius(new AttractRadiusControl(canvas, node, this))
+AttractControl::AttractControl(Node* node, QObject* parent)
+    : WireframeControl(node, parent),
+      radius(new _AttractRadiusControl(node, this))
 {
     watchDatums({"x","y","z","r"});
 }
@@ -16,24 +14,6 @@ void AttractControl::drag(QVector3D c, QVector3D d)
     dragValue("y", d.y());
     dragValue("z", d.z());
     Q_UNUSED(c);
-}
-
-QPointF AttractControl::inspectorPosition() const
-{
-    return canvas->worldToScene(
-            QVector3D(getValue("x"), getValue("y"), getValue("z")));
-}
-
-QPointF AttractControl::baseInputPosition() const
-{
-    return (radius->bounds().bottomLeft() +
-            radius->bounds().topLeft()) / 2;
-}
-
-QPointF AttractControl::baseOutputPosition() const
-{
-    return (radius->bounds().bottomRight() +
-            radius->bounds().topRight()) / 2;
 }
 
 QVector<QVector<QVector3D>> AttractControl::lines() const

@@ -1,8 +1,7 @@
 #include "control/2d/text_control.h"
-#include "ui/canvas.h"
 
-_CaretTopControl::_CaretTopControl(Canvas* canvas, Node* node, QGraphicsItem* parent)
-    : WireframeControl(canvas, node, parent)
+_CaretTopControl::_CaretTopControl(Node* node, QObject* parent)
+    : WireframeControl(node, parent)
 {
     watchDatums({"x", "y", "scale"});
 }
@@ -28,9 +27,9 @@ void _CaretTopControl::drag(QVector3D c, QVector3D d)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TextControl::TextControl(Canvas* canvas, Node* node)
-    : WireframeControl(canvas, node),
-      caret_top(new _CaretTopControl(canvas, node, this))
+TextControl::TextControl(Node* node, QObject* parent)
+    : WireframeControl(node, parent),
+      caret_top(new _CaretTopControl(node, this))
 {
     watchDatums({"x", "y", "scale"});
 }
@@ -57,25 +56,3 @@ QVector<QVector<QVector3D>> TextControl::lines() const
             QVector3D(x, y + s*0.9, 0)}};
 }
 
-QPointF TextControl::inspectorPosition() const
-{
-    return canvas->worldToScene(QVector3D(
-                getValue("x") + getValue("scale")/4,
-                getValue("y"), 0));
-}
-
-QPointF TextControl::baseInputPosition() const
-{
-    return canvas->worldToScene(QVector3D(
-                getValue("x"),
-                getValue("y") + getValue("scale")/2, 0));
-
-}
-
-QPointF TextControl::baseOutputPosition() const
-{
-    return canvas->worldToScene(QVector3D(
-                getValue("x"),
-                getValue("y") + getValue("scale")/2, 0));
-
-}

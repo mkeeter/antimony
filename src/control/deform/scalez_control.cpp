@@ -1,16 +1,13 @@
 #include <Python.h>
 #include "control/deform/scalez_control.h"
 
-#include "ui/canvas.h"
-
-ScaleZHandle::ScaleZHandle(Canvas* canvas, Node* node, bool pos,
-                           QGraphicsItem* parent)
-    : WireframeControl(canvas, node, parent), positive(pos)
+_ScaleZHandle::_ScaleZHandle(Node* node, bool pos, QObject* parent)
+    : WireframeControl(node, parent), positive(pos)
 {
     watchDatums({"_x","_y","z","s"});
 }
 
-QVector<QVector<QVector3D>> ScaleZHandle::lines() const
+QVector<QVector<QVector3D>> _ScaleZHandle::lines() const
 {
     QVector3D p(getValue("_x"), getValue("_y"), getValue("z"));
     float s = getValue("s");
@@ -27,17 +24,17 @@ QVector<QVector<QVector3D>> ScaleZHandle::lines() const
     }
 }
 
-void ScaleZHandle::drag(QVector3D center, QVector3D delta)
+void _ScaleZHandle::drag(QVector3D center, QVector3D delta)
 {
     dragValue("s", positive ? delta.z() : -delta.z());
     Q_UNUSED(center);
 }
 ////////////////////////////////////////////////////////////////////////////////
 
-ScaleZControl::ScaleZControl(Canvas* canvas, Node* node)
-    : WireframeControl(canvas, node),
-      positive_handle(new ScaleZHandle(canvas, node, true, this)),
-      negative_handle(new ScaleZHandle(canvas, node, false, this))
+ScaleZControl::ScaleZControl(Node* node, QObject* parent)
+    : WireframeControl(node, parent),
+      positive_handle(new _ScaleZHandle(node, true, this)),
+      negative_handle(new _ScaleZHandle(node, false, this))
 {
     watchDatums({"_x","_y","z","s"});
 }
@@ -50,15 +47,11 @@ void ScaleZControl::drag(QVector3D c, QVector3D d)
     Q_UNUSED(c);
 }
 
-QPointF ScaleZControl::inspectorPosition() const
-{
-    return canvas->worldToScene(position());
-}
-
 QVector3D ScaleZControl::position() const
 {
     return QVector3D(getValue("_x"), getValue("_y"), getValue("z"));
 }
+
 QVector<QVector<QVector3D>> ScaleZControl::lines() const
 {
     QVector3D center = position();

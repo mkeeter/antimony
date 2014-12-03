@@ -4,11 +4,10 @@
 #include "control/wireframe.h"
 #include "ui/colors.h"
 
-class RotateZHandle : public WireframeControl
+class _RotateZHandle : public WireframeControl
 {
 public:
-    explicit RotateZHandle(Canvas* canvas, Node* node,
-                           QGraphicsItem* parent);
+    explicit _RotateZHandle(Node* node, QObject* parent);
     void drag(QVector3D center, QVector3D delta) override;
     QVector<QPair<QVector3D, float>> points() const override;
 protected:
@@ -22,10 +21,9 @@ protected:
 class RotateZControl : public WireframeControl
 {
 public:
-    explicit RotateZControl(Canvas* canvas, Node* node);
+    explicit RotateZControl(Node* node, QObject* parent=NULL);
 
     void drag(QVector3D center, QVector3D delta) override;
-    QPointF inspectorPosition() const override;
     QVector<QVector<QVector3D>> lines() const override;
     QVector<QPair<QVector3D, float>> points() const override;
 
@@ -34,7 +32,7 @@ protected:
     QColor defaultPenColor() const
         { return Colors::teal; }
 
-    RotateZHandle* handle;
+    _RotateZHandle* handle;
 };
 
 #endif

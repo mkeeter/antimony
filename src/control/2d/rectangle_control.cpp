@@ -4,12 +4,11 @@
 #include "control/2d/point2d_control.h"
 
 #include "graph/node/node.h"
-#include "ui/canvas.h"
 
-RectangleControl::RectangleControl(Canvas* canvas, Node* node)
-    : WireframeControl(canvas, node),
-      a(new Point2DControl(canvas, node->findChild<Node*>("a"), this)),
-      b(new Point2DControl(canvas, node->findChild<Node*>("b"), this))
+RectangleControl::RectangleControl(Node* node, QObject* parent)
+    : WireframeControl(node, parent),
+      a(new Point2DControl(node->findChild<Node*>("a"), this)),
+      b(new Point2DControl(node->findChild<Node*>("b"), this))
 {
     watchDatums({"a.x","a.y","b.x","b.y"});
 }
@@ -31,11 +30,5 @@ void RectangleControl::drag(QVector3D center, QVector3D delta)
 {
     a->drag(center, delta);
     b->drag(center, delta);
-}
-
-QPointF RectangleControl::inspectorPosition() const
-{
-    return canvas->worldToScene(QVector3D(
-            b->getValue("x"), a->getValue("y"), 0));
 }
 

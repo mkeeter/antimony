@@ -6,11 +6,11 @@
 
 #include "ui/colors.h"
 
-class AttractRadiusControl : public SphereRadiusControl
+class _AttractRadiusControl : public _SphereRadiusControl
 {
 public:
-    explicit AttractRadiusControl(Canvas* canvas, Node* node, QGraphicsItem* parent)
-        : SphereRadiusControl(canvas, node, parent) {}
+    explicit _AttractRadiusControl(Node* node, QObject* parent)
+        : _SphereRadiusControl(node, parent) {}
 protected:
     QColor defaultPenColor() const override { return Colors::blue; }
 };
@@ -20,18 +20,14 @@ protected:
 class AttractControl : public WireframeControl
 {
 public:
-    explicit AttractControl(Canvas* canvas, Node* node);
+    explicit AttractControl(Node* node, QObject* parent=NULL);
 
 protected:
-    QPointF baseInputPosition() const override;
-    QPointF baseOutputPosition() const override;
-
     void drag(QVector3D center, QVector3D delta) override;
-    QPointF inspectorPosition() const override;
     QVector<QVector<QVector3D>> lines() const override;
 
     QColor defaultPenColor() const override { return Colors::blue; }
-    AttractRadiusControl* radius;
+    _AttractRadiusControl* radius;
 };
 
 #endif

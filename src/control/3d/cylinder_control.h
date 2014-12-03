@@ -7,7 +7,7 @@
 class _CylinderRadiusControl : public WireframeControl
 {
 public:
-    explicit _CylinderRadiusControl(Canvas* canvas, Node* node, QGraphicsItem* parent);
+    explicit _CylinderRadiusControl(Node* node, QObject* parent);
     QVector<QVector<QVector3D>> lines() const override;
     void drag(QVector3D center, QVector3D delta) override;
 };
@@ -15,7 +15,7 @@ public:
 class _CylinderSpanControl : public WireframeControl
 {
 public:
-    explicit _CylinderSpanControl(Canvas* canvas, Node* node, QGraphicsItem* parent);
+    explicit _CylinderSpanControl(Node* node, QObject* parent);
     QVector<QVector<QVector3D>> lines() const override;
     void drag(QVector3D center, QVector3D delta) override;
 };
@@ -23,11 +23,10 @@ public:
 class CylinderControl : public WireframeControl
 {
 public:
-    explicit CylinderControl(Canvas* canvas, Node* node);
+    explicit CylinderControl(Node* node, QObject* parent=NULL);
     QVector<QVector<QVector3D>> lines() const override;
     void drag(QVector3D center, QVector3D delta) override;
 protected:
-    QPointF inspectorPosition() const override;
     _CylinderRadiusControl* radius;
     _CylinderSpanControl* span;
 };

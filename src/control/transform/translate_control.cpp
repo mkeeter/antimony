@@ -1,16 +1,13 @@
 #include <Python.h>
 #include "control/transform/translate_control.h"
 
-#include "ui/canvas.h"
-
-TranslateHandle::TranslateHandle(Canvas* canvas, Node* node,
-                                 QGraphicsItem* parent)
-    : WireframeControl(canvas, node, parent)
+_TranslateHandle::_TranslateHandle(Node* node, QObject* parent)
+    : WireframeControl(node, parent)
 {
     watchDatums({"_x", "_y", "_z", "dx", "dy", "dz"});
 }
 
-void TranslateHandle::drag(QVector3D c, QVector3D d)
+void _TranslateHandle::drag(QVector3D c, QVector3D d)
 {
     Q_UNUSED(c);
     dragValue("dx", d.x());
@@ -18,22 +15,22 @@ void TranslateHandle::drag(QVector3D c, QVector3D d)
     dragValue("dz", d.z());
 }
 
-QVector3D TranslateHandle::position() const
+QVector3D _TranslateHandle::position() const
 {
     return QVector3D(getValue("_x"), getValue("_y"), getValue("_z")) + 
            QVector3D(getValue("dx"), getValue("dy"), getValue("dz"));
 }
 
-QVector<QPair<QVector3D, float>> TranslateHandle::points() const
+QVector<QPair<QVector3D, float>> _TranslateHandle::points() const
 {
     return {{position(), 5}};
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TranslateControl::TranslateControl(Canvas* canvas, Node* node)
-    : WireframeControl(canvas, node),
-      handle(new TranslateHandle(canvas, node, this))
+TranslateControl::TranslateControl(Node* node, QObject* parent)
+    : WireframeControl(node, parent),
+      handle(new _TranslateHandle(node, this))
 {
     watchDatums({"_x", "_y", "_z", "dx", "dy", "dz"});
 }
@@ -49,11 +46,6 @@ void TranslateControl::drag(QVector3D c, QVector3D d)
 QVector3D TranslateControl::position() const
 {
     return QVector3D(getValue("_x"), getValue("_y"), getValue("_z"));
-}
-
-QPointF TranslateControl::inspectorPosition() const
-{
-    return canvas->worldToScene(position());
 }
 
 QVector<QVector<QVector3D>> TranslateControl::lines() const

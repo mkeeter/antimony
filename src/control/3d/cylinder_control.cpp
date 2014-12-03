@@ -3,10 +3,9 @@
 #include <QVector3D>
 
 #include "control/3d/cylinder_control.h"
-#include "ui/canvas.h"
 
-_CylinderRadiusControl::_CylinderRadiusControl(Canvas* canvas, Node* node, QGraphicsItem* parent)
-    : WireframeControl(canvas, node, parent)
+_CylinderRadiusControl::_CylinderRadiusControl(Node* node, QObject* parent)
+    : WireframeControl(node, parent)
 {
     watchDatums({"x", "y", "z0", "z1", "r"});
 }
@@ -39,8 +38,8 @@ void _CylinderRadiusControl::drag(QVector3D c, QVector3D d)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_CylinderSpanControl::_CylinderSpanControl(Canvas* canvas, Node* node, QGraphicsItem* parent)
-    : WireframeControl(canvas, node, parent)
+_CylinderSpanControl::_CylinderSpanControl(Node* node, QObject* parent)
+    : WireframeControl(node, parent)
 {
     watchDatums({"x", "y", "z0", "z1", "r"});
 }
@@ -71,10 +70,10 @@ void _CylinderSpanControl::drag(QVector3D c, QVector3D d)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-CylinderControl::CylinderControl(Canvas* canvas, Node* node)
-    : WireframeControl(canvas, node),
-      radius(new _CylinderRadiusControl(canvas, node, this)),
-      span(new _CylinderSpanControl(canvas, node, this))
+CylinderControl::CylinderControl(Node* node, QObject* parent)
+    : WireframeControl(node, parent),
+      radius(new _CylinderRadiusControl(node, this)),
+      span(new _CylinderSpanControl(node, this))
 
 {
     watchDatums({"x", "y", "z0", "z1", "r"});
@@ -102,8 +101,3 @@ void CylinderControl::drag(QVector3D c, QVector3D d)
     dragValue("z1", d.z());
 }
 
-QPointF CylinderControl::inspectorPosition() const
-{
-    return canvas->worldToScene(QVector3D(
-                getValue("x"), getValue("y"), getValue("z0")));
-}

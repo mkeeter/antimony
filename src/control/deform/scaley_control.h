@@ -4,11 +4,10 @@
 #include "control/wireframe.h"
 #include "ui/colors.h"
 
-class ScaleYHandle : public WireframeControl
+class _ScaleYHandle : public WireframeControl
 {
 public:
-    explicit ScaleYHandle(Canvas* canvas, Node* node, bool pos,
-                          QGraphicsItem* parent);
+    explicit _ScaleYHandle(Node* node, bool pos, QObject* parent);
     void drag(QVector3D center, QVector3D delta) override;
 protected:
     QVector<QVector<QVector3D>> lines() const override;
@@ -20,10 +19,9 @@ protected:
 class ScaleYControl : public WireframeControl
 {
 public:
-    explicit ScaleYControl(Canvas* canvas, Node* node);
+    explicit ScaleYControl(Node* node, QObject* parent=NULL);
 
     void drag(QVector3D center, QVector3D delta) override;
-    QPointF inspectorPosition() const override;
 protected:
     QVector<QVector<QVector3D>> lines() const override;
     QVector<QPair<QVector3D, float>> points() const override;
@@ -31,8 +29,8 @@ protected:
         { return Colors::blue; }
     QVector3D position() const;
 
-    ScaleYHandle* positive_handle;
-    ScaleYHandle* negative_handle;
+    _ScaleYHandle* positive_handle;
+    _ScaleYHandle* negative_handle;
 };
 
 #endif

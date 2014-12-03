@@ -4,13 +4,12 @@
 #include "control/2d/point2d_control.h"
 
 #include "graph/node/node.h"
-#include "ui/canvas.h"
 
-TriangleControl::TriangleControl(Canvas* canvas, Node* node)
-    : WireframeControl(canvas, node),
-      a(new Point2DControl(canvas, node->findChild<Node*>("a"), this)),
-      b(new Point2DControl(canvas, node->findChild<Node*>("b"), this)),
-      c(new Point2DControl(canvas, node->findChild<Node*>("c"), this))
+TriangleControl::TriangleControl(Node* node, QObject* parent)
+    : WireframeControl(node, parent),
+      a(new Point2DControl(node->findChild<Node*>("a"), this)),
+      b(new Point2DControl(node->findChild<Node*>("b"), this)),
+      c(new Point2DControl(node->findChild<Node*>("c"), this))
 {
     watchDatums({"a.x","a.y","b.x","b.y","c.x","c.y"});
 }
@@ -36,10 +35,3 @@ void TriangleControl::drag(QVector3D center, QVector3D delta)
     c->drag(center, delta);
 }
 
-QPointF TriangleControl::inspectorPosition() const
-{
-    return canvas->worldToScene(QVector3D(
-            (a->getValue("x") + b->getValue("x")) / 2,
-            (a->getValue("y") + b->getValue("y")) / 2,
-            0));
-}
