@@ -62,27 +62,9 @@ public slots:
 
 protected:
     /*
-     *  Converts from scene space to world space
-     *  (in the corresponding viewport)
-     */
-    QVector3D sceneToWorld(QPointF p) const;
-
-    /*
-     *  Converts from world space (in the corresponding viewport)
-     *  to scene space.
-     */
-    QPointF worldToScene(QVector3D v) const;
-
-    /*
      *  Looks up the transform matrix for this proxy's viewport.
      */
     QMatrix4x4 getMatrix() const;
-
-    /*
-     *  Returns the bounding box (in scene space)
-     *  of a set of points (in world space).
-     */
-    QRectF boundingBox(QVector<QVector3D> points, int padding) const;
 
     QPointer<Control> control;
     Viewport* viewport;

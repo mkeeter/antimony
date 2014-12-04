@@ -75,8 +75,9 @@ void ControlProxy::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     QGraphicsObject::mouseMoveEvent(event);
 
-    QVector3D p0 = sceneToWorld(click_pos);
-    QVector3D p1 = sceneToWorld(event->pos());
+    QMatrix4x4 mi = getMatrix().inverted();
+    QVector3D p0 = mi * QVector3D(click_pos);
+    QVector3D p1 = mi * QVector3D(event->pos());
 
     control->drag(p1, p1 - p0);
     click_pos = event->pos();
@@ -89,39 +90,6 @@ void ControlProxy::keyPressEvent(QKeyEvent* event)
         control->deleteNode();
     else
         event->ignore();
-}
-
-QVector3D ControlProxy::sceneToWorld(QPointF p) const
-{
-    QMatrix4x4 m = getMatrix().inverted();
-    return m * QVector3D(p);
-}
-
-QPointF ControlProxy::worldToScene(QVector3D v) const
-{
-    return (getMatrix() * v).toPointF();
-}
-
-
-QRectF ControlProxy::boundingBox(QVector<QVector3D> points, int padding) const
-{
-    float xmin =  INFINITY;
-    float xmax = -INFINITY;
-    float ymin =  INFINITY;
-    float ymax = -INFINITY;
-
-    for (auto p : points)
-    {
-        QPointF o = worldToScene(p);
-        if (o.x() < xmin)   xmin = o.x();
-        if (o.x() > xmax)   xmax = o.x();
-        if (o.y() < ymin)   ymin = o.y();
-        if (o.y() > ymax)   ymax = o.y();
-    }
-
-    return QRectF(xmin - padding, ymin - padding,
-                  xmax - xmin + 2*padding,
-                  ymax - ymin + 2*padding);
 }
 
 QMatrix4x4 ControlProxy::getMatrix() const
