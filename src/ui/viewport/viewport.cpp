@@ -23,7 +23,6 @@
 #include "graph/datum/link.h"
 
 #include "control/control.h"
-#include "control/axes_control.h"
 
 Viewport::Viewport(QGraphicsScene* scene, QWidget* parent)
     : QGraphicsView(parent), scene(scene),
