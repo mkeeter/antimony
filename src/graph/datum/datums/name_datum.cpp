@@ -12,15 +12,15 @@ PyObject* NameDatum::kwlist_contains = NULL;
 NameDatum::NameDatum(QString name, QObject* parent)
     : EvalDatum(name, parent)
 {
-    connect(this, SIGNAL(nameChanged(QString)),
-            NodeManager::manager(), SLOT(onNameChange(QString)));
+    connect(this, &NameDatum::nameChanged,
+            NodeManager::manager(), &NodeManager::onNameChange);
+    connect(this, &NameDatum::changed, this, &NameDatum::onNameChange);
 }
 
 NameDatum::NameDatum(QString name, QString expr, QObject *parent)
     : NameDatum(name, parent)
 {
     setExpr(expr);
-    connect(this, SIGNAL(changed()), this, SLOT(onNameChange()));
 }
 
 void NameDatum::onNameChange()

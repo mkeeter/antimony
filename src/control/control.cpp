@@ -24,7 +24,7 @@ Control::Control(Node* node, QObject* parent)
 #endif
 
     if (node)
-        connect(node, SIGNAL(destroyed()), this, SLOT(deleteLater()));
+        connect(node, &Node::destroyed, this, &Control::deleteLater);
 }
 
 QPainterPath Control::shape(QMatrix4x4 m) const

@@ -27,7 +27,7 @@ Connection::Connection(Link* link)
     setAcceptHoverEvents(true);
 
     setZValue(2);
-    connect(link, SIGNAL(destroyed()), this, SLOT(deleteLater()));
+    connect(link, &Link::destroyed, this, &Connection::deleteLater);
 }
 
 void Connection::makeSceneConnections()

@@ -19,11 +19,12 @@ DatumTextItem::DatumTextItem(Datum* datum, QGraphicsItem* parent)
 {
     setTextInteractionFlags(Qt::TextEditorInteraction);
     setTextWidth(150);
-    connect(datum, SIGNAL(changed()), this, SLOT(onDatumChanged()));
+    connect(datum, &Datum::changed, this, &DatumTextItem::onDatumChanged);
     onDatumChanged();
 
     bbox = boundingRect();
-    connect(txt, SIGNAL(contentsChanged()), this, SLOT(onTextChanged()));
+    connect(txt, &QTextDocument::contentsChanged,
+            this, &DatumTextItem::onTextChanged);
 
     installEventFilter(this);
 }

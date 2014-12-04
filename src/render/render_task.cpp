@@ -81,7 +81,7 @@ void RenderTask::render3d(Shape s)
                 (transformed.bounds.ymin + transformed.bounds.ymax)/2,
                 (transformed.bounds.zmin + transformed.bounds.zmax)/2),
             scale);
-    connect(this, SIGNAL(halt()), image, SLOT(halt()));
+    connect(this, &RenderTask::halt, image, &RenderImage::halt);
     image->render(&transformed);
 }
 
@@ -112,7 +112,7 @@ void RenderTask::render2d(Shape s)
                           (b3d.ymin + b3d.ymax)/2,
                           (b3d.zmin + b3d.zmax)/2),
             scale);
-    connect(this, SIGNAL(halt()), image, SLOT(halt()));
+    connect(this, &RenderTask::halt, image, &RenderImage::halt);
     image->render(&transformed);
 
     if (matrix(1,2))

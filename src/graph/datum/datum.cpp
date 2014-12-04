@@ -50,8 +50,8 @@ void Datum::addLink(Link* input)
 {
     input_handler->addInput(input);
     input->setTarget(this);
-    connect(this, SIGNAL(destroyed()), input, SLOT(deleteLater()));
-    connect(input, SIGNAL(destroyed()), this, SLOT(update()));
+    connect(this, &Datum::destroyed, input, &Link::deleteLater);
+    connect(input, &Link::destroyed, this, &Datum::update);
 
     // For certain types of datums, making a connection changes behavior
     // in a way that requires a changed signal to be emitted.  This is

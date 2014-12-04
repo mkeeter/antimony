@@ -14,7 +14,7 @@ DatumTextButton::DatumTextButton(Datum *datum, QString label, QGraphicsItem *par
 {
     setHtml("<center>" + label + "</center>");
     setTextWidth(150);
-    connect(d, SIGNAL(changed()), this, SLOT(redraw()));
+    connect(d, &Datum::changed, this, &DatumTextButton::redraw);
 }
 
 void DatumTextButton::hoverEnterEvent(QGraphicsSceneHoverEvent *event)

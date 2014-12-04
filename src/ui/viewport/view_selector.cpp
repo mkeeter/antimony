@@ -68,18 +68,24 @@ ViewSelector::ViewSelector(Viewport* viewport)
 
     for (auto b : buttons)
     {
-        connect(b, SIGNAL(mouseEnter(QString)),
-                this, SLOT(setLabel(QString)));
-        connect(b, SIGNAL(mouseLeave()),
-                this, SLOT(clearLabel()));
+        connect(b, &ViewSelectorButton::mouseEnter,
+                this, &ViewSelector::setLabel);
+        connect(b, &ViewSelectorButton::mouseLeave,
+                this, &ViewSelector::clearLabel);
     }
 
-    connect(buttons[0], SIGNAL(pressed()), this, SLOT(onTopPressed()));
-    connect(buttons[1], SIGNAL(pressed()), this, SLOT(onFrontPressed()));
-    connect(buttons[2], SIGNAL(pressed()), this, SLOT(onLeftPressed()));
-    connect(buttons[3], SIGNAL(pressed()), this, SLOT(onRightPressed()));
-    connect(buttons[4], SIGNAL(pressed()), this, SLOT(onBackPressed()));
-    connect(buttons[5], SIGNAL(pressed()), this, SLOT(onBottomPressed()));
+    connect(buttons[0], &ViewSelectorButton::pressed,
+            this, &ViewSelector::onTopPressed);
+    connect(buttons[1], &ViewSelectorButton::pressed,
+            this, &ViewSelector::onFrontPressed);
+    connect(buttons[2], &ViewSelectorButton::pressed,
+            this, &ViewSelector::onLeftPressed);
+    connect(buttons[3], &ViewSelectorButton::pressed,
+            this, &ViewSelector::onRightPressed);
+    connect(buttons[4], &ViewSelectorButton::pressed,
+            this, &ViewSelector::onBackPressed);
+    connect(buttons[5], &ViewSelectorButton::pressed,
+            this, &ViewSelector::onBottomPressed);
 
     setDefaultTextColor(Colors::base04);
 

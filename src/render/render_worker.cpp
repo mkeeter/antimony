@@ -22,14 +22,14 @@ RenderWorker::RenderWorker(Datum* datum)
       next(NULL), depth_image(NULL), running(false),
       canvas(App::instance()->getCanvas())
 {
-    connect(datum, SIGNAL(changed()),
-            this, SLOT(onDatumChanged()));
-    connect(datum, SIGNAL(connectionChanged()),
-            this, SLOT(onDatumChanged()));
-    connect(datum, SIGNAL(destroyed()),
-            this, SLOT(onDatumDeleted()));
+    connect(datum, &Datum::changed,
+            this, &RenderWorker::onDatumChanged);
+    connect(datum, &Datum::changed,
+            this, &RenderWorker::onDatumChanged);
+    connect(datum, &Datum::destroyed,
+            this, &RenderWorker::onDatumChanged);
     connect(canvas, SIGNAL(viewChanged()),
-            this, SLOT(onDatumChanged()));
+            this, &RenderWorker::onDatumChanged);
 }
 
 RenderWorker::~RenderWorker()
@@ -162,22 +162,18 @@ void RenderWorker::startNextRender()
     running = true;
 
     // Halt rendering when the abort signal is emitted.
-    connect(this, SIGNAL(abort()),
-            current, SIGNAL(halt()));
+    connect(this, &RenderWorker::abort, current, &RenderTask::halt);
 
-    connect(thread, SIGNAL(started()),
-            current, SLOT(render()));
+    connect(thread, &QThread::started, current, &RenderTask::render);
 
-    connect(current, SIGNAL(finished()),
-            this, SLOT(onTaskFinished()));
+    connect(current, &RenderTask::finished,
+            this, &RenderWorker::onTaskFinished);
 
-    connect(current, SIGNAL(destroyed()),
-            thread, SLOT(quit()));
+    connect(current, &RenderWorker::destroyed, thread, &QThread::quit);
 
-    connect(thread, SIGNAL(finished()),
-            this, SLOT(onThreadFinished()));
-    connect(thread, SIGNAL(finished()),
-            thread, SLOT(deleteLater()));
+    connect(thread, &QThread::finished,
+            this, &RenderWorker::onThreadFinished);
+    connect(thread, &QThread::finished, thread, &QThread::deleteLater);
 
     thread->start();
 }
