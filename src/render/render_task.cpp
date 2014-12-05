@@ -42,7 +42,13 @@ bool RenderTask::hasFinishedRender() const
 
 DepthImageItem* RenderTask::getDepthImage(Viewport* viewport)
 {
-    return image->addToViewport(viewport);
+    Q_ASSERT(image);
+
+    auto d = image->addToViewport(viewport);
+    image->deleteLater();
+    image = NULL;
+
+    return d;
 }
 
 void RenderTask::render()
