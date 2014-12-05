@@ -38,9 +38,9 @@ bool RenderTask::hasFinishedRender() const
     return image && (image->halt_flag == 0);
 }
 
-DepthImageItem* RenderTask::getDepthImage(Canvas* canvas)
+DepthImageItem* RenderTask::getDepthImage(Viewport* viewport)
 {
-    return image->addToCanvas(canvas);
+    return image->addToViewport(viewport);
 }
 
 void RenderTask::render()

@@ -43,7 +43,9 @@ bool Datum::acceptsLink(Link* upstream)
 
 Link* Datum::linkFrom()
 {
-    return new Link(this);
+    auto link = new Link(this);
+    connect(link, &Link::destroyed, this, &Datum::connectionChanged);
+    return link;
 }
 
 void Datum::addLink(Link* input)
@@ -59,10 +61,7 @@ void Datum::addLink(Link* input)
     // are not used elsewhere in the system.
     emit(connectionChanged());
     emit(dynamic_cast<Datum*>(input->parent())->connectionChanged());
-    connect(input, SIGNAL(destroyed()), this, SIGNAL(connectionChanged()));
-    connect(input, SIGNAL(destroyed()),
-            dynamic_cast<Datum*>(input->parent()),
-            SIGNAL(connectionChanged()));
+    connect(input, &Link::destroyed, this, &Datum::connectionChanged);
 }
 
 void Datum::deleteLink(Datum* upstream)

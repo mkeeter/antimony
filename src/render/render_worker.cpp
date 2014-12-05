@@ -2,25 +2,22 @@
 
 #include <QDebug>
 
-#include "app/app.h"
-
 #include "render/render_task.h"
 #include "render/render_worker.h"
 #include "render/render_image.h"
 
-#include "ui/depth_image.h"
+#include "ui/viewport/depth_image.h"
 
 #include "graph/datum/datum.h"
 #include "graph/datum/link.h"
 
-#include "ui/canvas.h"
+#include "ui/viewport/viewport.h"
 
 #include "fab/fab.h"
 
-RenderWorker::RenderWorker(Datum* datum)
+RenderWorker::RenderWorker(Datum* datum, Viewport* viewport)
     : QObject(NULL), datum(datum), thread(NULL), current(NULL),
-      next(NULL), depth_image(NULL), running(false),
-      canvas(App::instance()->getCanvas())
+      next(NULL), depth_image(NULL), running(false), viewport(viewport)
 {
     connect(datum, &Datum::changed,
             this, &RenderWorker::onDatumChanged);
@@ -28,7 +25,7 @@ RenderWorker::RenderWorker(Datum* datum)
             this, &RenderWorker::onDatumChanged);
     connect(datum, &Datum::destroyed,
             this, &RenderWorker::onDatumChanged);
-    connect(canvas, SIGNAL(viewChanged()),
+    connect(viewport, &Viewport::viewChanged,
             this, &RenderWorker::onDatumChanged);
 }
 
@@ -86,9 +83,9 @@ void RenderWorker::onDatumChanged()
         emit(abort());
 
         next = new RenderTask(datum->getValue(),
-                                canvas->getTransformMatrix(),
-                                canvas->getScale() / (1 << 4),
-                                5);
+                              viewport->getTransformMatrix(),
+                              viewport->getScale() / (1 << 4),
+                              5);
 
         if (!running)
         {
@@ -107,7 +104,7 @@ void RenderWorker::onTaskFinished()
     if (current->hasFinishedRender() && hasNoOutput())
     {
         clearImage();
-        depth_image = current->getDepthImage(canvas);
+        depth_image = current->getDepthImage(viewport);
     }
 
     if (!next)

@@ -10,7 +10,7 @@
 
 class RenderImage;
 class DepthImageItem;
-class Canvas;
+class Viewport;
 
 class RenderTask : public QObject
 {
@@ -28,7 +28,7 @@ public:
 
     /** Constructs a depth image in the given canvas and returns it.
      */
-    DepthImageItem* getDepthImage(Canvas* canvas);
+    DepthImageItem* getDepthImage(Viewport* viewport);
 
 public slots:
     void render();
