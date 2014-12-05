@@ -63,6 +63,7 @@ void RenderImage::render(Shape *shape)
 
     free_arrays(&r);
 
+    // Copy from bitmap arrays into a QImage
     for (int j=0; j < depth.height(); ++j)
     {
         for (int i=0; i < depth.width(); ++i)
@@ -96,13 +97,9 @@ void RenderImage::applyGradient(bool direction)
             if (pix)
             {
                 if (direction)
-                {
                     pix *= j / float(depth.height());
-                }
                 else
-                {
                     pix *= 1 - j / float(depth.height());
-                }
                 depth.setPixel(i, j, pix | (pix << 8) | (pix << 16));
             }
         }

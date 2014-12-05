@@ -20,7 +20,7 @@ public:
     static bool accepts(Datum* d);
 public slots:
     void onDatumChanged();
-    void onDatumDeleted();
+    void deleteIfNotRunning();
     void onTaskFinished();
     void onThreadFinished();
 
@@ -51,7 +51,7 @@ protected:
 
     bool running;
 
-    Viewport* viewport;
+    QPointer<Viewport> viewport;
 };
 
 #endif // RENDER_TASK_H

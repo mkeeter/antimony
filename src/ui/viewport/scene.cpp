@@ -2,8 +2,10 @@
 
 #include "ui/viewport/scene.h"
 #include "ui/viewport/viewport.h"
+#include "render/render_worker.h"
 
 #include "graph/node/node.h"
+#include "graph/datum/datum.h"
 #include "control/control.h"
 #include "control/proxy.h"
 
@@ -59,7 +61,9 @@ void ViewportScene::makeProxyFor(Control* c, Viewport* v)
 
 void ViewportScene::makeRenderWorkersFor(Node* n, Viewport* v)
 {
-#warning "Not yet implemented"
+    for (auto d : n->findChildren<Datum*>())
+        if (RenderWorker::accepts(d))
+            workers[d] << new RenderWorker(d, v);
 }
 
 void ViewportScene::prune()
@@ -69,15 +73,20 @@ void ViewportScene::prune()
     for (auto itr = controls.begin(); itr != controls.end(); ++itr)
         if (itr.key())
             new_controls[itr.key()] = itr.value();
-
     controls = new_controls;
 
     QMap<QPointer<Viewport>, QGraphicsScene*> new_scenes;
     for (auto itr = scenes.begin(); itr != scenes.end(); ++itr)
         if (itr.key())
             new_scenes[itr.key()] = itr.value();
-
     scenes = new_scenes;
+
+    decltype(workers) new_workers;
+    for (auto itr = workers.begin(); itr != workers.end(); ++itr)
+        if (itr.key())
+            for (auto w : workers[itr.key()])
+                if (w)
+                    new_workers[itr.key()] << w;
 }
 
 

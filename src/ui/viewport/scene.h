@@ -8,7 +8,9 @@
 
 class Control;
 class Node;
+class Datum;
 class Viewport;
+class RenderWorker;
 
 class ViewportScene : public QObject
 {
@@ -61,6 +63,7 @@ protected:
 
     QMap<QPointer<Viewport>, QGraphicsScene*> scenes;
     QMap<QPointer<Node>, Control*> controls;
+    QMap<QPointer<Datum>, QList<QPointer<RenderWorker>>> workers;
 };
 
 #endif // VIEWPORT_SCENE_H

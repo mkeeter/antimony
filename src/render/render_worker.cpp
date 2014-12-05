@@ -24,7 +24,9 @@ RenderWorker::RenderWorker(Datum* datum, Viewport* viewport)
     connect(datum, &Datum::changed,
             this, &RenderWorker::onDatumChanged);
     connect(datum, &Datum::destroyed,
-            this, &RenderWorker::onDatumChanged);
+            this, &RenderWorker::deleteIfNotRunning);
+    connect(viewport, &Viewport::destroyed,
+            this, &RenderWorker::deleteIfNotRunning);
     connect(viewport, &Viewport::viewChanged,
             this, &RenderWorker::onDatumChanged);
 }
@@ -32,9 +34,7 @@ RenderWorker::RenderWorker(Datum* datum, Viewport* viewport)
 RenderWorker::~RenderWorker()
 {
     if (depth_image)
-    {
         depth_image->deleteLater();
-    }
 }
 
 bool RenderWorker::accepts(Datum *d)
@@ -42,20 +42,19 @@ bool RenderWorker::accepts(Datum *d)
     return d->getType() == fab::ShapeType;
 }
 
-void RenderWorker::onDatumDeleted()
+void RenderWorker::deleteIfNotRunning()
 {
+    // If this worker isn't running, call deleteLater.
+    // In the case that it is running, we check the deletion conditions
+    // at the beginning of onThreadFinished (so we'll get deleted then).
     if (!running)
-    {
         deleteLater();
-    }
 }
 
 bool RenderWorker::hasNoOutput()
 {
     if (!datum)
-    {
         return false;
-    }
 
     if (!datum->hasOutput())
     {
@@ -76,9 +75,8 @@ void RenderWorker::onDatumChanged()
     if (datum->getValid() && datum->getValue() && hasNoOutput())
     {
         if (next)
-        {
             next->deleteLater();
-        }
+
         // Tell in-progress renders to abort.
         emit(abort());
 
@@ -88,18 +86,14 @@ void RenderWorker::onDatumChanged()
                               5);
 
         if (!running)
-        {
             startNextRender();
-        }
     }
 }
 
 void RenderWorker::onTaskFinished()
 {
     if (!hasNoOutput())
-    {
         clearImage();
-    }
 
     if (current->hasFinishedRender() && hasNoOutput())
     {
@@ -108,9 +102,7 @@ void RenderWorker::onTaskFinished()
     }
 
     if (!next)
-    {
         next = current->getNext();
-    }
 
     current->deleteLater();
 }
@@ -128,14 +120,13 @@ void RenderWorker::onThreadFinished()
 {
     running = false;
 
-    // If the datum which we're rendering has been deleted, clean up
-    // and call deleteLater on oneself.
-    if (datum.isNull())
+    // If the datum which we're rendering has been deleted or the
+    // target viewport has been deleted, clean up and call deleteLater
+    // on oneself.
+    if (datum.isNull() || viewport.isNull())
     {
         if (next)
-        {
             next->deleteLater();
-        }
         deleteLater();
     }
 
