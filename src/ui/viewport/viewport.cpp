@@ -37,7 +37,35 @@ Viewport::Viewport(QGraphicsScene* scene, QWidget* parent)
     QGLFormat format;
     format.setVersion(2, 1);
     format.setSampleBuffers(true);
-    setViewport(new QGLWidget(format, this));
+    auto gl = new QGLWidget(format, this);
+    setViewport(gl);
+
+    gl->context()->makeCurrent();
+    initializeGL();
+}
+
+void Viewport::initializeGL()
+{
+    float vbuf[] = {
+         -1, -1,
+         -1,  1,
+          1, -1,
+          1,  1};
+    quad_vertices.create();
+    quad_vertices.bind();
+    quad_vertices.allocate(vbuf, sizeof(vbuf));
+    quad_vertices.release();
+
+    shaded_shader.addShaderFromSourceFile(
+            QOpenGLShader::Vertex, ":/gl/quad.vert");
+    shaded_shader.addShaderFromSourceFile(
+            QOpenGLShader::Fragment, ":/gl/shaded.frag");
+    shaded_shader.link();
+
+    height_shader.addShaderFromSourceFile(
+            QOpenGLShader::Vertex, ":/gl/quad.vert");
+    height_shader.addShaderFromSourceFile(
+            QOpenGLShader::Fragment, ":/gl/height.frag");
 }
 
 void Viewport::resizeEvent(QResizeEvent* e)

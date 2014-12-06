@@ -10,10 +10,6 @@
 #include "ui/viewport/depth_image.h"
 #include "ui/viewport/viewport.h"
 
-QGLShaderProgram DepthImageItem::shaded_shader;
-QGLShaderProgram DepthImageItem::height_shader;
-QOpenGLBuffer DepthImageItem::vertices;
-
 DepthImageItem::DepthImageItem(QVector3D pos, QVector3D size,
                                QImage depth, QImage shaded,
                                Viewport* viewport)
@@ -36,28 +32,6 @@ DepthImageItem::~DepthImageItem()
 void DepthImageItem::initializeGL()
 {
     initializeOpenGLFunctions();
-
-    // Global initialization for shared static member variables
-    if (!shaded_shader.shaders().length())
-    {
-        float vbuf[] = {
-             -1, -1,
-             -1,  1,
-              1, -1,
-              1,  1};
-        vertices.create();
-        vertices.bind();
-        vertices.allocate(vbuf, sizeof(vbuf));
-        vertices.release();
-
-        shaded_shader.addShaderFromSourceFile(QGLShader::Vertex, ":/gl/quad.vert");
-        shaded_shader.addShaderFromSourceFile(QGLShader::Fragment, ":/gl/shaded.frag");
-        shaded_shader.link();
-
-        height_shader.addShaderFromSourceFile(QGLShader::Vertex, ":/gl/quad.vert");
-        height_shader.addShaderFromSourceFile(QGLShader::Fragment, ":/gl/height.frag");
-        height_shader.link();
-    }
 
     glGenTextures(1, &depth_tex);
     glBindTexture(GL_TEXTURE_2D, depth_tex);
@@ -88,7 +62,6 @@ void DepthImageItem::initializeGL()
             GL_RGBA, GL_UNSIGNED_BYTE,   /* Data format */
             shaded.bits()        /* Input data */
     );
-
 }
 
 void DepthImageItem::reposition()
@@ -112,17 +85,17 @@ void DepthImageItem::paint(QPainter *painter,
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    vertices.bind();
+    viewport->getQuadVertices()->bind();
 #if 0
     if (App::instance()->getWindow()->isShaded())
         paintShaded();
     else
 #endif
         paintHeightmap();
-    vertices.release();
+    viewport->getQuadVertices()->release();
 }
 
-void DepthImageItem::loadSharedShaderVariables(QGLShaderProgram* shader)
+void DepthImageItem::loadSharedShaderVariables(QOpenGLShaderProgram* shader)
 {
     shader->bind();
 
@@ -169,26 +142,29 @@ void DepthImageItem::loadSharedShaderVariables(QGLShaderProgram* shader)
 
 void DepthImageItem::paintShaded()
 {
+    auto shaded_shader = viewport->getShadedShader();
     glEnable(GL_DEPTH_TEST);
-    loadSharedShaderVariables(&shaded_shader);
+    loadSharedShaderVariables(shaded_shader);
 
     glActiveTexture(GL_TEXTURE0 + 1);
     glBindTexture(GL_TEXTURE_2D, shaded_tex);
-    glUniform1i(shaded_shader.uniformLocation("shaded_tex"), 1);
+    glUniform1i(shaded_shader->uniformLocation("shaded_tex"), 1);
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    shaded_shader.release();
+    shaded_shader->release();
     glDisable(GL_DEPTH_TEST);
 }
 
 void DepthImageItem::paintHeightmap()
 {
+    auto height_shader = viewport->getHeightmapShader();
+
     glEnable(GL_BLEND);
     glBlendEquation(GL_MAX);
-    loadSharedShaderVariables(&height_shader);
+    loadSharedShaderVariables(height_shader);
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    height_shader.release();
+    height_shader->release();
 
     glDisable(GL_BLEND);
 }

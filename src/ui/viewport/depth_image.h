@@ -5,8 +5,7 @@
 #include <QImage>
 #include <QVector3D>
 #include <QtGui/QOpenGLFunctions>
-#include <QtOpenGL/QGLShaderProgram>
-#include <QtGui/QOpenGLBuffer>
+#include <QtGui/QOpenGLShaderProgram>
 
 class Viewport;
 
@@ -35,7 +34,7 @@ protected:
 
     /** Loads variables that are shared between height-map and shaded shaders.
      */
-    void loadSharedShaderVariables(QGLShaderProgram* shader);
+    void loadSharedShaderVariables(QOpenGLShaderProgram* shader);
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
@@ -45,10 +44,6 @@ protected:
 
     GLuint depth_tex;
     GLuint shaded_tex;
-
-    static QGLShaderProgram height_shader;
-    static QGLShaderProgram shaded_shader;
-    static QOpenGLBuffer vertices;
 };
 
 #endif // DEPTH_IMAGE_H

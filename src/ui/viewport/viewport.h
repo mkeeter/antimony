@@ -3,6 +3,8 @@
 
 #include <QGraphicsView>
 #include <QGraphicsScene>
+#include <QOpenGLShaderProgram>
+#include <QOpenGLBuffer>
 #include <QMatrix4x4>
 #include <QPointer>
 
@@ -60,6 +62,13 @@ public:
      */
     QVector3D getCenter() const { return center; }
 
+    /*
+     *  Getter functions so that DepthImageItems can use these shared objects.
+     */
+    QOpenGLBuffer* getQuadVertices() { return &quad_vertices; }
+    QOpenGLShaderProgram* getShadedShader() { return &shaded_shader; }
+    QOpenGLShaderProgram* getHeightmapShader() { return &height_shader; }
+
     QGraphicsScene* scene;
 signals:
     void viewChanged();
@@ -69,6 +78,12 @@ public slots:
     void spinTo(float new_yaw, float new_pitch);
 
 protected:
+    /*
+     *  Create the vertices buffer for the height-map quad
+     *  and the shader objects for shaded and height-map rendering.
+     */
+    void initializeGL();
+
     /** On mouse press, save mouse down position in _click_pos.
      *
      *  Left-clicks are saved in scene coordinates; right-clicks
@@ -133,6 +148,10 @@ protected:
     QPointF _click_pos;
     QVector3D _click_pos_world;
     ViewSelector* view_selector;
+
+    QOpenGLShaderProgram height_shader;
+    QOpenGLShaderProgram shaded_shader;
+    QOpenGLBuffer quad_vertices;
 };
 
 #endif // VIEWPORT_H
