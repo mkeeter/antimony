@@ -40,10 +40,6 @@ public:
      */
     float getScale() const { return scale; }
 
-    /** Finds the control associated with the given node.
-     */
-    Control* getControl(Node* node) const;
-
     /** Gets the minimum z position of a DepthImageItem.
      */
     float getZmin() const;

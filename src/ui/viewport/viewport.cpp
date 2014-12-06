@@ -38,9 +38,6 @@ Viewport::Viewport(QGraphicsScene* scene, QWidget* parent)
     format.setVersion(2, 1);
     format.setSampleBuffers(true);
     setViewport(new QGLWidget(format, this));
-#if 0
-    new AxesControl(this);
-#endif
 }
 
 void Viewport::resizeEvent(QResizeEvent* e)
@@ -94,23 +91,6 @@ QVector3D Viewport::sceneToWorld(QPointF p) const
 {
     QMatrix4x4 M = getMatrix().inverted();
     return M * QVector3D(p.x(), p.y(), 0);
-}
-
-Control* Viewport::getControl(Node* node) const
-{
-#if 0
-    for (auto i : items())
-    {
-        Control* c = dynamic_cast<Control*>(i);
-
-        if (c && c->getNode() == node && (c->parentItem() == NULL ||
-            dynamic_cast<Control*>(c->parentItem())->getNode() != node))
-        {
-            return c;
-        }
-    }
-#endif
-    return NULL;
 }
 
 float Viewport::getZmax() const
