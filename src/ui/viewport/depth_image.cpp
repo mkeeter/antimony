@@ -12,7 +12,7 @@
 
 QGLShaderProgram DepthImageItem::shaded_shader;
 QGLShaderProgram DepthImageItem::height_shader;
-QGLBuffer DepthImageItem::vertices;
+QOpenGLBuffer DepthImageItem::vertices;
 
 DepthImageItem::DepthImageItem(QVector3D pos, QVector3D size,
                                QImage depth, QImage shaded,
@@ -35,7 +35,7 @@ DepthImageItem::~DepthImageItem()
 
 void DepthImageItem::initializeGL()
 {
-    initializeGLFunctions();
+    initializeOpenGLFunctions();
 
     // Global initialization for shared static member variables
     if (!shaded_shader.shaders().length())

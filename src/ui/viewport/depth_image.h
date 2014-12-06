@@ -4,13 +4,13 @@
 #include <QGraphicsObject>
 #include <QImage>
 #include <QVector3D>
-#include <QtOpenGL/QGLFunctions>
+#include <QtGui/QOpenGLFunctions>
 #include <QtOpenGL/QGLShaderProgram>
-#include <QtOpenGL/QGLBuffer>
+#include <QtGui/QOpenGLBuffer>
 
 class Viewport;
 
-class DepthImageItem : public QGraphicsObject, protected QGLFunctions
+class DepthImageItem : public QGraphicsObject, protected QOpenGLFunctions
 {
     Q_OBJECT
 public:
@@ -48,7 +48,7 @@ protected:
 
     static QGLShaderProgram height_shader;
     static QGLShaderProgram shaded_shader;
-    static QGLBuffer vertices;
+    static QOpenGLBuffer vertices;
 };
 
 #endif // DEPTH_IMAGE_H
