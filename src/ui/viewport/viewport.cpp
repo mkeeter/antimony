@@ -26,7 +26,8 @@
 
 Viewport::Viewport(QGraphicsScene* scene, QWidget* parent)
     : QGraphicsView(parent), scene(scene),
-      scale(100), pitch(0), yaw(0), view_selector(new ViewSelector(this))
+      scale(100), pitch(0), yaw(0), angle_locked(false),
+      view_selector(new ViewSelector(this))
 {
     setScene(scene);
     setStyleSheet("QGraphicsView { border-style: none; }");
@@ -149,6 +150,17 @@ float Viewport::getZmin() const
     return zmin;
 }
 
+void Viewport::lockAngle(float y, float p)
+{
+    yaw = y;
+    pitch = p;
+    angle_locked = true;
+
+    update();
+    scene->invalidate(QRect(),QGraphicsScene::ForegroundLayer);
+    emit(viewChanged());
+}
+
 void Viewport::spinTo(float new_yaw, float new_pitch)
 {
     QPropertyAnimation* a = new QPropertyAnimation(this, "_yaw", this);
@@ -233,7 +245,7 @@ void Viewport::mouseMoveEvent(QMouseEvent *event)
         {
             pan(_click_pos_world - sceneToWorld(mapToScene(event->pos())));
         }
-        else if (event->buttons() == Qt::RightButton)
+        else if (event->buttons() == Qt::RightButton && !angle_locked)
         {
             QPointF d = _click_pos - event->pos();
             pitch = fmin(0, fmax(-M_PI, pitch - 0.01 * d.y()));

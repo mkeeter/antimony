@@ -63,6 +63,11 @@ public:
     QVector3D getCenter() const { return center; }
 
     /*
+     *  Locks yaw and pitch to the given values.
+     */
+    void lockAngle(float y, float p);
+
+    /*
      *  Getter functions so that DepthImageItems can use these shared objects.
      */
     QOpenGLBuffer* getQuadVertices() { return &quad_vertices; }
@@ -142,6 +147,7 @@ protected:
     Q_PROPERTY(float _pitch READ getPitch WRITE setPitch)
     float pitch;
     float yaw;
+    bool angle_locked;
 
     QPointer<Control> raised;
 
