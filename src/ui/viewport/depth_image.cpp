@@ -33,6 +33,7 @@ void DepthImageItem::initializeGL()
 {
     initializeOpenGLFunctions();
 
+    static_cast<QGLWidget*>(viewport->viewport())->context()->makeCurrent();
     glGenTextures(1, &depth_tex);
     glBindTexture(GL_TEXTURE_2D, depth_tex);
 
