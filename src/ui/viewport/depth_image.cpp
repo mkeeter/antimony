@@ -25,6 +25,7 @@ DepthImageItem::DepthImageItem(QVector3D pos, QVector3D size,
 
 DepthImageItem::~DepthImageItem()
 {
+    static_cast<QGLWidget*>(viewport->viewport())->context()->makeCurrent();
     glDeleteTextures(1, &depth_tex);
     glDeleteTextures(1, &shaded_tex);
 }
