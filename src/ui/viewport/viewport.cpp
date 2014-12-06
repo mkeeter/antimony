@@ -161,6 +161,12 @@ void Viewport::lockAngle(float y, float p)
     emit(viewChanged());
 }
 
+void Viewport::hideViewSelector()
+{
+    view_selector->hide();
+}
+
+
 void Viewport::spinTo(float new_yaw, float new_pitch)
 {
     QPropertyAnimation* a = new QPropertyAnimation(this, "_yaw", this);

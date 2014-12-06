@@ -42,6 +42,12 @@ public slots:
      */
     void newViewportWindow();
 
+
+    /*
+     *  Opens a new MainWindow with four Viewports.
+     */
+    void newQuadWindow();
+
 private slots:
     void onAbout();
     void onControls();

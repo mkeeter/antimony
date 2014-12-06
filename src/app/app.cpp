@@ -3,6 +3,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QThread>
+#include <QGridLayout>
 
 #include <cmath>
 
@@ -369,6 +370,43 @@ void App::newViewportWindow()
 {
     auto m = new MainWindow();
     m->setCentralWidget(view_scene->newViewport());
+    m->show();
+}
+
+void App::newQuadWindow()
+{
+    auto m = new MainWindow();
+    auto g = new QGridLayout();
+
+    auto top = view_scene->newViewport();
+    auto front = view_scene->newViewport();
+    auto side = view_scene->newViewport();
+    auto other = view_scene->newViewport();
+
+    top->lockAngle(0, 0);
+    front->lockAngle(0, -M_PI/2);
+    side->lockAngle(-M_PI/2, -M_PI/2);
+    other->spinTo(-M_PI/4, -M_PI/4);
+
+    top->hideViewSelector();
+    front->hideViewSelector();
+    side->hideViewSelector();
+    other->hideViewSelector();
+
+    g->addWidget(top, 0, 0);
+    g->addWidget(front, 0, 1);
+    g->addWidget(side, 1, 0);
+    g->addWidget(other, 1, 1);
+    g->setContentsMargins(0, 0, 0, 0);
+    g->setSpacing(2);
+
+    auto w = new QWidget();
+    w->setStyleSheet(QString(
+                "QWidget {"
+                "   background-color: %1;"
+                "}").arg(Colors::base01.name()));
+    w->setLayout(g);
+    m->setCentralWidget(w);
     m->show();
 }
 

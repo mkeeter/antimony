@@ -73,16 +73,10 @@
     <property name="title">
      <string>Window</string>
     </property>
-    <widget class="QMenu" name="menuPresets">
-     <property name="title">
-      <string>Presets</string>
-     </property>
-     <addaction name="actionFourPane"/>
-    </widget>
     <addaction name="actionNewCanvas"/>
-    <addaction name="actionNewViewport"/>
     <addaction name="separator"/>
-    <addaction name="menuPresets"/>
+    <addaction name="actionNewViewport"/>
+    <addaction name="actionNewQuad"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuAdd"/>
@@ -170,9 +164,9 @@
     <string>New 3D window</string>
    </property>
   </action>
-  <action name="actionFourPane">
+  <action name="actionNewQuad">
    <property name="text">
-    <string>Four-pane</string>
+    <string>New quad window</string>
    </property>
   </action>
  </widget>

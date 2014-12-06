@@ -68,6 +68,11 @@ public:
     void lockAngle(float y, float p);
 
     /*
+     *  Hides the ViewSelector tool.
+     */
+    void hideViewSelector();
+
+    /*
      *  Getter functions so that DepthImageItems can use these shared objects.
      */
     QOpenGLBuffer* getQuadVertices() { return &quad_vertices; }
