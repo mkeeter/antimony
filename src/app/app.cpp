@@ -363,6 +363,7 @@ void App::newCanvasWindow()
 {
     auto m = new MainWindow();
     m->setCentralWidget(graph_scene->newCanvas());
+    m->updateMenus();
     m->show();
 }
 
@@ -370,6 +371,7 @@ void App::newViewportWindow()
 {
     auto m = new MainWindow();
     m->setCentralWidget(view_scene->newViewport());
+    m->updateMenus();
     m->show();
 }
 
@@ -407,6 +409,7 @@ void App::newQuadWindow()
                 "}").arg(Colors::base01.name()));
     w->setLayout(g);
     m->setCentralWidget(w);
+    m->updateMenus();
     m->show();
 }
 

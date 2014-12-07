@@ -88,12 +88,17 @@ void DepthImageItem::paint(QPainter *painter,
     Q_UNUSED(widget);
 
     viewport->getQuadVertices()->bind();
-#if 0
-    if (App::instance()->getWindow()->isShaded())
+
+    // Find the parent MainWindow of our Viewport
+    QWidget* m = viewport;
+    while (m && !dynamic_cast<MainWindow*>(m))
+        m = m->parentWidget();
+
+    if (m && dynamic_cast<MainWindow*>(m)->isShaded())
         paintShaded();
     else
-#endif
         paintHeightmap();
+
     viewport->getQuadVertices()->release();
 }
 

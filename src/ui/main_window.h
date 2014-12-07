@@ -18,6 +18,11 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    /*
+     *  Updates menus once the central widget is set.
+     */
+    void updateMenus();
+
     /** Populate a menu with all of the widgets.
      */
     void populateMenu(QMenu* menu, bool recenter=true);

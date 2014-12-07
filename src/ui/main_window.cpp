@@ -6,7 +6,8 @@
 #include "app/app.h"
 #include "ui_main_window.h"
 #include "ui/main_window.h"
-#include "ui/canvas/inspector/inspector.h"
+#include "ui/canvas/canvas.h"
+#include "ui/viewport/viewport.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -25,12 +26,6 @@ MainWindow::MainWindow(QWidget *parent) :
             App::instance(), &App::newViewportWindow);
     connect(ui->actionNewQuad, &QAction::triggered,
             App::instance(), &App::newQuadWindow);
-#if 0
-    connect(ui->actionShaded, SIGNAL(triggered()),
-            canvas->scene, SLOT(invalidate()));
-    connect(ui->actionHeightmap, SIGNAL(triggered()),
-            canvas->scene, SLOT(invalidate()));
-#endif
 
     populateMenu(ui->menuAdd);
 
@@ -40,6 +35,22 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::updateMenus()
+{
+    if (dynamic_cast<Canvas*>(centralWidget()))
+    {
+        ui->menuView->deleteLater();
+    } else {
+        for (auto v : findChildren<Viewport*>())
+        {
+            connect(ui->actionShaded, SIGNAL(triggered()),
+                    v->scene, SLOT(invalidate()));
+            connect(ui->actionHeightmap, SIGNAL(triggered()),
+                    v->scene, SLOT(invalidate()));
+        }
+    }
 }
 
 void MainWindow::setShortcuts()
@@ -56,12 +67,12 @@ void MainWindow::openScript(ScriptDatum *d)
 {
     new ScriptEditorItem(d, ui->canvas);
 }
+#endif
 
 bool MainWindow::isShaded() const
 {
     return ui->actionShaded->isChecked();
 }
-#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 
