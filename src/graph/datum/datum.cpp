@@ -163,17 +163,6 @@ void Datum::postInit()
 {
     post_init_called = true;
     NodeManager::manager()->onNameChange(objectName());
-
-    // If we're running the antimony app (not the test suite) and this is a
-    // function that outputs a shape object, make a RenderTask for it.
-#ifdef ANTIMONY
-#if 0
-    if (RenderWorker::accepts(this))
-    {
-        new RenderWorker(this);
-    }
-#endif
-#endif
 }
 
 void Datum::onDisconnectRequest(Datum* downstream)

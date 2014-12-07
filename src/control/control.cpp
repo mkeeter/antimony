@@ -16,13 +16,6 @@
 Control::Control(Node* node, QObject* parent)
     : QObject(parent), node(node)
 {
-#if 0
-    if (parent == NULL)
-    {
-        canvas->scene->addItem(this);
-    }
-#endif
-
     if (node)
         connect(node, &Node::destroyed, this, &Control::deleteLater);
 }

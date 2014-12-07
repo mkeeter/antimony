@@ -97,13 +97,6 @@ void MainWindow::setShortcuts()
     ui->actionQuit->setShortcuts(QKeySequence::Quit);
 }
 
-#if 0
-void MainWindow::openScript(ScriptDatum *d)
-{
-    new ScriptEditorItem(d, ui->canvas);
-}
-#endif
-
 bool MainWindow::isShaded() const
 {
     return ui->actionShaded->isChecked();
