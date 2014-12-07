@@ -161,6 +161,27 @@ void Viewport::lockAngle(float y, float p)
     emit(viewChanged());
 }
 
+QPair<char, float> Viewport::getAxis() const
+{
+    const auto M = getTransformMatrix();
+    const float threshold = 0.98;
+
+    const auto a = M.inverted() * QVector3D(0, 0, 1);
+
+    QList<QPair<char, QVector3D>> axes = {
+        {'x', QVector3D(1, 0, 0)},
+        {'y', QVector3D(0, 1, 0)},
+        {'z', QVector3D(0, 0, 1)}};
+
+    for (const auto v : axes)
+    {
+        float dot = fabs(QVector3D::dotProduct(a, v.second));
+        if (dot > threshold)
+            return QPair<char, float>(v.first, (dot - threshold) / (1 - threshold));
+    }
+    return QPair<char, float>('\0', 0);
+}
+
 void Viewport::hideViewSelector()
 {
     view_selector->hide();
@@ -263,6 +284,11 @@ void Viewport::mouseMoveEvent(QMouseEvent *event)
             emit(viewChanged());
         }
     }
+
+    // If we're on an axis (which means the viewport is showing mouse
+    // coordinates), force a redraw on mouse motion.
+    if (getAxis().first)
+        scene->invalidate(QRect(),QGraphicsScene::ForegroundLayer);
 }
 
 void Viewport::setYaw(float y)
@@ -289,6 +315,13 @@ void Viewport::wheelEvent(QWheelEvent *event)
     pan(a - b);
     emit(viewChanged());
 }
+
+void Viewport::leaveEvent(QEvent* event)
+{
+    Q_UNUSED(event);
+    scene->invalidate(QRect(),QGraphicsScene::ForegroundLayer);
+}
+
 
 void Viewport::keyPressEvent(QKeyEvent *event)
 {
@@ -365,6 +398,7 @@ void Viewport::drawForeground(QPainter* painter, const QRectF& rect)
 {
     Q_UNUSED(rect);
 
+    // First, draw the axes.
     auto m = getMatrix();
     QVector3D o = m * QVector3D(0, 0, 0);
     QVector3D x = m * QVector3D(1, 0, 0);
@@ -385,5 +419,34 @@ void Viewport::drawForeground(QPainter* painter, const QRectF& rect)
     {
         painter->setPen(QPen(p.second, 2));
         painter->drawLine(o.toPointF(), p.first.toPointF());
+    }
+
+    // Then add a text label in the lower-left corner
+    // giving mouse coordinates (if we're near an axis)
+    QPair<char, float> axis = getAxis();
+    QPointF mouse_pos = mapToScene(mapFromGlobal(QCursor::pos()));
+    if (!sceneRect().contains(mouse_pos))
+        axis.first = '\0';
+
+    auto p = getMatrix().inverted() *
+             QVector3D(mouse_pos.x(), mouse_pos.y(), 0);
+
+    QPointF a = sceneRect().bottomLeft() + QPointF(10, -25);
+    QPointF b = sceneRect().bottomLeft() + QPointF(10, -10);
+    painter->setPen(QColor(axis.second*200, axis.second*200, axis.second*200));
+    if (axis.first == 'z')
+    {
+        painter->drawText(a, QString("X: %1").arg(p.x()));
+        painter->drawText(b, QString("Y: %1").arg(p.y()));
+    }
+    else if (axis.first == 'y')
+    {
+        painter->drawText(a, QString("X: %1").arg(p.x()));
+        painter->drawText(b, QString("Z: %1").arg(p.z()));
+    }
+    else if (axis.first == 'x')
+    {
+        painter->drawText(a, QString("Y: %1").arg(p.y()));
+        painter->drawText(b, QString("Z: %1").arg(p.z()));
     }
 }

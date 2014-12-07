@@ -89,6 +89,13 @@ public slots:
 
 protected:
     /*
+     *  Detects if we're near a major axis.  Returns a tuple
+     *  ({'x'|'y'|'z'}, o) where o is the opacity at which
+     *  text should be drawn.
+     */
+    QPair<char, float> getAxis() const;
+
+    /*
      *  Create the vertices buffer for the height-map quad
      *  and the shader objects for shaded and height-map rendering.
      */
@@ -108,6 +115,12 @@ protected:
     /** On mouse wheel action, zoom about the mouse cursor.
      */
     void wheelEvent(QWheelEvent *event) override;
+
+    /*
+     *  When the mouse leaves the window, redraw
+     *  (to clear cursor position text)
+     */
+    void leaveEvent(QEvent* event) override;
 
     /** On delete key press, delete nodes.
      */
