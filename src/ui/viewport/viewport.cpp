@@ -22,7 +22,7 @@
 #include "graph/node/node.h"
 #include "graph/datum/link.h"
 
-#include "control/control.h"
+#include "control/proxy.h"
 
 Viewport::Viewport(QGraphicsScene* scene, QWidget* parent)
     : QGraphicsView(parent), scene(scene),
@@ -359,23 +359,16 @@ void Viewport::keyReleaseEvent(QKeyEvent *event)
 
 void Viewport::hideUI()
 {
-#if 0
     for (auto i : scene->items())
-    {
-        Control* c = dynamic_cast<Control*>(i);
-        if (c && !dynamic_cast<AxesControl*>(i))
+        if (auto c = dynamic_cast<ControlProxy*>(i))
             c->hide();
-    }
-#endif
 }
 
 void Viewport::showUI()
 {
-#if 0
     for (auto i : scene->items())
-        if (Control* control = dynamic_cast<Control*>(i))
-            control->show();
-#endif
+        if (auto c = dynamic_cast<ControlProxy*>(i))
+            c->show();
 }
 
 void Viewport::pan(QVector3D d)
