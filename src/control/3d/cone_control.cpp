@@ -18,6 +18,11 @@ QVector<QVector<QVector3D>> _ConeRadiusControl::lines() const
 ConeControl::ConeControl(Node* node, QObject* parent)
     : CylinderControl(node, parent)
 {
+    // We build the ConeControl on the CylinderControl; however, we
+    // need to abandon the radius created by the Cylinder (otherwise
+    // the system will try to make ControlProxies for it).
+    radius->setParent(NULL);
     radius->deleteLater();
+
     radius = new _ConeRadiusControl(node, this);
 }
