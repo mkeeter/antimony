@@ -96,3 +96,9 @@ QMatrix4x4 ControlProxy::getMatrix() const
 {
     return viewport->getMatrix();
 }
+
+
+Node* ControlProxy::getNode() const
+{
+    return control ? control->getNode() : NULL;
+}

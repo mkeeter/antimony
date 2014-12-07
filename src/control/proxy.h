@@ -7,6 +7,7 @@
 #include <QMatrix4x4>
 
 class Control;
+class Node;
 class Viewport;
 
 class ControlProxy : public QGraphicsObject
@@ -56,6 +57,12 @@ public:
      *  On delete or backspace, delete node.
      */
     void keyPressEvent(QKeyEvent* event) override;
+
+    /*
+     *  Returns the Node that this proxy is pointing to
+     *  (or NULL)
+     */
+    Node* getNode() const;
 
 public slots:
     void redraw();

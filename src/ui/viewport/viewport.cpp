@@ -209,18 +209,15 @@ void Viewport::mousePressEvent(QMouseEvent *event)
     // On right-click, show a menu of items to raise.
     if (event->button() == Qt::RightButton)
     {
-#if 0
         auto menu = new QMenu(this);
-        QSet<Control*> used;
+        QSet<ControlProxy*> used;
         for (auto i : items(event->pos()))
         {
             while (i->parentItem())
-            {
                 i = i->parentItem();
-            }
 
-            auto c = dynamic_cast<Control*>(i);
-            if (c && !used.contains(c) && !dynamic_cast<AxesControl*>(i))
+            auto c = dynamic_cast<ControlProxy*>(i);
+            if (c && !used.contains(c))
             {
                 auto n = c->getNode();
                 auto a = new QAction(
@@ -236,16 +233,13 @@ void Viewport::mousePressEvent(QMouseEvent *event)
             if (chosen)
             {
                 if (raised)
-                {
                     raised->setZValue(1);
-                }
-                raised = static_cast<Control*>(
+                raised = static_cast<ControlProxy*>(
                         chosen->data().value<QGraphicsItem*>());
                 raised->setZValue(1.1);
             }
         }
         menu->deleteLater();
-#endif
     }
 
     QGraphicsView::mousePressEvent(event);

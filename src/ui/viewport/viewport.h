@@ -9,7 +9,7 @@
 #include <QPointer>
 
 class Node;
-class Control;
+class ControlProxy;
 class InputPort;
 class NodeInspector;
 class ViewSelector;
@@ -167,7 +167,11 @@ protected:
     float yaw;
     bool angle_locked;
 
-    QPointer<Control> raised;
+    /* Right-clicking allows users to raise a particular Control
+     * (to make overlapping work).  This value keeps track of
+     * whichever control was raised.
+     */
+    QPointer<ControlProxy> raised;
 
     QPointF _click_pos;
     QVector3D _click_pos_world;
