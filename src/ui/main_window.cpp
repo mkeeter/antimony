@@ -119,23 +119,38 @@ template <Node* (*f)(float, float, float, float, QObject*), bool recenter>
 void MainWindow::createNew()
 {
     qDebug() << this;
-#if 0
+
+    auto v = findChild<Viewport*>();
+    auto c = findChild<Canvas*>();
+
+    qDebug() << v << c;
+    Q_ASSERT((v != NULL) ^ (c != NULL));
+
+    QGraphicsView* view = (v != NULL) ?
+        static_cast<QGraphicsView*>(v) :
+        static_cast<QGraphicsView*>(c);
+
     QPoint mouse_pos = recenter
-        ? canvas->rect().center()
-        : canvas->mapFromGlobal(QCursor::pos());
-    QPointF scene_pos = canvas->mapToScene(mouse_pos);
+        ? view->rect().center()
+        : view->mapFromGlobal(QCursor::pos());
+    QPointF scene_pos = view->mapToScene(mouse_pos);
 
     if (recenter)
+        QCursor::setPos(view->mapToGlobal(mouse_pos));
+
+    Node* n;
+    if (v)
     {
-        QCursor::setPos(canvas->mapToGlobal(mouse_pos));
+        QVector3D obj_pos = v->sceneToWorld(scene_pos);
+        n = f(obj_pos.x(), obj_pos.y(), obj_pos.z(),
+              100 / v->getScale(), NULL);
     }
-#endif
+    else
+    {
+        n = f(0, 0, 0, 1, NULL);
+    }
 
-    Node* n = f(0, 0, 0, 1, NULL);
     App::instance()->newNode(n);
-
-    //Node* n = f(obj_pos.x(), obj_pos.y(), obj_pos.z(),
-    //            100 / canvas->getScale(), NULL);
 }
 
 template <Node* (*f)(float, float, float, float, QObject*),
