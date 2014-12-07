@@ -22,6 +22,7 @@
 #include "graph/node/node.h"
 #include "graph/datum/link.h"
 
+#include "control/control.h"
 #include "control/proxy.h"
 
 Viewport::Viewport(QGraphicsScene* scene, QWidget* parent)
@@ -187,6 +188,16 @@ void Viewport::hideViewSelector()
     view_selector->hide();
 }
 
+ControlProxy* Viewport::getControlProxy(Node* n)
+{
+    for (auto i : items())
+    {
+        auto p = dynamic_cast<ControlProxy*>(i);
+        if (p && p->getNode() == n && !p->getControl()->parent())
+            return p;
+    }
+    return NULL;
+}
 
 void Viewport::spinTo(float new_yaw, float new_pitch)
 {

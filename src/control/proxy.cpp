@@ -71,6 +71,13 @@ void ControlProxy::mousePressEvent(QGraphicsSceneMouseEvent* event)
     click_pos = event->pos();
 }
 
+void ControlProxy::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
+{
+    Q_UNUSED(event);
+    if (scene()->mouseGrabberItem() == this)
+        ungrabMouse();
+}
+
 void ControlProxy::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     QGraphicsObject::mouseMoveEvent(event);
@@ -101,4 +108,9 @@ QMatrix4x4 ControlProxy::getMatrix() const
 Node* ControlProxy::getNode() const
 {
     return control ? control->getNode() : NULL;
+}
+
+Control* ControlProxy::getControl() const
+{
+    return control;
 }

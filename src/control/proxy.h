@@ -49,6 +49,11 @@ public:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
 
     /*
+     *  On mouse release, release mouse (if it was grabbed)
+     */
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
+
+    /*
      *  On mouse drag, call the virtual function drag.
      */
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
@@ -63,6 +68,17 @@ public:
      *  (or NULL)
      */
     Node* getNode() const;
+
+    /*
+     *  Returns the Control that this is a proxy for.
+     */
+    Control* getControl() const;
+
+    /*
+     *  Helper function to set click_pos
+     *  (used when inserting objects to start dragging)
+     */
+    void setClickPos(QPointF p) { click_pos = p; }
 
 public slots:
     void redraw();

@@ -4,10 +4,13 @@
 #include <QDebug>
 
 #include "app/app.h"
+
 #include "ui_main_window.h"
 #include "ui/main_window.h"
 #include "ui/canvas/canvas.h"
 #include "ui/viewport/viewport.h"
+
+#include "control/proxy.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow)
@@ -151,6 +154,13 @@ void MainWindow::createNew()
     }
 
     App::instance()->newNode(n);
+
+    if (v)
+    {
+        auto proxy = v->getControlProxy(n);
+        Q_ASSERT(proxy);
+        proxy->grabMouse();
+    }
 }
 
 template <Node* (*f)(float, float, float, float, QObject*),

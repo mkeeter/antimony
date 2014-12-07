@@ -73,6 +73,11 @@ public:
     void hideViewSelector();
 
     /*
+     *  Look up which top-level ControlProxy is attached to the given node.
+     */
+    ControlProxy* getControlProxy(Node* n);
+
+    /*
      *  Getter functions so that DepthImageItems can use these shared objects.
      */
     QOpenGLBuffer* getQuadVertices() { return &quad_vertices; }
