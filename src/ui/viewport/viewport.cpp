@@ -415,8 +415,7 @@ void Viewport::drawForeground(QPainter* painter, const QRectF& rect)
     if (!sceneRect().contains(mouse_pos))
         axis.first = '\0';
 
-    auto p = getMatrix().inverted() *
-             QVector3D(mouse_pos.x(), mouse_pos.y(), 0);
+    auto p = sceneToWorld(mouse_pos);
 
     QPointF a = sceneRect().bottomLeft() + QPointF(10, -25);
     QPointF b = sceneRect().bottomLeft() + QPointF(10, -10);
