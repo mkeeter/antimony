@@ -6,6 +6,7 @@
 class Canvas;
 class ScriptDatum;
 class Node;
+class App;
 
 namespace Ui {
 class MainWindow;
@@ -32,6 +33,11 @@ public:
     bool isShaded() const;
 
 private:
+    /*
+     *  Connects menu actions to App slots.
+     */
+    void connectActions(App* app);
+
     /** Sets up main keyboard shortcuts
      *  (because Qt Designer doesn't have a good way to do so)
      */

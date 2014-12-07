@@ -48,7 +48,7 @@ public slots:
      */
     void newQuadWindow();
 
-private slots:
+public slots:
     void onAbout();
     void onControls();
 
@@ -61,6 +61,7 @@ private slots:
     void onExportHeightmap();
     void onExportJSON();
 #endif
+
 private:
 
     void setGlobalStyle();

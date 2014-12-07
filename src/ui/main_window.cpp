@@ -10,8 +10,7 @@
 #include "ui/viewport/viewport.h"
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
@@ -20,12 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     view_actions->addAction(ui->actionHeightmap);
     view_actions->setExclusive(true);
 
-    connect(ui->actionNewCanvas, &QAction::triggered,
-            App::instance(), &App::newCanvasWindow);
-    connect(ui->actionNewViewport, &QAction::triggered,
-            App::instance(), &App::newViewportWindow);
-    connect(ui->actionNewQuad, &QAction::triggered,
-            App::instance(), &App::newQuadWindow);
+    connectActions(App::instance());
 
     populateMenu(ui->menuAdd);
 
@@ -51,6 +45,47 @@ void MainWindow::updateMenus()
                     v->scene, SLOT(invalidate()));
         }
     }
+}
+
+void MainWindow::connectActions(App* app)
+{
+    // File menu
+#if 0
+    connect(ui->actionSave, &QAction::triggered,
+            app, &App::onSave);
+    connect(ui->actionSaveAs, &QAction::triggered,
+            app, &App::onSaveAs);
+    connect(ui->actionNew, &QAction::triggered,
+            app, &App::onNew);
+    connect(ui->actionOpen, &QAction::triggered,
+            app, &App::onOpen);
+#endif
+    connect(ui->actionQuit, &QAction::triggered,
+            app, &App::quit);
+
+    // View window
+    connect(ui->actionNewCanvas, &QAction::triggered,
+            app, &App::newCanvasWindow);
+    connect(ui->actionNewViewport, &QAction::triggered,
+            app, &App::newViewportWindow);
+    connect(ui->actionNewQuad, &QAction::triggered,
+            app, &App::newQuadWindow);
+
+    // Export menu
+#if 0
+    connect(ui->actionExportMesh, &QAction::triggered,
+            app, &App::onExportSTL);
+    connect(ui->actionExportHeightmap, &QAction::triggered,
+            app, &App::onExportHeightmap);
+    connect(ui->actionExportJSON, &QAction::triggered,
+            app, &App::onExportJSON);
+#endif
+
+    // Help menu
+    connect(ui->actionAbout, &QAction::triggered,
+            app, &App::onAbout);
+    connect(ui->actionControls, &QAction::triggered,
+            app, &App::onControls);
 }
 
 void MainWindow::setShortcuts()
