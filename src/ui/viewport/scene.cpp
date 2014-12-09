@@ -51,7 +51,6 @@ void ViewportScene::makeProxyFor(Control* c, Viewport* v)
         return;
 
     auto p = new ControlProxy(c, v);
-    qDebug() << "Making control proxy for" << c << "=" << p;
     scenes[v]->addItem(p);
     connect(v, &Viewport::viewChanged,
             p, &ControlProxy::redraw);

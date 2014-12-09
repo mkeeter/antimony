@@ -16,7 +16,6 @@
 Control::Control(Node* node, QObject* parent)
     : QObject(parent), node(node)
 {
-    qDebug() << "    Make control" << this;
     if (node)
         connect(node, &Node::destroyed, this, &Control::deleteLater);
 }
