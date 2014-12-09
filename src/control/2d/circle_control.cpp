@@ -46,7 +46,7 @@ void CircleControl::drag(QVector3D c, QVector3D delta)
     center->drag(c, delta);
 }
 
-QRectF CircleControl::bounds(QMatrix4x4 m) const
+QRectF CircleControl::bounds(QMatrix4x4 m, QMatrix4x4 t) const
 {
-    return radius->bounds(m);
+    return radius->bounds(m, t);
 }

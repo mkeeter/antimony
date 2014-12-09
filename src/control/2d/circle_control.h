@@ -32,7 +32,7 @@ public:
     void drag(QVector3D center, QVector3D delta) override;
 
 protected:
-    QRectF bounds(QMatrix4x4 m) const override;
+    QRectF bounds(QMatrix4x4 m, QMatrix4x4 t) const override;
 
     _RadiusControl* radius;
     Point2DControl* center;

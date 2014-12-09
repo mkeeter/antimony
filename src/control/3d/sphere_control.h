@@ -10,7 +10,7 @@ class _SphereRadiusControl : public WireframeControl
 {
 public:
     explicit _SphereRadiusControl(Node* node, QObject* parent);
-    QVector<QVector<QVector3D>> lines() const override;
+    QVector<QVector<QVector3D>> lines(QMatrix4x4 t) const override;
     void drag(QVector3D center, QVector3D delta) override;
     QVector3D center() const;
 };
@@ -24,7 +24,6 @@ public:
 
 protected:
     void drag(QVector3D center, QVector3D delta) override;
-    QRectF bounds(QMatrix4x4 m) const override;
 
     _SphereRadiusControl* radius;
     Point3DControl* center;

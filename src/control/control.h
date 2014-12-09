@@ -38,17 +38,23 @@ public:
     /*
      *  This function is overloaded by children to return bounds.
      */
-    virtual QRectF bounds(QMatrix4x4 m) const=0;
+    virtual QRectF bounds(QMatrix4x4 m, QMatrix4x4 t) const=0;
 
     /*
      *  Equivalent to QGraphicsObject::shape
      *  By default, returns the bounding rect
      */
-    virtual QPainterPath shape(QMatrix4x4 m) const;
+    virtual QPainterPath shape(QMatrix4x4 m, QMatrix4x4 t) const;
 
-    /** This function should be defined by child nodes
+    /*
+     *  This function should be defined by child nodes
+     *  m is the world-to-screen transform matrix.
+     *  t is just the rotation component of this matrix
+     *      (used for cylinders and spheres to make lines
+     *       face user at all times)
      */
-    virtual void paint(QMatrix4x4 m, bool highlight, QPainter* painter)=0;
+    virtual void paint(QMatrix4x4 m, QMatrix4x4 t,
+                       bool highlight, QPainter* painter)=0;
 
     /** Called to drag the node around with the mouse.
      */

@@ -15,15 +15,19 @@ void DummyControl::drag(QVector3D center, QVector3D delta)
     Q_ASSERT(false);
 }
 
-QPainterPath DummyControl::shape(QMatrix4x4 m) const
+QRectF DummyControl::bounds(QMatrix4x4 m, QMatrix4x4 t) const
 {
-    Q_UNUSED(m);
-    return QPainterPath();
+    auto r = QRectF();
+    for (auto c : findChildren<Control*>())
+        r = r.united(c->bounds(m, t));
+    return r;
 }
 
-void DummyControl::paint(QMatrix4x4 m, bool highlight, QPainter* painter)
+void DummyControl::paint(QMatrix4x4 m, QMatrix4x4 t,
+                         bool highlight, QPainter* painter)
 {
     Q_UNUSED(m);
+    Q_UNUSED(t);
     Q_UNUSED(highlight);
     Q_UNUSED(painter);
 }

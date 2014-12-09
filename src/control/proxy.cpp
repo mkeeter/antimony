@@ -27,12 +27,12 @@ void ControlProxy::redraw()
 
 QRectF ControlProxy::boundingRect() const
 {
-    return control->bounds(getMatrix());
+    return control->bounds(getMatrix(), viewport->getTransformMatrix());
 }
 
 QPainterPath ControlProxy::shape() const
 {
-    return control->shape(getMatrix());
+    return control->shape(getMatrix(), viewport->getTransformMatrix());
 }
 
 void ControlProxy::paint(QPainter* painter,
@@ -42,7 +42,8 @@ void ControlProxy::paint(QPainter* painter,
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    control->paint(getMatrix(), isSelected() || hover, painter);
+    control->paint(getMatrix(), viewport->getTransformMatrix(),
+                   isSelected() || hover, painter);
 }
 
 void ControlProxy::hoverEnterEvent(QGraphicsSceneHoverEvent *event)

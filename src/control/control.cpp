@@ -16,14 +16,15 @@
 Control::Control(Node* node, QObject* parent)
     : QObject(parent), node(node)
 {
+    qDebug() << "    Make control" << this;
     if (node)
         connect(node, &Node::destroyed, this, &Control::deleteLater);
 }
 
-QPainterPath Control::shape(QMatrix4x4 m) const
+QPainterPath Control::shape(QMatrix4x4 m, QMatrix4x4 t) const
 {
     QPainterPath p;
-    p.addRect(bounds(m));
+    p.addRect(bounds(m, t));
     return p;
 }
 
