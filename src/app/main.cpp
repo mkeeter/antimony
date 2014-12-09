@@ -3,8 +3,7 @@
 #include <QApplication>
 #include <QDebug>
 
-#include "ui/main_window.h"
-#include "app.h"
+#include "app/app.h"
 #include "fab/fab.h"
 
 int main(int argc, char *argv[])
@@ -12,12 +11,12 @@ int main(int argc, char *argv[])
     // Create the Application object
     App a(argc, argv);
 
-    // Initialize our fab Python package and the Python interpreter
+    // Initialize the _fabtypes Python package and the Python interpreter
     fab::preInit();
     Py_Initialize();
 
-    // Modify the default search path to include the application's directory
-    // (as this doesn't happen on Linux by default)
+    // Modify Python's default search path to include the application's
+    // directory (as this doesn't happen on Linux by default)
     QString d = QCoreApplication::applicationDirPath();
 #if defined Q_OS_MAC
     QStringList path = d.split("/");
