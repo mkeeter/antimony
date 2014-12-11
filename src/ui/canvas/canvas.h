@@ -3,9 +3,9 @@
 
 #include <QGraphicsView>
 #include <QGraphicsScene>
-#include <QMatrix4x4>
 #include <QPointer>
 
+class Node;
 class NodeInspector;
 class Link;
 
@@ -16,7 +16,7 @@ public:
     explicit Canvas(QWidget* parent=0);
     explicit Canvas(QGraphicsScene* scene, QWidget* parent=0);
 
-    void setScene(QGraphicsScene* s);
+    NodeInspector* getNodeInspector(Node* n) const;
 
     QGraphicsScene* scene;
 

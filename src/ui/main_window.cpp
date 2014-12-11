@@ -1,6 +1,7 @@
 #include <Python.h>
 
 #include <QKeySequence>
+#include <QMouseEvent>
 #include <QDebug>
 
 #include "app/app.h"
@@ -8,6 +9,7 @@
 #include "ui_main_window.h"
 #include "ui/main_window.h"
 #include "ui/canvas/canvas.h"
+#include "ui/canvas/inspector/inspector.h"
 #include "ui/viewport/viewport.h"
 
 #include "control/proxy.h"
@@ -160,6 +162,17 @@ void MainWindow::createNew()
         auto proxy = v->getControlProxy(n);
         Q_ASSERT(proxy);
         proxy->grabMouse();
+    }
+    else if (c)
+    {
+        auto inspector = c->getNodeInspector(n);
+        Q_ASSERT(inspector);
+        QMouseEvent event(
+                QEvent::MouseButtonPress, mouse_pos + QPointF(10, 10),
+                Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+        QApplication::sendEvent(c, &event);
+        inspector->setSelected(true);
+        inspector->grabMouse();
     }
 }
 

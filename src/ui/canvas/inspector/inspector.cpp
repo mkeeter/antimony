@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <QKeyEvent>
 #include <QGraphicsScene>
+#include <QGraphicsSceneMouseEvent>
 
 #include "ui/main_window.h"
 

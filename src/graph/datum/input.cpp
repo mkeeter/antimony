@@ -77,6 +77,7 @@ bool SingleInputHandler::hasInput() const
 void SingleInputHandler::deleteInput(Datum *d)
 {
     Q_ASSERT(!in.isNull() && in->parent() == d);
+    Q_UNUSED(d);
     delete in;
     in.clear();
 }

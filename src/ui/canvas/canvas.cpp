@@ -8,6 +8,7 @@
 #include <cmath>
 
 #include "ui/canvas/canvas.h"
+#include "ui/canvas/inspector/inspector.h"
 #include "ui/colors.h"
 
 #include "graph/node/node.h"
@@ -91,4 +92,15 @@ void Canvas::drawBackground(QPainter* painter, const QRectF& rect)
     for (int i = int(rect.left() / d) * d; i < rect.right(); i += d)
         for (int j = int(rect.top() / d) * d; j < rect.bottom(); j += d)
             painter->drawPoint(i, j);
+}
+
+NodeInspector* Canvas::getNodeInspector(Node* n) const
+{
+    for (auto i : items())
+    {
+        auto p = dynamic_cast<NodeInspector*>(i);
+        if (p && p->getNode() == n)
+            return p;
+    }
+    return NULL;
 }
