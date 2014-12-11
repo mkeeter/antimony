@@ -21,19 +21,14 @@ Canvas::Canvas(QWidget* parent)
     setRenderHints(QPainter::Antialiasing);
     setSceneRect(-width()/2, -height()/2, width(), height());
 
-    QGLFormat format;
-    format.setVersion(2, 1);
-    format.setSampleBuffers(true);
-    setViewport(new QGLWidget(format, this));
+    //QGLFormat format;
+    //format.setVersion(2, 1);
+    //format.setSampleBuffers(true);
+    //setViewport(new QGLWidget(format, this));
 }
 
 Canvas::Canvas(QGraphicsScene* s, QWidget* parent)
     : Canvas(parent)
-{
-    setScene(s);
-}
-
-void Canvas::setScene(QGraphicsScene* s)
 {
     QGraphicsView::setScene(s);
     scene = s;
