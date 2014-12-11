@@ -55,6 +55,16 @@ public slots:
     void openScript(Datum* d) const;
 #endif
 
+    /*
+     *  On mouse move, fake the left button being held down.
+     */
+    void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+
+    /*
+     *  On mouse move, fake the left button being held down.
+     */
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
+
     /** When datums are changed, update rows and layout.
      */
     void onDatumsChanged();
@@ -66,6 +76,8 @@ public slots:
     /** Change focus to the previous text item.
      */
     void focusPrev(DatumTextItem* prev);
+
+    void setDragging(bool d) { dragging = d; }
 
 protected:
     /** On delete or backspace, delete node.
@@ -83,6 +95,11 @@ protected:
     QPointer<Node> node;
     QMap<Datum*, InspectorRow*> rows;
     QGraphicsTextItem* title;
+
+    // Ugly hack because simply grabbing the mouse doesn't set up all of the
+    // magic that QGraphicsScene uses to drag items: upon first insertion,
+    // set this flag to true (then overload mouseMoveEvent to work correctly)
+    bool dragging;
 
     friend class InspectorRow;
 };

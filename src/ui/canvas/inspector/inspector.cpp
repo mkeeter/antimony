@@ -251,12 +251,32 @@ void NodeInspector::focusPrev(DatumTextItem* next)
             if (next == row->editor)
             {
                 if (prev)
-                {
                     prev->editor->setFocus();
-                }
                 return;
             }
             prev = row;
         }
     }
+}
+
+void NodeInspector::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
+{
+    if (dragging)
+    {
+        setPos(event->scenePos());
+        event->accept();
+    }
+    else
+    {
+        QGraphicsItem::mouseMoveEvent(event);
+    }
+}
+
+void NodeInspector::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
+{
+    QGraphicsItem::mouseReleaseEvent(event);
+
+    if (dragging)
+        ungrabMouse();
+    dragging = false;
 }

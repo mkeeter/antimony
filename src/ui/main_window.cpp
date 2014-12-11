@@ -167,11 +167,9 @@ void MainWindow::createNew()
     {
         auto inspector = c->getNodeInspector(n);
         Q_ASSERT(inspector);
-        QMouseEvent event(
-                QEvent::MouseButtonPress, mouse_pos + QPointF(10, 10),
-                Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
-        QApplication::sendEvent(c, &event);
         inspector->setSelected(true);
+        inspector->setPos(scene_pos);
+        inspector->setDragging(true);
         inspector->grabMouse();
     }
 }
