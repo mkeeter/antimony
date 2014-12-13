@@ -34,6 +34,7 @@ public:
 
     Node* getNode();
 
+
     OutputPort* datumOutputPort(Datum *d) const;
     InputPort* datumInputPort(Datum* d) const;
 

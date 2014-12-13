@@ -6,7 +6,7 @@
 #include "control/control.h"
 
 #include "ui/viewport/viewport.h"
-#include "ui/colors.h"
+#include "ui/util/colors.h"
 
 #include "graph/node/node.h"
 #include "graph/datum/datum.h"

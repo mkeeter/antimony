@@ -4,7 +4,7 @@
 #include <QGraphicsSceneMouseEvent>
 
 #include "ui/script/script_buttons.h"
-#include "ui/colors.h"
+#include "ui/util/colors.h"
 
 ScriptEditorButton::ScriptEditorButton(QGraphicsItem* parent)
     : QGraphicsObject(parent)

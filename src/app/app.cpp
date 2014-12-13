@@ -18,7 +18,7 @@
 
 #include "ui/viewport/viewport.h"
 #include "ui/viewport/scene.h"
-#include "ui/colors.h"
+#include "ui/util/colors.h"
 
 #include "graph/node/node.h"
 #include "graph/node/manager.h"

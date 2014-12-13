@@ -2,7 +2,7 @@
 #define SCALEY_CONTROL_H
 
 #include "control/wireframe.h"
-#include "ui/colors.h"
+#include "ui/util/colors.h"
 
 class _ScaleYHandle : public WireframeControl
 {

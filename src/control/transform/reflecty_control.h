@@ -2,7 +2,7 @@
 #define REFLECTY_CONTROL_H
 
 #include "control/wireframe.h"
-#include "ui/colors.h"
+#include "ui/util/colors.h"
 
 class ReflectYControl : public WireframeControl
 {

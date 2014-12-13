@@ -4,7 +4,7 @@
 #include "control/wireframe.h"
 #include "control/3d/sphere_control.h"
 
-#include "ui/colors.h"
+#include "ui/util/colors.h"
 
 class _AttractRadiusControl : public _SphereRadiusControl
 {

@@ -2,11 +2,10 @@
 
 #include "ui/canvas/inspector/inspector_row.h"
 #include "ui/canvas/inspector/inspector.h"
-#include "ui/canvas/inspector/inspector_button.h"
 #include "ui/canvas/inspector/inspector_text.h"
 #include "ui/canvas/port.h"
 
-#include "ui/colors.h"
+#include "ui/util/colors.h"
 
 #include "graph/datum/datum.h"
 #include "graph/datum/datums/script_datum.h"
@@ -23,25 +22,16 @@ InspectorRow::InspectorRow(Datum* d, NodeInspector* parent)
 {
     label->setDefaultTextColor(Colors::base04);
 
-    if (dynamic_cast<ScriptDatum*>(d))
-    {
-        editor = new DatumTextButton(d, "Open script", this);
-        connect(editor, SIGNAL(pressed(Datum*)),
-                parent, SLOT(openScript(Datum*)));
-    }
-    else
-    {
-        editor = new DatumTextItem(d, this);
-        connect(static_cast<DatumTextItem*>(editor),
-                &DatumTextItem::boundsChanged,
-                this, &InspectorRow::updateLayout);
-        connect(static_cast<DatumTextItem*>(editor),
-                &DatumTextItem::tabPressed,
-                parent, &NodeInspector::focusNext);
-        connect(static_cast<DatumTextItem*>(editor),
-                &DatumTextItem::shiftTabPressed,
-                parent, &NodeInspector::focusPrev);
-    }
+    editor = new DatumTextItem(d, this);
+    connect(static_cast<DatumTextItem*>(editor),
+            &DatumTextItem::boundsChanged,
+            this, &InspectorRow::updateLayout);
+    connect(static_cast<DatumTextItem*>(editor),
+            &DatumTextItem::tabPressed,
+            parent, &NodeInspector::focusNext);
+    connect(static_cast<DatumTextItem*>(editor),
+            &DatumTextItem::shiftTabPressed,
+            parent, &NodeInspector::focusPrev);
 }
 
 QRectF InspectorRow::boundingRect() const

@@ -25,12 +25,10 @@ SOURCES += \
     ../src/app/main.cpp \
     ../src/app/app.cpp \
     ../src/ui/main_window.cpp \
-    ../src/ui/colors.cpp \
     ../src/ui/canvas/canvas.cpp \
     ../src/ui/canvas/scene.cpp \
     ../src/ui/canvas/inspector/inspector.cpp \
     ../src/ui/canvas/inspector/inspector_text.cpp \
-    ../src/ui/canvas/inspector/inspector_button.cpp \
     ../src/ui/canvas/inspector/inspector_row.cpp \
     ../src/ui/canvas/connection.cpp \
     ../src/ui/canvas/port.cpp \
@@ -38,6 +36,8 @@ SOURCES += \
     ../src/ui/viewport/scene.cpp \
     ../src/ui/viewport/view_selector.cpp \
     ../src/ui/viewport/depth_image.cpp \
+    ../src/ui/util/button.cpp \
+    ../src/ui/util/colors.cpp \
     ../src/render/render_task.cpp \
     ../src/render/render_worker.cpp \
     ../src/render/render_image.cpp \
@@ -54,12 +54,10 @@ SOURCES += \
 HEADERS += \
     ../src/ui/main_window.h \
     ../src/app/app.h \
-    ../src/ui/colors.h \
     ../src/ui/canvas/canvas.h \
     ../src/ui/canvas/scene.h \
     ../src/ui/canvas/inspector/inspector.h \
     ../src/ui/canvas/inspector/inspector_text.h \
-    ../src/ui/canvas/inspector/inspector_button.h \
     ../src/ui/canvas/inspector/inspector_row.h \
     ../src/ui/canvas/port.h \
     ../src/ui/canvas/connection.h \
@@ -67,6 +65,8 @@ HEADERS += \
     ../src/ui/viewport/scene.h \
     ../src/ui/viewport/view_selector.h \
     ../src/ui/viewport/depth_image.h \
+    ../src/ui/util/button.h \
+    ../src/ui/util/colors.h \
     ../src/render/render_task.h \
     ../src/render/render_worker.h \
     ../src/render/render_image.h \

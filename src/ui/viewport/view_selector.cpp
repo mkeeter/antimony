@@ -4,7 +4,7 @@
 
 #include "ui/viewport/viewport.h"
 #include "ui/viewport/view_selector.h"
-#include "ui/colors.h"
+#include "ui/util/colors.h"
 
 ViewSelectorButton::ViewSelectorButton(QString label, QPointF pos,
                                        QGraphicsItem* parent)

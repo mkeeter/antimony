@@ -9,7 +9,7 @@
 
 #include "ui/canvas/canvas.h"
 #include "ui/canvas/inspector/inspector.h"
-#include "ui/colors.h"
+#include "ui/util/colors.h"
 
 #include "graph/node/node.h"
 #include "graph/datum/datum.h"

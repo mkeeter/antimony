@@ -4,7 +4,7 @@
 #include <QVector3D>
 
 #include "control/wireframe.h"
-#include "ui/colors.h"
+#include "ui/util/colors.h"
 
 class Iterate2DButton : public WireframeControl
 {

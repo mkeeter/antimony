@@ -3,7 +3,7 @@
 #include <QVector3D>
 
 #include "control/3d/extrude_control.h"
-#include "ui/colors.h"
+#include "ui/util/colors.h"
 
 _ExtrudeSpanControl::_ExtrudeSpanControl(Node* node, QObject* parent)
     : WireframeControl(node, parent)

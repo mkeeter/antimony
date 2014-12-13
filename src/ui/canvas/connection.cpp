@@ -8,7 +8,7 @@
 #include "ui/canvas/scene.h"
 #include "ui/canvas/port.h"
 #include "ui/canvas/inspector/inspector.h"
-#include "ui/colors.h"
+#include "ui/util/colors.h"
 
 #include "graph/datum/datum.h"
 #include "graph/datum/link.h"

@@ -14,7 +14,7 @@
 #include "ui/script/script_editor.h"
 #include "ui/script/script_buttons.h"
 #include "ui/script/syntax.h"
-#include "ui/colors.h"
+#include "ui/util/colors.h"
 
 ScriptEditorItem::ScriptEditorItem(ScriptDatum* datum, Canvas* canvas)
     : QGraphicsTextItem("HELLO WORLD"), datum(datum), border(10),

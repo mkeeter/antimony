@@ -16,7 +16,7 @@
 #include "ui/viewport/view_selector.h"
 
 #include "ui/main_window.h"
-#include "ui/colors.h"
+#include "ui/util/colors.h"
 
 #include "graph/datum/datum.h"
 #include "graph/node/node.h"

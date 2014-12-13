@@ -8,7 +8,7 @@
 #include <QKeyEvent>
 
 #include "ui/canvas/inspector/inspector_text.h"
-#include "ui/colors.h"
+#include "ui/util/colors.h"
 
 #include "graph/datum/datum.h"
 #include "graph/datum/types/eval_datum.h"

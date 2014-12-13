@@ -10,12 +10,11 @@
 #include "ui/main_window.h"
 
 #include "ui/canvas/inspector/inspector.h"
-#include "ui/canvas/inspector/inspector_button.h"
 #include "ui/canvas/inspector/inspector_text.h"
 #include "ui/canvas/inspector/inspector_row.h"
 #include "ui/canvas/port.h"
 
-#include "ui/colors.h"
+#include "ui/util/colors.h"
 
 #include "graph/datum/datum.h"
 #include "graph/datum/datums/script_datum.h"
