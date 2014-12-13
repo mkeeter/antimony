@@ -4,7 +4,6 @@
 
 #include <QMouseEvent>
 #include <QDebug>
-#include <QGridLayout>
 #include <QPropertyAnimation>
 #include <QGLWidget>
 #include <QMenu>
@@ -158,7 +157,7 @@ void Viewport::lockAngle(float y, float p)
     angle_locked = true;
 
     update();
-    scene->invalidate(QRect(),QGraphicsScene::ForegroundLayer);
+    scene->invalidate(QRect(), QGraphicsScene::ForegroundLayer);
     emit(viewChanged());
 }
 
