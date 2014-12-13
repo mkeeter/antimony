@@ -3,6 +3,7 @@
 
 #include <QGraphicsObject>
 #include <QImage>
+#include <QPointer>
 #include <QVector3D>
 #include <QtGui/QOpenGLFunctions>
 #include <QtGui/QOpenGLShaderProgram>
@@ -40,7 +41,7 @@ protected:
 
     QImage depth;
     QImage shaded;
-    Viewport* viewport;
+    QPointer<Viewport> viewport;
 
     GLuint depth_tex;
     GLuint shaded_tex;

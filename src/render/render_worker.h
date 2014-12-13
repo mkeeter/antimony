@@ -47,7 +47,7 @@ protected:
     QThread* thread;
     RenderTask* current;
     RenderTask* next;
-    DepthImageItem* depth_image;
+    QPointer<DepthImageItem> depth_image;
 
     bool running;
 
