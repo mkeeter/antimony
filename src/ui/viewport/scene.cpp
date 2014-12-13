@@ -67,7 +67,12 @@ void ViewportScene::makeRenderWorkersFor(Node* n, Viewport* v)
 {
     for (auto d : n->findChildren<Datum*>())
         if (RenderWorker::accepts(d))
-            workers[d] << new RenderWorker(d, v);
+        {
+            auto w = new RenderWorker(d, v);
+            workers[d] << w;
+            connect(w, &RenderWorker::destroyed,
+                    this, &ViewportScene::prune);
+        }
 }
 
 void ViewportScene::prune()
