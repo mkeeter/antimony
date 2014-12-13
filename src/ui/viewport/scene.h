@@ -36,6 +36,12 @@ public:
      */
     Control* makeUIfor(Node* n);
 
+protected slots:
+    /*
+     *  Removes dead Viewport and Node pointers from the list and map.
+     */
+    void prune();
+
 protected:
 
     /*
@@ -49,11 +55,6 @@ protected:
      *  given node that produces Shapes.
      */
     void makeRenderWorkersFor(Node* n, Viewport* v);
-
-    /*
-     *  Removes dead Viewport and Node pointers from the list and map.
-     */
-    void prune();
 
     /*
      *  Makes a new control for the given node

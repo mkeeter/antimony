@@ -32,6 +32,8 @@ Viewport* ViewportScene::newViewport()
 {
     auto s = new QGraphicsScene;
     auto v = new Viewport(s);
+    connect(v, &QObject::destroyed, s, &QObject::deleteLater);
+    connect(s, &QObject::destroyed, this, &ViewportScene::prune);
     scenes[v] = s;
 
     prune();
@@ -54,6 +56,8 @@ void ViewportScene::makeProxyFor(Control* c, Viewport* v)
     scenes[v]->addItem(p);
     connect(v, &Viewport::viewChanged,
             p, &ControlProxy::redraw);
+    connect(c, &ControlProxy::destroyed,
+            this, &ViewportScene::prune);
 
     for (auto f : c->findChildren<Control*>("", Qt::FindDirectChildrenOnly))
         makeProxyFor(f, v);

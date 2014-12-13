@@ -19,6 +19,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    setAttribute(Qt::WA_DeleteOnClose);
+
     QActionGroup* view_actions = new QActionGroup(this);
     view_actions->addAction(ui->actionShaded);
     view_actions->addAction(ui->actionHeightmap);

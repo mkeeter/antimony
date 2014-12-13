@@ -16,6 +16,8 @@ ControlProxy::ControlProxy(Control* control, Viewport* viewport)
 
     connect(control, &Control::destroyed,
             this, &ControlProxy::deleteLater);
+    connect(viewport, &Viewport::destroyed,
+            this, &ControlProxy::deleteLater);
     connect(control, &Control::redraw,
             this, &ControlProxy::redraw);
 }
