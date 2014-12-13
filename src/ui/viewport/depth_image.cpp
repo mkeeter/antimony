@@ -16,7 +16,6 @@ DepthImageItem::DepthImageItem(QVector3D pos, QVector3D size,
     : QGraphicsObject(), pos(pos), size(size), depth(depth), shaded(shaded),
       viewport(viewport)
 {
-    qDebug() << "Making stuff";
     connect(viewport, &Viewport::viewChanged, this, &DepthImageItem::reposition);
     reposition();
     setZValue(-20);
