@@ -37,12 +37,12 @@ SOURCES += \
     ../src/ui/viewport/scene.cpp \
     ../src/ui/viewport/view_selector.cpp \
     ../src/ui/viewport/depth_image.cpp \
+    ../src/ui/script/syntax.cpp \
     ../src/ui/util/button.cpp \
     ../src/ui/util/colors.cpp \
     ../src/render/render_task.cpp \
     ../src/render/render_worker.cpp \
     ../src/render/render_image.cpp \
-    #../src/ui/script/syntax.cpp \
     #../src/ui/resolution_dialog.cpp \
     #../src/ui/exporting_dialog.cpp \
     #../src/ui/tooltip.cpp \
@@ -67,6 +67,7 @@ HEADERS += \
     ../src/ui/viewport/scene.h \
     ../src/ui/viewport/view_selector.h \
     ../src/ui/viewport/depth_image.h \
+    ../src/ui/script/syntax.h \
     ../src/ui/util/button.h \
     ../src/ui/util/colors.h \
     ../src/render/render_task.h \
@@ -75,7 +76,6 @@ HEADERS += \
     #../src/render/export_mesh.h \
     #../src/render/export_bitmap.h \
     #../src/render/export_json.h \
-    #../src/ui/script/syntax.h \
     #../src/ui/resolution_dialog.h \
     #../src/ui/exporting_dialog.h \
     #../src/ui/tooltip.h \
