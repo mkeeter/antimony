@@ -24,6 +24,7 @@ void GraphicsButton::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 void GraphicsButton::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    QGraphicsItem::mousePressEvent(event);
     if (event->button() == Qt::LeftButton)
         emit(pressed());
 }

@@ -219,6 +219,11 @@ Node* NodeInspector::getNode()
     return node;
 }
 
+ScriptDatum* NodeInspector::getScriptDatum() const
+{
+    return dynamic_cast<ScriptDatum*>(node->getDatum("_script"));
+}
+
 QPointF NodeInspector::datumOutputPosition(Datum* d) const
 {
     OutputPort* p = datumOutputPort(d);

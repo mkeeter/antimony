@@ -9,6 +9,7 @@
 #include <QGraphicsObject>
 
 class Datum;
+class ScriptDatum;
 class Node;
 class Canvas;
 
@@ -35,6 +36,7 @@ public:
 
     Node* getNode();
 
+    ScriptDatum* getScriptDatum() const;
 
     OutputPort* datumOutputPort(Datum *d) const;
     InputPort* datumInputPort(Datum* d) const;

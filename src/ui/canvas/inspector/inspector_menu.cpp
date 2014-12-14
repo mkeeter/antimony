@@ -1,6 +1,8 @@
 #include <Python.h>
 
 #include <QPainter>
+#include <QMenu>
+#include <QAction>
 
 #include "ui/canvas/inspector/inspector_menu.h"
 #include "ui/canvas/inspector/inspector.h"
@@ -10,7 +12,8 @@
 InspectorMenuButton::InspectorMenuButton(NodeInspector* parent)
     : GraphicsButton(parent)
 {
-    // Nothing to do here
+    connect(this, &GraphicsButton::pressed,
+            this, &InspectorMenuButton::onPressed);
 }
 
 QRectF InspectorMenuButton::boundingRect() const
@@ -27,7 +30,20 @@ void InspectorMenuButton::paint(QPainter* painter,
 
     painter->setPen(Qt::NoPen);
     painter->setBrush(hover ? Colors::base05 : Colors::base04);
-    painter->drawRect(2, 1, 16, 3);
-    painter->drawRect(2, 7, 16, 3);
-    painter->drawRect(2, 13, 16, 3);
+    painter->drawRect(2, 2, 16, 3);
+    painter->drawRect(2, 8, 16, 3);
+    painter->drawRect(2, 14, 16, 3);
+}
+
+void InspectorMenuButton::onPressed()
+{
+    NodeInspector* i = dynamic_cast<NodeInspector*>(parentObject());
+    Q_ASSERT(i);
+    ScriptDatum* s = i->getScriptDatum();
+
+    QMenu* menu = new QMenu();
+    QAction* a = menu->addAction("Edit script");
+    if (!s)
+        a->setEnabled(false);
+    menu->exec(QCursor::pos());
 }
