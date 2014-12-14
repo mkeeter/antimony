@@ -13,6 +13,7 @@ class Node;
 class Canvas;
 
 class InspectorRow;
+class InspectorMenuButton;
 class InputPort;
 class OutputPort;
 
@@ -97,6 +98,7 @@ protected:
     QMap<Datum*, InspectorRow*> rows;
     DatumTextItem* name;
     QGraphicsTextItem* title;
+    InspectorMenuButton* menu_button;
 
     // Ugly hack because simply grabbing the mouse doesn't set up all of the
     // magic that QGraphicsScene uses to drag items: upon first insertion,

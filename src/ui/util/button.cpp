@@ -5,7 +5,7 @@
 GraphicsButton::GraphicsButton(QGraphicsItem *parent)
     : QGraphicsObject(parent), hover(false)
 {
-    // Nothing to do here
+    setAcceptHoverEvents(true);
 }
 
 void GraphicsButton::hoverEnterEvent(QGraphicsSceneHoverEvent *event)

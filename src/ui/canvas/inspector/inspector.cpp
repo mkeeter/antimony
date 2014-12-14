@@ -12,6 +12,7 @@
 #include "ui/canvas/inspector/inspector.h"
 #include "ui/canvas/inspector/inspector_text.h"
 #include "ui/canvas/inspector/inspector_row.h"
+#include "ui/canvas/inspector/inspector_menu.h"
 #include "ui/canvas/port.h"
 
 #include "ui/util/colors.h"
@@ -24,7 +25,8 @@
 
 NodeInspector::NodeInspector(Node* node)
     : node(node), name(NULL),
-      title(new QGraphicsTextItem(node->getType(), this))
+      title(new QGraphicsTextItem(node->getType(), this)),
+      menu_button(new InspectorMenuButton(this))
 {
     if (auto n = node->getDatum("_name"))
     {
@@ -75,7 +77,7 @@ float NodeInspector::labelWidth() const
     // field (forgive the hard-coded magic numbers)
     if (name)
     {
-        int free_space = label_width + 165 - title->boundingRect().width();
+        int free_space = label_width + 145 - title->boundingRect().width();
         if (name->boundingRect().width() > free_space)
             label_width += name->boundingRect().width() - free_space;
     }
@@ -99,8 +101,13 @@ void NodeInspector::onLayoutChanged()
 {
     // Right-align the title block
     if (name)
-        title->setPos(boundingRect().width() -
-                      title->boundingRect().width() - 6, 2);
+        title->setPos(
+                boundingRect().width() - title->boundingRect().width()
+                - menu_button->boundingRect().width() - 6, 2);
+
+    // Position the menu to the far right of the title bar
+    menu_button->setPos(boundingRect().width() -
+                        menu_button->boundingRect().width() - 3, 5);
 
     if (node)
     {
