@@ -7,20 +7,20 @@
 
 CubeControl::CubeControl(Node* node, QObject* parent)
     : WireframeControl(node, parent),
-      a(new Point3DControl(node->findChild<Node*>("a"), this)),
-      b(new Point3DControl(node->findChild<Node*>("b"), this))
+      a(new Point3DControl(node, this, "min")),
+      b(new Point3DControl(node, this, "max"))
 {
-    watchDatums({"a.x","a.y","a.z","b.x","b.y","b.z"});
+    watchDatums({"xmin","ymin","zmin","xmax","ymax","zmax"});
 }
 
 QVector<QVector<QVector3D>> CubeControl::lines() const
 {
-    float ax = a->getValue("x");
-    float ay = a->getValue("y");
-    float az = a->getValue("z");
-    float bx = b->getValue("x");
-    float by = b->getValue("y");
-    float bz = b->getValue("z");
+    float ax = getValue("xmin");
+    float ay = getValue("ymin");
+    float az = getValue("zmin");
+    float bx = getValue("xmax");
+    float by = getValue("ymax");
+    float bz = getValue("zmax");
 
     return {
         {QVector3D(ax, ay, az), QVector3D(ax, by, az),

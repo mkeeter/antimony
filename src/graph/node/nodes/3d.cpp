@@ -24,10 +24,16 @@ Node* CubeNode(float x, float y, float z, float scale, QObject* parent)
 {
     Node* n = new Node(NodeType::CUBE, parent);
     new NameDatum("_name", NodeManager::manager()->getName("c"), n);
-    Point3DNode(x, y, z, 0, n)->setObjectName("a");
-    Point3DNode(x + scale, y + scale, z + scale, 0, n)->setObjectName("b");
+
+    new FloatDatum("xmin", QString::number(x), n);
+    new FloatDatum("ymin", QString::number(y), n);
+    new FloatDatum("zmin", QString::number(z), n);
+    new FloatDatum("xmax", QString::number(x + scale), n);
+    new FloatDatum("ymax", QString::number(y + scale), n);
+    new FloatDatum("zmax", QString::number(z + scale), n);
+
     new ShapeFunctionDatum("shape", n, "cube",
-        {"a.x", "b.x", "a.y", "b.y", "a.z", "b.z"});
+        {"xmin", "xmax", "ymin", "ymax", "zmin", "zmax"});
     return n;
 }
 
