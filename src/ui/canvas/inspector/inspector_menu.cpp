@@ -41,9 +41,9 @@ void InspectorMenuButton::onPressed()
     Q_ASSERT(i);
     ScriptDatum* s = i->getScriptDatum();
 
-    QMenu* menu = new QMenu();
-    QAction* a = menu->addAction("Edit script");
+    QMenu menu;
+    QAction* a = menu.addAction("Edit script");
     if (!s)
         a->setEnabled(false);
-    menu->exec(QCursor::pos());
+    menu.exec(QCursor::pos());
 }
