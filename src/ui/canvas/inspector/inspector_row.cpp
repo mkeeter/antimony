@@ -18,11 +18,10 @@ InspectorRow::InspectorRow(Datum* d, NodeInspector* parent)
       output(d->hasOutput()
                 ? new OutputPort(d, static_cast<QGraphicsItem*>(this))
                 : NULL),
-      label(new QGraphicsTextItem(d->objectName(), this))
+      label(new QGraphicsTextItem(d->objectName(), this)),
+      editor(new DatumTextItem(d, this))
 {
     label->setDefaultTextColor(Colors::base04);
-
-    editor = new DatumTextItem(d, this);
     connect(static_cast<DatumTextItem*>(editor),
             &DatumTextItem::boundsChanged,
             this, &InspectorRow::updateLayout);

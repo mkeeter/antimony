@@ -4,6 +4,7 @@
 #include <QGraphicsObject>
 
 class Datum;
+class DatumTextItem;
 class InputPort;
 class OutputPort;
 class NodeInspector;
@@ -17,7 +18,7 @@ public:
     InputPort* input;
     OutputPort* output;
     QGraphicsTextItem* label;
-    QGraphicsTextItem* editor;
+    DatumTextItem* editor;
     QRectF boundingRect() const;
 
 public slots:

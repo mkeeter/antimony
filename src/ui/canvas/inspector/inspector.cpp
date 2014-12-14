@@ -23,8 +23,18 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 NodeInspector::NodeInspector(Node* node)
-    : node(node), title(new QGraphicsTextItem(node->getType(), this))
+    : node(node), name(NULL),
+      title(new QGraphicsTextItem(node->getType(), this))
 {
+    if (auto n = node->getDatum("_name"))
+    {
+        name = new DatumTextItem(n, this);
+        name->setAsTitle();
+        name->setPos(6, 2);
+        connect(n, &Datum::changed,
+                this, &NodeInspector::onLayoutChanged);
+    }
+
     setFlags(QGraphicsItem::ItemIsMovable |
              QGraphicsItem::ItemIsSelectable |
              QGraphicsItem::ItemIsFocusable);
@@ -58,8 +68,16 @@ float NodeInspector::labelWidth() const
 {
     float label_width = 0;
     for (auto row : rows)
-    {
         label_width = fmax(label_width, row->label->boundingRect().width());
+
+    // Special case if the name field is getting too long -- pad the label
+    // width so that the name field fits without overlapping into the title
+    // field (forgive the hard-coded magic numbers)
+    if (name)
+    {
+        int free_space = label_width + 165 - title->boundingRect().width();
+        if (name->boundingRect().width() > free_space)
+            label_width += name->boundingRect().width() - free_space;
     }
     return label_width;
 }
@@ -79,6 +97,11 @@ QRectF NodeInspector::boundingRect() const
 
 void NodeInspector::onLayoutChanged()
 {
+    // Right-align the title block
+    if (name)
+        title->setPos(boundingRect().width() -
+                      title->boundingRect().width() - 6, 2);
+
     if (node)
     {
         float y = 2 + title->boundingRect().height() + 4;

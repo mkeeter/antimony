@@ -95,6 +95,7 @@ protected:
 
     QPointer<Node> node;
     QMap<Datum*, InspectorRow*> rows;
+    DatumTextItem* name;
     QGraphicsTextItem* title;
 
     // Ugly hack because simply grabbing the mouse doesn't set up all of the

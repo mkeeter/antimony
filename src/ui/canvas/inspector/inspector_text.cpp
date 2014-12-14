@@ -15,7 +15,8 @@
 
 DatumTextItem::DatumTextItem(Datum* datum, QGraphicsItem* parent)
     : QGraphicsTextItem(parent), d(datum), txt(document()),
-      background(Colors::base02), border(background)
+      background(Colors::base02), foreground(Colors::base04),
+      border(background)
 {
     setTextInteractionFlags(Qt::TextEditorInteraction);
     setTextWidth(150);
@@ -29,16 +30,28 @@ DatumTextItem::DatumTextItem(Datum* datum, QGraphicsItem* parent)
     installEventFilter(this);
 }
 
+void DatumTextItem::setAsTitle()
+{
+    background = Colors::base03;
+    foreground = Colors::base06;
+
+    auto f = font();
+    f.setBold(true);
+    setFont(f);
+
+    // Allow this item to grow horizontally forever
+    setTextWidth(-1);
+
+    // Force a redraw
+    onDatumChanged();
+}
+
 void DatumTextItem::onDatumChanged()
 {
     if (d->canEdit())
-    {
-        setDefaultTextColor(Colors::base04);
-    }
+        setDefaultTextColor(foreground);
     else
-    {
         setDefaultTextColor(Colors::base03);
-    }
 
     QTextCursor cursor = textCursor();
     int p = textCursor().position();
@@ -49,13 +62,9 @@ void DatumTextItem::onDatumChanged()
     setEnabled(d->canEdit());
 
     if (d->getValid())
-    {
         border = background;
-    }
     else
-    {
         border = Colors::red;
-    }
 
     // Set tooltip if there was a Python evaluation error.
     if (dynamic_cast<EvalDatum*>(d) && !d->getValid())
@@ -90,7 +99,7 @@ void DatumTextItem::paint(QPainter* painter,
 {
     painter->setBrush(background);
     painter->setPen(QPen(border, 2));
-    painter->drawRect(boundingRect());
+    painter->drawRect(boundingRect().adjusted(-1, 1, 1, -1));
     QGraphicsTextItem::paint(painter, o, w);
 }
 

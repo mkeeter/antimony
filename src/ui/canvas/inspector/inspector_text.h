@@ -10,6 +10,12 @@ class DatumTextItem : public QGraphicsTextItem
     Q_OBJECT
 public:
     DatumTextItem(Datum* datum, QGraphicsItem* parent);
+
+    /*
+     *  Adjusts formatting so that the text box blends in
+     *  with an Inspector title bar
+     */
+    void setAsTitle();
 public slots:
     void onTextChanged();
     void onDatumChanged();
@@ -29,6 +35,7 @@ protected:
     Datum* d;
     QTextDocument* txt;
     QColor background;
+    QColor foreground;
     QColor border;
     QRectF bbox;
 };
