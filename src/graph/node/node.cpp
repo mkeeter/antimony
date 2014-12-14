@@ -13,19 +13,15 @@ Node::Node(NodeType::NodeType type, QObject* parent)
     : QObject(parent), type(type), control(NULL)
 {
     if (parent == NULL)
-    {
         setParent(NodeManager::manager());
-    }
 }
 
 Node::Node(NodeType::NodeType type, QString name, QObject* parent)
     : Node(type, parent)
 {
-    new NameDatum("name", name, this);
+    new NameDatum("_name", name, this);
     if (parent == NULL)
-    {
         setParent(NodeManager::manager());
-    }
 }
 
 
@@ -60,11 +56,9 @@ Datum* Node::getDatum(QString name) const
 
 QString Node::getName() const
 {
-    auto e = getDatum<EvalDatum>("name");
+    auto e = getDatum<EvalDatum>("_name");
     if (e)
-    {
         return e->getExpr();
-    }
     return "";
 }
 

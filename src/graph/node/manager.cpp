@@ -35,7 +35,7 @@ bool NodeManager::isNameUnique(QString name) const
 
 NameDatum* NodeManager::findMatchingName(PyObject* proposed) const
 {
-    for (NameDatum* d : findChildren<NameDatum*>("name"))
+    for (NameDatum* d : findChildren<NameDatum*>("_name"))
     {
         if (d->getValid() &&
             PyObject_RichCompareBool(d->getValue(), proposed, Py_EQ))
@@ -69,7 +69,7 @@ PyObject* NodeManager::proxyDict(Datum* caller)
     PyDict_SetItemString(d, "math", PyImport_ImportModule("math"));
     for (Node* n : findChildren<Node*>())
     {
-        NameDatum* name = n->getDatum<NameDatum>("name");
+        NameDatum* name = n->getDatum<NameDatum>("_name");
 
         if (name->getValid())
         {
@@ -191,7 +191,7 @@ QMap<QString, Shape> NodeManager::getShapes()
 
         Q_ASSERT(get_shape.check());
 
-        Datum* name = dynamic_cast<Node*>(d->parent())->getDatum("name");
+        Datum* name = dynamic_cast<Node*>(d->parent())->getDatum("_name");
         wchar_t* w = PyUnicode_AsWideCharString(name->getValue(), 0);
         Q_ASSERT(w);
         out[QString::fromWCharArray(w)] = get_shape();

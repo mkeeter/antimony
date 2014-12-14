@@ -44,7 +44,7 @@ void ScriptDatum::modifyGlobalsDict(PyObject* g)
 
 bool ScriptDatum::isValidName(QString name) const
 {
-    return name.size() && name.at(0) != '_' && name != "name" &&
+    return name.size() && name.at(0) != '_' &&
            name != "script" && !touched.contains(name);
 }
 
@@ -160,7 +160,7 @@ PyObject* ScriptDatum::getCurrentValue()
         {
             QString name = d->objectName();
             if (d != this && name.size() && name.at(0) != '_' &&
-                name != "name" && !touched.contains(name))
+                !touched.contains(name))
             {
                 datums_changed = true;
                 delete d;

@@ -16,7 +16,7 @@
 Node* AttractNode(float x, float y, float z, float scale, QObject* parent)
 {
     Node* n = new Node(NodeType::ATTRACT, parent);
-    new NameDatum("name", NodeManager::manager()->getName("a"), n);
+    new NameDatum("_name", NodeManager::manager()->getName("a"), n);
     new FloatDatum("x", QString::number(x), n);
     new FloatDatum("y", QString::number(y), n);
     new FloatDatum("z", QString::number(z), n);
@@ -30,7 +30,7 @@ Node* AttractNode(float x, float y, float z, float scale, QObject* parent)
 Node* RepelNode(float x, float y, float z, float scale, QObject* parent)
 {
     Node* n = new Node(NodeType::REPEL, parent);
-    new NameDatum("name", NodeManager::manager()->getName("a"), n);
+    new NameDatum("_name", NodeManager::manager()->getName("a"), n);
     new FloatDatum("x", QString::number(x), n);
     new FloatDatum("y", QString::number(y), n);
     new FloatDatum("z", QString::number(z), n);
@@ -44,7 +44,7 @@ Node* RepelNode(float x, float y, float z, float scale, QObject* parent)
 Node* ScaleXNode(float x, float y, float z, float scale, QObject* parent)
 {
     Node* n = new Node(NodeType::SCALEX, parent);
-    new NameDatum("name", NodeManager::manager()->getName("a"), n);
+    new NameDatum("_name", NodeManager::manager()->getName("a"), n);
     new FloatDatum("x", QString::number(x), n);
     new FloatDatum("_y", QString::number(y), n);
     new FloatDatum("_z", QString::number(z), n);
@@ -58,7 +58,7 @@ Node* ScaleXNode(float x, float y, float z, float scale, QObject* parent)
 Node* ScaleYNode(float x, float y, float z, float scale, QObject* parent)
 {
     Node* n = new Node(NodeType::SCALEY, parent);
-    new NameDatum("name", NodeManager::manager()->getName("a"), n);
+    new NameDatum("_name", NodeManager::manager()->getName("a"), n);
     new FloatDatum("_x", QString::number(x), n);
     new FloatDatum("y", QString::number(y), n);
     new FloatDatum("_z", QString::number(z), n);
@@ -72,7 +72,7 @@ Node* ScaleYNode(float x, float y, float z, float scale, QObject* parent)
 Node* ScaleZNode(float x, float y, float z, float scale, QObject* parent)
 {
     Node* n = new Node(NodeType::SCALEZ, parent);
-    new NameDatum("name", NodeManager::manager()->getName("a"), n);
+    new NameDatum("_name", NodeManager::manager()->getName("a"), n);
     new FloatDatum("_x", QString::number(x), n);
     new FloatDatum("_y", QString::number(y), n);
     new FloatDatum("z", QString::number(z), n);
