@@ -7,21 +7,21 @@
 
 TriangleControl::TriangleControl(Node* node, QObject* parent)
     : WireframeControl(node, parent),
-      a(new Point2DControl(node->findChild<Node*>("a"), this)),
-      b(new Point2DControl(node->findChild<Node*>("b"), this)),
-      c(new Point2DControl(node->findChild<Node*>("c"), this))
+      a(new Point2DControl(node, this, "0")),
+      b(new Point2DControl(node, this, "1")),
+      c(new Point2DControl(node, this, "2"))
 {
-    watchDatums({"a.x","a.y","b.x","b.y","c.x","c.y"});
+    watchDatums({"x0","x1","x2","y0","y1","y2"});
 }
 
 QVector<QVector<QVector3D>> TriangleControl::lines() const
 {
-    float ax = a->getValue("x");
-    float ay = a->getValue("y");
-    float bx = b->getValue("x");
-    float by = b->getValue("y");
-    float cx = c->getValue("x");
-    float cy = c->getValue("y");
+    float ax = getValue("x0");
+    float ay = getValue("y0");
+    float bx = getValue("x1");
+    float by = getValue("y1");
+    float cx = getValue("x2");
+    float cy = getValue("y2");
 
     return {
         {QVector3D(ax, ay, 0), QVector3D(bx, by, 0), QVector3D(cx, cy, 0),

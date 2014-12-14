@@ -7,18 +7,18 @@
 
 RectangleControl::RectangleControl(Node* node, QObject* parent)
     : WireframeControl(node, parent),
-      a(new Point2DControl(node->findChild<Node*>("a"), this)),
-      b(new Point2DControl(node->findChild<Node*>("b"), this))
+      a(new Point2DControl(node, this, "min")),
+      b(new Point2DControl(node, this, "max"))
 {
-    watchDatums({"a.x","a.y","b.x","b.y"});
+    watchDatums({"xmin","ymin","xmax","ymax"});
 }
 
 QVector<QVector<QVector3D>> RectangleControl::lines() const
 {
-    float ax = a->getValue("x");
-    float ay = a->getValue("y");
-    float bx = b->getValue("x");
-    float by = b->getValue("y");
+    float ax = getValue("xmin");
+    float ay = getValue("ymin");
+    float bx = getValue("xmax");
+    float by = getValue("ymax");
 
     return {
         {QVector3D(ax, ay, 0), QVector3D(ax, by, 0),

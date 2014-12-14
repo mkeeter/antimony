@@ -11,7 +11,8 @@
 class Point2DControl : public WireframeControl
 {
 public:
-    explicit Point2DControl(Node* node, QObject* parent=0);
+    explicit Point2DControl(Node* node, QObject* parent=0,
+                            QString suffix="");
 
     QVector<QPair<QVector3D, float>> points() const override;
 
@@ -22,6 +23,7 @@ public:
 
 protected:
     QVector3D position() const;
+    const QString suffix;
 };
 
 #endif // POINT2D_CONTROL_H
