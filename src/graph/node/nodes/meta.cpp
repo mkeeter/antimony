@@ -22,7 +22,7 @@ Node* ScriptNode(QString name, QString x, QString y, QString z,
     Q_UNUSED(z);
 
     Node* n = new Node(NodeType::SCRIPT, name, parent);
-    new ScriptDatum("script", script, n);
+    new ScriptDatum("_script", script, n);
     return n;
 }
 
@@ -36,11 +36,13 @@ Node* ScriptNode(float x, float y, float z, float scale,
 
     Node* n = new Node(
             NodeType::SCRIPT, NodeManager::manager()->getName("a"), parent);
-    new ScriptDatum("script",
+    new ScriptDatum("_script",
              "from fab import shapes\n\n"
              "output('c', shapes.circle(0, 0, 1))", n);
     return n;
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 Node* EquationNode(float x, float y, float z, float scale,
                        QObject* parent)
