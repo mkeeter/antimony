@@ -17,8 +17,8 @@ Node* Iterate2DNode(float x, float y, float z, float scale, QObject* parent)
 {
     Q_UNUSED(z);
 
-    Node* n = new Node(NodeType::ITERATE2D, parent);
-    new NameDatum("_name", NodeManager::manager()->getName("i"), n);
+    Node* n = new Node(
+            NodeType::ITERATE2D, NodeManager::manager()->getName("i"), parent);
     new FloatDatum("_x", QString::number(x), n);
     new FloatDatum("_y", QString::number(y), n);
     new IntDatum("i", "2", n);
