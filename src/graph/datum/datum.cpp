@@ -106,13 +106,9 @@ void Datum::update()
 
     PyObject* new_value;
     if (hasInputValue())
-    {
         new_value = input_handler->getValue();
-    }
     else
-    {
         new_value = getCurrentValue();
-    }
 
     bool has_changed = false;
     // If our previous value was valid and our new value is invalid,

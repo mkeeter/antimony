@@ -8,12 +8,12 @@
 
 int main(int argc, char *argv[])
 {
-    // Create the Application object
-    App a(argc, argv);
-
     // Initialize the _fabtypes Python package and the Python interpreter
     fab::preInit();
     Py_Initialize();
+
+    // Create the Application object
+    App a(argc, argv);
 
     // Modify Python's default search path to include the application's
     // directory (as this doesn't happen on Linux by default)

@@ -38,6 +38,7 @@ SOURCES += \
     ../src/ui/viewport/view_selector.cpp \
     ../src/ui/viewport/depth_image.cpp \
     ../src/ui/script/syntax.cpp \
+    ../src/ui/script/editor.cpp \
     ../src/ui/util/button.cpp \
     ../src/ui/util/colors.cpp \
     ../src/render/render_task.cpp \
@@ -46,7 +47,6 @@ SOURCES += \
     #../src/ui/resolution_dialog.cpp \
     #../src/ui/exporting_dialog.cpp \
     #../src/ui/tooltip.cpp \
-    #../src/ui/script/script_editor.cpp \
     #../src/ui/script/script_buttons.cpp \
     #../src/render/export_mesh.cpp \
     #../src/render/export_bitmap.cpp \
@@ -68,6 +68,7 @@ HEADERS += \
     ../src/ui/viewport/view_selector.h \
     ../src/ui/viewport/depth_image.h \
     ../src/ui/script/syntax.h \
+    ../src/ui/script/editor.h \
     ../src/ui/util/button.h \
     ../src/ui/util/colors.h \
     ../src/render/render_task.h \

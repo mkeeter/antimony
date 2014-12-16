@@ -11,6 +11,7 @@
 #include "ui/canvas/canvas.h"
 #include "ui/canvas/inspector/inspector.h"
 #include "ui/viewport/viewport.h"
+#include "ui/script/editor.h"
 
 #include "control/proxy.h"
 
@@ -43,7 +44,14 @@ void MainWindow::updateMenus()
     if (dynamic_cast<Canvas*>(centralWidget()))
     {
         ui->menuView->deleteLater();
-    } else {
+    }
+    else if (dynamic_cast<ScriptEditor*>(centralWidget()))
+    {
+        ui->menuView->deleteLater();
+        ui->menuAdd->deleteLater();
+    }
+    else
+    {
         for (auto v : findChildren<Viewport*>())
         {
             connect(ui->actionShaded, SIGNAL(triggered()),

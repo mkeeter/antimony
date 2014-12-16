@@ -12,12 +12,12 @@
 #include "ui/dialogs/resolution_dialog.h"
 #include "ui/dialogs/exporting_dialog.h"
 
-#include "ui/canvas/canvas.h"
 #include "ui/main_window.h"
+#include "ui/canvas/canvas.h"
 #include "ui/canvas/scene.h"
-
 #include "ui/viewport/viewport.h"
 #include "ui/viewport/scene.h"
+#include "ui/script/editor.h"
 #include "ui/util/colors.h"
 
 #include "graph/node/node.h"
@@ -32,6 +32,8 @@
 #define GITREV "???"
 #endif
 
+#include "graph/node/nodes/meta.h"
+#include "graph/datum/datums/script_datum.h"
 App::App(int& argc, char** argv) :
     QApplication(argc, argv),
     graph_scene(new GraphScene()),
@@ -39,6 +41,9 @@ App::App(int& argc, char** argv) :
 {
     setGlobalStyle();
     newCanvasWindow();
+    NodeManager::manager();
+
+    newEditorWindow(ScriptNode(0, 0, 0, 1)->getDatum<ScriptDatum>("_script"));
 }
 
 App::~App()
@@ -409,6 +414,14 @@ void App::newQuadWindow()
                 "}").arg(Colors::base01.name()));
     w->setLayout(g);
     m->setCentralWidget(w);
+    m->updateMenus();
+    m->show();
+}
+
+void App::newEditorWindow(ScriptDatum* datum)
+{
+    auto m = new MainWindow();
+    m->setCentralWidget(new ScriptEditor(datum, m));
     m->updateMenus();
     m->show();
 }

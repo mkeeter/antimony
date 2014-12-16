@@ -8,6 +8,7 @@ class ViewportScene;
 class Node;
 class Link;
 class Connection;
+class ScriptDatum;
 
 class App : public QApplication
 {
@@ -42,11 +43,15 @@ public slots:
      */
     void newViewportWindow();
 
-
     /*
      *  Opens a new MainWindow with four Viewports.
      */
     void newQuadWindow();
+
+    /*
+     *  Opens a new editor window targetting the given datum.
+     */
+    void newEditorWindow(ScriptDatum* datum);
 
 public slots:
     void onAbout();
