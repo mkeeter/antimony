@@ -33,11 +33,11 @@ Connection::Connection(Link* link)
 void Connection::makeSceneConnections()
 {
     Q_ASSERT(scene());
-    connect(startInspector(), &NodeInspector::portPositionChanged,
-            this, &Connection::onPortPositionChanged);
+    connect(startInspector(), &NodeInspector::moved,
+            this, &Connection::onInspectorMoved);
 }
 
-void Connection::onPortPositionChanged()
+void Connection::onInspectorMoved()
 {
     if (areInspectorsValid())
         prepareGeometryChange();
@@ -223,8 +223,8 @@ void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         datum->addLink(link);
         drag_state = CONNECTED;
 
-        connect(endInspector(), &NodeInspector::portPositionChanged,
-                this, &Connection::onPortPositionChanged);
+        connect(endInspector(), &NodeInspector::moved,
+                this, &Connection::onInspectorMoved);
     }
     else
     {

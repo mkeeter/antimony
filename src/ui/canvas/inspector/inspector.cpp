@@ -39,7 +39,8 @@ NodeInspector::NodeInspector(Node* node)
 
     setFlags(QGraphicsItem::ItemIsMovable |
              QGraphicsItem::ItemIsSelectable |
-             QGraphicsItem::ItemIsFocusable);
+             QGraphicsItem::ItemIsFocusable |
+             QGraphicsItem::ItemSendsGeometryChanges);
 
     title->setPos(6, 2);
     title->setDefaultTextColor(Colors::base06);
@@ -310,4 +311,11 @@ void NodeInspector::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     if (dragging)
         ungrabMouse();
     dragging = false;
+}
+
+QVariant NodeInspector::itemChange(GraphicsItemChange change, const QVariant& value)
+{
+    if (change == ItemPositionHasChanged)
+        emit(moved());
+    return value;
 }

@@ -25,7 +25,7 @@ public:
     void makeSceneConnections();
 
 public slots:
-    void onPortPositionChanged();
+    void onInspectorMoved();
 
 protected:
     GraphScene* gscene() const;

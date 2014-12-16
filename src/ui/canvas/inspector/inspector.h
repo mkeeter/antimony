@@ -45,7 +45,7 @@ public:
     QPointF datumInputPosition(Datum* d) const;
 
 signals:
-    void portPositionChanged();
+    void moved();
 
 public slots:
     /** Updates layout of text labels and fields.
@@ -84,6 +84,11 @@ public slots:
     void setDragging(bool d) { dragging = d; }
 
 protected:
+    /*
+     *  On object moved, emit moved signal.
+     */
+    QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
+
     /** On delete or backspace, delete node.
      */
     void keyPressEvent(QKeyEvent* event) override;
