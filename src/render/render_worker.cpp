@@ -23,6 +23,10 @@ RenderWorker::RenderWorker(Datum* datum, Viewport* viewport)
             this, &RenderWorker::onDatumChanged);
     connect(datum, &Datum::changed,
             this, &RenderWorker::onDatumChanged);
+
+    // If the Datum or Viewport is destroyed, delete this worker if a task
+    // isn't running.  If a task is running, the deletion criterion will be
+    // checked on task completion and the worker will be deleted then.
     connect(datum, &Datum::destroyed,
             this, &RenderWorker::deleteIfNotRunning);
     connect(viewport, &Viewport::destroyed,
