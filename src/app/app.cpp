@@ -32,8 +32,6 @@
 #define GITREV "???"
 #endif
 
-#include "graph/node/nodes/meta.h"
-#include "graph/datum/datums/script_datum.h"
 App::App(int& argc, char** argv) :
     QApplication(argc, argv),
     graph_scene(new GraphScene()),
@@ -42,8 +40,6 @@ App::App(int& argc, char** argv) :
     setGlobalStyle();
     newCanvasWindow();
     NodeManager::manager();
-
-    newEditorWindow(ScriptNode(0, 0, 0, 1)->getDatum<ScriptDatum>("_script"));
 }
 
 App::~App()

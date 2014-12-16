@@ -19,6 +19,8 @@ ScriptEditor::ScriptEditor(ScriptDatum* datum, QWidget* parent)
 {
     QFont font;
     font.setFamily("Courier");
+    QFontMetrics fm(font);
+    setTabStopWidth(fm.width("    "));
     document()->setDefaultFont(font);
 
     new SyntaxHighlighter(document());

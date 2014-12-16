@@ -8,6 +8,7 @@
 #include "ui/canvas/inspector/inspector.h"
 
 #include "ui/util/colors.h"
+#include "app/app.h"
 
 InspectorMenuButton::InspectorMenuButton(NodeInspector* parent)
     : GraphicsButton(parent)
@@ -45,5 +46,6 @@ void InspectorMenuButton::onPressed()
     QAction* a = menu.addAction("Edit script");
     if (!s)
         a->setEnabled(false);
-    menu.exec(QCursor::pos());
+    if (menu.exec(QCursor::pos()) == a)
+        App::instance()->newEditorWindow(s);
 }
