@@ -126,13 +126,9 @@ float Viewport::getZmax() const
 {
     float zmax = -INFINITY;
     for (auto i : scene->items())
-    {
         if (DepthImageItem* p = dynamic_cast<DepthImageItem*>(i))
-        {
-            zmax = fmax(zmax, (getTransformMatrix() * p->pos).z() +
-                                p->size.z()/2);
-        }
-    }
+            zmax = fmax((getTransformMatrix() * p->pos).z() + p->size.z()/2,
+                        zmax);
     return zmax;
 }
 
@@ -140,13 +136,9 @@ float Viewport::getZmin() const
 {
     float zmin = INFINITY;
     for (auto i : scene->items())
-    {
         if (DepthImageItem* p = dynamic_cast<DepthImageItem*>(i))
-        {
-            zmin = fmin(zmin, (getTransformMatrix() * p->pos).z() -
-                                p->size.z()/2);
-        }
-    }
+            zmin = fmin((getTransformMatrix() * p->pos).z() - p->size.z()/2,
+                        zmin);
     return zmin;
 }
 

@@ -64,11 +64,8 @@ InputPort* GraphScene::getInputPortAt(QPointF pos)
 {
     return getItemAt<InputPort>(pos);
     for (auto i : items(pos))
-    {
-        auto p = dynamic_cast<InputPort*>(i);
-        if (p)
+        if (auto p = dynamic_cast<InputPort*>(i))
             return p;
-    }
     return NULL;
 }
 
