@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent) :
     view_actions->setExclusive(true);
 
     connectActions(App::instance());
+    setShortcuts();
 
     populateMenu(ui->menuAdd);
 
@@ -77,6 +78,8 @@ void MainWindow::connectActions(App* app)
 #endif
     connect(ui->actionQuit, &QAction::triggered,
             app, &App::quit);
+    connect(ui->actionClose, &QAction::triggered,
+            this, &MainWindow::deleteLater);
 
     // View window
     connect(ui->actionNewCanvas, &QAction::triggered,
@@ -109,6 +112,7 @@ void MainWindow::setShortcuts()
     ui->actionOpen->setShortcuts(QKeySequence::Open);
     ui->actionSave->setShortcuts(QKeySequence::Save);
     ui->actionSaveAs->setShortcuts(QKeySequence::SaveAs);
+    ui->actionClose->setShortcuts(QKeySequence::Close);
     ui->actionQuit->setShortcuts(QKeySequence::Quit);
 }
 
