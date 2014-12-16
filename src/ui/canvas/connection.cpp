@@ -27,14 +27,18 @@ Connection::Connection(Link* link)
     setAcceptHoverEvents(true);
 
     setZValue(2);
+
     connect(link, &Link::destroyed, this, &Connection::deleteLater);
 }
 
 void Connection::makeSceneConnections()
 {
-    Q_ASSERT(scene());
     connect(startInspector(), &NodeInspector::moved,
             this, &Connection::onInspectorMoved);
+
+    auto s = scene();
+    Q_ASSERT(s);
+    connect(this, &Connection::destroyed, [=]{s->update();});
 }
 
 void Connection::onInspectorMoved()
