@@ -22,6 +22,12 @@ ScriptEditor::ScriptEditor(ScriptDatum* datum, QWidget* parent)
     document()->setDefaultFont(font);
 
     new SyntaxHighlighter(document());
+    setStyleSheet(QString(
+        "QPlainTextEdit {"
+        "    background-color: %1;"
+        "    color: %2;"
+        "}").arg(Colors::base00.name())
+            .arg(Colors::base04.name()));
     //document()->setDefaultTextColor(Colors::base04);
 
     connect(document(), &QTextDocument::contentsChanged,
