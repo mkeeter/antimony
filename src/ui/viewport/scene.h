@@ -57,6 +57,11 @@ protected:
     void makeRenderWorkersFor(Node* n, Viewport* v);
 
     /*
+     *  Make a RenderWorker for the specified Datum in the given Viewport.
+     */
+    void makeRenderWorkerFor(Datum* d, Viewport* v);
+
+    /*
      *  Makes a new control for the given node
      *  (hardcoded against the node's type code)
      */

@@ -63,16 +63,19 @@ void ViewportScene::makeProxyFor(Control* c, Viewport* v)
         makeProxyFor(f, v);
 }
 
+void ViewportScene::makeRenderWorkerFor(Datum* d, Viewport* v)
+{
+    auto w = new RenderWorker(d, v);
+    workers[d] << w;
+    connect(w, &RenderWorker::destroyed,
+            this, &ViewportScene::prune);
+}
+
 void ViewportScene::makeRenderWorkersFor(Node* n, Viewport* v)
 {
     for (auto d : n->findChildren<Datum*>())
         if (RenderWorker::accepts(d))
-        {
-            auto w = new RenderWorker(d, v);
-            workers[d] << w;
-            connect(w, &RenderWorker::destroyed,
-                    this, &ViewportScene::prune);
-        }
+            makeRenderWorkerFor(d, v);
 }
 
 void ViewportScene::prune()
