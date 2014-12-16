@@ -38,6 +38,7 @@ RenderWorker::RenderWorker(Datum* datum, Viewport* viewport)
 
 RenderWorker::~RenderWorker()
 {
+    qDebug() << "Deleting RenderWorker";
     if (depth_image)
         depth_image->deleteLater();
 }

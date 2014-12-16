@@ -25,6 +25,10 @@ Control* ViewportScene::makeUIfor(Node* n)
         makeProxyFor(c, itr.key());
         makeRenderWorkersFor(n, itr.key());
     }
+
+    // Behold, the wonders of C++11 and Qt5:
+    connect(n, &Node::datumsChanged,
+            [=]{ this->onDatumsChanged(n); });
     return c;
 }
 
@@ -80,6 +84,7 @@ void ViewportScene::makeRenderWorkersFor(Node* n, Viewport* v)
 
 void ViewportScene::prune()
 {
+    qDebug() << "Calling prune (from within";
     QMap<QPointer<Node>, Control*> new_controls;
 
     for (auto itr = controls.begin(); itr != controls.end(); ++itr)
@@ -100,6 +105,18 @@ void ViewportScene::prune()
                 if (w)
                     new_workers[itr.key()] << w;
     new_workers = workers;
+}
+
+void ViewportScene::onDatumsChanged(Node* n)
+{
+    qDebug() << "Calling prune";
+    prune();
+    qDebug() << "Done with prune";
+
+    for (auto d : n->findChildren<Datum*>())
+        if (RenderWorker::accepts(d) && !workers.contains(d))
+            for (auto v = scenes.begin(); v != scenes.end(); ++v)
+                makeRenderWorkerFor(d, v.key());
 }
 
 

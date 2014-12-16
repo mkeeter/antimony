@@ -42,6 +42,11 @@ protected slots:
      */
     void prune();
 
+    /*
+     *  When a Node's datums change, update RenderWorkers.
+     */
+    void onDatumsChanged(Node* n);
+
 protected:
 
     /*
