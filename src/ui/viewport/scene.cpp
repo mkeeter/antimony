@@ -99,6 +99,7 @@ void ViewportScene::prune()
             for (auto w : workers[itr.key()])
                 if (w)
                     new_workers[itr.key()] << w;
+    new_workers = workers;
 }
 
 
