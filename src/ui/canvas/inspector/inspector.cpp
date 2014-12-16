@@ -47,11 +47,8 @@ NodeInspector::NodeInspector(Node* node)
     f.setBold(true);
     title->setFont(f);
 
-    if (node->getDatum<ScriptDatum>("script"))
-    {
-        connect(node->getDatum<ScriptDatum>("script"), SIGNAL(datumsChanged()),
-                this, SLOT(onDatumsChanged()));
-    }
+    connect(node, &Node::datumsChanged,
+            this, &NodeInspector::onDatumsChanged);
     connect(node, &Node::destroyed, this, &NodeInspector::deleteLater);
 
     populateLists(node);

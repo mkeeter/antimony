@@ -171,9 +171,7 @@ PyObject* ScriptDatum::getCurrentValue()
     globals = NULL;
 
     if (datums_changed)
-    {
-        emit(datumsChanged());
-    }
+        emit(static_cast<Node*>(parent())->datumsChanged());
     return out;
 }
 
