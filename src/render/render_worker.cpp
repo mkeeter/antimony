@@ -21,7 +21,7 @@ RenderWorker::RenderWorker(Datum* datum, Viewport* viewport)
 {
     connect(datum, &Datum::changed,
             this, &RenderWorker::onDatumChanged);
-    connect(datum, &Datum::changed,
+    connect(datum, &Datum::connectionChanged,
             this, &RenderWorker::onDatumChanged);
 
     // If the Datum or Viewport is destroyed, delete this worker if a task
