@@ -173,9 +173,8 @@ void MainWindow::createNew()
 
     if (v)
     {
-        auto proxy = v->getControlProxy(n);
-        Q_ASSERT(proxy);
-        proxy->grabMouse();
+        if (auto proxy = v->getControlProxy(n))
+            proxy->grabMouse();
     }
     else if (c)
     {
