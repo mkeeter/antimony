@@ -84,7 +84,6 @@ void ViewportScene::makeRenderWorkersFor(Node* n, Viewport* v)
 
 void ViewportScene::prune()
 {
-    qDebug() << "Calling prune (from within";
     QMap<QPointer<Node>, Control*> new_controls;
 
     for (auto itr = controls.begin(); itr != controls.end(); ++itr)
@@ -109,9 +108,7 @@ void ViewportScene::prune()
 
 void ViewportScene::onDatumsChanged(Node* n)
 {
-    qDebug() << "Calling prune";
     prune();
-    qDebug() << "Done with prune";
 
     for (auto d : n->findChildren<Datum*>())
         if (RenderWorker::accepts(d) && !workers.contains(d))

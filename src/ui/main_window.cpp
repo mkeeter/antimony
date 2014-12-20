@@ -137,12 +137,9 @@ bool MainWindow::isShaded() const
 template <Node* (*f)(float, float, float, float, QObject*), bool recenter>
 void MainWindow::createNew()
 {
-    qDebug() << this;
-
     auto v = findChild<Viewport*>();
     auto c = findChild<Canvas*>();
 
-    qDebug() << v << c;
     Q_ASSERT((v != NULL) ^ (c != NULL));
 
     QGraphicsView* view = (v != NULL) ?
