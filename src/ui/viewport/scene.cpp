@@ -148,9 +148,9 @@ void ViewportScene::onDatumsChanged(Node* n)
 #include "control/transform/recenter_control.h"
 #include "control/transform/translate_control.h"
 
-//#include "control/variable/slider_control.h"
+#include "control/iterate/iterate2d_control.h"
 
-//#include "control/iterate/iterate2d_control.h"
+//#include "control/variable/slider_control.h"
 
 Control* ViewportScene::makeControlFor(Node* node) const
 {
@@ -205,7 +205,7 @@ Control* ViewportScene::makeControlFor(Node* node) const
         case NodeType::TRANSLATE:
             return new TranslateControl(node);
         case NodeType::ITERATE2D:
-            //return new Iterate2DControl(node);
+            return new Iterate2DControl(node);
         case NodeType::SLIDER:
         case NodeType::UNION:
         case NodeType::BLEND:

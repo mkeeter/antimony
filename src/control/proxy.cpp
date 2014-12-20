@@ -75,8 +75,10 @@ void ControlProxy::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 void ControlProxy::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    QGraphicsObject::mousePressEvent(event);
     click_pos = event->pos();
+
+    if (event->button() != Qt::LeftButton || !control->onClick())
+        QGraphicsObject::mousePressEvent(event);
 }
 
 void ControlProxy::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)

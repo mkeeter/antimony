@@ -60,6 +60,13 @@ public:
      */
     virtual void drag(QVector3D center, QVector3D delta)=0;
 
+    /*
+     *  Overloaded to make buttons inside the Control.
+     *  Returns true if the Control has used the click event
+     *  (which prevents the event from being used for selection)
+     */
+    virtual bool onClick() { return false; }
+
 signals:
     void redraw();
 
