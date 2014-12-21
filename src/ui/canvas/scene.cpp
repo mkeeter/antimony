@@ -7,6 +7,7 @@
 #include "ui/canvas/port.h"
 
 #include "graph/datum/datum.h"
+#include "graph/datum/link.h"
 
 GraphScene::GraphScene(QObject* parent)
     : QGraphicsScene(parent)
@@ -23,6 +24,11 @@ NodeInspector* GraphScene::makeUIfor(Node* n)
 {
     auto i = new NodeInspector(n);
     addItem(i);
+
+    for (auto d : n->findChildren<Datum*>())
+        for (auto link : d->findChildren<Link*>())
+            makeUIfor(link);
+
     return i;
 }
 
@@ -116,4 +122,11 @@ QMap<Node*, QPointF> GraphScene::inspectorPositions() const
             out[i->getNode()] = i->pos();
 
     return out;
+}
+
+void GraphScene::setInspectorPositions(QMap<Node*, QPointF> p)
+{
+    for (auto m : items())
+        if (auto i = dynamic_cast<NodeInspector*>(m))
+            i->setPos(p[i->getNode()]);
 }

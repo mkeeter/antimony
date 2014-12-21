@@ -50,10 +50,17 @@ public:
     void raiseInspectorAt(QPointF pos);
 
     /*
-     *  Return a list of all inspector positions, indexed by datums
-     *  (used in serializing and deserializing the graph)
+     *  Return a list of all inspector positions, indexed by node
+     *  (used in serializing the graph)
      */
     QMap<Node*, QPointF> inspectorPositions() const;
+
+
+    /*
+     *  Set all inspector positions from the given map.
+     *  (used in deserializing the graph)
+     */
+    void setInspectorPositions(QMap<Node*, QPointF> p);
 
 protected:
     QPointer<NodeInspector> raised_inspector;

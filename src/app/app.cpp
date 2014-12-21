@@ -144,9 +144,18 @@ void App::onOpen()
         SceneDeserializer ds(root);
         ds.run(&in);
 
-        for (auto n : root->findChildren<Node*>(
-                    "", Qt::FindDirectChildrenOnly))
-            newNode(n);
+        if (ds.failed == true)
+        {
+            QMessageBox::critical(NULL, "Loading error",
+                    "<b>Loading error:</b><br>" +
+                    ds.error_message);
+        } else {
+            for (auto n : root->findChildren<Node*>(
+                        "", Qt::FindDirectChildrenOnly))
+                newNode(n);
+
+            graph_scene->setInspectorPositions(ds.inspectors);
+        }
     }
 }
 
