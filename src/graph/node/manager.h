@@ -45,10 +45,6 @@ public:
      */
     void clear();
 
-    /** Returns a serialized version of the current scene.
-     */
-    QByteArray getSerializedScene() const;
-
     /** Deserializes the given scene.
      *  Returns true on success, false otherwise.
      */

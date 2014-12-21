@@ -22,7 +22,10 @@
 
 #include "graph/node/node.h"
 #include "graph/node/manager.h"
+#include "graph/node/serializer.h"
+
 #include "fab/types/shape.h"
+
 #include "render/export_mesh.h"
 #include "render/export_json.h"
 #include "render/export_bitmap.h"
@@ -107,7 +110,12 @@ void App::onSave()
 
     QFile file(filename);
     file.open(QIODevice::WriteOnly);
-    file.write(NodeManager::manager()->getSerializedScene());
+
+    SceneSerializer ss(NodeManager::manager(),
+                       graph_scene->inspectorPositions());
+
+    QDataStream out(&file);
+    ss.run(&out);
 }
 
 void App::onSaveAs()

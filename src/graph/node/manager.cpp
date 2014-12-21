@@ -112,19 +112,6 @@ void NodeManager::onNameChange(QString new_name)
 
 }
 
-QByteArray NodeManager::getSerializedScene() const
-{
-    QBuffer buffer;
-    buffer.open(QBuffer::WriteOnly);
-
-    QDataStream stream(&buffer);
-    SceneSerializer ss;
-    ss.run(&stream);
-    buffer.seek(0);
-
-    return buffer.data();
-}
-
 bool NodeManager::deserializeScene(QByteArray in)
 {
     QBuffer buffer(&in);
