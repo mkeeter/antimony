@@ -2,6 +2,8 @@
 #define DESERIALIZER_H
 
 #include <QObject>
+#include <QMap>
+#include <QPointF>
 
 class Datum;
 class Node;
@@ -22,6 +24,8 @@ protected:
 
     bool failed;
     QString error_message;
+
+    QMap<Node*, QPointF> inspectors;
 
     QList<Datum*> datums;
 };

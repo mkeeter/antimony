@@ -66,6 +66,11 @@ void SceneDeserializer::deserializeNode(QDataStream* in, QObject* p)
     Node* node = new Node(node_type, p);
     node->setObjectName(node_name);
 
+    // Deserialize inspector position
+    QPointF i;
+    *in >> i;
+    inspectors[node] = i;
+
     // Deserialize child nodes.
     deserializeNodes(in, node);
 

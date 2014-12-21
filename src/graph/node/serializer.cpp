@@ -1,4 +1,5 @@
 #include <Python.h>
+
 #include <QDataStream>
 
 #include "graph/node/serializer.h"
@@ -10,8 +11,9 @@
 #include "graph/datum/datums/shape_function_datum.h"
 #include "graph/datum/datums/script_datum.h"
 
-SceneSerializer::SceneSerializer(QObject* parent)
-    : QObject(parent)
+SceneSerializer::SceneSerializer(QObject* node_root,
+                                 QMap<Node*, QPointF> inspectors)
+    : QObject(), node_root(node_root), inspectors(inspectors)
 {
     // Nothing to do here.
 }
@@ -19,14 +21,14 @@ SceneSerializer::SceneSerializer(QObject* parent)
 void SceneSerializer::run(QDataStream* out)
 {
     *out << QString("sb") << quint32(1);
-    serializeNodes(out, NodeManager::manager());
+    serializeNodes(out, node_root);
     serializeConnections(out);
 }
 
 void SceneSerializer::serializeNodes(QDataStream* out, QObject* p)
 {
-    auto nodes = p->findChildren<Node*>(QString(),
-                                        Qt::FindDirectChildrenOnly);
+    auto nodes = p->findChildren<Node*>(
+            QString(), Qt::FindDirectChildrenOnly);
     *out << quint32(nodes.length());
 
     for (auto node : nodes)
@@ -37,6 +39,9 @@ void SceneSerializer::serializeNode(QDataStream* out, Node* node)
 {
     *out << quint32(node->getNodeType());
     *out << node->objectName();
+
+    // Serialize position (or default QPointF if not provided)
+    *out << (inspectors.contains(node) ? inspectors[node] : QPointF());
 
     // Serialize child nodes first.
     serializeNodes(out, node);

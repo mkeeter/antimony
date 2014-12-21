@@ -49,6 +49,12 @@ public:
     void raiseInspector(NodeInspector* i);
     void raiseInspectorAt(QPointF pos);
 
+    /*
+     *  Return a list of all inspector positions, indexed by datums
+     *  (used in serializing and deserializing the graph)
+     */
+    QMap<Node*, QPointF> inspectorPositions() const;
+
 protected:
     QPointer<NodeInspector> raised_inspector;
 };

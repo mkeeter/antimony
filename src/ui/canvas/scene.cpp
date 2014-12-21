@@ -106,3 +106,14 @@ void GraphScene::raiseInspectorAt(QPointF pos)
     if (i)
         raiseInspector(i);
 }
+
+QMap<Node*, QPointF> GraphScene::inspectorPositions() const
+{
+    QMap<Node*, QPointF> out;
+
+    for (auto m : items())
+        if (auto i = dynamic_cast<NodeInspector*>(m))
+            out[i->getNode()] = i->pos();
+
+    return out;
+}
