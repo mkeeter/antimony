@@ -68,7 +68,7 @@ void TestProxy::DatumNameChange()
     Node* a = Point3DNode("a", "0.0", "1.0", "2.0");
     Node* b = Point3DNode("b", "a.x", "1.0", "2.0");
     QVERIFY(b->getDatum("x")->getValid() == true);
-    a->getDatum<NameDatum>("name")->setExpr("q");
+    a->getDatum<NameDatum>("_name")->setExpr("q");
     QVERIFY(b->getDatum("x")->getValid() == false);
 
     delete a;

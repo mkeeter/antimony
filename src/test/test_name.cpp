@@ -28,7 +28,7 @@ void TestName::NodeName()
 void TestName::NameValid()
 {
     Node* p = Point3DNode("p0", "0", "0", "0");
-    QVERIFY(p->getDatum("name")->getValid());
+    QVERIFY(p->getDatum("_name")->getValid());
     delete p;
 }
 
@@ -42,17 +42,17 @@ void TestName::MultiNodeName()
 void TestName::Rename()
 {
     Node* p = Point3DNode("p0", "0", "0", "0");
-    p->getDatum<NameDatum>("name")->setExpr("not_p0");
+    p->getDatum<NameDatum>("_name")->setExpr("not_p0");
     QVERIFY(NodeManager::manager()->getName("p") == "p0");
-    QVERIFY(p->getDatum<NameDatum>("name")->getValid() == true);
+    QVERIFY(p->getDatum<NameDatum>("_name")->getValid() == true);
     delete p;
 }
 
 void TestName::RenameWithSpaces()
 {
     Node* p = Point3DNode("p0", "0", "0", "0");
-    p->getDatum<NameDatum>("name")->setExpr("   p0   ");
-    QVERIFY(p->getDatum<NameDatum>("name")->getValid() == true);
+    p->getDatum<NameDatum>("_name")->setExpr("   p0   ");
+    QVERIFY(p->getDatum<NameDatum>("_name")->getValid() == true);
     QVERIFY(NodeManager::manager()->getName("p") == "p1");
     delete p;
 }

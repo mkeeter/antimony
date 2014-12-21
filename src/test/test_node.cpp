@@ -23,8 +23,8 @@ TestNode::TestNode(QObject* parent)
 void TestNode::GetDatum()
 {
     Node* p = Point3DNode("p", "0", "0", "0");
-    QVERIFY(p->getDatum<NameDatum>("name"));
-    QVERIFY(p->getDatum<NameDatum>("name")->getExpr() == "p");
+    QVERIFY(p->getDatum<NameDatum>("_name"));
+    QVERIFY(p->getDatum<NameDatum>("_name")->getExpr() == "p");
     delete p;
 }
 
@@ -39,7 +39,7 @@ void TestNode::DeleteNode()
 void TestNode::EvalValid()
 {
     Node* a = Point3DNode("p0", "0.0", "1.0", "2.0");
-    QVERIFY(a->getDatum("name")->getValid());
+    QVERIFY(a->getDatum("_name")->getValid());
     Node* b = Point3DNode("p1", "p0.x", "1.0", "2.0");
     QVERIFY(b->getDatum("x")->getValid() == true);
     QVERIFY(a->getDatum("x")->getValue() == b->getDatum("x")->getValue());
@@ -50,10 +50,10 @@ void TestNode::EvalValid()
 void TestNode::NameChangeEval()
 {
     Node* a = Point3DNode("old_name", "0.0", "1.0", "2.0");
-    QVERIFY(a->getDatum("name")->getValid());
+    QVERIFY(a->getDatum("_name")->getValid());
     Node* b = Point3DNode("p1", "new_name.x", "1.0", "2.0");
     QVERIFY(b->getDatum("x")->getValid() == false);
-    a->getDatum<NameDatum>("name")->setExpr("new_name");
+    a->getDatum<NameDatum>("_name")->setExpr("new_name");
     QVERIFY(b->getDatum("x")->getValid() == true);
     QVERIFY(a->getDatum("x")->getValue() == b->getDatum("x")->getValue());
     delete a;
