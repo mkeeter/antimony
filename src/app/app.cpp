@@ -95,7 +95,6 @@ void App::onControls()
     );
 }
 
-#if 0
 void App::onNew()
 {
     NodeManager::manager()->clear();
@@ -104,9 +103,7 @@ void App::onNew()
 void App::onSave()
 {
     if (filename.isEmpty())
-    {
         return onSaveAs();
-    }
 
     QFile file(filename);
     file.open(QIODevice::WriteOnly);
@@ -115,7 +112,7 @@ void App::onSave()
 
 void App::onSaveAs()
 {
-    QString f = QFileDialog::getSaveFileName(window, "Save as", "", "*.sb");
+    QString f = QFileDialog::getSaveFileName(NULL, "Save as", "", "*.sb");
     if (!f.isEmpty())
     {
         filename = f;
@@ -125,7 +122,7 @@ void App::onSaveAs()
 
 void App::onOpen()
 {
-    QString f = QFileDialog::getOpenFileName(window, "Open", "", "*.sb");
+    QString f = QFileDialog::getOpenFileName(NULL, "Open", "", "*.sb");
     if (!f.isEmpty())
     {
         filename = f;
@@ -133,11 +130,12 @@ void App::onOpen()
         QFile file(f);
         file.open(QIODevice::ReadOnly);
         NodeManager::manager()->deserializeScene(file.readAll());
-        NodeManager::manager()->makeControls(window->canvas);
-        NodeManager::manager()->makeConnections(window->canvas);
+        //NodeManager::manager()->makeControls(window->canvas);
+        //NodeManager::manager()->makeConnections(window->canvas);
     }
 }
 
+#if 0
 void App::onExportSTL()
 {
     Shape s = NodeManager::manager()->getCombinedShape();

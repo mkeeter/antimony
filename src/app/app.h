@@ -57,11 +57,11 @@ public slots:
     void onAbout();
     void onControls();
 
-#if 0
     void onNew();
     void onSave();
     void onSaveAs();
     void onOpen();
+#if 0
     void onExportSTL();
     void onExportHeightmap();
     void onExportJSON();

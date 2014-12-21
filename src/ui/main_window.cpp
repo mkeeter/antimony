@@ -66,7 +66,6 @@ void MainWindow::updateMenus()
 void MainWindow::connectActions(App* app)
 {
     // File menu
-#if 0
     connect(ui->actionSave, &QAction::triggered,
             app, &App::onSave);
     connect(ui->actionSaveAs, &QAction::triggered,
@@ -75,7 +74,6 @@ void MainWindow::connectActions(App* app)
             app, &App::onNew);
     connect(ui->actionOpen, &QAction::triggered,
             app, &App::onOpen);
-#endif
     connect(ui->actionQuit, &QAction::triggered,
             app, &App::quit);
     connect(ui->actionClose, &QAction::triggered,

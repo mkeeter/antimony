@@ -11,7 +11,7 @@ class SceneDeserializer : public QObject
     Q_OBJECT
 public:
     explicit SceneDeserializer(QObject* parent=0);
-    void run(QDataStream* in);
+    bool run(QDataStream* in);
     bool hasError() const { return failed; }
     QString errorMessage() const { return error_message; }
 protected:
