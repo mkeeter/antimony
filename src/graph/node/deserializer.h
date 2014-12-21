@@ -12,7 +12,7 @@ class SceneDeserializer : public QObject
 {
     Q_OBJECT
 public:
-    explicit SceneDeserializer(QObject* parent=0);
+    explicit SceneDeserializer(QObject* node_root);
     bool run(QDataStream* in);
     bool hasError() const { return failed; }
     QString errorMessage() const { return error_message; }
@@ -25,8 +25,8 @@ protected:
     bool failed;
     QString error_message;
 
+    QObject* node_root;
     QMap<Node*, QPointF> inspectors;
-
     QList<Datum*> datums;
 };
 

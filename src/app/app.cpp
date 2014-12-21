@@ -23,6 +23,7 @@
 #include "graph/node/node.h"
 #include "graph/node/manager.h"
 #include "graph/node/serializer.h"
+#include "graph/node/deserializer.h"
 
 #include "fab/types/shape.h"
 
@@ -137,9 +138,15 @@ void App::onOpen()
         NodeManager::manager()->clear();
         QFile file(f);
         file.open(QIODevice::ReadOnly);
-        NodeManager::manager()->deserializeScene(file.readAll());
-        //NodeManager::manager()->makeControls(window->canvas);
-        //NodeManager::manager()->makeConnections(window->canvas);
+
+        QDataStream in(&file);
+        QObject* root = NodeManager::manager();
+        SceneDeserializer ds(root);
+        ds.run(&in);
+
+        for (auto n : root->findChildren<Node*>(
+                    "", Qt::FindDirectChildrenOnly))
+            newNode(n);
     }
 }
 

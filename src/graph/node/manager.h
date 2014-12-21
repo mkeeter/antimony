@@ -45,11 +45,6 @@ public:
      */
     void clear();
 
-    /** Deserializes the given scene.
-     *  Returns true on success, false otherwise.
-     */
-    bool deserializeScene(QByteArray in);
-
     /** Returns the union of all unconnected shapes in the scene.
      */
     Shape getCombinedShape();

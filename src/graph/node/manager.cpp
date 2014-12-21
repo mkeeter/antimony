@@ -8,8 +8,6 @@
 #include "graph/node/manager.h"
 #include "graph/node/node.h"
 #include "graph/node/proxy.h"
-#include "graph/node/serializer.h"
-#include "graph/node/deserializer.h"
 
 #include "graph/datum/datum.h"
 #include "graph/datum/datums/name_datum.h"
@@ -110,18 +108,6 @@ void NodeManager::onNameChange(QString new_name)
         }
     }
 
-}
-
-bool NodeManager::deserializeScene(QByteArray in)
-{
-    QBuffer buffer(&in);
-    buffer.open(QBuffer::ReadOnly);
-
-    QDataStream stream(&buffer);
-    SceneDeserializer ss;
-    ss.run(&stream);
-
-    return true;
 }
 
 Shape NodeManager::getCombinedShape()

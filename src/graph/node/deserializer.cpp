@@ -15,8 +15,8 @@
 #include "graph/datum/datums/shape_input_datum.h"
 #include "graph/datum/datums/shape_function_datum.h"
 
-SceneDeserializer::SceneDeserializer(QObject* parent)
-    : QObject(parent), failed(false)
+SceneDeserializer::SceneDeserializer(QObject* node_root)
+    : QObject(), failed(false), node_root(node_root)
 {
     // Nothing to do here
 }
@@ -39,7 +39,7 @@ bool SceneDeserializer::run(QDataStream* in)
     }
     else
     {
-        deserializeNodes(in, NodeManager::manager());
+        deserializeNodes(in, node_root);
         deserializeConnections(in);
     }
 
