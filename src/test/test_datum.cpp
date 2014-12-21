@@ -5,7 +5,7 @@
 
 #include "test_datum.h"
 #include "graph/datum/datums/float_datum.h"
-#include "datum/name_datum.h"
+#include "graph/datum/datums/name_datum.h"
 
 void TestDatum::FloatValid()
 {

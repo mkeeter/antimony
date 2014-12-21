@@ -6,13 +6,13 @@
 #include "test_script.h"
 
 #include "graph/datum/datums/script_datum.h"
-#include "datum/shape_datum.h"
+#include "graph/datum/datums/shape_input_datum.h"
 #include "graph/datum/datums/float_datum.h"
-#include "datum/output_datum.h"
+#include "graph/datum/datums/shape_output_datum.h"
 
-#include "node/node.h"
-#include "node/meta.h"
-#include "node/3d.h"
+#include "graph/node/node.h"
+#include "graph/node/nodes/meta.h"
+#include "graph/node/nodes/3d.h"
 
 TestScript::TestScript(QObject* parent)
     : QObject(parent)

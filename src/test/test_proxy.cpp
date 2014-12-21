@@ -6,10 +6,10 @@
 #include "test_proxy.h"
 
 #include "graph/datum/datum.h"
-#include "datum/name_datum.h"
+#include "graph/datum/datums/name_datum.h"
 
-#include "node/node.h"
-#include "node/3d.h"
+#include "graph/node/node.h"
+#include "graph/node/nodes/3d.h"
 
 TestProxy::TestProxy(QObject* parent)
     : QObject(parent)
