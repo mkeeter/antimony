@@ -26,7 +26,7 @@ public:
      *  Creates a new NodeInspector for the given node
      *  and adds it to the QGraphicsScene.
      */
-    NodeInspector* makeUIfor(Node* n);
+    void makeUIfor(Node* n);
 
     /*
      *  Creates a new Connection for the given Link

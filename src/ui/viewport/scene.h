@@ -34,7 +34,7 @@ public:
     /*
      *  Creates Controls and DepthImageItems for this node.
      */
-    Control* makeUIfor(Node* n);
+    void makeUIfor(Node* n);
 
 protected slots:
     /*

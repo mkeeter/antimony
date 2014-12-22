@@ -20,7 +20,7 @@ Canvas* GraphScene::newCanvas()
     return new Canvas(this);
 }
 
-NodeInspector* GraphScene::makeUIfor(Node* n)
+void GraphScene::makeUIfor(Node* n)
 {
     auto i = new NodeInspector(n);
     addItem(i);
@@ -28,8 +28,6 @@ NodeInspector* GraphScene::makeUIfor(Node* n)
     for (auto d : n->findChildren<Datum*>())
         for (auto link : d->findChildren<Link*>())
             makeUIfor(link);
-
-    return i;
 }
 
 Connection* GraphScene::makeUIfor(Link* link)

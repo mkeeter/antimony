@@ -15,7 +15,7 @@ ViewportScene::ViewportScene(QObject* parent)
     // Nothing to do here
 }
 
-Control* ViewportScene::makeUIfor(Node* n)
+void ViewportScene::makeUIfor(Node* n)
 {
     auto c = makeControlFor(n);
     controls[n] = c;
@@ -29,7 +29,6 @@ Control* ViewportScene::makeUIfor(Node* n)
     // Behold, the wonders of C++11 and Qt5:
     connect(n, &Node::datumsChanged,
             [=]{ this->onDatumsChanged(n); });
-    return c;
 }
 
 Viewport* ViewportScene::newViewport()
