@@ -101,7 +101,7 @@ void RenderWorker::onTaskFinished()
     if (!hasNoOutput())
         clearImage();
 
-    if (current->hasFinishedRender() && hasNoOutput())
+    if (current->hasFinishedRender() && hasNoOutput() && viewport)
     {
         clearImage();
         depth_image = current->getDepthImage(viewport);
