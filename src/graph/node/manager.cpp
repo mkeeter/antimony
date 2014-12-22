@@ -2,8 +2,6 @@
 
 #include <QApplication>
 #include <QDebug>
-#include <QDataStream>
-#include <QBuffer>
 
 #include "graph/node/manager.h"
 #include "graph/node/node.h"

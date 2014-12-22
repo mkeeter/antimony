@@ -1,6 +1,7 @@
 #include <Python.h>
 
 #include <QDataStream>
+#include <QBuffer>
 
 #include "graph/node/serializer.h"
 #include "graph/node/manager.h"
@@ -16,6 +17,18 @@ SceneSerializer::SceneSerializer(QObject* node_root,
     : QObject(), node_root(node_root), inspectors(inspectors)
 {
     // Nothing to do here.
+}
+
+QByteArray SceneSerializer::run()
+{
+    QBuffer buffer;
+    buffer.open(QBuffer::WriteOnly);
+
+    QDataStream stream(&buffer);
+    run(&stream);
+    buffer.seek(0);
+
+    return buffer.data();
 }
 
 void SceneSerializer::run(QDataStream* out)

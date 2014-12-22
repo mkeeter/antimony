@@ -14,9 +14,12 @@ class SceneSerializer : public QObject
 {
     Q_OBJECT
 public:
-    explicit SceneSerializer(QObject* node_root,
-                             QMap<Node*, QPointF> inspectors);
+    explicit SceneSerializer(
+            QObject* node_root,
+            QMap<Node*, QPointF> inspectors=QMap<Node*, QPointF>());
+
     void run(QDataStream* out);
+    QByteArray run();
 
 protected:
     void serializeNodes(QDataStream* out, QObject* p);

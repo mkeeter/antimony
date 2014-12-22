@@ -1,10 +1,10 @@
 #include <Python.h>
 
 #include <QDataStream>
+#include <QBuffer>
 
 #include "graph/node/deserializer.h"
 #include "graph/node/node.h"
-#include "graph/node/manager.h"
 
 #include "graph/datum/datums/float_datum.h"
 #include "graph/datum/datums/int_datum.h"
@@ -19,6 +19,15 @@ SceneDeserializer::SceneDeserializer(QObject* node_root)
     : QObject(), failed(false), node_root(node_root)
 {
     // Nothing to do here
+}
+
+bool SceneDeserializer::run(QByteArray in)
+{
+    QBuffer buffer(&in);
+    buffer.open(QBuffer::ReadOnly);
+
+    QDataStream stream(&buffer);
+    return run(&stream);
 }
 
 bool SceneDeserializer::run(QDataStream* in)
