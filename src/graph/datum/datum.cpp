@@ -70,12 +70,8 @@ void Datum::deleteLink(Datum* upstream)
 bool Datum::hasConnectedLink() const
 {
     for (auto link : findChildren<Link*>())
-    {
         if (link->hasTarget())
-        {
             return true;
-        }
-    }
     return false;
 }
 
@@ -86,16 +82,12 @@ void Datum::update()
     //  datum creation causes a name change update which tries
     //  to recursivey update the script datum).
     if (isRecursing())
-    {
         return;
-    }
 
     // The very first time that update() is called, refresh all other nodes
     // that may refer to this node by name (then never do so again).
     if (!post_init_called)
-    {
         postInit();
-    }
 
     // Request that all upstream datums disconnect.
     emit disconnectFrom(this);
@@ -148,9 +140,7 @@ void Datum::update()
     }
 
     if (has_changed)
-    {
         emit changed();
-    }
 }
 
 void Datum::postInit()
