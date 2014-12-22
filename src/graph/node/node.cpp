@@ -56,8 +56,7 @@ Datum* Node::getDatum(QString name) const
 
 QString Node::getName() const
 {
-    auto e = getDatum<EvalDatum>("_name");
-    if (e)
+    if (auto e = getDatum<EvalDatum>("_name"))
         return e->getExpr();
     return "";
 }
