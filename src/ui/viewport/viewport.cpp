@@ -5,7 +5,8 @@
 #include <QMouseEvent>
 #include <QDebug>
 #include <QPropertyAnimation>
-#include <QGLWidget>
+#include <QOpenGLWidget>
+#include <QSurfaceFormat>
 #include <QMenu>
 
 #include <cmath>
@@ -35,14 +36,14 @@ Viewport::Viewport(QGraphicsScene* scene, QWidget* parent)
     setSceneRect(-width()/2, -height()/2, width(), height());
     setRenderHints(QPainter::Antialiasing);
 
-    QGLFormat format;
-    format.setVersion(2, 1);
-    format.setSampleBuffers(true);
-    auto gl = new QGLWidget(format, this);
+    auto gl = new QOpenGLWidget(this);
     setViewport(gl);
 
-    gl->context()->makeCurrent();
+    show();
+
+    gl->makeCurrent();
     initializeGL();
+    gl->doneCurrent();
 }
 
 void Viewport::initializeGL()
@@ -67,6 +68,7 @@ void Viewport::initializeGL()
             QOpenGLShader::Vertex, ":/gl/quad.vert");
     height_shader.addShaderFromSourceFile(
             QOpenGLShader::Fragment, ":/gl/height.frag");
+    height_shader.link();
 }
 
 void Viewport::resizeEvent(QResizeEvent* e)

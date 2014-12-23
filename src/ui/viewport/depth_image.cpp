@@ -3,7 +3,7 @@
 #include <QPainter>
 #include <QDebug>
 #include <QStyleOptionGraphicsItem>
-#include <QGLWidget>
+#include <QOpenGLWidget>
 
 #include "app/app.h"
 #include "ui/main_window.h"
@@ -27,7 +27,7 @@ DepthImageItem::~DepthImageItem()
 {
     if (viewport)
     {
-        static_cast<QGLWidget*>(viewport->viewport())->context()->makeCurrent();
+        static_cast<QOpenGLWidget*>(viewport->viewport())->makeCurrent();
         glDeleteTextures(1, &depth_tex);
         glDeleteTextures(1, &shaded_tex);
     }
@@ -35,9 +35,10 @@ DepthImageItem::~DepthImageItem()
 
 void DepthImageItem::initializeGL()
 {
+    static_cast<QOpenGLWidget*>(viewport->viewport())->makeCurrent();
+
     initializeOpenGLFunctions();
 
-    static_cast<QGLWidget*>(viewport->viewport())->context()->makeCurrent();
     glGenTextures(1, &depth_tex);
     glBindTexture(GL_TEXTURE_2D, depth_tex);
 
@@ -67,6 +68,8 @@ void DepthImageItem::initializeGL()
             GL_RGBA, GL_UNSIGNED_BYTE,   /* Data format */
             shaded.bits()        /* Input data */
     );
+
+    static_cast<QOpenGLWidget*>(viewport->viewport())->doneCurrent();
 }
 
 void DepthImageItem::reposition()
