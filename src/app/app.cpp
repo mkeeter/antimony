@@ -76,29 +76,6 @@ void App::onAbout()
             );
 }
 
-void App::onControls()
-{
-    QMessageBox::information(NULL, "Controls",
-            "<b>Controls</b><br><br>"
-            "<table>"
-            "<tr><td>Left-click:"
-            "<td style=\"padding-left:15px;\"> pan or select object"
-            "<tr><td>Right-click:"
-            "<td style=\"padding-left:15px;\"> rotate"
-            "<tr><td>Scroll:"
-            "<td style=\"padding-left:15px;\"> zoom"
-            "<tr><td>Delete:"
-            "<td style=\"padding-left:15px;\"> delete object"
-            "<tr><td>Double-click:"
-            "<td style=\"padding-left:15px;vertical-align:middle\" rowspan=\"2\">toggle inspector"
-            "<tr><td>Spacebar:"
-            "<tr><td>Shift+A:"
-            "<td style=\"padding-left:15px;\"> open <i>Add</i> menu"
-            "<tr><td>Alt:"
-            "<td style=\"padding-left:15px;\"> Hide UI"
-    );
-}
-
 void App::onNew()
 {
     NodeManager::manager()->clear();

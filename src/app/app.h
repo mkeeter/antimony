@@ -55,7 +55,6 @@ public slots:
 
 public slots:
     void onAbout();
-    void onControls();
 
     void onNew();
     void onSave();

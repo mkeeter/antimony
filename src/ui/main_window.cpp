@@ -98,8 +98,6 @@ void MainWindow::connectActions(App* app)
     // Help menu
     connect(ui->actionAbout, &QAction::triggered,
             app, &App::onAbout);
-    connect(ui->actionControls, &QAction::triggered,
-            app, &App::onControls);
 }
 
 void MainWindow::setShortcuts()
