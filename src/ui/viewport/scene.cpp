@@ -205,7 +205,6 @@ Control* ViewportScene::makeControlFor(Node* node) const
             return new TranslateControl(node);
         case NodeType::ITERATE2D:
             return new Iterate2DControl(node);
-        case NodeType::SLIDER:
         case NodeType::UNION:
         case NodeType::BLEND:
         case NodeType::INTERSECTION:
@@ -214,7 +213,6 @@ Control* ViewportScene::makeControlFor(Node* node) const
         case NodeType::CLEARANCE:
         case NodeType::SHELL:
         case NodeType::SCRIPT:
-        case NodeType::EQUATION:
             return NULL;
     }
    Q_ASSERT(false);

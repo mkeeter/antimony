@@ -127,7 +127,6 @@ bool MainWindow::isShaded() const
 #include "graph/node/nodes/meta.h"
 #include "graph/node/nodes/transforms.h"
 #include "graph/node/nodes/deform.h"
-#include "graph/node/nodes/variable.h"
 #include "graph/node/nodes/iterate.h"
 
 template <Node* (*f)(float, float, float, float, QObject*), bool recenter>
@@ -185,11 +184,9 @@ template <Node* (*f)(float, float, float, float, QObject*),
 void MainWindow::addNodeToMenu(QString category, QString name,
                                QMenu* menu, QMap<QString, QMenu*>* submenus)
 {
-    if (!submenus->contains(category))
-    {
+    if (submenus && !submenus->contains(category))
         (*submenus)[category] = menu->addMenu(category);
-    }
-    QAction* a = (*submenus)[category]->addAction(name);
+    QAction* a = (submenus ? (*submenus)[category] : menu)->addAction(name);
     connect(a, &QAction::triggered, this, &MainWindow::createNew<f, recenter>);
 }
 
@@ -236,10 +233,9 @@ void MainWindow::_populateMenu(QMenu* menu)
     addNodeToMenu<ScaleYNode, recenter>("Deform", "Scale (Y)", menu, &submenus);
     addNodeToMenu<ScaleZNode, recenter>("Deform", "Scale (Z)", menu, &submenus);
 
-    addNodeToMenu<SliderNode, recenter>("Variable", "Slider", menu, &submenus);
+    menu->addSeparator();
 
-    addNodeToMenu<ScriptNode, recenter>("Meta", "Script", menu, &submenus);
-    addNodeToMenu<EquationNode, recenter>("Meta", "Show equation", menu, &submenus);
+    addNodeToMenu<ScriptNode, recenter>("", "Script", menu, NULL);
 }
 
 void MainWindow::populateMenu(QMenu* menu, bool recenter)

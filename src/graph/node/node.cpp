@@ -77,7 +77,6 @@ QString Node::getType() const
         case NodeType::SPHERE:      return "Sphere";
         case NodeType::POINT3D:     return "Point (3D)";
         case NodeType::SCRIPT:      return "Script";
-        case NodeType::EQUATION:    return "Equation";
         case NodeType::UNION:       return "Union";
         case NodeType::BLEND:       return "Blend";
         case NodeType::INTERSECTION: return "Intersection";
@@ -98,7 +97,6 @@ QString Node::getType() const
         case NodeType::REFLECTZ:    return "Reflect (Z)";
         case NodeType::RECENTER:    return "Re-center";
         case NodeType::TRANSLATE:   return "Translate";
-        case NodeType::SLIDER:      return "Slider";
         case NodeType::ITERATE2D:   return "Iterate (2D)";
     }
 }

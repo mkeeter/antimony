@@ -42,20 +42,3 @@ Node* ScriptNode(float x, float y, float z, float scale,
     return n;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-Node* EquationNode(float x, float y, float z, float scale,
-                       QObject* parent)
-{
-    Q_UNUSED(x);
-    Q_UNUSED(y);
-    Q_UNUSED(z);
-    Q_UNUSED(scale);
-
-    Node* n = new Node(
-            NodeType::EQUATION, NodeManager::manager()->getName("a"), parent);
-    new ShapeInputDatum("a", n);
-    new ShapeFunctionDatum("shape", n, "buffer", {"a"});
-
-    return n;
-}
