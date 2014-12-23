@@ -24,10 +24,6 @@ Canvas::Canvas(QWidget* parent)
 
     QAbstractScrollArea::setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     QAbstractScrollArea::setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    //QGLFormat format;
-    //format.setVersion(2, 1);
-    //format.setSampleBuffers(true);
-    //setViewport(new QGLWidget(format, this));
 }
 
 Canvas::Canvas(QGraphicsScene* s, QWidget* parent)
