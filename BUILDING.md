@@ -1,3 +1,10 @@
+Requirements
+------------
+- [Qt 5.4](http://www.qt.io/)
+- [Python 3](https://www.python.org/)
+- [Boost.Python](http://www.boost.org/doc/libs/1_57_0/libs/python/doc/index.html) (linked against Python 3)
+- [`libpng`](http://www.libpng.org/pub/png/libpng.html)
+
 Mac OS X
 --------
 Tested on Mac OS X 10.9.4 with [homebrew](http://brew.sh/) already installed:
@@ -12,7 +19,7 @@ cd antimony
 mkdir build
 cd build
 
-/usr/local/Cellar/qt5/*/bin/qmake ../qt/antimony.pro
+/usr/local/Cellar/qt5/5.4.*/bin/qmake ../qt/antimony.pro
 make -j8
 
 open antimony.app
