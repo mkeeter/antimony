@@ -198,16 +198,16 @@ void App::onExportSTL()
     delete resolution_dialog;
     worker->moveToThread(thread);
 
-    connect(thread, SIGNAL(started()),
-            worker, SLOT(render()));
-    connect(worker, SIGNAL(finished()),
-            thread, SLOT(quit()));
-    connect(thread, SIGNAL(finished()),
-            thread, SLOT(deleteLater()));
-    connect(thread, SIGNAL(finished()),
-            worker, SLOT(deleteLater()));
-    connect(thread, SIGNAL(destroyed()),
-            exporting_dialog, SLOT(accept()));
+    connect(thread, &QThread::started,
+            worker, &ExportMeshWorker::render);
+    connect(worker, &ExportMeshWorker::finished,
+            thread, &QThread::quit);
+    connect(thread, &QThread::finished,
+            thread, &QThread::deleteLater);
+    connect(thread, &QThread::finished,
+            worker, &ExportMeshWorker::deleteLater);
+    connect(thread, &QThread::destroyed,
+            exporting_dialog, &ExportingDialog::accept);
 
     thread->start();
     exporting_dialog->exec();
@@ -273,16 +273,16 @@ void App::onExportHeightmap()
     delete resolution_dialog;
     worker->moveToThread(thread);
 
-    connect(thread, SIGNAL(started()),
-            worker, SLOT(render()));
-    connect(worker, SIGNAL(finished()),
-            thread, SLOT(quit()));
-    connect(thread, SIGNAL(finished()),
-            thread, SLOT(deleteLater()));
-    connect(thread, SIGNAL(finished()),
-            worker, SLOT(deleteLater()));
-    connect(thread, SIGNAL(destroyed()),
-            exporting_dialog, SLOT(accept()));
+    connect(thread, &QThread::started,
+            worker, &ExportBitmapWorker::render);
+    connect(worker, &ExportBitmapWorker::finished,
+            thread, &QThread::quit);
+    connect(thread, &QThread::finished,
+            thread, &QThread::deleteLater);
+    connect(thread, &QThread::finished,
+            worker, &ExportBitmapWorker::deleteLater);
+    connect(thread, &QThread::destroyed,
+            exporting_dialog, &ExportingDialog::accept);
 
     thread->start();
     exporting_dialog->exec();
@@ -312,16 +312,16 @@ void App::onExportJSON()
     auto worker = new ExportJSONWorker(s, file_name, EXPORT_JSON_INFIX);
     worker->moveToThread(thread);
 
-    connect(thread, SIGNAL(started()),
-            worker, SLOT(run()));
-    connect(worker, SIGNAL(finished()),
-            thread, SLOT(quit()));
-    connect(thread, SIGNAL(finished()),
-            thread, SLOT(deleteLater()));
-    connect(thread, SIGNAL(finished()),
-            worker, SLOT(deleteLater()));
-    connect(thread, SIGNAL(destroyed()),
-            exporting_dialog, SLOT(accept()));
+    connect(thread, &QThread::started,
+            worker, &ExportJSONWorker::run);
+    connect(worker, &ExportJSONWorker::finished,
+            thread, &QThread::quit);
+    connect(thread, &QThread::finished,
+            thread, &QThread::deleteLater);
+    connect(thread, &QThread::finished,
+            worker, &ExportJSONWorker::deleteLater);
+    connect(thread, &QThread::destroyed,
+            exporting_dialog, &ExportingDialog::accept);
 
     thread->start();
     exporting_dialog->exec();
