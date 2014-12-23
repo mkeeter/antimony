@@ -77,9 +77,9 @@ void DepthImageItem::reposition()
 
 QRectF DepthImageItem::boundingRect() const
 {
-    return QRectF(0, -size.y() * viewport->getScale(),
-                  size.x() * viewport->getScale(),
-                  size.y() * viewport->getScale());
+    float sx = size.x() * viewport->getScale();
+    float sy = size.y() * viewport->getScale();
+    return QRectF(-sx/2, -sy/2, sx, sy);
 }
 
 void DepthImageItem::paint(QPainter *painter,
