@@ -22,6 +22,8 @@ Canvas::Canvas(QWidget* parent)
     setRenderHints(QPainter::Antialiasing);
     setSceneRect(-width()/2, -height()/2, width(), height());
 
+    QAbstractScrollArea::setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    QAbstractScrollArea::setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     //QGLFormat format;
     //format.setVersion(2, 1);
     //format.setSampleBuffers(true);
