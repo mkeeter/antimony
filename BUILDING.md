@@ -40,11 +40,12 @@ cd antimony
 mkdir build
 cd build
 
-qmake ../qt/antimony.pro
+~/Qt5.4.0/5.4/gcc_64/bin/qmake ../qt/antimony.pro
 make -j8
 
 ./antimony
 ```
+(the path to `qmake` may vary depending on how Qt 5.4 was installed)
 
 If the top menu bar is not appearing in Ubuntu with a non-Unity
 desktop environment (e.g. `gnome-session-flashback`), run
