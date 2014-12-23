@@ -6,6 +6,7 @@ namespace DatumType
     enum DatumType
     {
         FLOAT,
+        FLOAT_OUTPUT,
         INT,
         NAME,
         SCRIPT,

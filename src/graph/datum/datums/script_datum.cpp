@@ -5,6 +5,7 @@
 #include "graph/datum/datums/shape_output_datum.h"
 #include "graph/datum/datums/script_datum.h"
 #include "graph/datum/datums/float_datum.h"
+#include "graph/datum/datums/float_output_datum.h"
 
 #include "graph/node/node.h"
 #include "graph/node/manager.h"
@@ -127,6 +128,10 @@ PyObject* ScriptDatum::makeOutput(QString name, PyObject *out)
         if (out->ob_type == fab::ShapeType)
         {
             d = new ShapeOutputDatum(name, parent());
+        }
+        else if (out->ob_type == &PyFloat_Type)
+        {
+            d = new FloatOutputDatum(name, parent());
         }
         else
         {

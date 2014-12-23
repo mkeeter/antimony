@@ -7,6 +7,7 @@
 #include "graph/node/node.h"
 
 #include "graph/datum/datums/float_datum.h"
+#include "graph/datum/datums/float_output_datum.h"
 #include "graph/datum/datums/int_datum.h"
 #include "graph/datum/datums/name_datum.h"
 #include "graph/datum/datums/string_datum.h"
@@ -104,6 +105,8 @@ void SceneDeserializer::deserializeDatum(QDataStream* in, Node* node)
     {
         case DatumType::FLOAT:
             datum = new FloatDatum(name, node); break;
+        case DatumType::FLOAT_OUTPUT:
+            datum = new FloatOutputDatum(name, node); break;
         case DatumType::INT:
             datum = new IntDatum(name, node); break;
         case DatumType::NAME:
