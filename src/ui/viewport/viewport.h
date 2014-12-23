@@ -80,9 +80,9 @@ public:
     /*
      *  Getter functions so that DepthImageItems can use these shared objects.
      */
-    QOpenGLBuffer* getQuadVertices() { return &quad_vertices; }
-    QOpenGLShaderProgram* getShadedShader() { return &shaded_shader; }
-    QOpenGLShaderProgram* getHeightmapShader() { return &height_shader; }
+    QOpenGLBuffer* getQuadVertices();
+    QOpenGLShaderProgram* getShadedShader();
+    QOpenGLShaderProgram* getHeightmapShader();
 
     QGraphicsScene* scene;
 signals:
@@ -185,6 +185,8 @@ protected:
     QOpenGLShaderProgram height_shader;
     QOpenGLShaderProgram shaded_shader;
     QOpenGLBuffer quad_vertices;
+
+    bool gl_initialized;
 };
 
 #endif // VIEWPORT_H

@@ -28,7 +28,8 @@
 Viewport::Viewport(QGraphicsScene* scene, QWidget* parent)
     : QGraphicsView(parent), scene(scene),
       scale(100), pitch(0), yaw(0), angle_locked(false),
-      view_selector(new ViewSelector(this))
+      view_selector(new ViewSelector(this)),
+      gl_initialized(false)
 {
     setScene(scene);
     setStyleSheet("QGraphicsView { border-style: none; }");
@@ -40,10 +41,6 @@ Viewport::Viewport(QGraphicsScene* scene, QWidget* parent)
     setViewport(gl);
 
     show();
-
-    gl->makeCurrent();
-    initializeGL();
-    gl->doneCurrent();
 }
 
 void Viewport::initializeGL()
@@ -69,6 +66,8 @@ void Viewport::initializeGL()
     height_shader.addShaderFromSourceFile(
             QOpenGLShader::Fragment, ":/gl/height.frag");
     height_shader.link();
+
+    gl_initialized = true;
 }
 
 void Viewport::resizeEvent(QResizeEvent* e)
@@ -190,6 +189,27 @@ ControlProxy* Viewport::getControlProxy(Node* n)
             return p;
     }
     return NULL;
+}
+
+QOpenGLBuffer* Viewport::getQuadVertices()
+{
+    if (!gl_initialized)
+        initializeGL();
+    return &quad_vertices;
+}
+
+QOpenGLShaderProgram* Viewport::getShadedShader()
+{
+    if (!gl_initialized)
+        initializeGL();
+    return &shaded_shader;
+}
+
+QOpenGLShaderProgram* Viewport::getHeightmapShader()
+{
+    if (!gl_initialized)
+        initializeGL();
+    return &height_shader;
 }
 
 void Viewport::spinTo(float new_yaw, float new_pitch)
