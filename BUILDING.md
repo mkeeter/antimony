@@ -27,11 +27,11 @@ open antimony.app
 
 Linux
 -----
-Tested on a clean Xubuntu 14.04 virtual machine:
+Tested on a clean Xubuntu 14.04 virtual machine:  
+Install [Qt 5.4](http://www.qt.io/download-open-source/), then run
 ```
 sudo apt-get install build-essential
 sudo apt-get install libpng-dev
-sudo apt-get install qt5-default qt5-qmake
 sudo apt-get install python3-dev
 sudo apt-get install libboost-all-dev
 
