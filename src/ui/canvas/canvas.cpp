@@ -9,6 +9,7 @@
 #include "ui/canvas/canvas.h"
 #include "ui/canvas/inspector/inspector.h"
 #include "ui/util/colors.h"
+#include "ui/main_window.h"
 
 #include "graph/node/node.h"
 #include "graph/datum/datum.h"
@@ -63,20 +64,19 @@ void Canvas::keyPressEvent(QKeyEvent *event)
     QGraphicsView::keyPressEvent(event);
     if (event->isAccepted())
         return;
-#if 0
+
     if (event->key() == Qt::Key_A &&
                 (event->modifiers() & Qt::ShiftModifier))
     {
         QMenu* m = new QMenu(this);
 
-        auto window = dynamic_cast<MainWindow*>(parent()->parent());
+        auto window = dynamic_cast<MainWindow*>(parent());
         Q_ASSERT(window);
         window->populateMenu(m, false);
 
         m->exec(QCursor::pos());
         m->deleteLater();
     }
-#endif
 }
 
 void Canvas::drawBackground(QPainter* painter, const QRectF& rect)

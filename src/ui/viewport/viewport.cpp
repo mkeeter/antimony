@@ -356,12 +356,14 @@ void Viewport::keyPressEvent(QKeyEvent *event)
     {
         QMenu* m = new QMenu(this);
 
-        auto window = dynamic_cast<MainWindow*>(parent()->parent());
-        Q_ASSERT(window);
-        window->populateMenu(m, false);
+        QObject* w = this;
+        while (!dynamic_cast<MainWindow*>(w))
+            w = w->parent();
+        Q_ASSERT(w);
+        static_cast<MainWindow*>(w)->populateMenu(m, false);
 
         m->exec(QCursor::pos());
-        m->deleteLater();
+        delete m;
     }
 }
 
