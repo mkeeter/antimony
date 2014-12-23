@@ -159,13 +159,12 @@ void App::onOpen()
     }
 }
 
-#if 0
 void App::onExportSTL()
 {
     Shape s = NodeManager::manager()->getCombinedShape();
     if (!s.tree)
     {
-        QMessageBox::critical(window, "Export error",
+        QMessageBox::critical(NULL, "Export error",
                 "<b>Export error:</b><br>"
                 "Cannot export without any shapes in the scene.");
         return;
@@ -174,33 +173,29 @@ void App::onExportSTL()
         isinf(s.bounds.ymin) || isinf(s.bounds.ymax) ||
         isinf(s.bounds.zmin) || isinf(s.bounds.zmax))
     {
-        QMessageBox::critical(window, "Export error",
+        QMessageBox::critical(NULL, "Export error",
                 "<b>Export error:</b><br>"
                 "Some shapes do not have 3D bounds;<br>"
                 "cannot export mesh.");
         return;
     }
 
-    ResolutionDialog* resolution_dialog = new ResolutionDialog(
-            &s, RESOLUTION_DIALOG_3D);
+    auto resolution_dialog = new ResolutionDialog(&s, RESOLUTION_DIALOG_3D);
     if (!resolution_dialog->exec())
-    {
         return;
-    }
 
     QString file_name = QFileDialog::getSaveFileName(
-            window, "Export STL", "", "*.stl");
+            NULL, "Export STL", "", "*.stl");
     if (file_name.isEmpty())
-    {
         return;
-    }
 
-    ExportingDialog* exporting_dialog = new ExportingDialog(window);
+    auto exporting_dialog = new ExportingDialog();
 
-    QThread* thread = new QThread();
-    ExportMeshWorker* worker = new ExportMeshWorker(
+    auto thread = new QThread();
+    auto worker = new ExportMeshWorker(
             s, resolution_dialog->getResolution(),
             file_name);
+    delete resolution_dialog;
     worker->moveToThread(thread);
 
     connect(thread, SIGNAL(started()),
@@ -216,6 +211,7 @@ void App::onExportSTL()
 
     thread->start();
     exporting_dialog->exec();
+    delete exporting_dialog;
 }
 
 void App::onExportHeightmap()
@@ -226,20 +222,14 @@ void App::onExportHeightmap()
         bool has_2d = false;
         bool has_3d = false;
         for (auto s=shapes.begin(); s != shapes.end(); ++s)
-        {
             if (isinf(s->bounds.zmin) || isinf(s->bounds.zmax))
-            {
                 has_2d = true;
-            }
             else
-            {
                 has_3d = true;
-            }
-        }
 
         if (has_2d && has_3d)
         {
-            QMessageBox::critical(window, "Export error",
+            QMessageBox::critical(NULL, "Export error",
                     "<b>Export error:</b><br>"
                     "Cannot export with a mix of 2D and 3D shapes in the scene.");
             return;
@@ -249,7 +239,7 @@ void App::onExportHeightmap()
     Shape s = NodeManager::manager()->getCombinedShape();
     if (!s.tree)
     {
-        QMessageBox::critical(window, "Export error",
+        QMessageBox::critical(NULL, "Export error",
                 "<b>Export error:</b><br>"
                 "Cannot export without any shapes in the scene.");
         return;
@@ -257,7 +247,7 @@ void App::onExportHeightmap()
     if (isinf(s.bounds.xmin) || isinf(s.bounds.xmax) ||
         isinf(s.bounds.ymin) || isinf(s.bounds.ymax))
     {
-        QMessageBox::critical(window, "Export error",
+        QMessageBox::critical(NULL, "Export error",
                 "<b>Export error:</b><br>"
                 "Some shapes do not have 2D bounds;<br>"
                 "cannot export mesh.");
@@ -265,26 +255,22 @@ void App::onExportHeightmap()
     }
 
     // Make a ResolutionDialog for 2D export
-    ResolutionDialog* resolution_dialog = new ResolutionDialog(
-            &s, RESOLUTION_DIALOG_2D);
+    auto resolution_dialog = new ResolutionDialog(&s, RESOLUTION_DIALOG_2D);
     if (!resolution_dialog->exec())
-    {
         return;
-    }
 
     QString file_name = QFileDialog::getSaveFileName(
-            window, "Export .png", "", "*.png");
+            NULL, "Export .png", "", "*.png");
     if (file_name.isEmpty())
-    {
         return;
-    }
 
-    ExportingDialog* exporting_dialog = new ExportingDialog(window);
+    auto exporting_dialog = new ExportingDialog();
 
-    QThread* thread = new QThread();
-    ExportBitmapWorker* worker = new ExportBitmapWorker(
+    auto thread = new QThread();
+    auto worker = new ExportBitmapWorker(
             s, resolution_dialog->getResolution(),
             file_name);
+    delete resolution_dialog;
     worker->moveToThread(thread);
 
     connect(thread, SIGNAL(started()),
@@ -300,6 +286,7 @@ void App::onExportHeightmap()
 
     thread->start();
     exporting_dialog->exec();
+    delete exporting_dialog;
 }
 
 void App::onExportJSON()
@@ -307,25 +294,22 @@ void App::onExportJSON()
     QMap<QString, Shape> s = NodeManager::manager()->getShapes();
     if (s.isEmpty())
     {
-        QMessageBox::critical(window, "Export error",
+        QMessageBox::critical(NULL, "Export error",
                 "<b>Export error:</b><br>"
                 "Cannot export without any shapes in the scene.");
         return;
     }
 
     QString file_name = QFileDialog::getSaveFileName(
-            window, "Export JSON", "", "*.f");
+            NULL, "Export JSON", "", "*.f");
     if (file_name.isEmpty())
-    {
         return;
-    }
 
-    ExportingDialog* exporting_dialog = new ExportingDialog(window);
+    auto exporting_dialog = new ExportingDialog();
 
     // Prepare to export (in infix notation)
-    QThread* thread = new QThread();
-    ExportJSONWorker* worker = new ExportJSONWorker(
-            s, file_name, EXPORT_JSON_INFIX);
+    auto thread = new QThread();
+    auto worker = new ExportJSONWorker(s, file_name, EXPORT_JSON_INFIX);
     worker->moveToThread(thread);
 
     connect(thread, SIGNAL(started()),
@@ -341,33 +325,7 @@ void App::onExportJSON()
 
     thread->start();
     exporting_dialog->exec();
-}
-#endif
-
-void App::connectActions()
-{
-#if 0
-    connect(window->ui->actionQuit, SIGNAL(triggered()),
-            this, SLOT(quit()));
-    connect(window->ui->actionAbout, SIGNAL(triggered()),
-            this, SLOT(onAbout()));
-    connect(window->ui->actionControls, SIGNAL(triggered()),
-            this, SLOT(onControls()));
-    connect(window->ui->actionSave, SIGNAL(triggered()),
-            this, SLOT(onSave()));
-    connect(window->ui->actionSaveAs, SIGNAL(triggered()),
-            this, SLOT(onSaveAs()));
-    connect(window->ui->actionNew, SIGNAL(triggered()),
-            this, SLOT(onNew()));
-    connect(window->ui->actionOpen, SIGNAL(triggered()),
-            this, SLOT(onOpen()));
-    connect(window->ui->actionExportMesh, SIGNAL(triggered()),
-            this, SLOT(onExportSTL()));
-    connect(window->ui->actionExportHeightmap, SIGNAL(triggered()),
-            this, SLOT(onExportHeightmap()));
-    connect(window->ui->actionExportJSON, SIGNAL(triggered()),
-            this, SLOT(onExportJSON()));
-#endif
+    delete exporting_dialog;
 }
 
 void App::setGlobalStyle()

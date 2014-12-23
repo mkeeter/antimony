@@ -1,7 +1,7 @@
 #include <cmath>
 
 #include "ui_resolution_dialog.h"
-#include "ui/resolution_dialog.h"
+#include "ui/dialogs/resolution_dialog.h"
 #include "fab/types/shape.h"
 
 ResolutionDialog::ResolutionDialog(Shape* shape, bool dimensions, long max_voxels,

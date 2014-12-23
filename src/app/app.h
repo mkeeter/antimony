@@ -61,16 +61,14 @@ public slots:
     void onSave();
     void onSaveAs();
     void onOpen();
-#if 0
+
     void onExportSTL();
     void onExportHeightmap();
     void onExportJSON();
-#endif
 
 private:
 
     void setGlobalStyle();
-    void connectActions();
 
     GraphScene* graph_scene;
     ViewportScene* view_scene;

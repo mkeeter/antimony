@@ -41,16 +41,16 @@ SOURCES += \
     ../src/ui/script/editor.cpp \
     ../src/ui/util/button.cpp \
     ../src/ui/util/colors.cpp \
+    ../src/ui/dialogs/resolution_dialog.cpp \
+    ../src/ui/dialogs/exporting_dialog.cpp \
     ../src/render/render_task.cpp \
     ../src/render/render_worker.cpp \
     ../src/render/render_image.cpp \
-    #../src/ui/resolution_dialog.cpp \
-    #../src/ui/exporting_dialog.cpp \
+    ../src/render/export_mesh.cpp \
+    ../src/render/export_bitmap.cpp \
+    ../src/render/export_json.cpp \
     #../src/ui/tooltip.cpp \
     #../src/ui/script/script_buttons.cpp \
-    #../src/render/export_mesh.cpp \
-    #../src/render/export_bitmap.cpp \
-    #../src/render/export_json.cpp \
 
 HEADERS += \
     ../src/ui/main_window.h \
@@ -71,14 +71,14 @@ HEADERS += \
     ../src/ui/script/editor.h \
     ../src/ui/util/button.h \
     ../src/ui/util/colors.h \
+    ../src/ui/dialogs/resolution_dialog.h \
+    ../src/ui/dialogs/exporting_dialog.h \
     ../src/render/render_task.h \
     ../src/render/render_worker.h \
     ../src/render/render_image.h \
-    #../src/render/export_mesh.h \
-    #../src/render/export_bitmap.h \
-    #../src/render/export_json.h \
-    #../src/ui/resolution_dialog.h \
-    #../src/ui/exporting_dialog.h \
+    ../src/render/export_mesh.h \
+    ../src/render/export_bitmap.h \
+    ../src/render/export_json.h \
     #../src/ui/tooltip.h \
     #../src/ui/script/script_editor.h \
     #../src/ui/script/script_buttons.h \
