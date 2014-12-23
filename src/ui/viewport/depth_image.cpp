@@ -14,11 +14,12 @@ DepthImageItem::DepthImageItem(QVector3D pos, QVector3D size,
                                QImage depth, QImage shaded,
                                Viewport* viewport)
     : QGraphicsObject(), pos(pos), size(size), depth(depth), shaded(shaded),
-      viewport(viewport), gl_initialized(false)
+      viewport(viewport)
 {
     connect(viewport, &Viewport::viewChanged, this, &DepthImageItem::reposition);
     reposition();
     setZValue(-20);
+    initializeGL();
     viewport->scene->addItem(this);
 }
 
@@ -34,6 +35,8 @@ DepthImageItem::~DepthImageItem()
 
 void DepthImageItem::initializeGL()
 {
+    static_cast<QOpenGLWidget*>(viewport->viewport())->makeCurrent();
+
     initializeOpenGLFunctions();
 
     glGenTextures(1, &depth_tex);
@@ -66,7 +69,7 @@ void DepthImageItem::initializeGL()
             shaded.bits()        /* Input data */
     );
 
-    gl_initialized = true;
+    static_cast<QOpenGLWidget*>(viewport->viewport())->doneCurrent();
 }
 
 void DepthImageItem::reposition()
@@ -89,9 +92,6 @@ void DepthImageItem::paint(QPainter *painter,
     Q_UNUSED(painter);
     Q_UNUSED(option);
     Q_UNUSED(widget);
-
-    if (!gl_initialized)
-        initializeGL();
 
     viewport->getQuadVertices()->bind();
 
