@@ -49,8 +49,6 @@ SOURCES += \
     ../src/render/export_mesh.cpp \
     ../src/render/export_bitmap.cpp \
     ../src/render/export_json.cpp \
-    #../src/ui/tooltip.cpp \
-    #../src/ui/script/script_buttons.cpp \
 
 HEADERS += \
     ../src/ui/main_window.h \
@@ -79,9 +77,6 @@ HEADERS += \
     ../src/render/export_mesh.h \
     ../src/render/export_bitmap.h \
     ../src/render/export_json.h \
-    #../src/ui/tooltip.h \
-    #../src/ui/script/script_editor.h \
-    #../src/ui/script/script_buttons.h \
 
 FORMS += \
     ../src/ui/forms/main_window.ui \
