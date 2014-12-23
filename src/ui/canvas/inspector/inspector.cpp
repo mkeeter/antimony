@@ -236,15 +236,6 @@ QPointF NodeInspector::datumInputPosition(Datum* d) const
     return p->mapToScene(p->boundingRect().center());
 }
 
-#if 0
-void NodeInspector::openScript(Datum *d) const
-{
-    ScriptDatum* s = dynamic_cast<ScriptDatum*>(d);
-    Q_ASSERT(s);
-    App::instance()->getWindow()->openScript(s);
-}
-#endif
-
 void NodeInspector::focusNext(DatumTextItem* prev)
 {
     bool next = false;

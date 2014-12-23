@@ -52,13 +52,6 @@ public slots:
      */
     void onLayoutChanged();
 
-#if 0
-    /** Opens the script editor for the given datum
-     *  (which must be a ScriptDatum).
-     */
-    void openScript(Datum* d) const;
-#endif
-
     /*
      *  On mouse move, fake the left button being held down.
      */

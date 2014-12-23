@@ -170,27 +170,3 @@ QMap<QString, Shape> NodeManager::getShapes()
     }
     return out;
 }
-
-#ifdef ANTIMONY
-#if 0
-#include "control/control.h"
-#include "ui/connection.h"
-
-void NodeManager::makeControls(Canvas* canvas)
-{
-    for (auto n : findChildren<Node*>(QString(), Qt::FindDirectChildrenOnly))
-    {
-        Control::makeControlFor(canvas, n);
-    }
-}
-
-void NodeManager::makeConnections(Canvas* canvas)
-{
-    for (auto link : findChildren<Link*>())
-    {
-        new Connection(link, canvas);
-    }
-}
-#endif
-
-#endif
