@@ -45,6 +45,8 @@ protected:
 
     GLuint depth_tex;
     GLuint shaded_tex;
+
+    bool gl_initialized;
 };
 
 #endif // DEPTH_IMAGE_H
