@@ -32,7 +32,7 @@ void WireframeControl::paint(QMatrix4x4 m, QMatrix4x4 t,
 QPainterPath WireframeControl::linePath(QMatrix4x4 m, QMatrix4x4 t) const
 {
     QPainterPath path;
-    for (auto line : lines(t))
+    for (auto line : lines(m, t))
     {
         path.moveTo((m*line.front()).toPointF());
         for (auto pt : line)
@@ -44,7 +44,7 @@ QPainterPath WireframeControl::linePath(QMatrix4x4 m, QMatrix4x4 t) const
 QPainterPath WireframeControl::pointPath(QMatrix4x4 m, QMatrix4x4 t) const
 {
     QPainterPath path;
-    for (auto ptr : points(t))
+    for (auto ptr : points(m, t))
     {
         QPointF pt = (m*ptr.first).toPointF();
         float r = ptr.second;

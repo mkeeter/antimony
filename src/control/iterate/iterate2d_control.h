@@ -29,11 +29,12 @@ protected:
 
     /** Draw a single point at button's position.
      */
-    QVector<QPair<QVector3D, float>> points() const override;
+    QVector<QPair<QVector3D, float>> points(QMatrix4x4 m,
+                                            QMatrix4x4 t) const override;
 
     /** Return the position (in 3D) of this button.
      */
-    QVector3D position() const;
+    QVector3D position(QMatrix4x4 m) const;
 
     QColor defaultPenColor() const
         { return Colors::teal; }

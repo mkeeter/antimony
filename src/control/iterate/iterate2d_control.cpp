@@ -39,7 +39,7 @@ void Iterate2DButton::paint(QMatrix4x4 m, QMatrix4x4 t,
     WireframeControl::paint(m, t, highlight, painter);
 
     setDefaultPen(highlight, painter);
-    QPointF p = (m * position()).toPointF();
+    QPointF p = (m * position(m)).toPointF();
     painter->drawLine(p.x() - 3, p.y(), p.x() + 3, p.y());
     if (sign)
     {
@@ -47,17 +47,21 @@ void Iterate2DButton::paint(QMatrix4x4 m, QMatrix4x4 t,
     }
 }
 
-QVector<QPair<QVector3D, float>> Iterate2DButton::points() const
+QVector<QPair<QVector3D, float>> Iterate2DButton::points(QMatrix4x4 m,
+                                                         QMatrix4x4 t) const
 {
-    return {{position(), 8}};
+    Q_UNUSED(t);
+
+    return {{position(m), 8}};
 }
 
-QVector3D Iterate2DButton::position() const
+QVector3D Iterate2DButton::position(QMatrix4x4 m) const
 {
-    float scale = fmin(getValue("dx"), getValue("dy"));
+    float scale = (m * QVector3D(1, 0, 0) - m*QVector3D(0, 0, 0)).length();
+
     QVector3D p = QVector3D(getValue("_x"), getValue("_y"), 0);
-    QVector3D d = axis ? QVector3D(scale/10, 0, 0)
-                       : QVector3D(0, scale/10, 0);
+    QVector3D d = axis ? QVector3D(15/scale, 0, 0)
+                       : QVector3D(0, 15/scale, 0);
     return sign ? p + d : p - d;
 }
 

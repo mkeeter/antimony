@@ -34,16 +34,16 @@ protected:
      */
     virtual QVector<QVector<QVector3D>> lines() const
         { return {}; }
-    virtual QVector<QVector<QVector3D>> lines(QMatrix4x4 t) const
-        { Q_UNUSED(t); return lines(); }
+    virtual QVector<QVector<QVector3D>> lines(QMatrix4x4 m, QMatrix4x4 t) const
+        { Q_UNUSED(m); Q_UNUSED(t); return lines(); }
 
     /** Provides a list of points to draw as point, radius pairs.
      *  (must be overloaded in derived classes).
      */
     virtual QVector<QPair<QVector3D, float>> points() const
         { return {}; }
-    virtual QVector<QPair<QVector3D, float>> points(QMatrix4x4 t) const
-        { Q_UNUSED(t); return points(); }
+    virtual QVector<QPair<QVector3D, float>> points(QMatrix4x4 m, QMatrix4x4 t) const
+        { Q_UNUSED(m); Q_UNUSED(t); return points(); }
 };
 
 #endif // WIREFRAME_H

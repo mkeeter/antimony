@@ -11,8 +11,11 @@ _SphereRadiusControl::_SphereRadiusControl(Node* node, QObject* parent)
     watchDatums({"x","y","z","r"});
 }
 
-QVector<QVector<QVector3D>> _SphereRadiusControl::lines(QMatrix4x4 t) const
+QVector<QVector<QVector3D>> _SphereRadiusControl::lines(QMatrix4x4 m,
+                                                        QMatrix4x4 t) const
 {
+    Q_UNUSED(m);
+
     QVector3D c = center();
     float r = getValue("r");
 
