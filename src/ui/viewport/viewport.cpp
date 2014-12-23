@@ -39,8 +39,6 @@ Viewport::Viewport(QGraphicsScene* scene, QWidget* parent)
 
     auto gl = new QOpenGLWidget(this);
     setViewport(gl);
-
-    show();
 }
 
 void Viewport::initializeGL()
