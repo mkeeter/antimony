@@ -1,8 +1,5 @@
 #include <Python.h>
 
-#include <QGraphicsSceneMouseEvent>
-#include <QRegularExpression>
-
 #include "control/control.h"
 
 #include "ui/viewport/viewport.h"
@@ -69,28 +66,7 @@ void Control::dragValue(QString name, double delta)
     FloatDatum* f = dynamic_cast<FloatDatum*>(d);
     Q_ASSERT(f);
 
-    bool ok = false;
-    QString s = f->getExpr();
-    double v = s.toFloat(&ok);
-    if (ok)
-    {
-        f->setExpr(QString::number(v + delta));
-        return;
-    }
-
-    QRegularExpression regex(
-        "(.*[+\\-]\\s*)(\\d*(\\.\\d*|)(e\\d+(\\.\\d*|)|))"
-    );
-    auto match= regex.match(s);
-    if (match.isValid())
-    {
-        v = match.captured(2).toFloat(&ok);
-        if (ok)
-        {
-            f->setExpr(match.captured(1) +
-                       QString::number(v + delta));
-        }
-    }
+    f->dragValue(delta);
 }
 
 void Control::setValue(QString name, double new_value)

@@ -32,6 +32,8 @@ protected:
      */
     bool eventFilter(QObject* obj, QEvent* event);
 
+    void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
+
     Datum* d;
     QTextDocument* txt;
     QColor background;

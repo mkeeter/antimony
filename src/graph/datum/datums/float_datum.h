@@ -13,6 +13,13 @@ public:
     PyTypeObject* getType() const override { return &PyFloat_Type; }
     DatumType::DatumType getDatumType() const override
         { return DatumType::FLOAT; }
+
+    /*
+     *  Attempts to add delta to the current value.
+     *
+     *  Will only succeed if the expression is a single float number.
+     */
+    bool dragValue(double delta);
 };
 
 #endif // FLOAT_H

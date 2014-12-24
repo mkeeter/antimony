@@ -11,6 +11,7 @@
 #include "ui/util/colors.h"
 
 #include "graph/datum/datum.h"
+#include "graph/datum/datums/float_datum.h"
 #include "graph/datum/types/eval_datum.h"
 
 DatumTextItem::DatumTextItem(Datum* datum, QGraphicsItem* parent)
@@ -129,4 +130,20 @@ bool DatumTextItem::eventFilter(QObject* obj, QEvent* event)
         return false;
     }
     return DatumTextItem::eventFilter(obj, event);
+}
+
+void DatumTextItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
+{
+    const auto f = dynamic_cast<FloatDatum*>(d);
+    if (f && f->getValid() && (event->modifiers() & Qt::ShiftModifier))
+    {
+        const double scale = fmax(
+                0.01, abs(PyFloat_AsDouble(f->getValue()) * 0.01));
+        const double dx = (event->screenPos() - event->lastScreenPos()).x();
+        f->dragValue(scale * dx);
+    }
+    else
+    {
+        QGraphicsTextItem::mouseMoveEvent(event);
+    }
 }
