@@ -76,7 +76,9 @@ float NodeInspector::labelWidth() const
 QRectF NodeInspector::boundingRect() const
 {
     float height = title->boundingRect().height() + 4;
-    float width = fmax(200, title->boundingRect().width() + 12);
+    float width =  title->boundingRect().width() +
+                   name->boundingRect().width() +
+                   menu_button->boundingRect().width() + 24;
 
     for (auto row : rows)
     {
