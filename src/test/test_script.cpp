@@ -11,11 +11,12 @@
 #include "graph/datum/datums/shape_output_datum.h"
 
 #include "graph/node/node.h"
+#include "graph/node/root.h"
 #include "graph/node/nodes/meta.h"
 #include "graph/node/nodes/3d.h"
 
 TestScript::TestScript(QObject* parent)
-    : QObject(parent)
+    : QObject(parent), r(new NodeRoot)
 {
     // Nothing to do here
 }
@@ -43,14 +44,16 @@ void TestScript::RunMultilineScript()
 
 void TestScript::ImportFabShapes()
 {
-    ScriptDatum* d = new ScriptDatum("s", "from fab import shapes", NULL);
+    Node* n = new Node(NodeType::DUMMY, r);
+    ScriptDatum* d = new ScriptDatum("s", "from fab import shapes", n);
     QVERIFY(d->getValid() == true);
     delete d;
+    delete n;
 }
 
 void TestScript::MakeScriptNode()
 {
-    Node* n = ScriptNode("s", "0.0", "0.0", "0.0", "x = 3\ny = 12");
+    Node* n = ScriptNode("s", "0.0", "0.0", "0.0", "x = 3\ny = 12", r);
     QVERIFY(n->getDatum("_script")->getValid() == true);
     delete n;
 }
@@ -60,33 +63,33 @@ void TestScript::MakeScriptInput()
     Node* n;
 
     n = ScriptNode("s", "0.0", "0.0", "0.0",
-                       "input('q', float)");
+                       "input('q', float)", r);
     QVERIFY(n->getDatum("_script")->getValid() == true);
     delete n;
 
 
     n = ScriptNode("s", "0.0", "0.0", "0.0",
-                       "input('q', 12)");
+                       "input('q', 12)", r);
     QVERIFY(n->getDatum("_script")->getValid() == false);
     delete n;
 
     n = ScriptNode("s", "0.0", "0.0", "0.0",
-                       "input(12, float)");
+                       "input(12, float)", r);
     QVERIFY(n->getDatum("_script")->getValid() == false);
     delete n;
 
     n = ScriptNode("s", "0.0", "0.0", "0.0",
-                       "input('q', float, 12)");
+                       "input('q', float, 12)", r);
     QVERIFY(n->getDatum("_script")->getValid() == false);
     delete n;
 
     n = ScriptNode("s", "0.0", "0.0", "0.0",
-                       "input('q', float, x=12)");
+                       "input('q', float, x=12)", r);
     QVERIFY(n->getDatum("_script")->getValid() == false);
     delete n;
 
     n = ScriptNode("s", "0.0", "0.0", "0.0",
-                       "input('q', str)");
+                       "input('q', str)", r);
     QVERIFY(n->getDatum("_script")->getValid() == false);
     delete n;
 }
@@ -94,7 +97,7 @@ void TestScript::MakeScriptInput()
 void TestScript::CheckFloatInput()
 {
     Node* n;
-    n = ScriptNode("s", "0.0", "0.0", "0.0", "input('q', float)");
+    n = ScriptNode("s", "0.0", "0.0", "0.0", "input('q', float)", r);
     QVERIFY(n->getDatum("q") != NULL);
     QVERIFY(n->getDatum<FloatDatum>("q"));
     delete n;
@@ -102,7 +105,7 @@ void TestScript::CheckFloatInput()
 
 void TestScript::ChangeFloatInput()
 {
-    Node* n = ScriptNode("s", "0.0", "0.0", "0.0", "input('q', float); print(q)");
+    Node* n = ScriptNode("s", "0.0", "0.0", "0.0", "input('q', float); print(q)", r);
 
     QSignalSpy s(n->getDatum("_script"), SIGNAL(changed()));
 
@@ -117,7 +120,7 @@ void TestScript::ChangeFloatInput()
 void TestScript::CheckShapeInput()
 {
     Node* n;
-    n = ScriptNode("s", "0.0", "0.0", "0.0", "from fab.types import Shape;input('q', Shape)");
+    n = ScriptNode("s", "0.0", "0.0", "0.0", "from fab.types import Shape;input('q', Shape)", r);
     QVERIFY(n->getDatum("q") != NULL);
     QVERIFY(n->getDatum<ShapeInputDatum>("q"));
     delete n;
@@ -126,17 +129,17 @@ void TestScript::CheckShapeInput()
 void TestScript::InvalidInputNames()
 {
     Node* n;
-    n = ScriptNode("s", "0.0", "0.0", "0.0", "from fab.types import Shape;input('', Shape)");
+    n = ScriptNode("s", "0.0", "0.0", "0.0", "from fab.types import Shape;input('', Shape)", r);
     QVERIFY(n->getDatum("_script")->getValid() == false);
     delete n;
 
-    n = ScriptNode("s", "0.0", "0.0", "0.0", "from fab.types import Shape;input('_reserved', Shape)");
+    n = ScriptNode("s", "0.0", "0.0", "0.0", "from fab.types import Shape;input('_reserved', Shape)", r);
     QVERIFY(n->getDatum("_script")->getValid() == false);
     QVERIFY(n->getDatum("_reserved") == NULL);
     delete n;
 
     n = ScriptNode("s", "0.0", "0.0", "0.0",
-                       "from fab.types import Shape;input('dupe', Shape);input('dupe', Shape)");
+                       "from fab.types import Shape;input('dupe', Shape);input('dupe', Shape)", r);
     QVERIFY(n->getDatum("_script")->getValid() == false);
     QVERIFY(n->getDatum("dupe") != NULL);
     delete n;
@@ -145,7 +148,7 @@ void TestScript::InvalidInputNames()
 void TestScript::AddThenRemoveDatum()
 {
     Node* n;
-    n = ScriptNode("s", "0.0", "0.0", "0.0", "input('x', float)");
+    n = ScriptNode("s", "0.0", "0.0", "0.0", "input('x', float)", r);
     ScriptDatum* d = n->getDatum<ScriptDatum>("_script");
     QVERIFY(n->getDatum("x") != NULL);
     QVERIFY(n->getDatum<FloatDatum>("x"));
@@ -161,8 +164,8 @@ void TestScript::AddThenRemoveDatum()
 
 void TestScript::UseOtherDatum()
 {
-    Node* p = Point3DNode("p", "0.!", "0.0", "0.0");
-    Node* n = ScriptNode("s", "0.0", "0.0", "0.0", "p.x + 1");
+    Node* p = Point3DNode("p", "0.!", "0.0", "0.0", r);
+    Node* n = ScriptNode("s", "0.0", "0.0", "0.0", "p.x + 1", r);
     QVERIFY(n->getDatum("_script")->getValid() == false);
 
     QSignalSpy s(n->getDatum("_script"), SIGNAL(changed()));
@@ -177,7 +180,7 @@ void TestScript::UseOtherDatum()
 
 void TestScript::MakeShapeOutput()
 {
-    Node* n = ScriptNode("s", "0.0", "0.0", "0.0", "from fab import shapes; output('q', shapes.circle(0,0,1))");
+    Node* n = ScriptNode("s", "0.0", "0.0", "0.0", "from fab import shapes; output('q', shapes.circle(0,0,1))", r);
     QVERIFY(n->getDatum("_script")->getValid() == true);
     QVERIFY(n->getDatum("q") != NULL);
     QVERIFY(n->getDatum<ShapeOutputDatum>("q"));
@@ -198,7 +201,7 @@ void TestScript::MakeShapeOutput()
 
 void TestScript::ChangeInputOrder()
 {
-    Node* n = ScriptNode("s", "0.0", "0.0", "0.0", "from fab.types import Shape; input('a', Shape); input('b', Shape);");
+    Node* n = ScriptNode("s", "0.0", "0.0", "0.0", "from fab.types import Shape; input('a', Shape); input('b', Shape);", r);
     QVERIFY(n->getDatum("_script")->getValid() == true);
     Datum* a = n->getDatum("a");
     Datum* b = n->getDatum("b");
@@ -217,7 +220,7 @@ void TestScript::ChangeInputOrder()
 
 void TestScript::ShapeUpdate()
 {
-    Node* n = ScriptNode("s", "0.0", "0.0", "1.0", "from fab import shapes; output('q', shapes.circle(0, 0, s._z))");
+    Node* n = ScriptNode("s", "0.0", "0.0", "1.0", "from fab import shapes; output('q', shapes.circle(0, 0, s._z))", r);
     QVERIFY(n->getDatum("_script")->getValid() == false);
     new FloatDatum("_z", "1.0", n);
     QVERIFY(n->getDatum("_script")->getValid() == true);

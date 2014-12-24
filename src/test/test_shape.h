@@ -3,11 +3,14 @@
 
 #include <QObject>
 
+class Node;
+class NodeRoot;
+
 class TestShape : public QObject
 {
     Q_OBJECT
 public:
-    explicit TestShape(QObject *parent = 0);
+    explicit TestShape();
 
 private slots:
     /** Confirm that the default shape is valid (with no inputs)
@@ -29,6 +32,10 @@ private slots:
     /** Put multiple inputs into a ShapeInputDatum, then delete them.
      */
     void DeleteInput();
+
+protected:
+    NodeRoot* r;
+    Node* n;
 };
 
 #endif // TEST_SHAPE_H

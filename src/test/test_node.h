@@ -3,11 +3,13 @@
 
 #include <QObject>
 
+class NodeRoot;
+
 class TestNode : public QObject
 {
     Q_OBJECT
 public:
-    explicit TestNode(QObject *parent = 0);
+    explicit TestNode();
 
 private slots:
     /** Can you get a datum from a node? */
@@ -44,6 +46,9 @@ private slots:
     /** Creates a node with child nodes and verifies that it works.
      */
     void TestChildNodes();
+
+protected:
+    NodeRoot* r;
 };
 
 #endif // TEST_NODE_H

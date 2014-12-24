@@ -9,7 +9,7 @@ class FloatDatum : public EvalDatum
     Q_OBJECT
 public:
     explicit FloatDatum(QString name, Node* parent);
-    explicit FloatDatum(QString name, QString expr, Node *parent);
+    explicit FloatDatum(QString name, QString expr, Node* parent);
     PyTypeObject* getType() const override { return &PyFloat_Type; }
     DatumType::DatumType getDatumType() const override
         { return DatumType::FLOAT; }

@@ -3,9 +3,15 @@
 
 #include <QObject>
 
+class Node;
+class NodeRoot;
+
 class TestDatum : public QObject
 {
     Q_OBJECT
+public:
+    explicit TestDatum();
+
 private slots:
 
     /** Test that a valid float is labelled as valid. */
@@ -48,6 +54,9 @@ private slots:
     /** Check name validation. */
     void NameValidate();
 
+protected:
+    NodeRoot* r;
+    Node* n;
 };
 
 #endif // TEST_DATUM_H

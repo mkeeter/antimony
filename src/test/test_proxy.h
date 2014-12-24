@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+class NodeRoot;
+
 class TestProxy : public QObject
 {
     Q_OBJECT
@@ -23,6 +25,9 @@ private slots:
 
     /** Change a datum's name, invalidating downstream datums. */
     void DatumNameChange();
+
+protected:
+    NodeRoot* r;
 };
 
 #endif // TEST_PROXY_H
