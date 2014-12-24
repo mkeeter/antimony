@@ -18,6 +18,9 @@ Datum::Datum(QString name, Node* parent)
 
 Datum::~Datum()
 {
+    // Request that all upstream datums disconnect
+    // (to prevent recursive loops in a partially-destroyed object)
+    emit disconnectFrom(this);
     Py_XDECREF(value);
 }
 
