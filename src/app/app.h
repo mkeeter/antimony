@@ -9,6 +9,7 @@ class Node;
 class Link;
 class Connection;
 class ScriptDatum;
+class MainWindow;
 
 class App : public QApplication
 {
@@ -36,22 +37,22 @@ public slots:
     /*
      *  Opens a new MainWindow with a Canvas as its central widget.
      */
-    void newCanvasWindow();
+    MainWindow* newCanvasWindow();
 
     /*
      *  Opens a new MainWindow with a Viewport as its central widget.
      */
-    void newViewportWindow();
+    MainWindow* newViewportWindow();
 
     /*
      *  Opens a new MainWindow with four Viewports.
      */
-    void newQuadWindow();
+    MainWindow* newQuadWindow();
 
     /*
      *  Opens a new editor window targetting the given datum.
      */
-    void newEditorWindow(ScriptDatum* datum);
+    MainWindow* newEditorWindow(ScriptDatum* datum);
 
 public slots:
     void onAbout();

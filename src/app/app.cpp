@@ -42,7 +42,13 @@ App::App(int& argc, char** argv) :
     view_scene(new ViewportScene())
 {
     setGlobalStyle();
-    newCanvasWindow();
+
+    auto v = newViewportWindow();
+    v->move(v->pos() - QPoint(25, 25));
+
+    auto c = newCanvasWindow();
+    c->move(c->pos() + QPoint(25, 25));
+
     NodeManager::manager();
 }
 
@@ -317,23 +323,25 @@ void App::setGlobalStyle()
                 .arg(Colors::base04.name()));
 }
 
-void App::newCanvasWindow()
+MainWindow* App::newCanvasWindow()
 {
     auto m = new MainWindow();
     m->setCentralWidget(graph_scene->newCanvas());
     m->updateMenus();
     m->show();
+    return m;
 }
 
-void App::newViewportWindow()
+MainWindow* App::newViewportWindow()
 {
     auto m = new MainWindow();
     m->setCentralWidget(view_scene->newViewport());
     m->updateMenus();
     m->show();
+    return m;
 }
 
-void App::newQuadWindow()
+MainWindow* App::newQuadWindow()
 {
     auto m = new MainWindow();
     auto g = new QGridLayout();
@@ -369,15 +377,17 @@ void App::newQuadWindow()
     m->setCentralWidget(w);
     m->updateMenus();
     m->show();
+    return m;
 }
 
-void App::newEditorWindow(ScriptDatum* datum)
+MainWindow* App::newEditorWindow(ScriptDatum* datum)
 {
     auto m = new MainWindow();
     m->setCentralWidget(new ScriptEditor(datum, m));
     m->updateMenus();
     m->resize(400, 600);
     m->show();
+    return m;
 }
 
 void App::newNode(Node* n)
