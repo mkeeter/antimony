@@ -23,28 +23,34 @@ TestScript::TestScript(QObject* parent)
 
 void TestScript::RunSimpleScript()
 {
-    ScriptDatum* d = new ScriptDatum("s", "None", NULL);
+    Node* n = new Node(NodeType::DUMMY, "_dummy", r);
+    ScriptDatum* d = new ScriptDatum("s", "None", n);
     QVERIFY(d->getValid() == true);
     delete d;
+    delete n;
 }
 
 void TestScript::RunInvalidScript()
 {
-    ScriptDatum* d = new ScriptDatum("s", "y = 12 + x", NULL);
+    Node* n = new Node(NodeType::DUMMY, "_dummy", r);
+    ScriptDatum* d = new ScriptDatum("s", "y = 12 + x", n);
     QVERIFY(d->getValid() == false);
     delete d;
+    delete n;
 }
 
 void TestScript::RunMultilineScript()
 {
-    ScriptDatum* d = new ScriptDatum("s", "x = 3\ny = 12 + x", NULL);
+    Node* n = new Node(NodeType::DUMMY, "_dummy", r);
+    ScriptDatum* d = new ScriptDatum("s", "x = 3\ny = 12 + x", n);
     QVERIFY(d->getValid() == true);
     delete d;
+    delete n;
 }
 
 void TestScript::ImportFabShapes()
 {
-    Node* n = new Node(NodeType::DUMMY, r);
+    Node* n = new Node(NodeType::DUMMY, "_dummy", r);
     ScriptDatum* d = new ScriptDatum("s", "from fab import shapes", n);
     QVERIFY(d->getValid() == true);
     delete d;

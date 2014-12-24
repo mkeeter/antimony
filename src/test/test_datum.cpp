@@ -12,7 +12,7 @@
 #include "graph/datum/datums/name_datum.h"
 
 TestDatum::TestDatum()
-    : r(new NodeRoot()), n(new Node(NodeType::DUMMY, r))
+    : r(new NodeRoot()), n(new Node(NodeType::DUMMY, "_dummy", r))
 {
     // Nothing to do here
 }

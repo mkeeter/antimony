@@ -16,7 +16,7 @@
 #include "fab/types/shape.h"
 
 TestShape::TestShape()
-    : QObject(), r(new NodeRoot), n(new Node(NodeType::DUMMY, r))
+    : QObject(), r(new NodeRoot), n(new Node(NodeType::DUMMY, "_dummy", r))
 {
     // Nothing to do here
 }
