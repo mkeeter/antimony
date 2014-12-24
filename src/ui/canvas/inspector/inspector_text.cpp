@@ -57,8 +57,12 @@ void DatumTextItem::onDatumChanged()
     QTextCursor cursor = textCursor();
     int p = textCursor().position();
     txt->setPlainText(d->getString());
-    cursor.setPosition(p);
-    setTextCursor(cursor);
+
+    if (p < d->getString().length())
+    {
+        cursor.setPosition(p);
+        setTextCursor(cursor);
+    }
 
     setEnabled(d->canEdit());
 
