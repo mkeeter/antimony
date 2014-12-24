@@ -1,7 +1,7 @@
 #include <Python.h>
 
 #include "graph/node/node.h"
-#include "graph/node/manager.h"
+#include "graph/node/root.h"
 
 #include "graph/node/nodes/meta.h"
 
@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 Node* ScriptNode(QString name, QString x, QString y, QString z,
-                 QString script, QObject* parent)
+                 QString script, NodeRoot* parent)
 {
     Q_UNUSED(x);
     Q_UNUSED(y);
@@ -27,15 +27,14 @@ Node* ScriptNode(QString name, QString x, QString y, QString z,
 }
 
 Node* ScriptNode(float x, float y, float z, float scale,
-                 QObject* parent)
+                 NodeRoot* parent)
 {
     Q_UNUSED(x);
     Q_UNUSED(y);
     Q_UNUSED(z);
     Q_UNUSED(scale);
 
-    Node* n = new Node(
-            NodeType::SCRIPT, NodeManager::manager()->getName("a"), parent);
+    Node* n = new Node(NodeType::SCRIPT, parent->getName("a"), parent);
     new ScriptDatum("_script",
              "from fab import shapes\n\n"
              "output('c', shapes.circle(0, 0, 1))", n);

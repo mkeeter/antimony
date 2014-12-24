@@ -6,6 +6,9 @@
 
 #include "app/app.h"
 
+#include "graph/node/node.h"
+#include "graph/node/root.h"
+
 #include "ui_main_window.h"
 #include "ui/main_window.h"
 #include "ui/canvas/canvas.h"
@@ -117,8 +120,6 @@ bool MainWindow::isShaded() const
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "graph/node/node.h"
-
 #include "graph/node/nodes/2d.h"
 #include "graph/node/nodes/3d.h"
 #include "graph/node/nodes/csg.h"
@@ -127,7 +128,7 @@ bool MainWindow::isShaded() const
 #include "graph/node/nodes/deform.h"
 #include "graph/node/nodes/iterate.h"
 
-template <Node* (*f)(float, float, float, float, QObject*), bool recenter>
+template <Node* (*f)(float, float, float, float, NodeRoot*), bool recenter>
 void MainWindow::createNew()
 {
     auto v = findChild<Viewport*>();
@@ -152,11 +153,11 @@ void MainWindow::createNew()
     {
         QVector3D obj_pos = v->sceneToWorld(scene_pos);
         n = f(obj_pos.x(), obj_pos.y(), obj_pos.z(),
-              100 / v->getScale(), NULL);
+              100 / v->getScale(), App::instance()->getNodeRoot());
     }
     else
     {
-        n = f(0, 0, 0, 1, NULL);
+        n = f(0, 0, 0, 1, App::instance()->getNodeRoot());
     }
 
     App::instance()->newNode(n);
@@ -177,7 +178,7 @@ void MainWindow::createNew()
     }
 }
 
-template <Node* (*f)(float, float, float, float, QObject*),
+template <Node* (*f)(float, float, float, float, NodeRoot*),
           bool recenter>
 void MainWindow::addNodeToMenu(QString category, QString name,
                                QMenu* menu, QMap<QString, QMenu*>* submenus)

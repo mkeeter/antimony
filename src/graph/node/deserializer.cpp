@@ -5,6 +5,7 @@
 
 #include "graph/node/deserializer.h"
 #include "graph/node/node.h"
+#include "graph/node/root.h"
 
 #include "graph/datum/datums/float_datum.h"
 #include "graph/datum/datums/float_output_datum.h"
@@ -16,7 +17,7 @@
 #include "graph/datum/datums/shape_input_datum.h"
 #include "graph/datum/datums/shape_function_datum.h"
 
-SceneDeserializer::SceneDeserializer(QObject* node_root)
+SceneDeserializer::SceneDeserializer(NodeRoot* node_root)
     : QObject(), failed(false), node_root(node_root)
 {
     // Nothing to do here
@@ -42,7 +43,7 @@ bool SceneDeserializer::run(QDataStream* in)
         failed = true;
         error_message = "File is not an Antimony file";
     }
-    else if (protocol_version != 1)
+    else if (protocol_version < 2)
     {
         failed = true;
         error_message = "File was saved with an older protocol and can no longer be read.";
@@ -56,7 +57,7 @@ bool SceneDeserializer::run(QDataStream* in)
     return failed;
 }
 
-void SceneDeserializer::deserializeNodes(QDataStream* in, QObject* p)
+void SceneDeserializer::deserializeNodes(QDataStream* in, NodeRoot* p)
 {
     quint32 count;
     *in >> count;
@@ -64,7 +65,7 @@ void SceneDeserializer::deserializeNodes(QDataStream* in, QObject* p)
         deserializeNode(in, p);
 }
 
-void SceneDeserializer::deserializeNode(QDataStream* in, QObject* p)
+void SceneDeserializer::deserializeNode(QDataStream* in, NodeRoot* p)
 {
     quint32 t;
     *in >> t;
@@ -80,9 +81,6 @@ void SceneDeserializer::deserializeNode(QDataStream* in, QObject* p)
     QPointF i;
     *in >> i;
     inspectors[node] = i;
-
-    // Deserialize child nodes.
-    deserializeNodes(in, node);
 
     quint32 datum_count;
     *in >> datum_count;

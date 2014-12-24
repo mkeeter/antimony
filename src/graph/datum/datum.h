@@ -10,6 +10,7 @@
 
 class InputHandler;
 class Link;
+class NodeRoot;
 
 class Datum : public QObject
 {
@@ -83,6 +84,11 @@ public:
     /** Returns a list of datums that are inputs to the input handler.
      */
     QList<Datum*> getInputDatums() const;
+
+    /*
+     *  Looks up the root of this datum's branch of the hierarchy.
+     */
+    NodeRoot* root() const;
 
 signals:
     /** Emitted when value, valid, or editable changes.

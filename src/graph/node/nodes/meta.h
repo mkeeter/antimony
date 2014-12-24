@@ -1,15 +1,15 @@
 #ifndef NODE_META_H
 #define NODE_META_H
 
-#include <QObject>
 #include <QString>
 
 class Node;
+class NodeRoot;
 
 Node* ScriptNode(QString name, QString x, QString y, QString z,
-                 QString script, QObject* parent=0);
+                 QString script, NodeRoot* parent);
 Node* ScriptNode(float x, float y, float z, float scale,
-                 QObject* parent=0);
+                 NodeRoot* parent);
 
 #endif
 

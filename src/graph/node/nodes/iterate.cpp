@@ -1,7 +1,7 @@
 #include <Python.h>
 
 #include "graph/node/node.h"
-#include "graph/node/manager.h"
+#include "graph/node/root.h"
 
 #include "graph/node/nodes/iterate.h"
 
@@ -13,12 +13,11 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Node* Iterate2DNode(float x, float y, float z, float scale, QObject* parent)
+Node* Iterate2DNode(float x, float y, float z, float scale, NodeRoot* parent)
 {
     Q_UNUSED(z);
 
-    Node* n = new Node(
-            NodeType::ITERATE2D, NodeManager::manager()->getName("i"), parent);
+    Node* n = new Node(NodeType::ITERATE2D, parent->getName("i"), parent);
     new FloatDatum("_x", QString::number(x), n);
     new FloatDatum("_y", QString::number(y), n);
     new IntDatum("i", "2", n);

@@ -10,6 +10,7 @@ class Link;
 class Connection;
 class ScriptDatum;
 class MainWindow;
+class NodeRoot;
 
 class App : public QApplication
 {
@@ -32,6 +33,11 @@ public:
      *  Create UI elements for a new link, returning the associated Connection.
      */
     Connection* newLink(Link* link);
+
+    /*
+     *  Returns the root of the node tree.
+     */
+    NodeRoot* getNodeRoot() const { return root; }
 
 public slots:
     /*
@@ -73,6 +79,7 @@ private:
     GraphScene* graph_scene;
     ViewportScene* view_scene;
     QString filename;
+    NodeRoot* root;
 };
 
 #endif // APP_H

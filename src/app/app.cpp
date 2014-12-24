@@ -21,7 +21,7 @@
 #include "ui/util/colors.h"
 
 #include "graph/node/node.h"
-#include "graph/node/manager.h"
+#include "graph/node/root.h"
 #include "graph/node/serializer.h"
 #include "graph/node/deserializer.h"
 
@@ -39,7 +39,8 @@
 App::App(int& argc, char** argv) :
     QApplication(argc, argv),
     graph_scene(new GraphScene()),
-    view_scene(new ViewportScene())
+    view_scene(new ViewportScene()),
+    root(new NodeRoot())
 {
     setGlobalStyle();
 
@@ -48,15 +49,13 @@ App::App(int& argc, char** argv) :
 
     auto c = newCanvasWindow();
     c->move(c->pos() + QPoint(25, 25));
-
-    NodeManager::manager();
 }
 
 App::~App()
 {
     graph_scene->deleteLater();
     view_scene->deleteLater();
-    NodeManager::manager()->clear();
+    root->deleteLater();
 }
 
 App* App::instance()
@@ -84,7 +83,8 @@ void App::onAbout()
 
 void App::onNew()
 {
-    NodeManager::manager()->clear();
+    root->deleteLater();
+    root = new NodeRoot();
 }
 
 void App::onSave()
@@ -95,7 +95,7 @@ void App::onSave()
     QFile file(filename);
     file.open(QIODevice::WriteOnly);
 
-    SceneSerializer ss(NodeManager::manager(),
+    SceneSerializer ss(root,
                        graph_scene->inspectorPositions());
 
     QDataStream out(&file);
@@ -118,12 +118,12 @@ void App::onOpen()
     if (!f.isEmpty())
     {
         filename = f;
-        NodeManager::manager()->clear();
+        root->deleteLater();
+        root = new NodeRoot();
         QFile file(f);
         file.open(QIODevice::ReadOnly);
 
         QDataStream in(&file);
-        QObject* root = NodeManager::manager();
         SceneDeserializer ds(root);
         ds.run(&in);
 
@@ -144,7 +144,7 @@ void App::onOpen()
 
 void App::onExportSTL()
 {
-    Shape s = NodeManager::manager()->getCombinedShape();
+    Shape s = root->getCombinedShape();
     if (!s.tree)
     {
         QMessageBox::critical(NULL, "Export error",
@@ -201,7 +201,7 @@ void App::onExportHeightmap()
 {
     // Verify that we are not mixing 2D and 3D shapes.
     {
-        QMap<QString, Shape> shapes = NodeManager::manager()->getShapes();
+        QMap<QString, Shape> shapes = root->getShapes();
         bool has_2d = false;
         bool has_3d = false;
         for (auto s=shapes.begin(); s != shapes.end(); ++s)
@@ -219,7 +219,7 @@ void App::onExportHeightmap()
         }
     }
 
-    Shape s = NodeManager::manager()->getCombinedShape();
+    Shape s = root->getCombinedShape();
     if (!s.tree)
     {
         QMessageBox::critical(NULL, "Export error",
@@ -274,7 +274,7 @@ void App::onExportHeightmap()
 
 void App::onExportJSON()
 {
-    QMap<QString, Shape> s = NodeManager::manager()->getShapes();
+    QMap<QString, Shape> s = root->getShapes();
     if (s.isEmpty())
     {
         QMessageBox::critical(NULL, "Export error",

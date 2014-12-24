@@ -3,7 +3,8 @@
 
 #include "graph/datum/types/eval_datum.h"
 #include "graph/datum/input.h"
-#include "graph/node/manager.h"
+
+#include "graph/node/root.h"
 
 EvalDatum::EvalDatum(QString name, QObject *parent) :
     Datum(name, parent)
@@ -71,7 +72,7 @@ PyObject* EvalDatum::getCurrentValue()
 
     if (validateExpr(e))
     {
-        PyObject* globals = NodeManager::manager()->proxyDict(this);
+        PyObject* globals = root()->proxyDict(this);
         PyObject* locals = Py_BuildValue("{}");
 
         modifyGlobalsDict(globals);

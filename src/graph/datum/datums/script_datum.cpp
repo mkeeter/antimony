@@ -8,7 +8,6 @@
 #include "graph/datum/datums/float_output_datum.h"
 
 #include "graph/node/node.h"
-#include "graph/node/manager.h"
 
 #include "fab/fab.h"
 
