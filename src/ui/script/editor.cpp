@@ -30,7 +30,8 @@ ScriptEditor::ScriptEditor(ScriptDatum* datum, QWidget* parent)
         "    color: %2;"
         "}").arg(Colors::base00.name())
             .arg(Colors::base04.name()));
-    //document()->setDefaultTextColor(Colors::base04);
+
+    QAbstractScrollArea::setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     connect(document(), &QTextDocument::contentsChanged,
             this, &ScriptEditor::onTextChanged);

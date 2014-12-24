@@ -376,6 +376,7 @@ void App::newEditorWindow(ScriptDatum* datum)
     auto m = new MainWindow();
     m->setCentralWidget(new ScriptEditor(datum, m));
     m->updateMenus();
+    m->resize(400, 600);
     m->show();
 }
 
