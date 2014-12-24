@@ -1,7 +1,7 @@
 #include <Python.h>
 
 #include "graph/node/node.h"
-#include "graph/node/manager.h"
+#include "graph/node/root.h"
 
 #include "graph/node/nodes/3d.h"
 
@@ -13,16 +13,15 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Node* CubeNode(QString name, QObject* parent)
+Node* CubeNode(QString name, NodeRoot* parent)
 {
     Node* n = new Node(NodeType::CUBE, name, parent);
     return n;
 }
 
-Node* CubeNode(float x, float y, float z, float scale, QObject* parent)
+Node* CubeNode(float x, float y, float z, float scale, NodeRoot* parent)
 {
-    Node* n = new Node(
-            NodeType::CUBE, NodeManager::manager()->getName("c"), parent);
+    Node* n = new Node(NodeType::CUBE, parent->getName("c"), parent);
 
     new FloatDatum("xmin", QString::number(x), n);
     new FloatDatum("ymin", QString::number(y), n);
@@ -38,10 +37,9 @@ Node* CubeNode(float x, float y, float z, float scale, QObject* parent)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Node* CylinderNode(float x, float y, float z, float scale, QObject* parent)
+Node* CylinderNode(float x, float y, float z, float scale, NodeRoot* parent)
 {
-    Node* n = new Node(
-            NodeType::CYLINDER, NodeManager::manager()->getName("c"), parent);
+    Node* n = new Node(NodeType::CYLINDER, parent->getName("c"), parent);
     new FloatDatum("x", QString::number(x), n);
     new FloatDatum("y", QString::number(y), n);
     new FloatDatum("z0", QString::number(z), n);
@@ -53,10 +51,9 @@ Node* CylinderNode(float x, float y, float z, float scale, QObject* parent)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Node* ExtrudeNode(float x, float y, float z, float scale, QObject* parent)
+Node* ExtrudeNode(float x, float y, float z, float scale, NodeRoot* parent)
 {
-    Node* n = new Node(
-            NodeType::EXTRUDE, NodeManager::manager()->getName("e"), parent);
+    Node* n = new Node(NodeType::EXTRUDE, parent->getName("e"), parent);
     new FloatDatum("_x", QString::number(x), n);
     new FloatDatum("_y", QString::number(y), n);
     new FloatDatum("z0", QString::number(z), n);
@@ -69,13 +66,13 @@ Node* ExtrudeNode(float x, float y, float z, float scale, QObject* parent)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Node* Point3DNode(QString name, QObject* parent)
+Node* Point3DNode(QString name, NodeRoot* parent)
 {
     Node* n = new Node(NodeType::POINT3D, name, parent);
     return n;
 }
 
-Node* Point3DNode(QString name, QString x, QString y, QString z, QObject* parent)
+Node* Point3DNode(QString name, QString x, QString y, QString z, NodeRoot* parent)
 {
     Node* n = new Node(NodeType::POINT3D, name, parent);
     new FloatDatum("x", x, n);
@@ -84,12 +81,11 @@ Node* Point3DNode(QString name, QString x, QString y, QString z, QObject* parent
     return n;
 }
 
-Node* Point3DNode(float x, float y, float z, float scale, QObject* parent)
+Node* Point3DNode(float x, float y, float z, float scale, NodeRoot* parent)
 {
     Q_UNUSED(scale);
 
-    Node* n = new Node(
-            NodeType::POINT3D, NodeManager::manager()->getName("p"), parent);
+    Node* n = new Node(NodeType::POINT3D, parent->getName("p"), parent);
     new FloatDatum("x", QString::number(x), n);
     new FloatDatum("y", QString::number(y), n);
     new FloatDatum("z", QString::number(z), n);
@@ -98,10 +94,9 @@ Node* Point3DNode(float x, float y, float z, float scale, QObject* parent)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Node* SphereNode(float x, float y, float z, float scale, QObject* parent)
+Node* SphereNode(float x, float y, float z, float scale, NodeRoot* parent)
 {
-    Node* n = new Node(
-            NodeType::SPHERE, NodeManager::manager()->getName("s"), parent);
+    Node* n = new Node(NodeType::SPHERE, parent->getName("s"), parent);
     new FloatDatum("x", QString::number(x), n);
     new FloatDatum("y", QString::number(y), n);
     new FloatDatum("z", QString::number(z), n);
@@ -112,10 +107,9 @@ Node* SphereNode(float x, float y, float z, float scale, QObject* parent)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Node* ConeNode(float x, float y, float z, float scale, QObject* parent)
+Node* ConeNode(float x, float y, float z, float scale, NodeRoot* parent)
 {
-    Node* n = new Node(
-            NodeType::CONE, NodeManager::manager()->getName("c"), parent);
+    Node* n = new Node(NodeType::CONE, parent->getName("c"), parent);
     new FloatDatum("x", QString::number(x), n);
     new FloatDatum("y", QString::number(y), n);
     new FloatDatum("z0", QString::number(z), n);

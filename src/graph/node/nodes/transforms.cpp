@@ -1,6 +1,6 @@
 #include <Python.h>
 
-#include "graph/node/manager.h"
+#include "graph/node/root.h"
 #include "graph/node/node.h"
 
 #include "graph/node/nodes/2d.h"
@@ -13,12 +13,11 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Node* RotateXNode(float x, float y, float z, float scale, QObject* parent=0)
+Node* RotateXNode(float x, float y, float z, float scale, NodeRoot* parent)
 {
     Q_UNUSED(scale);
 
-    Node* n = new Node(
-            NodeType::ROTATEX, NodeManager::manager()->getName("r"), parent);
+    Node* n = new Node(NodeType::ROTATEX, parent->getName("r"), parent);
     new FloatDatum("_x", QString::number(x), n);
     new FloatDatum("y", QString::number(y), n);
     new FloatDatum("z", QString::number(z), n);
@@ -31,12 +30,11 @@ Node* RotateXNode(float x, float y, float z, float scale, QObject* parent=0)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Node* RotateYNode(float x, float y, float z, float scale, QObject* parent=0)
+Node* RotateYNode(float x, float y, float z, float scale, NodeRoot* parent)
 {
     Q_UNUSED(scale);
 
-    Node* n = new Node(
-            NodeType::ROTATEY, NodeManager::manager()->getName("r"), parent);
+    Node* n = new Node(NodeType::ROTATEY, parent->getName("r"), parent);
     new FloatDatum("x", QString::number(x), n);
     new FloatDatum("_y", QString::number(y), n);
     new FloatDatum("z", QString::number(z), n);
@@ -49,12 +47,11 @@ Node* RotateYNode(float x, float y, float z, float scale, QObject* parent=0)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Node* RotateZNode(float x, float y, float z, float scale, QObject* parent=0)
+Node* RotateZNode(float x, float y, float z, float scale, NodeRoot* parent)
 {
     Q_UNUSED(scale);
 
-    Node* n = new Node(
-            NodeType::ROTATEZ, NodeManager::manager()->getName("r"), parent);
+    Node* n = new Node(NodeType::ROTATEZ, parent->getName("r"), parent);
     new FloatDatum("x", QString::number(x), n);
     new FloatDatum("y", QString::number(y), n);
     new FloatDatum("_z", QString::number(z), n);
@@ -67,12 +64,11 @@ Node* RotateZNode(float x, float y, float z, float scale, QObject* parent=0)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Node* ReflectXNode(float x, float y, float z, float scale, QObject* parent=0)
+Node* ReflectXNode(float x, float y, float z, float scale, NodeRoot* parent)
 {
     Q_UNUSED(scale);
 
-    Node* n = new Node(
-            NodeType::REFLECTX, NodeManager::manager()->getName("r"), parent);
+    Node* n = new Node(NodeType::REFLECTX, parent->getName("r"), parent);
     new FloatDatum("x", QString::number(x), n);
     new FloatDatum("_y", QString::number(y), n);
     new FloatDatum("_z", QString::number(z), n);
@@ -84,12 +80,11 @@ Node* ReflectXNode(float x, float y, float z, float scale, QObject* parent=0)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Node* ReflectYNode(float x, float y, float z, float scale, QObject* parent)
+Node* ReflectYNode(float x, float y, float z, float scale, NodeRoot* parent)
 {
     Q_UNUSED(scale);
 
-    Node* n = new Node(
-            NodeType::REFLECTY, NodeManager::manager()->getName("r"), parent);
+    Node* n = new Node(NodeType::REFLECTY, parent->getName("r"), parent);
     new FloatDatum("_x", QString::number(x), n);
     new FloatDatum("y", QString::number(y), n);
     new FloatDatum("_z", QString::number(z), n);
@@ -101,12 +96,11 @@ Node* ReflectYNode(float x, float y, float z, float scale, QObject* parent)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Node* ReflectZNode(float x, float y, float z, float scale, QObject* parent=0)
+Node* ReflectZNode(float x, float y, float z, float scale, NodeRoot* parent)
 {
     Q_UNUSED(scale);
 
-    Node* n = new Node(
-            NodeType::REFLECTZ, NodeManager::manager()->getName("r"), parent);
+    Node* n = new Node(NodeType::REFLECTZ, parent->getName("r"), parent);
     new FloatDatum("_x", QString::number(x), n);
     new FloatDatum("_y", QString::number(y), n);
     new FloatDatum("z", QString::number(z), n);
@@ -118,12 +112,11 @@ Node* ReflectZNode(float x, float y, float z, float scale, QObject* parent=0)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Node* RecenterNode(float x, float y, float z, float scale, QObject* parent=0)
+Node* RecenterNode(float x, float y, float z, float scale, NodeRoot* parent)
 {
     Q_UNUSED(scale);
 
-    Node* n = new Node(
-            NodeType::RECENTER, NodeManager::manager()->getName("r"), parent);
+    Node* n = new Node(NodeType::RECENTER, parent->getName("r"), parent);
     new FloatDatum("x", QString::number(x), n);
     new FloatDatum("y", QString::number(y), n);
     new FloatDatum("z", QString::number(z), n);
@@ -134,10 +127,9 @@ Node* RecenterNode(float x, float y, float z, float scale, QObject* parent=0)
 }
 
 
-Node* TranslateNode(float x, float y, float z, float scale, QObject* parent=0)
+Node* TranslateNode(float x, float y, float z, float scale, NodeRoot* parent)
 {
-    Node* n = new Node(
-            NodeType::TRANSLATE, NodeManager::manager()->getName("t"), parent);
+    Node* n = new Node(NodeType::TRANSLATE, parent->getName("t"), parent);
     new FloatDatum("_x", QString::number(x), n);
     new FloatDatum("_y", QString::number(y), n);
     new FloatDatum("_z", QString::number(z), n);

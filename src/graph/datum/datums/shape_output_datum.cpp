@@ -1,7 +1,7 @@
 #include "graph/datum/datums/shape_output_datum.h"
 #include "fab/fab.h"
 
-ShapeOutputDatum::ShapeOutputDatum(QString name, QObject* parent)
+ShapeOutputDatum::ShapeOutputDatum(QString name, Node* parent)
     : OutputDatum(name, parent)
 {
     // Nothing to do here

@@ -3,11 +3,13 @@
 
 #include <QObject>
 
+class NodeRoot;
+
 class TestName : public QObject
 {
     Q_OBJECT
 public:
-    explicit TestName(QObject *parent = 0);
+    explicit TestName();
 
 private slots:
 
@@ -26,6 +28,8 @@ private slots:
     /** Does renaming a node with a name that's equivalent post-trimming work? */
     void RenameWithSpaces();
 
+protected:
+    NodeRoot* r;
 };
 
 #endif // TEST_NAME_H

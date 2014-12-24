@@ -4,7 +4,6 @@
 #include <QBuffer>
 
 #include "graph/node/serializer.h"
-#include "graph/node/manager.h"
 #include "graph/node/node.h"
 
 #include "graph/datum/datum.h"
@@ -33,7 +32,7 @@ QByteArray SceneSerializer::run()
 
 void SceneSerializer::run(QDataStream* out)
 {
-    *out << QString("sb") << quint32(1);
+    *out << QString("sb") << quint32(2);
     serializeNodes(out, node_root);
     serializeConnections(out);
 }
@@ -55,9 +54,6 @@ void SceneSerializer::serializeNode(QDataStream* out, Node* node)
 
     // Serialize position (or default QPointF if not provided)
     *out << (inspectors.contains(node) ? inspectors[node] : QPointF());
-
-    // Serialize child nodes first.
-    serializeNodes(out, node);
 
     Datum* deferred = NULL;
     auto datums = node->findChildren<Datum*>(QString(),

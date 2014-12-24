@@ -5,17 +5,18 @@
 #include <QString>
 
 class Node;
+class NodeRoot;
 
-Node* CircleNode(QString name, QObject* parent=0);
-Node* CircleNode(QString name, QString x, QString y, QString r, QObject* parent=0);
-Node* CircleNode(float x, float y, float z, float scale, QObject* parent=0);
+Node* CircleNode(QString name, NodeRoot* parent);
+Node* CircleNode(QString name, QString x, QString y, QString r, NodeRoot* parent);
+Node* CircleNode(float x, float y, float z, float scale, NodeRoot* parent);
 
-Node* Point2DNode(float x, float y, float z, float scale, QObject* parent=0);
+Node* Point2DNode(float x, float y, float z, float scale, NodeRoot* parent);
 
-Node* TextNode(float x, float y, float z, float scale, QObject* parent=0);
+Node* TextNode(float x, float y, float z, float scale, NodeRoot* parent);
 
-Node* TriangleNode(float x, float y, float z, float scale, QObject* parent=0);
+Node* TriangleNode(float x, float y, float z, float scale, NodeRoot* parent);
 
-Node* RectangleNode(float x, float y, float z, float scale, QObject* parent=0);
+Node* RectangleNode(float x, float y, float z, float scale, NodeRoot* parent);
 
 #endif

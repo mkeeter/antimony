@@ -7,7 +7,7 @@ class FloatOutputDatum : public OutputDatum
 {
     Q_OBJECT
 public:
-    explicit FloatOutputDatum(QString name, QObject* parent=0);
+    explicit FloatOutputDatum(QString name, Node* parent);
     PyTypeObject* getType() const override;
     DatumType::DatumType getDatumType() const override
         { return DatumType::FLOAT_OUTPUT; }

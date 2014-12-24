@@ -2,6 +2,7 @@
 #define NODE_H
 
 #include <Python.h>
+
 #include <QObject>
 
 #include "graph/node/enum.h"
@@ -9,13 +10,14 @@
 class Control;
 class Datum;
 class Canvas;
+class NodeRoot;
 
 class Node : public QObject
 {
     Q_OBJECT
 public:
-    explicit Node(NodeType::NodeType type, QObject* parent=NULL);
-    explicit Node(NodeType::NodeType type, QString name, QObject* parent=NULL);
+    explicit Node(NodeType::NodeType type, NodeRoot* parent);
+    explicit Node(NodeType::NodeType type, QString name, NodeRoot* parent);
 
     /** Returns a Python proxy that calls getDatum when getattr is called */
     PyObject* proxy();

@@ -8,8 +8,8 @@ class IntDatum : public EvalDatum
 {
     Q_OBJECT
 public:
-    explicit IntDatum(QString name, QObject* parent=0);
-    explicit IntDatum(QString name, QString expr, QObject *parent = 0);
+    explicit IntDatum(QString name, Node* parent);
+    explicit IntDatum(QString name, QString expr, Node *parent);
     PyTypeObject* getType() const override { return &PyLong_Type; }
     DatumType::DatumType getDatumType() const override
         { return DatumType::INT; }

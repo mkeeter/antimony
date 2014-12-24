@@ -10,12 +10,14 @@
 
 class InputHandler;
 class Link;
+class Node;
+class NodeRoot;
 
 class Datum : public QObject
 {
     Q_OBJECT
 public:
-    explicit Datum(QString name, QObject* parent=0);
+    explicit Datum(QString name, Node* parent);
     virtual ~Datum();
 
     /** Returns stored value. */
@@ -83,6 +85,11 @@ public:
     /** Returns a list of datums that are inputs to the input handler.
      */
     QList<Datum*> getInputDatums() const;
+
+    /*
+     *  Looks up the root of this datum's branch of the hierarchy.
+     */
+    NodeRoot* root() const;
 
 signals:
     /** Emitted when value, valid, or editable changes.

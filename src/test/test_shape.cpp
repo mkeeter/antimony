@@ -10,19 +10,20 @@
 #include "graph/datum/link.h"
 
 #include "graph/node/node.h"
+#include "graph/node/root.h"
 #include "graph/node/nodes/3d.h"
 
 #include "fab/types/shape.h"
 
-TestShape::TestShape(QObject* parent)
-    : QObject(parent)
+TestShape::TestShape()
+    : QObject(), r(new NodeRoot), n(new Node(NodeType::DUMMY, "_dummy", r))
 {
     // Nothing to do here
 }
 
 void TestShape::MakeEmptyShape()
 {
-    ShapeInputDatum* d = new ShapeInputDatum("s");
+    ShapeInputDatum* d = new ShapeInputDatum("s", n);
     QVERIFY(d->getValid());
     delete d;
 }
@@ -32,7 +33,7 @@ void TestShape::ShapeOutput()
 {
     ShapeOutputDatum* d;
 
-    d = new ShapeOutputDatum("s");
+    d = new ShapeOutputDatum("s", n);
     QVERIFY(d->getValid() == false);
     delete d;
 }
@@ -40,10 +41,10 @@ void TestShape::ShapeOutput()
 
 void TestShape::ShapeInput()
 {
-    Node* p = Point3DNode("p", "0.0", "0.0", "1.0");
+    Node* p = Point3DNode("p", "0.0", "0.0", "1.0", r);
     ShapeFunctionDatum* a = new ShapeFunctionDatum("a", p, "circle", {"x","y","z"});
 
-    ShapeInputDatum* d = new ShapeInputDatum("d");
+    ShapeInputDatum* d = new ShapeInputDatum("d", n);
     Link* link = a->linkFrom();
     QVERIFY(d->acceptsLink(link));
 
@@ -57,11 +58,11 @@ void TestShape::ShapeInput()
 
 void TestShape::MultiShapeInput()
 {
-    Node* p = Point3DNode("p", "0.0", "1.0", "!.0");
+    Node* p = Point3DNode("p", "0.0", "1.0", "!.0", r);
     ShapeFunctionDatum* a = new ShapeFunctionDatum("a", p, "circle", {"x","x","y"});
     ShapeFunctionDatum* b = new ShapeFunctionDatum("b", p, "circle", {"x","y","z"});
 
-    ShapeInputDatum* d = new ShapeInputDatum("d");
+    ShapeInputDatum* d = new ShapeInputDatum("d", n);
     Link* la = a->linkFrom();
     Link* lb = b->linkFrom();
 
@@ -81,10 +82,10 @@ void TestShape::MultiShapeInput()
 
 void TestShape::DeleteInput()
 {
-    Node* p = Point3DNode("p", "0.0", "1.0", "!.0");
+    Node* p = Point3DNode("p", "0.0", "1.0", "!.0", r);
     ShapeFunctionDatum* a = new ShapeFunctionDatum("a", p, "circle", {"x","y","z"});
 
-    ShapeInputDatum* d = new ShapeInputDatum("d");
+    ShapeInputDatum* d = new ShapeInputDatum("d", n);
     Link* link = a->linkFrom();
 
     d->addLink(link);

@@ -6,8 +6,8 @@
 class StringDatum : public EvalDatum
 {
 public:
-    explicit StringDatum(QString name, QObject* parent=0);
-    explicit StringDatum(QString name, QString expr, QObject* parent=0);
+    explicit StringDatum(QString name, Node* parent);
+    explicit StringDatum(QString name, QString expr, Node* parent);
 
     PyTypeObject* getType() const override { return &PyUnicode_Type; }
     DatumType::DatumType getDatumType() const override

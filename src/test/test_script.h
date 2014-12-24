@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+class NodeRoot;
+
 class TestScript : public QObject
 {
     Q_OBJECT
@@ -66,6 +68,9 @@ private slots:
     /** Make sure that an output shape datum is updated.
      */
     void ShapeUpdate();
+
+protected:
+    NodeRoot* r;
 };
 
 #endif // TEST_SCRIPT_H

@@ -5,19 +5,21 @@
 
 #include "graph/datum/datums/name_datum.h"
 #include "graph/datum/input.h"
-#include "graph/node/manager.h"
+
+#include "graph/node/node.h"
+#include "graph/node/root.h"
 
 PyObject* NameDatum::kwlist_contains = NULL;
 
-NameDatum::NameDatum(QString name, QObject* parent)
+NameDatum::NameDatum(QString name, Node* parent)
     : EvalDatum(name, parent)
 {
     connect(this, &NameDatum::changed, this, &NameDatum::onNameChange);
     connect(this, &NameDatum::nameChanged,
-            NodeManager::manager(), &NodeManager::onNameChange);
+            root(), &NodeRoot::onNameChange);
 }
 
-NameDatum::NameDatum(QString name, QString expr, QObject *parent)
+NameDatum::NameDatum(QString name, QString expr, Node* parent)
     : NameDatum(name, parent)
 {
     setExpr(expr);
@@ -70,7 +72,7 @@ bool NameDatum::isKeyword(PyObject* v)
 
 PyObject* NameDatum::validatePyObject(PyObject *v) const
 {
-    NameDatum* match = NodeManager::manager()->findMatchingName(v);
+    NameDatum* match = root()->findMatchingName(v);
     if ((match == NULL || match == this) && !isKeyword(v))
     {
         return v;

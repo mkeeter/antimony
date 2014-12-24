@@ -7,7 +7,7 @@ class ShapeOutputDatum : public OutputDatum
 {
     Q_OBJECT
 public:
-    explicit ShapeOutputDatum(QString name, QObject* parent=0);
+    explicit ShapeOutputDatum(QString name, Node* parent);
     PyTypeObject* getType() const override;
     DatumType::DatumType getDatumType() const override
         { return DatumType::SHAPE_OUTPUT; }

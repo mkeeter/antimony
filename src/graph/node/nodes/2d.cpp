@@ -1,7 +1,7 @@
 #include <Python.h>
 
 #include "graph/node/node.h"
-#include "graph/node/manager.h"
+#include "graph/node/root.h"
 
 #include "graph/node/nodes/2d.h"
 
@@ -13,12 +13,12 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Node* CircleNode(QString name, QObject* parent)
+Node* CircleNode(QString name, NodeRoot* parent)
 {
     return new Node(NodeType::CIRCLE, name, parent);
 }
 
-Node* CircleNode(QString name, QString x, QString y, QString r, QObject* parent)
+Node* CircleNode(QString name, QString x, QString y, QString r, NodeRoot* parent)
 {
     Node* n = CircleNode(name, parent);
     new FloatDatum("x", x, n);
@@ -28,11 +28,11 @@ Node* CircleNode(QString name, QString x, QString y, QString r, QObject* parent)
     return n;
 }
 
-Node* CircleNode(float x, float y, float z, float scale, QObject* parent)
+Node* CircleNode(float x, float y, float z, float scale, NodeRoot* parent)
 {
     Q_UNUSED(z);
 
-    return CircleNode(NodeManager::manager()->getName("c"),
+    return CircleNode(parent->getName("c"),
                       QString::number(x),
                       QString::number(y),
                       QString::number(scale), parent);
@@ -40,13 +40,12 @@ Node* CircleNode(float x, float y, float z, float scale, QObject* parent)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Node* Point2DNode(float x, float y, float z, float scale, QObject* parent)
+Node* Point2DNode(float x, float y, float z, float scale, NodeRoot* parent)
 {
     Q_UNUSED(z);
     Q_UNUSED(scale);
 
-    Node* n = new Node(
-            NodeType::POINT2D, NodeManager::manager()->getName("p"), parent);
+    Node* n = new Node(NodeType::POINT2D, parent->getName("p"), parent);
     new FloatDatum("x", QString::number(x), n);
     new FloatDatum("y", QString::number(y), n);
     return n;
@@ -54,12 +53,11 @@ Node* Point2DNode(float x, float y, float z, float scale, QObject* parent)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Node* TextNode(float x, float y, float z, float scale, QObject* parent)
+Node* TextNode(float x, float y, float z, float scale, NodeRoot* parent)
 {
     Q_UNUSED(z);
 
-    Node* n = new Node(
-            NodeType::TEXT, NodeManager::manager()->getName("t"), parent);
+    Node* n = new Node(NodeType::TEXT, parent->getName("t"), parent);
     new FloatDatum("x", QString::number(x), n);
     new FloatDatum("y", QString::number(y), n);
     new StringDatum("text", "hello", n);
@@ -70,12 +68,11 @@ Node* TextNode(float x, float y, float z, float scale, QObject* parent)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Node* TriangleNode(float x, float y, float z, float scale, QObject* parent)
+Node* TriangleNode(float x, float y, float z, float scale, NodeRoot* parent)
 {
     Q_UNUSED(z);
 
-    Node* n = new Node(
-            NodeType::TRIANGLE, NodeManager::manager()->getName("t"), parent);
+    Node* n = new Node(NodeType::TRIANGLE, parent->getName("t"), parent);
 
     new FloatDatum("x0", QString::number(x), n);
     new FloatDatum("y0", QString::number(y), n);
@@ -91,12 +88,11 @@ Node* TriangleNode(float x, float y, float z, float scale, QObject* parent)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Node* RectangleNode(float x, float y, float z, float scale, QObject* parent)
+Node* RectangleNode(float x, float y, float z, float scale, NodeRoot* parent)
 {
     Q_UNUSED(z);
 
-    Node* n = new Node(
-            NodeType::RECTANGLE, NodeManager::manager()->getName("r"), parent);
+    Node* n = new Node(NodeType::RECTANGLE, parent->getName("r"), parent);
 
     new FloatDatum("xmin", QString::number(x), n);
     new FloatDatum("ymin", QString::number(y), n);

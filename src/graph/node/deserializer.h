@@ -7,12 +7,13 @@
 
 class Datum;
 class Node;
+class NodeRoot;
 
 class SceneDeserializer : public QObject
 {
     Q_OBJECT
 public:
-    explicit SceneDeserializer(QObject* node_root);
+    explicit SceneDeserializer(NodeRoot* node_root);
 
     bool run(QDataStream* in);
     bool run(QByteArray in);
@@ -25,12 +26,12 @@ public:
     QString error_message;
 
 protected:
-    void deserializeNodes(QDataStream* in, QObject* p);
-    void deserializeNode(QDataStream* in, QObject* p);
+    void deserializeNodes(QDataStream* in, NodeRoot* p);
+    void deserializeNode(QDataStream* in, NodeRoot* p);
     void deserializeDatum(QDataStream* in, Node* node);
     void deserializeConnections(QDataStream* in);
 
-    QObject* node_root;
+    NodeRoot* node_root;
     QList<Datum*> datums;
 };
 

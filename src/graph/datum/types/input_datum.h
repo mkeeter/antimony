@@ -8,7 +8,7 @@ class InputDatum : public Datum
 {
     Q_OBJECT
 public:
-    explicit InputDatum(QString name, QObject* parent=0);
+    explicit InputDatum(QString name, Node* parent);
 
     /** User editing is always forbidden.
      */

@@ -6,6 +6,7 @@
 class Canvas;
 class ScriptDatum;
 class Node;
+class NodeRoot;
 class App;
 
 namespace Ui {
@@ -45,12 +46,12 @@ private:
 
     /** Makes a new object of the given class.
      */
-    template <Node* (*f)(float, float, float, float, QObject*), bool recenter>
+    template <Node* (*f)(float, float, float, float, NodeRoot*), bool recenter>
     void createNew();
 
     /** Adds a particular node to the "Add" menu.
      */
-    template <Node* (*f)(float, float, float, float, QObject*), bool recenter>
+    template <Node* (*f)(float, float, float, float, NodeRoot*), bool recenter>
     void addNodeToMenu(QString category, QString name, QMenu* menu,
                        QMap<QString, QMenu*>* submenus);
 

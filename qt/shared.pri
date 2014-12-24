@@ -2,7 +2,7 @@ include(datums.pri)
 include(nodes.pri)
 
 SOURCES += \
-    ../src/graph/node/manager.cpp \
+    ../src/graph/node/root.cpp \
     ../src/graph/node/proxy.cpp \
     ../src/graph/datum/input.cpp \
     ../src/graph/datum/link.cpp \
@@ -11,7 +11,7 @@ SOURCES += \
     ../src/graph/node/deserializer.cpp \
 
 HEADERS += \
-    ../src/graph/node/manager.h \
+    ../src/graph/node/root.h \
     ../src/graph/node/proxy.h \
     ../src/graph/datum/input.h \
     ../src/graph/datum/link.h \

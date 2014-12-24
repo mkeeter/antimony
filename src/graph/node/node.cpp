@@ -3,25 +3,22 @@
 #include <QStringList>
 
 #include "graph/node/node.h"
-#include "graph/node/manager.h"
+#include "graph/node/root.h"
 #include "graph/node/proxy.h"
 
 #include "graph/datum/datum.h"
 #include "graph/datum/datums/name_datum.h"
 
-Node::Node(NodeType::NodeType type, QObject* parent)
+Node::Node(NodeType::NodeType type, NodeRoot* parent)
     : QObject(parent), type(type), control(NULL)
 {
-    if (parent == NULL)
-        setParent(NodeManager::manager());
+    // Nothing to do here
 }
 
-Node::Node(NodeType::NodeType type, QString name, QObject* parent)
+Node::Node(NodeType::NodeType type, QString name, NodeRoot* parent)
     : Node(type, parent)
 {
     new NameDatum("_name", name, this);
-    if (parent == NULL)
-        setParent(NodeManager::manager());
 }
 
 
@@ -98,5 +95,6 @@ QString Node::getType() const
         case NodeType::RECENTER:    return "Re-center";
         case NodeType::TRANSLATE:   return "Translate";
         case NodeType::ITERATE2D:   return "Iterate (2D)";
+        case NodeType::DUMMY:       return "Dummy";
     }
 }

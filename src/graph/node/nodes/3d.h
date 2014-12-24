@@ -1,24 +1,24 @@
 #ifndef NODE_3D_H
 #define NODE_3D_H
 
-#include <QObject>
 #include <QString>
 
 class Node;
+class NodeRoot;
 
-Node* CubeNode(QString name, QObject* parent=0);
-Node* CubeNode(float x, float y, float z, float scale, QObject* parent=0);
+Node* CubeNode(QString name, NodeRoot* parent);
+Node* CubeNode(float x, float y, float z, float scale, NodeRoot* parent);
 
-Node* CylinderNode(float x, float y, float z, float scale, QObject* parent=0);
+Node* CylinderNode(float x, float y, float z, float scale, NodeRoot* parent);
 
-Node* ExtrudeNode(float x, float y, float z, float scale, QObject* parent=0);
+Node* ExtrudeNode(float x, float y, float z, float scale, NodeRoot* parent);
 
-Node* Point3DNode(QString name, QObject* parent=0);
-Node* Point3DNode(QString name, QString x, QString y, QString z, QObject* parent=0);
-Node* Point3DNode(float x, float y, float z, float scale, QObject* parent=0);
+Node* Point3DNode(QString name, NodeRoot* parent);
+Node* Point3DNode(QString name, QString x, QString y, QString z, NodeRoot* parent);
+Node* Point3DNode(float x, float y, float z, float scale, NodeRoot* parent);
 
-Node* SphereNode(float x, float y, float z, float scale, QObject* parent=0);
+Node* SphereNode(float x, float y, float z, float scale, NodeRoot* parent);
 
-Node* ConeNode(float x, float y, float z, float scale, QObject* parent=0);
+Node* ConeNode(float x, float y, float z, float scale, NodeRoot* parent);
 
 #endif

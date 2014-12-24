@@ -1,7 +1,7 @@
 #include "graph/datum/types/input_datum.h"
 #include "graph/datum/input.h"
 
-InputDatum::InputDatum(QString name, QObject* parent)
+InputDatum::InputDatum(QString name, Node* parent)
     : Datum(name, parent)
 {
     // Nothing to do here

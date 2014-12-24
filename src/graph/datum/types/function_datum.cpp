@@ -3,13 +3,13 @@
 #include "graph/datum/types/function_datum.h"
 #include "graph/node/node.h"
 
-FunctionDatum::FunctionDatum(QString name, QObject* parent)
+FunctionDatum::FunctionDatum(QString name, Node* parent)
     : Datum(name, parent), function(NULL)
 {
     // Nothing to do here
 }
 
-FunctionDatum::FunctionDatum(QString name, QObject* parent,
+FunctionDatum::FunctionDatum(QString name, Node* parent,
                              QString f, QList<QString> args)
     : Datum(name, parent), function_name(f), arguments(args),
       function(NULL)

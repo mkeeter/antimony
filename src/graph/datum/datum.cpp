@@ -6,11 +6,10 @@
 #include "graph/datum/input.h"
 #include "graph/datum/link.h"
 
-#include "graph/node/manager.h"
+#include "graph/node/node.h"
+#include "graph/node/root.h"
 
-#include "render/render_worker.h"
-
-Datum::Datum(QString name, QObject* parent)
+Datum::Datum(QString name, Node* parent)
     : QObject(parent), value(NULL), valid(false), input_handler(NULL),
       post_init_called(false)
 {
@@ -19,6 +18,9 @@ Datum::Datum(QString name, QObject* parent)
 
 Datum::~Datum()
 {
+    // Request that all upstream datums disconnect
+    // (to prevent recursive loops in a partially-destroyed object)
+    emit disconnectFrom(this);
     Py_XDECREF(value);
 }
 
@@ -77,11 +79,17 @@ bool Datum::hasConnectedLink() const
 
 void Datum::update()
 {
-    // Prevent recursive calls
-    // (at the moment, only of concern for ScriptDatums, as new
-    //  datum creation causes a name change update which tries
-    //  to recursivey update the script datum).
-    if (isRecursing())
+    // Prevent recursive calls and calls during destruction
+    //
+    // Recursive calls only happen for ScriptDatums, as new  datum creation
+    // causes a name change update which tries to recursivey update the script
+    // datum.
+    //
+    // Calls during deletion can happen anytime multiple Datums in the same
+    // Node are connected; when the first Datum is deleted it will try to
+    // update downstream values even as the Node is being deleted.
+    if (isRecursing() || !dynamic_cast<Node*>(parent())
+                      || !dynamic_cast<NodeRoot*>(parent()->parent()))
         return;
 
     // The very first time that update() is called, refresh all other nodes
@@ -146,7 +154,7 @@ void Datum::update()
 void Datum::postInit()
 {
     post_init_called = true;
-    NodeManager::manager()->onNameChange(objectName());
+    root()->onNameChange(objectName());
 }
 
 void Datum::onDisconnectRequest(Datum* downstream)
@@ -173,4 +181,14 @@ QList<Datum*> Datum::getInputDatums() const
 {
     return input_handler ? input_handler->getInputDatums()
                          : QList<Datum*>();
+}
+
+NodeRoot* Datum::root() const
+{
+    Q_ASSERT(parent() && dynamic_cast<Node*>(parent()));
+
+    auto root = dynamic_cast<NodeRoot*>(parent()->parent());
+    Q_ASSERT(root);
+
+    return root;
 }

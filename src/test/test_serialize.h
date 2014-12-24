@@ -10,10 +10,6 @@ private slots:
     /** Serialize a scene with one object then deserialize it.
      */
     void SerializeSimpleScene();
-
-    /** Serialize a nested datum and make sure it is restored.
-     */
-    void SerializeNestedDatum();
 };
 
 #endif

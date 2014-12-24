@@ -8,7 +8,7 @@ class ShapeInputDatum : public InputDatum
 {
     Q_OBJECT
 public:
-    explicit ShapeInputDatum(QString name, QObject* parent=0);
+    explicit ShapeInputDatum(QString name, Node* parent);
 
     PyTypeObject* getType() const override;
 

@@ -3,9 +3,10 @@
 
 #include "graph/datum/types/eval_datum.h"
 #include "graph/datum/input.h"
-#include "graph/node/manager.h"
 
-EvalDatum::EvalDatum(QString name, QObject *parent) :
+#include "graph/node/root.h"
+
+EvalDatum::EvalDatum(QString name, Node* parent) :
     Datum(name, parent)
 {
     // Nothing to do here
@@ -54,7 +55,7 @@ int EvalDatum::getStartToken() const
     return Py_eval_input;
 }
 
-void EvalDatum::modifyGlobalsDict(PyObject *g)
+void EvalDatum::modifyGlobalsDict(PyObject* g)
 {
     Q_UNUSED(g);
     // (nothing to do here; this function is mainly provided for the sake of
@@ -71,7 +72,7 @@ PyObject* EvalDatum::getCurrentValue()
 
     if (validateExpr(e))
     {
-        PyObject* globals = NodeManager::manager()->proxyDict(this);
+        PyObject* globals = root()->proxyDict(this);
         PyObject* locals = Py_BuildValue("{}");
 
         modifyGlobalsDict(globals);
