@@ -213,6 +213,7 @@ Control* ViewportScene::makeControlFor(Node* node) const
         case NodeType::CLEARANCE:
         case NodeType::SHELL:
         case NodeType::SCRIPT:
+        case NodeType::DUMMY:
             return NULL;
     }
    Q_ASSERT(false);
