@@ -61,7 +61,7 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* doc)
             QRegularExpression(neg + "\\b\\d+e\\d+)"), float_format);
 
     QTextCharFormat comment_format;
-    comment_format.setForeground(Colors::base01);
+    comment_format.setForeground(Colors::base03);
 
     rules << QPair<QRegularExpression, QTextCharFormat>(
             QRegularExpression("#.*"), comment_format);
