@@ -63,7 +63,11 @@ PyObject* ScriptDatum::makeInput(QString name, PyTypeObject *type)
     // Save that this datum is still present in the script
     touched.insert(name);
 
-    if (d != NULL && d->getType() != type)
+    const auto datum_type =
+        (type == &PyFloat_Type)  ? DatumType::FLOAT :
+        (type == fab::ShapeType) ? DatumType::SHAPE_INPUT : 0;
+
+    if (d != NULL && d->getDatumType() != datum_type)
     {
         delete d;
         d = NULL;
@@ -116,7 +120,11 @@ PyObject* ScriptDatum::makeOutput(QString name, PyObject *out)
     // Save that this datum is still present in the script
     touched.insert(name);
 
-    if (d != NULL && d->getType() != out->ob_type)
+    const auto datum_type =
+        (out->ob_type == &PyFloat_Type)  ? DatumType::FLOAT_OUTPUT :
+        (out->ob_type == fab::ShapeType) ? DatumType::SHAPE_OUTPUT : 0;
+
+    if (d != NULL && d->getDatumType() != datum_type)
     {
         delete d;
         d = NULL;
