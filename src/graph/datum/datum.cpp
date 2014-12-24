@@ -9,7 +9,7 @@
 #include "graph/node/node.h"
 #include "graph/node/root.h"
 
-Datum::Datum(QString name, QObject* parent)
+Datum::Datum(QString name, Node* parent)
     : QObject(parent), value(NULL), valid(false), input_handler(NULL),
       post_init_called(false)
 {

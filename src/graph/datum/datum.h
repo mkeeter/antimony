@@ -10,13 +10,14 @@
 
 class InputHandler;
 class Link;
+class Node;
 class NodeRoot;
 
 class Datum : public QObject
 {
     Q_OBJECT
 public:
-    explicit Datum(QString name, QObject* parent=0);
+    explicit Datum(QString name, Node* parent);
     virtual ~Datum();
 
     /** Returns stored value. */

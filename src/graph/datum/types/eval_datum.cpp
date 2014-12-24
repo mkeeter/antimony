@@ -6,7 +6,7 @@
 
 #include "graph/node/root.h"
 
-EvalDatum::EvalDatum(QString name, QObject *parent) :
+EvalDatum::EvalDatum(QString name, Node* parent) :
     Datum(name, parent)
 {
     // Nothing to do here
@@ -55,7 +55,7 @@ int EvalDatum::getStartToken() const
     return Py_eval_input;
 }
 
-void EvalDatum::modifyGlobalsDict(PyObject *g)
+void EvalDatum::modifyGlobalsDict(PyObject* g)
 {
     Q_UNUSED(g);
     // (nothing to do here; this function is mainly provided for the sake of

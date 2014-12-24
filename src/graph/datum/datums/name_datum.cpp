@@ -11,7 +11,7 @@
 
 PyObject* NameDatum::kwlist_contains = NULL;
 
-NameDatum::NameDatum(QString name, QObject* parent)
+NameDatum::NameDatum(QString name, Node* parent)
     : EvalDatum(name, parent)
 {
     connect(this, &NameDatum::changed, this, &NameDatum::onNameChange);
@@ -19,7 +19,7 @@ NameDatum::NameDatum(QString name, QObject* parent)
             root(), &NodeRoot::onNameChange);
 }
 
-NameDatum::NameDatum(QString name, QString expr, QObject *parent)
+NameDatum::NameDatum(QString name, QString expr, Node* parent)
     : NameDatum(name, parent)
 {
     setExpr(expr);

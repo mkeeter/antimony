@@ -8,7 +8,7 @@ class EvalDatum : public Datum
 {
     Q_OBJECT
 public:
-    explicit EvalDatum(QString name, QObject* parent=0);
+    explicit EvalDatum(QString name, Node* parent);
 
     QString getExpr() const { return expr; }
     void setExpr(QString new_expr);

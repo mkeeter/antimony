@@ -8,7 +8,7 @@ class OutputDatum : public Datum
 {
     Q_OBJECT
 public:
-    explicit OutputDatum(QString name, QObject* parent=0);
+    explicit OutputDatum(QString name, Node* parent);
     ~OutputDatum();
     void setNewValue(PyObject* p);
     QString getString() const override;

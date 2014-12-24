@@ -7,8 +7,8 @@ class ShapeFunctionDatum : public FunctionDatum
 {
     Q_OBJECT
 public:
-    explicit ShapeFunctionDatum(QString name, QObject* parent);
-    explicit ShapeFunctionDatum(QString name, QObject* parent,
+    explicit ShapeFunctionDatum(QString name, Node* parent);
+    explicit ShapeFunctionDatum(QString name, Node* parent,
                                 QString func_name, QList<QString> args);
     DatumType::DatumType getDatumType() const override
         { return DatumType::SHAPE_FUNCTION; }

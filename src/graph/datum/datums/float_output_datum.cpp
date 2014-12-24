@@ -1,6 +1,6 @@
 #include "graph/datum/datums/float_output_datum.h"
 
-FloatOutputDatum::FloatOutputDatum(QString name, QObject* parent)
+FloatOutputDatum::FloatOutputDatum(QString name, Node* parent)
     : OutputDatum(name, parent)
 {
     // Nothing to do here

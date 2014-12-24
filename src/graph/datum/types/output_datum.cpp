@@ -1,7 +1,7 @@
 #include <Python.h>
 #include "graph/datum/types/output_datum.h"
 
-OutputDatum::OutputDatum(QString name, QObject* parent)
+OutputDatum::OutputDatum(QString name, Node* parent)
     : Datum(name, parent), new_value(NULL)
 {
     // Nothing to do here

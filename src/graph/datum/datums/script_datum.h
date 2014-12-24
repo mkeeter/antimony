@@ -11,8 +11,8 @@
 class ScriptDatum : public EvalDatum
 {
 public:
-    explicit ScriptDatum(QString name, QObject *parent);
-    explicit ScriptDatum(QString name, QString expr, QObject *parent);
+    explicit ScriptDatum(QString name, Node* parent);
+    explicit ScriptDatum(QString name, QString expr, Node* parent);
     virtual ~ScriptDatum();
 
     PyObject* makeInput(QString name, PyTypeObject* type);

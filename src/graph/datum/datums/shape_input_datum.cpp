@@ -3,7 +3,7 @@
 
 #include "fab/fab.h"
 
-ShapeInputDatum::ShapeInputDatum(QString name, QObject* parent)
+ShapeInputDatum::ShapeInputDatum(QString name, Node* parent)
     : InputDatum(name, parent)
 {
     input_handler = new ShapeInputHandler(this);

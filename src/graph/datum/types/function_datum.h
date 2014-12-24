@@ -11,9 +11,9 @@ class FunctionDatum : public Datum
 {
     Q_OBJECT
 public:
-    explicit FunctionDatum(QString name, QObject* parent);
+    explicit FunctionDatum(QString name, Node* parent);
 
-    explicit FunctionDatum(QString name, QObject* parent,
+    explicit FunctionDatum(QString name, Node* parent,
                            QString f, QList<QString> args);
 
     virtual ~FunctionDatum();

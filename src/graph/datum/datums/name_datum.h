@@ -8,8 +8,8 @@ class NameDatum : public EvalDatum
 {
     Q_OBJECT
 public:
-    explicit NameDatum(QString name, QObject *parent = 0);
-    explicit NameDatum(QString name, QString expr, QObject *parent = 0);
+    explicit NameDatum(QString name, Node* parent);
+    explicit NameDatum(QString name, QString expr, Node* parent);
     PyTypeObject* getType() const override { return &PyUnicode_Type; }
     bool hasOutput() const override { return false; }
     DatumType::DatumType getDatumType() const override

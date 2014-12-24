@@ -11,14 +11,14 @@
 
 #include "fab/fab.h"
 
-ScriptDatum::ScriptDatum(QString name, QObject *parent)
+ScriptDatum::ScriptDatum(QString name, Node* parent)
     : EvalDatum(name, parent), globals(NULL),
       input_func(scriptInput(this)), output_func(scriptOutput(this))
 {
     // Nothing to do here
 }
 
-ScriptDatum::ScriptDatum(QString name, QString expr, QObject *parent)
+ScriptDatum::ScriptDatum(QString name, QString expr, Node* parent)
     : ScriptDatum(name, parent)
 {
     setExpr(expr);
@@ -75,13 +75,17 @@ PyObject* ScriptDatum::makeInput(QString name, PyTypeObject *type)
     if (d == NULL)
     {
         datums_changed = true;
+
+        auto n = dynamic_cast<Node*>(parent());
+        Q_ASSERT(n);
+
         if (type == &PyFloat_Type)
         {
-            d = new FloatDatum(name, "0.0", parent());
+            d = new FloatDatum(name, "0.0", n);
         }
         else if (type == fab::ShapeType)
         {
-            d = new ShapeInputDatum(name, parent());
+            d = new ShapeInputDatum(name, n);
         }
         else
         {
@@ -132,13 +136,17 @@ PyObject* ScriptDatum::makeOutput(QString name, PyObject *out)
     if (d == NULL)
     {
         datums_changed = true;
+
+        auto n = dynamic_cast<Node*>(parent());
+        Q_ASSERT(n);
+
         if (out->ob_type == fab::ShapeType)
         {
-            d = new ShapeOutputDatum(name, parent());
+            d = new ShapeOutputDatum(name, n);
         }
         else if (out->ob_type == &PyFloat_Type)
         {
-            d = new FloatOutputDatum(name, parent());
+            d = new FloatOutputDatum(name, n);
         }
         else
         {

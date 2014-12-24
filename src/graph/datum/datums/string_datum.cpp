@@ -1,12 +1,12 @@
 #include "graph/datum/datums/string_datum.h"
 
-StringDatum::StringDatum(QString name, QObject* parent)
+StringDatum::StringDatum(QString name, Node* parent)
     : EvalDatum(name, parent)
 {
     // Nothing to do here
 }
 
-StringDatum::StringDatum(QString name, QString expr, QObject* parent)
+StringDatum::StringDatum(QString name, QString expr, Node* parent)
     : StringDatum(name, parent)
 {
     setExpr(expr);
