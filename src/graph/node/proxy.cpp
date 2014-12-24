@@ -42,9 +42,7 @@ static PyObject* NodeProxy_getAttro(PyObject* o, PyObject* attr_name)
         {
             // Try to connect this datum as an upstream datum of the caller
             if (!p->caller->connectUpstream(datum))
-            {
                 failed = true;
-            }
 
             // Also connect the node's name as an upstream datum
             // (since if the name changes, the expression may become invalid)
