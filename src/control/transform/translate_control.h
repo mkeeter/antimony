@@ -2,12 +2,12 @@
 #define TRANSLATE_CONTROL_H
 
 #include "control/wireframe.h"
-#include "ui/colors.h"
+#include "ui/util/colors.h"
 
-class TranslateHandle : public WireframeControl
+class _TranslateHandle : public WireframeControl
 {
 public:
-    explicit TranslateHandle(Canvas* canvas, Node* node, QGraphicsItem* parent);
+    explicit _TranslateHandle(Node* node, QObject* parent);
     void drag(QVector3D center, QVector3D delta) override;
     QVector<QPair<QVector3D, float>> points() const override;
 protected:
@@ -19,10 +19,9 @@ protected:
 class TranslateControl : public WireframeControl
 {
 public:
-    explicit TranslateControl(Canvas* canvas, Node* node);
+    explicit TranslateControl(Node* node, QObject* parent=NULL);
 
     void drag(QVector3D center, QVector3D delta) override;
-    QPointF inspectorPosition() const override;
     QVector<QVector<QVector3D>> lines() const override;
     QVector<QPair<QVector3D, float>> points() const override;
 
@@ -31,7 +30,7 @@ protected:
     QColor defaultPenColor() const
         { return Colors::teal; }
 
-    TranslateHandle* handle;
+    _TranslateHandle* handle;
 };
 
 #endif

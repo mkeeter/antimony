@@ -10,7 +10,6 @@
 
 class ScriptDatum : public EvalDatum
 {
-    Q_OBJECT
 public:
     explicit ScriptDatum(QString name, QObject *parent);
     explicit ScriptDatum(QString name, QString expr, QObject *parent);
@@ -24,9 +23,6 @@ public:
 
     DatumType::DatumType getDatumType() const override
         { return DatumType::SCRIPT; }
-
-signals:
-    void datumsChanged();
 
 protected:
 

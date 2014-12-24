@@ -43,6 +43,13 @@ public:
      */
     QString getType() const;
 
+signals:
+    /*
+     *  Emitted when the set of datums stored in this Node changes
+     *  (usually through ScriptDatum meta-programming magic).
+     */
+    void datumsChanged();
+
 protected:
     const NodeType::NodeType type;
     Control* control;

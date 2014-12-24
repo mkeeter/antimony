@@ -9,15 +9,14 @@
 class _ConeRadiusControl : public _CylinderRadiusControl
 {
 public:
-    explicit _ConeRadiusControl(Canvas* canvas, Node* node,
-                                QGraphicsItem* parent);
+    explicit _ConeRadiusControl(Node* node, QObject* parent);
     QVector<QVector<QVector3D>> lines() const override;
 };
 
 class ConeControl : public CylinderControl
 {
 public:
-    explicit ConeControl(Canvas* canvas, Node* node);
+    explicit ConeControl(Node* node, QObject* parent=NULL);
 };
 
 #endif

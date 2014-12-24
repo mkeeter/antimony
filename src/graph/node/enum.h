@@ -16,7 +16,6 @@ namespace NodeType
         SPHERE,
         POINT3D,
         SCRIPT,
-        EQUATION,
         UNION,
         BLEND,
         INTERSECTION,
@@ -37,7 +36,6 @@ namespace NodeType
         REFLECTZ,
         RECENTER,
         TRANSLATE,
-        SLIDER,
         ITERATE2D,
         // NODE TYPES
     };

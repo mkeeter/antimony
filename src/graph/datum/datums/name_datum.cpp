@@ -12,21 +12,23 @@ PyObject* NameDatum::kwlist_contains = NULL;
 NameDatum::NameDatum(QString name, QObject* parent)
     : EvalDatum(name, parent)
 {
-    connect(this, SIGNAL(nameChanged(QString)),
-            NodeManager::manager(), SLOT(onNameChange(QString)));
+    connect(this, &NameDatum::changed, this, &NameDatum::onNameChange);
+    connect(this, &NameDatum::nameChanged,
+            NodeManager::manager(), &NodeManager::onNameChange);
 }
 
 NameDatum::NameDatum(QString name, QString expr, QObject *parent)
     : NameDatum(name, parent)
 {
     setExpr(expr);
-    connect(this, SIGNAL(changed()), this, SLOT(onNameChange()));
 }
 
 void NameDatum::onNameChange()
 {
     if (getValid())
     {
+        if (auto d = dynamic_cast<Datum*>(parent()))
+            d->setObjectName(getExpr().trimmed());
         emit nameChanged(getExpr().trimmed());
     }
 }

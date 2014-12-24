@@ -20,7 +20,15 @@ int main(int argc, char *argv[])
 
     fab::preInit();
     Py_Initialize();
-    fab::postInit();
+
+    QString d = QCoreApplication::applicationDirPath();
+#if defined Q_OS_MAC
+    QStringList path = d.split("/");
+    for (int i=0; i < 3; ++i)
+        path.removeLast();
+    d = path.join("/");
+#endif
+    fab::postInit(d.toStdString().c_str());
 
     int out = 0;
     if (!out) {

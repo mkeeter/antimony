@@ -6,7 +6,7 @@
 class _CaretTopControl : public WireframeControl
 {
 public:
-    explicit _CaretTopControl(Canvas* canvas, Node* node, QGraphicsItem* parent);
+    explicit _CaretTopControl(Node* node, QObject* parent=NULL);
     QVector<QVector<QVector3D>> lines() const override;
     void drag(QVector3D center, QVector3D delta) override;
     QVector3D center() const;
@@ -15,13 +15,10 @@ public:
 class TextControl : public WireframeControl
 {
 public:
-    explicit TextControl(Canvas* canvas, Node* node);
+    explicit TextControl(Node* node, QObject* parent=NULL);
     QVector<QVector<QVector3D>> lines() const override;
     void drag(QVector3D center, QVector3D delta) override;
-    QPointF inspectorPosition() const override;
 protected:
-    QPointF baseInputPosition() const override;
-    QPointF baseOutputPosition() const override;
     _CaretTopControl* caret_top;
 };
 

@@ -2,13 +2,12 @@
 #define SCALEZ_CONTROL_H
 
 #include "control/wireframe.h"
-#include "ui/colors.h"
+#include "ui/util/colors.h"
 
-class ScaleZHandle : public WireframeControl
+class _ScaleZHandle : public WireframeControl
 {
 public:
-    explicit ScaleZHandle(Canvas* canvas, Node* node, bool pos,
-                          QGraphicsItem* parent);
+    explicit _ScaleZHandle(Node* node, bool pos, QObject* parent);
     void drag(QVector3D center, QVector3D delta) override;
 protected:
     QVector<QVector<QVector3D>> lines() const override;
@@ -20,10 +19,9 @@ protected:
 class ScaleZControl : public WireframeControl
 {
 public:
-    explicit ScaleZControl(Canvas* canvas, Node* node);
+    explicit ScaleZControl(Node* node, QObject* parent=NULL);
 
     void drag(QVector3D center, QVector3D delta) override;
-    QPointF inspectorPosition() const override;
 protected:
     QVector<QVector<QVector3D>> lines() const override;
     QVector<QPair<QVector3D, float>> points() const override;
@@ -31,8 +29,8 @@ protected:
         { return Colors::blue; }
     QVector3D position() const;
 
-    ScaleZHandle* positive_handle;
-    ScaleZHandle* negative_handle;
+    _ScaleZHandle* positive_handle;
+    _ScaleZHandle* negative_handle;
 };
 
 #endif

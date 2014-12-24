@@ -1,5 +1,7 @@
 #include <Python.h>
+
 #include <QDataStream>
+#include <QBuffer>
 
 #include "graph/node/serializer.h"
 #include "graph/node/manager.h"
@@ -10,35 +12,49 @@
 #include "graph/datum/datums/shape_function_datum.h"
 #include "graph/datum/datums/script_datum.h"
 
-SceneSerializer::SceneSerializer(QObject* parent)
-    : QObject(parent)
+SceneSerializer::SceneSerializer(QObject* node_root,
+                                 QMap<Node*, QPointF> inspectors)
+    : QObject(), node_root(node_root), inspectors(inspectors)
 {
     // Nothing to do here.
 }
 
+QByteArray SceneSerializer::run()
+{
+    QBuffer buffer;
+    buffer.open(QBuffer::WriteOnly);
+
+    QDataStream stream(&buffer);
+    run(&stream);
+    buffer.seek(0);
+
+    return buffer.data();
+}
+
 void SceneSerializer::run(QDataStream* out)
 {
-    *out << QString("sb") << quint32(1) << quint32(0);
-    serializeNodes(out, NodeManager::manager());
+    *out << QString("sb") << quint32(1);
+    serializeNodes(out, node_root);
     serializeConnections(out);
 }
 
 void SceneSerializer::serializeNodes(QDataStream* out, QObject* p)
 {
-    auto nodes = p->findChildren<Node*>(QString(),
-                                        Qt::FindDirectChildrenOnly);
+    auto nodes = p->findChildren<Node*>(
+            QString(), Qt::FindDirectChildrenOnly);
     *out << quint32(nodes.length());
 
     for (auto node : nodes)
-    {
         serializeNode(out, node);
-    }
 }
 
 void SceneSerializer::serializeNode(QDataStream* out, Node* node)
 {
     *out << quint32(node->getNodeType());
     *out << node->objectName();
+
+    // Serialize position (or default QPointF if not provided)
+    *out << (inspectors.contains(node) ? inspectors[node] : QPointF());
 
     // Serialize child nodes first.
     serializeNodes(out, node);
@@ -62,9 +78,7 @@ void SceneSerializer::serializeNode(QDataStream* out, Node* node)
     }
 
     if (deferred)
-    {
         serializeDatum(out, deferred);
-    }
 }
 
 void SceneSerializer::serializeDatum(QDataStream* out, Datum* datum)
@@ -72,13 +86,11 @@ void SceneSerializer::serializeDatum(QDataStream* out, Datum* datum)
     *out << quint32(datum->getDatumType());
     *out << datum->objectName();
 
-    EvalDatum* e = dynamic_cast<EvalDatum*>(datum);
-    FunctionDatum* f = dynamic_cast<FunctionDatum*>(datum);
-    if (e)
+    if (auto e = dynamic_cast<EvalDatum*>(datum))
     {
         *out << e->getExpr();
     }
-    else if (f)
+    else if (auto f = dynamic_cast<FunctionDatum*>(datum))
     {
         *out << f->getFunctionName();
         *out << f->getArguments();
@@ -89,17 +101,13 @@ void SceneSerializer::serializeDatum(QDataStream* out, Datum* datum)
     // once all of the datums have been written).
     datums << datum;
     for (auto d : datum->getInputDatums())
-    {
         connections << QPair<Datum*, Datum*>(d, datum);
-    }
 }
 
 void SceneSerializer::serializeConnections(QDataStream* out)
 {
     *out << quint32(connections.length());
     for (auto p : connections)
-    {
         *out << quint32(datums.indexOf(p.first))
              << quint32(datums.indexOf(p.second));
-    }
 }

@@ -2,13 +2,12 @@
 
 #include <QPainter>
 
-#include "ui/canvas.h"
 #include "control/2d/point2d_control.h"
 
-Point2DControl::Point2DControl(Canvas* canvas, Node* node, QGraphicsItem* parent)
-    : WireframeControl(canvas, node, parent)
+Point2DControl::Point2DControl(Node* node, QObject* parent, QString suffix)
+    : WireframeControl(node, parent), suffix(suffix)
 {
-    watchDatums({"x","y"});
+    watchDatums({"x" + suffix, "y" + suffix});
 }
 
 QVector<QPair<QVector3D, float>> Point2DControl::points() const
@@ -18,17 +17,12 @@ QVector<QPair<QVector3D, float>> Point2DControl::points() const
 
 QVector3D Point2DControl::position() const
 {
-    return QVector3D(getValue("x"), getValue("y"), 0);
+    return QVector3D(getValue("x" + suffix), getValue("y" + suffix), 0);
 }
 
 void Point2DControl::drag(QVector3D center, QVector3D delta)
 {
     Q_UNUSED(center);
-    dragValue("x", delta.x());
-    dragValue("y", delta.y());
-}
-
-QPointF Point2DControl::inspectorPosition() const
-{
-    return canvas->worldToScene(position());
+    dragValue("x" + suffix, delta.x());
+    dragValue("y" + suffix, delta.y());
 }

@@ -1,12 +1,13 @@
 #include <Python.h>
 
 #include <QDataStream>
+#include <QBuffer>
 
 #include "graph/node/deserializer.h"
 #include "graph/node/node.h"
-#include "graph/node/manager.h"
 
 #include "graph/datum/datums/float_datum.h"
+#include "graph/datum/datums/float_output_datum.h"
 #include "graph/datum/datums/int_datum.h"
 #include "graph/datum/datums/name_datum.h"
 #include "graph/datum/datums/string_datum.h"
@@ -15,21 +16,44 @@
 #include "graph/datum/datums/shape_input_datum.h"
 #include "graph/datum/datums/shape_function_datum.h"
 
-SceneDeserializer::SceneDeserializer(QObject* parent)
-    : QObject(parent)
+SceneDeserializer::SceneDeserializer(QObject* node_root)
+    : QObject(), failed(false), node_root(node_root)
 {
     // Nothing to do here
 }
 
-void SceneDeserializer::run(QDataStream* in)
+bool SceneDeserializer::run(QByteArray in)
+{
+    QBuffer buffer(&in);
+    buffer.open(QBuffer::ReadOnly);
+
+    QDataStream stream(&buffer);
+    return run(&stream);
+}
+
+bool SceneDeserializer::run(QDataStream* in)
 {
     QString sb;
-    quint32 version_major;
-    quint32 version_minor;
-    *in >> sb >> version_major >> version_minor;
+    quint32 protocol_version;
+    *in >> sb >> protocol_version;
 
-    deserializeNodes(in, NodeManager::manager());
-    deserializeConnections(in);
+    if (sb != "sb")
+    {
+        failed = true;
+        error_message = "File is not an Antimony file";
+    }
+    else if (protocol_version != 1)
+    {
+        failed = true;
+        error_message = "File was saved with an older protocol and can no longer be read.";
+    }
+    else
+    {
+        deserializeNodes(in, node_root);
+        deserializeConnections(in);
+    }
+
+    return failed;
 }
 
 void SceneDeserializer::deserializeNodes(QDataStream* in, QObject* p)
@@ -37,9 +61,7 @@ void SceneDeserializer::deserializeNodes(QDataStream* in, QObject* p)
     quint32 count;
     *in >> count;
     for (unsigned i=0; i < count; ++i)
-    {
         deserializeNode(in, p);
-    }
 }
 
 void SceneDeserializer::deserializeNode(QDataStream* in, QObject* p)
@@ -54,15 +76,18 @@ void SceneDeserializer::deserializeNode(QDataStream* in, QObject* p)
     Node* node = new Node(node_type, p);
     node->setObjectName(node_name);
 
+    // Deserialize inspector position
+    QPointF i;
+    *in >> i;
+    inspectors[node] = i;
+
     // Deserialize child nodes.
     deserializeNodes(in, node);
 
     quint32 datum_count;
     *in >> datum_count;
     for (unsigned d=0; d < datum_count; ++d)
-    {
         deserializeDatum(in, node);
-    }
 }
 
 void SceneDeserializer::deserializeDatum(QDataStream* in, Node* node)
@@ -80,6 +105,8 @@ void SceneDeserializer::deserializeDatum(QDataStream* in, Node* node)
     {
         case DatumType::FLOAT:
             datum = new FloatDatum(name, node); break;
+        case DatumType::FLOAT_OUTPUT:
+            datum = new FloatOutputDatum(name, node); break;
         case DatumType::INT:
             datum = new IntDatum(name, node); break;
         case DatumType::NAME:
@@ -96,15 +123,13 @@ void SceneDeserializer::deserializeDatum(QDataStream* in, Node* node)
             datum = new ShapeFunctionDatum(name, node); break;
     }
 
-    EvalDatum* e = dynamic_cast<EvalDatum*>(datum);
-    FunctionDatum* f = dynamic_cast<FunctionDatum*>(datum);
-    if (e)
+    if (auto e = dynamic_cast<EvalDatum*>(datum))
     {
         QString expr;
         *in >> expr;
         e->setExpr(expr);
     }
-    else if (f)
+    else if (auto f = dynamic_cast<FunctionDatum*>(datum))
     {
         QString function_name;
         QList<QString> function_args;

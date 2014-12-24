@@ -13,19 +13,15 @@ Node::Node(NodeType::NodeType type, QObject* parent)
     : QObject(parent), type(type), control(NULL)
 {
     if (parent == NULL)
-    {
         setParent(NodeManager::manager());
-    }
 }
 
 Node::Node(NodeType::NodeType type, QString name, QObject* parent)
     : Node(type, parent)
 {
-    new NameDatum("name", name, this);
+    new NameDatum("_name", name, this);
     if (parent == NULL)
-    {
         setParent(NodeManager::manager());
-    }
 }
 
 
@@ -60,11 +56,8 @@ Datum* Node::getDatum(QString name) const
 
 QString Node::getName() const
 {
-    auto e = getDatum<EvalDatum>("name");
-    if (e)
-    {
+    if (auto e = getDatum<EvalDatum>("_name"))
         return e->getExpr();
-    }
     return "";
 }
 
@@ -84,7 +77,6 @@ QString Node::getType() const
         case NodeType::SPHERE:      return "Sphere";
         case NodeType::POINT3D:     return "Point (3D)";
         case NodeType::SCRIPT:      return "Script";
-        case NodeType::EQUATION:    return "Equation";
         case NodeType::UNION:       return "Union";
         case NodeType::BLEND:       return "Blend";
         case NodeType::INTERSECTION: return "Intersection";
@@ -105,7 +97,6 @@ QString Node::getType() const
         case NodeType::REFLECTZ:    return "Reflect (Z)";
         case NodeType::RECENTER:    return "Re-center";
         case NodeType::TRANSLATE:   return "Translate";
-        case NodeType::SLIDER:      return "Slider";
         case NodeType::ITERATE2D:   return "Iterate (2D)";
     }
 }

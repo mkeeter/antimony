@@ -6,7 +6,6 @@ SOURCES += \
     ../src/graph/node/nodes/deform.cpp \
     ../src/graph/node/nodes/meta.cpp \
     ../src/graph/node/nodes/transforms.cpp \
-    ../src/graph/node/nodes/variable.cpp \
     ../src/graph/node/nodes/iterate.cpp \
 
 HEADERS += \
@@ -17,6 +16,5 @@ HEADERS += \
     ../src/graph/node/nodes/deform.h \
     ../src/graph/node/nodes/meta.h \
     ../src/graph/node/nodes/transforms.h \
-    ../src/graph/node/nodes/variable.h \
     ../src/graph/node/nodes/iterate.h \
 

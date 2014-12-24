@@ -35,12 +35,20 @@ RenderTask* RenderTask::getNext() const
 
 bool RenderTask::hasFinishedRender() const
 {
+    // Checks that the rendering was completed
+    // (rather than halted mid-render)
     return image && (image->halt_flag == 0);
 }
 
-DepthImageItem* RenderTask::getDepthImage(Canvas* canvas)
+DepthImageItem* RenderTask::getDepthImage(Viewport* viewport)
 {
-    return image->addToCanvas(canvas);
+    Q_ASSERT(image);
+
+    auto d = image->addToViewport(viewport);
+    image->deleteLater();
+    image = NULL;
+
+    return d;
 }
 
 void RenderTask::render()
@@ -56,13 +64,9 @@ void RenderTask::render()
         !isinf(s.bounds.xmin) && !isinf(s.bounds.xmax))
     {
         if (isinf(s.bounds.zmin))
-        {
             render2d(s);
-        }
         else
-        {
             render3d(s);
-        }
         image->moveToThread(QApplication::instance()->thread());
     }
 
@@ -81,7 +85,7 @@ void RenderTask::render3d(Shape s)
                 (transformed.bounds.ymin + transformed.bounds.ymax)/2,
                 (transformed.bounds.zmin + transformed.bounds.zmax)/2),
             scale);
-    connect(this, SIGNAL(halt()), image, SLOT(halt()));
+    connect(this, &RenderTask::halt, image, &RenderImage::halt);
     image->render(&transformed);
 }
 
@@ -112,13 +116,11 @@ void RenderTask::render2d(Shape s)
                           (b3d.ymin + b3d.ymax)/2,
                           (b3d.zmin + b3d.zmax)/2),
             scale);
-    connect(this, SIGNAL(halt()), image, SLOT(halt()));
+    connect(this, &RenderTask::halt, image, &RenderImage::halt);
     image->render(&transformed);
 
     if (matrix(1,2))
-    {
         image->applyGradient(matrix(2,2) > 0);
-    }
 
     image->setNormals(
         sqrt(pow(matrix(0,2),2) + pow(matrix(1,2),2)),

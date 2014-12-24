@@ -2,14 +2,10 @@
 
 #include <QApplication>
 #include <QDebug>
-#include <QDataStream>
-#include <QBuffer>
 
 #include "graph/node/manager.h"
 #include "graph/node/node.h"
 #include "graph/node/proxy.h"
-#include "graph/node/serializer.h"
-#include "graph/node/deserializer.h"
 
 #include "graph/datum/datum.h"
 #include "graph/datum/datums/name_datum.h"
@@ -35,7 +31,7 @@ bool NodeManager::isNameUnique(QString name) const
 
 NameDatum* NodeManager::findMatchingName(PyObject* proposed) const
 {
-    for (NameDatum* d : findChildren<NameDatum*>("name"))
+    for (NameDatum* d : findChildren<NameDatum*>("_name"))
     {
         if (d->getValid() &&
             PyObject_RichCompareBool(d->getValue(), proposed, Py_EQ))
@@ -69,7 +65,7 @@ PyObject* NodeManager::proxyDict(Datum* caller)
     PyDict_SetItemString(d, "math", PyImport_ImportModule("math"));
     for (Node* n : findChildren<Node*>())
     {
-        NameDatum* name = n->getDatum<NameDatum>("name");
+        NameDatum* name = n->getDatum<NameDatum>("_name");
 
         if (name->getValid())
         {
@@ -110,31 +106,6 @@ void NodeManager::onNameChange(QString new_name)
         }
     }
 
-}
-
-QByteArray NodeManager::getSerializedScene() const
-{
-    QBuffer buffer;
-    buffer.open(QBuffer::WriteOnly);
-
-    QDataStream stream(&buffer);
-    SceneSerializer ss;
-    ss.run(&stream);
-    buffer.seek(0);
-
-    return buffer.data();
-}
-
-bool NodeManager::deserializeScene(QByteArray in)
-{
-    QBuffer buffer(&in);
-    buffer.open(QBuffer::ReadOnly);
-
-    QDataStream stream(&buffer);
-    SceneDeserializer ss;
-    ss.run(&stream);
-
-    return true;
 }
 
 Shape NodeManager::getCombinedShape()
@@ -191,7 +162,7 @@ QMap<QString, Shape> NodeManager::getShapes()
 
         Q_ASSERT(get_shape.check());
 
-        Datum* name = dynamic_cast<Node*>(d->parent())->getDatum("name");
+        Datum* name = dynamic_cast<Node*>(d->parent())->getDatum("_name");
         wchar_t* w = PyUnicode_AsWideCharString(name->getValue(), 0);
         Q_ASSERT(w);
         out[QString::fromWCharArray(w)] = get_shape();
@@ -199,26 +170,3 @@ QMap<QString, Shape> NodeManager::getShapes()
     }
     return out;
 }
-
-#ifdef ANTIMONY
-
-#include "control/control.h"
-#include "ui/connection.h"
-
-void NodeManager::makeControls(Canvas* canvas)
-{
-    for (auto n : findChildren<Node*>(QString(), Qt::FindDirectChildrenOnly))
-    {
-        Control::makeControlFor(canvas, n);
-    }
-}
-
-void NodeManager::makeConnections(Canvas* canvas)
-{
-    for (auto link : findChildren<Link*>())
-    {
-        new Connection(link, canvas);
-    }
-}
-
-#endif

@@ -3,8 +3,12 @@
 
 #include <QApplication>
 
-class MainWindow;
-class Canvas;
+class GraphScene;
+class ViewportScene;
+class Node;
+class Link;
+class Connection;
+class ScriptDatum;
 
 class App : public QApplication
 {
@@ -13,33 +17,60 @@ public:
     explicit App(int& argc, char **argv);
     ~App();
 
-    /** Helper function to get Canvas widget.
-     */
-    Canvas* getCanvas() const;
-
-    /** Helper function to get main window.
-     */
-    MainWindow* getWindow() const;
-
-    /** Helper function to get running instance.
+    /*
+     *  Helper function to get running instance.
      */
     static App* instance();
 
-private slots:
+    /*
+     *  Creates UI elements for a new Node and adds them to scenes.
+     */
+    void newNode(Node* n);
+
+    /*
+     *  Create UI elements for a new link, returning the associated Connection.
+     */
+    Connection* newLink(Link* link);
+
+public slots:
+    /*
+     *  Opens a new MainWindow with a Canvas as its central widget.
+     */
+    void newCanvasWindow();
+
+    /*
+     *  Opens a new MainWindow with a Viewport as its central widget.
+     */
+    void newViewportWindow();
+
+    /*
+     *  Opens a new MainWindow with four Viewports.
+     */
+    void newQuadWindow();
+
+    /*
+     *  Opens a new editor window targetting the given datum.
+     */
+    void newEditorWindow(ScriptDatum* datum);
+
+public slots:
     void onAbout();
-    void onControls();
+
     void onNew();
     void onSave();
     void onSaveAs();
     void onOpen();
+
     void onExportSTL();
     void onExportHeightmap();
     void onExportJSON();
-private:
-    void setGlobalStyle();
-    void connectActions();
 
-    MainWindow* window;
+private:
+
+    void setGlobalStyle();
+
+    GraphScene* graph_scene;
+    ViewportScene* view_scene;
     QString filename;
 };
 

@@ -35,23 +35,23 @@ bool Datum::canEdit() const
 bool Datum::acceptsLink(Link* upstream)
 {
     if (dynamic_cast<Datum*>(upstream->parent())->_upstream.contains(this))
-    {
         return false;
-    }
     return input_handler->accepts(upstream);
 }
 
 Link* Datum::linkFrom()
 {
-    return new Link(this);
+    auto link = new Link(this);
+    connect(link, &Link::destroyed, this, &Datum::connectionChanged);
+    return link;
 }
 
 void Datum::addLink(Link* input)
 {
     input_handler->addInput(input);
     input->setTarget(this);
-    connect(this, SIGNAL(destroyed()), input, SLOT(deleteLater()));
-    connect(input, SIGNAL(destroyed()), this, SLOT(update()));
+    connect(this, &Datum::destroyed, input, &Link::deleteLater);
+    connect(input, &Link::destroyed, this, &Datum::update);
 
     // For certain types of datums, making a connection changes behavior
     // in a way that requires a changed signal to be emitted.  This is
@@ -59,10 +59,7 @@ void Datum::addLink(Link* input)
     // are not used elsewhere in the system.
     emit(connectionChanged());
     emit(dynamic_cast<Datum*>(input->parent())->connectionChanged());
-    connect(input, SIGNAL(destroyed()), this, SIGNAL(connectionChanged()));
-    connect(input, SIGNAL(destroyed()),
-            dynamic_cast<Datum*>(input->parent()),
-            SIGNAL(connectionChanged()));
+    connect(input, &Link::destroyed, this, &Datum::connectionChanged);
 }
 
 void Datum::deleteLink(Datum* upstream)
@@ -73,12 +70,8 @@ void Datum::deleteLink(Datum* upstream)
 bool Datum::hasConnectedLink() const
 {
     for (auto link : findChildren<Link*>())
-    {
         if (link->hasTarget())
-        {
             return true;
-        }
-    }
     return false;
 }
 
@@ -89,16 +82,12 @@ void Datum::update()
     //  datum creation causes a name change update which tries
     //  to recursivey update the script datum).
     if (isRecursing())
-    {
         return;
-    }
 
     // The very first time that update() is called, refresh all other nodes
     // that may refer to this node by name (then never do so again).
     if (!post_init_called)
-    {
         postInit();
-    }
 
     // Request that all upstream datums disconnect.
     emit disconnectFrom(this);
@@ -107,13 +96,9 @@ void Datum::update()
 
     PyObject* new_value;
     if (hasInputValue())
-    {
         new_value = input_handler->getValue();
-    }
     else
-    {
         new_value = getCurrentValue();
-    }
 
     bool has_changed = false;
     // If our previous value was valid and our new value is invalid,
@@ -155,24 +140,13 @@ void Datum::update()
     }
 
     if (has_changed)
-    {
         emit changed();
-    }
 }
 
 void Datum::postInit()
 {
     post_init_called = true;
     NodeManager::manager()->onNameChange(objectName());
-
-    // If we're running the antimony app (not the test suite) and this is a
-    // function that outputs a shape object, make a RenderTask for it.
-#ifdef ANTIMONY
-    if (RenderWorker::accepts(this))
-    {
-        new RenderWorker(this);
-    }
-#endif
 }
 
 void Datum::onDisconnectRequest(Datum* downstream)

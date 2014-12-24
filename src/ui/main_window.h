@@ -6,6 +6,7 @@
 class Canvas;
 class ScriptDatum;
 class Node;
+class App;
 
 namespace Ui {
 class MainWindow;
@@ -18,8 +19,10 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void openScript(ScriptDatum* d);
-    Canvas* getCanvas() const { return canvas; }
+    /*
+     *  Updates menus once the central widget is set.
+     */
+    void updateMenus();
 
     /** Populate a menu with all of the widgets.
      */
@@ -30,6 +33,11 @@ public:
     bool isShaded() const;
 
 private:
+    /*
+     *  Connects menu actions to App slots.
+     */
+    void connectActions(App* app);
+
     /** Sets up main keyboard shortcuts
      *  (because Qt Designer doesn't have a good way to do so)
      */
@@ -52,9 +60,6 @@ private:
     void _populateMenu(QMenu* menu);
 
     Ui::MainWindow *ui;
-    Canvas* canvas;
-
-    friend class App;
 };
 
 #endif // MAIN_WINDOW_H

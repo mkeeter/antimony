@@ -2,13 +2,12 @@
 #define ROTATEY_CONTROL_H
 
 #include "control/wireframe.h"
-#include "ui/colors.h"
+#include "ui/util/colors.h"
 
-class RotateYHandle : public WireframeControl
+class _RotateYHandle : public WireframeControl
 {
 public:
-    explicit RotateYHandle(Canvas* canvas, Node* node,
-                           QGraphicsItem* parent);
+    explicit _RotateYHandle(Node* node, QObject* parent);
     void drag(QVector3D center, QVector3D delta) override;
     QVector<QPair<QVector3D, float>> points() const override;
 protected:
@@ -22,10 +21,9 @@ protected:
 class RotateYControl : public WireframeControl
 {
 public:
-    explicit RotateYControl(Canvas* canvas, Node* node);
+    explicit RotateYControl(Node* node, QObject* parent=NULL);
 
     void drag(QVector3D center, QVector3D delta) override;
-    QPointF inspectorPosition() const override;
     QVector<QVector<QVector3D>> lines() const override;
     QVector<QPair<QVector3D, float>> points() const override;
 
@@ -34,7 +32,7 @@ protected:
     QColor defaultPenColor() const
         { return Colors::teal; }
 
-    RotateYHandle* handle;
+    _RotateYHandle* handle;
 };
 
 #endif

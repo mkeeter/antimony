@@ -3,27 +3,20 @@
 #include <QGraphicsSceneMouseEvent>
 
 #include "control/iterate/iterate2d_control.h"
-#include "ui/canvas.h"
 
 #include "graph/node/node.h"
 #include "graph/datum/datums/int_datum.h"
 
-Iterate2DButton::Iterate2DButton(Canvas* canvas, Node* node,
-                                 bool axis, bool sign, QGraphicsItem* parent)
-    : WireframeControl(canvas, node, parent),
+Iterate2DButton::Iterate2DButton(Node* node, bool axis, bool sign,
+                                 QObject* parent)
+    : WireframeControl(node, parent),
       axis(axis), sign(sign)
 {
     watchDatums({"_x", "_y"});
 }
 
-void Iterate2DButton::mousePressEvent(QGraphicsSceneMouseEvent* event)
+bool Iterate2DButton::onClick()
 {
-    if (event->button() != Qt::LeftButton)
-    {
-        event->ignore();
-        return;
-    }
-
     Datum* d = node->getDatum(axis ? "i" : "j");
     Q_ASSERT(d);
 
@@ -36,13 +29,17 @@ void Iterate2DButton::mousePressEvent(QGraphicsSceneMouseEvent* event)
     {
         i->setExpr(QString::number(sign ? v + 1 : v - 1));
     }
+
+    return true;
 }
 
-void Iterate2DButton::paintControl(QPainter* painter)
+void Iterate2DButton::paint(QMatrix4x4 m, QMatrix4x4 t,
+                            bool highlight, QPainter* painter)
 {
-    WireframeControl::paintControl(painter);
-    setDefaultPen(painter);
-    QPointF p = canvas->worldToScene(position());
+    WireframeControl::paint(m, t, highlight, painter);
+
+    setDefaultPen(highlight, painter);
+    QPointF p = (m * position(m)).toPointF();
     painter->drawLine(p.x() - 3, p.y(), p.x() + 3, p.y());
     if (sign)
     {
@@ -50,25 +47,28 @@ void Iterate2DButton::paintControl(QPainter* painter)
     }
 }
 
-QVector<QPair<QVector3D, float>> Iterate2DButton::points() const
+QVector<QPair<QVector3D, float>> Iterate2DButton::points(QMatrix4x4 m,
+                                                         QMatrix4x4 t) const
 {
-    return {{position(), 8}};
+    Q_UNUSED(t);
+
+    return {{position(m), 8}};
 }
 
-QVector3D Iterate2DButton::position() const
+QVector3D Iterate2DButton::position(QMatrix4x4 m) const
 {
-    float scale = canvas->getScale();
+    float scale = (m * QVector3D(1, 0, 0) - m*QVector3D(0, 0, 0)).length();
+
     QVector3D p = QVector3D(getValue("_x"), getValue("_y"), 0);
-    QVector3D d = axis ? QVector3D(15 / scale, 0, 0)
-                       : QVector3D(0, 15 / scale, 0);
+    QVector3D d = axis ? QVector3D(15/scale, 0, 0)
+                       : QVector3D(0, 15/scale, 0);
     return sign ? p + d : p - d;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Iterate2DHandle::Iterate2DHandle(Canvas* canvas, Node* node, bool dir,
-                                 QGraphicsItem* parent)
-    : WireframeControl(canvas, node, parent), dir(dir)
+Iterate2DHandle::Iterate2DHandle(Node* node, bool dir, QObject* parent)
+    : WireframeControl(node, parent), dir(dir)
 {
     if (dir)
     {
@@ -113,16 +113,16 @@ QVector<QVector<QVector3D>> Iterate2DHandle::lines() const
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Iterate2DControl::Iterate2DControl(Canvas* canvas, Node* node)
-    : WireframeControl(canvas, node),
-      handle_x(new Iterate2DHandle(canvas, node, true, this)),
-      handle_y(new Iterate2DHandle(canvas, node, false, this))
+Iterate2DControl::Iterate2DControl(Node* node, QObject* parent)
+    : WireframeControl(node, parent),
+      handle_x(new Iterate2DHandle(node, true, this)),
+      handle_y(new Iterate2DHandle(node, false, this))
 {
     watchDatums({"_x", "_y", "dx", "dy"});
-    new Iterate2DButton(canvas, node, false, false, this);
-    new Iterate2DButton(canvas, node, false, true, this);
-    new Iterate2DButton(canvas, node, true, false, this);
-    new Iterate2DButton(canvas, node, true, true, this);
+    new Iterate2DButton(node, false, false, this);
+    new Iterate2DButton(node, false, true, this);
+    new Iterate2DButton(node, true, false, this);
+    new Iterate2DButton(node, true, true, this);
 }
 
 void Iterate2DControl::drag(QVector3D center, QVector3D delta)
@@ -130,11 +130,6 @@ void Iterate2DControl::drag(QVector3D center, QVector3D delta)
     Q_UNUSED(center);
     dragValue("_x", delta.x());
     dragValue("_y", delta.y());
-}
-
-QPointF Iterate2DControl::inspectorPosition() const
-{
-    return canvas->worldToScene(position());
 }
 
 QVector<QVector<QVector3D>> Iterate2DControl::lines() const

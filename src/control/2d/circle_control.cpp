@@ -1,8 +1,7 @@
 #include "control/2d/circle_control.h"
-#include "ui/canvas.h"
 
-_RadiusControl::_RadiusControl(Canvas *canvas, Node *node, QGraphicsItem *parent)
-    : WireframeControl(canvas, node, parent)
+_RadiusControl::_RadiusControl(Node *node, QObject* parent)
+    : WireframeControl(node, parent)
 {
     watchDatums({"x","y","r"});
 }
@@ -34,10 +33,10 @@ void _RadiusControl::drag(QVector3D c, QVector3D d)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-CircleControl::CircleControl(Canvas *canvas, Node *node)
-    : DummyControl(canvas, node),
-      radius(new _RadiusControl(canvas, node, this)),
-      center(new Point2DControl(canvas, node, this))
+CircleControl::CircleControl(Node *node, QObject* parent)
+    : DummyControl(node, parent),
+      radius(new _RadiusControl(node, this)),
+      center(new Point2DControl(node, this))
 {
     watchDatums({"x","y","r"});
 }
@@ -47,22 +46,7 @@ void CircleControl::drag(QVector3D c, QVector3D delta)
     center->drag(c, delta);
 }
 
-QPointF CircleControl::inspectorPosition() const
+QRectF CircleControl::bounds(QMatrix4x4 m, QMatrix4x4 t) const
 {
-    return canvas->worldToScene(radius->center());
-}
-
-QPointF CircleControl::baseInputPosition() const
-{
-    return (bounds().bottomLeft() + bounds().topLeft()) / 2;
-}
-
-QPointF CircleControl::baseOutputPosition() const
-{
-    return (bounds().bottomRight() + bounds().topRight()) / 2;
-}
-
-QRectF CircleControl::bounds() const
-{
-    return radius->boundingRect();
+    return radius->bounds(m, t);
 }

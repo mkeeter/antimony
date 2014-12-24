@@ -4,13 +4,13 @@
 #include <QVector3D>
 
 #include "control/wireframe.h"
-#include "ui/colors.h"
+#include "ui/util/colors.h"
 
 class Iterate2DButton : public WireframeControl
 {
 public:
-    explicit Iterate2DButton(Canvas* canvas, Node* node, bool axis,
-                             bool sign, QGraphicsItem* parent);
+    explicit Iterate2DButton(Node* node, bool axis, bool sign,
+                             QObject* parent);
 
 protected:
 
@@ -20,29 +20,21 @@ protected:
 
     /** On left-click, increment iteration count.
      */
-    void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+    bool onClick() override;
 
     /** Overload paint to draw + and - buttons over circle.
      */
-    void paintControl(QPainter* painter) override;
+    void paint(QMatrix4x4 m, QMatrix4x4 t,
+               bool highlight, QPainter* painter) override;
 
     /** Draw a single point at button's position.
      */
-    QVector<QPair<QVector3D, float>> points() const override;
-
-    /** Special case: buttons cannot be selected.
-     */
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent*)
-        { ungrabMouse(); }
-
-    /** Special case: buttons do nothing on double-click
-     */
-    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent* e)
-        { mousePressEvent(e); }
+    QVector<QPair<QVector3D, float>> points(QMatrix4x4 m,
+                                            QMatrix4x4 t) const override;
 
     /** Return the position (in 3D) of this button.
      */
-    QVector3D position() const;
+    QVector3D position(QMatrix4x4 m) const;
 
     QColor defaultPenColor() const
         { return Colors::teal; }
@@ -51,11 +43,13 @@ protected:
     bool sign;
 };
 
+////////////////////////////////////////////////////////////////////////////////
+
 class Iterate2DHandle : public WireframeControl
 {
 public:
-    explicit Iterate2DHandle(Canvas* canvas, Node* node, bool dir,
-                             QGraphicsItem* parent);
+    explicit Iterate2DHandle(Node* node, bool dir,
+                             QObject* parent);
 
 protected:
     void drag(QVector3D center, QVector3D delta) override;
@@ -72,11 +66,10 @@ protected:
 class Iterate2DControl : public WireframeControl
 {
 public:
-    explicit Iterate2DControl(Canvas* canvas, Node* node);
+    explicit Iterate2DControl(Node* node, QObject* parent=0);
 
 protected:
     void drag(QVector3D center, QVector3D delta) override;
-    QPointF inspectorPosition() const override;
     QVector<QVector<QVector3D>> lines() const override;
     QVector<QPair<QVector3D, float>> points() const override;
 

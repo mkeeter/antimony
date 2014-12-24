@@ -6,10 +6,10 @@
 #include "test_proxy.h"
 
 #include "graph/datum/datum.h"
-#include "datum/name_datum.h"
+#include "graph/datum/datums/name_datum.h"
 
-#include "node/node.h"
-#include "node/3d.h"
+#include "graph/node/node.h"
+#include "graph/node/nodes/3d.h"
 
 TestProxy::TestProxy(QObject* parent)
     : QObject(parent)
@@ -68,7 +68,7 @@ void TestProxy::DatumNameChange()
     Node* a = Point3DNode("a", "0.0", "1.0", "2.0");
     Node* b = Point3DNode("b", "a.x", "1.0", "2.0");
     QVERIFY(b->getDatum("x")->getValid() == true);
-    a->getDatum<NameDatum>("name")->setExpr("q");
+    a->getDatum<NameDatum>("_name")->setExpr("q");
     QVERIFY(b->getDatum("x")->getValid() == false);
 
     delete a;

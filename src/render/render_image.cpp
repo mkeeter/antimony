@@ -3,14 +3,12 @@
 #include <QCoreApplication>
 
 #include "render/render_image.h"
-#include "ui/canvas.h"
-#include "ui/depth_image.h"
+#include "ui/viewport/depth_image.h"
 
 #include "fab/types/shape.h"
-#include "util/region.h"
-#include "tree/render.h"
-
-#include "formats/png.h"
+#include "fab/util/region.h"
+#include "fab/tree/render.h"
+#include "fab/formats/png.h"
 
 RenderImage::RenderImage(Bounds b, QVector3D pos, float scale)
     : QObject(), bounds(b), pos(pos), scale(scale),
@@ -65,6 +63,7 @@ void RenderImage::render(Shape *shape)
 
     free_arrays(&r);
 
+    // Copy from bitmap arrays into a QImage
     for (int j=0; j < depth.height(); ++j)
     {
         for (int i=0; i < depth.width(); ++i)
@@ -98,13 +97,9 @@ void RenderImage::applyGradient(bool direction)
             if (pix)
             {
                 if (direction)
-                {
                     pix *= j / float(depth.height());
-                }
                 else
-                {
                     pix *= 1 - j / float(depth.height());
-                }
                 depth.setPixel(i, j, pix | (pix << 8) | (pix << 16));
             }
         }
@@ -116,11 +111,11 @@ void RenderImage::setNormals(float xy, float z)
     shaded.fill((int(z * 255) << 16) | int(xy * 255));
 }
 
-DepthImageItem* RenderImage::addToCanvas(Canvas *canvas)
+DepthImageItem* RenderImage::addToViewport(Viewport* viewport)
 {
     return new DepthImageItem(pos,
             QVector3D(bounds.xmax - bounds.xmin,
                       bounds.ymax - bounds.ymin,
-                      bounds.zmax - bounds.zmin), depth, shaded, canvas);
+                      bounds.zmax - bounds.zmin), depth, shaded, viewport);
 }
 

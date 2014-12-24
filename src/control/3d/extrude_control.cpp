@@ -3,11 +3,10 @@
 #include <QVector3D>
 
 #include "control/3d/extrude_control.h"
-#include "ui/canvas.h"
-#include "ui/colors.h"
+#include "ui/util/colors.h"
 
-_ExtrudeSpanControl::_ExtrudeSpanControl(Canvas* canvas, Node* node, QGraphicsItem* parent)
-    : WireframeControl(canvas, node, parent)
+_ExtrudeSpanControl::_ExtrudeSpanControl(Node* node, QObject* parent)
+    : WireframeControl(node, parent)
 {
     watchDatums({"_x", "_y", "z0", "z1", "_scale"});
 }
@@ -43,9 +42,9 @@ QColor _ExtrudeSpanControl::defaultPenColor() const
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ExtrudeControl::ExtrudeControl(Canvas* canvas, Node* node)
-    : WireframeControl(canvas, node),
-      span(new _ExtrudeSpanControl(canvas, node, this))
+ExtrudeControl::ExtrudeControl(Node* node, QObject* parent)
+    : WireframeControl(node, parent),
+      span(new _ExtrudeSpanControl(node, this))
 
 {
     watchDatums({"_x", "_y", "z0", "z1", "_scale"});
@@ -71,13 +70,6 @@ void ExtrudeControl::drag(QVector3D c, QVector3D d)
     dragValue("z0", d.z());
     dragValue("z1", d.z());
 }
-
-QPointF ExtrudeControl::inspectorPosition() const
-{
-    return canvas->worldToScene(QVector3D(
-                getValue("_x"), getValue("_y"), getValue("z0")));
-}
-
 
 QColor ExtrudeControl::defaultPenColor() const
 {

@@ -1,16 +1,13 @@
 #include <Python.h>
 #include "control/deform/scaley_control.h"
 
-#include "ui/canvas.h"
-
-ScaleYHandle::ScaleYHandle(Canvas* canvas, Node* node, bool pos,
-                           QGraphicsItem* parent)
-    : WireframeControl(canvas, node, parent), positive(pos)
+_ScaleYHandle::_ScaleYHandle(Node* node, bool pos, QObject* parent)
+    : WireframeControl(node, parent), positive(pos)
 {
     watchDatums({"_x","y","_z","s"});
 }
 
-QVector<QVector<QVector3D>> ScaleYHandle::lines() const
+QVector<QVector<QVector3D>> _ScaleYHandle::lines() const
 {
     QVector3D p(getValue("_x"), getValue("y"), getValue("_z"));
     float s = getValue("s");
@@ -27,17 +24,17 @@ QVector<QVector<QVector3D>> ScaleYHandle::lines() const
     }
 }
 
-void ScaleYHandle::drag(QVector3D center, QVector3D delta)
+void _ScaleYHandle::drag(QVector3D center, QVector3D delta)
 {
     dragValue("s", positive ? delta.y() : -delta.y());
     Q_UNUSED(center);
 }
 ////////////////////////////////////////////////////////////////////////////////
 
-ScaleYControl::ScaleYControl(Canvas* canvas, Node* node)
-    : WireframeControl(canvas, node),
-      positive_handle(new ScaleYHandle(canvas, node, true, this)),
-      negative_handle(new ScaleYHandle(canvas, node, false, this))
+ScaleYControl::ScaleYControl(Node* node, QObject* parent)
+    : WireframeControl(node, parent),
+      positive_handle(new _ScaleYHandle(node, true, this)),
+      negative_handle(new _ScaleYHandle(node, false, this))
 {
     watchDatums({"_x","y","_z","s"});
 }
@@ -50,15 +47,11 @@ void ScaleYControl::drag(QVector3D c, QVector3D d)
     Q_UNUSED(c);
 }
 
-QPointF ScaleYControl::inspectorPosition() const
-{
-    return canvas->worldToScene(position());
-}
-
 QVector3D ScaleYControl::position() const
 {
     return QVector3D(getValue("_x"), getValue("y"), getValue("_z"));
 }
+
 QVector<QVector<QVector3D>> ScaleYControl::lines() const
 {
     QVector3D center = position();

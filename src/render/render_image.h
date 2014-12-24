@@ -11,7 +11,7 @@
 #include "fab/types/bounds.h"
 
 struct Shape;
-class Canvas;
+class Viewport;
 class DepthImageItem;
 
 class RenderImage : public QObject
@@ -21,7 +21,7 @@ public:
     explicit RenderImage(Bounds b, QVector3D pos, float scale);
     void render(Shape* shape);
     void applyGradient(bool direction);
-    DepthImageItem* addToCanvas(Canvas* canvas);
+    DepthImageItem* addToViewport(Viewport* viewport);
 
     /** Sets the normals in the shaded image.
      *  (used for 2D image shading).

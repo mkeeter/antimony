@@ -3,14 +3,14 @@
 #include <QSignalSpy>
 
 #include "test_shape.h"
-#include "datum/shape_datum.h"
-#include "datum/output_datum.h"
-#include "datum/function_datum.h"
+#include "graph/datum/datums/shape_input_datum.h"
+#include "graph/datum/datums/shape_output_datum.h"
+#include "graph/datum/datums/shape_function_datum.h"
 #include "graph/datum/datums/float_datum.h"
-#include "datum/link.h"
+#include "graph/datum/link.h"
 
-#include "node/node.h"
-#include "node/3d.h"
+#include "graph/node/node.h"
+#include "graph/node/nodes/3d.h"
 
 #include "fab/types/shape.h"
 
@@ -22,7 +22,7 @@ TestShape::TestShape(QObject* parent)
 
 void TestShape::MakeEmptyShape()
 {
-    ShapeInputDatum* d = new ShapeDatum("s");
+    ShapeInputDatum* d = new ShapeInputDatum("s");
     QVERIFY(d->getValid());
     delete d;
 }
@@ -43,7 +43,7 @@ void TestShape::ShapeInput()
     Node* p = Point3DNode("p", "0.0", "0.0", "1.0");
     ShapeFunctionDatum* a = new ShapeFunctionDatum("a", p, "circle", {"x","y","z"});
 
-    ShapeInputDatum* d = new ShapeDatum("d");
+    ShapeInputDatum* d = new ShapeInputDatum("d");
     Link* link = a->linkFrom();
     QVERIFY(d->acceptsLink(link));
 
@@ -61,7 +61,7 @@ void TestShape::MultiShapeInput()
     ShapeFunctionDatum* a = new ShapeFunctionDatum("a", p, "circle", {"x","x","y"});
     ShapeFunctionDatum* b = new ShapeFunctionDatum("b", p, "circle", {"x","y","z"});
 
-    ShapeInputDatum* d = new ShapeDatum("d");
+    ShapeInputDatum* d = new ShapeInputDatum("d");
     Link* la = a->linkFrom();
     Link* lb = b->linkFrom();
 
@@ -84,7 +84,7 @@ void TestShape::DeleteInput()
     Node* p = Point3DNode("p", "0.0", "1.0", "!.0");
     ShapeFunctionDatum* a = new ShapeFunctionDatum("a", p, "circle", {"x","y","z"});
 
-    ShapeInputDatum* d = new ShapeDatum("d");
+    ShapeInputDatum* d = new ShapeInputDatum("d");
     Link* link = a->linkFrom();
 
     d->addLink(link);

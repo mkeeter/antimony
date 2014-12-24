@@ -8,19 +8,19 @@
 class Datum;
 class RenderTask;
 class DepthImageItem;
-class Canvas;
+class Viewport;
 
 class RenderWorker : public QObject
 {
     Q_OBJECT
 public:
-    explicit RenderWorker(Datum* datum);
+    explicit RenderWorker(Datum* datum, Viewport* viewport);
     ~RenderWorker();
 
     static bool accepts(Datum* d);
 public slots:
     void onDatumChanged();
-    void onDatumDeleted();
+    void deleteIfNotRunning();
     void onTaskFinished();
     void onThreadFinished();
 
@@ -47,11 +47,11 @@ protected:
     QThread* thread;
     RenderTask* current;
     RenderTask* next;
-    DepthImageItem* depth_image;
+    QPointer<DepthImageItem> depth_image;
 
     bool running;
 
-    Canvas* canvas;
+    QPointer<Viewport> viewport;
 };
 
 #endif // RENDER_TASK_H

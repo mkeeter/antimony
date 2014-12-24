@@ -9,27 +9,27 @@ include(fab.pri)
 include(shared.pri)
 
 SOURCES += \
-    ../test/main.cpp \
-    ../test/test_datum.cpp \
-    ../test/test_node.cpp \
-    ../test/test_name.cpp \
-    ../test/test_proxy.cpp \
-    ../test/test_fab.cpp \
-    ../test/test_script.cpp \
-    ../test/test_shape.cpp \
-    ../test/test_function.cpp \
-    ../test/test_serialize.cpp \
+    ../src/test/main.cpp \
+    ../src/test/test_datum.cpp \
+    ../src/test/test_node.cpp \
+    ../src/test/test_name.cpp \
+    ../src/test/test_proxy.cpp \
+    ../src/test/test_fab.cpp \
+    ../src/test/test_script.cpp \
+    ../src/test/test_shape.cpp \
+    ../src/test/test_function.cpp \
+    ../src/test/test_serialize.cpp \
 
 HEADERS += \
-    ../test/test_datum.h \
-    ../test/test_node.h \
-    ../test/test_name.h \
-    ../test/test_proxy.h \
-    ../test/test_fab.h \
-    ../test/test_script.h \
-    ../test/test_shape.h \
-    ../test/test_function.h \
-    ../test/test_serialize.h \
+    ../src/test/test_datum.h \
+    ../src/test/test_node.h \
+    ../src/test/test_name.h \
+    ../src/test/test_proxy.h \
+    ../src/test/test_fab.h \
+    ../src/test/test_script.h \
+    ../src/test/test_shape.h \
+    ../src/test/test_function.h \
+    ../src/test/test_serialize.h \
 
 
 

@@ -49,7 +49,7 @@ static PyObject* NodeProxy_getAttro(PyObject* o, PyObject* attr_name)
             // Also connect the node's name as an upstream datum
             // (since if the name changes, the expression may become invalid)
             Node* n = dynamic_cast<Node*>(datum->parent());
-            p->caller->connectUpstream(n->getDatum("name"));
+            p->caller->connectUpstream(n->getDatum("_name"));
         }
 
         if (failed)

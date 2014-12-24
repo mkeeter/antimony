@@ -1,29 +1,34 @@
 #include <Python.h>
 
 #include <QKeySequence>
+#include <QMouseEvent>
+#include <QDebug>
+
+#include "app/app.h"
 
 #include "ui_main_window.h"
-
 #include "ui/main_window.h"
-#include "ui/canvas.h"
-#include "ui/script/script_editor.h"
+#include "ui/canvas/canvas.h"
+#include "ui/canvas/inspector/inspector.h"
+#include "ui/viewport/viewport.h"
+#include "ui/script/editor.h"
 
+#include "control/proxy.h"
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    canvas = ui->canvas;
+
+    setAttribute(Qt::WA_DeleteOnClose);
 
     QActionGroup* view_actions = new QActionGroup(this);
     view_actions->addAction(ui->actionShaded);
     view_actions->addAction(ui->actionHeightmap);
     view_actions->setExclusive(true);
-    connect(ui->actionShaded, SIGNAL(triggered()),
-            canvas->scene, SLOT(invalidate()));
-    connect(ui->actionHeightmap, SIGNAL(triggered()),
-            canvas->scene, SLOT(invalidate()));
+
+    connectActions(App::instance());
+    setShortcuts();
 
     populateMenu(ui->menuAdd);
 
@@ -35,18 +40,74 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::updateMenus()
+{
+    if (dynamic_cast<Canvas*>(centralWidget()))
+    {
+        ui->menuView->deleteLater();
+    }
+    else if (dynamic_cast<ScriptEditor*>(centralWidget()))
+    {
+        ui->menuView->deleteLater();
+        ui->menuAdd->deleteLater();
+    }
+    else
+    {
+        for (auto v : findChildren<Viewport*>())
+        {
+            connect(ui->actionShaded, SIGNAL(triggered()),
+                    v->scene, SLOT(invalidate()));
+            connect(ui->actionHeightmap, SIGNAL(triggered()),
+                    v->scene, SLOT(invalidate()));
+        }
+    }
+}
+
+void MainWindow::connectActions(App* app)
+{
+    // File menu
+    connect(ui->actionSave, &QAction::triggered,
+            app, &App::onSave);
+    connect(ui->actionSaveAs, &QAction::triggered,
+            app, &App::onSaveAs);
+    connect(ui->actionNew, &QAction::triggered,
+            app, &App::onNew);
+    connect(ui->actionOpen, &QAction::triggered,
+            app, &App::onOpen);
+    connect(ui->actionQuit, &QAction::triggered,
+            app, &App::quit);
+    connect(ui->actionClose, &QAction::triggered,
+            this, &MainWindow::deleteLater);
+
+    // View window
+    connect(ui->actionNewCanvas, &QAction::triggered,
+            app, &App::newCanvasWindow);
+    connect(ui->actionNewViewport, &QAction::triggered,
+            app, &App::newViewportWindow);
+    connect(ui->actionNewQuad, &QAction::triggered,
+            app, &App::newQuadWindow);
+
+    // Export menu
+    connect(ui->actionExportMesh, &QAction::triggered,
+            app, &App::onExportSTL);
+    connect(ui->actionExportHeightmap, &QAction::triggered,
+            app, &App::onExportHeightmap);
+    connect(ui->actionExportJSON, &QAction::triggered,
+            app, &App::onExportJSON);
+
+    // Help menu
+    connect(ui->actionAbout, &QAction::triggered,
+            app, &App::onAbout);
+}
+
 void MainWindow::setShortcuts()
 {
     ui->actionNew->setShortcuts(QKeySequence::New);
     ui->actionOpen->setShortcuts(QKeySequence::Open);
     ui->actionSave->setShortcuts(QKeySequence::Save);
     ui->actionSaveAs->setShortcuts(QKeySequence::SaveAs);
+    ui->actionClose->setShortcuts(QKeySequence::Close);
     ui->actionQuit->setShortcuts(QKeySequence::Quit);
-}
-
-void MainWindow::openScript(ScriptDatum *d)
-{
-    new ScriptEditorItem(d, ui->canvas);
 }
 
 bool MainWindow::isShaded() const
@@ -57,8 +118,6 @@ bool MainWindow::isShaded() const
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "graph/node/node.h"
-#include "graph/node/manager.h"
-#include "control/control.h"
 
 #include "graph/node/nodes/2d.h"
 #include "graph/node/nodes/3d.h"
@@ -66,28 +125,56 @@ bool MainWindow::isShaded() const
 #include "graph/node/nodes/meta.h"
 #include "graph/node/nodes/transforms.h"
 #include "graph/node/nodes/deform.h"
-#include "graph/node/nodes/variable.h"
 #include "graph/node/nodes/iterate.h"
 
 template <Node* (*f)(float, float, float, float, QObject*), bool recenter>
 void MainWindow::createNew()
 {
+    auto v = findChild<Viewport*>();
+    auto c = findChild<Canvas*>();
+
+    Q_ASSERT((v != NULL) ^ (c != NULL));
+
+    QGraphicsView* view = (v != NULL) ?
+        static_cast<QGraphicsView*>(v) :
+        static_cast<QGraphicsView*>(c);
+
     QPoint mouse_pos = recenter
-        ? canvas->rect().center()
-        : canvas->mapFromGlobal(QCursor::pos());
-    QPointF scene_pos = canvas->mapToScene(mouse_pos);
-    QVector3D obj_pos = canvas->sceneToWorld(scene_pos);
+        ? view->rect().center()
+        : view->mapFromGlobal(QCursor::pos());
+    QPointF scene_pos = view->mapToScene(mouse_pos);
 
     if (recenter)
+        QCursor::setPos(view->mapToGlobal(mouse_pos));
+
+    Node* n;
+    if (v)
     {
-        QCursor::setPos(canvas->mapToGlobal(mouse_pos));
+        QVector3D obj_pos = v->sceneToWorld(scene_pos);
+        n = f(obj_pos.x(), obj_pos.y(), obj_pos.z(),
+              100 / v->getScale(), NULL);
+    }
+    else
+    {
+        n = f(0, 0, 0, 1, NULL);
     }
 
-    Node* n = f(obj_pos.x(), obj_pos.y(), obj_pos.z(),
-                100 / canvas->getScale(), NULL);
-    Control* c = Control::makeControlFor(canvas, n);
-    c->grabMouse();
-    c->setClickPos(scene_pos);
+    App::instance()->newNode(n);
+
+    if (v)
+    {
+        if (auto proxy = v->getControlProxy(n))
+            proxy->grabMouse();
+    }
+    else if (c)
+    {
+        auto inspector = c->getNodeInspector(n);
+        Q_ASSERT(inspector);
+        inspector->setSelected(true);
+        inspector->setPos(scene_pos);
+        inspector->setDragging(true);
+        inspector->grabMouse();
+    }
 }
 
 template <Node* (*f)(float, float, float, float, QObject*),
@@ -95,11 +182,9 @@ template <Node* (*f)(float, float, float, float, QObject*),
 void MainWindow::addNodeToMenu(QString category, QString name,
                                QMenu* menu, QMap<QString, QMenu*>* submenus)
 {
-    if (!submenus->contains(category))
-    {
+    if (submenus && !submenus->contains(category))
         (*submenus)[category] = menu->addMenu(category);
-    }
-    QAction* a = (*submenus)[category]->addAction(name);
+    QAction* a = (submenus ? (*submenus)[category] : menu)->addAction(name);
     connect(a, &QAction::triggered, this, &MainWindow::createNew<f, recenter>);
 }
 
@@ -146,21 +231,15 @@ void MainWindow::_populateMenu(QMenu* menu)
     addNodeToMenu<ScaleYNode, recenter>("Deform", "Scale (Y)", menu, &submenus);
     addNodeToMenu<ScaleZNode, recenter>("Deform", "Scale (Z)", menu, &submenus);
 
-    addNodeToMenu<SliderNode, recenter>("Variable", "Slider", menu, &submenus);
+    menu->addSeparator();
 
-    addNodeToMenu<ScriptNode, recenter>("Meta", "Script", menu, &submenus);
-    addNodeToMenu<EquationNode, recenter>("Meta", "Show equation", menu, &submenus);
+    addNodeToMenu<ScriptNode, recenter>("", "Script", menu, NULL);
 }
 
 void MainWindow::populateMenu(QMenu* menu, bool recenter)
 {
     if (recenter)
-    {
         _populateMenu<true>(menu);
-    }
     else
-    {
         _populateMenu<false>(menu);
-    }
-
 }

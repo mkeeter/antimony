@@ -30,11 +30,10 @@ bool EvalDatum::validateExpr(QString e) const
 PyObject* EvalDatum::validateType(PyObject* v) const
 {
     if (v == NULL)
-    {
         return NULL;
-    } else if (PyObject_TypeCheck(v, getType())) {
+    else if (PyObject_TypeCheck(v, getType()))
         return v;
-    }
+
     else
     {
         // Attempt to cast into the desired type.
@@ -109,13 +108,9 @@ void EvalDatum::setExpr(QString new_expr)
 QString EvalDatum::getString() const
 {
     if (hasInputValue())
-    {
         return input_handler->getString();
-    }
     else
-    {
         return expr;
-    }
 }
 
 void EvalDatum::onPyError()

@@ -2,42 +2,45 @@
 
 #include <QDebug>
 
-#include "app/app.h"
-
 #include "render/render_task.h"
 #include "render/render_worker.h"
 #include "render/render_image.h"
 
-#include "ui/depth_image.h"
+#include "ui/viewport/depth_image.h"
 
 #include "graph/datum/datum.h"
 #include "graph/datum/link.h"
 
-#include "ui/canvas.h"
+#include "ui/viewport/viewport.h"
 
 #include "fab/fab.h"
 
-RenderWorker::RenderWorker(Datum* datum)
+RenderWorker::RenderWorker(Datum* datum, Viewport* viewport)
     : QObject(NULL), datum(datum), thread(NULL), current(NULL),
-      next(NULL), depth_image(NULL), running(false),
-      canvas(App::instance()->getCanvas())
+      next(NULL), depth_image(NULL), running(false), viewport(viewport)
 {
-    connect(datum, SIGNAL(changed()),
-            this, SLOT(onDatumChanged()));
-    connect(datum, SIGNAL(connectionChanged()),
-            this, SLOT(onDatumChanged()));
-    connect(datum, SIGNAL(destroyed()),
-            this, SLOT(onDatumDeleted()));
-    connect(canvas, SIGNAL(viewChanged()),
-            this, SLOT(onDatumChanged()));
+    connect(datum, &Datum::changed,
+            this, &RenderWorker::onDatumChanged);
+    connect(datum, &Datum::connectionChanged,
+            this, &RenderWorker::onDatumChanged);
+
+    // If the Datum or Viewport is destroyed, delete this worker if a task
+    // isn't running.  If a task is running, the deletion criterion will be
+    // checked on task completion and the worker will be deleted then.
+    connect(datum, &Datum::destroyed,
+            this, &RenderWorker::deleteIfNotRunning);
+    connect(viewport, &Viewport::destroyed,
+            this, &RenderWorker::deleteIfNotRunning);
+    connect(viewport, &Viewport::viewChanged,
+            this, &RenderWorker::onDatumChanged);
+    emit(datum->changed());
 }
 
 RenderWorker::~RenderWorker()
 {
+    qDebug() << "Deleting RenderWorker";
     if (depth_image)
-    {
         depth_image->deleteLater();
-    }
 }
 
 bool RenderWorker::accepts(Datum *d)
@@ -45,20 +48,19 @@ bool RenderWorker::accepts(Datum *d)
     return d->getType() == fab::ShapeType;
 }
 
-void RenderWorker::onDatumDeleted()
+void RenderWorker::deleteIfNotRunning()
 {
+    // If this worker isn't running, call deleteLater.
+    // In the case that it is running, we check the deletion conditions
+    // at the beginning of onThreadFinished (so we'll get deleted then).
     if (!running)
-    {
         deleteLater();
-    }
 }
 
 bool RenderWorker::hasNoOutput()
 {
     if (!datum)
-    {
         return false;
-    }
 
     if (!datum->hasOutput())
     {
@@ -79,41 +81,34 @@ void RenderWorker::onDatumChanged()
     if (datum->getValid() && datum->getValue() && hasNoOutput())
     {
         if (next)
-        {
             next->deleteLater();
-        }
+
         // Tell in-progress renders to abort.
         emit(abort());
 
         next = new RenderTask(datum->getValue(),
-                                canvas->getTransformMatrix(),
-                                canvas->getScale() / (1 << 4),
-                                5);
+                              viewport->getTransformMatrix(),
+                              viewport->getScale() / (1 << 4),
+                              5);
 
         if (!running)
-        {
             startNextRender();
-        }
     }
 }
 
 void RenderWorker::onTaskFinished()
 {
     if (!hasNoOutput())
-    {
         clearImage();
-    }
 
-    if (current->hasFinishedRender() && hasNoOutput())
+    if (current->hasFinishedRender() && hasNoOutput() && viewport)
     {
         clearImage();
-        depth_image = current->getDepthImage(canvas);
+        depth_image = current->getDepthImage(viewport);
     }
 
     if (!next)
-    {
         next = current->getNext();
-    }
 
     current->deleteLater();
 }
@@ -131,14 +126,13 @@ void RenderWorker::onThreadFinished()
 {
     running = false;
 
-    // If the datum which we're rendering has been deleted, clean up
-    // and call deleteLater on oneself.
-    if (datum.isNull())
+    // If the datum which we're rendering has been deleted or the
+    // target viewport has been deleted, clean up and call deleteLater
+    // on oneself.
+    if (datum.isNull() || viewport.isNull())
     {
         if (next)
-        {
             next->deleteLater();
-        }
         deleteLater();
     }
 
@@ -162,22 +156,18 @@ void RenderWorker::startNextRender()
     running = true;
 
     // Halt rendering when the abort signal is emitted.
-    connect(this, SIGNAL(abort()),
-            current, SIGNAL(halt()));
+    connect(this, &RenderWorker::abort, current, &RenderTask::halt);
 
-    connect(thread, SIGNAL(started()),
-            current, SLOT(render()));
+    connect(thread, &QThread::started, current, &RenderTask::render);
 
-    connect(current, SIGNAL(finished()),
-            this, SLOT(onTaskFinished()));
+    connect(current, &RenderTask::finished,
+            this, &RenderWorker::onTaskFinished);
 
-    connect(current, SIGNAL(destroyed()),
-            thread, SLOT(quit()));
+    connect(current, &RenderWorker::destroyed, thread, &QThread::quit);
 
-    connect(thread, SIGNAL(finished()),
-            this, SLOT(onThreadFinished()));
-    connect(thread, SIGNAL(finished()),
-            thread, SLOT(deleteLater()));
+    connect(thread, &QThread::finished,
+            this, &RenderWorker::onThreadFinished);
+    connect(thread, &QThread::finished, thread, &QThread::deleteLater);
 
     thread->start();
 }

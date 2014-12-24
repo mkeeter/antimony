@@ -5,6 +5,7 @@
 #include "graph/datum/datums/shape_output_datum.h"
 #include "graph/datum/datums/script_datum.h"
 #include "graph/datum/datums/float_datum.h"
+#include "graph/datum/datums/float_output_datum.h"
 
 #include "graph/node/node.h"
 #include "graph/node/manager.h"
@@ -44,7 +45,7 @@ void ScriptDatum::modifyGlobalsDict(PyObject* g)
 
 bool ScriptDatum::isValidName(QString name) const
 {
-    return name.size() && name.at(0) != '_' && name != "name" &&
+    return name.size() && name.at(0) != '_' &&
            name != "script" && !touched.contains(name);
 }
 
@@ -62,7 +63,11 @@ PyObject* ScriptDatum::makeInput(QString name, PyTypeObject *type)
     // Save that this datum is still present in the script
     touched.insert(name);
 
-    if (d != NULL && d->getType() != type)
+    const auto datum_type =
+        (type == &PyFloat_Type)  ? DatumType::FLOAT :
+        (type == fab::ShapeType) ? DatumType::SHAPE_INPUT : 0;
+
+    if (d != NULL && d->getDatumType() != datum_type)
     {
         delete d;
         d = NULL;
@@ -115,7 +120,11 @@ PyObject* ScriptDatum::makeOutput(QString name, PyObject *out)
     // Save that this datum is still present in the script
     touched.insert(name);
 
-    if (d != NULL && d->getType() != out->ob_type)
+    const auto datum_type =
+        (out->ob_type == &PyFloat_Type)  ? DatumType::FLOAT_OUTPUT :
+        (out->ob_type == fab::ShapeType) ? DatumType::SHAPE_OUTPUT : 0;
+
+    if (d != NULL && d->getDatumType() != datum_type)
     {
         delete d;
         d = NULL;
@@ -127,6 +136,10 @@ PyObject* ScriptDatum::makeOutput(QString name, PyObject *out)
         if (out->ob_type == fab::ShapeType)
         {
             d = new ShapeOutputDatum(name, parent());
+        }
+        else if (out->ob_type == &PyFloat_Type)
+        {
+            d = new FloatOutputDatum(name, parent());
         }
         else
         {
@@ -160,7 +173,7 @@ PyObject* ScriptDatum::getCurrentValue()
         {
             QString name = d->objectName();
             if (d != this && name.size() && name.at(0) != '_' &&
-                name != "name" && !touched.contains(name))
+                !touched.contains(name))
             {
                 datums_changed = true;
                 delete d;
@@ -171,9 +184,7 @@ PyObject* ScriptDatum::getCurrentValue()
     globals = NULL;
 
     if (datums_changed)
-    {
-        emit(datumsChanged());
-    }
+        emit(static_cast<Node*>(parent())->datumsChanged());
     return out;
 }
 

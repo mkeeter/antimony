@@ -2,14 +2,15 @@
 #define SPHERE_CONTROL_H
 
 #include "control/wireframe.h"
+#include "control/dummy.h"
 
 class Point3DControl;
 
-class SphereRadiusControl : public WireframeControl
+class _SphereRadiusControl : public WireframeControl
 {
 public:
-    explicit SphereRadiusControl(Canvas* canvas, Node* node, QGraphicsItem* parent);
-    QVector<QVector<QVector3D>> lines() const override;
+    explicit _SphereRadiusControl(Node* node, QObject* parent);
+    QVector<QVector<QVector3D>> lines(QMatrix4x4 m, QMatrix4x4 t) const override;
     void drag(QVector3D center, QVector3D delta) override;
     QVector3D center() const;
 };
@@ -19,17 +20,12 @@ public:
 class SphereControl : public DummyControl
 {
 public:
-    explicit SphereControl(Canvas* canvas, Node* node);
+    explicit SphereControl(Node* node, QObject* parent=NULL);
 
 protected:
-    QPointF baseInputPosition() const override;
-    QPointF baseOutputPosition() const override;
-
     void drag(QVector3D center, QVector3D delta) override;
-    QPointF inspectorPosition() const override;
-    QRectF bounds() const override;
 
-    SphereRadiusControl* radius;
+    _SphereRadiusControl* radius;
     Point3DControl* center;
 };
 

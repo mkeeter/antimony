@@ -1,11 +1,9 @@
 #include <Python.h>
 #include "control/deform/repel_control.h"
 
-#include "ui/canvas.h"
-
-RepelControl::RepelControl(Canvas* canvas, Node* node)
-    : WireframeControl(canvas, node),
-      radius(new RepelRadiusControl(canvas, node, this))
+RepelControl::RepelControl(Node* node, QObject* parent)
+    : WireframeControl(node, parent),
+      radius(new _RepelRadiusControl(node, this))
 {
     watchDatums({"x","y","z","r"});
 }
@@ -16,24 +14,6 @@ void RepelControl::drag(QVector3D c, QVector3D d)
     dragValue("y", d.y());
     dragValue("z", d.z());
     Q_UNUSED(c);
-}
-
-QPointF RepelControl::inspectorPosition() const
-{
-    return canvas->worldToScene(
-            QVector3D(getValue("x"), getValue("y"), getValue("z")));
-}
-
-QPointF RepelControl::baseInputPosition() const
-{
-    return (radius->bounds().bottomLeft() +
-            radius->bounds().topLeft()) / 2;
-}
-
-QPointF RepelControl::baseOutputPosition() const
-{
-    return (radius->bounds().bottomRight() +
-            radius->bounds().topRight()) / 2;
 }
 
 QVector<QVector<QVector3D>> RepelControl::lines() const
