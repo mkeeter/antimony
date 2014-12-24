@@ -85,7 +85,7 @@ float NodeInspector::labelWidth() const
 QRectF NodeInspector::boundingRect() const
 {
     float height = title->boundingRect().height() + 4;
-    float width = title->boundingRect().width() + 12;
+    float width = fmax(200, title->boundingRect().width() + 12);
 
     for (auto row : rows)
     {
