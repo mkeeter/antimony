@@ -39,7 +39,6 @@ NodeInspector::NodeInspector(Node* node)
 
     setFlags(QGraphicsItem::ItemIsMovable |
              QGraphicsItem::ItemIsSelectable |
-             QGraphicsItem::ItemIsFocusable |
              QGraphicsItem::ItemSendsGeometryChanges);
 
     title->setPos(6, 2);
@@ -54,14 +53,6 @@ NodeInspector::NodeInspector(Node* node)
 
     populateLists(node);
     setZValue(-2);
-}
-
-void NodeInspector::keyPressEvent(QKeyEvent* event)
-{
-    if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace)
-        node->deleteLater();
-    else
-        event->ignore();
 }
 
 float NodeInspector::labelWidth() const

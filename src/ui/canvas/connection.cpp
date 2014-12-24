@@ -219,6 +219,7 @@ void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
     ungrabMouse();
     clearFocus();
+    setFlag(QGraphicsItem::ItemIsFocusable, false);
 
     InputPort* target = gscene()->getInputPortAt(endPos());
     Datum* datum = target ? target->getDatum() : NULL;
@@ -272,11 +273,6 @@ void Connection::keyPressEvent(QKeyEvent* event)
         updateSnap();
         checkDragTarget();
         prepareGeometryChange();
-    }
-    else if (event->key() == Qt::Key_Delete ||
-             event->key() == Qt::Key_Backspace)
-    {
-        link->deleteLater();
     }
     else
     {

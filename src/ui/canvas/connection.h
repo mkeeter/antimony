@@ -4,7 +4,8 @@
 #include <QGraphicsObject>
 #include <QPointer>
 
-class Link;
+#include "graph/datum/link.h"
+
 class Datum;
 class Node;
 class InputPort;
@@ -23,6 +24,8 @@ public:
     /* Makes connections between inspector port signals and redraw.
      */
     void makeSceneConnections();
+
+    void deleteLink() { link->deleteLater(); }
 
 public slots:
     void onInspectorMoved();

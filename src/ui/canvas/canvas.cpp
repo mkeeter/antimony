@@ -8,6 +8,7 @@
 
 #include "ui/canvas/canvas.h"
 #include "ui/canvas/inspector/inspector.h"
+#include "ui/canvas/connection.h"
 #include "ui/util/colors.h"
 #include "ui/main_window.h"
 
@@ -63,9 +64,20 @@ void Canvas::keyPressEvent(QKeyEvent *event)
 {
     QGraphicsView::keyPressEvent(event);
     if (event->isAccepted())
+    {
         return;
-
-    if (event->key() == Qt::Key_A &&
+    }
+    else if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace)
+    {
+        for (auto i : scene->selectedItems())
+        {
+            if (auto ni = dynamic_cast<NodeInspector*>(i))
+                ni->deleteNode();
+            else if (auto c = dynamic_cast<Connection*>(i))
+                c->deleteLink();
+        }
+    }
+    else if (event->key() == Qt::Key_A &&
                 (event->modifiers() & Qt::ShiftModifier))
     {
         QMenu* m = new QMenu(this);

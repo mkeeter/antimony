@@ -76,15 +76,16 @@ public slots:
 
     void setDragging(bool d) { dragging = d; }
 
+    /*
+     *  Trigger self-destruction by deleting the node.
+     */
+    void deleteNode() { node->deleteLater(); }
+
 protected:
     /*
      *  On object moved, emit moved signal.
      */
     QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
-
-    /** On delete or backspace, delete node.
-     */
-    void keyPressEvent(QKeyEvent* event) override;
 
     /** Returns the width of the largest label.
      */
