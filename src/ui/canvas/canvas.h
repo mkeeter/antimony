@@ -29,6 +29,11 @@ protected:
      */
     void mouseMoveEvent(QMouseEvent* event) override;
 
+    /*
+     *  On mouse release, do the multi-select thing.
+     */
+    void mouseReleaseEvent(QMouseEvent* event) override;
+
     /*  When the scroll wheel is rolled, zoom about the cursor.
      */
     void wheelEvent(QWheelEvent* event) override;
@@ -37,15 +42,22 @@ protected:
      */
     void keyPressEvent(QKeyEvent *event) override;
 
-    /** Draws shaded panels in the background.
+    /** Draws pixel grid in the background
      */
     void drawBackground(QPainter* painter, const QRectF& rect) override;
+
+    /*
+     *  Draws selection area in the foreground.
+     */
+    void drawForeground(QPainter* painter, const QRectF& rect) override;
 
     /** Pans the scene rectangle.
      */
     void pan(QVector3D d);
 
     QPointF click_pos;
+    QPointF drag_pos;
+    bool selecting;
 };
 
 #endif // CANVAS_H

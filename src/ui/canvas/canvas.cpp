@@ -17,7 +17,7 @@
 #include "graph/datum/link.h"
 
 Canvas::Canvas(QWidget* parent)
-    : QGraphicsView(parent)
+    : QGraphicsView(parent), selecting(false)
 {
     setStyleSheet("QGraphicsView { border-style: none; }");
     setRenderHints(QPainter::Antialiasing);
@@ -41,13 +41,36 @@ void Canvas::mousePressEvent(QMouseEvent* event)
         click_pos = mapToScene(event->pos());
 }
 
+void Canvas::mouseReleaseEvent(QMouseEvent* event)
+{
+    QGraphicsView::mouseReleaseEvent(event);
+
+    if (selecting)
+    {
+        QPainterPath p;
+        p.addRect(QRectF(click_pos, drag_pos));
+        scene->setSelectionArea(p);
+        selecting = false;
+        scene->invalidate(QRectF(), QGraphicsScene::ForegroundLayer);
+    }
+}
+
 void Canvas::mouseMoveEvent(QMouseEvent* event)
 {
     QGraphicsView::mouseMoveEvent(event);
     if (scene->mouseGrabberItem() == NULL && event->buttons() == Qt::LeftButton)
     {
-        auto d = click_pos - mapToScene(event->pos());
-        setSceneRect(sceneRect().translated(d.x(), d.y()));
+        if (event->modifiers() & Qt::ShiftModifier)
+        {
+            drag_pos = mapToScene(event->pos());
+            selecting = true;
+            scene->invalidate(QRectF(), QGraphicsScene::ForegroundLayer);
+        }
+        else
+        {
+            auto d = click_pos - mapToScene(event->pos());
+            setSceneRect(sceneRect().translated(d.x(), d.y()));
+        }
     }
 }
 
@@ -101,6 +124,17 @@ void Canvas::drawBackground(QPainter* painter, const QRectF& rect)
     for (int i = int(rect.left() / d) * d; i < rect.right(); i += d)
         for (int j = int(rect.top() / d) * d; j < rect.bottom(); j += d)
             painter->drawPoint(i, j);
+}
+
+void Canvas::drawForeground(QPainter* painter, const QRectF& rect)
+{
+    Q_UNUSED(rect);
+
+    if (selecting)
+    {
+        painter->setPen(QPen(Colors::base05, 2));
+        painter->drawRect(QRectF(click_pos, drag_pos));
+    }
 }
 
 NodeInspector* Canvas::getNodeInspector(Node* n) const
