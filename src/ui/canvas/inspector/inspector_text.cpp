@@ -116,20 +116,13 @@ bool DatumTextItem::eventFilter(QObject* obj, QEvent* event)
         {
             QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
             if (keyEvent->key() == Qt::Key_Tab)
-            {
                 emit tabPressed(this);
-                return true;
-            }
             else if (keyEvent->key() == Qt::Key_Backtab)
-            {
                 emit shiftTabPressed(this);
-                return true;
-            }
-            else if (keyEvent->key() == Qt::Key_Return)
-            {
-                emit returnPressed();
-                return true;
-            }
+            else
+                return false;
+
+            return true;
         }
         return false;
     }
