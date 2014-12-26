@@ -358,7 +358,7 @@ void Viewport::keyPressEvent(QKeyEvent *event)
         while (!dynamic_cast<MainWindow*>(w))
             w = w->parent();
         Q_ASSERT(w);
-        static_cast<MainWindow*>(w)->populateMenu(m, false);
+        static_cast<MainWindow*>(w)->populateMenu(m, false, this);
 
         m->exec(QCursor::pos());
         delete m;

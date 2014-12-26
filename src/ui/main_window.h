@@ -4,6 +4,7 @@
 #include <QMainWindow>
 
 class Canvas;
+class Viewport;
 class ScriptDatum;
 class Node;
 class NodeRoot;
@@ -27,7 +28,7 @@ public:
 
     /** Populate a menu with all of the widgets.
      */
-    void populateMenu(QMenu* menu, bool recenter=true);
+    void populateMenu(QMenu* menu, bool recenter=true, Viewport* v=NULL);
 
     /** Returns True if the Shaded option is checked.
      */
@@ -44,21 +45,22 @@ private:
      */
     void setShortcuts();
 
-    /** Makes a new object of the given class.
+    /*
+     *  Makes a new object of the given class.
+     *
+     *  If recenter is true, snaps object to center of canvas or viewport
+     *  If v is given, use it as the viewport in which to add the object
+     *      (which enables Shift+A adding objects in quad windows)
      */
-    template <Node* (*f)(float, float, float, float, NodeRoot*), bool recenter>
-    void createNew();
+    template <Node* (*f)(float, float, float, float, NodeRoot*)>
+    void createNew(bool recenter, Viewport* v=NULL);
 
     /** Adds a particular node to the "Add" menu.
      */
-    template <Node* (*f)(float, float, float, float, NodeRoot*), bool recenter>
+    template <Node* (*f)(float, float, float, float, NodeRoot*)>
     void addNodeToMenu(QString category, QString name, QMenu* menu,
-                       QMap<QString, QMenu*>* submenus);
-
-    /** Populate a menu with all of the widgets.
-     */
-    template <bool recenter>
-    void _populateMenu(QMenu* menu);
+                       QMap<QString, QMenu*>* submenus,
+                       bool recenter, Viewport* v=NULL);
 
     Ui::MainWindow *ui;
 };
