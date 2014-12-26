@@ -165,7 +165,10 @@ void MainWindow::createNew(bool recenter, Viewport* v)
     if (v)
     {
         if (auto proxy = v->getControlProxy(n))
+        {
+            proxy->setClickPos(scene_pos);
             proxy->grabMouse();
+        }
     }
     else if (c)
     {
