@@ -18,6 +18,11 @@ public slots:
     void onDatumChanged();
 
 protected:
+    /*
+     *  Returns the bounding rectangle of the given line.
+     */
+    void highlightError(int lineno);
+
     QPointer<ScriptDatum> datum;
 };
 

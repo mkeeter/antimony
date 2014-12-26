@@ -58,11 +58,13 @@ void ScriptEditor::onDatumChanged()
         if (!datum->getValid())
         {
             setToolTip(datum->getErrorTraceback());
+            highlightError(datum->getErrorLine());
         }
         else
         {
             setToolTip("");
             QToolTip::hideText();
+            setExtraSelections({});
         }
 
         if (datum->getExpr() != document()->toPlainText())
@@ -73,4 +75,19 @@ void ScriptEditor::onDatumChanged()
         setToolTip("");
         QToolTip::hideText();
     }
+}
+
+void ScriptEditor::highlightError(int lineno)
+{
+    QTextEdit::ExtraSelection line;
+
+    line.format.setBackground(Colors::dim(Colors::red));
+    line.format.setProperty(QTextFormat::FullWidthSelection, true);
+
+    line.cursor = textCursor();
+    line.cursor.setPosition(
+            document()->findBlockByLineNumber(lineno - 1).position());
+    line.cursor.clearSelection();
+
+    setExtraSelections({line});
 }
