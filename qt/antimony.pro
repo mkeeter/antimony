@@ -26,6 +26,7 @@ SOURCES += \
     ../src/app/app.cpp \
     ../src/app/undo/stack.cpp \
     ../src/app/undo/undo_move.cpp \
+    ../src/app/undo/undo_add_link.cpp \
     ../src/ui/main_window.cpp \
     ../src/ui/canvas/canvas.cpp \
     ../src/ui/canvas/scene.cpp \
@@ -57,6 +58,7 @@ HEADERS += \
     ../src/app/app.h \
     ../src/app/undo/stack.h \
     ../src/app/undo/undo_move.h \
+    ../src/app/undo/undo_add_link.h \
     ../src/ui/canvas/canvas.h \
     ../src/ui/canvas/scene.h \
     ../src/ui/canvas/inspector/inspector.h \
