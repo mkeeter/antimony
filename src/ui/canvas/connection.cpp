@@ -36,6 +36,12 @@ void Connection::makeSceneConnections()
     connect(startInspector(), &NodeInspector::moved,
             this, &Connection::onInspectorMoved);
 
+    if (link->hasTarget())
+    {
+        connect(endInspector(), &NodeInspector::moved,
+                this, &Connection::onInspectorMoved);
+    }
+
     auto s = scene();
     Q_ASSERT(s);
     connect(this, &Connection::destroyed, [=]{s->update();});
