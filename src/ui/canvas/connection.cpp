@@ -17,6 +17,7 @@
 
 #include "app/app.h"
 #include "app/undo/undo_add_link.h"
+#include "app/undo/undo_delete_link.h"
 
 Connection::Connection(Link* link)
     : QGraphicsObject(), link(link),
@@ -48,6 +49,12 @@ void Connection::makeSceneConnections()
     auto s = scene();
     Q_ASSERT(s);
     connect(this, &Connection::destroyed, [=]{s->update();});
+}
+
+void Connection::deleteLink()
+{
+    App::instance()->pushStack(new UndoDeleteLinkCommand(
+            static_cast<GraphScene*>(scene()), link));
 }
 
 void Connection::onInspectorMoved()
