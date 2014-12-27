@@ -3,10 +3,12 @@
 
 #include <Python.h>
 
+#include <QPointF>
+
 #include "app/undo/undo_command.h"
 
-#include "graph/node/node.h"
-#include "ui/canvas/scene.h"
+class GraphScene;
+class Node;
 
 class UndoMoveCommand : public UndoCommand
 {
@@ -19,8 +21,8 @@ public:
     void swapNode(Node* a, Node* b) const;
 
 protected:
-    QPointer<GraphScene> g;
-    mutable QPointer<Node> n;
+    GraphScene* g;
+    mutable Node* n;
     QPointF a;
     QPointF b;
 };

@@ -1,6 +1,11 @@
 #include "app/undo/undo_add_link.h"
 #include "app/undo/stack.h"
 
+#include "graph/datum/datum.h"
+#include "graph/datum/link.h"
+
+#include "ui/canvas/scene.h"
+
 UndoAddLinkCommand::UndoAddLinkCommand(GraphScene* g, Link* link)
     : g(g), link(link), start(static_cast<Datum*>(link->parent())),
       end(link->getTarget()), first(true)
@@ -19,10 +24,6 @@ void UndoAddLinkCommand::redo()
     }
     else
     {
-        Q_ASSERT(g);
-        Q_ASSERT(start);
-        Q_ASSERT(end);
-
         auto new_link = start->linkFrom();
         Q_ASSERT(end->acceptsLink(new_link));
         end->addLink(new_link);

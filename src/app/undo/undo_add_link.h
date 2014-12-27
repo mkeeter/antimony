@@ -5,10 +5,9 @@
 
 #include "app/undo/undo_command.h"
 
-#include "graph/datum/datum.h"
-#include "graph/datum/link.h"
-
-#include "ui/canvas/scene.h"
+class GraphScene;
+class Datum;
+class Link;
 
 class UndoAddLinkCommand : public UndoCommand
 {
@@ -21,11 +20,11 @@ public:
     void swapDatum(Datum* a, Datum* b) const;
 
 protected:
-    QPointer<GraphScene> g;
-    mutable QPointer<Datum> start;
-    mutable QPointer<Datum> end;
+    GraphScene* g;
+    Datum* start;
+    Datum* end;
 
-    QPointer<Link> link;
+    Link* link;
 
     bool first;
 };

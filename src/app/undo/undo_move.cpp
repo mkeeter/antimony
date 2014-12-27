@@ -1,4 +1,8 @@
 #include "app/undo/undo_move.h"
+
+#include "graph/node/node.h"
+
+#include "ui/canvas/scene.h"
 #include "ui/canvas/inspector/inspector.h"
 
 UndoMoveCommand::UndoMoveCommand(GraphScene* g, Node* n, QPointF a, QPointF b)
@@ -9,29 +13,17 @@ UndoMoveCommand::UndoMoveCommand(GraphScene* g, Node* n, QPointF a, QPointF b)
 
 void UndoMoveCommand::redo()
 {
-    Q_ASSERT(g);
-    Q_ASSERT(n);
-
-    auto i = g->getInspector(n);
-    Q_ASSERT(i);
-
-    i->setPos(b);
+    g->getInspector(n)->setPos(b);
 }
 
 void UndoMoveCommand::undo()
 {
-    Q_ASSERT(g);
-    Q_ASSERT(n);
-
-    auto i = g->getInspector(n);
-    Q_ASSERT(i);
-
-    i->setPos(a);
+    g->getInspector(n)->setPos(a);
 }
 
 void UndoMoveCommand::swapNode(Node* a, Node* b) const
 {
-    if (a == n.data())
+    if (a == n)
         n = b;
 }
 
