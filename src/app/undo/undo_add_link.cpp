@@ -38,3 +38,16 @@ void UndoAddLinkCommand::undo()
     link->deleteLater();
 }
 
+void UndoAddLinkCommand::swapDatum(Datum* a, Datum* b) const
+{
+    if (start == a)
+        start = b;
+    if (end == a)
+        end = b;
+}
+
+void UndoAddLinkCommand::swapLink(Link* a, Link* b) const
+{
+    if (link == a)
+        link = b;
+}

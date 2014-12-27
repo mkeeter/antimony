@@ -18,13 +18,15 @@ public:
     void undo() override;
 
     void swapDatum(Datum* a, Datum* b) const;
+    void swapLink(Link* a, Link* b) const;
 
 protected:
     GraphScene* g;
-    Datum* start;
-    Datum* end;
 
-    Link* link;
+    mutable Link* link;
+
+    mutable Datum* start;
+    mutable Datum* end;
 
     bool first;
 };

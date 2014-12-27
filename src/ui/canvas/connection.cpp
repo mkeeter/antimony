@@ -15,6 +15,9 @@
 
 #include "graph/node/node.h"
 
+#include "app/app.h"
+#include "app/undo/undo_add_link.h"
+
 Connection::Connection(Link* link)
     : QGraphicsObject(), link(link),
       drag_state(link->hasTarget() ? CONNECTED : NONE),
@@ -236,6 +239,9 @@ void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
         connect(endInspector(), &NodeInspector::moved,
                 this, &Connection::onInspectorMoved);
+
+        App::instance()->pushStack(new UndoAddLinkCommand(
+                static_cast<GraphScene*>(scene()), link));
     }
     else
     {
