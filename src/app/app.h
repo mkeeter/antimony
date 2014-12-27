@@ -2,6 +2,7 @@
 #define APP_H
 
 #include <QApplication>
+#include <QAction>
 
 class GraphScene;
 class ViewportScene;
@@ -11,6 +12,7 @@ class Connection;
 class ScriptDatum;
 class MainWindow;
 class NodeRoot;
+class UndoStack;
 
 class App : public QApplication
 {
@@ -60,6 +62,9 @@ public slots:
      */
     MainWindow* newEditorWindow(ScriptDatum* datum);
 
+    QAction* undoAction();
+    QAction* redoAction();
+
 public slots:
     void onAbout();
 
@@ -80,6 +85,7 @@ private:
     ViewportScene* view_scene;
     QString filename;
     NodeRoot* root;
+    UndoStack* stack;
 };
 
 #endif // APP_H
