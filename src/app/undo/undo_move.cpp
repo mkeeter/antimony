@@ -4,7 +4,7 @@
 UndoMoveCommand::UndoMoveCommand(GraphScene* g, Node* n, QPointF a, QPointF b)
     : g(g), n(n), a(a), b(b)
 {
-    // Nothing to do here
+    setText("'move inspector'");
 }
 
 void UndoMoveCommand::redo()
