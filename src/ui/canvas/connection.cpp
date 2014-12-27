@@ -294,7 +294,7 @@ void Connection::keyPressEvent(QKeyEvent* event)
 
 void Connection::keyReleaseEvent(QKeyEvent* event)
 {
-    if (event->key() == Qt::Key_Shift)
+    if (event->key() == Qt::Key_Shift && drag_state != CONNECTED)
     {
         snapping = false;
         checkDragTarget();
