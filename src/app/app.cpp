@@ -415,3 +415,8 @@ QAction* App::redoAction()
     a->setShortcuts(QKeySequence::Redo);
     return a;
 }
+
+void App::pushStack(QUndoCommand* c)
+{
+    stack->push(c);
+}

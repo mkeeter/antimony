@@ -21,6 +21,9 @@
 #include "graph/datum/datums/script_datum.h"
 #include "graph/node/node.h"
 
+#include "app/app.h"
+#include "app/undo/undo_move.h"
+
 ///////////////////////////////////////////////////////////////////////////////
 
 NodeInspector::NodeInspector(Node* node)
@@ -293,7 +296,21 @@ void NodeInspector::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     QGraphicsItem::mouseReleaseEvent(event);
 
     if (dragging)
+    {
         ungrabMouse();
+    }
+    else
+    {
+        // Store an Undo command for this drag
+        auto delta = event->scenePos() -
+                     event->buttonDownScenePos(Qt::LeftButton);
+        auto u = new UndoMoveCommand(
+                static_cast<GraphScene*>(scene()),
+                node, pos() - delta, pos());
+        App::instance()->pushStack(u);
+    }
+
+
     dragging = false;
 }
 

@@ -3,6 +3,7 @@
 
 #include <QApplication>
 #include <QAction>
+#include <QUndoCommand>
 
 class GraphScene;
 class ViewportScene;
@@ -64,6 +65,8 @@ public slots:
 
     QAction* undoAction();
     QAction* redoAction();
+
+    void pushStack(QUndoCommand* c);
 
 public slots:
     void onAbout();
