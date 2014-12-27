@@ -16,9 +16,11 @@ public:
     void redo() override;
     void undo() override;
 
+    void swapNode(Node* a, Node* b) const;
+
 protected:
     QPointer<GraphScene> g;
-    QPointer<Node> n;
+    mutable QPointer<Node> n;
     QPointF a;
     QPointF b;
 };

@@ -3,17 +3,18 @@
 
 #include <QUndoStack>
 
+class Node;
+class Datum;
+class Link;
+
 class UndoStack : public QUndoStack
 {
 public:
     UndoStack(QObject* parent=NULL);
 
-    template<typename T> void swapPointer(T* a, T* b)
-    {
-        for (auto p : findChildren<QPointer<T>*>())
-            if (p->data() == a)
-                *p = b;
-    }
+    void swapPointer(Node* a, Node* b);
+    void swapPointer(Datum* a, Datum* b);
+    void swapPointer(Link* a, Link* b);
 };
 
 #endif

@@ -29,5 +29,10 @@ void UndoMoveCommand::undo()
     i->setPos(a);
 }
 
+void UndoMoveCommand::swapNode(Node* a, Node* b) const
+{
+    if (a == n.data())
+        n = b;
+}
 
 
