@@ -3,7 +3,6 @@
 
 #include <QApplication>
 #include <QAction>
-#include <QUndoCommand>
 
 class GraphScene;
 class ViewportScene;
@@ -14,6 +13,7 @@ class ScriptDatum;
 class MainWindow;
 class NodeRoot;
 class UndoStack;
+class UndoCommand;
 
 class App : public QApplication
 {
@@ -66,7 +66,7 @@ public slots:
     QAction* undoAction();
     QAction* redoAction();
 
-    void pushStack(QUndoCommand* c);
+    void pushStack(UndoCommand* c);
 
 public slots:
     void onAbout();

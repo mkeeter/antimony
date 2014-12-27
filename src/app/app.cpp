@@ -9,6 +9,7 @@
 
 #include "app.h"
 #include "app/undo/stack.h"
+#include "app/undo/undo_command.h"
 
 #include "ui/dialogs/resolution_dialog.h"
 #include "ui/dialogs/exporting_dialog.h"
@@ -416,7 +417,7 @@ QAction* App::redoAction()
     return a;
 }
 
-void App::pushStack(QUndoCommand* c)
+void App::pushStack(UndoCommand* c)
 {
     stack->push(c);
 }

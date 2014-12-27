@@ -1,6 +1,7 @@
 #include <Python.h>
 
 #include "app/undo/stack.h"
+#include "app/undo/undo_command.h"
 #include "app/undo/undo_move.h"
 
 UndoStack::UndoStack(QObject* parent)
@@ -26,4 +27,10 @@ void UndoStack::swapPointer(Datum* a, Datum* b)
 
 void UndoStack::swapPointer(Link* a, Link* b)
 {
+}
+
+void UndoStack::push(UndoCommand* c)
+{
+    c->setStack(this);
+    QUndoStack::push(c);
 }

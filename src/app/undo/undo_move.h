@@ -3,12 +3,12 @@
 
 #include <Python.h>
 
-#include <QUndoCommand>
+#include "app/undo/undo_command.h"
 
 #include "graph/node/node.h"
 #include "ui/canvas/scene.h"
 
-class UndoMoveCommand : public QUndoCommand
+class UndoMoveCommand : public UndoCommand
 {
 public:
     UndoMoveCommand(GraphScene* g, Node* n, QPointF a, QPointF b);
