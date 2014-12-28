@@ -54,7 +54,6 @@ ScriptEditor::ScriptEditor(ScriptDatum* datum, QWidget* parent)
 
 void ScriptEditor::onTextChanged()
 {
-    qDebug() << "onTextChanged called";
     setToolTip("");
     QToolTip::hideText();
     if (datum)
@@ -78,7 +77,19 @@ void ScriptEditor::onDatumChanged()
         }
 
         if (datum->getExpr() != document()->toPlainText())
+        {
+            // Keep the cursor at the same position in the document
+            // (not 100% reliable)
+            QTextCursor cursor = textCursor();
+            int p = textCursor().position();
             document()->setPlainText(datum->getExpr());
+
+            if (p < datum->getExpr().length())
+            {
+                cursor.setPosition(p);
+                setTextCursor(cursor);
+            }
+        }
     }
     else
     {
@@ -94,12 +105,16 @@ void ScriptEditor::onUndoCommandAdded()
 
     document()->undo();
     QString before = document()->toPlainText();
+    int cursor_before = textCursor().position();
 
     document()->redo();
     QString after = document()->toPlainText();
+    int cursor_after = textCursor().position();
 
     App::instance()->pushStack(
-            new UndoChangeExprCommand(datum, before, after));
+            new UndoChangeExprCommand(
+                datum, before, after,
+                cursor_before, cursor_after, this));
     connect(document(), &QTextDocument::contentsChanged,
             this, &ScriptEditor::onTextChanged);
 }
