@@ -158,6 +158,27 @@ bool DatumTextItem::eventFilter(QObject* obj, QEvent* event)
     return false;
 }
 
+void DatumTextItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
+{
+    if (const auto e = dynamic_cast<EvalDatum*>(d))
+        drag_start = e->getExpr();
+
+    QGraphicsTextItem::mousePressEvent(event);
+}
+
+void DatumTextItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
+{
+    if (const auto e = dynamic_cast<EvalDatum*>(d))
+    {
+        QString drag_end = e->getExpr();
+        if (drag_start != drag_end)
+            App::instance()->pushStack(
+                    new UndoChangeExprCommand(e, drag_start, drag_end));
+    }
+
+    QGraphicsTextItem::mouseReleaseEvent(event);
+}
+
 void DatumTextItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     const auto f = dynamic_cast<FloatDatum*>(d);
