@@ -13,7 +13,7 @@ class Node;
 class UndoMoveCommand : public UndoCommand
 {
 public:
-    UndoMoveCommand(GraphScene* g, Node* n, QPointF a, QPointF b);
+    UndoMoveCommand(GraphScene* g, Node* n, QPointF before, QPointF after);
 
     void redo() override;
     void undo() override;
@@ -23,8 +23,8 @@ public:
 protected:
     GraphScene* g;
     mutable Node* n;
-    QPointF a;
-    QPointF b;
+    QPointF before;
+    QPointF after;
 };
 
 #endif
