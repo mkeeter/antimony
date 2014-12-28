@@ -4,8 +4,8 @@
 #include "graph/datum/datum.h"
 
 
-UndoChangeExprCommand::UndoChangeExprCommand(EvalDatum* d, QString before,
-                                             QString after)
+UndoChangeExprCommand::UndoChangeExprCommand(EvalDatum* d,
+                                             QString before, QString after)
     : d(d), before(before), after(after)
 {
     setText("'set value'");
@@ -18,6 +18,7 @@ void UndoChangeExprCommand::redo()
 
 void UndoChangeExprCommand::undo()
 {
+    after = d->getExpr();
     d->setExpr(before);
 }
 

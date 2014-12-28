@@ -67,6 +67,8 @@ public slots:
     QAction* redoAction();
 
     void pushStack(UndoCommand* c);
+    void undo();
+    void redo();
 
 public slots:
     void onAbout();

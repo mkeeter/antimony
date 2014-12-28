@@ -421,3 +421,13 @@ void App::pushStack(UndoCommand* c)
 {
     stack->push(c);
 }
+
+void App::undo()
+{
+    stack->undo();
+}
+
+void App::redo()
+{
+    stack->redo();
+}

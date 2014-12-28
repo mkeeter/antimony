@@ -17,7 +17,15 @@ public slots:
     void onTextChanged();
     void onDatumChanged();
 
+protected slots:
+    void onUndoCommandAdded();
+
 protected:
+    /*
+     *  Filter out control+Z events.
+     */
+    bool eventFilter(QObject* obj, QEvent* event);
+
     /*
      *  Returns the bounding rectangle of the given line.
      */
