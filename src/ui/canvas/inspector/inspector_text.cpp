@@ -14,6 +14,9 @@
 #include "graph/datum/datums/float_datum.h"
 #include "graph/datum/types/eval_datum.h"
 
+#include "app/app.h"
+#include "app/undo/undo_change_expr.h"
+
 DatumTextItem::DatumTextItem(Datum* datum, QGraphicsItem* parent)
     : QGraphicsTextItem(parent), d(datum), txt(document()),
       background(Colors::base02), foreground(Colors::base04),
@@ -27,6 +30,9 @@ DatumTextItem::DatumTextItem(Datum* datum, QGraphicsItem* parent)
     bbox = boundingRect();
     connect(txt, &QTextDocument::contentsChanged,
             this, &DatumTextItem::onTextChanged);
+
+    connect(document(), &QTextDocument::undoCommandAdded,
+            this, &DatumTextItem::onUndoCommandAdded);
 
     installEventFilter(this);
 }
@@ -98,6 +104,30 @@ void DatumTextItem::onTextChanged()
     }
 }
 
+void DatumTextItem::onUndoCommandAdded()
+{
+    EvalDatum* e = dynamic_cast<EvalDatum*>(d);
+    if (e && e->canEdit())
+    {
+        disconnect(document(), &QTextDocument::contentsChanged,
+                   this, &DatumTextItem::onTextChanged);
+
+        document()->undo();
+        QString before = document()->toPlainText();
+        int cursor_before = textCursor().position();
+
+        document()->redo();
+        QString after = document()->toPlainText();
+        int cursor_after = textCursor().position();
+
+        App::instance()->pushStack(
+                new UndoChangeExprCommand(e, before, after));
+
+        connect(document(), &QTextDocument::contentsChanged,
+                this, &DatumTextItem::onTextChanged);
+    }
+}
+
 void DatumTextItem::paint(QPainter* painter,
                            const QStyleOptionGraphicsItem* o,
                            QWidget* w)
@@ -117,6 +147,10 @@ bool DatumTextItem::eventFilter(QObject* obj, QEvent* event)
             emit tabPressed(this);
         else if (keyEvent->key() == Qt::Key_Backtab)
             emit shiftTabPressed(this);
+        else if (keyEvent->matches(QKeySequence::Undo))
+            App::instance()->undo();
+        else if (keyEvent->matches(QKeySequence::Redo))
+            App::instance()->redo();
         else
             return false;
         return true;

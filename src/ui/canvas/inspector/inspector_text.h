@@ -16,13 +16,19 @@ public:
      *  with an Inspector title bar
      */
     void setAsTitle();
+
 public slots:
     void onTextChanged();
     void onDatumChanged();
+
+protected slots:
+    void onUndoCommandAdded();
+
 signals:
     void boundsChanged();
     void tabPressed(DatumTextItem* item);
     void shiftTabPressed(DatumTextItem* item);
+
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget);
