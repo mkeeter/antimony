@@ -17,7 +17,6 @@
 #include "app/app.h"
 #include "app/undo/undo_change_expr.h"
 
-
 ScriptEditor::ScriptEditor(ScriptDatum* datum, QWidget* parent)
     : QPlainTextEdit(parent), datum(datum)
 {
