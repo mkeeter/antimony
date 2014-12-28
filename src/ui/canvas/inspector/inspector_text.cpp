@@ -110,23 +110,18 @@ void DatumTextItem::paint(QPainter* painter,
 
 bool DatumTextItem::eventFilter(QObject* obj, QEvent* event)
 {
-    if (obj == this)
+    if (obj == this && event->type() == QEvent::KeyPress)
     {
-        if (event->type() == QEvent::KeyPress)
-        {
-            QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-            if (keyEvent->key() == Qt::Key_Tab)
-                emit tabPressed(this);
-            else if (keyEvent->key() == Qt::Key_Backtab)
-                emit shiftTabPressed(this);
-            else
-                return false;
-
-            return true;
-        }
-        return false;
+        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+        if (keyEvent->key() == Qt::Key_Tab)
+            emit tabPressed(this);
+        else if (keyEvent->key() == Qt::Key_Backtab)
+            emit shiftTabPressed(this);
+        else
+            return false;
+        return true;
     }
-    return DatumTextItem::eventFilter(obj, event);
+    return false;
 }
 
 void DatumTextItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
