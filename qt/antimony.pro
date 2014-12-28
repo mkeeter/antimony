@@ -28,6 +28,7 @@ SOURCES += \
     ../src/app/undo/undo_move.cpp \
     ../src/app/undo/undo_add_link.cpp \
     ../src/app/undo/undo_delete_link.cpp \
+    ../src/app/undo/undo_change_expr.cpp \
     ../src/ui/main_window.cpp \
     ../src/ui/canvas/canvas.cpp \
     ../src/ui/canvas/scene.cpp \
@@ -61,6 +62,7 @@ HEADERS += \
     ../src/app/undo/undo_move.h \
     ../src/app/undo/undo_add_link.h \
     ../src/app/undo/undo_delete_link.h \
+    ../src/app/undo/undo_change_expr.h \
     ../src/ui/canvas/canvas.h \
     ../src/ui/canvas/scene.h \
     ../src/ui/canvas/inspector/inspector.h \
