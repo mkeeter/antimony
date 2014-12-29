@@ -3,14 +3,29 @@
 
 #include <Python.h>
 
-#include "app/undo/undo_add_link.h"
+#include "app/undo/undo_command.h"
 
-class UndoDeleteLinkCommand : public UndoAddLinkCommand
+class GraphScene;
+class Datum;
+class Link;
+
+class UndoDeleteLinkCommand : public UndoCommand
 {
 public:
     UndoDeleteLinkCommand(GraphScene* g, Link* link);
 
     void redo() override;
     void undo() override;
+
+    void swapDatum(Datum* a, Datum* b) const override;
+    void swapLink(Link* a, Link* b) const override;
+
+protected:
+    GraphScene* g;
+
+    mutable Link* link;
+
+    mutable Datum* start;
+    mutable Datum* end;
 };
 #endif
