@@ -1,5 +1,8 @@
 #include <Python.h>
+
 #include <QTextCursor>
+#include <QPlainTextEdit>
+#include <QGraphicsTextItem>
 
 #include "app/undo/undo_change_expr.h"
 
@@ -16,41 +19,61 @@ UndoChangeExprCommand::UndoChangeExprCommand(
 UndoChangeExprCommand::UndoChangeExprCommand(
         EvalDatum* d, QString before, QString after,
         int cursor_before, int cursor_after,
-        QPlainTextEdit* doc)
+        QObject* obj)
     : d(d), before(before), after(after),
       cursor_before(cursor_before), cursor_after(cursor_after),
-      doc(doc)
+      obj(obj)
 {
     setText("'set value'");
+}
+
+
+template<typename T>
+void UndoChangeExprCommand::_saveCursor()
+{
+    if (auto txt = dynamic_cast<T*>(obj.data()))
+        cursor_after = txt->textCursor().position();
+}
+
+template<typename T>
+void UndoChangeExprCommand::_restoreCursor(int pos)
+{
+    if (auto txt = dynamic_cast<T*>(obj.data()))
+    {
+        QTextCursor c = txt->textCursor();
+        c.setPosition(pos);
+        txt->setTextCursor(c);
+    }
+}
+
+void UndoChangeExprCommand::saveCursor()
+{
+    _saveCursor<QPlainTextEdit>();
+    _saveCursor<QGraphicsTextItem>();
+}
+
+void UndoChangeExprCommand::restoreCursor(int pos)
+{
+    _restoreCursor<QPlainTextEdit>(pos);
+    _restoreCursor<QGraphicsTextItem>(pos);
 }
 
 void UndoChangeExprCommand::redo()
 {
     d->setExpr(after);
-    if (doc)
-    {
-        QTextCursor c = doc->textCursor();
-        c.setPosition(cursor_after);
-        doc->setTextCursor(c);
-    }
+    restoreCursor(cursor_after);
 }
 
 void UndoChangeExprCommand::undo()
 {
     // Save text value and cursor position
-    if (doc)
-        cursor_after = doc->textCursor().position();
+    saveCursor();
     after = d->getExpr();
 
     d->setExpr(before);
 
     // Restore cursor to previous position
-    if (doc)
-    {
-        QTextCursor c = doc->textCursor();
-        c.setPosition(cursor_before);
-        doc->setTextCursor(c);
-    }
+    restoreCursor(cursor_before);
 }
 
 void UndoChangeExprCommand::swapDatum(Datum* a, Datum* b) const
