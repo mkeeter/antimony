@@ -2,8 +2,6 @@
 
 #include "app/undo/stack.h"
 #include "app/undo/undo_command.h"
-#include "app/undo/undo_move.h"
-#include "app/undo/undo_add_link.h"
 
 UndoStack::UndoStack(QObject* parent)
     : QUndoStack(parent)
@@ -15,31 +13,19 @@ UndoStack::UndoStack(QObject* parent)
 void UndoStack::swapPointer(Node* a, Node* b)
 {
     for (int i=0; i < count(); ++i)
-    {
-        auto c = command(i);
-        if (auto u = dynamic_cast<const UndoMoveCommand*>(c))
-            u->swapNode(a, b);
-    }
+        static_cast<const UndoCommand*>(command(i))->swapNode(a, b);
 }
 
 void UndoStack::swapPointer(Datum* a, Datum* b)
 {
     for (int i=0; i < count(); ++i)
-    {
-        auto c = command(i);
-        if (auto u = dynamic_cast<const UndoAddLinkCommand*>(c))
-            u->swapDatum(a, b);
-    }
+        static_cast<const UndoCommand*>(command(i))->swapDatum(a, b);
 }
 
 void UndoStack::swapPointer(Link* a, Link* b)
 {
     for (int i=0; i < count(); ++i)
-    {
-        auto c = command(i);
-        if (auto u = dynamic_cast<const UndoAddLinkCommand*>(c))
-            u->swapLink(a, b);
-    }
+        static_cast<const UndoCommand*>(command(i))->swapLink(a, b);
 }
 
 void UndoStack::push(UndoCommand* c)

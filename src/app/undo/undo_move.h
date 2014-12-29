@@ -18,7 +18,7 @@ public:
     void redo() override;
     void undo() override;
 
-    void swapNode(Node* a, Node* b) const;
+    void swapNode(Node* a, Node* b) const override;
 
 protected:
     GraphScene* g;

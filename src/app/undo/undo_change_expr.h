@@ -22,7 +22,7 @@ public:
     void redo() override;
     void undo() override;
 
-    void swapDatum(Datum* a, Datum* b) const;
+    void swapDatum(Datum* a, Datum* b) const override;
 
 protected:
     template<typename T> void _saveCursor();

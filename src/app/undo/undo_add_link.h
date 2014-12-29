@@ -17,8 +17,8 @@ public:
     void redo() override;
     void undo() override;
 
-    void swapDatum(Datum* a, Datum* b) const;
-    void swapLink(Link* a, Link* b) const;
+    void swapDatum(Datum* a, Datum* b) const override;
+    void swapLink(Link* a, Link* b) const override;
 
 protected:
     GraphScene* g;
