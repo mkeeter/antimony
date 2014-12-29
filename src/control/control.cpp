@@ -10,6 +10,9 @@
 #include "graph/datum/datums/float_datum.h"
 #include "graph/datum/datums/script_datum.h"
 
+#include "app/app.h"
+#include "app/undo/undo_change_expr.h"
+
 Control::Control(Node* node, QObject* parent)
     : QObject(parent), node(node)
 {
@@ -36,6 +39,8 @@ void Control::watchDatums(QVector<QString> datums)
         Datum* d = node->getDatum(n);
         Q_ASSERT(d);
         connect(d, &Datum::changed, this, &Control::redraw);
+        if (auto e = dynamic_cast<EvalDatum*>(d))
+            watched[e] = "";
     }
 }
 
@@ -56,6 +61,34 @@ void Control::deleteNode()
         dynamic_cast<Control*>(parent())->deleteNode();
     else
         node->deleteLater();
+}
+
+void Control::beginDrag()
+{
+    for (auto d=watched.begin(); d != watched.end(); ++d)
+    {
+        watched[d.key()] = d.key()->getExpr();
+    }
+}
+
+void Control::endDrag()
+{
+    bool started = false;
+    for (auto d=watched.begin(); d != watched.end(); ++d)
+        if (watched[d.key()] != d.key()->getExpr())
+        {
+            if (!started)
+            {
+                App::instance()->beginUndoMacro("'drag'");
+                started = true;
+            }
+            App::instance()->pushStack(
+                    new UndoChangeExprCommand(
+                        d.key(), watched[d.key()], d.key()->getExpr()));
+        }
+
+    if (started)
+        App::instance()->endUndoMacro();
 }
 
 void Control::dragValue(QString name, double delta)
