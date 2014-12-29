@@ -431,3 +431,13 @@ void App::redo()
 {
     stack->redo();
 }
+
+void App::beginUndoMacro(QString text)
+{
+    stack->beginMacro(text);
+}
+
+void App::endUndoMacro()
+{
+    stack->endMacro();
+}

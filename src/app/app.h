@@ -69,6 +69,8 @@ public slots:
     void pushStack(UndoCommand* c);
     void undo();
     void redo();
+    void beginUndoMacro(QString text);
+    void endUndoMacro();
 
 public slots:
     void onAbout();
