@@ -419,6 +419,7 @@ QAction* App::redoAction()
 
 void App::pushStack(UndoCommand* c)
 {
+    c->setApp(this);
     stack->push(c);
 }
 

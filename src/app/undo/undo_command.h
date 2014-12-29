@@ -4,13 +4,23 @@
 #include <QUndoCommand>
 
 class UndoStack;
+class App;
 
 class UndoCommand : public QUndoCommand
 {
 public:
     void setStack(UndoStack* s) { stack = s; }
+    void setApp(App* a) { app = a; }
 protected:
+    // Backwards pointer to parent stack
+    // Used so that commands can ask the stack to rewrite pointers
+    // (e.g. when undoing Node deletion, any other commands in the stack
+    //  that refer to that Node by pointer must be updated)
     UndoStack* stack;
+
+    // Pointer to parent App
+    // (to access app-level function to create UIs for new objects)
+    App* app;
 };
 
 #endif
