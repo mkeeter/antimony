@@ -5,10 +5,10 @@
 #include "graph/datum/datum.h"
 #include "graph/datum/link.h"
 
-#include "ui/canvas/scene.h"
+#include "app/app.h"
 
-UndoDeleteLinkCommand::UndoDeleteLinkCommand(GraphScene* g, Link* link)
-    : g(g), link(link), start(static_cast<Datum*>(link->parent())),
+UndoDeleteLinkCommand::UndoDeleteLinkCommand(Link* link)
+    : link(link), start(static_cast<Datum*>(link->parent())),
       end(link->getTarget())
 {
     setText("'delete link'");
@@ -25,7 +25,11 @@ void UndoDeleteLinkCommand::undo()
     Q_ASSERT(end->acceptsLink(new_link));
     end->addLink(new_link);
 
-    g->makeUIfor(new_link);
+    if (app)
+        app->newLink(new_link);
+
+    // Swap link pointer for command in the stack
+    // (including this one)
     stack->swapPointer(link, new_link);
 }
 

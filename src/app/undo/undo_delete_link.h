@@ -12,7 +12,7 @@ class Link;
 class UndoDeleteLinkCommand : public UndoCommand
 {
 public:
-    UndoDeleteLinkCommand(GraphScene* g, Link* link);
+    UndoDeleteLinkCommand(Link* link);
 
     void redo() override;
     void undo() override;

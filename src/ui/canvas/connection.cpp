@@ -53,8 +53,7 @@ void Connection::makeSceneConnections()
 
 void Connection::deleteLink()
 {
-    App::instance()->pushStack(new UndoDeleteLinkCommand(
-            static_cast<GraphScene*>(scene()), link));
+    App::instance()->pushStack(new UndoDeleteLinkCommand(link));
 }
 
 void Connection::onInspectorMoved()
@@ -247,8 +246,7 @@ void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         connect(endInspector(), &NodeInspector::moved,
                 this, &Connection::onInspectorMoved);
 
-        App::instance()->pushStack(new UndoAddLinkCommand(
-                static_cast<GraphScene*>(scene()), link));
+        App::instance()->pushStack(new UndoAddLinkCommand(link));
     }
     else
     {

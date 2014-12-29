@@ -1,8 +1,7 @@
 #include "app/undo/undo_add_link.h"
-#include "app/undo/stack.h"
 
-UndoAddLinkCommand::UndoAddLinkCommand(GraphScene* g, Link* link)
-    : UndoDeleteLinkCommand(g, link), first(true)
+UndoAddLinkCommand::UndoAddLinkCommand(Link* link)
+    : UndoDeleteLinkCommand(link), first(true)
 {
     setText("'add link'");
 }

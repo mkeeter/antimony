@@ -8,7 +8,7 @@
 class UndoAddLinkCommand : public UndoDeleteLinkCommand
 {
 public:
-    UndoAddLinkCommand(GraphScene* g, Link* link);
+    UndoAddLinkCommand(Link* link);
 
     void redo() override;
     void undo() override;
