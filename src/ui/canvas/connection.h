@@ -25,7 +25,7 @@ public:
      */
     void makeSceneConnections();
 
-    void deleteLink();
+    Link* getLink() { return link; }
 
 public slots:
     void onInspectorMoved();

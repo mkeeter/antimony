@@ -7,6 +7,7 @@
 #include <cmath>
 
 #include "ui/canvas/canvas.h"
+#include "ui/canvas/scene.h"
 #include "ui/canvas/inspector/inspector.h"
 #include "ui/canvas/connection.h"
 #include "ui/util/colors.h"
@@ -15,6 +16,10 @@
 #include "graph/node/node.h"
 #include "graph/datum/datum.h"
 #include "graph/datum/link.h"
+
+#include "app/app.h"
+#include "app/undo/undo_delete_link.h"
+#include "app/undo/undo_delete_node.h"
 
 Canvas::Canvas(QWidget* parent)
     : QGraphicsView(parent), selecting(false)
@@ -92,13 +97,7 @@ void Canvas::keyPressEvent(QKeyEvent *event)
     }
     else if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace)
     {
-        for (auto i : scene->selectedItems())
-        {
-            if (auto ni = dynamic_cast<NodeInspector*>(i))
-                ni->deleteNode();
-            else if (auto c = dynamic_cast<Connection*>(i))
-                c->deleteLink();
-        }
+        deleteSelected();
     }
     else if (event->key() == Qt::Key_A &&
                 (event->modifiers() & Qt::ShiftModifier))
@@ -147,3 +146,43 @@ NodeInspector* Canvas::getNodeInspector(Node* n) const
     }
     return NULL;
 }
+
+void Canvas::deleteSelected()
+{
+    QSet<Link*> links;
+    bool started = false;
+    auto start = [&]{ App::instance()->beginUndoMacro("'delete'");
+                      started = true; };
+
+    // Begin by pushing delete commands for all selected links
+    for (auto i : scene->selectedItems())
+        if (auto c = dynamic_cast<Connection*>(i))
+        {
+            auto k = c->getLink();
+            links.insert(k);
+            if (!started)
+                start();
+            App::instance()->pushStack(new UndoDeleteLinkCommand(k));
+        }
+
+    // Push delete commands for each selected node.
+    // We keep track of links that have already been deleted to avoid
+    // double-deleting them; double-deletion isn't a problem (since we're
+    // using deleteLater), but double re-creation on redo would break things).
+    for (auto i : scene->selectedItems())
+        if (auto p = dynamic_cast<NodeInspector*>(i))
+        {
+            auto n = p->getNode();
+            if (!started)
+                start();
+            App::instance()->pushStack(new UndoDeleteNodeCommand(
+                        n, static_cast<GraphScene*>(scene), links));
+
+            for (auto k : n->getLinks())
+                links.insert(k);
+        }
+
+    if (started)
+        App::instance()->endUndoMacro();
+}
+

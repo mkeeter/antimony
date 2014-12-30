@@ -44,6 +44,11 @@ public:
      */
     bool hasInputValue() const;
 
+    /*
+     *  Returns a list of all the input links
+     */
+    QList<Link*> inputLinks() const;
+
     /** Returns true if the datum should have an output port.
      */
     virtual bool hasOutput() const { return true; }

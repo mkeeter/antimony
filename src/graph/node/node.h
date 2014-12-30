@@ -4,11 +4,13 @@
 #include <Python.h>
 
 #include <QObject>
+#include <QSet>
 
 #include "graph/node/enum.h"
 
 class Control;
 class Datum;
+class Link;
 class Canvas;
 class NodeRoot;
 
@@ -44,6 +46,11 @@ public:
     /** Returns a human-readable type name.
      */
     QString getType() const;
+
+    /*
+     *  Returns a set of all the links that connect to this node's datums.
+     */
+    QSet<Link*> getLinks() const;
 
 signals:
     /*
