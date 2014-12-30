@@ -13,7 +13,8 @@ class Link;
 class UndoCommand : public QUndoCommand
 {
 public:
-    UndoCommand(QUndoCommand* parent=NULL) : QUndoCommand(parent) {}
+    UndoCommand(QUndoCommand* parent=NULL)
+        : QUndoCommand(parent), stack(NULL), app(NULL) {}
     void setStack(UndoStack* s) { stack = s; }
     void setApp(App* a) { app = a; }
 
