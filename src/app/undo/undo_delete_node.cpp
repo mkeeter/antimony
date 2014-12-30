@@ -60,9 +60,6 @@ void UndoDeleteNodeCommand::undo()
     // Extract the node from the temporary root
     n = temp_root.findChild<Node*>();
     n->setParent(root);
-    if (g)
-        g->setInspectorPositions(ds.inspectors);
-
     // Find the new lists of node and datum pointers
     auto new_nodes = getNodes();
     auto new_datums = getDatums();
@@ -78,6 +75,9 @@ void UndoDeleteNodeCommand::undo()
 
     if (app)
         app->newNode(n);
+
+    if (g)
+        g->setInspectorPositions(ds.inspectors);
 
     // Call undo to undo all child commands (re-creating deleted Links)
     UndoCommand::undo();
