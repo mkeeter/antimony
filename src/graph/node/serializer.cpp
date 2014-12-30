@@ -102,8 +102,15 @@ void SceneSerializer::serializeDatum(QDataStream* out, Datum* datum)
 
 void SceneSerializer::serializeConnections(QDataStream* out)
 {
-    *out << quint32(connections.length());
+    // Only serialize connections for which we have serialized both datums
+    // (prevents edge cases in node deletion and copy-paste)
+    QList<QPair<Datum*, Datum*>> valid;
     for (auto p : connections)
+        if (datums.contains(p.first) && datums.contains(p.second))
+            valid << p;
+
+    *out << quint32(valid.length());
+    for (auto p : valid)
         *out << quint32(datums.indexOf(p.first))
              << quint32(datums.indexOf(p.second));
 }
