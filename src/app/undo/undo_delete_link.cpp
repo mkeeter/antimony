@@ -7,9 +7,9 @@
 
 #include "app/app.h"
 
-UndoDeleteLinkCommand::UndoDeleteLinkCommand(Link* link)
-    : link(link), start(static_cast<Datum*>(link->parent())),
-      end(link->getTarget())
+UndoDeleteLinkCommand::UndoDeleteLinkCommand(Link* link, QUndoCommand* parent)
+    : UndoCommand(parent), link(link),
+      start(static_cast<Datum*>(link->parent())), end(link->getTarget())
 {
     setText("'delete link'");
 }

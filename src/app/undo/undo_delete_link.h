@@ -12,7 +12,7 @@ class Link;
 class UndoDeleteLinkCommand : public UndoCommand
 {
 public:
-    UndoDeleteLinkCommand(Link* link);
+    UndoDeleteLinkCommand(Link* link, QUndoCommand* parent=NULL);
 
     void redo() override;
     void undo() override;
