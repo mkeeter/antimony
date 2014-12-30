@@ -78,7 +78,9 @@ void UndoChangeExprCommand::undo()
 
 void UndoChangeExprCommand::swapDatum(Datum* a, Datum* b) const
 {
-    Q_ASSERT(dynamic_cast<EvalDatum*>(b));
     if (d == a)
+    {
+        Q_ASSERT(dynamic_cast<EvalDatum*>(b));
         d = static_cast<EvalDatum*>(b);
+    }
 }
