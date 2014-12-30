@@ -25,6 +25,7 @@ SOURCES += \
     ../src/app/main.cpp \
     ../src/app/app.cpp \
     ../src/app/undo/stack.cpp \
+    ../src/app/undo/undo_command.cpp \
     ../src/app/undo/undo_move.cpp \
     ../src/app/undo/undo_add_link.cpp \
     ../src/app/undo/undo_delete_link.cpp \

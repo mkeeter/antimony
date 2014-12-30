@@ -103,7 +103,8 @@ QString Node::getType() const
 QSet<Link*> Node::getLinks() const
 {
     QSet<Link*> links;
-    for (auto d : findChildren<Datum*>("", Qt::FindDirectChildrenOnly))
+
+    for (auto d : findChildren<Datum*>(QString(), Qt::FindDirectChildrenOnly))
     {
         for (auto k : d->findChildren<Link*>())
             links.insert(k);
