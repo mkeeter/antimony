@@ -5,7 +5,6 @@
 
 #include "app/undo/undo_command.h"
 
-class GraphScene;
 class Datum;
 class Link;
 
@@ -21,8 +20,6 @@ public:
     void swapLink(Link* a, Link* b) const override;
 
 protected:
-    GraphScene* g;
-
     mutable Link* link;
 
     mutable Datum* start;
