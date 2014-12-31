@@ -18,8 +18,10 @@ public:
             QObject* node_root,
             QMap<Node*, QPointF> inspectors=QMap<Node*, QPointF>());
 
-    void run(QDataStream* out);
-    QByteArray run();
+    enum SerializerMode { SERIALIZE_ALL, SERIALIZE_NODES };
+
+    void run(QDataStream* out, SerializerMode mode=SERIALIZE_ALL);
+    QByteArray run(SerializerMode mode=SERIALIZE_ALL);
 
 protected:
     void serializeNodes(QDataStream* out, QObject* p);

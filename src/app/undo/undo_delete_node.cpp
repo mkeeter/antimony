@@ -35,8 +35,10 @@ void UndoDeleteNodeCommand::redo()
     NodeRoot temp_root;
     n->setParent(&temp_root);
     data = g
-        ? SceneSerializer(&temp_root, g->inspectorPositions()).run()
-        : SceneSerializer(&temp_root).run();
+        ? SceneSerializer(&temp_root, g->inspectorPositions()).run(
+                SceneSerializer::SERIALIZE_NODES)
+        : SceneSerializer(&temp_root).run(
+                SceneSerializer::SERIALIZE_NODES);
 
     // Tell the system to delete the node
     n->deleteLater();
