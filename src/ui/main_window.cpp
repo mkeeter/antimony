@@ -59,10 +59,17 @@ void MainWindow::updateMenus()
         connect(ui->actionPaste, &QAction::triggered,
                 c, &Canvas::onPaste);
     }
-    else if (dynamic_cast<ScriptEditor*>(centralWidget()))
+    else if (auto e = dynamic_cast<ScriptEditor*>(centralWidget()))
     {
         ui->menuView->deleteLater();
         ui->menuAdd->deleteLater();
+
+        connect(ui->actionCopy, &QAction::triggered,
+                e, &QPlainTextEdit::copy);
+        connect(ui->actionCut, &QAction::triggered,
+                e, &QPlainTextEdit::cut);
+        connect(ui->actionPaste, &QAction::triggered,
+                e, &QPlainTextEdit::paste);
     }
     else
     {
