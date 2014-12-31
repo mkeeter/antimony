@@ -149,38 +149,44 @@ NodeInspector* Canvas::getNodeInspector(Node* n) const
 
 void Canvas::deleteSelected()
 {
+    QSet<Node*> nodes;
     QSet<Link*> links;
     bool started = false;
     auto start = [&]{ App::instance()->beginUndoMacro("'delete'");
                       started = true; };
 
-    // Begin by pushing delete commands for all selected links
+    // Find all selected links
     for (auto i : scene->selectedItems())
         if (auto c = dynamic_cast<Connection*>(i))
-        {
-            auto k = c->getLink();
-            links.insert(k);
-            if (!started)
-                start();
-            App::instance()->pushStack(new UndoDeleteLinkCommand(k));
-        }
+            links.insert(c->getLink());
 
-    // Push delete commands for each selected node.
-    // We keep track of links that have already been deleted to avoid
-    // double-deleting them; double-deletion isn't a problem (since we're
-    // using deleteLater), but double re-creation on redo would break things).
+    // Find all selected nodes (and any links that are attached to them)
     for (auto i : scene->selectedItems())
         if (auto p = dynamic_cast<NodeInspector*>(i))
         {
             auto n = p->getNode();
-            if (!started)
-                start();
-            App::instance()->pushStack(new UndoDeleteNodeCommand(
-                        n, static_cast<GraphScene*>(scene), links));
-
+            nodes.insert(n);
             for (auto k : n->getLinks())
                 links.insert(k);
         }
+
+
+    // Push delete commands for each selected and connected link.
+    for (auto k : links)
+    {
+        if (!started)
+            start();
+        App::instance()->pushStack(new UndoDeleteLinkCommand(k));
+    }
+
+    // Push delete commands for each selected node.
+    for (auto n : nodes)
+    {
+        if (!started)
+            start();
+        App::instance()->pushStack(new UndoDeleteNodeCommand(
+                    n, static_cast<GraphScene*>(scene)));
+    }
 
     if (started)
         App::instance()->endUndoMacro();

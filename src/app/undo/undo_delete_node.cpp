@@ -11,18 +11,14 @@
 #include "graph/node/serializer.h"
 #include "graph/node/deserializer.h"
 #include "graph/datum/datum.h"
+#include "graph/datum/link.h"
 
 #include "ui/canvas/scene.h"
 
-UndoDeleteNodeCommand::UndoDeleteNodeCommand(
-        Node* n, GraphScene* g, QSet<Link*> ignore)
+UndoDeleteNodeCommand::UndoDeleteNodeCommand(Node* n, GraphScene* g)
     : n(n), g(g)
 {
     setText("'delete node'");
-
-    for (auto k : n->getLinks())
-        if (!ignore.contains(k))
-            new UndoDeleteLinkCommand(k, this);
 }
 
 void UndoDeleteNodeCommand::redo()
@@ -44,10 +40,6 @@ void UndoDeleteNodeCommand::redo()
 
     // Tell the system to delete the node
     n->deleteLater();
-
-    // Call redo to redo all link deletion
-    // (not strictly necessary, but nice for symmetry reasons)
-    UndoCommand::redo();
 }
 
 void UndoDeleteNodeCommand::undo()
@@ -57,9 +49,10 @@ void UndoDeleteNodeCommand::undo()
     SceneDeserializer ds(&temp_root);
     ds.run(data);
 
-    // Extract the node from the temporary root
+    // Extract the node from the temporary root and move it back
     n = temp_root.findChild<Node*>();
     n->setParent(root);
+
     // Find the new lists of node and datum pointers
     auto new_nodes = getNodes();
     auto new_datums = getDatums();
@@ -78,9 +71,6 @@ void UndoDeleteNodeCommand::undo()
 
     if (g)
         g->setInspectorPositions(ds.inspectors);
-
-    // Call undo to undo all child commands (re-creating deleted Links)
-    UndoCommand::undo();
 }
 
 QList<Node*> UndoDeleteNodeCommand::getNodes() const
