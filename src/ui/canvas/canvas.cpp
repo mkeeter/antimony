@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QMenu>
 #include <QClipboard>
+#include <QMimeData>
 
 #include <cmath>
 
@@ -16,7 +17,10 @@
 #include "ui_main_window.h"
 
 #include "graph/node/node.h"
+#include "graph/node/root.h"
 #include "graph/datum/datum.h"
+#include "graph/node/serializer.h"
+#include "graph/node/deserializer.h"
 #include "graph/datum/link.h"
 
 #include "app/app.h"
@@ -224,9 +228,39 @@ void Canvas::makeNodeAtCursor(NodeConstructor f)
 
 void Canvas::onCopy()
 {
-    if (auto i = dynamic_cast<QGraphicsTextItem*>(scene->focusItem()))
-        QApplication::clipboard()->setText(i->textCursor().selectedText());
     qDebug() << "Copy called";
+    if (auto i = dynamic_cast<QGraphicsTextItem*>(scene->focusItem()))
+    {
+        QApplication::clipboard()->setText(i->textCursor().selectedText());
+    }
+    else
+    {
+        // Find all selected nodes
+        QList<Node*> selected;
+        for (auto i : scene->selectedItems())
+            if (auto r = dynamic_cast<NodeInspector*>(i))
+                selected << r->getNode();
+
+        if (!selected.isEmpty())
+        {
+            auto p = selected[0]->parent();
+            NodeRoot temp_root;
+
+            // Move the nodes to a temporary root for serialization
+            for (auto n : selected)
+                n->setParent(&temp_root);
+
+            auto data = new QMimeData();
+            data->setData("sb::canvas", SceneSerializer(
+                        &temp_root,
+                        static_cast<GraphScene*>(scene)->inspectorPositions()
+            ).run());
+            QApplication::clipboard()->setMimeData(data);
+
+            for (auto n : selected)
+                n->setParent(p);
+        }
+    }
 }
 
 void Canvas::onCut()
@@ -242,6 +276,35 @@ void Canvas::onCut()
 void Canvas::onPaste()
 {
     if (auto i = dynamic_cast<QGraphicsTextItem*>(scene->focusItem()))
+    {
         i->textCursor().insertText(QApplication::clipboard()->text());
+    }
+    else
+    {
+        auto data = QApplication::clipboard()->mimeData();
+        if (data->hasFormat("sb::canvas"))
+        {
+            NodeRoot temp_root;
+            SceneDeserializer ds(&temp_root);
+            ds.run(data->data("sb::canvas"));
+
+            for (auto& i : ds.inspectors)
+                i += QPointF(10, 10);
+
+            scene->clearSelection();
+            App::instance()->beginUndoMacro("'paste'");
+            for (auto n : temp_root.findChildren<Node*>())
+            {
+                n->setParent(App::instance()->getNodeRoot());
+                App::instance()->newNode(n);
+                App::instance()->pushStack(new UndoAddNodeCommand(n, "'paste'"));
+                static_cast<GraphScene*>(scene)->getInspector(n)
+                                               ->setSelected(true);
+            }
+            static_cast<GraphScene*>(scene)->setInspectorPositions(ds.inspectors);
+            App::instance()->endUndoMacro();
+        }
+    }
+
     qDebug() << "Paste called";
 }
