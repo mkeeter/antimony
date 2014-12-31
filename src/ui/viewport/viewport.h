@@ -8,6 +8,8 @@
 #include <QMatrix4x4>
 #include <QPointer>
 
+#include "graph/node/constructor.h"
+
 class Node;
 class ControlProxy;
 class InputPort;
@@ -37,6 +39,12 @@ public:
     /** Transforms points from scene to world coordinates.
      */
     QVector3D sceneToWorld(QPointF p) const;
+
+    /*
+     *  Creates a new node at the mouse cursor's position.
+     *  The new node grabs the mouse and is dragged until click+release.
+     */
+    void makeNodeAtCursor(NodeConstructor f);
 
     /** Look up scale.
      */

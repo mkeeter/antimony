@@ -5,7 +5,6 @@
 #include <QDebug>
 
 #include "app/app.h"
-#include "app/undo/undo_add_node.h"
 
 #include "graph/node/node.h"
 #include "graph/node/root.h"
@@ -155,8 +154,7 @@ bool MainWindow::isShaded() const
 #include "graph/node/nodes/deform.h"
 #include "graph/node/nodes/iterate.h"
 
-template <Node* (*f)(float, float, float, float, NodeRoot*)>
-void MainWindow::createNew(bool recenter, Viewport* v)
+void MainWindow::createNew(bool recenter, NodeConstructor f, Viewport* v)
 {
     v = v ? v : findChild<Viewport*>();
     auto c = findChild<Canvas*>();
@@ -167,102 +165,68 @@ void MainWindow::createNew(bool recenter, Viewport* v)
         static_cast<QGraphicsView*>(v) :
         static_cast<QGraphicsView*>(c);
 
-    QPoint mouse_pos = recenter
-        ? view->rect().center()
-        : view->mapFromGlobal(QCursor::pos());
-    QPointF scene_pos = view->mapToScene(mouse_pos);
-
     if (recenter)
-        QCursor::setPos(view->mapToGlobal(mouse_pos));
-
-    Node* n;
-    if (v)
-    {
-        QVector3D obj_pos = v->sceneToWorld(scene_pos);
-        n = f(obj_pos.x(), obj_pos.y(), obj_pos.z(),
-              100 / v->getScale(), App::instance()->getNodeRoot());
-    }
-    else
-    {
-        n = f(0, 0, 0, 1, App::instance()->getNodeRoot());
-    }
-
-    App::instance()->newNode(n);
-    App::instance()->pushStack(new UndoAddNodeCommand(n));
+        QCursor::setPos(view->rect().center());
 
     if (v)
-    {
-        if (auto proxy = v->getControlProxy(n))
-        {
-            proxy->setClickPos(scene_pos);
-            proxy->grabMouse();
-        }
-    }
+        v->makeNodeAtCursor(f);
     else if (c)
-    {
-        auto inspector = c->getNodeInspector(n);
-        Q_ASSERT(inspector);
-        inspector->setSelected(true);
-        inspector->setPos(scene_pos);
-        inspector->setDragging(true);
-        inspector->grabMouse();
-    }
+        c->makeNodeAtCursor(f);
 }
 
-template <Node* (*f)(float, float, float, float, NodeRoot*)>
 void MainWindow::addNodeToMenu(QString category, QString name,
                                QMenu* menu, QMap<QString, QMenu*>* submenus,
-                               bool recenter, Viewport* v)
+                               bool recenter, NodeConstructor f, Viewport* v)
 {
     if (submenus && !submenus->contains(category))
         (*submenus)[category] = menu->addMenu(category);
     QAction* a = (submenus ? (*submenus)[category] : menu)->addAction(name);
-    connect(a, &QAction::triggered, [=]{ this->createNew<f>(recenter, v); });
+    connect(a, &QAction::triggered, [=]{ this->createNew(recenter, f, v); });
 }
 
 void MainWindow::populateMenu(QMenu* menu, bool recenter, Viewport* v)
 {
     QMap<QString, QMenu*> submenus;
 
-    addNodeToMenu<CircleNode>("2D", "Circle", menu, &submenus, recenter, v);
-    addNodeToMenu<Point2DNode>("2D", "Point", menu, &submenus, recenter, v);
-    addNodeToMenu<TriangleNode>("2D", "Triangle", menu, &submenus, recenter, v);
-    addNodeToMenu<RectangleNode>("2D", "Rectangle", menu, &submenus, recenter, v);
-    addNodeToMenu<TextNode>("2D", "Text", menu, &submenus, recenter, v);
+    addNodeToMenu("2D", "Circle", menu, &submenus, recenter, CircleNode, v);
+    addNodeToMenu("2D", "Point", menu, &submenus, recenter, Point2DNode, v);
+    addNodeToMenu("2D", "Triangle", menu, &submenus, recenter, TriangleNode, v);
+    addNodeToMenu("2D", "Rectangle", menu, &submenus, recenter, RectangleNode, v);
+    addNodeToMenu("2D", "Text", menu, &submenus, recenter, TextNode, v);
 
-    addNodeToMenu<Point3DNode>("3D", "Point", menu, &submenus, recenter, v);
-    addNodeToMenu<CubeNode>("3D", "Cube", menu, &submenus, recenter, v);
-    addNodeToMenu<SphereNode>("3D", "Sphere", menu, &submenus, recenter, v);
-    addNodeToMenu<CylinderNode>("3D", "Cylinder", menu, &submenus, recenter, v);
-    addNodeToMenu<ConeNode>("3D", "Cone", menu, &submenus, recenter, v);
-    addNodeToMenu<ExtrudeNode>("3D", "Extrude", menu, &submenus, recenter, v);
+    addNodeToMenu("3D", "Point", menu, &submenus, recenter, Point3DNode, v);
+    addNodeToMenu("3D", "Cube", menu, &submenus, recenter, CubeNode, v);
+    addNodeToMenu("3D", "Sphere", menu, &submenus, recenter, SphereNode, v);
+    addNodeToMenu("3D", "Cylinder", menu, &submenus, recenter, CylinderNode, v);
+    addNodeToMenu("3D", "Cone", menu, &submenus, recenter, ConeNode, v);
+    addNodeToMenu("3D", "Extrude", menu, &submenus, recenter, ExtrudeNode, v);
 
-    addNodeToMenu<UnionNode>("CSG", "Union", menu, &submenus, recenter, v);
-    addNodeToMenu<BlendNode>("CSG", "Blend", menu, &submenus, recenter, v);
-    addNodeToMenu<IntersectionNode>("CSG", "Intersection", menu, &submenus, recenter, v);
-    addNodeToMenu<DifferenceNode>("CSG", "Difference", menu, &submenus, recenter, v);
-    addNodeToMenu<OffsetNode>("CSG", "Offset", menu, &submenus, recenter, v);
-    addNodeToMenu<ClearanceNode>("CSG", "Clearance", menu, &submenus, recenter, v);
-    addNodeToMenu<ShellNode>("CSG", "Shell", menu, &submenus, recenter, v);
+    addNodeToMenu("CSG", "Union", menu, &submenus, recenter, UnionNode, v);
+    addNodeToMenu("CSG", "Blend", menu, &submenus, recenter, BlendNode, v);
+    addNodeToMenu("CSG", "Intersection", menu, &submenus, recenter, IntersectionNode, v);
+    addNodeToMenu("CSG", "Difference", menu, &submenus, recenter, DifferenceNode, v);
+    addNodeToMenu("CSG", "Offset", menu, &submenus, recenter, OffsetNode, v);
+    addNodeToMenu("CSG", "Clearance", menu, &submenus, recenter, ClearanceNode, v);
+    addNodeToMenu("CSG", "Shell", menu, &submenus, recenter, ShellNode, v);
 
-    addNodeToMenu<RotateXNode>("Transform", "Rotate (X)", menu, &submenus, recenter, v);
-    addNodeToMenu<RotateYNode>("Transform", "Rotate (Y)", menu, &submenus, recenter, v);
-    addNodeToMenu<RotateZNode>("Transform", "Rotate (Z)", menu, &submenus, recenter, v);
-    addNodeToMenu<ReflectXNode>("Transform", "Reflect (X)", menu, &submenus, recenter, v);
-    addNodeToMenu<ReflectYNode>("Transform", "Reflect (Y)", menu, &submenus, recenter, v);
-    addNodeToMenu<ReflectZNode>("Transform", "Reflect (Z)", menu, &submenus, recenter, v);
-    addNodeToMenu<RecenterNode>("Transform", "Recenter", menu, &submenus, recenter, v);
-    addNodeToMenu<TranslateNode>("Transform", "Translate", menu, &submenus, recenter, v);
+    addNodeToMenu("Transform", "Rotate (X)", menu, &submenus, recenter, RotateXNode, v);
+    addNodeToMenu("Transform", "Rotate (Y)", menu, &submenus, recenter, RotateYNode, v);
+    addNodeToMenu("Transform", "Rotate (Z)", menu, &submenus, recenter, RotateZNode, v);
+    addNodeToMenu("Transform", "Reflect (X)", menu, &submenus, recenter, ReflectXNode, v);
+    addNodeToMenu("Transform", "Reflect (Y)", menu, &submenus, recenter, ReflectYNode, v);
+    addNodeToMenu("Transform", "Reflect (Z)", menu, &submenus, recenter, ReflectZNode, v);
+    addNodeToMenu("Transform", "Recenter", menu, &submenus, recenter, RecenterNode, v);
+    addNodeToMenu("Transform", "Translate", menu, &submenus, recenter, TranslateNode, v);
 
-    addNodeToMenu<Iterate2DNode>("Iterate", "Iterate (2D)", menu, &submenus, recenter, v);
+    addNodeToMenu("Iterate", "Iterate (2D)", menu, &submenus, recenter, Iterate2DNode, v);
 
-    addNodeToMenu<AttractNode>("Deform", "Attract", menu, &submenus, recenter, v);
-    addNodeToMenu<RepelNode>("Deform", "Repel", menu, &submenus, recenter, v);
-    addNodeToMenu<ScaleXNode>("Deform", "Scale (X)", menu, &submenus, recenter, v);
-    addNodeToMenu<ScaleYNode>("Deform", "Scale (Y)", menu, &submenus, recenter, v);
-    addNodeToMenu<ScaleZNode>("Deform", "Scale (Z)", menu, &submenus, recenter, v);
+    addNodeToMenu("Deform", "Attract", menu, &submenus, recenter, AttractNode, v);
+    addNodeToMenu("Deform", "Repel", menu, &submenus, recenter, RepelNode, v);
+    addNodeToMenu("Deform", "Scale (X)", menu, &submenus, recenter, ScaleXNode, v);
+    addNodeToMenu("Deform", "Scale (Y)", menu, &submenus, recenter, ScaleYNode, v);
+    addNodeToMenu("Deform", "Scale (Z)", menu, &submenus, recenter, ScaleZNode, v);
 
     menu->addSeparator();
 
-    addNodeToMenu<ScriptNode>("", "Script", menu, NULL, recenter, v);
+    addNodeToMenu("", "Script", menu, NULL, recenter, ScriptNode, v);
 }

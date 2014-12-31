@@ -25,6 +25,9 @@
 #include "control/control.h"
 #include "control/proxy.h"
 
+#include "app/app.h"
+#include "app/undo/undo_add_node.h"
+
 Viewport::Viewport(QGraphicsScene* scene, QWidget* parent)
     : QGraphicsView(parent), scene(scene),
       scale(100), pitch(0), yaw(0), angle_locked(false),
@@ -119,6 +122,23 @@ QVector3D Viewport::sceneToWorld(QPointF p) const
 {
     QMatrix4x4 M = getMatrix().inverted();
     return M * QVector3D(p.x(), p.y(), 0);
+}
+
+void Viewport::makeNodeAtCursor(NodeConstructor f)
+{
+    QPointF scene_pos = mapToScene(mapFromGlobal(QCursor::pos()));
+    QVector3D p = sceneToWorld(scene_pos);
+
+    auto n = f(p.x(), p.y(), p.z(), scale, App::instance()->getNodeRoot());
+
+    App::instance()->newNode(n);
+    App::instance()->pushStack(new UndoAddNodeCommand(n));
+
+    if (auto proxy = getControlProxy(n))
+    {
+        proxy->setClickPos(scene_pos);
+        proxy->grabMouse();
+    }
 }
 
 float Viewport::getZmax() const

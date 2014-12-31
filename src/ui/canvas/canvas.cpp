@@ -19,6 +19,7 @@
 #include "graph/datum/link.h"
 
 #include "app/app.h"
+#include "app/undo/undo_add_node.h"
 #include "app/undo/undo_delete_link.h"
 #include "app/undo/undo_delete_node.h"
 
@@ -190,6 +191,22 @@ void Canvas::deleteSelected()
 
     if (started)
         App::instance()->endUndoMacro();
+}
+
+
+void Canvas::makeNodeAtCursor(NodeConstructor f)
+{
+    auto n = f(0, 0, 0, 1, App::instance()->getNodeRoot());
+
+    App::instance()->newNode(n);
+    App::instance()->pushStack(new UndoAddNodeCommand(n));
+
+    auto inspector = getNodeInspector(n);
+    Q_ASSERT(inspector);
+    inspector->setSelected(true);
+    inspector->setPos(mapToScene(mapFromGlobal(QCursor::pos())));
+    inspector->setDragging(true);
+    inspector->grabMouse();
 }
 
 

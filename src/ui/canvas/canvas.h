@@ -5,6 +5,8 @@
 #include <QGraphicsScene>
 #include <QPointer>
 
+#include "graph/node/constructor.h"
+
 class Node;
 class NodeInspector;
 class Link;
@@ -15,6 +17,8 @@ class Canvas : public QGraphicsView
 public:
     explicit Canvas(QWidget* parent=0);
     explicit Canvas(QGraphicsScene* scene, QWidget* parent=0);
+
+    void makeNodeAtCursor(NodeConstructor f);
 
     NodeInspector* getNodeInspector(Node* n) const;
 
