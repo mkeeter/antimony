@@ -541,7 +541,7 @@ void Viewport::onCut()
             n->setParent(p);
 
             QApplication::clipboard()->setMimeData(data);
-            proxy->getControl()->deleteNode();
+            proxy->getControl()->deleteNode("'cut'");
             return;
         }
 }
@@ -560,6 +560,6 @@ void Viewport::onPaste()
         n->setParent(App::instance()->getNodeRoot());
 
         App::instance()->newNode(n);
-        App::instance()->pushStack(new UndoAddNodeCommand(n));
+        App::instance()->pushStack(new UndoAddNodeCommand(n, "'paste'"));
     }
 }

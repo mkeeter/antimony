@@ -32,9 +32,11 @@ public:
      */
     double getValue(QString name) const;
 
-    /** Calls deleteLater on the top-level node.
+    /*
+     *  Schedules the top-level node for deletion in an undo-able way
+     *  text is an optional argument that sets the text in the undo command.
      */
-    void deleteNode();
+    void deleteNode(QString text=QString());
 
     /*
      *  This function is overloaded by children to return bounds.

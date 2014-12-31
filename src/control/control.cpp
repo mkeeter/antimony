@@ -56,12 +56,12 @@ double Control::getValue(QString name) const
     return v;
 }
 
-void Control::deleteNode()
+void Control::deleteNode(QString text)
 {
     if (parent())
-        dynamic_cast<Control*>(parent())->deleteNode();
+        dynamic_cast<Control*>(parent())->deleteNode(text);
     else
-        App::instance()->pushStack(new UndoDeleteNodeCommand(node));
+        App::instance()->pushStack(new UndoDeleteNodeCommand(node, text));
 }
 
 void Control::beginDrag()
