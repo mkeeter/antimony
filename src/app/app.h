@@ -63,6 +63,8 @@ public slots:
      */
     MainWindow* newEditorWindow(ScriptDatum* datum);
 
+    GraphScene* getGraphScene() const { return graph_scene; }
+
     QAction* undoAction();
     QAction* redoAction();
 

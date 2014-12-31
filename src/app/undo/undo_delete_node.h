@@ -5,7 +5,6 @@
 
 #include "app/undo/undo_command.h"
 
-class GraphScene;
 class NodeRoot;
 
 class UndoDeleteNodeCommand : public UndoCommand
@@ -13,10 +12,8 @@ class UndoDeleteNodeCommand : public UndoCommand
 public:
     /*
      *  n is the target node to delete
-     *  g is the GraphScene in which to look up an inspector position
-     *      (or NULL)
      */
-    UndoDeleteNodeCommand(Node* n, GraphScene* g);
+    UndoDeleteNodeCommand(Node* n);
 
     void redo();
     void undo();
@@ -33,7 +30,6 @@ protected:
     QList<Node*> nodes;
     QList<Datum*> datums;
 
-    GraphScene* g;
     QByteArray data;
 };
 

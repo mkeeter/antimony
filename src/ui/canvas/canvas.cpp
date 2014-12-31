@@ -184,8 +184,7 @@ void Canvas::deleteSelected()
     {
         if (!started)
             start();
-        App::instance()->pushStack(new UndoDeleteNodeCommand(
-                    n, static_cast<GraphScene*>(scene)));
+        App::instance()->pushStack(new UndoDeleteNodeCommand(n));
     }
 
     if (started)

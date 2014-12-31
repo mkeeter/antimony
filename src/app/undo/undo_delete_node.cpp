@@ -15,8 +15,8 @@
 
 #include "ui/canvas/scene.h"
 
-UndoDeleteNodeCommand::UndoDeleteNodeCommand(Node* n, GraphScene* g)
-    : n(n), g(g)
+UndoDeleteNodeCommand::UndoDeleteNodeCommand(Node* n)
+    : n(n)
 {
     setText("'delete node'");
 }
@@ -34,8 +34,9 @@ void UndoDeleteNodeCommand::redo()
     // Serialize n into data byte array
     NodeRoot temp_root;
     n->setParent(&temp_root);
-    data = g
-        ? SceneSerializer(&temp_root, g->inspectorPositions()).run(
+    data = app
+        ? SceneSerializer(
+                &temp_root, app->getGraphScene()->inspectorPositions()).run(
                 SceneSerializer::SERIALIZE_NODES)
         : SceneSerializer(&temp_root).run(
                 SceneSerializer::SERIALIZE_NODES);
@@ -69,10 +70,10 @@ void UndoDeleteNodeCommand::undo()
         stack->swapPointer(*a, *b);
 
     if (app)
+    {
         app->newNode(n);
-
-    if (g)
-        g->setInspectorPositions(ds.inspectors);
+        app->getGraphScene()->setInspectorPositions(ds.inspectors);
+    }
 }
 
 QList<Node*> UndoDeleteNodeCommand::getNodes() const
