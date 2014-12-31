@@ -87,6 +87,7 @@ void App::onNew()
 {
     root->deleteLater();
     root = new NodeRoot();
+    filename.clear();
     stack->clear();
 }
 
