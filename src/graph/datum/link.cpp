@@ -15,3 +15,8 @@ void Link::setTarget(Datum *d)
 {
     target = QPointer<Datum>(d);
 }
+
+Datum* Link::getTarget() const
+{
+    return target;
+}

@@ -29,6 +29,12 @@ bool Datum::hasInputValue() const
     return input_handler != NULL && input_handler->hasInput();
 }
 
+QList<Link*> Datum::inputLinks() const
+{
+    return input_handler ? input_handler->getLinks()
+                         : QList<Link*>();
+}
+
 bool Datum::canEdit() const
 {
     return !hasInputValue();

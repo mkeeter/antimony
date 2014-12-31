@@ -16,13 +16,19 @@ public:
      *  with an Inspector title bar
      */
     void setAsTitle();
+
 public slots:
     void onTextChanged();
     void onDatumChanged();
+
+protected slots:
+    void onUndoCommandAdded();
+
 signals:
     void boundsChanged();
     void tabPressed(DatumTextItem* item);
     void shiftTabPressed(DatumTextItem* item);
+
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget);
@@ -31,7 +37,9 @@ protected:
      */
     bool eventFilter(QObject* obj, QEvent* event);
 
-    void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
+    void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+    void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 
     Datum* d;
     QTextDocument* txt;
@@ -39,6 +47,8 @@ protected:
     QColor foreground;
     QColor border;
     QRectF bbox;
+
+    QString drag_start;
 };
 
 #endif // INSPECTOR_TEXT_H

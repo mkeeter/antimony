@@ -7,6 +7,7 @@
 #include "graph/node/proxy.h"
 
 #include "graph/datum/datum.h"
+#include "graph/datum/link.h"
 #include "graph/datum/datums/name_datum.h"
 
 Node::Node(NodeType::NodeType type, NodeRoot* parent)
@@ -97,4 +98,18 @@ QString Node::getType() const
         case NodeType::ITERATE2D:   return "Iterate (2D)";
         case NodeType::DUMMY:       return "Dummy";
     }
+}
+
+QSet<Link*> Node::getLinks() const
+{
+    QSet<Link*> links;
+
+    for (auto d : findChildren<Datum*>(QString(), Qt::FindDirectChildrenOnly))
+    {
+        for (auto k : d->findChildren<Link*>())
+            links.insert(k);
+        for (auto k : d->inputLinks())
+            links.insert(k);
+    }
+    return links;
 }

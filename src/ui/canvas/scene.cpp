@@ -126,5 +126,6 @@ void GraphScene::setInspectorPositions(QMap<Node*, QPointF> p)
 {
     for (auto m : items())
         if (auto i = dynamic_cast<NodeInspector*>(m))
-            i->setPos(p[i->getNode()]);
+            if (p.contains(i->getNode()))
+                i->setPos(p[i->getNode()]);
 }

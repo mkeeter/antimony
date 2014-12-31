@@ -18,22 +18,26 @@ SceneSerializer::SceneSerializer(QObject* node_root,
     // Nothing to do here.
 }
 
-QByteArray SceneSerializer::run()
+QByteArray SceneSerializer::run(SerializerMode mode)
 {
     QBuffer buffer;
     buffer.open(QBuffer::WriteOnly);
 
     QDataStream stream(&buffer);
-    run(&stream);
+    run(&stream, mode);
     buffer.seek(0);
 
     return buffer.data();
 }
 
-void SceneSerializer::run(QDataStream* out)
+void SceneSerializer::run(QDataStream* out, SerializerMode mode)
 {
     *out << QString("sb") << quint32(2);
     serializeNodes(out, node_root);
+
+    if (mode == SERIALIZE_NODES)
+        connections.clear();
+
     serializeConnections(out);
 }
 
@@ -102,8 +106,15 @@ void SceneSerializer::serializeDatum(QDataStream* out, Datum* datum)
 
 void SceneSerializer::serializeConnections(QDataStream* out)
 {
-    *out << quint32(connections.length());
+    // Only serialize connections for which we have serialized both datums
+    // (prevents edge cases in copy-paste)
+    QList<QPair<Datum*, Datum*>> valid;
     for (auto p : connections)
+        if (datums.contains(p.first) && datums.contains(p.second))
+            valid << p;
+
+    *out << quint32(valid.length());
+    for (auto p : valid)
         *out << quint32(datums.indexOf(p.first))
              << quint32(datums.indexOf(p.second));
 }

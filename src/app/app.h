@@ -2,6 +2,7 @@
 #define APP_H
 
 #include <QApplication>
+#include <QAction>
 
 class GraphScene;
 class ViewportScene;
@@ -11,6 +12,8 @@ class Connection;
 class ScriptDatum;
 class MainWindow;
 class NodeRoot;
+class UndoStack;
+class UndoCommand;
 
 class App : public QApplication
 {
@@ -60,6 +63,17 @@ public slots:
      */
     MainWindow* newEditorWindow(ScriptDatum* datum);
 
+    GraphScene* getGraphScene() const { return graph_scene; }
+
+    QAction* undoAction();
+    QAction* redoAction();
+
+    void pushStack(UndoCommand* c);
+    void undo();
+    void redo();
+    void beginUndoMacro(QString text);
+    void endUndoMacro();
+
 public slots:
     void onAbout();
 
@@ -80,6 +94,7 @@ private:
     ViewportScene* view_scene;
     QString filename;
     NodeRoot* root;
+    UndoStack* stack;
 };
 
 #endif // APP_H

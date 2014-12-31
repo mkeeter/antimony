@@ -41,8 +41,14 @@ public:
     virtual QString getString() const=0;
 
     /** Returns a list of all the datums connected to this input handler.
+     * (calls getLinks internally, then looks up the parent of each one)
      */
-    virtual QList<Datum*> getInputDatums() const=0;
+    QList<Datum*> getInputDatums() const;
+
+    /*
+     *  Returns a list of links coming into this input handler.
+     */
+    virtual QList<Link*> getLinks() const=0;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -57,7 +63,7 @@ public:
     bool hasInput() const override;
     void deleteInput(Datum* d) override;
     QString getString() const override;
-    QList<Datum*> getInputDatums() const override;
+    QList<Link*> getLinks() const override;
 protected:
     QPointer<Link> in;
 };
@@ -75,7 +81,7 @@ public:
     bool hasInput() const override;
     void deleteInput(Datum* d) override;
     QString getString() const override;
-    QList<Datum*> getInputDatums() const override;
+    QList<Link*> getLinks() const override;
 public slots:
     /** Removes inactive input pointers from the list.
      */

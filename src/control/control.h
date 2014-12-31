@@ -9,6 +9,7 @@
 
 // Forward declarations
 class Datum;
+class EvalDatum;
 class Node;
 
 class Control : public QObject
@@ -56,9 +57,21 @@ public:
     virtual void paint(QMatrix4x4 m, QMatrix4x4 t,
                        bool highlight, QPainter* painter)=0;
 
+    /*
+     *  Saves watched datum's expressions
+     *  (used in undo/redo framework)
+     */
+    void beginDrag();
+
     /** Called to drag the node around with the mouse.
      */
     virtual void drag(QVector3D center, QVector3D delta)=0;
+
+    /*
+     *  Pushes an UndoCommand to the stack that undoes the
+     *  previous drag operation.
+     */
+    void endDrag();
 
     /*
      *  Overloaded to make buttons inside the Control.
@@ -100,6 +113,7 @@ protected:
     void setDefaultBrush(bool highlight, QPainter* painter) const;
 
     QPointer<Node> node;
+    QMap<EvalDatum*, QString> watched;
 };
 
 

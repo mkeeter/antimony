@@ -13,6 +13,7 @@ public:
     explicit Link(Datum *parent);
     void setTarget(Datum* d);
     bool hasTarget() const { return !target.isNull(); }
+    Datum* getTarget() const;
 protected:
     QPointer<Datum> target;
 

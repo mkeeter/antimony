@@ -55,6 +55,11 @@ protected:
      */
     void pan(QVector3D d);
 
+    /*
+     *  Deletes all selected objects in an undo-able way
+     */
+    void deleteSelected();
+
     QPointF click_pos;
     QPointF drag_pos;
     bool selecting;

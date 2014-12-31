@@ -14,12 +14,16 @@
 #include "ui/canvas/inspector/inspector_row.h"
 #include "ui/canvas/inspector/inspector_menu.h"
 #include "ui/canvas/port.h"
+#include "ui/canvas/scene.h"
 
 #include "ui/util/colors.h"
 
 #include "graph/datum/datum.h"
 #include "graph/datum/datums/script_datum.h"
 #include "graph/node/node.h"
+
+#include "app/app.h"
+#include "app/undo/undo_move.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -293,7 +297,21 @@ void NodeInspector::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     QGraphicsItem::mouseReleaseEvent(event);
 
     if (dragging)
+    {
         ungrabMouse();
+    }
+    else
+    {
+        // Store an Undo command for this drag
+        auto delta = event->scenePos() -
+                     event->buttonDownScenePos(Qt::LeftButton);
+        if (delta.x() || delta.y())
+            App::instance()->pushStack(new UndoMoveCommand(
+                static_cast<GraphScene*>(scene()),
+                node, pos() - delta, pos()));
+    }
+
+
     dragging = false;
 }
 

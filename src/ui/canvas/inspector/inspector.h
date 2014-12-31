@@ -76,11 +76,6 @@ public slots:
 
     void setDragging(bool d) { dragging = d; }
 
-    /*
-     *  Trigger self-destruction by deleting the node.
-     */
-    void deleteNode() { node->deleteLater(); }
-
 protected:
     /*
      *  On object moved, emit moved signal.

@@ -5,6 +5,7 @@
 #include <QDebug>
 
 #include "app/app.h"
+#include "app/undo/undo_add_node.h"
 
 #include "graph/node/node.h"
 #include "graph/node/root.h"
@@ -31,6 +32,8 @@ MainWindow::MainWindow(QWidget *parent) :
     view_actions->setExclusive(true);
 
     connectActions(App::instance());
+    ui->menuEdit->addAction(App::instance()->undoAction());
+    ui->menuEdit->addAction(App::instance()->redoAction());
     setShortcuts();
 
     populateMenu(ui->menuAdd);
@@ -161,6 +164,7 @@ void MainWindow::createNew(bool recenter, Viewport* v)
     }
 
     App::instance()->newNode(n);
+    App::instance()->pushStack(new UndoAddNodeCommand(n));
 
     if (v)
     {

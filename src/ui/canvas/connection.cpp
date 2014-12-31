@@ -15,6 +15,9 @@
 
 #include "graph/node/node.h"
 
+#include "app/app.h"
+#include "app/undo/undo_add_link.h"
+
 Connection::Connection(Link* link)
     : QGraphicsObject(), link(link),
       drag_state(link->hasTarget() ? CONNECTED : NONE),
@@ -35,6 +38,12 @@ void Connection::makeSceneConnections()
 {
     connect(startInspector(), &NodeInspector::moved,
             this, &Connection::onInspectorMoved);
+
+    if (link->hasTarget())
+    {
+        connect(endInspector(), &NodeInspector::moved,
+                this, &Connection::onInspectorMoved);
+    }
 
     auto s = scene();
     Q_ASSERT(s);
@@ -230,6 +239,8 @@ void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
         connect(endInspector(), &NodeInspector::moved,
                 this, &Connection::onInspectorMoved);
+
+        App::instance()->pushStack(new UndoAddLinkCommand(link));
     }
     else
     {
@@ -282,7 +293,7 @@ void Connection::keyPressEvent(QKeyEvent* event)
 
 void Connection::keyReleaseEvent(QKeyEvent* event)
 {
-    if (event->key() == Qt::Key_Shift)
+    if (event->key() == Qt::Key_Shift && drag_state != CONNECTED)
     {
         snapping = false;
         checkDragTarget();

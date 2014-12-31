@@ -8,6 +8,8 @@
 #include <cmath>
 
 #include "app.h"
+#include "app/undo/stack.h"
+#include "app/undo/undo_command.h"
 
 #include "ui/dialogs/resolution_dialog.h"
 #include "ui/dialogs/exporting_dialog.h"
@@ -40,7 +42,7 @@ App::App(int& argc, char** argv) :
     QApplication(argc, argv),
     graph_scene(new GraphScene()),
     view_scene(new ViewportScene()),
-    root(new NodeRoot())
+    root(new NodeRoot()), stack(new UndoStack(this))
 {
     setGlobalStyle();
 
@@ -399,4 +401,44 @@ void App::newNode(Node* n)
 Connection* App::newLink(Link* link)
 {
     return graph_scene->makeUIfor(link);
+}
+
+QAction* App::undoAction()
+{
+    auto a = stack->createUndoAction(this);
+    a->setShortcuts(QKeySequence::Undo);
+    return a;
+}
+
+QAction* App::redoAction()
+{
+    auto a = stack->createRedoAction(this);
+    a->setShortcuts(QKeySequence::Redo);
+    return a;
+}
+
+void App::pushStack(UndoCommand* c)
+{
+    c->setApp(this);
+    stack->push(c);
+}
+
+void App::undo()
+{
+    stack->undo();
+}
+
+void App::redo()
+{
+    stack->redo();
+}
+
+void App::beginUndoMacro(QString text)
+{
+    stack->beginMacro(text);
+}
+
+void App::endUndoMacro()
+{
+    stack->endMacro();
 }

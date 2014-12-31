@@ -62,7 +62,8 @@ void ViewportScene::makeProxyFor(Control* c, Viewport* v)
     connect(c, &ControlProxy::destroyed,
             this, &ViewportScene::prune);
 
-    for (auto f : c->findChildren<Control*>("", Qt::FindDirectChildrenOnly))
+    for (auto f : c->findChildren<Control*>(
+                QString(), Qt::FindDirectChildrenOnly))
         makeProxyFor(f, v);
 }
 
