@@ -42,6 +42,17 @@ public:
      */
     NodeRoot* getNodeRoot() const { return root; }
 
+    GraphScene* getGraphScene() const { return graph_scene; }
+
+    QAction* undoAction();
+    QAction* redoAction();
+
+    void pushStack(UndoCommand* c);
+    void undo();
+    void redo();
+    void beginUndoMacro(QString text);
+    void endUndoMacro();
+
 public slots:
     /*
      *  Opens a new MainWindow with a Canvas as its central widget.
@@ -62,19 +73,6 @@ public slots:
      *  Opens a new editor window targetting the given datum.
      */
     MainWindow* newEditorWindow(ScriptDatum* datum);
-
-    GraphScene* getGraphScene() const { return graph_scene; }
-
-    QAction* undoAction();
-    QAction* redoAction();
-
-    void pushStack(UndoCommand* c);
-    void undo();
-    void redo();
-    void beginUndoMacro(QString text);
-    void endUndoMacro();
-
-public slots:
     void onAbout();
 
     void onNew();
