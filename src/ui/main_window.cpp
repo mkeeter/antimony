@@ -36,8 +36,6 @@ MainWindow::MainWindow(QWidget *parent) :
     setShortcuts();
 
     populateMenu(ui->menuAdd);
-
-    setWindowTitle("antimony");
 }
 
 MainWindow::~MainWindow()
@@ -93,6 +91,11 @@ void MainWindow::connectActions(App* app)
     // Help menu
     connect(ui->actionAbout, &QAction::triggered,
             app, &App::onAbout);
+
+    // Window title
+    setWindowTitle(app->getWindowTitle());
+    connect(app, &App::windowTitleChanged,
+            this, &MainWindow::setWindowTitle);
 }
 
 void MainWindow::setShortcuts()

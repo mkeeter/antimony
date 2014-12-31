@@ -44,6 +44,14 @@ public:
 
     GraphScene* getGraphScene() const { return graph_scene; }
 
+    /*
+     *  Returns a window title in the form
+     *      antimony [Untitled]*
+     *  or
+     *      antimony [filename.sb]*
+     */
+    QString getWindowTitle() const;
+
     QAction* undoAction();
     QAction* redoAction();
 
@@ -52,6 +60,9 @@ public:
     void redo();
     void beginUndoMacro(QString text);
     void endUndoMacro();
+
+signals:
+    void windowTitleChanged(QString new_title);
 
 public slots:
     /*
