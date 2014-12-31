@@ -104,6 +104,8 @@ void App::onSave()
 
     QDataStream out(&file);
     ss.run(&out);
+
+    stack->setClean();
 }
 
 void App::onSaveAs()
