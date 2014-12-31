@@ -12,6 +12,7 @@
 
 #include "app/app.h"
 #include "app/undo/undo_change_expr.h"
+#include "app/undo/undo_delete_node.h"
 
 Control::Control(Node* node, QObject* parent)
     : QObject(parent), node(node)
@@ -60,7 +61,7 @@ void Control::deleteNode()
     if (parent())
         dynamic_cast<Control*>(parent())->deleteNode();
     else
-        node->deleteLater();
+        App::instance()->pushStack(new UndoDeleteNodeCommand(node));
 }
 
 void Control::beginDrag()
