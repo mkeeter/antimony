@@ -63,18 +63,7 @@ void ScriptEditor::onDatumChanged()
 {
     if (datum)
     {
-        if (!datum->getValid())
-        {
-            setToolTip(datum->getErrorTraceback());
-            highlightError(datum->getErrorLine());
-        }
-        else
-        {
-            setToolTip("");
-            QToolTip::hideText();
-            setExtraSelections({});
-        }
-
+        // Update the document text
         if (datum->getExpr() != document()->toPlainText())
         {
             // Keep the cursor at the same position in the document
@@ -88,6 +77,19 @@ void ScriptEditor::onDatumChanged()
                 cursor.setPosition(p);
                 setTextCursor(cursor);
             }
+        }
+
+        // If the datum is invalid, update the error line highlighting
+        if (!datum->getValid())
+        {
+            setToolTip(datum->getErrorTraceback());
+            highlightError(datum->getErrorLine());
+        }
+        else
+        {
+            setToolTip("");
+            QToolTip::hideText();
+            setExtraSelections({});
         }
     }
     else
