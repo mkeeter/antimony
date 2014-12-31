@@ -6,7 +6,7 @@
 class UndoAddNodeCommand : public UndoDeleteNodeCommand
 {
 public:
-    UndoAddNodeCommand(Node* node);
+    UndoAddNodeCommand(Node* node, QString text=QString());
 
     void redo() override;
     void undo() override;

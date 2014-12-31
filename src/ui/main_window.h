@@ -1,7 +1,10 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
+#include <Python.h>
 #include <QMainWindow>
+
+#include "graph/node/constructor.h"
 
 class Canvas;
 class Viewport;
@@ -24,7 +27,7 @@ public:
     /*
      *  Updates menus once the central widget is set.
      */
-    void updateMenus();
+    void setCentralWidget(QWidget* w);
 
     /** Populate a menu with all of the widgets.
      */
@@ -52,15 +55,13 @@ private:
      *  If v is given, use it as the viewport in which to add the object
      *      (which enables Shift+A adding objects in quad windows)
      */
-    template <Node* (*f)(float, float, float, float, NodeRoot*)>
-    void createNew(bool recenter, Viewport* v=NULL);
+    void createNew(bool recenter, NodeConstructor f, Viewport* v=NULL);
 
     /** Adds a particular node to the "Add" menu.
      */
-    template <Node* (*f)(float, float, float, float, NodeRoot*)>
     void addNodeToMenu(QString category, QString name, QMenu* menu,
                        QMap<QString, QMenu*>* submenus,
-                       bool recenter, Viewport* v=NULL);
+                       bool recenter, NodeConstructor f, Viewport* v=NULL);
 
     Ui::MainWindow *ui;
 };

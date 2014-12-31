@@ -3,6 +3,8 @@
 #include <QMouseEvent>
 #include <QDebug>
 #include <QMenu>
+#include <QClipboard>
+#include <QMimeData>
 
 #include <cmath>
 
@@ -12,12 +14,17 @@
 #include "ui/canvas/connection.h"
 #include "ui/util/colors.h"
 #include "ui/main_window.h"
+#include "ui_main_window.h"
 
 #include "graph/node/node.h"
+#include "graph/node/root.h"
 #include "graph/datum/datum.h"
+#include "graph/node/serializer.h"
+#include "graph/node/deserializer.h"
 #include "graph/datum/link.h"
 
 #include "app/app.h"
+#include "app/undo/undo_add_node.h"
 #include "app/undo/undo_delete_link.h"
 #include "app/undo/undo_delete_node.h"
 
@@ -32,11 +39,23 @@ Canvas::Canvas(QWidget* parent)
     QAbstractScrollArea::setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
-Canvas::Canvas(QGraphicsScene* s, QWidget* parent)
+Canvas::Canvas(GraphScene* s, QWidget* parent)
     : Canvas(parent)
 {
     QGraphicsView::setScene(s);
     scene = s;
+}
+
+void Canvas::setupUI(Ui::MainWindow* ui)
+{
+    ui->menuView->deleteLater();
+
+    connect(ui->actionCopy, &QAction::triggered,
+            this, &Canvas::onCopy);
+    connect(ui->actionCut, &QAction::triggered,
+            this, &Canvas::onCut);
+    connect(ui->actionPaste, &QAction::triggered,
+            this, &Canvas::onPaste);
 }
 
 void Canvas::mousePressEvent(QMouseEvent* event)
@@ -191,3 +210,94 @@ void Canvas::deleteSelected()
         App::instance()->endUndoMacro();
 }
 
+void Canvas::makeNodeAtCursor(NodeConstructor f)
+{
+    auto n = f(0, 0, 0, 1, App::instance()->getNodeRoot());
+
+    App::instance()->newNode(n);
+    App::instance()->pushStack(new UndoAddNodeCommand(n));
+
+    auto inspector = getNodeInspector(n);
+    Q_ASSERT(inspector);
+    inspector->setSelected(true);
+    inspector->setPos(mapToScene(mapFromGlobal(QCursor::pos())));
+    inspector->setDragging(true);
+    inspector->grabMouse();
+}
+
+
+void Canvas::onCopy()
+{
+    if (auto i = dynamic_cast<QGraphicsTextItem*>(scene->focusItem()))
+    {
+        QApplication::clipboard()->setText(i->textCursor().selectedText());
+    }
+    else
+    {
+        // Find all selected nodes
+        QList<Node*> selected;
+        for (auto i : scene->selectedItems())
+            if (auto r = dynamic_cast<NodeInspector*>(i))
+                selected << r->getNode();
+
+        if (!selected.isEmpty())
+        {
+            auto p = selected[0]->parent();
+            NodeRoot temp_root;
+
+            // Move the nodes to a temporary root for serialization
+            for (auto n : selected)
+                n->setParent(&temp_root);
+
+            auto data = new QMimeData();
+            data->setData("sb::canvas", SceneSerializer(
+                        &temp_root, scene->inspectorPositions()).run());
+            QApplication::clipboard()->setMimeData(data);
+
+            for (auto n : selected)
+                n->setParent(p);
+        }
+    }
+}
+
+void Canvas::onCut()
+{
+    if (auto i = dynamic_cast<QGraphicsTextItem*>(scene->focusItem()))
+    {
+        QApplication::clipboard()->setText(i->textCursor().selectedText());
+        i->textCursor().insertText("");
+    }
+}
+
+void Canvas::onPaste()
+{
+    if (auto i = dynamic_cast<QGraphicsTextItem*>(scene->focusItem()))
+    {
+        i->textCursor().insertText(QApplication::clipboard()->text());
+    }
+    else
+    {
+        auto data = QApplication::clipboard()->mimeData();
+        if (data->hasFormat("sb::canvas"))
+        {
+            NodeRoot temp_root;
+            SceneDeserializer ds(&temp_root);
+            ds.run(data->data("sb::canvas"));
+
+            for (auto& i : ds.inspectors)
+                i += QPointF(10, 10);
+
+            scene->clearSelection();
+            App::instance()->beginUndoMacro("'paste'");
+            for (auto n : temp_root.findChildren<Node*>())
+            {
+                n->setParent(App::instance()->getNodeRoot());
+                App::instance()->newNode(n);
+                App::instance()->pushStack(new UndoAddNodeCommand(n, "'paste'"));
+                scene->getInspector(n)->setSelected(true);
+            }
+            scene->setInspectorPositions(ds.inspectors);
+            App::instance()->endUndoMacro();
+        }
+    }
+}

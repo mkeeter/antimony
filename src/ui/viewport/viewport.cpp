@@ -3,10 +3,12 @@
 #include <algorithm>
 
 #include <QMouseEvent>
+#include <QClipboard>
 #include <QDebug>
 #include <QPropertyAnimation>
 #include <QOpenGLWidget>
 #include <QSurfaceFormat>
+#include <QMimeData>
 #include <QMenu>
 
 #include <cmath>
@@ -15,15 +17,22 @@
 #include "ui/viewport/depth_image.h"
 #include "ui/viewport/view_selector.h"
 
+#include "ui_main_window.h"
 #include "ui/main_window.h"
 #include "ui/util/colors.h"
 
 #include "graph/datum/datum.h"
 #include "graph/node/node.h"
+#include "graph/node/serializer.h"
+#include "graph/node/deserializer.h"
+#include "graph/node/root.h"
 #include "graph/datum/link.h"
 
 #include "control/control.h"
 #include "control/proxy.h"
+
+#include "app/app.h"
+#include "app/undo/undo_add_node.h"
 
 Viewport::Viewport(QGraphicsScene* scene, QWidget* parent)
     : QGraphicsView(parent), scene(scene),
@@ -39,6 +48,21 @@ Viewport::Viewport(QGraphicsScene* scene, QWidget* parent)
 
     auto gl = new QOpenGLWidget(this);
     setViewport(gl);
+}
+
+void Viewport::setupUI(Ui::MainWindow* ui)
+{
+    connect(ui->actionShaded, SIGNAL(triggered()),
+            scene, SLOT(invalidate()));
+    connect(ui->actionHeightmap, SIGNAL(triggered()),
+            scene, SLOT(invalidate()));
+
+    connect(ui->actionCopy, &QAction::triggered,
+            this, &Viewport::onCopy);
+    connect(ui->actionCut, &QAction::triggered,
+            this, &Viewport::onCut);
+    connect(ui->actionPaste, &QAction::triggered,
+            this, &Viewport::onPaste);
 }
 
 void Viewport::initializeGL()
@@ -119,6 +143,23 @@ QVector3D Viewport::sceneToWorld(QPointF p) const
 {
     QMatrix4x4 M = getMatrix().inverted();
     return M * QVector3D(p.x(), p.y(), 0);
+}
+
+void Viewport::makeNodeAtCursor(NodeConstructor f)
+{
+    QPointF scene_pos = mapToScene(mapFromGlobal(QCursor::pos()));
+    QVector3D p = sceneToWorld(scene_pos);
+
+    auto n = f(p.x(), p.y(), p.z(), 100 / scale, App::instance()->getNodeRoot());
+
+    App::instance()->newNode(n);
+    App::instance()->pushStack(new UndoAddNodeCommand(n));
+
+    if (auto proxy = getControlProxy(n))
+    {
+        proxy->setClickPos(scene_pos);
+        proxy->grabMouse();
+    }
 }
 
 float Viewport::getZmax() const
@@ -265,6 +306,9 @@ void Viewport::mousePressEvent(QMouseEvent *event)
     }
 
     QGraphicsView::mousePressEvent(event);
+
+    // If the event hasn't been accepted, record click position for
+    // panning / rotation on mouse drag.
     if (!event->isAccepted())
     {
         if (event->button() == Qt::LeftButton)
@@ -458,5 +502,61 @@ void Viewport::drawForeground(QPainter* painter, const QRectF& rect)
     {
         painter->drawText(a, QString("Y: %1").arg(p.y()));
         painter->drawText(b, QString("Z: %1").arg(p.z()));
+    }
+}
+
+void Viewport::onCopy()
+{
+    for (auto i : scene->selectedItems())
+        if (auto proxy = dynamic_cast<ControlProxy*>(i))
+        {
+            auto n = proxy->getControl()->getNode();
+            auto p = n->parent();
+
+            NodeRoot temp_root;
+            n->setParent(&temp_root);
+            auto data = new QMimeData();
+            data->setData("sb::viewport", SceneSerializer(&temp_root).run());
+            n->setParent(p);
+
+            QApplication::clipboard()->setMimeData(data);
+            return;
+        }
+}
+
+void Viewport::onCut()
+{
+    for (auto i : scene->selectedItems())
+        if (auto proxy = dynamic_cast<ControlProxy*>(i))
+        {
+            auto n = proxy->getControl()->getNode();
+            auto p = n->parent();
+
+            NodeRoot temp_root;
+            n->setParent(&temp_root);
+            auto data = new QMimeData();
+            data->setData("sb::viewport", SceneSerializer(&temp_root).run());
+            n->setParent(p);
+
+            QApplication::clipboard()->setMimeData(data);
+            proxy->getControl()->deleteNode("'cut'");
+            return;
+        }
+}
+
+void Viewport::onPaste()
+{
+    auto data = QApplication::clipboard()->mimeData();
+    if (data->hasFormat("sb::viewport"))
+    {
+        NodeRoot temp_root;
+        SceneDeserializer ds(&temp_root);
+        ds.run(data->data("sb::viewport"));
+
+        auto n = temp_root.findChild<Node*>();
+        n->setParent(App::instance()->getNodeRoot());
+
+        App::instance()->newNode(n);
+        App::instance()->pushStack(new UndoAddNodeCommand(n, "'paste'"));
     }
 }

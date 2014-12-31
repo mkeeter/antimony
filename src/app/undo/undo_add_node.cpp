@@ -1,9 +1,12 @@
 #include "app/undo/undo_add_node.h"
 
-UndoAddNodeCommand::UndoAddNodeCommand(Node* node)
+UndoAddNodeCommand::UndoAddNodeCommand(Node* node, QString text)
     : UndoDeleteNodeCommand(node), first(true)
 {
-    setText("'add node'");
+    if (text.isNull())
+        setText("'add node'");
+    else
+        setText(text);
 }
 
 void UndoAddNodeCommand::redo()

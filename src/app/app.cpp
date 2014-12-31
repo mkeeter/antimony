@@ -51,6 +51,10 @@ App::App(int& argc, char** argv) :
 
     auto c = newCanvasWindow();
     c->move(c->pos() + QPoint(25, 25));
+
+    // When the clean flag on the undo stack changes, update window titles
+    connect(stack, &QUndoStack::cleanChanged,
+            [&](bool){ emit(windowTitleChanged(getWindowTitle())); });
 }
 
 App::~App()
@@ -58,6 +62,9 @@ App::~App()
     graph_scene->deleteLater();
     view_scene->deleteLater();
     root->deleteLater();
+
+    // Prevent segfault-inducing callback during stack destruction
+    disconnect(stack, 0, 0, 0);
 }
 
 App* App::instance()
@@ -87,6 +94,10 @@ void App::onNew()
 {
     root->deleteLater();
     root = new NodeRoot();
+
+    filename.clear();
+    stack->clear();
+    emit(windowTitleChanged(getWindowTitle()));
 }
 
 void App::onSave()
@@ -102,6 +113,8 @@ void App::onSave()
 
     QDataStream out(&file);
     ss.run(&out);
+
+    stack->setClean();
 }
 
 void App::onSaveAs()
@@ -110,6 +123,7 @@ void App::onSaveAs()
     if (!f.isEmpty())
     {
         filename = f;
+        emit(windowTitleChanged(getWindowTitle()));
         return onSave();
     }
 }
@@ -134,12 +148,14 @@ void App::onOpen()
             QMessageBox::critical(NULL, "Loading error",
                     "<b>Loading error:</b><br>" +
                     ds.error_message);
+            onNew();
         } else {
             for (auto n : root->findChildren<Node*>(
                         "", Qt::FindDirectChildrenOnly))
                 newNode(n);
 
             graph_scene->setInspectorPositions(ds.inspectors);
+            emit(windowTitleChanged(getWindowTitle()));
         }
     }
 }
@@ -313,6 +329,19 @@ void App::onExportJSON()
     delete exporting_dialog;
 }
 
+QString App::getWindowTitle() const
+{
+    QString t = "antimony [";
+    if (!filename.isEmpty())
+        t += filename + "]";
+    else
+        t += "Untitled]";
+
+    if (!stack->isClean())
+        t += "*";
+    return t;
+}
+
 void App::setGlobalStyle()
 {
     setStyleSheet(QString(
@@ -329,7 +358,6 @@ MainWindow* App::newCanvasWindow()
 {
     auto m = new MainWindow();
     m->setCentralWidget(graph_scene->newCanvas());
-    m->updateMenus();
     m->show();
     return m;
 }
@@ -338,7 +366,6 @@ MainWindow* App::newViewportWindow()
 {
     auto m = new MainWindow();
     m->setCentralWidget(view_scene->newViewport());
-    m->updateMenus();
     m->show();
     return m;
 }
@@ -377,7 +404,6 @@ MainWindow* App::newQuadWindow()
                 "}").arg(Colors::base01.name()));
     w->setLayout(g);
     m->setCentralWidget(w);
-    m->updateMenus();
     m->show();
     return m;
 }
@@ -386,7 +412,6 @@ MainWindow* App::newEditorWindow(ScriptDatum* datum)
 {
     auto m = new MainWindow();
     m->setCentralWidget(new ScriptEditor(datum, m));
-    m->updateMenus();
     m->resize(400, 600);
     m->show();
     return m;

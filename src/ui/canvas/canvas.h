@@ -5,20 +5,36 @@
 #include <QGraphicsScene>
 #include <QPointer>
 
+#include "graph/node/constructor.h"
+
 class Node;
 class NodeInspector;
 class Link;
+class GraphScene;
+namespace Ui { class MainWindow; }
 
 class Canvas : public QGraphicsView
 {
     Q_OBJECT
 public:
     explicit Canvas(QWidget* parent=0);
-    explicit Canvas(QGraphicsScene* scene, QWidget* parent=0);
+    explicit Canvas(GraphScene* scene, QWidget* parent=0);
+
+    /*
+     *  Connect to appropriate UI actions and modify menus.
+     */
+    void setupUI(Ui::MainWindow* ui);
+
+    void makeNodeAtCursor(NodeConstructor f);
 
     NodeInspector* getNodeInspector(Node* n) const;
 
-    QGraphicsScene* scene;
+    GraphScene* scene;
+
+public slots:
+    void onCopy();
+    void onCut();
+    void onPaste();
 
 protected:
     /** On mouse press, save click position (for panning).
