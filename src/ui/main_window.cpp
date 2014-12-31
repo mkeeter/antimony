@@ -5,6 +5,7 @@
 #include <QDebug>
 
 #include "app/app.h"
+#include "app/undo/undo_add_node.h"
 
 #include "graph/node/node.h"
 #include "graph/node/root.h"
@@ -163,6 +164,7 @@ void MainWindow::createNew(bool recenter, Viewport* v)
     }
 
     App::instance()->newNode(n);
+    App::instance()->pushStack(new UndoAddNodeCommand(n));
 
     if (v)
     {
