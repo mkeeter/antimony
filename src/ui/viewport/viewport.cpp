@@ -265,6 +265,9 @@ void Viewport::mousePressEvent(QMouseEvent *event)
     }
 
     QGraphicsView::mousePressEvent(event);
+
+    // If the event hasn't been accepted, record click position for
+    // panning / rotation on mouse drag.
     if (!event->isAccepted())
     {
         if (event->button() == Qt::LeftButton)
