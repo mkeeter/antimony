@@ -310,8 +310,6 @@ void NodeInspector::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
                 static_cast<GraphScene*>(scene()),
                 node, pos() - delta, pos()));
     }
-
-
     dragging = false;
 }
 

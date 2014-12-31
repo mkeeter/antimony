@@ -228,7 +228,6 @@ void Canvas::makeNodeAtCursor(NodeConstructor f)
 
 void Canvas::onCopy()
 {
-    qDebug() << "Copy called";
     if (auto i = dynamic_cast<QGraphicsTextItem*>(scene->focusItem()))
     {
         QApplication::clipboard()->setText(i->textCursor().selectedText());
@@ -268,7 +267,6 @@ void Canvas::onCut()
         QApplication::clipboard()->setText(i->textCursor().selectedText());
         i->textCursor().insertText("");
     }
-    qDebug() << "Cut called";
 }
 
 void Canvas::onPaste()
@@ -302,6 +300,4 @@ void Canvas::onPaste()
             App::instance()->endUndoMacro();
         }
     }
-
-    qDebug() << "Paste called";
 }

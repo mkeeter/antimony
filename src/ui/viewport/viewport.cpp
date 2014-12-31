@@ -507,7 +507,6 @@ void Viewport::drawForeground(QPainter* painter, const QRectF& rect)
 
 void Viewport::onCopy()
 {
-    qDebug() << "Copy called";
     for (auto i : scene->selectedItems())
         if (auto proxy = dynamic_cast<ControlProxy*>(i))
         {
@@ -527,7 +526,6 @@ void Viewport::onCopy()
 
 void Viewport::onCut()
 {
-    qDebug() << "Cut called";
     for (auto i : scene->selectedItems())
         if (auto proxy = dynamic_cast<ControlProxy*>(i))
         {
@@ -548,7 +546,6 @@ void Viewport::onCut()
 
 void Viewport::onPaste()
 {
-    qDebug() << "Paste called";
     auto data = QApplication::clipboard()->mimeData();
     if (data->hasFormat("sb::viewport"))
     {
