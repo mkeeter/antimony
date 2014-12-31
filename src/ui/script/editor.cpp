@@ -13,6 +13,7 @@
 #include "ui/script/editor.h"
 #include "ui/script/syntax.h"
 #include "ui/util/colors.h"
+#include "ui_main_window.h"
 
 #include "app/app.h"
 #include "app/undo/undo_change_expr.h"
@@ -49,6 +50,19 @@ ScriptEditor::ScriptEditor(ScriptDatum* datum, QWidget* parent)
     installEventFilter(this);
 
     onDatumChanged(); // update tooltip and text
+}
+
+void ScriptEditor::setupUI(Ui::MainWindow* ui)
+{
+    ui->menuView->deleteLater();
+    ui->menuAdd->deleteLater();
+
+    connect(ui->actionCopy, &QAction::triggered,
+            this, &QPlainTextEdit::copy);
+    connect(ui->actionCut, &QAction::triggered,
+            this, &QPlainTextEdit::cut);
+    connect(ui->actionPaste, &QAction::triggered,
+            this, &QPlainTextEdit::paste);
 }
 
 void ScriptEditor::onTextChanged()

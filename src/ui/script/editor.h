@@ -5,12 +5,19 @@
 #include <QPointer>
 
 class ScriptDatum;
+namespace Ui { class MainWindow; }
 
 class ScriptEditor: public QPlainTextEdit
 {
     Q_OBJECT
 public:
     explicit ScriptEditor(ScriptDatum* datum, QWidget* parent=NULL);
+
+    /*
+     *  Connect to appropriate UI actions and modify menus.
+     */
+    void setupUI(Ui::MainWindow* ui);
+
     void setDatum(ScriptDatum* d);
 
 public slots:

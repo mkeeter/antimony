@@ -329,7 +329,6 @@ MainWindow* App::newCanvasWindow()
 {
     auto m = new MainWindow();
     m->setCentralWidget(graph_scene->newCanvas());
-    m->updateMenus();
     m->show();
     return m;
 }
@@ -338,7 +337,6 @@ MainWindow* App::newViewportWindow()
 {
     auto m = new MainWindow();
     m->setCentralWidget(view_scene->newViewport());
-    m->updateMenus();
     m->show();
     return m;
 }
@@ -377,7 +375,6 @@ MainWindow* App::newQuadWindow()
                 "}").arg(Colors::base01.name()));
     w->setLayout(g);
     m->setCentralWidget(w);
-    m->updateMenus();
     m->show();
     return m;
 }
@@ -386,7 +383,6 @@ MainWindow* App::newEditorWindow(ScriptDatum* datum)
 {
     auto m = new MainWindow();
     m->setCentralWidget(new ScriptEditor(datum, m));
-    m->updateMenus();
     m->resize(400, 600);
     m->show();
     return m;

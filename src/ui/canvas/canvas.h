@@ -10,6 +10,7 @@
 class Node;
 class NodeInspector;
 class Link;
+namespace Ui { class MainWindow; }
 
 class Canvas : public QGraphicsView
 {
@@ -17,6 +18,11 @@ class Canvas : public QGraphicsView
 public:
     explicit Canvas(QWidget* parent=0);
     explicit Canvas(QGraphicsScene* scene, QWidget* parent=0);
+
+    /*
+     *  Connect to appropriate UI actions and modify menus.
+     */
+    void setupUI(Ui::MainWindow* ui);
 
     void makeNodeAtCursor(NodeConstructor f);
 

@@ -15,6 +15,7 @@
 #include "ui/viewport/depth_image.h"
 #include "ui/viewport/view_selector.h"
 
+#include "ui_main_window.h"
 #include "ui/main_window.h"
 #include "ui/util/colors.h"
 
@@ -42,6 +43,21 @@ Viewport::Viewport(QGraphicsScene* scene, QWidget* parent)
 
     auto gl = new QOpenGLWidget(this);
     setViewport(gl);
+}
+
+void Viewport::setupUI(Ui::MainWindow* ui)
+{
+    connect(ui->actionShaded, SIGNAL(triggered()),
+            scene, SLOT(invalidate()));
+    connect(ui->actionHeightmap, SIGNAL(triggered()),
+            scene, SLOT(invalidate()));
+
+    connect(ui->actionCopy, &QAction::triggered,
+            this, &Viewport::onCopy);
+    connect(ui->actionCut, &QAction::triggered,
+            this, &Viewport::onCut);
+    connect(ui->actionPaste, &QAction::triggered,
+            this, &Viewport::onPaste);
 }
 
 void Viewport::initializeGL()

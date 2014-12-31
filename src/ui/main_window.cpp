@@ -45,48 +45,17 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::updateMenus()
+void MainWindow::setCentralWidget(QWidget* w)
 {
+    QMainWindow::setCentralWidget(w);
+
     if (auto c = dynamic_cast<Canvas*>(centralWidget()))
-    {
-        ui->menuView->deleteLater();
-
-        connect(ui->actionCopy, &QAction::triggered,
-                c, &Canvas::onCopy);
-        connect(ui->actionCut, &QAction::triggered,
-                c, &Canvas::onCut);
-        connect(ui->actionPaste, &QAction::triggered,
-                c, &Canvas::onPaste);
-    }
+        c->setupUI(ui);
     else if (auto e = dynamic_cast<ScriptEditor*>(centralWidget()))
-    {
-        ui->menuView->deleteLater();
-        ui->menuAdd->deleteLater();
-
-        connect(ui->actionCopy, &QAction::triggered,
-                e, &QPlainTextEdit::copy);
-        connect(ui->actionCut, &QAction::triggered,
-                e, &QPlainTextEdit::cut);
-        connect(ui->actionPaste, &QAction::triggered,
-                e, &QPlainTextEdit::paste);
-    }
+        e->setupUI(ui);
     else
-    {
         for (auto v : findChildren<Viewport*>())
-        {
-            connect(ui->actionShaded, SIGNAL(triggered()),
-                    v->scene, SLOT(invalidate()));
-            connect(ui->actionHeightmap, SIGNAL(triggered()),
-                    v->scene, SLOT(invalidate()));
-
-            connect(ui->actionCopy, &QAction::triggered,
-                    v, &Viewport::onCopy);
-            connect(ui->actionCut, &QAction::triggered,
-                    v, &Viewport::onCut);
-            connect(ui->actionPaste, &QAction::triggered,
-                    v, &Viewport::onPaste);
-        }
-    }
+            v->setupUI(ui);
 }
 
 void MainWindow::connectActions(App* app)

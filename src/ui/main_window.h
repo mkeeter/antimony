@@ -27,7 +27,7 @@ public:
     /*
      *  Updates menus once the central widget is set.
      */
-    void updateMenus();
+    void setCentralWidget(QWidget* w);
 
     /** Populate a menu with all of the widgets.
      */

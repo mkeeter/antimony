@@ -13,6 +13,7 @@
 #include "ui/canvas/connection.h"
 #include "ui/util/colors.h"
 #include "ui/main_window.h"
+#include "ui_main_window.h"
 
 #include "graph/node/node.h"
 #include "graph/datum/datum.h"
@@ -39,6 +40,18 @@ Canvas::Canvas(QGraphicsScene* s, QWidget* parent)
 {
     QGraphicsView::setScene(s);
     scene = s;
+}
+
+void Canvas::setupUI(Ui::MainWindow* ui)
+{
+    ui->menuView->deleteLater();
+
+    connect(ui->actionCopy, &QAction::triggered,
+            this, &Canvas::onCopy);
+    connect(ui->actionCut, &QAction::triggered,
+            this, &Canvas::onCut);
+    connect(ui->actionPaste, &QAction::triggered,
+            this, &Canvas::onPaste);
 }
 
 void Canvas::mousePressEvent(QMouseEvent* event)
@@ -192,7 +205,6 @@ void Canvas::deleteSelected()
     if (started)
         App::instance()->endUndoMacro();
 }
-
 
 void Canvas::makeNodeAtCursor(NodeConstructor f)
 {

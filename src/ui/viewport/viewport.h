@@ -17,11 +17,18 @@ class NodeInspector;
 class ViewSelector;
 class Link;
 
+namespace Ui { class MainWindow; }
+
 class Viewport : public QGraphicsView
 {
     Q_OBJECT
 public:
     explicit Viewport(QGraphicsScene* scene, QWidget* parent=0);
+
+    /*
+     *  Connect to appropriate UI actions and modify menus.
+     */
+    void setupUI(Ui::MainWindow* ui);
 
     /** Returns our scale + rotation +translate transform matrix.
      */
