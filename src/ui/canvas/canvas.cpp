@@ -39,7 +39,7 @@ Canvas::Canvas(QWidget* parent)
     QAbstractScrollArea::setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
-Canvas::Canvas(QGraphicsScene* s, QWidget* parent)
+Canvas::Canvas(GraphScene* s, QWidget* parent)
     : Canvas(parent)
 {
     QGraphicsView::setScene(s);
@@ -252,9 +252,7 @@ void Canvas::onCopy()
 
             auto data = new QMimeData();
             data->setData("sb::canvas", SceneSerializer(
-                        &temp_root,
-                        static_cast<GraphScene*>(scene)->inspectorPositions()
-            ).run());
+                        &temp_root, scene->inspectorPositions()).run());
             QApplication::clipboard()->setMimeData(data);
 
             for (auto n : selected)
@@ -298,10 +296,9 @@ void Canvas::onPaste()
                 n->setParent(App::instance()->getNodeRoot());
                 App::instance()->newNode(n);
                 App::instance()->pushStack(new UndoAddNodeCommand(n, "'paste'"));
-                static_cast<GraphScene*>(scene)->getInspector(n)
-                                               ->setSelected(true);
+                scene->getInspector(n)->setSelected(true);
             }
-            static_cast<GraphScene*>(scene)->setInspectorPositions(ds.inspectors);
+            scene->setInspectorPositions(ds.inspectors);
             App::instance()->endUndoMacro();
         }
     }

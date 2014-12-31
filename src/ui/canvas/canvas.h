@@ -10,6 +10,7 @@
 class Node;
 class NodeInspector;
 class Link;
+class GraphScene;
 namespace Ui { class MainWindow; }
 
 class Canvas : public QGraphicsView
@@ -17,7 +18,7 @@ class Canvas : public QGraphicsView
     Q_OBJECT
 public:
     explicit Canvas(QWidget* parent=0);
-    explicit Canvas(QGraphicsScene* scene, QWidget* parent=0);
+    explicit Canvas(GraphScene* scene, QWidget* parent=0);
 
     /*
      *  Connect to appropriate UI actions and modify menus.
@@ -28,7 +29,7 @@ public:
 
     NodeInspector* getNodeInspector(Node* n) const;
 
-    QGraphicsScene* scene;
+    GraphScene* scene;
 
 public slots:
     void onCopy();
