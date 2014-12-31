@@ -3,10 +3,12 @@
 #include <algorithm>
 
 #include <QMouseEvent>
+#include <QClipboard>
 #include <QDebug>
 #include <QPropertyAnimation>
 #include <QOpenGLWidget>
 #include <QSurfaceFormat>
+#include <QMimeData>
 #include <QMenu>
 
 #include <cmath>
@@ -21,6 +23,9 @@
 
 #include "graph/datum/datum.h"
 #include "graph/node/node.h"
+#include "graph/node/serializer.h"
+#include "graph/node/deserializer.h"
+#include "graph/node/root.h"
 #include "graph/datum/link.h"
 
 #include "control/control.h"
@@ -503,14 +508,58 @@ void Viewport::drawForeground(QPainter* painter, const QRectF& rect)
 void Viewport::onCopy()
 {
     qDebug() << "Copy called";
+    for (auto i : scene->selectedItems())
+        if (auto proxy = dynamic_cast<ControlProxy*>(i))
+        {
+            auto n = proxy->getControl()->getNode();
+            auto p = n->parent();
+
+            NodeRoot temp_root;
+            n->setParent(&temp_root);
+            auto data = new QMimeData();
+            data->setData("sb::viewport", SceneSerializer(&temp_root).run());
+            n->setParent(p);
+
+            QApplication::clipboard()->setMimeData(data);
+            return;
+        }
 }
 
 void Viewport::onCut()
 {
     qDebug() << "Cut called";
+    for (auto i : scene->selectedItems())
+        if (auto proxy = dynamic_cast<ControlProxy*>(i))
+        {
+            auto n = proxy->getControl()->getNode();
+            auto p = n->parent();
+
+            NodeRoot temp_root;
+            n->setParent(&temp_root);
+            auto data = new QMimeData();
+            data->setData("sb::viewport", SceneSerializer(&temp_root).run());
+            n->setParent(p);
+
+            QApplication::clipboard()->setMimeData(data);
+            proxy->getControl()->deleteNode();
+            return;
+        }
 }
 
 void Viewport::onPaste()
 {
     qDebug() << "Paste called";
+    auto data = QApplication::clipboard()->mimeData();
+    if (data->hasFormat("sb::viewport"))
+    {
+        NodeRoot temp_root;
+        SceneDeserializer ds(&temp_root);
+        ds.run(data->data("sb::viewport"));
+
+        auto n = temp_root.findChild<Node*>();
+        n->setParent(App::instance()->getNodeRoot());
+
+        App::instance()->newNode(n);
+        App::instance()->pushStack(new UndoAddNodeCommand(n));
+    }
 }
