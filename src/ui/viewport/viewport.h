@@ -90,6 +90,10 @@ signals:
     void showPorts(bool);
 
 public slots:
+    void onCopy();
+    void onCut();
+    void onPaste();
+
     void spinTo(float new_yaw, float new_pitch);
 
 protected:

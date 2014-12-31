@@ -48,9 +48,16 @@ MainWindow::~MainWindow()
 
 void MainWindow::updateMenus()
 {
-    if (dynamic_cast<Canvas*>(centralWidget()))
+    if (auto c = dynamic_cast<Canvas*>(centralWidget()))
     {
         ui->menuView->deleteLater();
+
+        connect(ui->actionCopy, &QAction::triggered,
+                c, &Canvas::onCopy);
+        connect(ui->actionCut, &QAction::triggered,
+                c, &Canvas::onCut);
+        connect(ui->actionPaste, &QAction::triggered,
+                c, &Canvas::onPaste);
     }
     else if (dynamic_cast<ScriptEditor*>(centralWidget()))
     {
@@ -65,6 +72,13 @@ void MainWindow::updateMenus()
                     v->scene, SLOT(invalidate()));
             connect(ui->actionHeightmap, SIGNAL(triggered()),
                     v->scene, SLOT(invalidate()));
+
+            connect(ui->actionCopy, &QAction::triggered,
+                    v, &Viewport::onCopy);
+            connect(ui->actionCut, &QAction::triggered,
+                    v, &Viewport::onCut);
+            connect(ui->actionPaste, &QAction::triggered,
+                    v, &Viewport::onPaste);
         }
     }
 }
@@ -114,6 +128,9 @@ void MainWindow::setShortcuts()
     ui->actionSaveAs->setShortcuts(QKeySequence::SaveAs);
     ui->actionClose->setShortcuts(QKeySequence::Close);
     ui->actionQuit->setShortcuts(QKeySequence::Quit);
+    ui->actionCut->setShortcuts(QKeySequence::Cut);
+    ui->actionCopy->setShortcuts(QKeySequence::Copy);
+    ui->actionPaste->setShortcuts(QKeySequence::Paste);
 }
 
 bool MainWindow::isShaded() const

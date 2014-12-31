@@ -460,3 +460,18 @@ void Viewport::drawForeground(QPainter* painter, const QRectF& rect)
         painter->drawText(b, QString("Z: %1").arg(p.z()));
     }
 }
+
+void Viewport::onCopy()
+{
+    qDebug() << "Copy called";
+}
+
+void Viewport::onCut()
+{
+    qDebug() << "Cut called";
+}
+
+void Viewport::onPaste()
+{
+    qDebug() << "Paste called";
+}

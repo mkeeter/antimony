@@ -20,6 +20,11 @@ public:
 
     QGraphicsScene* scene;
 
+public slots:
+    void onCopy();
+    void onCut();
+    void onPaste();
+
 protected:
     /** On mouse press, save click position (for panning).
      */

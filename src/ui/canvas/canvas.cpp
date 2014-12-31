@@ -3,6 +3,7 @@
 #include <QMouseEvent>
 #include <QDebug>
 #include <QMenu>
+#include <QClipboard>
 
 #include <cmath>
 
@@ -191,3 +192,27 @@ void Canvas::deleteSelected()
         App::instance()->endUndoMacro();
 }
 
+
+void Canvas::onCopy()
+{
+    if (auto i = dynamic_cast<QGraphicsTextItem*>(scene->focusItem()))
+        QApplication::clipboard()->setText(i->textCursor().selectedText());
+    qDebug() << "Copy called";
+}
+
+void Canvas::onCut()
+{
+    if (auto i = dynamic_cast<QGraphicsTextItem*>(scene->focusItem()))
+    {
+        QApplication::clipboard()->setText(i->textCursor().selectedText());
+        i->textCursor().insertText("");
+    }
+    qDebug() << "Cut called";
+}
+
+void Canvas::onPaste()
+{
+    if (auto i = dynamic_cast<QGraphicsTextItem*>(scene->focusItem()))
+        i->textCursor().insertText(QApplication::clipboard()->text());
+    qDebug() << "Paste called";
+}
