@@ -7,6 +7,7 @@
 #include <QList>
 
 class Control;
+class ControlProxy;
 class Node;
 class Datum;
 class Viewport;
@@ -53,7 +54,7 @@ protected:
      *  Creates a ControlProxy that represents the given Control
      *  in the given QGraphicsScene.
      */
-    void makeProxyFor(Control* c, Viewport* v);
+    void makeProxyFor(Control* c, Viewport* v, ControlProxy* parent=NULL);
 
     /*
      *  Creates one or more RenderWorkers to render Datums in the

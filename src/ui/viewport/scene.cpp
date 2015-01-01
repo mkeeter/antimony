@@ -50,13 +50,14 @@ Viewport* ViewportScene::newViewport()
     return v;
 }
 
-void ViewportScene::makeProxyFor(Control* c, Viewport* v)
+void ViewportScene::makeProxyFor(Control* c, Viewport* v, ControlProxy* parent)
 {
     if (!c)
         return;
 
-    auto p = new ControlProxy(c, v);
-    scenes[v]->addItem(p);
+    auto p = new ControlProxy(c, v, parent);
+    if (parent == NULL)
+        scenes[v]->addItem(p);
     connect(v, &Viewport::viewChanged,
             p, &ControlProxy::redraw);
     connect(c, &ControlProxy::destroyed,
@@ -64,7 +65,7 @@ void ViewportScene::makeProxyFor(Control* c, Viewport* v)
 
     for (auto f : c->findChildren<Control*>(
                 QString(), Qt::FindDirectChildrenOnly))
-        makeProxyFor(f, v);
+        makeProxyFor(f, v, p);
 }
 
 void ViewportScene::makeRenderWorkerFor(Datum* d, Viewport* v)

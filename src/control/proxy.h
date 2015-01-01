@@ -14,7 +14,8 @@ class ControlProxy : public QGraphicsObject
 {
     Q_OBJECT
 public:
-    explicit ControlProxy(Control* control, Viewport* viewport);
+    explicit ControlProxy(Control* control, Viewport* viewport,
+                          QGraphicsItem* parent=NULL);
 
     /*
      *  Returns the bounding rect of the QGraphicsObject by calling

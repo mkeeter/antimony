@@ -7,8 +7,10 @@
 #include "control/control.h"
 #include "ui/viewport/viewport.h"
 
-ControlProxy::ControlProxy(Control* control, Viewport* viewport)
-    : QGraphicsObject(), control(control), viewport(viewport), hover(false)
+ControlProxy::ControlProxy(Control* control, Viewport* viewport,
+                           QGraphicsItem* parent)
+    : QGraphicsObject(parent), control(control),
+      viewport(viewport), hover(false)
 {
     setFlags(QGraphicsItem::ItemIsSelectable |
              QGraphicsItem::ItemIsFocusable);
