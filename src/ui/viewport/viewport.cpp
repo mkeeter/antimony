@@ -52,10 +52,10 @@ Viewport::Viewport(QGraphicsScene* scene, QWidget* parent)
 
 void Viewport::setupUI(Ui::MainWindow* ui)
 {
-    connect(ui->actionShaded, SIGNAL(triggered()),
-            scene, SLOT(invalidate()));
-    connect(ui->actionHeightmap, SIGNAL(triggered()),
-            scene, SLOT(invalidate()));
+    connect(ui->actionShaded, &QAction::triggered,
+            [&]{ scene->invalidate(); });
+    connect(ui->actionHeightmap, &QAction::triggered,
+            [&]{ scene->invalidate(); });
 
     connect(ui->actionCopy, &QAction::triggered,
             this, &Viewport::onCopy);

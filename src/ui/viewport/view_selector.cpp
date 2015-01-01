@@ -90,8 +90,8 @@ ViewSelector::ViewSelector(Viewport* viewport)
     setDefaultTextColor(Colors::base04);
 
     viewport->scene->addItem(this);
-    connect(this, SIGNAL(spinTo(float,float)),
-            viewport, SLOT(spinTo(float,float)));
+    connect(this, &ViewSelector::spinTo,
+            viewport, &Viewport::spinTo);
 }
 
 void ViewSelector::setLabel(QString label)

@@ -10,8 +10,9 @@ ResolutionDialog::ResolutionDialog(Shape* shape, bool dimensions, long max_voxel
       z_bounded(!isinf(shape->bounds.zmax) && !isinf(shape->bounds.zmin))
 {
     ui->setupUi(this);
-    connect(ui->export_res, SIGNAL(valueChanged(int)),
-            this, SLOT(onValueChanged(int)));
+    connect(ui->export_res,
+            static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+            this, &ResolutionDialog::onValueChanged);
 
     if (dimensions == RESOLUTION_DIALOG_2D || !z_bounded)
     {
