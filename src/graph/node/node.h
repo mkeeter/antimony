@@ -26,6 +26,12 @@ public:
      */
     void setParent(NodeRoot* root);
 
+    /*
+     *  Updates the NameDatum in _name so that it doesn't collide
+     *  (used when pasting in nodes)
+     */
+    void updateName();
+
     /** Returns a Python proxy that calls getDatum when getattr is called */
     PyObject* proxy();
 

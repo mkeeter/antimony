@@ -558,6 +558,7 @@ void Viewport::onPaste()
 
         auto n = temp_root.findChild<Node*>();
         n->setParent(App::instance()->getNodeRoot());
+        n->updateName();
 
         App::instance()->newNode(n);
         App::instance()->pushStack(new UndoAddNodeCommand(n, "'paste'"));

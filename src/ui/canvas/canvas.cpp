@@ -293,6 +293,7 @@ void Canvas::onPaste()
             for (auto n : temp_root.findChildren<Node*>())
             {
                 n->setParent(App::instance()->getNodeRoot());
+                n->updateName();
                 App::instance()->newNode(n);
                 App::instance()->pushStack(new UndoAddNodeCommand(n, "'paste'"));
                 scene->getInspector(n)->setSelected(true);

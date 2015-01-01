@@ -30,6 +30,16 @@ void Node::setParent(NodeRoot* root)
         d->update();
 }
 
+void Node::updateName()
+{
+    auto r = dynamic_cast<NodeRoot*>(parent());
+    Q_ASSERT(r);
+
+    for (auto d : findChildren<NameDatum*>(QString(),
+                                           Qt::FindDirectChildrenOnly))
+        d->setExpr(r->getName(d->getExpr() + "_"));
+}
+
 PyObject* Node::proxy()
 {
     PyObject* p = PyObject_CallObject(proxyType(), NULL);
