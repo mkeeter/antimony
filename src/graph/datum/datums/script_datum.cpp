@@ -5,6 +5,7 @@
 #include "graph/datum/datums/shape_output_datum.h"
 #include "graph/datum/datums/script_datum.h"
 #include "graph/datum/datums/float_datum.h"
+#include "graph/datum/datums/int_datum.h"
 #include "graph/datum/datums/float_output_datum.h"
 
 #include "graph/node/node.h"
@@ -64,6 +65,7 @@ PyObject* ScriptDatum::makeInput(QString name, PyTypeObject *type)
 
     const auto datum_type =
         (type == &PyFloat_Type)  ? DatumType::FLOAT :
+        (type == &PyLong_Type)   ? DatumType::INT :
         (type == fab::ShapeType) ? DatumType::SHAPE_INPUT : 0;
 
     if (d != NULL && d->getDatumType() != datum_type)
@@ -82,6 +84,10 @@ PyObject* ScriptDatum::makeInput(QString name, PyTypeObject *type)
         if (type == &PyFloat_Type)
         {
             d = new FloatDatum(name, "0.0", n);
+        }
+        else if (type == &PyLong_Type)
+        {
+            d = new IntDatum(name, "0", n);
         }
         else if (type == fab::ShapeType)
         {
