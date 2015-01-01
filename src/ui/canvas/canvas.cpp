@@ -242,7 +242,8 @@ void Canvas::onCopy()
 
         if (!selected.isEmpty())
         {
-            auto p = selected[0]->parent();
+            auto p = dynamic_cast<NodeRoot*>(selected[0]->parent());
+            Q_ASSERT(p);
             NodeRoot temp_root;
 
             // Move the nodes to a temporary root for serialization

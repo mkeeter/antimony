@@ -22,6 +22,13 @@ Node::Node(NodeType::NodeType type, QString name, NodeRoot* parent)
     new NameDatum("_name", name, this);
 }
 
+void Node::setParent(NodeRoot* root)
+{
+    QObject::setParent(root);
+    for (auto d : findChildren<NameDatum*>(QString(),
+                                           Qt::FindDirectChildrenOnly))
+        d->update();
+}
 
 PyObject* Node::proxy()
 {

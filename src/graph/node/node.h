@@ -21,6 +21,11 @@ public:
     explicit Node(NodeType::NodeType type, NodeRoot* parent);
     explicit Node(NodeType::NodeType type, QString name, NodeRoot* parent);
 
+    /*
+     *  On setParent, update NameDatums to check for collisions.
+     */
+    void setParent(NodeRoot* root);
+
     /** Returns a Python proxy that calls getDatum when getattr is called */
     PyObject* proxy();
 
