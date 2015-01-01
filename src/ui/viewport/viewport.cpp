@@ -273,6 +273,7 @@ void Viewport::mousePressEvent(QMouseEvent *event)
     if (event->button() == Qt::RightButton)
     {
         auto menu = new QMenu(this);
+        int overlapping = 0;
         QSet<ControlProxy*> used;
         for (auto i : items(event->pos()))
         {
@@ -282,6 +283,7 @@ void Viewport::mousePressEvent(QMouseEvent *event)
             auto c = dynamic_cast<ControlProxy*>(i);
             if (c && !used.contains(c))
             {
+                overlapping++;
                 auto n = c->getNode();
                 auto a = new QAction(
                         n->getName() + " (" + n->getType() + ")", menu);
@@ -290,7 +292,7 @@ void Viewport::mousePressEvent(QMouseEvent *event)
                 used << c;
             }
         }
-        if (!menu->isEmpty())
+        if (overlapping > 1)
         {
             QAction* chosen = menu->exec(QCursor::pos());
             if (chosen)
