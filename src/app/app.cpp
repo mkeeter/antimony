@@ -92,10 +92,10 @@ void App::onAbout()
     QString rev(GITREV);
 
     if (!tag.isEmpty())
-        txt += "Release: " + tag;
+        txt += "Release: <tt>" + tag + "</tt>";
     else
-        txt += "Branch: " + branch;
-    txt += "<br>Git revision: " + rev;
+        txt += "Branch: <tt>" + branch + "</tt>";
+    txt += "<br>Git revision: <tt>" + rev + "</tt>";
 
     QMessageBox::about(NULL, "Antimony", txt);
 }
