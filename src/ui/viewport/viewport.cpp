@@ -398,12 +398,11 @@ void Viewport::keyPressEvent(QKeyEvent *event)
     else if (event->key() == Qt::Key_A &&
                 (event->modifiers() & Qt::ShiftModifier))
     {
-        QMenu* m = new QMenu(this);
-
         QObject* w = this;
         while (!dynamic_cast<MainWindow*>(w))
             w = w->parent();
         Q_ASSERT(w);
+        QMenu* m = new QMenu(static_cast<MainWindow*>(w));
         static_cast<MainWindow*>(w)->populateMenu(m, false, this);
 
         m->exec(QCursor::pos());
