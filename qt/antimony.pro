@@ -14,8 +14,12 @@ QMAKE_CXXFLAGS += -Werror=switch
 
 GITREV = $$system(git log --pretty=format:'%h' -n 1)
 GITDIFF = $$system(git diff --quiet --exit-code || echo "+")
+GITTAG = $$system(git describe --tags)
+GITBRANCH = $$system(git rev-parse --abbrev-ref HEAD)
 
 QMAKE_CXXFLAGS += "-D'GITREV=\"$${GITREV}$${GITDIFF}\"'"
+QMAKE_CXXFLAGS += "-D'GITTAG=\"$${GITTAG}\"'"
+QMAKE_CXXFLAGS += "-D'GITBRANCH=\"$${GITBRANCH}\"'"
 
 include(fab.pri)
 include(shared.pri)
