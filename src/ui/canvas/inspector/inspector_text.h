@@ -49,6 +49,7 @@ protected:
     QRectF bbox;
 
     QString drag_start;
+    float drag_accumulated;
 };
 
 #endif // INSPECTOR_TEXT_H

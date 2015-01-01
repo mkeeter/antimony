@@ -12,6 +12,7 @@
 
 #include "graph/datum/datum.h"
 #include "graph/datum/datums/float_datum.h"
+#include "graph/datum/datums/int_datum.h"
 #include "graph/datum/types/eval_datum.h"
 
 #include "app/app.h"
@@ -163,7 +164,10 @@ bool DatumTextItem::eventFilter(QObject* obj, QEvent* event)
 void DatumTextItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     if (const auto e = dynamic_cast<EvalDatum*>(d))
+    {
         drag_start = e->getExpr();
+        drag_accumulated = 0;
+    }
 
     QGraphicsTextItem::mousePressEvent(event);
 }
@@ -184,12 +188,21 @@ void DatumTextItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 void DatumTextItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     const auto f = dynamic_cast<FloatDatum*>(d);
+    const auto i = dynamic_cast<IntDatum*>(d);
     if (f && f->getValid() && (event->modifiers() & Qt::ShiftModifier))
     {
         const double scale = fmax(
                 0.01, abs(PyFloat_AsDouble(f->getValue()) * 0.01));
         const double dx = (event->screenPos() - event->lastScreenPos()).x();
         f->dragValue(scale * dx);
+    }
+    else if (i && i->getValid() && (event->modifiers() & Qt::ShiftModifier))
+    {
+        drag_accumulated += (event->screenPos() -
+                             event->lastScreenPos()).x() / 60.;
+        int q = drag_accumulated;
+        drag_accumulated -= q;
+        i->dragValue(q);
     }
     else
     {

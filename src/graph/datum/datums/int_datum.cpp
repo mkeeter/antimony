@@ -13,3 +13,15 @@ IntDatum::IntDatum(QString name, QString expr, Node *parent)
 {
     setExpr(expr);
 }
+
+bool IntDatum::dragValue(int delta)
+{
+    bool ok = false;
+
+    QString s = getExpr();
+    int i = s.toInt(&ok);
+    if (ok)
+        setExpr(QString::number(i + delta));
+    return ok;
+}
+
