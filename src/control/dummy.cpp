@@ -23,6 +23,13 @@ QRectF DummyControl::bounds(QMatrix4x4 m, QMatrix4x4 t) const
     return r;
 }
 
+QPainterPath DummyControl::shape(QMatrix4x4 m, QMatrix4x4 t) const
+{
+    Q_UNUSED(m);
+    Q_UNUSED(t);
+    return QPainterPath();
+}
+
 void DummyControl::paint(QMatrix4x4 m, QMatrix4x4 t,
                          bool highlight, QPainter* painter)
 {

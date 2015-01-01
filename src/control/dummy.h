@@ -13,6 +13,7 @@ public:
     void drag(QVector3D center, QVector3D delta) override;
     void paint(QMatrix4x4 m, QMatrix4x4 t, bool highlight, QPainter *painter);
     QRectF bounds(QMatrix4x4 m, QMatrix4x4 t) const override;
+    QPainterPath shape(QMatrix4x4 m, QMatrix4x4 t) const override;
 };
 
 #endif
