@@ -74,7 +74,7 @@ App* App::instance()
 
 void App::onAbout()
 {
-    QMessageBox::about(NULL, "Antimony",
+    QString txt(
             "<i>Antimony</i><br><br>"
             "CAD from a parallel universe.<br>"
             "<a href=\"https://github.com/mkeeter/antimony\">https://github.com/mkeeter/antimony</a><br><br>"
@@ -86,8 +86,18 @@ void App::onAbout()
             "© 2013-2014 Matthew Keeter<br><br>"
             "Inspired by the <a href=\"http://kokompe.cba.mit.edu\">fab modules</a><br>"
             "_________________________________________________<br><br>"
-            "Git revision: " GITREV
-            );
+    );
+    QString tag(GITTAG);
+    QString branch(GITBRANCH);
+    QString rev(GITREV);
+
+    if (!tag.isEmpty())
+        txt += "Release: " + tag;
+    else
+        txt += "Branch: " + branch;
+    txt += "<br>Git revision: " + rev;
+
+    QMessageBox::about(NULL, "Antimony", txt);
 }
 
 void App::onNew()
