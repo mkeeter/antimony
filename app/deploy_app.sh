@@ -11,7 +11,7 @@ make clean
 make qmake
 rm -rf antimony.app
 
-make
+make -j8
 macdeployqt antimony.app
 
 cd antimony.app/Contents/PlugIns
