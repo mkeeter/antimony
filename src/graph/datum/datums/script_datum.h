@@ -58,6 +58,7 @@ protected:
 
     QSet<QString> touched;
     bool datums_changed;
+    QString output;
 };
 
 #endif // SCRIPT_DATUM_H

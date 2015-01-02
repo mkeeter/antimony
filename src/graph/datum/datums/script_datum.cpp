@@ -185,7 +185,30 @@ PyObject* ScriptDatum::getCurrentValue()
     touched.clear();
     datums_changed = false;
 
+    // Swap in a stringIO object for stdout, saving stdout in out
+    PyObject* sys_mod = PyImport_ImportModule("sys");
+    PyObject* io_mod = PyImport_ImportModule("io");
+    PyObject* stdout_obj = PyObject_GetAttrString(sys_mod, "stdout");
+    PyObject* string_out = PyObject_CallMethod(io_mod, "StringIO", NULL);
+    PyObject_SetAttrString(sys_mod, "stdout", string_out);
+    Q_ASSERT(!PyErr_Occurred());
+
     PyObject* out = EvalDatum::getCurrentValue();
+
+    // Get the output from the StringIO object
+    PyObject* s = PyObject_CallMethod(string_out, "getvalue", NULL);
+    wchar_t* w = PyUnicode_AsWideCharString(s, NULL);
+    Q_ASSERT(w);
+    output = QString::fromWCharArray(w);
+    PyMem_Free(w);
+
+    // Swap stdout back into sys.stdout
+    PyObject_SetAttrString(sys_mod, "stdout", stdout_obj);
+    Py_DECREF(sys_mod);
+    Py_DECREF(io_mod);
+    Py_DECREF(stdout_obj);
+    Py_DECREF(string_out);
+    Py_DECREF(s);
 
     // Look at all of the datums (other than the script datum and other
     // reserved datums), deleting them if they have not been touched.
