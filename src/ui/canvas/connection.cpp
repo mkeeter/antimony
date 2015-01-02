@@ -29,8 +29,6 @@ Connection::Connection(Link* link)
     setFocus();
     setAcceptHoverEvents(true);
 
-    setZValue(2);
-
     connect(link, &Link::destroyed, this, &Connection::deleteLater);
 }
 

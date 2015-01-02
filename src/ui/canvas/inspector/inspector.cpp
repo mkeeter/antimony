@@ -66,7 +66,6 @@ NodeInspector::NodeInspector(Node* node)
     connect(node, &Node::destroyed, this, &NodeInspector::deleteLater);
 
     populateLists(node);
-    setZValue(-2);
 }
 
 float NodeInspector::labelWidth() const

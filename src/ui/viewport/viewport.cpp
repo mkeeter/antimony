@@ -298,10 +298,10 @@ void Viewport::mousePressEvent(QMouseEvent *event)
             if (chosen)
             {
                 if (raised)
-                    raised->setZValue(1);
+                    raised->setZValue(0);
                 raised = static_cast<ControlProxy*>(
                         chosen->data().value<QGraphicsItem*>());
-                raised->setZValue(1.1);
+                raised->setZValue(0.1);
             }
         }
         menu->deleteLater();

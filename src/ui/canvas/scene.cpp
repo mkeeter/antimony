@@ -99,8 +99,8 @@ InputPort* GraphScene::getInputPortNear(QPointF pos, Link* link)
 void GraphScene::raiseInspector(NodeInspector* i)
 {
     if (raised_inspector)
-        raised_inspector->setZValue(-2);
-    i->setZValue(-1.9);
+        raised_inspector->setZValue(0);
+    i->setZValue(0.1);
     raised_inspector = i;
 }
 
