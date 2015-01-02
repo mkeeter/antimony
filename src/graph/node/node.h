@@ -27,6 +27,12 @@ public:
     void setParent(NodeRoot* root);
 
     /*
+     *  Sets the title field of this node
+     *  (and may emit titleChanged)
+     */
+    void setTitle(QString new_title);
+
+    /*
      *  Updates the NameDatum in _name so that it doesn't collide
      *  (used when pasting in nodes)
      */
@@ -54,9 +60,11 @@ public:
      */
     QString getName() const;
 
-    /** Returns a human-readable type name.
+    /*
+     *  Returns a human-readable title for this node
+     *  (e.g. Cube, Sphere, Triangle)
      */
-    QString getType() const;
+    QString getTitle() const { return title; }
 
     /*
      *  Returns a set of all the links that connect to this node's datums.
@@ -70,9 +78,20 @@ signals:
      */
     void datumsChanged();
 
+    /*
+     *  Emitted when this node's title changes.
+     *  (usually only happens for ScriptNodes)
+     */
+    void titleChanged(QString new_title);
+
 protected:
+    /** Returns a human-readable name based on type.
+     */
+    QString getDefaultTitle() const;
+
     const NodeType::NodeType type;
     Control* control;
+    QString title;
 };
 
 #endif // NODE_H

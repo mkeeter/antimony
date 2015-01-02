@@ -11,7 +11,7 @@
 #include "graph/datum/datums/name_datum.h"
 
 Node::Node(NodeType::NodeType type, NodeRoot* parent)
-    : QObject(parent), type(type), control(NULL)
+    : QObject(parent), type(type), control(NULL), title(getDefaultTitle())
 {
     // Nothing to do here
 }
@@ -28,6 +28,15 @@ void Node::setParent(NodeRoot* root)
     for (auto d : findChildren<NameDatum*>(QString(),
                                            Qt::FindDirectChildrenOnly))
         d->update();
+}
+
+void Node::setTitle(QString new_title)
+{
+    if (new_title != title)
+    {
+        title = new_title;
+        emit(titleChanged(title));
+    }
 }
 
 void Node::updateName()
@@ -76,7 +85,7 @@ QString Node::getName() const
     return "";
 }
 
-QString Node::getType() const
+QString Node::getDefaultTitle() const
 {
     switch (type)
     {

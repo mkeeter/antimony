@@ -18,6 +18,11 @@ public:
     PyObject* makeInput(QString name, PyTypeObject* type);
     PyObject* makeOutput(QString name, PyObject* out);
 
+    /*
+     *  Sets the title field of the parent node.
+     */
+    PyObject* setTitle(QString desc);
+
     PyTypeObject* getType() const override { return Py_None->ob_type; }
     bool hasOutput() const override { return false; }
 
@@ -49,6 +54,7 @@ protected:
     PyObject* globals;
     PyObject* input_func;
     PyObject* output_func;
+    PyObject* title_func;
 
     QSet<QString> touched;
     bool datums_changed;

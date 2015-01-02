@@ -29,7 +29,7 @@
 
 NodeInspector::NodeInspector(Node* node)
     : node(node), name(NULL),
-      title(new QGraphicsTextItem(node->getType(), this)),
+      title(new QGraphicsTextItem(node->getTitle(), this)),
       menu_button(new InspectorMenuButton(this))
 {
     if (auto n = node->getDatum("_name"))
@@ -51,8 +51,18 @@ NodeInspector::NodeInspector(Node* node)
     f.setBold(true);
     title->setFont(f);
 
+    // Make connections for dynamic title changing
+    // (which only happens for ScriptNodes)
+    connect(node, &Node::titleChanged,
+            title, &QGraphicsTextItem::setPlainText);
+    connect(node, &Node::titleChanged,
+            [=](QString){ this->onLayoutChanged(); });
+
+    // Redo layout when datums change (also only for script nodes)
     connect(node, &Node::datumsChanged,
             this, &NodeInspector::onDatumsChanged);
+
+    // Delete oneself when the target node is deleted
     connect(node, &Node::destroyed, this, &NodeInspector::deleteLater);
 
     populateLists(node);

@@ -14,7 +14,8 @@
 
 ScriptDatum::ScriptDatum(QString name, Node* parent)
     : EvalDatum(name, parent), globals(NULL),
-      input_func(scriptInput(this)), output_func(scriptOutput(this))
+      input_func(scriptInput(this)), output_func(scriptOutput(this)),
+      title_func(scriptTitle(this))
 {
     // Nothing to do here
 }
@@ -29,6 +30,7 @@ ScriptDatum::~ScriptDatum()
 {
     Py_DECREF(input_func);
     Py_DECREF(output_func);
+    Py_DECREF(title_func);
 }
 
 int ScriptDatum::getStartToken() const
@@ -41,6 +43,7 @@ void ScriptDatum::modifyGlobalsDict(PyObject* g)
     globals = g;
     PyDict_SetItemString(g, "input", input_func);
     PyDict_SetItemString(g, "output", output_func);
+    PyDict_SetItemString(g, "title", title_func);
 }
 
 bool ScriptDatum::isValidName(QString name) const
@@ -163,9 +166,15 @@ PyObject* ScriptDatum::makeOutput(QString name, PyObject *out)
     d->setParent(NULL);
     d->setParent(parent());
 
-    dynamic_cast<OutputDatum*>(d)->setNewValue(out);
+    static_cast<OutputDatum*>(d)->setNewValue(out);
     return Py_None;
 
+}
+
+PyObject* ScriptDatum::setTitle(QString title)
+{
+    static_cast<Node*>(parent())->setTitle(title);
+    return Py_None;
 }
 
 PyObject* ScriptDatum::getCurrentValue()

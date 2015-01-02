@@ -286,7 +286,7 @@ void Viewport::mousePressEvent(QMouseEvent *event)
                 overlapping++;
                 auto n = c->getNode();
                 auto a = new QAction(
-                        n->getName() + " (" + n->getType() + ")", menu);
+                        n->getName() + " (" + n->getTitle() + ")", menu);
                 a->setData(QVariant::fromValue(i));
                 menu->addAction(a);
                 used << c;
