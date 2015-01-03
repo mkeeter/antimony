@@ -19,7 +19,7 @@
 #include "ui/canvas/scene.h"
 #include "ui/viewport/viewport.h"
 #include "ui/viewport/scene.h"
-#include "ui/script/editor.h"
+#include "ui/script/script_pane.h"
 #include "ui/util/colors.h"
 
 #include "graph/node/node.h"
@@ -421,7 +421,7 @@ MainWindow* App::newQuadWindow()
 MainWindow* App::newEditorWindow(ScriptDatum* datum)
 {
     auto m = new MainWindow();
-    m->setCentralWidget(new ScriptEditor(datum, m));
+    m->setCentralWidget(new ScriptPane(datum, m));
     m->resize(400, 600);
     m->show();
     return m;

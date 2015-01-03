@@ -51,6 +51,7 @@ SOURCES += \
     ../src/ui/viewport/depth_image.cpp \
     ../src/ui/script/syntax.cpp \
     ../src/ui/script/editor.cpp \
+    ../src/ui/script/script_pane.cpp \
     ../src/ui/util/button.cpp \
     ../src/ui/util/colors.cpp \
     ../src/ui/dialogs/resolution_dialog.cpp \
@@ -86,6 +87,7 @@ HEADERS += \
     ../src/ui/viewport/depth_image.h \
     ../src/ui/script/syntax.h \
     ../src/ui/script/editor.h \
+    ../src/ui/script/script_pane.h \
     ../src/ui/util/button.h \
     ../src/ui/util/colors.h \
     ../src/ui/dialogs/resolution_dialog.h \
