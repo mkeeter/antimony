@@ -18,6 +18,8 @@ ScriptPane::ScriptPane(ScriptDatum* datum, QWidget* parent)
         txt->setReadOnly(true);
         txt->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         txt->setStyleSheet(editor->styleSheet());
+        txt->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,
+                                       QSizePolicy::Fixed));
     }
 
     setStyleSheet(QString(
@@ -67,6 +69,13 @@ void ScriptPane::onDatumChanged()
     {
         error->setPlainText(e);
         error->show();
+    }
+
+    for (auto txt : {output, error})
+    {
+        int lines = txt->document()->size().height() + 1;
+        QFontMetrics fm(txt->document()->defaultFont());
+        txt->setFixedHeight(lines * fm.lineSpacing());
     }
 }
 
