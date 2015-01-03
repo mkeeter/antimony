@@ -17,6 +17,12 @@ public:
      */
     void setupUI(Ui::MainWindow* ui);
 
+
+    /*
+     *  Override paint event so that we can style the widget with CSS.
+     */
+    void paintEvent(QPaintEvent* event) override;
+
 protected slots:
     void onDatumChanged();
 
