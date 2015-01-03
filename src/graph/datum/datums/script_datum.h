@@ -29,6 +29,7 @@ public:
     DatumType::DatumType getDatumType() const override
         { return DatumType::SCRIPT; }
 
+    QString getOutput() const { return output; }
 protected:
 
     /** Returns true if we are already evaluating this datum.
