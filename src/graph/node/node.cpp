@@ -122,6 +122,7 @@ QString Node::getDefaultTitle() const
         case NodeType::RECENTER:    return "Re-center";
         case NodeType::TRANSLATE:   return "Translate";
         case NodeType::ITERATE2D:   return "Iterate (2D)";
+        case NodeType::ITERATE_POLAR:   return "Iterate (polar)";
         case NodeType::DUMMY:       return "Dummy";
     }
 }

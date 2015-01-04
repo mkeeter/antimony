@@ -30,3 +30,19 @@ Node* Iterate2DNode(float x, float y, float z, float scale, NodeRoot* parent)
 
     return n;
 }
+
+Node* IteratePolarNode(float x, float y, float z, float scale, NodeRoot* parent)
+{
+    Q_UNUSED(z);
+    Q_UNUSED(scale);
+
+    Node* n = new Node(NodeType::ITERATE_POLAR, parent->getName("i"), parent);
+    new FloatDatum("x", QString::number(x), n);
+    new FloatDatum("y", QString::number(y), n);
+    new IntDatum("n", "4", n);
+    new ShapeInputDatum("input", n);
+    new ShapeFunctionDatum("shape", n, "iterate_polar",
+            {"input", "x", "y", "n"});
+
+    return n;
+}

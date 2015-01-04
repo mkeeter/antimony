@@ -191,6 +191,7 @@ void MainWindow::populateMenu(QMenu* menu, bool recenter, Viewport* v)
     addNodeToMenu("Transform", "Translate", menu, &submenus, recenter, TranslateNode, v);
 
     addNodeToMenu("Iterate", "Iterate (2D)", menu, &submenus, recenter, Iterate2DNode, v);
+    addNodeToMenu("Iterate", "Iterate (polar)", menu, &submenus, recenter, IteratePolarNode, v);
 
     addNodeToMenu("Deform", "Attract", menu, &submenus, recenter, AttractNode, v);
     addNodeToMenu("Deform", "Repel", menu, &submenus, recenter, RepelNode, v);

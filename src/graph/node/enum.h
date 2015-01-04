@@ -37,6 +37,7 @@ namespace NodeType
         RECENTER,
         TRANSLATE,
         ITERATE2D,
+        ITERATE_POLAR,
         DUMMY,
         // NODE TYPES
     };
