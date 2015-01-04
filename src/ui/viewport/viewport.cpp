@@ -272,7 +272,13 @@ void Viewport::mousePressEvent(QMouseEvent *event)
     // On right-click, show a menu of items to raise.
     if (event->button() == Qt::RightButton)
     {
-        auto menu = new QMenu(this);
+        // Find the top-level MainWindow and attach the menu to it
+        QObject* w = this;
+        while (!dynamic_cast<MainWindow*>(w))
+            w = w->parent();
+        Q_ASSERT(w);
+        auto menu = new QMenu(static_cast<MainWindow*>(w));
+
         int overlapping = 0;
         QSet<ControlProxy*> used;
         for (auto i : items(event->pos()))
