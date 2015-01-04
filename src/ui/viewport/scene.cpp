@@ -150,6 +150,7 @@ void ViewportScene::onDatumsChanged(Node* n)
 #include "control/transform/translate_control.h"
 
 #include "control/iterate/iterate2d_control.h"
+#include "control/iterate/iterate_polar_control.h"
 
 //#include "control/variable/slider_control.h"
 
@@ -207,6 +208,8 @@ Control* ViewportScene::makeControlFor(Node* node) const
             return new TranslateControl(node);
         case NodeType::ITERATE2D:
             return new Iterate2DControl(node);
+        case NodeType::ITERATE_POLAR:
+            return new IteratePolarControl(node);
         case NodeType::UNION:
         case NodeType::BLEND:
         case NodeType::INTERSECTION:
@@ -216,7 +219,6 @@ Control* ViewportScene::makeControlFor(Node* node) const
         case NodeType::SHELL:
         case NodeType::SCRIPT:
         case NodeType::DUMMY:
-        case NodeType::ITERATE_POLAR:
             return NULL;
     }
    Q_ASSERT(false);
