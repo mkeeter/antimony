@@ -11,7 +11,7 @@
 #include "graph/datum/datums/name_datum.h"
 
 Node::Node(NodeType::NodeType type, NodeRoot* parent)
-    : QObject(parent), type(type), control(NULL)
+    : QObject(parent), type(type), control(NULL), title(getDefaultTitle())
 {
     // Nothing to do here
 }
@@ -22,6 +22,32 @@ Node::Node(NodeType::NodeType type, QString name, NodeRoot* parent)
     new NameDatum("_name", name, this);
 }
 
+void Node::setParent(NodeRoot* root)
+{
+    QObject::setParent(root);
+    for (auto d : findChildren<NameDatum*>(QString(),
+                                           Qt::FindDirectChildrenOnly))
+        d->update();
+}
+
+void Node::setTitle(QString new_title)
+{
+    if (new_title != title)
+    {
+        title = new_title;
+        emit(titleChanged(title));
+    }
+}
+
+void Node::updateName()
+{
+    auto r = dynamic_cast<NodeRoot*>(parent());
+    Q_ASSERT(r);
+
+    for (auto d : findChildren<NameDatum*>(QString(),
+                                           Qt::FindDirectChildrenOnly))
+        d->setExpr(r->getName(d->getExpr() + "_"));
+}
 
 PyObject* Node::proxy()
 {
@@ -59,7 +85,7 @@ QString Node::getName() const
     return "";
 }
 
-QString Node::getType() const
+QString Node::getDefaultTitle() const
 {
     switch (type)
     {
@@ -96,6 +122,7 @@ QString Node::getType() const
         case NodeType::RECENTER:    return "Re-center";
         case NodeType::TRANSLATE:   return "Translate";
         case NodeType::ITERATE2D:   return "Iterate (2D)";
+        case NodeType::ITERATE_POLAR:   return "Iterate (polar)";
         case NodeType::DUMMY:       return "Dummy";
     }
 }

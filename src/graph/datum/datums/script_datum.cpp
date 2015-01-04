@@ -5,6 +5,7 @@
 #include "graph/datum/datums/shape_output_datum.h"
 #include "graph/datum/datums/script_datum.h"
 #include "graph/datum/datums/float_datum.h"
+#include "graph/datum/datums/int_datum.h"
 #include "graph/datum/datums/float_output_datum.h"
 
 #include "graph/node/node.h"
@@ -13,7 +14,8 @@
 
 ScriptDatum::ScriptDatum(QString name, Node* parent)
     : EvalDatum(name, parent), globals(NULL),
-      input_func(scriptInput(this)), output_func(scriptOutput(this))
+      input_func(scriptInput(this)), output_func(scriptOutput(this)),
+      title_func(scriptTitle(this))
 {
     // Nothing to do here
 }
@@ -28,6 +30,7 @@ ScriptDatum::~ScriptDatum()
 {
     Py_DECREF(input_func);
     Py_DECREF(output_func);
+    Py_DECREF(title_func);
 }
 
 int ScriptDatum::getStartToken() const
@@ -40,6 +43,7 @@ void ScriptDatum::modifyGlobalsDict(PyObject* g)
     globals = g;
     PyDict_SetItemString(g, "input", input_func);
     PyDict_SetItemString(g, "output", output_func);
+    PyDict_SetItemString(g, "title", title_func);
 }
 
 bool ScriptDatum::isValidName(QString name) const
@@ -64,6 +68,7 @@ PyObject* ScriptDatum::makeInput(QString name, PyTypeObject *type)
 
     const auto datum_type =
         (type == &PyFloat_Type)  ? DatumType::FLOAT :
+        (type == &PyLong_Type)   ? DatumType::INT :
         (type == fab::ShapeType) ? DatumType::SHAPE_INPUT : 0;
 
     if (d != NULL && d->getDatumType() != datum_type)
@@ -82,6 +87,10 @@ PyObject* ScriptDatum::makeInput(QString name, PyTypeObject *type)
         if (type == &PyFloat_Type)
         {
             d = new FloatDatum(name, "0.0", n);
+        }
+        else if (type == &PyLong_Type)
+        {
+            d = new IntDatum(name, "0", n);
         }
         else if (type == fab::ShapeType)
         {
@@ -157,9 +166,15 @@ PyObject* ScriptDatum::makeOutput(QString name, PyObject *out)
     d->setParent(NULL);
     d->setParent(parent());
 
-    dynamic_cast<OutputDatum*>(d)->setNewValue(out);
+    static_cast<OutputDatum*>(d)->setNewValue(out);
     return Py_None;
 
+}
+
+PyObject* ScriptDatum::setTitle(QString title)
+{
+    static_cast<Node*>(parent())->setTitle(title);
+    return Py_None;
 }
 
 PyObject* ScriptDatum::getCurrentValue()
@@ -170,7 +185,30 @@ PyObject* ScriptDatum::getCurrentValue()
     touched.clear();
     datums_changed = false;
 
+    // Swap in a stringIO object for stdout, saving stdout in out
+    PyObject* sys_mod = PyImport_ImportModule("sys");
+    PyObject* io_mod = PyImport_ImportModule("io");
+    PyObject* stdout_obj = PyObject_GetAttrString(sys_mod, "stdout");
+    PyObject* string_out = PyObject_CallMethod(io_mod, "StringIO", NULL);
+    PyObject_SetAttrString(sys_mod, "stdout", string_out);
+    Q_ASSERT(!PyErr_Occurred());
+
     PyObject* out = EvalDatum::getCurrentValue();
+
+    // Get the output from the StringIO object
+    PyObject* s = PyObject_CallMethod(string_out, "getvalue", NULL);
+    wchar_t* w = PyUnicode_AsWideCharString(s, NULL);
+    Q_ASSERT(w);
+    output = QString::fromWCharArray(w);
+    PyMem_Free(w);
+
+    // Swap stdout back into sys.stdout
+    PyObject_SetAttrString(sys_mod, "stdout", stdout_obj);
+    Py_DECREF(sys_mod);
+    Py_DECREF(io_mod);
+    Py_DECREF(stdout_obj);
+    Py_DECREF(string_out);
+    Py_DECREF(s);
 
     // Look at all of the datums (other than the script datum and other
     // reserved datums), deleting them if they have not been touched.

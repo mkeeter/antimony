@@ -80,6 +80,40 @@ static PyObject* ScriptOutput_Call(PyObject* callable_object,
     return d->makeOutput(str, out);
 }
 
+static PyObject* ScriptTitle_Call(PyObject* callable_object,
+                                  PyObject* args, PyObject* kw)
+{
+    if (kw && PyDict_Size(kw) != 0)
+    {
+        PyErr_SetString(PyExc_RuntimeError,
+                        "No keyword arguments allowed.");
+        return NULL;
+    }
+
+    if (PyTuple_Size(args) != 1)
+    {
+        PyErr_SetString(PyExc_RuntimeError,
+                        "Invalid argument count");
+        return NULL;
+    }
+
+    PyObject* desc = PyTuple_GetItem(args, 0);
+    if (!PyUnicode_Check(desc))
+    {
+        PyErr_SetString(PyExc_TypeError,
+                        "Invalid first argument (must be a string)");
+        return NULL;
+    }
+
+    wchar_t* w = PyUnicode_AsWideCharString(desc, NULL);
+    Q_ASSERT(w);
+    QString str = QString::fromWCharArray(w);
+    PyMem_Free(w);
+
+    ScriptDatum* d = ((ScriptOutputWrapper*)callable_object)->datum;
+    return d->setTitle(str);
+}
+
 static PyTypeObject ScriptInputWrapperType = {
     PyVarObject_HEAD_INIT(NULL, 0)
     "wrapper.ScriptInputWrapper",   /* tp_name */
@@ -128,6 +162,29 @@ static PyTypeObject ScriptOutputWrapperType = {
     "Script output wrapper",   /* tp_doc */
 };
 
+static PyTypeObject ScriptTitleWrapperType = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    "wrapper.ScriptTitleWrapper",   /* tp_name */
+    sizeof(ScriptTitleWrapper),     /* tp_basicsize */
+    0,                         /* tp_itemsize */
+    0,                         /* tp_dealloc */
+    0,                         /* tp_print */
+    0,                         /* tp_getattr */
+    0,                         /* tp_setattr */
+    0,                         /* tp_reserved */
+    0,                         /* tp_repr */
+    0,                         /* tp_as_number */
+    0,                         /* tp_as_sequence */
+    0,                         /* tp_as_mapping */
+    0,                         /* tp_hash  */
+    ScriptTitle_Call,          /* tp_call */
+    0,                         /* tp_str */
+    0,                         /* tp_getattro */
+    0,                         /* tp_setattro */
+    0,                         /* tp_as_buffer */
+    Py_TPFLAGS_DEFAULT,        /* tp_flags */
+    "Script title wrapper",    /* tp_doc */
+};
 static PyModuleDef ScriptWrapperModule = {
     PyModuleDef_HEAD_INIT,
     "wrapper",
@@ -143,10 +200,13 @@ PyInit_wrapper(void)
 
     ScriptInputWrapperType.tp_new = PyType_GenericNew;
     ScriptOutputWrapperType.tp_new = PyType_GenericNew;
+    ScriptTitleWrapperType.tp_new = PyType_GenericNew;
 
     if (PyType_Ready(&ScriptInputWrapperType) < 0)
         return NULL;
     if (PyType_Ready(&ScriptOutputWrapperType) < 0)
+        return NULL;
+    if (PyType_Ready(&ScriptTitleWrapperType) < 0)
         return NULL;
 
     m = PyModule_Create(&ScriptWrapperModule);
@@ -159,6 +219,8 @@ PyInit_wrapper(void)
                        (PyObject*)&ScriptInputWrapperType);
     PyModule_AddObject(m, "ScriptOutputWrapper",
                        (PyObject*)&ScriptOutputWrapperType);
+    PyModule_AddObject(m, "ScriptTitleWrapper",
+                       (PyObject*)&ScriptTitleWrapperType);
     return m;
 }
 
@@ -168,9 +230,7 @@ static PyObject* _wrapper_module = NULL;
 PyObject* scriptInput(ScriptDatum* d)
 {
     if (_wrapper_module == NULL)
-    {
         _wrapper_module = PyInit_wrapper();
-    }
     PyObject* p = PyObject_CallObject(
                 PyObject_GetAttrString(_wrapper_module, "ScriptInputWrapper"),
                 NULL);
@@ -181,12 +241,21 @@ PyObject* scriptInput(ScriptDatum* d)
 PyObject* scriptOutput(ScriptDatum* d)
 {
     if (_wrapper_module == NULL)
-    {
         _wrapper_module = PyInit_wrapper();
-    }
     PyObject* p = PyObject_CallObject(
                 PyObject_GetAttrString(_wrapper_module, "ScriptOutputWrapper"),
                 NULL);
     ((ScriptOutputWrapper*)p)->datum = d;
+    return p;
+}
+
+PyObject* scriptTitle(ScriptDatum* d)
+{
+    if (_wrapper_module == NULL)
+        _wrapper_module = PyInit_wrapper();
+    PyObject* p = PyObject_CallObject(
+                PyObject_GetAttrString(_wrapper_module, "ScriptTitleWrapper"),
+                NULL);
+    ((ScriptTitleWrapper*)p)->datum = d;
     return p;
 }

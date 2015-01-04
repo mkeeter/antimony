@@ -11,7 +11,7 @@ make clean
 make qmake
 rm -rf antimony.app
 
-make
+make -j8
 macdeployqt antimony.app
 
 cd antimony.app/Contents/PlugIns
@@ -35,8 +35,8 @@ install_name_tool -change /usr/local/Frameworks/Python.framework/Versions/3.4/Py
 cd ../../..
 cp -r fab antimony.app/Contents/Frameworks/Python.framework/Versions/3.4/lib/python3.4/fab
 
-cp ../README.md .
-tar -cvzf antimony.tar.gz antimony.app README.md
+cp ../README.md ../doc/USAGE.md .
+tar -cvzf antimony.tar.gz antimony.app README.md USAGE.md
 rm README.md
 
 if [ `whoami` = "mkeeter" ]; then

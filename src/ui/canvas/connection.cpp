@@ -29,8 +29,6 @@ Connection::Connection(Link* link)
     setFocus();
     setAcceptHoverEvents(true);
 
-    setZValue(2);
-
     connect(link, &Link::destroyed, this, &Connection::deleteLater);
 }
 
@@ -151,7 +149,7 @@ QPointF Connection::endPos() const
     }
     else
     {
-        return snapping ? snap_pos : drag_pos;
+        return (snapping && has_snap_pos) ? snap_pos : drag_pos;
     }
 }
 
@@ -273,7 +271,14 @@ void Connection::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 void Connection::updateSnap()
 {
     if (Port* p = gscene()->getInputPortNear(drag_pos, link))
+    {
+        has_snap_pos = true;
         snap_pos = p->mapToScene(p->boundingRect().center());
+    }
+    else
+    {
+        has_snap_pos = false;
+    }
 }
 
 void Connection::keyPressEvent(QKeyEvent* event)

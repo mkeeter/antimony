@@ -6,7 +6,6 @@
 #include <QTextDocument>
 #include <QTextCursor>
 #include <QHelpEvent>
-#include <QToolTip>
 
 #include "graph/datum/datums/script_datum.h"
 
@@ -67,8 +66,6 @@ void ScriptEditor::setupUI(Ui::MainWindow* ui)
 
 void ScriptEditor::onTextChanged()
 {
-    setToolTip("");
-    QToolTip::hideText();
     if (datum)
         datum->setExpr(document()->toPlainText());
 }
@@ -95,21 +92,9 @@ void ScriptEditor::onDatumChanged()
 
         // If the datum is invalid, update the error line highlighting
         if (!datum->getValid())
-        {
-            setToolTip(datum->getErrorTraceback());
             highlightError(datum->getErrorLine());
-        }
         else
-        {
-            setToolTip("");
-            QToolTip::hideText();
             setExtraSelections({});
-        }
-    }
-    else
-    {
-        setToolTip("");
-        QToolTip::hideText();
     }
 }
 

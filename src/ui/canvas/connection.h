@@ -106,6 +106,7 @@ protected:
     enum { NONE, VALID, INVALID, CONNECTED } drag_state;
 
     QPointF snap_pos;
+    bool has_snap_pos;
     bool snapping;
 
     InputPort* target;

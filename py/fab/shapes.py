@@ -282,6 +282,19 @@ def iterate2d(part, i, j, dx, dy):
                     [move(part, a*dx, 0, 0) for a in range(i)]), 0, b*dy, 0)
                 for b in range(j)])
 
+def iterate_polar(part, x, y, n):
+    """ Tiles a part by rotating it n times about x,y
+    """
+
+    if n < 1:
+        raise ValueError("Invalid count for iteration")
+
+    import functools
+    import operator
+    return functools.reduce(operator.or_,
+            [rotate(part, 360./n * i, x, y)
+             for i in range(n)])
+
 ################################################################################
 
 def blend(p0, p1, amount):

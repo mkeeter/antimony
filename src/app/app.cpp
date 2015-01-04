@@ -19,7 +19,7 @@
 #include "ui/canvas/scene.h"
 #include "ui/viewport/viewport.h"
 #include "ui/viewport/scene.h"
-#include "ui/script/editor.h"
+#include "ui/script/script_pane.h"
 #include "ui/util/colors.h"
 
 #include "graph/node/node.h"
@@ -92,10 +92,10 @@ void App::onAbout()
     QString rev(GITREV);
 
     if (!tag.isEmpty())
-        txt += "Release: " + tag;
+        txt += "Release: <tt>" + tag + "</tt>";
     else
-        txt += "Branch: " + branch;
-    txt += "<br>Git revision: " + rev;
+        txt += "Branch: <tt>" + branch + "</tt>";
+    txt += "<br>Git revision: <tt>" + rev + "</tt>";
 
     QMessageBox::about(NULL, "Antimony", txt);
 }
@@ -421,7 +421,7 @@ MainWindow* App::newQuadWindow()
 MainWindow* App::newEditorWindow(ScriptDatum* datum)
 {
     auto m = new MainWindow();
-    m->setCentralWidget(new ScriptEditor(datum, m));
+    m->setCentralWidget(new ScriptPane(datum, m));
     m->resize(400, 600);
     m->show();
     return m;

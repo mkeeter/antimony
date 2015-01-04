@@ -286,7 +286,7 @@ void Viewport::mousePressEvent(QMouseEvent *event)
                 overlapping++;
                 auto n = c->getNode();
                 auto a = new QAction(
-                        n->getName() + " (" + n->getType() + ")", menu);
+                        n->getName() + " (" + n->getTitle() + ")", menu);
                 a->setData(QVariant::fromValue(i));
                 menu->addAction(a);
                 used << c;
@@ -298,10 +298,10 @@ void Viewport::mousePressEvent(QMouseEvent *event)
             if (chosen)
             {
                 if (raised)
-                    raised->setZValue(1);
+                    raised->setZValue(0);
                 raised = static_cast<ControlProxy*>(
                         chosen->data().value<QGraphicsItem*>());
-                raised->setZValue(1.1);
+                raised->setZValue(0.1);
             }
         }
         menu->deleteLater();
@@ -398,12 +398,11 @@ void Viewport::keyPressEvent(QKeyEvent *event)
     else if (event->key() == Qt::Key_A &&
                 (event->modifiers() & Qt::ShiftModifier))
     {
-        QMenu* m = new QMenu(this);
-
         QObject* w = this;
         while (!dynamic_cast<MainWindow*>(w))
             w = w->parent();
         Q_ASSERT(w);
+        QMenu* m = new QMenu(static_cast<MainWindow*>(w));
         static_cast<MainWindow*>(w)->populateMenu(m, false, this);
 
         m->exec(QCursor::pos());
@@ -513,7 +512,8 @@ void Viewport::onCopy()
         if (auto proxy = dynamic_cast<ControlProxy*>(i))
         {
             auto n = proxy->getControl()->getNode();
-            auto p = n->parent();
+            auto p = dynamic_cast<NodeRoot*>(n->parent());
+            Q_ASSERT(p);
 
             NodeRoot temp_root;
             n->setParent(&temp_root);
@@ -532,7 +532,8 @@ void Viewport::onCut()
         if (auto proxy = dynamic_cast<ControlProxy*>(i))
         {
             auto n = proxy->getControl()->getNode();
-            auto p = n->parent();
+            auto p = dynamic_cast<NodeRoot*>(n->parent());
+            Q_ASSERT(p);
 
             NodeRoot temp_root;
             n->setParent(&temp_root);
@@ -557,6 +558,7 @@ void Viewport::onPaste()
 
         auto n = temp_root.findChild<Node*>();
         n->setParent(App::instance()->getNodeRoot());
+        n->updateName();
 
         App::instance()->newNode(n);
         App::instance()->pushStack(new UndoAddNodeCommand(n, "'paste'"));

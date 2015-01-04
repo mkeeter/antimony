@@ -14,7 +14,7 @@
 #include "ui/canvas/canvas.h"
 #include "ui/canvas/inspector/inspector.h"
 #include "ui/viewport/viewport.h"
-#include "ui/script/editor.h"
+#include "ui/script/script_pane.h"
 
 #include "control/proxy.h"
 
@@ -49,7 +49,7 @@ void MainWindow::setCentralWidget(QWidget* w)
 
     if (auto c = dynamic_cast<Canvas*>(centralWidget()))
         c->setupUI(ui);
-    else if (auto e = dynamic_cast<ScriptEditor*>(centralWidget()))
+    else if (auto e = dynamic_cast<ScriptPane*>(centralWidget()))
         e->setupUI(ui);
     else
         for (auto v : findChildren<Viewport*>())
@@ -191,6 +191,7 @@ void MainWindow::populateMenu(QMenu* menu, bool recenter, Viewport* v)
     addNodeToMenu("Transform", "Translate", menu, &submenus, recenter, TranslateNode, v);
 
     addNodeToMenu("Iterate", "Iterate (2D)", menu, &submenus, recenter, Iterate2DNode, v);
+    addNodeToMenu("Iterate", "Iterate (polar)", menu, &submenus, recenter, IteratePolarNode, v);
 
     addNodeToMenu("Deform", "Attract", menu, &submenus, recenter, AttractNode, v);
     addNodeToMenu("Deform", "Repel", menu, &submenus, recenter, RepelNode, v);

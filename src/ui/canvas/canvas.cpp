@@ -242,7 +242,8 @@ void Canvas::onCopy()
 
         if (!selected.isEmpty())
         {
-            auto p = selected[0]->parent();
+            auto p = dynamic_cast<NodeRoot*>(selected[0]->parent());
+            Q_ASSERT(p);
             NodeRoot temp_root;
 
             // Move the nodes to a temporary root for serialization
@@ -292,6 +293,7 @@ void Canvas::onPaste()
             for (auto n : temp_root.findChildren<Node*>())
             {
                 n->setParent(App::instance()->getNodeRoot());
+                n->updateName();
                 App::instance()->newNode(n);
                 App::instance()->pushStack(new UndoAddNodeCommand(n, "'paste'"));
                 scene->getInspector(n)->setSelected(true);

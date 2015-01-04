@@ -9,7 +9,7 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* doc)
     PyObject* kwmod = PyImport_ImportModule("keyword");
     PyObject* kwlist = PyObject_GetAttrString(kwmod, "kwlist");
 
-    QList<QString> keywords = {"input", "output"};
+    QList<QString> keywords = {"input", "output", "title"};
 
     // Get all of Python's keywords and add them to a list.
     for (int i=0; i < PyList_Size(kwlist); ++i)
