@@ -20,11 +20,9 @@ The name is in the upper left corner and can be edited;
 data values are inside of the box.
 
 Each datum's text field is evaluated as a chunk of Python code.
-These code snippets are executed in a global namespace that includes nodes by name,
-as in the final example below.
-
-If you have a Point node named `p0`,
-here are a few examples of valid values for its `y` datum:
+These code snippets are executed in a global namespace that includes nodes by name.
+For example, given a Point node named `p0`,
+here are valid values for its `y` datum:
 - `1`
 - `2 + 3`
 - `p0.x * 2`
@@ -34,8 +32,8 @@ Hover over it with the mouse to see the Python traceback.
 
 Shift + left-click on a datum's text field and drag right or left to slide values up and down.
 
-Datums can also be connected using the I/O ports on the right and left.
-Left-click and drag on the right-hand port to start a connection;
+Datums can be connected using the I/O ports on the right and left.
+Click and drag on the right-hand port to start a connection;
 release the mouse button on a left-hand port to finish it.
 While dragging, pressing Shift will snap the connection to the nearest valid port.
 
@@ -72,7 +70,7 @@ then choose "Edit Script" from the menu icon in the top right of the node.
 There are three panes in the editor window:
 - The top pane is the script
 - The middle pane is any output sent to `stdout` (e.g. with `print`)
-- The botton pane is any Python error that occured during execution.
+- The botton pane is any Python error that occured during execution
 
 The lower two panes only appear when needed
 (i.e. when something was sent to `stdout`
@@ -82,7 +80,7 @@ When an error occurs, the relevant line will be highlighted in red.
 
 Scripting is standard Python 3.x with a few extra functions:
 - `input(name, type)` creates an input datum of the given type
-and injects it into the namespace.  `name` should be a string
+and injects it into the namespace.  `name` must be a string
 and `type` must be either `float`, `int`, or `fab.types.Shape`
 (or simply `Shape` depending on how it was imported).
 - `output(name, value)` creates an output datum with the given name and value
