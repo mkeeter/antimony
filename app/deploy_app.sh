@@ -6,10 +6,14 @@ if [ $# -ne 1 ]; then
     exit 1
 fi
 
+RELEASE=`git describe --exact-match --tags || echo "($(git rev-parse --abbrev-ref HEAD))"`
+
 cd ../build-$1
 make clean
 make qmake
 rm -rf antimony.app
+rm -rf antimony
+rm -rf antimony.dmg
 
 make -j8
 macdeployqt antimony.app
@@ -35,11 +39,11 @@ install_name_tool -change /usr/local/Frameworks/Python.framework/Versions/3.4/Py
 cd ../../..
 cp -r fab antimony.app/Contents/Frameworks/Python.framework/Versions/3.4/lib/python3.4/fab
 
-cp ../README.md ./README.txt
-cp ../doc/USAGE.md USAGE.txt
-tar -cvzf antimony.tar.gz antimony.app README.txt USAGE.txt
-rm README.txt USAGE.txt
+sed -i "" "s/0\.0\.0/$RELEASE/g" antimony.app/Contents/Info.plist
 
-if [ `whoami` = "mkeeter" ]; then
-    scp antimony.tar.gz mattkeeter.com:mattkeeter.com/projects/antimony/antimony.tar.gz
-fi
+mkdir antimony
+cp ../README.md ./antimony/README.txt
+cp ../doc/USAGE.md ./antimony/USAGE.txt
+mv antimony.app ./antimony
+hdiutil create antimony.dmg -volname "Antimony $RELEASE" -srcfolder antimony
+rm -rf antimony
