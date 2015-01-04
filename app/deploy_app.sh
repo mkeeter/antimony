@@ -35,9 +35,10 @@ install_name_tool -change /usr/local/Frameworks/Python.framework/Versions/3.4/Py
 cd ../../..
 cp -r fab antimony.app/Contents/Frameworks/Python.framework/Versions/3.4/lib/python3.4/fab
 
-cp ../README.md ../doc/USAGE.md .
-tar -cvzf antimony.tar.gz antimony.app README.md USAGE.md
-rm README.md
+cp ../README.md ./README.txt
+cp ../doc/USAGE.md USAGE.txt
+tar -cvzf antimony.tar.gz antimony.app README.txt USAGE.txt
+rm README.txt USAGE.txt
 
 if [ `whoami` = "mkeeter" ]; then
     scp antimony.tar.gz mattkeeter.com:mattkeeter.com/projects/antimony/antimony.tar.gz
