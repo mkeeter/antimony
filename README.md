@@ -12,7 +12,7 @@ For more details and screenshots, look at [this writeup](http://mattkeeter.com/p
 alpha software.  It is suitable for experimental and non-mission-critical use.
 
 To get started, refer to the [build instructions](https://github.com/mkeeter/antimony/blob/master/BUILDING.md)
-or download a [prebuilt Mac application](http://mattkeeter.com/projects/antimony/antimony.tar.gz).
+or download a [release build](https://github.com/mkeeter/antimony/releases).
 
 ## License
 © 2013-2014 Matthew Keeter  
