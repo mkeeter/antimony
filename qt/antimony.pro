@@ -36,6 +36,7 @@ SOURCES += \
     ../src/app/undo/undo_change_expr.cpp \
     ../src/app/undo/undo_delete_node.cpp \
     ../src/app/undo/undo_delete_multi.cpp \
+    ../src/app/undo/undo_add_multi.cpp \
     ../src/app/undo/undo_add_node.cpp \
     ../src/ui/main_window.cpp \
     ../src/ui/canvas/canvas.cpp \
@@ -74,6 +75,7 @@ HEADERS += \
     ../src/app/undo/undo_change_expr.h \
     ../src/app/undo/undo_delete_node.h \
     ../src/app/undo/undo_delete_multi.h \
+    ../src/app/undo/undo_add_multi.h \
     ../src/app/undo/undo_add_node.h \
     ../src/ui/canvas/canvas.h \
     ../src/ui/canvas/scene.h \

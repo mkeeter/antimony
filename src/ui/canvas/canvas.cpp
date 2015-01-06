@@ -25,6 +25,7 @@
 
 #include "app/app.h"
 #include "app/undo/undo_add_node.h"
+#include "app/undo/undo_add_multi.h"
 #include "app/undo/undo_delete_multi.h"
 
 Canvas::Canvas(QWidget* parent)
@@ -259,17 +260,18 @@ void Canvas::onPaste()
                 i += QPointF(10, 10);
 
             scene->clearSelection();
-            App::instance()->beginUndoMacro("'paste'");
+            App::instance()->pushStack(new UndoAddMultiCommand(
+                        temp_root.findChildren<Node*>().toSet(), {},
+                        "'paste'"));
+
             for (auto n : temp_root.findChildren<Node*>())
             {
                 n->setParent(App::instance()->getNodeRoot());
                 n->updateName();
                 App::instance()->newNode(n);
-                App::instance()->pushStack(new UndoAddNodeCommand(n, "'paste'"));
                 scene->getInspector(n)->setSelected(true);
             }
             scene->setInspectorPositions(ds.inspectors);
-            App::instance()->endUndoMacro();
         }
     }
 }
