@@ -13,7 +13,7 @@ public:
     /*
      *  n is the target node to delete
      */
-    UndoDeleteNodeCommand(Node* n, QString text=QString());
+    UndoDeleteNodeCommand(Node* n, QUndoCommand* parent=NULL);
 
     void redo();
     void undo();

@@ -15,13 +15,10 @@
 
 #include "ui/canvas/scene.h"
 
-UndoDeleteNodeCommand::UndoDeleteNodeCommand(Node* n, QString text)
-    : n(n)
+UndoDeleteNodeCommand::UndoDeleteNodeCommand(Node* n, QUndoCommand* parent)
+    : UndoCommand(parent), n(n)
 {
-    if (text.isNull())
-        setText("'delete node'");
-    else
-        setText(text);
+    setText("'delete node'");
 }
 
 void UndoDeleteNodeCommand::redo()
