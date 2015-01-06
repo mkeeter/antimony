@@ -3,10 +3,7 @@
 UndoAddNodeCommand::UndoAddNodeCommand(Node* node, QString text)
     : UndoDeleteNodeCommand(node), first(true)
 {
-    if (text.isNull())
-        setText("'add node'");
-    else
-        setText(text);
+    setText(text.isNull() ? "'add node'" : text);
 }
 
 void UndoAddNodeCommand::redo()
