@@ -25,8 +25,7 @@
 
 #include "app/app.h"
 #include "app/undo/undo_add_node.h"
-#include "app/undo/undo_delete_link.h"
-#include "app/undo/undo_delete_node.h"
+#include "app/undo/undo_delete_multi.h"
 
 Canvas::Canvas(QWidget* parent)
     : QGraphicsView(parent), selecting(false)
@@ -170,44 +169,15 @@ void Canvas::deleteSelected()
 {
     QSet<Node*> nodes;
     QSet<Link*> links;
-    bool started = false;
-    auto start = [&]{ App::instance()->beginUndoMacro("'delete'");
-                      started = true; };
 
     // Find all selected links
     for (auto i : scene->selectedItems())
         if (auto c = dynamic_cast<Connection*>(i))
             links.insert(c->getLink());
+        else if (auto p = dynamic_cast<NodeInspector*>(i))
+            nodes.insert(p->getNode());
 
-    // Find all selected nodes (and any links that are attached to them)
-    for (auto i : scene->selectedItems())
-        if (auto p = dynamic_cast<NodeInspector*>(i))
-        {
-            auto n = p->getNode();
-            nodes.insert(n);
-            for (auto k : n->getLinks())
-                links.insert(k);
-        }
-
-
-    // Push delete commands for each selected and connected link.
-    for (auto k : links)
-    {
-        if (!started)
-            start();
-        App::instance()->pushStack(new UndoDeleteLinkCommand(k));
-    }
-
-    // Push delete commands for each selected node.
-    for (auto n : nodes)
-    {
-        if (!started)
-            start();
-        App::instance()->pushStack(new UndoDeleteNodeCommand(n));
-    }
-
-    if (started)
-        App::instance()->endUndoMacro();
+    App::instance()->pushStack(new UndoDeleteMultiCommand(nodes, links));
 }
 
 void Canvas::makeNodeAtCursor(NodeConstructor f)
