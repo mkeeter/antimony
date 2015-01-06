@@ -15,7 +15,7 @@ To get started, refer to the [build instructions](https://github.com/mkeeter/ant
 or download a [release build](https://github.com/mkeeter/antimony/releases).
 
 ## License
-© 2013-2014 Matthew Keeter  
+© 2013-2015 Matthew Keeter  
 This work may be reproduced, modified, distributed, performed, and displayed for any purpose, but must acknowledge the `antimony` project. Copyright is retained and must be preserved. The work is provided as is; no warranty is provided, and users accept all liability.
 
 Includes code from [kokopelli](https://github.com/mkeeter/kokopelli), which is  
