@@ -30,7 +30,8 @@
 NodeInspector::NodeInspector(Node* node)
     : node(node), name(NULL),
       title(new QGraphicsTextItem(node->getTitle(), this)),
-      menu_button(new InspectorMenuButton(this))
+      menu_button(new InspectorMenuButton(this)),
+      dragging(false)
 {
     if (auto n = node->getDatum("_name"))
     {
