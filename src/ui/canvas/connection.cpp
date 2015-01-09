@@ -283,7 +283,7 @@ void Connection::updateSnap()
 
 void Connection::keyPressEvent(QKeyEvent* event)
 {
-    if (event->key() == Qt::Key_Shift && drag_state != CONNECTED)
+    if (event->key() == Qt::Key_Space && drag_state != CONNECTED)
     {
         snapping = true;
         updateSnap();
@@ -298,7 +298,7 @@ void Connection::keyPressEvent(QKeyEvent* event)
 
 void Connection::keyReleaseEvent(QKeyEvent* event)
 {
-    if (event->key() == Qt::Key_Shift && drag_state != CONNECTED)
+    if (event->key() == Qt::Key_Space && drag_state != CONNECTED)
     {
         snapping = false;
         checkDragTarget();
