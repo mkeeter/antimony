@@ -315,10 +315,7 @@ void NodeInspector::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
         // Store an Undo command for this drag
         auto delta = event->scenePos() -
                      event->buttonDownScenePos(Qt::LeftButton);
-        if (delta.x() || delta.y())
-            App::instance()->pushStack(new UndoMoveCommand(
-                static_cast<GraphScene*>(scene()),
-                node, pos() - delta, pos()));
+        static_cast<GraphScene*>(scene())->endDrag(delta);
     }
     dragging = false;
 }

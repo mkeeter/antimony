@@ -6,6 +6,9 @@
 #include "ui/canvas/inspector/inspector.h"
 #include "ui/canvas/port.h"
 
+#include "app/app.h"
+#include "app/undo/undo_move.h"
+
 #include "graph/datum/datum.h"
 #include "graph/datum/link.h"
 
@@ -128,4 +131,14 @@ void GraphScene::setInspectorPositions(QMap<Node*, QPointF> p)
         if (auto i = dynamic_cast<NodeInspector*>(m))
             if (p.contains(i->getNode()))
                 i->setPos(p[i->getNode()]);
+}
+
+void GraphScene::endDrag(QPointF delta)
+{
+    App::instance()->beginUndoMacro("'drag'");
+    for (auto m : selectedItems())
+        if (auto i = dynamic_cast<NodeInspector*>(m))
+            App::instance()->pushStack(new UndoMoveCommand(
+                        this, i->getNode(), i->pos() - delta, i->pos()));
+    App::instance()->endUndoMacro();
 }

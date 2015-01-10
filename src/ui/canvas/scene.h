@@ -55,12 +55,16 @@ public:
      */
     QMap<Node*, QPointF> inspectorPositions() const;
 
-
     /*
      *  Set all inspector positions from the given map.
      *  (used in deserializing the graph)
      */
     void setInspectorPositions(QMap<Node*, QPointF> p);
+
+    /*
+     *  Creates a UndoDragCommand and pushes it to the application's stack.
+     */
+    void endDrag(QPointF delta);
 
 protected:
     QPointer<NodeInspector> raised_inspector;
