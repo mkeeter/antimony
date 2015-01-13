@@ -25,6 +25,7 @@ Connection::Connection(Link* link)
 {
     setFlags(QGraphicsItem::ItemIsSelectable|
              QGraphicsItem::ItemIsFocusable);
+    setZValue(1);
 
     setFocus();
     setAcceptHoverEvents(true);
