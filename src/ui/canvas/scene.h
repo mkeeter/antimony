@@ -65,9 +65,6 @@ public:
      *  Creates a UndoDragCommand and pushes it to the application's stack.
      */
     void endDrag(QPointF delta);
-
-protected:
-    QPointer<NodeInspector> raised_inspector;
 };
 
 #endif
