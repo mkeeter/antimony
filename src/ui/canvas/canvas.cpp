@@ -264,12 +264,35 @@ void Canvas::onPaste()
                         temp_root.findChildren<Node*>().toSet(), {},
                         "'paste'"));
 
+            QMap<Datum*, QList<Link*>> links;
             for (auto n : temp_root.findChildren<Node*>())
             {
                 n->setParent(App::instance()->getNodeRoot());
                 n->updateName();
+
+                // Save all Links separately
+                // (as their UI must be created after all NodeInspectors)
+                for (auto d : n->findChildren<Datum*>(
+                            QString(), Qt::FindDirectChildrenOnly))
+                {
+                    for (auto k : d->findChildren<Link*>())
+                    {
+                        links[d].append(k);
+                        k->setParent(NULL);
+                    }
+                }
                 App::instance()->newNode(n);
                 scene->getInspector(n)->setSelected(true);
+            }
+
+            for (auto i = links.begin(); i != links.end(); ++i)
+            {
+                for (auto k : i.value())
+                {
+                    k->setParent(i.key());
+                    k->getTarget()->update();
+                    App::instance()->newLink(k);
+                }
             }
             scene->setInspectorPositions(ds.inspectors);
         }
