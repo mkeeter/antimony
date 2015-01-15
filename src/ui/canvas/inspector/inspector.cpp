@@ -31,7 +31,7 @@ NodeInspector::NodeInspector(Node* node)
     : node(node), name(NULL),
       title(new QGraphicsTextItem(node->getTitle(), this)),
       menu_button(new InspectorMenuButton(this)),
-      dragging(false)
+      dragging(false), border(10)
 {
     if (auto n = node->getDatum("_name"))
     {
@@ -99,7 +99,7 @@ QRectF NodeInspector::boundingRect() const
         height += row->boundingRect().height() + 4;
         width = fmax(width, row->boundingRect().width());
     }
-    return QRectF(0, 0, width, height);
+    return QRectF(-border, -border, width + 2*border, height + 2*border);
 }
 
 void NodeInspector::onLayoutChanged()
@@ -107,11 +107,11 @@ void NodeInspector::onLayoutChanged()
     // Right-align the title block
     if (name)
         title->setPos(
-                boundingRect().width() - title->boundingRect().width()
+                boundingRect().right() - border - title->boundingRect().width()
                 - menu_button->boundingRect().width() - 6, 2);
 
     // Position the menu to the far right of the title bar
-    menu_button->setPos(boundingRect().width() -
+    menu_button->setPos(boundingRect().right() - border -
                         menu_button->boundingRect().width() - 3, 5);
 
     if (node)
@@ -166,13 +166,14 @@ void NodeInspector::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
+    const auto r = boundingRect().adjusted(border, border, -border, -border);
     painter->setBrush(Colors::base01);
     painter->setPen(Qt::NoPen);
-    painter->drawRoundedRect(boundingRect(), 8, 8);
+    painter->drawRoundedRect(r, 8, 8);
 
     painter->setBrush(Colors::base03);
     QRectF br = title->boundingRect();
-    br.setWidth(boundingRect().width());
+    br.setWidth(r.width());
     br.setHeight(br.height() + 2);
     painter->drawRoundedRect(br, 8, 8);
     br.setHeight(br.height()/2);
@@ -184,7 +185,7 @@ void NodeInspector::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
         painter->setPen(QPen(Colors::base05, 2));
     else
         painter->setPen(QPen(Colors::base03, 2));
-    painter->drawRoundedRect(boundingRect(), 8, 8);
+    painter->drawRoundedRect(r, 8, 8);
 }
 
 InputPort* NodeInspector::datumInputPort(Datum *d) const

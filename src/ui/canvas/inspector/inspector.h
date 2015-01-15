@@ -101,6 +101,9 @@ protected:
     // set this flag to true (then overload mouseMoveEvent to work correctly)
     bool dragging;
 
+    // Extra padding around the inspector (for glowing effect)
+    int border;
+
     friend class InspectorRow;
 };
 
