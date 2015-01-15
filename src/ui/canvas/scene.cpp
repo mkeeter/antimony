@@ -23,10 +23,17 @@ Canvas* GraphScene::newCanvas()
     return new Canvas(this);
 }
 
+void GraphScene::onGlowChange(Node* n, bool g)
+{
+    getInspector(n)->setGlow(g);
+}
+
 void GraphScene::makeUIfor(Node* n)
 {
     auto i = new NodeInspector(n);
     addItem(i);
+    connect(i, &NodeInspector::glowSet,
+            this, &GraphScene::onGlowChange);
 
     for (auto d : n->findChildren<Datum*>())
         for (auto link : d->findChildren<Link*>())
