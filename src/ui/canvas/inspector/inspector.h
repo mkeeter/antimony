@@ -76,6 +76,8 @@ public slots:
 
     void setDragging(bool d) { dragging = d; }
 
+    void setGlow(bool g);
+
 protected:
     /*
      *  On object moved, emit moved signal.
@@ -103,6 +105,9 @@ protected:
 
     // Extra padding around the inspector (for glowing effect)
     int border;
+
+    // Boolean to determine whether to draw glow
+    bool glow;
 
     friend class InspectorRow;
 };

@@ -31,7 +31,7 @@ NodeInspector::NodeInspector(Node* node)
     : node(node), name(NULL),
       title(new QGraphicsTextItem(node->getTitle(), this)),
       menu_button(new InspectorMenuButton(this)),
-      dragging(false), border(10)
+      dragging(false), border(10), glow(false)
 {
     if (auto n = node->getDatum("_name"))
     {
@@ -167,6 +167,14 @@ void NodeInspector::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     Q_UNUSED(widget);
 
     const auto r = boundingRect().adjusted(border, border, -border, -border);
+
+    if (glow)
+    {
+        painter->setBrush(Qt::NoBrush);
+        painter->setPen(QPen(Colors::base02, 20));
+        painter->drawRoundedRect(r, 8, 8);
+    }
+
     painter->setBrush(Colors::base01);
     painter->setPen(Qt::NoPen);
     painter->drawRoundedRect(r, 8, 8);
@@ -287,6 +295,15 @@ void NodeInspector::focusPrev(DatumTextItem* next)
             }
             prev = row;
         }
+    }
+}
+
+void NodeInspector::setGlow(bool g)
+{
+    if (g != glow)
+    {
+        glow = g;
+        prepareGeometryChange();
     }
 }
 
