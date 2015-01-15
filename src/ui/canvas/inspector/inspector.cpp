@@ -45,6 +45,7 @@ NodeInspector::NodeInspector(Node* node)
     setFlags(QGraphicsItem::ItemIsMovable |
              QGraphicsItem::ItemIsSelectable |
              QGraphicsItem::ItemSendsGeometryChanges);
+    setAcceptHoverEvents(true);
 
     title->setPos(6, 2);
     title->setDefaultTextColor(Colors::base06);
@@ -343,4 +344,16 @@ QVariant NodeInspector::itemChange(GraphicsItemChange change, const QVariant& va
     if (change == ItemPositionHasChanged)
         emit(moved());
     return value;
+}
+
+void NodeInspector::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    Q_UNUSED(event);
+    setGlow(true);
+}
+
+void NodeInspector::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    Q_UNUSED(event);
+    setGlow(false);
 }

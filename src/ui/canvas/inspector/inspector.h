@@ -62,6 +62,16 @@ public slots:
      */
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 
+    /*
+     *  On hover, set glow to true.
+     */
+    void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
+
+    /*
+     *  On hover, set glow to true.
+     */
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
+
     /** When datums are changed, update rows and layout.
      */
     void onDatumsChanged();
