@@ -35,10 +35,12 @@ SOURCES += \
     ../src/app/undo/undo_delete_link.cpp \
     ../src/app/undo/undo_change_expr.cpp \
     ../src/app/undo/undo_delete_node.cpp \
+    ../src/app/undo/undo_delete_multi.cpp \
+    ../src/app/undo/undo_add_multi.cpp \
     ../src/app/undo/undo_add_node.cpp \
     ../src/ui/main_window.cpp \
     ../src/ui/canvas/canvas.cpp \
-    ../src/ui/canvas/scene.cpp \
+    ../src/ui/canvas/graph_scene.cpp \
     ../src/ui/canvas/inspector/inspector.cpp \
     ../src/ui/canvas/inspector/inspector_text.cpp \
     ../src/ui/canvas/inspector/inspector_row.cpp \
@@ -46,7 +48,7 @@ SOURCES += \
     ../src/ui/canvas/connection.cpp \
     ../src/ui/canvas/port.cpp \
     ../src/ui/viewport/viewport.cpp \
-    ../src/ui/viewport/scene.cpp \
+    ../src/ui/viewport/viewport_scene.cpp \
     ../src/ui/viewport/view_selector.cpp \
     ../src/ui/viewport/depth_image.cpp \
     ../src/ui/script/syntax.cpp \
@@ -72,9 +74,11 @@ HEADERS += \
     ../src/app/undo/undo_delete_link.h \
     ../src/app/undo/undo_change_expr.h \
     ../src/app/undo/undo_delete_node.h \
+    ../src/app/undo/undo_delete_multi.h \
+    ../src/app/undo/undo_add_multi.h \
     ../src/app/undo/undo_add_node.h \
     ../src/ui/canvas/canvas.h \
-    ../src/ui/canvas/scene.h \
+    ../src/ui/canvas/graph_scene.h \
     ../src/ui/canvas/inspector/inspector.h \
     ../src/ui/canvas/inspector/inspector_text.h \
     ../src/ui/canvas/inspector/inspector_row.h \
@@ -82,7 +86,7 @@ HEADERS += \
     ../src/ui/canvas/port.h \
     ../src/ui/canvas/connection.h \
     ../src/ui/viewport/viewport.h \
-    ../src/ui/viewport/scene.h \
+    ../src/ui/viewport/viewport_scene.h \
     ../src/ui/viewport/view_selector.h \
     ../src/ui/viewport/depth_image.h \
     ../src/ui/script/syntax.h \

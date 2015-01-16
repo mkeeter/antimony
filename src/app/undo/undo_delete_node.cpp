@@ -13,15 +13,12 @@
 #include "graph/datum/datum.h"
 #include "graph/datum/link.h"
 
-#include "ui/canvas/scene.h"
+#include "ui/canvas/graph_scene.h"
 
-UndoDeleteNodeCommand::UndoDeleteNodeCommand(Node* n, QString text)
-    : n(n)
+UndoDeleteNodeCommand::UndoDeleteNodeCommand(Node* n, QUndoCommand* parent)
+    : UndoCommand(parent), n(n)
 {
-    if (text.isNull())
-        setText("'delete node'");
-    else
-        setText(text);
+    setText("'delete node'");
 }
 
 void UndoDeleteNodeCommand::redo()

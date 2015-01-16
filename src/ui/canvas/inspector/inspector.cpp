@@ -14,7 +14,7 @@
 #include "ui/canvas/inspector/inspector_row.h"
 #include "ui/canvas/inspector/inspector_menu.h"
 #include "ui/canvas/port.h"
-#include "ui/canvas/scene.h"
+#include "ui/canvas/graph_scene.h"
 
 #include "ui/util/colors.h"
 
@@ -30,7 +30,8 @@
 NodeInspector::NodeInspector(Node* node)
     : node(node), name(NULL),
       title(new QGraphicsTextItem(node->getTitle(), this)),
-      menu_button(new InspectorMenuButton(this))
+      menu_button(new InspectorMenuButton(this)),
+      dragging(false), border(10), glow(false)
 {
     if (auto n = node->getDatum("_name"))
     {
@@ -44,6 +45,7 @@ NodeInspector::NodeInspector(Node* node)
     setFlags(QGraphicsItem::ItemIsMovable |
              QGraphicsItem::ItemIsSelectable |
              QGraphicsItem::ItemSendsGeometryChanges);
+    setAcceptHoverEvents(true);
 
     title->setPos(6, 2);
     title->setDefaultTextColor(Colors::base06);
@@ -98,7 +100,7 @@ QRectF NodeInspector::boundingRect() const
         height += row->boundingRect().height() + 4;
         width = fmax(width, row->boundingRect().width());
     }
-    return QRectF(0, 0, width, height);
+    return QRectF(-border, -border, width + 2*border, height + 2*border);
 }
 
 void NodeInspector::onLayoutChanged()
@@ -106,11 +108,11 @@ void NodeInspector::onLayoutChanged()
     // Right-align the title block
     if (name)
         title->setPos(
-                boundingRect().width() - title->boundingRect().width()
+                boundingRect().right() - border - title->boundingRect().width()
                 - menu_button->boundingRect().width() - 6, 2);
 
     // Position the menu to the far right of the title bar
-    menu_button->setPos(boundingRect().width() -
+    menu_button->setPos(boundingRect().right() - border -
                         menu_button->boundingRect().width() - 3, 5);
 
     if (node)
@@ -165,13 +167,22 @@ void NodeInspector::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
+    const auto r = boundingRect().adjusted(border, border, -border, -border);
+
+    if (glow)
+    {
+        painter->setBrush(Qt::NoBrush);
+        painter->setPen(QPen(QColor(255, 255, 255, Colors::base02.red()), 20));
+        painter->drawRoundedRect(r, 8, 8);
+    }
+
     painter->setBrush(Colors::base01);
     painter->setPen(Qt::NoPen);
-    painter->drawRoundedRect(boundingRect(), 8, 8);
+    painter->drawRoundedRect(r, 8, 8);
 
     painter->setBrush(Colors::base03);
     QRectF br = title->boundingRect();
-    br.setWidth(boundingRect().width());
+    br.setWidth(r.width());
     br.setHeight(br.height() + 2);
     painter->drawRoundedRect(br, 8, 8);
     br.setHeight(br.height()/2);
@@ -183,7 +194,7 @@ void NodeInspector::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
         painter->setPen(QPen(Colors::base05, 2));
     else
         painter->setPen(QPen(Colors::base03, 2));
-    painter->drawRoundedRect(boundingRect(), 8, 8);
+    painter->drawRoundedRect(r, 8, 8);
 }
 
 InputPort* NodeInspector::datumInputPort(Datum *d) const
@@ -288,6 +299,15 @@ void NodeInspector::focusPrev(DatumTextItem* next)
     }
 }
 
+void NodeInspector::setGlow(bool g)
+{
+    if (g != glow)
+    {
+        glow = g;
+        prepareGeometryChange();
+    }
+}
+
 void NodeInspector::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     if (dragging)
@@ -314,10 +334,7 @@ void NodeInspector::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
         // Store an Undo command for this drag
         auto delta = event->scenePos() -
                      event->buttonDownScenePos(Qt::LeftButton);
-        if (delta.x() || delta.y())
-            App::instance()->pushStack(new UndoMoveCommand(
-                static_cast<GraphScene*>(scene()),
-                node, pos() - delta, pos()));
+        static_cast<GraphScene*>(scene())->endDrag(delta);
     }
     dragging = false;
 }
@@ -327,4 +344,16 @@ QVariant NodeInspector::itemChange(GraphicsItemChange change, const QVariant& va
     if (change == ItemPositionHasChanged)
         emit(moved());
     return value;
+}
+
+void NodeInspector::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    Q_UNUSED(event);
+    emit(glowChanged(node, true));
+}
+
+void NodeInspector::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    Q_UNUSED(event);
+    emit(glowChanged(node, false));
 }

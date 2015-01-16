@@ -12,11 +12,10 @@
 
 #include "app/app.h"
 #include "app/undo/undo_change_expr.h"
-#include "app/undo/undo_delete_node.h"
-#include "app/undo/undo_delete_link.h"
+#include "app/undo/undo_delete_multi.h"
 
 Control::Control(Node* node, QObject* parent)
-    : QObject(parent), node(node)
+    : QObject(parent), node(node), glow(false)
 {
     if (node)
         connect(node, &Node::destroyed, this, &Control::deleteLater);
@@ -62,14 +61,7 @@ void Control::deleteNode(QString text)
     if (parent())
         dynamic_cast<Control*>(parent())->deleteNode(text);
     else
-    {
-        App::instance()->beginUndoMacro(text);
-
-        for (auto k : node->getLinks())
-            App::instance()->pushStack(new UndoDeleteLinkCommand(k));
-        App::instance()->pushStack(new UndoDeleteNodeCommand(node));
-        App::instance()->endUndoMacro();
-    }
+        App::instance()->pushStack(new UndoDeleteMultiCommand({node}, {}));
 }
 
 void Control::beginDrag()
@@ -98,6 +90,19 @@ void Control::endDrag()
 
     if (started)
         App::instance()->endUndoMacro();
+}
+
+void Control::setGlow(bool g)
+{
+    if (g != glow)
+    {
+        glow = g;
+        emit(redraw());
+        for (auto c : findChildren<Control*>(
+                    QString(),
+                    Qt::FindDirectChildrenOnly))
+            c->setGlow(g);
+    }
 }
 
 void Control::dragValue(QString name, double delta)

@@ -4,6 +4,7 @@
 #include <QFileDialog>
 #include <QThread>
 #include <QGridLayout>
+#include <QDesktopWidget>
 
 #include <cmath>
 
@@ -16,9 +17,9 @@
 
 #include "ui/main_window.h"
 #include "ui/canvas/canvas.h"
-#include "ui/canvas/scene.h"
+#include "ui/canvas/graph_scene.h"
 #include "ui/viewport/viewport.h"
-#include "ui/viewport/scene.h"
+#include "ui/viewport/viewport_scene.h"
 #include "ui/script/script_pane.h"
 #include "ui/util/colors.h"
 
@@ -46,15 +47,24 @@ App::App(int& argc, char** argv) :
 {
     setGlobalStyle();
 
+    QDesktopWidget desktop;
+
     auto v = newViewportWindow();
-    v->move(v->pos() - QPoint(25, 25));
+    v->move((desktop.geometry().width() - v->width()) / 2 - 25,
+            (desktop.geometry().height() - v->height()) / 2 - 25);
 
     auto c = newCanvasWindow();
-    c->move(c->pos() + QPoint(25, 25));
+    c->move((desktop.geometry().width() - c->width()) / 2 + 25,
+            (desktop.geometry().height() - c->height()) / 2 + 25);
 
     // When the clean flag on the undo stack changes, update window titles
     connect(stack, &QUndoStack::cleanChanged,
             [&](bool){ emit(windowTitleChanged(getWindowTitle())); });
+
+    connect(view_scene, &ViewportScene::glowChanged,
+            graph_scene, &GraphScene::onGlowChange);
+    connect(graph_scene, &GraphScene::glowChanged,
+            view_scene, &ViewportScene::onGlowChange);
 }
 
 App::~App()

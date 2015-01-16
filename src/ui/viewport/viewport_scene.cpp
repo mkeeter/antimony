@@ -1,6 +1,6 @@
 #include <Python.h>
 
-#include "ui/viewport/scene.h"
+#include "ui/viewport/viewport_scene.h"
 #include "ui/viewport/viewport.h"
 #include "render/render_worker.h"
 
@@ -19,6 +19,10 @@ void ViewportScene::makeUIfor(Node* n)
 {
     auto c = makeControlFor(n);
     controls[n] = c;
+    connect(c, &Control::glowChanged,
+            this, &ViewportScene::onGlowChange);
+    connect(c, &Control::glowChanged,
+            this, &ViewportScene::glowChanged);
 
     for (auto itr = scenes.begin(); itr != scenes.end(); ++itr)
     {
@@ -118,6 +122,12 @@ void ViewportScene::onDatumsChanged(Node* n)
 }
 
 
+void ViewportScene::onGlowChange(Node* n, bool g)
+{
+    Q_ASSERT(controls.contains(n));
+    controls[n]->setGlow(g);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 
@@ -150,6 +160,7 @@ void ViewportScene::onDatumsChanged(Node* n)
 #include "control/transform/translate_control.h"
 
 #include "control/iterate/iterate2d_control.h"
+#include "control/iterate/iterate_polar_control.h"
 
 //#include "control/variable/slider_control.h"
 
@@ -207,6 +218,8 @@ Control* ViewportScene::makeControlFor(Node* node) const
             return new TranslateControl(node);
         case NodeType::ITERATE2D:
             return new Iterate2DControl(node);
+        case NodeType::ITERATE_POLAR:
+            return new IteratePolarControl(node);
         case NodeType::UNION:
         case NodeType::BLEND:
         case NodeType::INTERSECTION:
@@ -216,7 +229,6 @@ Control* ViewportScene::makeControlFor(Node* node) const
         case NodeType::SHELL:
         case NodeType::SCRIPT:
         case NodeType::DUMMY:
-        case NodeType::ITERATE_POLAR:
             return NULL;
     }
    Q_ASSERT(false);

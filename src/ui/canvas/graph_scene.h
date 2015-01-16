@@ -14,6 +14,7 @@ class Connection;
 
 class GraphScene : public QGraphicsScene
 {
+    Q_OBJECT
 public:
     GraphScene(QObject* parent=0);
 
@@ -55,15 +56,29 @@ public:
      */
     QMap<Node*, QPointF> inspectorPositions() const;
 
-
     /*
      *  Set all inspector positions from the given map.
      *  (used in deserializing the graph)
      */
     void setInspectorPositions(QMap<Node*, QPointF> p);
 
-protected:
-    QPointer<NodeInspector> raised_inspector;
+    /*
+     *  Creates a UndoDragCommand and pushes it to the application's stack.
+     */
+    void endDrag(QPointF delta);
+
+public slots:
+    /*
+     *  When the glow value for a node changes,
+     *  propagate to the relevant inspector
+     */
+    void onGlowChange(Node* n, bool g);
+
+signals:
+    /*
+     *  Used to cross-link glow between canvas and viewport.
+     */
+    void glowChanged(Node* n, bool g);
 };
 
 #endif

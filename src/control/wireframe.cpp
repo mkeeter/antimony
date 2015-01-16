@@ -1,4 +1,5 @@
 #include "control/wireframe.h"
+#include "ui/util/colors.h"
 
 WireframeControl::WireframeControl(Node* node, QObject* parent)
     : Control(node, parent)
@@ -17,12 +18,24 @@ QPainterPath WireframeControl::shape(QMatrix4x4 m, QMatrix4x4 t) const
 
 QRectF WireframeControl::bounds(QMatrix4x4 m, QMatrix4x4 t) const
 {
-    return shape(m, t).boundingRect();
+    QPainterPathStroker stroker;
+    stroker.setWidth(20);
+    QPainterPath path = stroker.createStroke(linePath(m, t));
+    path.addPath(pointPath(m, t));
+    return path.boundingRect();
 }
 
 void WireframeControl::paint(QMatrix4x4 m, QMatrix4x4 t,
                              bool highlight, QPainter* painter)
 {
+    if (glow)
+    {
+        painter->setBrush(Qt::NoBrush);
+        painter->setPen(QPen(QColor(255, 255, 255, Colors::base02.red()), 20));
+        painter->drawPath(linePath(m, t));
+        painter->drawPath(pointPath(m, t));
+    }
+
     setDefaultPen(highlight, painter);
     painter->drawPath(linePath(m, t));
     setDefaultBrush(highlight, painter);

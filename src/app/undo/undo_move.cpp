@@ -2,7 +2,7 @@
 
 #include "graph/node/node.h"
 
-#include "ui/canvas/scene.h"
+#include "ui/canvas/graph_scene.h"
 #include "ui/canvas/inspector/inspector.h"
 
 UndoMoveCommand::UndoMoveCommand(GraphScene* g, Node* n,

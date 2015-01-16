@@ -1,10 +1,13 @@
 #include <Python.h>
 
-#include "ui/canvas/scene.h"
+#include "ui/canvas/graph_scene.h"
 #include "ui/canvas/canvas.h"
 #include "ui/canvas/connection.h"
 #include "ui/canvas/inspector/inspector.h"
 #include "ui/canvas/port.h"
+
+#include "app/app.h"
+#include "app/undo/undo_move.h"
 
 #include "graph/datum/datum.h"
 #include "graph/datum/link.h"
@@ -20,10 +23,19 @@ Canvas* GraphScene::newCanvas()
     return new Canvas(this);
 }
 
+void GraphScene::onGlowChange(Node* n, bool g)
+{
+    getInspector(n)->setGlow(g);
+}
+
 void GraphScene::makeUIfor(Node* n)
 {
     auto i = new NodeInspector(n);
     addItem(i);
+    connect(i, &NodeInspector::glowChanged,
+            this, &GraphScene::onGlowChange);
+    connect(i, &NodeInspector::glowChanged,
+            this, &GraphScene::glowChanged);
 
     for (auto d : n->findChildren<Datum*>())
         for (auto link : d->findChildren<Link*>())
@@ -98,10 +110,8 @@ InputPort* GraphScene::getInputPortNear(QPointF pos, Link* link)
 
 void GraphScene::raiseInspector(NodeInspector* i)
 {
-    if (raised_inspector)
-        raised_inspector->setZValue(0);
-    i->setZValue(0.1);
-    raised_inspector = i;
+    removeItem(i);
+    addItem(i);
 }
 
 void GraphScene::raiseInspectorAt(QPointF pos)
@@ -128,4 +138,14 @@ void GraphScene::setInspectorPositions(QMap<Node*, QPointF> p)
         if (auto i = dynamic_cast<NodeInspector*>(m))
             if (p.contains(i->getNode()))
                 i->setPos(p[i->getNode()]);
+}
+
+void GraphScene::endDrag(QPointF delta)
+{
+    App::instance()->beginUndoMacro("'drag'");
+    for (auto m : selectedItems())
+        if (auto i = dynamic_cast<NodeInspector*>(m))
+            App::instance()->pushStack(new UndoMoveCommand(
+                        this, i->getNode(), i->pos() - delta, i->pos()));
+    App::instance()->endUndoMacro();
 }

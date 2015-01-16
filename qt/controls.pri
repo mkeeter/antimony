@@ -28,6 +28,7 @@ SOURCES += \
     ../src/control/transform/recenter_control.cpp \
     ../src/control/transform/translate_control.cpp \
     ../src/control/iterate/iterate2d_control.cpp \
+    ../src/control/iterate/iterate_polar_control.cpp \
 
 HEADERS += \
     ../src/control/control.h \
@@ -59,3 +60,4 @@ HEADERS += \
     ../src/control/transform/recenter_control.h \
     ../src/control/transform/translate_control.h \
     ../src/control/iterate/iterate2d_control.h \
+    ../src/control/iterate/iterate_polar_control.h \

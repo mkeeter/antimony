@@ -14,6 +14,8 @@
 	<string>antimony</string>
 	<key>CFBundleIdentifier</key>
     <string>com.impraxical.antimony</string>
+    <key>CFBundleVersion</key>
+    <string>0.0.0</string>
     <key>CFBundleDocumentTypes</key>
     <array>
         <dict>

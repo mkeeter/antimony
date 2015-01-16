@@ -2,6 +2,7 @@
 
 #include <QApplication>
 #include <QDebug>
+#include <QMessageBox>
 #include <QSurfaceFormat>
 
 #include "app/app.h"
@@ -32,6 +33,18 @@ int main(int argc, char *argv[])
     d = path.join("/");
 #endif
     fab::postInit(d.toStdString().c_str());
+
+    // Check to make sure that the fab module exists
+    PyObject* fab = PyImport_ImportModule("fab");
+    if (!fab)
+    {
+        QMessageBox::critical(NULL, "Import error",
+                "Import Error:<br><br>"
+                "Could not find <tt>fab</tt> Python module.<br>"
+                "Antimony will now exit.");
+        exit(1);
+    }
+    Py_DECREF(fab);
 
     return a.exec();
 }

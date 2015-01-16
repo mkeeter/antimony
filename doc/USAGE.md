@@ -35,7 +35,7 @@ Shift + left-click on a datum's text field and drag right or left to slide value
 Datums can be connected using the I/O ports on the right and left.
 Click and drag on the right-hand port to start a connection;
 release the mouse button on a left-hand port to finish it.
-While dragging, pressing Shift will snap the connection to the nearest valid port.
+While dragging, pressing Spacebar will snap the connection to the nearest valid port.
 
 Any shape datum with an unconnected output port will be rendered.
 

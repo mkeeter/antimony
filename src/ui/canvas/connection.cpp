@@ -5,7 +5,7 @@
 #include <QPainter>
 
 #include "ui/canvas/connection.h"
-#include "ui/canvas/scene.h"
+#include "ui/canvas/graph_scene.h"
 #include "ui/canvas/port.h"
 #include "ui/canvas/inspector/inspector.h"
 #include "ui/util/colors.h"
@@ -25,6 +25,7 @@ Connection::Connection(Link* link)
 {
     setFlags(QGraphicsItem::ItemIsSelectable|
              QGraphicsItem::ItemIsFocusable);
+    setZValue(1);
 
     setFocus();
     setAcceptHoverEvents(true);
@@ -283,7 +284,7 @@ void Connection::updateSnap()
 
 void Connection::keyPressEvent(QKeyEvent* event)
 {
-    if (event->key() == Qt::Key_Shift && drag_state != CONNECTED)
+    if (event->key() == Qt::Key_Space && drag_state != CONNECTED)
     {
         snapping = true;
         updateSnap();
@@ -298,7 +299,7 @@ void Connection::keyPressEvent(QKeyEvent* event)
 
 void Connection::keyReleaseEvent(QKeyEvent* event)
 {
-    if (event->key() == Qt::Key_Shift && drag_state != CONNECTED)
+    if (event->key() == Qt::Key_Space && drag_state != CONNECTED)
     {
         snapping = false;
         checkDragTarget();
