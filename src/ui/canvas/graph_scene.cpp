@@ -26,7 +26,6 @@ Canvas* GraphScene::newCanvas()
 void GraphScene::onGlowChange(Node* n, bool g)
 {
     getInspector(n)->setGlow(g);
-    emit(glowChanged(n, g));
 }
 
 void GraphScene::makeUIfor(Node* n)
@@ -35,6 +34,8 @@ void GraphScene::makeUIfor(Node* n)
     addItem(i);
     connect(i, &NodeInspector::glowChanged,
             this, &GraphScene::onGlowChange);
+    connect(i, &NodeInspector::glowChanged,
+            this, &GraphScene::glowChanged);
 
     for (auto d : n->findChildren<Datum*>())
         for (auto link : d->findChildren<Link*>())

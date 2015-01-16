@@ -21,6 +21,8 @@ void ViewportScene::makeUIfor(Node* n)
     controls[n] = c;
     connect(c, &Control::glowChanged,
             this, &ViewportScene::onGlowChange);
+    connect(c, &Control::glowChanged,
+            this, &ViewportScene::glowChanged);
 
     for (auto itr = scenes.begin(); itr != scenes.end(); ++itr)
     {
@@ -124,7 +126,6 @@ void ViewportScene::onGlowChange(Node* n, bool g)
 {
     Q_ASSERT(controls.contains(n));
     controls[n]->setGlow(g);
-    emit(glowChanged(n, g));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
