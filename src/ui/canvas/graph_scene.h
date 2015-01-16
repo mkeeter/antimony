@@ -14,6 +14,7 @@ class Connection;
 
 class GraphScene : public QGraphicsScene
 {
+    Q_OBJECT
 public:
     GraphScene(QObject* parent=0);
 
@@ -65,6 +66,19 @@ public:
      *  Creates a UndoDragCommand and pushes it to the application's stack.
      */
     void endDrag(QPointF delta);
+
+public slots:
+    /*
+     *  When the glow value for a node changes,
+     *  propagate to the relevant inspector
+     */
+    void onGlowChange(Node* n, bool g);
+
+signals:
+    /*
+     *  Used to cross-link glow between canvas and viewport.
+     */
+    void glowChanged(Node* n, bool g);
 };
 
 #endif

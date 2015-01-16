@@ -15,6 +15,7 @@ class RenderWorker;
 
 class ViewportScene : public QObject
 {
+    Q_OBJECT
 public:
     /*
      *  A ViewportScene is similar in nature to the CanvasScene
@@ -36,6 +37,15 @@ public:
      *  Creates Controls and DepthImageItems for this node.
      */
     void makeUIfor(Node* n);
+
+public slots:
+    void onGlowChange(Node* n, bool g);
+
+signals:
+    /*
+     *  Used to cross-link glow between viewport and canvas.
+     */
+    void glowChanged(Node* n, bool g);
 
 protected slots:
     /*

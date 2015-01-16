@@ -1,6 +1,6 @@
 #include <Python.h>
 
-#include "ui/canvas/scene.h"
+#include "ui/canvas/graph_scene.h"
 #include "ui/canvas/canvas.h"
 #include "ui/canvas/connection.h"
 #include "ui/canvas/inspector/inspector.h"
@@ -23,10 +23,19 @@ Canvas* GraphScene::newCanvas()
     return new Canvas(this);
 }
 
+void GraphScene::onGlowChange(Node* n, bool g)
+{
+    getInspector(n)->setGlow(g);
+}
+
 void GraphScene::makeUIfor(Node* n)
 {
     auto i = new NodeInspector(n);
     addItem(i);
+    connect(i, &NodeInspector::glowChanged,
+            this, &GraphScene::onGlowChange);
+    connect(i, &NodeInspector::glowChanged,
+            this, &GraphScene::glowChanged);
 
     for (auto d : n->findChildren<Datum*>())
         for (auto link : d->findChildren<Link*>())

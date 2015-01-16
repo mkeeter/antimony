@@ -63,6 +63,7 @@ void ControlProxy::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
         hover = true;
         update();
     }
+    emit(control->glowChanged(control->getNode(), true));
 }
 
 void ControlProxy::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
@@ -73,6 +74,7 @@ void ControlProxy::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
         hover = false;
         update();
     }
+    emit(control->glowChanged(control->getNode(), false));
 }
 
 void ControlProxy::mousePressEvent(QGraphicsSceneMouseEvent* event)

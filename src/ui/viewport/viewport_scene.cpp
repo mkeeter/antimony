@@ -1,6 +1,6 @@
 #include <Python.h>
 
-#include "ui/viewport/scene.h"
+#include "ui/viewport/viewport_scene.h"
 #include "ui/viewport/viewport.h"
 #include "render/render_worker.h"
 
@@ -19,6 +19,10 @@ void ViewportScene::makeUIfor(Node* n)
 {
     auto c = makeControlFor(n);
     controls[n] = c;
+    connect(c, &Control::glowChanged,
+            this, &ViewportScene::onGlowChange);
+    connect(c, &Control::glowChanged,
+            this, &ViewportScene::glowChanged);
 
     for (auto itr = scenes.begin(); itr != scenes.end(); ++itr)
     {
@@ -117,6 +121,12 @@ void ViewportScene::onDatumsChanged(Node* n)
                 makeRenderWorkerFor(d, v.key());
 }
 
+
+void ViewportScene::onGlowChange(Node* n, bool g)
+{
+    Q_ASSERT(controls.contains(n));
+    controls[n]->setGlow(g);
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 

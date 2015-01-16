@@ -46,6 +46,7 @@ public:
 
 signals:
     void moved();
+    void glowChanged(Node* node, bool g);
 
 public slots:
     /** Updates layout of text labels and fields.
@@ -62,6 +63,16 @@ public slots:
      */
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 
+    /*
+     *  On hover, set glow to true.
+     */
+    void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
+
+    /*
+     *  On hover, set glow to true.
+     */
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
+
     /** When datums are changed, update rows and layout.
      */
     void onDatumsChanged();
@@ -75,6 +86,8 @@ public slots:
     void focusPrev(DatumTextItem* prev);
 
     void setDragging(bool d) { dragging = d; }
+
+    void setGlow(bool g);
 
 protected:
     /*
@@ -100,6 +113,12 @@ protected:
     // magic that QGraphicsScene uses to drag items: upon first insertion,
     // set this flag to true (then overload mouseMoveEvent to work correctly)
     bool dragging;
+
+    // Extra padding around the inspector (for glowing effect)
+    int border;
+
+    // Boolean to determine whether to draw glow
+    bool glow;
 
     friend class InspectorRow;
 };
