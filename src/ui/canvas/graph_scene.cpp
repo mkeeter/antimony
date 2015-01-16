@@ -1,6 +1,6 @@
 #include <Python.h>
 
-#include "ui/canvas/scene.h"
+#include "ui/canvas/graph_scene.h"
 #include "ui/canvas/canvas.h"
 #include "ui/canvas/connection.h"
 #include "ui/canvas/inspector/inspector.h"

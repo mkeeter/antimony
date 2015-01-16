@@ -1,6 +1,6 @@
 #include <Python.h>
 
-#include "ui/viewport/scene.h"
+#include "ui/viewport/viewport_scene.h"
 #include "ui/viewport/viewport.h"
 #include "render/render_worker.h"
 

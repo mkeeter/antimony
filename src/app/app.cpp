@@ -17,9 +17,9 @@
 
 #include "ui/main_window.h"
 #include "ui/canvas/canvas.h"
-#include "ui/canvas/scene.h"
+#include "ui/canvas/graph_scene.h"
 #include "ui/viewport/viewport.h"
-#include "ui/viewport/scene.h"
+#include "ui/viewport/viewport_scene.h"
 #include "ui/script/script_pane.h"
 #include "ui/util/colors.h"
 
