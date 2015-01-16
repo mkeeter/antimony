@@ -172,7 +172,7 @@ void NodeInspector::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     if (glow)
     {
         painter->setBrush(Qt::NoBrush);
-        painter->setPen(QPen(Colors::base02, 20));
+        painter->setPen(QPen(QColor(255, 255, 255, Colors::base02.red()), 20));
         painter->drawRoundedRect(r, 8, 8);
     }
 
