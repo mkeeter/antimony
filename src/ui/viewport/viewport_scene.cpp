@@ -128,7 +128,8 @@ void ViewportScene::onDatumsChanged(Node* n)
 void ViewportScene::onGlowChange(Node* n, bool g)
 {
     Q_ASSERT(controls.contains(n));
-    controls[n]->setGlow(g);
+    if (controls[n])
+        controls[n]->setGlow(g);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
