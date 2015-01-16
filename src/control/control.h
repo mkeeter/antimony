@@ -82,8 +82,11 @@ public:
      */
     virtual bool onClick() { return false; }
 
+    void setGlow(bool g);
+
 signals:
     void redraw();
+    void glowChanged(Node* node, bool g);
 
 protected:
     /** Mark a set of datums as causing a re-render when changed.
@@ -116,6 +119,8 @@ protected:
 
     QPointer<Node> node;
     QMap<EvalDatum*, QString> watched;
+
+    bool glow;
 };
 
 

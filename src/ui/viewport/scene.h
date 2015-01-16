@@ -37,6 +37,9 @@ public:
      */
     void makeUIfor(Node* n);
 
+public slots:
+    void onGlowChange(Node* n, bool g);
+
 protected slots:
     /*
      *  Removes dead Viewport and Node pointers from the list and map.
