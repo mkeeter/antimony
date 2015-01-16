@@ -46,7 +46,7 @@ public:
 
 signals:
     void moved();
-    void glowSet(Node* node, bool g);
+    void glowChanged(Node* node, bool g);
 
 public slots:
     /** Updates layout of text labels and fields.

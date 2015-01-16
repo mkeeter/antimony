@@ -32,7 +32,7 @@ void GraphScene::makeUIfor(Node* n)
 {
     auto i = new NodeInspector(n);
     addItem(i);
-    connect(i, &NodeInspector::glowSet,
+    connect(i, &NodeInspector::glowChanged,
             this, &GraphScene::onGlowChange);
 
     for (auto d : n->findChildren<Datum*>())

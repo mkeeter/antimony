@@ -349,11 +349,11 @@ QVariant NodeInspector::itemChange(GraphicsItemChange change, const QVariant& va
 void NodeInspector::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event);
-    emit(glowSet(node, true));
+    emit(glowChanged(node, true));
 }
 
 void NodeInspector::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED(event);
-    emit(glowSet(node, false));
+    emit(glowChanged(node, false));
 }
