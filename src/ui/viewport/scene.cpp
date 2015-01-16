@@ -124,6 +124,7 @@ void ViewportScene::onGlowChange(Node* n, bool g)
 {
     Q_ASSERT(controls.contains(n));
     controls[n]->setGlow(g);
+    emit(glowChanged(n, g));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

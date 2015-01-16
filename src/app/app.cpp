@@ -60,6 +60,11 @@ App::App(int& argc, char** argv) :
     // When the clean flag on the undo stack changes, update window titles
     connect(stack, &QUndoStack::cleanChanged,
             [&](bool){ emit(windowTitleChanged(getWindowTitle())); });
+
+    connect(view_scene, &ViewportScene::glowChanged,
+            graph_scene, &GraphScene::onGlowChange);
+    connect(graph_scene, &GraphScene::glowChanged,
+            view_scene, &ViewportScene::onGlowChange);
 }
 
 App::~App()

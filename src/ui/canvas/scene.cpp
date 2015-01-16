@@ -26,6 +26,7 @@ Canvas* GraphScene::newCanvas()
 void GraphScene::onGlowChange(Node* n, bool g)
 {
     getInspector(n)->setGlow(g);
+    emit(glowChanged(n, g));
 }
 
 void GraphScene::makeUIfor(Node* n)

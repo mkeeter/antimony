@@ -15,6 +15,7 @@ class RenderWorker;
 
 class ViewportScene : public QObject
 {
+    Q_OBJECT
 public:
     /*
      *  A ViewportScene is similar in nature to the CanvasScene
@@ -39,6 +40,12 @@ public:
 
 public slots:
     void onGlowChange(Node* n, bool g);
+
+signals:
+    /*
+     *  Used to cross-link glow between viewport and canvas.
+     */
+    void glowChanged(Node* n, bool g);
 
 protected slots:
     /*

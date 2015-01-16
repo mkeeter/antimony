@@ -73,6 +73,12 @@ public slots:
      *  propagate to the relevant inspector
      */
     void onGlowChange(Node* n, bool g);
+
+signals:
+    /*
+     *  Used to cross-link glow between canvas and viewport.
+     */
+    void glowChanged(Node* n, bool g);
 };
 
 #endif
