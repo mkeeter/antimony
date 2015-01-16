@@ -19,10 +19,13 @@ void ViewportScene::makeUIfor(Node* n)
 {
     auto c = makeControlFor(n);
     controls[n] = c;
-    connect(c, &Control::glowChanged,
-            this, &ViewportScene::onGlowChange);
-    connect(c, &Control::glowChanged,
-            this, &ViewportScene::glowChanged);
+    if (c)
+    {
+        connect(c, &Control::glowChanged,
+                this, &ViewportScene::onGlowChange);
+        connect(c, &Control::glowChanged,
+                this, &ViewportScene::glowChanged);
+    }
 
     for (auto itr = scenes.begin(); itr != scenes.end(); ++itr)
     {
@@ -125,7 +128,8 @@ void ViewportScene::onDatumsChanged(Node* n)
 void ViewportScene::onGlowChange(Node* n, bool g)
 {
     Q_ASSERT(controls.contains(n));
-    controls[n]->setGlow(g);
+    if (controls[n])
+        controls[n]->setGlow(g);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
