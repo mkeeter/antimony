@@ -19,10 +19,13 @@ void ViewportScene::makeUIfor(Node* n)
 {
     auto c = makeControlFor(n);
     controls[n] = c;
-    connect(c, &Control::glowChanged,
-            this, &ViewportScene::onGlowChange);
-    connect(c, &Control::glowChanged,
-            this, &ViewportScene::glowChanged);
+    if (c)
+    {
+        connect(c, &Control::glowChanged,
+                this, &ViewportScene::onGlowChange);
+        connect(c, &Control::glowChanged,
+                this, &ViewportScene::glowChanged);
+    }
 
     for (auto itr = scenes.begin(); itr != scenes.end(); ++itr)
     {
