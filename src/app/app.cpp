@@ -469,6 +469,7 @@ void App::makeUI(NodeRoot* r)
         for (auto d : n->findChildren<Datum*>(
                     QString(), Qt::FindDirectChildrenOnly))
         {
+            d->update();
             for (auto k : d->findChildren<Link*>())
             {
                 links[d].append(k);
