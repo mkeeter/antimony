@@ -33,6 +33,11 @@ public:
     void newNode(Node* n);
 
     /*
+     *  Makes UI elements for the given NodeRoot.
+     */
+    void makeUI(NodeRoot* r);
+
+    /*
      *  Create UI elements for a new link, returning the associated Connection.
      */
     Connection* newLink(Link* link);

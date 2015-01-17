@@ -25,6 +25,8 @@
 
 #include "graph/node/node.h"
 #include "graph/node/root.h"
+#include "graph/datum/datum.h"
+#include "graph/datum/link.h"
 #include "graph/node/serializer.h"
 #include "graph/node/deserializer.h"
 
@@ -184,11 +186,9 @@ void App::loadFile(QString f)
                 ds.error_message);
         onNew();
     } else {
-        for (auto n : root->findChildren<Node*>(
-                    "", Qt::FindDirectChildrenOnly))
-            newNode(n);
-
+        makeUI(root);
         graph_scene->setInspectorPositions(ds.inspectors);
+
         emit(windowTitleChanged(getWindowTitle()));
     }
 }
@@ -454,6 +454,39 @@ void App::newNode(Node* n)
 {
     graph_scene->makeUIfor(n);
     view_scene->makeUIfor(n);
+}
+
+void App::makeUI(NodeRoot* r)
+{
+    QMap<Datum*, QList<Link*>> links;
+    for (auto n : r->findChildren<Node*>(
+                QString(), Qt::FindDirectChildrenOnly))
+    {
+        n->setParent(root);
+
+        // Save all Links separately
+        // (as their UI must be created after all NodeInspectors)
+        for (auto d : n->findChildren<Datum*>(
+                    QString(), Qt::FindDirectChildrenOnly))
+        {
+            for (auto k : d->findChildren<Link*>())
+            {
+                links[d].append(k);
+                k->setParent(NULL);
+            }
+        }
+        newNode(n);
+    }
+
+    for (auto i = links.begin(); i != links.end(); ++i)
+    {
+        for (auto k : i.value())
+        {
+            k->setParent(i.key());
+            k->getTarget()->update();
+            newLink(k);
+        }
+    }
 }
 
 Connection* App::newLink(Link* link)
