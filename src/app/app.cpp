@@ -65,6 +65,9 @@ App::App(int& argc, char** argv) :
             graph_scene, &GraphScene::onGlowChange);
     connect(graph_scene, &GraphScene::glowChanged,
             view_scene, &ViewportScene::onGlowChange);
+
+    if (arguments().length() == 2)
+        loadFile(arguments()[1]);
 }
 
 App::~App()
@@ -152,31 +155,41 @@ void App::onOpen()
 {
     QString f = QFileDialog::getOpenFileName(NULL, "Open", "", "*.sb");
     if (!f.isEmpty())
+        loadFile(f);
+}
+
+void App::loadFile(QString f)
+{
+    filename = f;
+    root->deleteLater();
+    root = new NodeRoot();
+    QFile file(f);
+    if (!file.open(QIODevice::ReadOnly))
     {
-        filename = f;
-        root->deleteLater();
-        root = new NodeRoot();
-        QFile file(f);
-        file.open(QIODevice::ReadOnly);
+        QMessageBox::critical(NULL, "Loading error",
+                "<b>Loading error:</b><br>"
+                "File does not exist.");
+        onNew();
+        return;
+    }
 
-        QDataStream in(&file);
-        SceneDeserializer ds(root);
-        ds.run(&in);
+    QDataStream in(&file);
+    SceneDeserializer ds(root);
+    ds.run(&in);
 
-        if (ds.failed == true)
-        {
-            QMessageBox::critical(NULL, "Loading error",
-                    "<b>Loading error:</b><br>" +
-                    ds.error_message);
-            onNew();
-        } else {
-            for (auto n : root->findChildren<Node*>(
-                        "", Qt::FindDirectChildrenOnly))
-                newNode(n);
+    if (ds.failed == true)
+    {
+        QMessageBox::critical(NULL, "Loading error",
+                "<b>Loading error:</b><br>" +
+                ds.error_message);
+        onNew();
+    } else {
+        for (auto n : root->findChildren<Node*>(
+                    "", Qt::FindDirectChildrenOnly))
+            newNode(n);
 
-            graph_scene->setInspectorPositions(ds.inspectors);
-            emit(windowTitleChanged(getWindowTitle()));
-        }
+        graph_scene->setInspectorPositions(ds.inspectors);
+        emit(windowTitleChanged(getWindowTitle()));
     }
 }
 

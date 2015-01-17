@@ -97,6 +97,8 @@ public slots:
 
 private:
 
+    void loadFile(QString f);
+
     void setGlobalStyle();
 
     GraphScene* graph_scene;
