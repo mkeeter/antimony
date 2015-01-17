@@ -91,6 +91,8 @@ public slots:
     void onSaveAs();
     void onOpen();
 
+    void loadFile(QString f);
+
     void onExportSTL();
     void onExportHeightmap();
     void onExportJSON();

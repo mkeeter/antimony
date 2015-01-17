@@ -152,31 +152,34 @@ void App::onOpen()
 {
     QString f = QFileDialog::getOpenFileName(NULL, "Open", "", "*.sb");
     if (!f.isEmpty())
+        loadFile(f);
+}
+
+void App::loadFile(QString f)
+{
+    filename = f;
+    root->deleteLater();
+    root = new NodeRoot();
+    QFile file(f);
+    file.open(QIODevice::ReadOnly);
+
+    QDataStream in(&file);
+    SceneDeserializer ds(root);
+    ds.run(&in);
+
+    if (ds.failed == true)
     {
-        filename = f;
-        root->deleteLater();
-        root = new NodeRoot();
-        QFile file(f);
-        file.open(QIODevice::ReadOnly);
+        QMessageBox::critical(NULL, "Loading error",
+                "<b>Loading error:</b><br>" +
+                ds.error_message);
+        onNew();
+    } else {
+        for (auto n : root->findChildren<Node*>(
+                    "", Qt::FindDirectChildrenOnly))
+            newNode(n);
 
-        QDataStream in(&file);
-        SceneDeserializer ds(root);
-        ds.run(&in);
-
-        if (ds.failed == true)
-        {
-            QMessageBox::critical(NULL, "Loading error",
-                    "<b>Loading error:</b><br>" +
-                    ds.error_message);
-            onNew();
-        } else {
-            for (auto n : root->findChildren<Node*>(
-                        "", Qt::FindDirectChildrenOnly))
-                newNode(n);
-
-            graph_scene->setInspectorPositions(ds.inspectors);
-            emit(windowTitleChanged(getWindowTitle()));
-        }
+        graph_scene->setInspectorPositions(ds.inspectors);
+        emit(windowTitleChanged(getWindowTitle()));
     }
 }
 
