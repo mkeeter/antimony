@@ -161,7 +161,13 @@ void App::loadFile(QString f)
     root->deleteLater();
     root = new NodeRoot();
     QFile file(f);
-    file.open(QIODevice::ReadOnly);
+    if (!file.open(QIODevice::ReadOnly))
+    {
+        QMessageBox::critical(NULL, "Loading error",
+                "<b>Loading error:</b><br>"
+                "File does not exist.");
+        onNew();
+    }
 
     QDataStream in(&file);
     SceneDeserializer ds(root);
