@@ -362,6 +362,17 @@ void App::onExportJSON()
     delete exporting_dialog;
 }
 
+bool App::event(QEvent *event)
+{
+    switch (event->type()) {
+        case QEvent::FileOpen:
+            loadFile(static_cast<QFileOpenEvent *>(event)->file());
+            return true;
+        default:
+            return QApplication::event(event);
+    }
+}
+
 QString App::getWindowTitle() const
 {
     QString t = "antimony [";

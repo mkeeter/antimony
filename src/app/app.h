@@ -102,6 +102,8 @@ public slots:
 
 private:
 
+    bool event(QEvent* event);
+
     void loadFile(QString f);
 
     void setGlobalStyle();
