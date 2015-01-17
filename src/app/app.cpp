@@ -167,6 +167,7 @@ void App::loadFile(QString f)
                 "<b>Loading error:</b><br>"
                 "File does not exist.");
         onNew();
+        return;
     }
 
     QDataStream in(&file);
