@@ -215,7 +215,22 @@ void MainWindow::populateMenu(QMenu* menu, bool recenter, Viewport* v)
     add("", "Script", ScriptNode);
 
     // Finally, iterate over all of the user-defined scripts.
-    QDirIterator itr("nodes", QDirIterator::Subdirectories);
+    auto path = QCoreApplication::applicationDirPath().split("/");
+
+#if defined Q_OS_MAC
+    path.removeLast(); // Trim the MacOS folder from the path
+
+    // When deployed, the nodes folder is in Resources
+    if (QDir(path.join("/") + "/Resources/nodes").exists())
+        path.append("Resources");
+    // Otherwise, assume it's at the same level as antimony.app
+    else
+        for (int i=0; i < 2; ++i)
+            path.removeLast();
+#endif
+    path.append("nodes");
+    QDirIterator itr(path.join("/"), QDirIterator::Subdirectories);
+
     while (itr.hasNext())
     {
         auto n = itr.next();
@@ -223,6 +238,9 @@ void MainWindow::populateMenu(QMenu* menu, bool recenter, Viewport* v)
             continue;
 
         auto split = n.split('/');
+        while (split.first() != "nodes")
+            split.removeFirst();
+
         if (split.length() != 3)
             continue;
         QString category = split[1];
