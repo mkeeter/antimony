@@ -59,11 +59,11 @@ macx {
 
 
 # Copy the py/fab and py/nodes directory when building the application
-copyfab.commands = $(COPY_DIR) $$PWD/../py/fab $$OUT_PWD
+copy_fab.commands = $(COPY_DIR) $$PWD/../py/fab $$OUT_PWD
 copy_nodes.commands = $(COPY_DIR) $$PWD/../py/nodes $$OUT_PWD
 
-first.depends = $(first) copyfab copy_nodes
+first.depends = $(first) copy_fab copy_nodes
 export(first.depends)
-export(copyfab.commands)
+export(copy_fab.commands)
 export(copy_nodes.commands)
-QMAKE_EXTRA_TARGETS += first copyfab copy_nodes
+QMAKE_EXTRA_TARGETS += first copy_fab copy_nodes
