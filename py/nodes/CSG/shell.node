@@ -1,0 +1,8 @@
+import fab.types
+import fab.shapes
+
+title('Shell')
+input('a', fab.types.Shape)
+input('s', float)
+
+output('shape', fab.shapes.shell(a, s))

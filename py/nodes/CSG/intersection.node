@@ -1,7 +1,7 @@
 import fab.types
 
-title('Union')
+title('Intersection')
 input('a', fab.types.Shape)
 input('b', fab.types.Shape)
 
-output('shape', a | b)
+output('shape', a & b)
