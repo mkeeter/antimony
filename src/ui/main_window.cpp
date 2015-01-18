@@ -3,6 +3,7 @@
 #include <QKeySequence>
 #include <QMouseEvent>
 #include <QDebug>
+#include <QDirIterator>
 
 #include "app/app.h"
 
@@ -126,6 +127,8 @@ bool MainWindow::isShaded() const
 #include "graph/node/nodes/deform.h"
 #include "graph/node/nodes/iterate.h"
 
+#include "graph/datum/types/eval_datum.h"
+
 void MainWindow::createNew(bool recenter, NodeConstructorFunction f,
                            Viewport* v)
 {
@@ -210,4 +213,36 @@ void MainWindow::populateMenu(QMenu* menu, bool recenter, Viewport* v)
     menu->addSeparator();
 
     add("", "Script", ScriptNode);
+
+    // Finally, iterate over all of the user-defined scripts.
+    QDirIterator itr("nodes", QDirIterator::Subdirectories);
+    while (itr.hasNext())
+    {
+        auto n = itr.next();
+        if (!n.endsWith(".node"))
+            continue;
+
+        auto split = n.split('/');
+        if (split.length() != 3)
+            continue;
+        QString category = split[1];
+
+        QFile file(n);
+        if (!file.open(QIODevice::ReadOnly))
+            continue;
+
+        QTextStream in(&file);
+        QString txt = in.readAll();
+
+        NodeConstructorFunction constructor =
+            [=](float x, float y, float z, float scale, NodeRoot *r)
+            {
+                auto s = ScriptNode(x, y, z, scale, r);
+                static_cast<EvalDatum*>(s->getDatum("_script"))->setExpr(txt);
+                return s;
+            };
+        addNodeToMenu(
+                split[1], split[2].replace(".node",""),
+                menu, &submenus, recenter, constructor, v);
+    }
 }
