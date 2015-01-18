@@ -20,10 +20,10 @@ public:
     QRectF boundingRect() const;
 
     /** Position of lower-left corner (in original scene units) */
-    QVector3D pos;
+    const QVector3D pos;
 
     /** Scale (in rotated scene coordinates) */
-    QVector3D size;
+    const QVector3D size;
 
 public slots:
     void reposition();
