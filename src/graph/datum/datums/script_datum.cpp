@@ -115,6 +115,7 @@ PyObject* ScriptDatum::makeInput(QString name, PyTypeObject *type)
         PyErr_SetString(PyExc_RuntimeError, "Accessed invalid datum value");
         return NULL;
     }
+    Py_INCREF(Py_None);
     return Py_None;
 }
 
@@ -167,6 +168,7 @@ PyObject* ScriptDatum::makeOutput(QString name, PyObject *out)
     d->setParent(parent());
 
     static_cast<OutputDatum*>(d)->setNewValue(out);
+    Py_INCREF(Py_None);
     return Py_None;
 
 }
@@ -174,6 +176,7 @@ PyObject* ScriptDatum::makeOutput(QString name, PyObject *out)
 PyObject* ScriptDatum::setTitle(QString title)
 {
     static_cast<Node*>(parent())->setTitle(title);
+    Py_INCREF(Py_None);
     return Py_None;
 }
 
