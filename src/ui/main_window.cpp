@@ -152,9 +152,9 @@ void MainWindow::addNodeToMenu(QString category, QString name,
                                bool recenter, NodeConstructorFunction f,
                                Viewport* v)
 {
-    if (submenus && !submenus->contains(category))
+    if (!category.isEmpty() && !submenus->contains(category))
         (*submenus)[category] = menu->addMenu(category);
-    QAction* a = (submenus ? (*submenus)[category] : menu)->addAction(name);
+    QAction* a = (category.isEmpty() ? menu : (*submenus)[category])->addAction(name);
     connect(a, &QAction::triggered, [=]{ this->createNew(recenter, f, v); });
 }
 
