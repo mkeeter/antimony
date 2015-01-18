@@ -55,13 +55,14 @@ private:
      *  If v is given, use it as the viewport in which to add the object
      *      (which enables Shift+A adding objects in quad windows)
      */
-    void createNew(bool recenter, NodeConstructor f, Viewport* v=NULL);
+    void createNew(bool recenter, NodeConstructorFunction f, Viewport* v=NULL);
 
     /** Adds a particular node to the "Add" menu.
      */
     void addNodeToMenu(QString category, QString name, QMenu* menu,
                        QMap<QString, QMenu*>* submenus,
-                       bool recenter, NodeConstructor f, Viewport* v=NULL);
+                       bool recenter, NodeConstructorFunction f,
+                       Viewport* v=NULL);
 
     Ui::MainWindow *ui;
 };

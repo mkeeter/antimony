@@ -145,7 +145,7 @@ QVector3D Viewport::sceneToWorld(QPointF p) const
     return M * QVector3D(p.x(), p.y(), 0);
 }
 
-void Viewport::makeNodeAtCursor(NodeConstructor f)
+void Viewport::makeNodeAtCursor(NodeConstructorFunction f)
 {
     QPointF scene_pos = mapToScene(mapFromGlobal(QCursor::pos()));
     QVector3D p = sceneToWorld(scene_pos);
