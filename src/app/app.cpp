@@ -67,9 +67,6 @@ App::App(int& argc, char** argv) :
             graph_scene, &GraphScene::onGlowChange);
     connect(graph_scene, &GraphScene::glowChanged,
             view_scene, &ViewportScene::onGlowChange);
-
-    if (arguments().length() == 2)
-        loadFile(arguments()[1]);
 }
 
 App::~App()

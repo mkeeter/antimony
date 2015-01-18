@@ -66,6 +66,8 @@ public:
     void beginUndoMacro(QString text);
     void endUndoMacro();
 
+    void loadFile(QString f);
+
 signals:
     void windowTitleChanged(QString new_title);
 
@@ -103,8 +105,6 @@ public slots:
 private:
 
     bool event(QEvent* event);
-
-    void loadFile(QString f);
 
     void setGlobalStyle();
 
