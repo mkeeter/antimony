@@ -64,6 +64,11 @@ private:
                        bool recenter, NodeConstructorFunction f,
                        Viewport* v=NULL);
 
+    void populateBuiltIn(QMenu* menu, QMap<QString, QMenu*>* submenus,
+                         bool recenter=true, Viewport* v=NULL);
+    void populateUserScripts(QMenu* menu, QMap<QString, QMenu*>* submenus,
+                             bool recenter=true, Viewport* v=NULL);
+
     Ui::MainWindow *ui;
 };
 

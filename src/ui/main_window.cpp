@@ -161,13 +161,12 @@ void MainWindow::addNodeToMenu(QString category, QString name,
     connect(a, &QAction::triggered, [=]{ this->createNew(recenter, f, v); });
 }
 
-void MainWindow::populateMenu(QMenu* menu, bool recenter, Viewport* v)
+void MainWindow::populateBuiltIn(QMenu* menu, QMap<QString, QMenu*>* submenus,
+                                 bool recenter, Viewport* v)
 {
-    QMap<QString, QMenu*> submenus;
-
     auto add = [&](QString category, QString name, NodeConstructor constructor)
     {
-        addNodeToMenu(category, name, menu, &submenus,
+        addNodeToMenu(category, name, menu, submenus,
                       recenter, constructor, v);
     };
 
@@ -213,8 +212,12 @@ void MainWindow::populateMenu(QMenu* menu, bool recenter, Viewport* v)
     menu->addSeparator();
 
     add("", "Script", ScriptNode);
+}
 
-    // Finally, iterate over all of the user-defined scripts.
+void MainWindow::populateUserScripts(
+        QMenu* menu, QMap<QString, QMenu*>* submenus,
+        bool recenter, Viewport* v)
+{
     auto path = QCoreApplication::applicationDirPath().split("/");
 
 #if defined Q_OS_MAC
@@ -261,6 +264,14 @@ void MainWindow::populateMenu(QMenu* menu, bool recenter, Viewport* v)
             };
         addNodeToMenu(
                 split[1], split[2].replace(".node",""),
-                menu, &submenus, recenter, constructor, v);
+                menu, submenus, recenter, constructor, v);
     }
+}
+
+void MainWindow::populateMenu(QMenu* menu, bool recenter, Viewport* v)
+{
+    QMap<QString, QMenu*> submenus;
+
+    populateBuiltIn(menu, &submenus, recenter, v);
+    populateUserScripts(menu, &submenus, recenter, v);
 }
