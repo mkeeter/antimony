@@ -183,14 +183,6 @@ void MainWindow::populateBuiltIn(QMenu* menu, QMap<QString, QMenu*>* submenus,
     add("3D", "Cone", ConeNode);
     add("3D", "Extrude", ExtrudeNode);
 
-    add("CSG", "Union", UnionNode);
-    add("CSG", "Blend", BlendNode);
-    add("CSG", "Intersection", IntersectionNode);
-    add("CSG", "Difference", DifferenceNode);
-    add("CSG", "Offset", OffsetNode);
-    add("CSG", "Clearance", ClearanceNode);
-    add("CSG", "Shell", ShellNode);
-
     add("Transform", "Rotate (X)", RotateXNode);
     add("Transform", "Rotate (Y)", RotateYNode);
     add("Transform", "Rotate (Z)", RotateZNode);
