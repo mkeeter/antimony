@@ -4,6 +4,6 @@ import fab.shapes
 title('Blend')
 input('a', fab.types.Shape)
 input('b', fab.types.Shape)
-input('q', float)
+input('q', float, 0.1)
 
 output('shape', fab.shapes.blend(a, b, q))

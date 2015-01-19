@@ -1,5 +1,8 @@
 #include <Python.h>
 
+#include <QRegExp>
+#include <QStringList>
+
 #include "graph/datum/wrapper.h"
 #include "graph/datum/datums/shape_input_datum.h"
 #include "graph/datum/datums/shape_output_datum.h"
@@ -52,11 +55,18 @@ bool ScriptDatum::isValidName(QString name) const
            name != "script" && !touched.contains(name);
 }
 
-PyObject* ScriptDatum::makeInput(QString name, PyTypeObject *type)
+PyObject* ScriptDatum::makeInput(QString name, PyTypeObject *type,
+                                 QString value)
 {
     if (!isValidName(name))
     {
         PyErr_SetString(PyExc_RuntimeError, "Invalid datum name");
+        return NULL;
+    }
+    else if (type == fab::ShapeType && !value.isNull())
+    {
+        PyErr_SetString(PyExc_RuntimeError,
+                "Cannot have default argument for Shape input.");
         return NULL;
     }
 
@@ -86,11 +96,11 @@ PyObject* ScriptDatum::makeInput(QString name, PyTypeObject *type)
 
         if (type == &PyFloat_Type)
         {
-            d = new FloatDatum(name, "0.0", n);
+            d = new FloatDatum(name, value.isEmpty() ? "0.0" : value, n);
         }
         else if (type == &PyLong_Type)
         {
-            d = new IntDatum(name, "0", n);
+            d = new IntDatum(name, value.isEmpty() ? "0" : value, n);
         }
         else if (type == fab::ShapeType)
         {
@@ -233,6 +243,13 @@ PyObject* ScriptDatum::getCurrentValue()
 
     if (datums_changed)
         emit(static_cast<Node*>(parent())->datumsChanged());
+
+    QRegExp input("(.*input\\([^(),]+,[^(),]+),[^(),]+(\\).*)");
+    while (input.exactMatch(expr))
+    {
+        auto out = input.capturedTexts();
+        expr = out[1] + out[2];
+    }
     return out;
 }
 
