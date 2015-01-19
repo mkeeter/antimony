@@ -272,6 +272,9 @@ void MainWindow::populateMenu(QMenu* menu, bool recenter, Viewport* v)
 {
     QMap<QString, QMenu*> submenus;
 
+    for (auto c : {"2D", "3D", "CSG", "Transform", "Iterate", "Deform"})
+        submenus[c] = menu->addMenu(c);
+
     populateBuiltIn(menu, &submenus, recenter, v);
     populateUserScripts(menu, &submenus, recenter, v);
 }
