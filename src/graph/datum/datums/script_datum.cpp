@@ -96,11 +96,11 @@ PyObject* ScriptDatum::makeInput(QString name, PyTypeObject *type,
 
         if (type == &PyFloat_Type)
         {
-            d = new FloatDatum(name, value.isEmpty() ? "0.0" : value, n);
+            d = new FloatDatum(name, value.isNull() ? "0.0" : value, n);
         }
         else if (type == &PyLong_Type)
         {
-            d = new IntDatum(name, value.isEmpty() ? "0" : value, n);
+            d = new IntDatum(name, value.isNull() ? "0" : value, n);
         }
         else if (type == fab::ShapeType)
         {
