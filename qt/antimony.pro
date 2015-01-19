@@ -115,3 +115,13 @@ macx {
     QMAKE_INFO_PLIST = ../app/Info.plist
     ICON = ../app/sb.icns
 }
+
+linux {
+    executable.path = /usr/local/bin
+    executable.files = antimony
+    nodes_folder.path = /usr/local/bin/nodes
+    nodes_folder.files = ../py/nodes/*
+    fab_folder.path = /usr/local/bin/fab
+    fab_folder.files = ../py/nodes/*
+    INSTALLS += executable nodes_folder fab_folder
+}
