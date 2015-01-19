@@ -4,6 +4,7 @@
 #include <QMouseEvent>
 #include <QDebug>
 #include <QDirIterator>
+#include <QRegExp>
 
 #include "app/app.h"
 
@@ -224,6 +225,8 @@ void MainWindow::populateUserScripts(
 #endif
     path.append("nodes");
     QDirIterator itr(path.join("/"), QDirIterator::Subdirectories);
+    QList<QRegExp> title_regexs= {QRegExp(".*title\\('+([^()']+)'+\\).*"),
+                                  QRegExp(".*title\\(\"+([^\"()]+)\"+\\).*")};
 
     while (itr.hasNext())
     {
@@ -246,6 +249,12 @@ void MainWindow::populateUserScripts(
         QTextStream in(&file);
         QString txt = in.readAll();
 
+        QString title = split[2].replace(".node","");
+        for (auto& regex : title_regexs)
+            if (regex.exactMatch(txt))
+                title = regex.capturedTexts()[1];
+
+
         NodeConstructorFunction constructor =
             [=](float x, float y, float z, float scale, NodeRoot *r)
             {
@@ -253,9 +262,8 @@ void MainWindow::populateUserScripts(
                 static_cast<EvalDatum*>(s->getDatum("_script"))->setExpr(txt);
                 return s;
             };
-        addNodeToMenu(
-                split[1], split[2].replace(".node",""),
-                menu, submenus, recenter, constructor, v);
+        addNodeToMenu(category, title, menu, submenus, recenter,
+                      constructor, v);
     }
 }
 
