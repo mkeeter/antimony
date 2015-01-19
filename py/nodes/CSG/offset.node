@@ -1,0 +1,8 @@
+import fab.types
+import fab.shapes
+
+title('Offset')
+input('a', fab.types.Shape)
+input('o', float)
+
+output('shape', fab.shapes.offset(a, o))

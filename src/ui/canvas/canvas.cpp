@@ -181,7 +181,7 @@ void Canvas::deleteSelected()
     App::instance()->pushStack(new UndoDeleteMultiCommand(nodes, links));
 }
 
-void Canvas::makeNodeAtCursor(NodeConstructor f)
+void Canvas::makeNodeAtCursor(NodeConstructorFunction f)
 {
     auto n = f(0, 0, 0, 1, App::instance()->getNodeRoot());
 
