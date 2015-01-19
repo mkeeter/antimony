@@ -40,12 +40,9 @@ void InspectorMenuButton::onPressed()
 {
     NodeInspector* i = dynamic_cast<NodeInspector*>(parentObject());
     Q_ASSERT(i);
-    ScriptDatum* s = i->getScriptDatum();
 
-    QMenu menu;
-    QAction* a = menu.addAction("Edit script");
-    if (!s)
-        a->setEnabled(false);
-    if (menu.exec(QCursor::pos()) == a)
-        App::instance()->newEditorWindow(s);
+    ScriptDatum* s = i->getScriptDatum();
+    Q_ASSERT(s);
+
+    App::instance()->newEditorWindow(s);
 }

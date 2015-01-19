@@ -30,7 +30,7 @@
 NodeInspector::NodeInspector(Node* node)
     : node(node), name(NULL),
       title(new QGraphicsTextItem(node->getTitle(), this)),
-      menu_button(new InspectorMenuButton(this)),
+      menu_button(getScriptDatum() ? new InspectorMenuButton(this) : NULL),
       dragging(false), border(10), glow(false)
 {
     if (auto n = node->getDatum("_name"))
@@ -92,8 +92,8 @@ QRectF NodeInspector::boundingRect() const
 {
     float height = title->boundingRect().height() + 4;
     float width =  title->boundingRect().width() +
-                   name->boundingRect().width() +
-                   menu_button->boundingRect().width() + 24;
+                   name->boundingRect().width() + 24 +
+                   (menu_button ? menu_button->boundingRect().width() : 0);
 
     for (auto row : rows)
     {
@@ -109,11 +109,13 @@ void NodeInspector::onLayoutChanged()
     if (name)
         title->setPos(
                 boundingRect().right() - border - title->boundingRect().width()
-                - menu_button->boundingRect().width() - 6, 2);
+                - (menu_button ? menu_button->boundingRect().width() : 0)
+                - 6, 2);
 
     // Position the menu to the far right of the title bar
-    menu_button->setPos(boundingRect().right() - border -
-                        menu_button->boundingRect().width() - 3, 5);
+    if (menu_button)
+        menu_button->setPos(boundingRect().right() - border -
+                            menu_button->boundingRect().width() - 3, 5);
 
     if (node)
     {
