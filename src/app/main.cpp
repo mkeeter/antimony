@@ -32,6 +32,7 @@ int main(int argc, char *argv[])
         path.removeLast();
     d = path.join("/");
 #endif
+    d += "/sb";
     fab::postInit(d.toStdString().c_str());
 
     // Check to make sure that the fab module exists
