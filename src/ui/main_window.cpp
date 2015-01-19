@@ -121,7 +121,6 @@ bool MainWindow::isShaded() const
 
 #include "graph/node/nodes/2d.h"
 #include "graph/node/nodes/3d.h"
-#include "graph/node/nodes/csg.h"
 #include "graph/node/nodes/meta.h"
 #include "graph/node/nodes/transforms.h"
 #include "graph/node/nodes/deform.h"
