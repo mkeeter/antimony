@@ -40,7 +40,6 @@ static PyObject* ScriptInput_Call(PyObject* callable_object,
     QString default_value;
     if (PyTuple_Size(args) == 3)
     {
-
         PyObject* third = PyTuple_GetItem(args, 2);
         PyObject* init = PyUnicode_Check(third)
             ? third
