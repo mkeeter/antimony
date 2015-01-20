@@ -474,7 +474,9 @@ void App::newNode(Node* n)
 
 void App::makeUI(NodeRoot* r)
 {
+    QList<Datum*> datums;
     QMap<Datum*, QList<Link*>> links;
+
     for (auto n : r->findChildren<Node*>(
                 QString(), Qt::FindDirectChildrenOnly))
     {
@@ -485,7 +487,7 @@ void App::makeUI(NodeRoot* r)
         for (auto d : n->findChildren<Datum*>(
                     QString(), Qt::FindDirectChildrenOnly))
         {
-            d->update();
+            datums.append(d);
             for (auto k : d->findChildren<Link*>())
             {
                 links[d].append(k);
@@ -504,6 +506,11 @@ void App::makeUI(NodeRoot* r)
             newLink(k);
         }
     }
+
+    // Now that all links are created and all nodes are under the same
+    // root (in case of address-by-name), run update on every datum.
+    for (auto d : datums)
+        d->update();
 }
 
 Connection* App::newLink(Link* link)
