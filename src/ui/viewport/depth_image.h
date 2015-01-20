@@ -19,11 +19,17 @@ public:
     ~DepthImageItem();
     QRectF boundingRect() const;
 
+    /*
+     *  Calls prepareGeometryChange, then deleteLater after a paint event.
+     *  This is used to clean up bounding boxes in the QGraphicsScene.
+     */
+    void deleteAfterPaint();
+
     /** Position of lower-left corner (in original scene units) */
-    QVector3D pos;
+    const QVector3D pos;
 
     /** Scale (in rotated scene coordinates) */
-    QVector3D size;
+    const QVector3D size;
 
 public slots:
     void reposition();
@@ -45,6 +51,8 @@ protected:
 
     GLuint depth_tex;
     GLuint shaded_tex;
+
+    bool delete_me;
 };
 
 #endif // DEPTH_IMAGE_H

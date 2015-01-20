@@ -51,7 +51,7 @@ public:
      *  Creates a new node at the mouse cursor's position.
      *  The new node grabs the mouse and is dragged until click+release.
      */
-    void makeNodeAtCursor(NodeConstructor f);
+    void makeNodeAtCursor(NodeConstructorFunction f);
 
     /** Look up scale.
      */

@@ -33,6 +33,11 @@ public:
     void newNode(Node* n);
 
     /*
+     *  Makes UI elements for the given NodeRoot.
+     */
+    void makeUI(NodeRoot* r);
+
+    /*
      *  Create UI elements for a new link, returning the associated Connection.
      */
     Connection* newLink(Link* link);
@@ -60,6 +65,8 @@ public:
     void redo();
     void beginUndoMacro(QString text);
     void endUndoMacro();
+
+    void loadFile(QString f);
 
 signals:
     void windowTitleChanged(QString new_title);
@@ -96,6 +103,8 @@ public slots:
     void onExportJSON();
 
 private:
+
+    bool event(QEvent* event);
 
     void setGlobalStyle();
 

@@ -25,6 +25,8 @@
 
 #include "graph/node/node.h"
 #include "graph/node/root.h"
+#include "graph/datum/datum.h"
+#include "graph/datum/link.h"
 #include "graph/node/serializer.h"
 #include "graph/node/deserializer.h"
 
@@ -152,31 +154,39 @@ void App::onOpen()
 {
     QString f = QFileDialog::getOpenFileName(NULL, "Open", "", "*.sb");
     if (!f.isEmpty())
+        loadFile(f);
+}
+
+void App::loadFile(QString f)
+{
+    filename = f;
+    root->deleteLater();
+    root = new NodeRoot();
+    QFile file(f);
+    if (!file.open(QIODevice::ReadOnly))
     {
-        filename = f;
-        root->deleteLater();
-        root = new NodeRoot();
-        QFile file(f);
-        file.open(QIODevice::ReadOnly);
+        QMessageBox::critical(NULL, "Loading error",
+                "<b>Loading error:</b><br>"
+                "File does not exist.");
+        onNew();
+        return;
+    }
 
-        QDataStream in(&file);
-        SceneDeserializer ds(root);
-        ds.run(&in);
+    QDataStream in(&file);
+    SceneDeserializer ds(root);
+    ds.run(&in);
 
-        if (ds.failed == true)
-        {
-            QMessageBox::critical(NULL, "Loading error",
-                    "<b>Loading error:</b><br>" +
-                    ds.error_message);
-            onNew();
-        } else {
-            for (auto n : root->findChildren<Node*>(
-                        "", Qt::FindDirectChildrenOnly))
-                newNode(n);
+    if (ds.failed == true)
+    {
+        QMessageBox::critical(NULL, "Loading error",
+                "<b>Loading error:</b><br>" +
+                ds.error_message);
+        onNew();
+    } else {
+        makeUI(root);
+        graph_scene->setInspectorPositions(ds.inspectors);
 
-            graph_scene->setInspectorPositions(ds.inspectors);
-            emit(windowTitleChanged(getWindowTitle()));
-        }
+        emit(windowTitleChanged(getWindowTitle()));
     }
 }
 
@@ -238,15 +248,23 @@ void App::onExportSTL()
 void App::onExportHeightmap()
 {
     // Verify that we are not mixing 2D and 3D shapes.
+    // (for shapes that have non-zero bounds)
     {
         QMap<QString, Shape> shapes = root->getShapes();
         bool has_2d = false;
         bool has_3d = false;
         for (auto s=shapes.begin(); s != shapes.end(); ++s)
-            if (isinf(s->bounds.zmin) || isinf(s->bounds.zmax))
-                has_2d = true;
-            else
-                has_3d = true;
+        {
+            if (s->bounds.xmin != s->bounds.xmax ||
+                s->bounds.ymin != s->bounds.ymax ||
+                s->bounds.zmin != s->bounds.zmax)
+            {
+                if (isinf(s->bounds.zmin) || isinf(s->bounds.zmax))
+                    has_2d = true;
+                else
+                    has_3d = true;
+            }
+        }
 
         if (has_2d && has_3d)
         {
@@ -349,6 +367,17 @@ void App::onExportJSON()
     delete exporting_dialog;
 }
 
+bool App::event(QEvent *event)
+{
+    switch (event->type()) {
+        case QEvent::FileOpen:
+            loadFile(static_cast<QFileOpenEvent *>(event)->file());
+            return true;
+        default:
+            return QApplication::event(event);
+    }
+}
+
 QString App::getWindowTitle() const
 {
     QString t = "antimony [";
@@ -441,6 +470,47 @@ void App::newNode(Node* n)
 {
     graph_scene->makeUIfor(n);
     view_scene->makeUIfor(n);
+}
+
+void App::makeUI(NodeRoot* r)
+{
+    QList<Datum*> datums;
+    QMap<Datum*, QList<Link*>> links;
+
+    for (auto n : r->findChildren<Node*>(
+                QString(), Qt::FindDirectChildrenOnly))
+    {
+        n->setParent(root);
+
+        // Save all Links separately
+        // (as their UI must be created after all NodeInspectors)
+        for (auto d : n->findChildren<Datum*>(
+                    QString(), Qt::FindDirectChildrenOnly))
+        {
+            datums.append(d);
+            for (auto k : d->findChildren<Link*>())
+            {
+                links[d].append(k);
+                k->setParent(NULL);
+            }
+        }
+        newNode(n);
+    }
+
+    for (auto i = links.begin(); i != links.end(); ++i)
+    {
+        for (auto k : i.value())
+        {
+            k->setParent(i.key());
+            k->getTarget()->update();
+            newLink(k);
+        }
+    }
+
+    // Now that all links are created and all nodes are under the same
+    // root (in case of address-by-name), run update on every datum.
+    for (auto d : datums)
+        d->update();
 }
 
 Connection* App::newLink(Link* link)

@@ -14,7 +14,7 @@ DepthImageItem::DepthImageItem(QVector3D pos, QVector3D size,
                                QImage depth, QImage shaded,
                                Viewport* viewport)
     : QGraphicsObject(), pos(pos), size(size), depth(depth), shaded(shaded),
-      viewport(viewport)
+      viewport(viewport), delete_me(false)
 {
     connect(viewport, &Viewport::viewChanged, this, &DepthImageItem::reposition);
     reposition();
@@ -85,6 +85,12 @@ QRectF DepthImageItem::boundingRect() const
     return QRectF(-sx/2, -sy/2, sx, sy);
 }
 
+void DepthImageItem::deleteAfterPaint()
+{
+    delete_me = true;
+    prepareGeometryChange();
+}
+
 void DepthImageItem::paint(QPainter *painter,
                            const QStyleOptionGraphicsItem *option,
                            QWidget *widget)
@@ -106,6 +112,9 @@ void DepthImageItem::paint(QPainter *painter,
         paintHeightmap();
 
     viewport->getQuadVertices()->release();
+
+    if (delete_me)
+        deleteLater();
 }
 
 void DepthImageItem::loadSharedShaderVariables(QOpenGLShaderProgram* shader)

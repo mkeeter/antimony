@@ -1,4 +1,5 @@
 #include <Python.h>
+
 #include "graph/datum/wrapper.h"
 #include "graph/datum/datums/script_datum.h"
 
@@ -12,7 +13,7 @@ static PyObject* ScriptInput_Call(PyObject* callable_object,
         return NULL;
     }
 
-    if (PyTuple_Size(args) != 2)
+    if (PyTuple_Size(args) != 2 && PyTuple_Size(args) != 3)
     {
         PyErr_SetString(PyExc_RuntimeError,
                         "Invalid argument count");
@@ -35,13 +36,39 @@ static PyObject* ScriptInput_Call(PyObject* callable_object,
         return NULL;
     }
 
+    // Accept an optional third argument to set starting value.
+    QString default_value;
+    if (PyTuple_Size(args) == 3)
+    {
+        PyObject* third = PyTuple_GetItem(args, 2);
+        PyObject* init = PyUnicode_Check(third)
+            ? third
+            : PyObject_Str(third);
+
+        if (init)
+        {
+            wchar_t* w = PyUnicode_AsWideCharString(init, NULL);
+            Q_ASSERT(w);
+            default_value = QString::fromWCharArray(w);
+            PyMem_Free(w);
+            Py_DECREF(init);
+        }
+        else
+        {
+            PyErr_SetString(PyExc_TypeError,
+                    "Could not convert third argument to string");
+            return NULL;
+        }
+        Py_DECREF(third);
+    }
+
     wchar_t* w = PyUnicode_AsWideCharString(name, NULL);
     Q_ASSERT(w);
     QString str = QString::fromWCharArray(w);
     PyMem_Free(w);
 
     ScriptDatum* d = ((ScriptInputWrapper*)callable_object)->datum;
-    return d->makeInput(str, (PyTypeObject*)type);
+    return d->makeInput(str, (PyTypeObject*)type, default_value);
 }
 
 static PyObject* ScriptOutput_Call(PyObject* callable_object,

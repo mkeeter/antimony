@@ -15,7 +15,8 @@ public:
     explicit ScriptDatum(QString name, QString expr, Node* parent);
     virtual ~ScriptDatum();
 
-    PyObject* makeInput(QString name, PyTypeObject* type);
+    PyObject* makeInput(QString name, PyTypeObject* type,
+                        QString value=QString());
     PyObject* makeOutput(QString name, PyObject* out);
 
     /*

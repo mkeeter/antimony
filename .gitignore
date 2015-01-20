@@ -5,3 +5,4 @@ fab/c/build*
 *.dylib
 *.pro.user
 build-*/*
+build

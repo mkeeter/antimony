@@ -1,0 +1,7 @@
+import fab.types
+
+title('Union')
+input('a', fab.types.Shape)
+input('b', fab.types.Shape)
+
+output('shape', a | b)

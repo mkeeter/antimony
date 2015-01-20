@@ -117,7 +117,8 @@ void RenderWorker::clearImage()
 {
     if (depth_image)
     {
-        depth_image->deleteLater();
+        depth_image->hide();
+        depth_image->deleteAfterPaint();
         depth_image = NULL;
     }
 }

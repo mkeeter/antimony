@@ -25,7 +25,7 @@ public:
      */
     void setupUI(Ui::MainWindow* ui);
 
-    void makeNodeAtCursor(NodeConstructor f);
+    void makeNodeAtCursor(NodeConstructorFunction f);
 
     NodeInspector* getNodeInspector(Node* n) const;
 

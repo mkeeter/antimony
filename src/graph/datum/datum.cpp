@@ -160,6 +160,17 @@ void Datum::update()
 void Datum::postInit()
 {
     post_init_called = true;
+
+    // Attempt to create a default value by calling the type's constructor.
+    //
+    // This is necessary for float datums in particular, as Controls may
+    // query them for their value -- without this default, loading a file
+    // with invalid float datums will crash (as the value will be NULL
+    // when queried by the Control).
+    value = PyObject_CallFunctionObjArgs((PyObject*)getType(), NULL);
+    if (PyErr_Occurred())
+        PyErr_Clear();
+
     root()->onNameChange(objectName());
 }
 

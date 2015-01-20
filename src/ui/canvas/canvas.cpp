@@ -181,7 +181,7 @@ void Canvas::deleteSelected()
     App::instance()->pushStack(new UndoDeleteMultiCommand(nodes, links));
 }
 
-void Canvas::makeNodeAtCursor(NodeConstructor f)
+void Canvas::makeNodeAtCursor(NodeConstructorFunction f)
 {
     auto n = f(0, 0, 0, 1, App::instance()->getNodeRoot());
 
@@ -264,36 +264,21 @@ void Canvas::onPaste()
                         temp_root.findChildren<Node*>().toSet(), {},
                         "'paste'"));
 
-            QMap<Datum*, QList<Link*>> links;
-            for (auto n : temp_root.findChildren<Node*>())
-            {
-                n->setParent(App::instance()->getNodeRoot());
+            // Add _0, _1, etc suffix to all nodes.
+            auto nodes = temp_root.findChildren<Node*>(
+                        QString(), Qt::FindDirectChildrenOnly);
+            for (auto n : nodes)
                 n->updateName();
 
-                // Save all Links separately
-                // (as their UI must be created after all NodeInspectors)
-                for (auto d : n->findChildren<Datum*>(
-                            QString(), Qt::FindDirectChildrenOnly))
-                {
-                    for (auto k : d->findChildren<Link*>())
-                    {
-                        links[d].append(k);
-                        k->setParent(NULL);
-                    }
-                }
-                App::instance()->newNode(n);
-                scene->getInspector(n)->setSelected(true);
-            }
+            // Safely make the UI elements (inspectors, controls, connections)
+            // for all of the pasted nodes.
+            App::instance()->makeUI(&temp_root);
 
-            for (auto i = links.begin(); i != links.end(); ++i)
-            {
-                for (auto k : i.value())
-                {
-                    k->setParent(i.key());
-                    k->getTarget()->update();
-                    App::instance()->newLink(k);
-                }
-            }
+            // Select all pasted nodes.
+            for (auto n : nodes)
+                scene->getInspector(n)->setSelected(true);
+
+            // Load inspector positions and apply them to the scene.
             scene->setInspectorPositions(ds.inspectors);
         }
     }
