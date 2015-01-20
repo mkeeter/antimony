@@ -37,8 +37,8 @@ install_name_tool -change /usr/local/Frameworks/Python.framework/Versions/3.4/Py
                          antimony
 
 cd ../../..
-cp -r fab antimony.app/Contents/Frameworks/Python.framework/Versions/3.4/lib/python3.4/fab
-cp -r nodes antimony.app/Contents/Resources
+cp -r sb/fab antimony.app/Contents/Frameworks/Python.framework/Versions/3.4/lib/python3.4/fab
+cp -r sb/nodes antimony.app/Contents/Resources
 
 sed -i "" "s/0\.0\.0/$RELEASE/g" antimony.app/Contents/Info.plist
 
