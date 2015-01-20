@@ -248,15 +248,23 @@ void App::onExportSTL()
 void App::onExportHeightmap()
 {
     // Verify that we are not mixing 2D and 3D shapes.
+    // (for shapes that have non-zero bounds)
     {
         QMap<QString, Shape> shapes = root->getShapes();
         bool has_2d = false;
         bool has_3d = false;
         for (auto s=shapes.begin(); s != shapes.end(); ++s)
-            if (isinf(s->bounds.zmin) || isinf(s->bounds.zmax))
-                has_2d = true;
-            else
-                has_3d = true;
+        {
+            if (s->bounds.xmin != s->bounds.xmax ||
+                s->bounds.ymin != s->bounds.ymax ||
+                s->bounds.zmin != s->bounds.zmax)
+            {
+                if (isinf(s->bounds.zmin) || isinf(s->bounds.zmax))
+                    has_2d = true;
+                else
+                    has_3d = true;
+            }
+        }
 
         if (has_2d && has_3d)
         {
