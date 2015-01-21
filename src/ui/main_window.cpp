@@ -150,24 +150,38 @@ void MainWindow::createNew(bool recenter, NodeConstructorFunction f,
         c->makeNodeAtCursor(f);
 }
 
-void MainWindow::addNodeToMenu(QString category, QString name,
-                               QMenu* menu, QMap<QString, QMenu*>* submenus,
+void MainWindow::addNodeToMenu(QStringList category, QString name, QMenu* menu,
                                bool recenter, NodeConstructorFunction f,
                                Viewport* v)
 {
-    if (!category.isEmpty() && !submenus->contains(category))
-        (*submenus)[category] = menu->addMenu(category);
-    QAction* a = (category.isEmpty() ? menu : (*submenus)[category])->addAction(name);
-    connect(a, &QAction::triggered, [=]{ this->createNew(recenter, f, v); });
+    while (!category.isEmpty())
+    {
+        bool found = false;
+        for (auto m : menu->findChildren<QMenu*>(
+                    QString(), Qt::FindDirectChildrenOnly))
+        {
+            if (m->title() == category.first())
+            {
+                menu = m;
+                found = true;
+                break;
+            }
+        }
+
+        if (!found)
+            menu = menu->addMenu(category.first());
+
+        category.removeFirst();
+    }
+    connect(menu->addAction(name), &QAction::triggered,
+            [=]{ this->createNew(recenter, f, v); });
 }
 
-void MainWindow::populateBuiltIn(QMenu* menu, QMap<QString, QMenu*>* submenus,
-                                 bool recenter, Viewport* v)
+void MainWindow::populateBuiltIn(QMenu* menu, bool recenter, Viewport* v)
 {
     auto add = [&](QString category, QString name, NodeConstructor constructor)
     {
-        addNodeToMenu(category, name, menu, submenus,
-                      recenter, constructor, v);
+        addNodeToMenu({category}, name, menu, recenter, constructor, v);
     };
 
     add("2D", "Circle", CircleNode);
@@ -200,15 +214,9 @@ void MainWindow::populateBuiltIn(QMenu* menu, QMap<QString, QMenu*>* submenus,
     add("Deform", "Scale (X)", ScaleXNode);
     add("Deform", "Scale (Y)", ScaleYNode);
     add("Deform", "Scale (Z)", ScaleZNode);
-
-    menu->addSeparator();
-
-    add("", "Script", ScriptNode);
 }
 
-void MainWindow::populateUserScripts(
-        QMenu* menu, QMap<QString, QMenu*>* submenus,
-        bool recenter, Viewport* v)
+void MainWindow::populateUserScripts(QMenu* menu, bool recenter, Viewport* v)
 {
     auto path = QCoreApplication::applicationDirPath().split("/");
 
@@ -247,10 +255,7 @@ void MainWindow::populateUserScripts(
         auto split = n.split('/');
         while (split.first() != "nodes")
             split.removeFirst();
-
-        if (split.length() != 3)
-            continue;
-        QString category = split[1];
+        split.removeFirst();
 
         QFile file(n);
         if (!file.open(QIODevice::ReadOnly))
@@ -259,11 +264,11 @@ void MainWindow::populateUserScripts(
         QTextStream in(&file);
         QString txt = in.readAll();
 
-        QString title = split[2].replace(".node","");
+        QString title = split.last().replace(".node","");
+        split.removeLast();
         for (auto& regex : title_regexs)
             if (regex.exactMatch(txt))
                 title = regex.capturedTexts()[1];
-
 
         NodeConstructorFunction constructor =
             [=](float x, float y, float z, float scale, NodeRoot *r)
@@ -272,18 +277,19 @@ void MainWindow::populateUserScripts(
                 static_cast<EvalDatum*>(s->getDatum("_script"))->setExpr(txt);
                 return s;
             };
-        addNodeToMenu(category, title, menu, submenus, recenter,
-                      constructor, v);
+        addNodeToMenu(split, title, menu, recenter, constructor, v);
     }
 }
 
 void MainWindow::populateMenu(QMenu* menu, bool recenter, Viewport* v)
 {
-    QMap<QString, QMenu*> submenus;
-
     for (auto c : {"2D", "3D", "CSG", "Transform", "Iterate", "Deform"})
-        submenus[c] = menu->addMenu(c);
+        menu->addMenu(c);
 
-    populateBuiltIn(menu, &submenus, recenter, v);
-    populateUserScripts(menu, &submenus, recenter, v);
+    populateBuiltIn(menu, recenter, v);
+    populateUserScripts(menu, recenter, v);
+
+    menu->addSeparator();
+    addNodeToMenu(QStringList(), "Script", menu, recenter,
+                  static_cast<NodeConstructor>(ScriptNode), v);
 }
