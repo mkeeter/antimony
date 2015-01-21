@@ -18,16 +18,14 @@ ResolutionDialog::ResolutionDialog(Shape* shape, bool dimensions, long max_voxel
     {
         float area = (shape->bounds.xmax - shape->bounds.xmin) *
                      (shape->bounds.ymax - shape->bounds.ymin);
-        ui->export_res->setMaximum(pow(max_voxels / area, 1/2.));
-        ui->export_res->setValue(ui->export_res->maximum() / 4);
+        ui->export_res->setValue(pow(max_voxels / area, 1/2.) / 4.);
     }
     else
     {
         float volume = (shape->bounds.xmax - shape->bounds.xmin) *
                        (shape->bounds.ymax - shape->bounds.ymin) *
                        (shape->bounds.zmax - shape->bounds.zmin);
-        ui->export_res->setMaximum(pow(max_voxels / volume, 1/3.));
-        ui->export_res->setValue(ui->export_res->maximum() / 2.52);
+        ui->export_res->setValue(pow(max_voxels / volume, 1/3.) / 2.52);
     }
 }
 
