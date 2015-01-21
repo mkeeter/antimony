@@ -51,3 +51,15 @@ float ResolutionDialog::getResolution() const
 {
     return ui->export_res->value();
 }
+
+
+float ResolutionDialog::getMMperUnit() const
+{
+    QString u = ui->units->currentText();
+
+    if (u == "mm")              return 1;
+    else if (u == "cm")         return 10;
+    else if (u == "inches")     return 25.4;
+
+    return 1;
+}

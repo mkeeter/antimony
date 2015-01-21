@@ -310,7 +310,7 @@ void App::onExportHeightmap()
     auto thread = new QThread();
     auto worker = new ExportBitmapWorker(
             s, resolution_dialog->getResolution(),
-            file_name);
+            resolution_dialog->getMMperUnit(), file_name);
     delete resolution_dialog;
     worker->moveToThread(thread);
 

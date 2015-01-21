@@ -8,8 +8,10 @@
 #include "fab/util/region.h"
 #include "fab/formats/png.h"
 
-ExportBitmapWorker::ExportBitmapWorker(Shape s, float resolution, QString filename)
-    : QObject(), shape(s), resolution(resolution), filename(filename)
+ExportBitmapWorker::ExportBitmapWorker(Shape s, float resolution,
+                                       float mm_per_unit, QString filename)
+    : QObject(), shape(s), resolution(resolution), mm_per_unit(mm_per_unit),
+      filename(filename)
 {
     qDebug() << shape.math.c_str();
     float dx = (shape.bounds.xmax - shape.bounds.xmin) / 20;
@@ -59,8 +61,13 @@ void ExportBitmapWorker::render()
     int halt_flag = 0;
     render16(shape.tree.get(), r, d16_rows, &halt_flag);
 
-    float bounds[6] = {r.X[0], r.Y[0], r.Z[0],
-                       r.X[r.ni], r.Y[r.nj], r.Z[r.nk]};
+    float bounds[6] = {
+        r.X[0] * mm_per_unit,
+        r.Y[0] * mm_per_unit,
+        r.Z[0] * mm_per_unit,
+        r.X[r.ni] * mm_per_unit,
+        r.Y[r.nj] * mm_per_unit,
+        r.Z[r.nk] * mm_per_unit};
 
     // Flip rows before saving image
     for (unsigned i=0; i < r.nj; ++i)
