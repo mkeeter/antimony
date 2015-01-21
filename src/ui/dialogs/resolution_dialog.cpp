@@ -13,8 +13,8 @@ ResolutionDialog::ResolutionDialog(Shape* shape, bool dimensions, bool has_units
 
     if (!has_units)
     {
-        ui->units->deleteLater();
-        ui->unit_label->deleteLater();
+        ui->units->hide();
+        ui->unit_label->hide();
     }
 
     // This connection is awkward because of function overloading.
