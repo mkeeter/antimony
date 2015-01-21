@@ -4,12 +4,20 @@
 #include "ui/dialogs/resolution_dialog.h"
 #include "fab/types/shape.h"
 
-ResolutionDialog::ResolutionDialog(Shape* shape, bool dimensions, long max_voxels,
-                                   QWidget* parent)
+ResolutionDialog::ResolutionDialog(Shape* shape, bool dimensions, bool has_units,
+                                   long max_voxels, QWidget* parent)
     : QDialog(parent), shape(shape), ui(new Ui::ResolutionDialog),
       z_bounded(!isinf(shape->bounds.zmax) && !isinf(shape->bounds.zmin))
 {
     ui->setupUi(this);
+
+    if (!has_units)
+    {
+        ui->units->deleteLater();
+        ui->unit_label->deleteLater();
+    }
+
+    // This connection is awkward because of function overloading.
     connect(ui->export_res,
             static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
             this, &ResolutionDialog::onValueChanged);

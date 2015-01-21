@@ -211,7 +211,8 @@ void App::onExportSTL()
         return;
     }
 
-    auto resolution_dialog = new ResolutionDialog(&s, RESOLUTION_DIALOG_3D);
+    auto resolution_dialog = new ResolutionDialog(
+            &s, RESOLUTION_DIALOG_3D, false);
     if (!resolution_dialog->exec())
         return;
 
@@ -294,7 +295,8 @@ void App::onExportHeightmap()
     }
 
     // Make a ResolutionDialog for 2D export
-    auto resolution_dialog = new ResolutionDialog(&s, RESOLUTION_DIALOG_2D);
+    auto resolution_dialog = new ResolutionDialog(
+            &s, RESOLUTION_DIALOG_2D, true);
     if (!resolution_dialog->exec())
         return;
 
