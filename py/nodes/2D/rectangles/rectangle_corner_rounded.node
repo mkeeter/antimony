@@ -1,0 +1,33 @@
+import fab
+
+title('rectangle corner rounded')
+
+def rectangle_corner_rounded(x0,y0,width,height,r):
+   from fab.types import Shape, Transform
+   def rectangle_corner(x0,y0,x1,y1):
+      # max(max(x0-X,X-x1),max(y0-Y,Y-y1)
+      return Shape(
+         'aa-f%(x0)gX-Xf%(x1)ga-f%(y0)gY-Yf%(y1)g' % locals(),
+          x0,y0,x1,y1)
+   def circle(x0,y0,r):
+      # sqrt((X-x0)**2+(Y-y0)**2)-r
+      r = abs(r)
+      return Shape(
+         '-r+q-Xf%(x0)gq-Yf%(y0)gf%(r)g' % locals(),
+          x0-r,y0-r,x0+r,y0+r)
+   return (
+      rectangle_corner(x0,y0+r,x1,y1-r) |
+      rectangle_corner(x0+r,y0,x1-r,y1) |
+      circle(x0+r,y0+r,r) |
+      circle(x0+r,y1-r,r) |
+      circle(x1-r,y0+r,r) |
+      circle(x1-r,y1-r,r)
+      )
+
+input('x0',float,-1)
+input('y0',float,-.5)
+input('x1',float,1)
+input('y1',float,.5)
+input('r',float,.25)
+
+output('shape',rectangle_corner_rounded(x0,y0,x1,y1,r))
