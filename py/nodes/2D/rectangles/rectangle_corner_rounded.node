@@ -2,10 +2,10 @@ import fab
 
 title('rectangle corner rounded')
 
-def rectangle_corner_rounded(x0,y0,width,height,r):
+def rectangle_corner_rounded(x0,y0,x1,y1,r):
    from fab.types import Shape, Transform
    def rectangle_corner(x0,y0,x1,y1):
-      # max(max(x0-X,X-x1),max(y0-Y,Y-y1)
+      # max(max(x0-X,X-x1),max(y0-Y,Y-y1))
       return Shape(
          'aa-f%(x0)gX-Xf%(x1)ga-f%(y0)gY-Yf%(y1)g' % locals(),
           x0,y0,x1,y1)
