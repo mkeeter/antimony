@@ -2,7 +2,6 @@
 #include "graph/hooks/hooks.h"
 
 #include "graph/datum/datums/script_datum.h"
-#include <QDebug>
 
 void ScriptInputHook::call(std::string name, boost::python::object type)
 {
