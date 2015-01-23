@@ -12,6 +12,7 @@ SOURCES += \
     ../src/graph/hooks/hooks.cpp \
     ../src/graph/hooks/input.cpp \
     ../src/graph/hooks/output.cpp \
+    ../src/graph/hooks/title.cpp \
 
 HEADERS += \
     ../src/graph/node/root.h \
@@ -24,6 +25,7 @@ HEADERS += \
     ../src/graph/hooks/hooks.h \
     ../src/graph/hooks/input.h \
     ../src/graph/hooks/output.h \
+    ../src/graph/hooks/title.h \
 
 INCLUDEPATH += ../src
 
