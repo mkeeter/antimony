@@ -15,6 +15,8 @@ ResolutionDialog::ResolutionDialog(Shape* shape, bool dimensions, bool has_units
     {
         ui->units->hide();
         ui->unit_label->hide();
+        layout()->invalidate();
+        adjustSize();
     }
 
     // This connection is awkward because of function overloading.
