@@ -11,6 +11,7 @@ SOURCES += \
     ../src/graph/node/deserializer.cpp \
     ../src/graph/hooks/hooks.cpp \
     ../src/graph/hooks/input.cpp \
+    ../src/graph/hooks/output.cpp \
 
 HEADERS += \
     ../src/graph/node/root.h \
@@ -22,6 +23,7 @@ HEADERS += \
     ../src/graph/node/deserializer.h \
     ../src/graph/hooks/hooks.h \
     ../src/graph/hooks/input.h \
+    ../src/graph/hooks/output.h \
 
 INCLUDEPATH += ../src
 

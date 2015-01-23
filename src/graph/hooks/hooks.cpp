@@ -2,6 +2,7 @@
 
 #include "graph/hooks/hooks.h"
 #include "graph/hooks/input.h"
+#include "graph/hooks/output.h"
 
 using namespace boost::python;
 
@@ -15,6 +16,9 @@ BOOST_PYTHON_MODULE(_hooks)
     class_<ScriptInputHook>("ScriptInputHook", init<>())
         .def("__call__", &ScriptInputHook::call)
         .def("__call__", &ScriptInputHook::call_with_default);
+
+    class_<ScriptOutputHook>("ScriptOutputHook", init<>())
+        .def("__call__", &ScriptOutputHook::call);
 
     register_exception_translator<hooks::HookException>(
             hooks::onHookException);
