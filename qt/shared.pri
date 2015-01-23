@@ -9,6 +9,8 @@ SOURCES += \
     ../src/graph/datum/wrapper.cpp \
     ../src/graph/node/serializer.cpp \
     ../src/graph/node/deserializer.cpp \
+    ../src/graph/hooks/hooks.cpp \
+    ../src/graph/hooks/input.cpp \
 
 HEADERS += \
     ../src/graph/node/root.h \
@@ -18,6 +20,8 @@ HEADERS += \
     ../src/graph/datum/wrapper.h \
     ../src/graph/node/serializer.h \
     ../src/graph/node/deserializer.h \
+    ../src/graph/hooks/hooks.h \
+    ../src/graph/hooks/input.h \
 
 INCLUDEPATH += ../src
 
