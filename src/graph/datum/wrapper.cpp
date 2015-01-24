@@ -59,7 +59,6 @@ static PyObject* ScriptInput_Call(PyObject* callable_object,
                     "Could not convert third argument to string");
             return NULL;
         }
-        Py_DECREF(third);
     }
 
     wchar_t* w = PyUnicode_AsWideCharString(name, NULL);
