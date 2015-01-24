@@ -246,12 +246,19 @@ void MainWindow::populateUserScripts(QMenu* menu, bool recenter, Viewport* v)
     QList<QRegExp> title_regexs= {QRegExp(".*title\\('+([^()']+)'+\\).*"),
                                   QRegExp(".*title\\(\"+([^\"()]+)\"+\\).*")};
 
+    // Extract all of valid filenames into a QStringList.
+    QStringList node_filenames;
     while (itr.hasNext())
     {
         auto n = itr.next();
-        if (!n.endsWith(".node"))
-            continue;
+        if (n.endsWith(".node"))
+            node_filenames.append(n);
+    }
 
+    // Sort the list, then populate menus.
+    node_filenames.sort();
+    for (auto n : node_filenames)
+    {
         auto split = n.split('/');
         while (split.first() != "nodes")
             split.removeFirst();
