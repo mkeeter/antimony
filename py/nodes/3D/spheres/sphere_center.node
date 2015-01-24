@@ -1,0 +1,19 @@
+# Neil Gershenfeld 1/24/15
+
+import fab
+
+title('sphere center')
+
+def sphere_center(x0,y0,z0,r):
+   from fab.types import Shape, Transform
+   # sqrt((X-x0)^2+(Y-y0)^2+(Z-z0)^2)-r
+   return Shape(
+      '-r++q-Xf%(x0)gq-Yf%(y0)gq-Zf%(z0)gf%(r)g' % locals(),
+       x0-r,y0-r,z0-r,x0+r,y0+r,z0+r)
+
+input('x0',float,0)
+input('y0',float,0)
+input('z0',float,0)
+input('r',float,1)
+
+output('shape',sphere_center(x0,y0,z0,r))

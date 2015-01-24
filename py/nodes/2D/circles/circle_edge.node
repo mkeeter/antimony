@@ -1,0 +1,22 @@
+# Neil Gershenfeld 1/24/15
+
+import fab
+
+title('circle edge')
+
+def circle_edge(x0,y0,x1,y1):
+   from fab.types import Shape, Transform
+   xmid = (x0+x1)/2
+   ymid = (y0+y1)/2
+   r = math.sqrt((xmid-x0)*(xmid-x0)+(ymid-y0)*(ymid-y0))
+   # sqrt((X-xmid)^2+(Y-ymid)^2)-r
+   return Shape(
+      '-r+q-Xf%(xmid)gq-Yf%(ymid)gf%(r)g' % locals(),
+       xmid-r,ymid-r,xmid+r,ymid+r)
+
+input('x0',float,-1)
+input('y0',float,-1)
+input('x1',float,1)
+input('y1',float,1)
+
+output('shape',circle_edge(x0,y0,x1,y1))

@@ -17,7 +17,6 @@ def rectangle_center_rounded(x0,y0,width,height,r):
           x0-width/2,y0-height/2,x0+width/2,y0+height/2)
    def circle(x0,y0,r):
       # sqrt((X-x0)^2+(Y-y0)^2)-r
-      r = abs(r)
       return Shape(
          '-r+q-Xf%(x0)gq-Yf%(y0)gf%(r)g' % locals(),
           x0-r,y0-r,x0+r,y0+r)
