@@ -2,9 +2,9 @@
 
 import fab
 
-title('taper x y')
+title('scale x y')
 
-def taper_x_y(part,x0,y0,y1,s0,s1):
+def scale_x_y(part,x0,y0,y1,s0,s1):
    from fab.types import Shape, Transform
    dy = y1-y0
    # X' = x0 + (X-x0)*dy/(s1*(Y-y0)+s0*(y1-Y))
@@ -22,5 +22,5 @@ input('s0',float,2)
 input('s1',float,.5)
 
 input('shape',fab.types.Shape)
-output('transform',taper_x_y(shape,x0,y0,y1,s0,s1))
+output('transform',scale_x_y(shape,x0,y0,y1,s0,s1))
 

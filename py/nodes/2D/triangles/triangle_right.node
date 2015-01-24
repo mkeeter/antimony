@@ -1,0 +1,21 @@
+# Neil Gershenfeld 1/24/15
+
+import fab
+
+title('right triangle')
+
+def right_triangle(x0,y0,width,height):
+   from fab.types import Shape, Transform
+   # max(max(x0-X,y0-Y),X-(x0*(Y-y0)+(x0+width)*(y0+height-Y))/height)
+   return Shape(
+      '' % locals(),
+       x0,y0,x0+width,y0+height)
+
+input('x0',float,0)
+input('y0',float,0)
+input('width',float,0)
+input('height',float,0)
+
+output('shape',right_triangle(x0,y0,width,height))
+
+
