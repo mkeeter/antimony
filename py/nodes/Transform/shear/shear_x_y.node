@@ -1,0 +1,25 @@
+# Neil Gershenfeld 1/24/15
+
+import fab
+
+title('shear x y')
+
+def shear_x_y(part,y0,y1,dx0,dx1):
+   from fab.types import Shape, Transform
+   dy = y1-y0
+   # X' = X + (dx1*(Y-y0) + dx0*(y1-Y))/dy
+   # X = X' - (dx1*(Y-y0) + dx0*(y1-Y))/dy
+   return part.map(Transform(
+      '-X/+*f%(dx1)g-Yf%(y0)g*f%(dx0)g-f%(y1)gYf%(dy)g' % locals(),
+      'Y',
+      '+X/+*f%(dx1)g-Yf%(y0)g*f%(dx0)g-f%(y1)gYf%(dy)g' % locals(),
+      'Y'))
+
+input('y0',float,-1)
+input('y1',float,1)
+input('dx0',float,-1)
+input('dx1',float,1)
+
+input('shape',fab.types.Shape)
+output('transform',shear_x_y(shape,y0,y1,dx0,dx1))
+
