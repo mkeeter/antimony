@@ -41,9 +41,17 @@ static PyObject* ScriptInput_Call(PyObject* callable_object,
     if (PyTuple_Size(args) == 3)
     {
         PyObject* third = PyTuple_GetItem(args, 2);
-        PyObject* init = PyUnicode_Check(third)
-            ? third
-            : PyObject_Str(third);
+
+        PyObject* init = NULL;
+        if (PyUnicode_Check(third))
+        {
+            init = third;
+            Py_INCREF(third);
+        }
+        else
+        {
+            init = PyObject_Str(third);
+        }
 
         if (init)
         {
