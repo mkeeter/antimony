@@ -62,12 +62,14 @@ GraphScene* Connection::gscene() const
 
 QRectF Connection::boundingRect() const
 {
-    return areInspectorsValid() ? path().boundingRect() : QRectF();
+    return areInspectorsValid() ? shape().boundingRect() : QRectF();
 }
 
 QPainterPath Connection::shape() const
 {
-    return QPainterPathStroker(QPen(4)).createStroke(path());
+    QPainterPathStroker s;
+    s.setWidth(20);
+    return s.createStroke(path());
 }
 
 bool Connection::areDatumsValid() const
@@ -178,6 +180,12 @@ void Connection::paint(QPainter *painter,
 {
     Q_UNUSED(option);
     Q_UNUSED(widget);
+
+    if (hover)
+    {
+        painter->setPen(QPen(QColor(255, 255, 255, Colors::base02.red()), 20));
+        painter->drawPath(path());
+    }
 
     if (!areInspectorsValid())
         return;
