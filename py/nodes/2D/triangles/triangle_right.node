@@ -4,17 +4,17 @@ import fab
 
 title('right triangle')
 
-def right_triangle(x0,y0,width,height):
+def right_triangle(x0,y0,w,h):
    from fab.types import Shape, Transform
-   # max(max(x0-X,y0-Y),X-(x0*(Y-y0)+(x0+width)*(y0+height-Y))/height)
+   # max(max(x0-X,y0-Y),X-(x0*(Y-y0)+(x0+w)*(y0+h-Y))/h)
    return Shape(
-      '' % locals(),
-       x0,y0,x0+width,y0+height)
+      'aa-f%(x0)gX-f%(y0)gY-X/+*f%(x0)g-Yf%(y0)g*+f%(x0)gf%(w)g-+f%(y0)gf%(h)gYf%(h)g' % locals(),
+       x0,y0,x0+w,y0+h)
 
 input('x0',float,0)
 input('y0',float,0)
-input('width',float,0)
-input('height',float,0)
+input('width',float,1)
+input('height',float,2)
 
 output('shape',right_triangle(x0,y0,width,height))
 
