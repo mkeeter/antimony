@@ -28,7 +28,31 @@ BOOST_PYTHON_MODULE(_hooks)
             hooks::onHookException);
 }
 
+// Lazy initialization of the hooks module.
+static PyObject* _hooks_module = NULL;
+
 void hooks::preInit()
 {
     PyImport_AppendInittab("_hooks", PyInit__hooks);
+}
+
+void hooks::loadHooks(PyObject* g, ScriptDatum* d)
+{
+    if (_hooks_module == NULL)
+        _hooks_module = PyImport_ImportModule("_hooks");
+
+    auto input_func = PyObject_CallMethod(
+            _hooks_module, "ScriptInputHook", NULL);
+    auto output_func = PyObject_CallMethod(
+            _hooks_module, "ScriptOutputHook", NULL);
+    auto title_func = PyObject_CallMethod(
+            _hooks_module, "ScriptTitleHook", NULL);
+
+    extract<ScriptInputHook&>(input_func)().datum = d;
+    extract<ScriptOutputHook&>(output_func)().datum = d;
+    extract<ScriptTitleHook&>(title_func)().datum = d;
+
+    PyDict_SetItemString(g, "input", input_func);
+    PyDict_SetItemString(g, "output", output_func);
+    PyDict_SetItemString(g, "title", title_func);
 }
