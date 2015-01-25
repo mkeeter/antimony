@@ -62,14 +62,19 @@ GraphScene* Connection::gscene() const
 
 QRectF Connection::boundingRect() const
 {
-    return areInspectorsValid() ? shape().boundingRect() : QRectF();
+    if (!areInspectorsValid())
+        return QRectF();
+
+    QPainterPathStroker s;
+    s.setWidth(20);
+    return s.createStroke(path()).boundingRect();
 }
 
 QPainterPath Connection::shape() const
 {
     QPainterPathStroker s;
     s.setWidth(20);
-    return s.createStroke(path());
+    return s.createStroke(path(true));
 }
 
 bool Connection::areDatumsValid() const
@@ -156,7 +161,7 @@ QPointF Connection::endPos() const
     }
 }
 
-QPainterPath Connection::path() const
+QPainterPath Connection::path(bool only_bezier) const
 {
     QPointF start = startPos();
     QPointF end = endPos();
@@ -169,8 +174,17 @@ QPainterPath Connection::path() const
 
     QPainterPath p;
     p.moveTo(start);
+    if (only_bezier)
+        p.moveTo(start + QPointF(15, 0));
+    else
+        p.lineTo(start + QPointF(15, 0));
+
     p.cubicTo(start + QPointF(length, 0),
-              end - QPointF(length, 0), end);
+              end - QPointF(length, 0), end - QPointF(15, 0));
+
+    if (!only_bezier)
+        p.lineTo(end);
+
    return p;
 }
 
@@ -184,7 +198,7 @@ void Connection::paint(QPainter *painter,
     if (hover)
     {
         painter->setPen(QPen(QColor(255, 255, 255, Colors::base02.red()), 20));
-        painter->drawPath(path());
+        painter->drawPath(path(true));
     }
 
     if (!areInspectorsValid())
