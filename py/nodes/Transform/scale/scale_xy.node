@@ -8,8 +8,8 @@ def scale_xy(part,x0,y0,sx,sy):
    from fab.types import Shape, Transform
    # X' = x0 + (X-x0)/sx
    # Y' = y0 + (Y-y0)/sy
-   # X = x0 + (X-x0)*sx
-   # Y = y0 + (Y-y0)*sy
+   # X = x0 + (X'-x0)*sx
+   # Y = y0 + (Y'-y0)*sy
    return part.map(Transform(
       '+f%(x0)g/-Xf%(x0)gf%(sx)g' % locals(),
       '+f%(y0)g/-Yf%(y0)gf%(sy)g' % locals(),
