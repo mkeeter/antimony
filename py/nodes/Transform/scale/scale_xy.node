@@ -1,0 +1,26 @@
+# Neil Gershenfeld 1/24/15
+
+import fab
+
+title('scale xy')
+
+def scale_xy(part,x0,y0,sx,sy):
+   from fab.types import Shape, Transform
+   # X' = x0 + (X-x0)/sx
+   # Y' = y0 + (Y-y0)/sy
+   # X = x0 + (X-x0)*sx
+   # Y = y0 + (Y-y0)*sy
+   return part.map(Transform(
+      '+f%(x0)g/-Xf%(x0)gf%(sx)g' % locals(),
+      '+f%(y0)g/-Yf%(y0)gf%(sy)g' % locals(),
+      '+f%(x0)g*-Xf%(x0)gf%(sx)g' % locals(),
+      '+f%(y0)g*-Yf%(y0)gf%(sy)g' % locals()))
+
+input('x0',float,0)
+input('y0',float,0)
+input('sx',float,2)
+input('sy',float,.5)
+
+input('shape',fab.types.Shape)
+output('transform',scale_xy(shape,x0,y0,sx,sy))
+
