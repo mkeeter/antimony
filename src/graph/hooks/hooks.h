@@ -17,6 +17,10 @@ namespace hooks {
     void onHookException(const HookException& e);
     void preInit();
 
+    /*
+     *  Loads input, output, and title hooks into the given globals
+     *  dictionary (with callbacks pointing to the given datum).
+     */
     void loadHooks(PyObject* g, ScriptDatum* d);
 }
 
