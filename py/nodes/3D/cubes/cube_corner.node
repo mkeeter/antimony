@@ -2,7 +2,7 @@
 
 import fab
 
-title('cube corner broken')
+title('cube corner')
 
 def cube_corner(x0,y0,z0,x1,y1,z1):
    from fab.types import Shape, Transform
