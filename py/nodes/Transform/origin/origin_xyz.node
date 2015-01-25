@@ -1,0 +1,29 @@
+# Neil Gershenfeld 1/25/15
+
+import fab
+
+title('origin xyz')
+
+def origin_xyz(part,x0,y0,z0):
+   from fab.types import Shape, Transform
+   # X' = X-x0
+   # Y' = Y-y0
+   # Z' = Z-z0
+   # X = X'+x0
+   # Y = Y'+y0
+   # Z = Z'+z0
+   return part.map(Transform(
+      '-Xf%(x0)g' % locals(),
+      '-Yf%(y0)g' % locals(),
+      '-Zf%(z0)g' % locals(),
+      '+f%(x0)gX' % locals(),
+      '+f%(y0)gY' % locals(),
+      '+f%(z0)gZ' % locals()))
+
+input('x0',float,1)
+input('y0',float,1)
+input('z0',float,1)
+
+input('shape',fab.types.Shape)
+output('transform',origin_xyz(shape,x0,y0,z0))
+
