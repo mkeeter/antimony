@@ -28,9 +28,6 @@ void UndoDeleteNodeCommand::redo()
     nodes = getNodes();
     datums = getDatums();
 
-    // Save the root so we know where to re-create this node.
-    root = static_cast<NodeRoot*>(n->parent());
-
     // Serialize n into data byte array
     NodeRoot temp_root;
     n->setParent(&temp_root);
@@ -52,9 +49,8 @@ void UndoDeleteNodeCommand::undo()
     SceneDeserializer ds(&temp_root);
     ds.run(data);
 
-    // Extract the node from the temporary root and move it back
+    // Extract the node from the temporary root
     n = temp_root.findChild<Node*>();
-    n->setParent(root);
 
     // Find the new lists of node and datum pointers
     auto new_nodes = getNodes();
@@ -71,7 +67,7 @@ void UndoDeleteNodeCommand::undo()
 
     if (app)
     {
-        app->newNode(n);
+        app->makeUI(&temp_root);
         app->getGraphScene()->setInspectorPositions(ds.inspectors);
     }
 }

@@ -5,8 +5,6 @@
 
 #include "app/undo/undo_command.h"
 
-class NodeRoot;
-
 class UndoDeleteNodeCommand : public UndoCommand
 {
 public:
@@ -26,7 +24,6 @@ protected:
 
     mutable Node* n;
 
-    NodeRoot* root;
     QList<Node*> nodes;
     QList<Datum*> datums;
 
