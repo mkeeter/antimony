@@ -75,7 +75,8 @@ static PyObject* ScriptInput_Call(PyObject* callable_object,
     PyMem_Free(w);
 
     ScriptDatum* d = ((ScriptInputWrapper*)callable_object)->datum;
-    return d->makeInput(str, (PyTypeObject*)type, default_value);
+    d->makeInput(str, (PyTypeObject*)type, default_value);
+    return NULL;
 }
 
 static PyObject* ScriptOutput_Call(PyObject* callable_object,
@@ -111,7 +112,8 @@ static PyObject* ScriptOutput_Call(PyObject* callable_object,
     PyMem_Free(w);
 
     ScriptDatum* d = ((ScriptOutputWrapper*)callable_object)->datum;
-    return d->makeOutput(str, out);
+    d->makeOutput(str, out);
+    return NULL;
 }
 
 static PyObject* ScriptTitle_Call(PyObject* callable_object,
@@ -145,7 +147,8 @@ static PyObject* ScriptTitle_Call(PyObject* callable_object,
     PyMem_Free(w);
 
     ScriptDatum* d = ((ScriptOutputWrapper*)callable_object)->datum;
-    return d->setTitle(str);
+    d->setTitle(str);
+    return NULL;
 }
 
 static PyTypeObject ScriptInputWrapperType = {
