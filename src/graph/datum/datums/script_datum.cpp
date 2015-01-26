@@ -3,7 +3,6 @@
 #include <QRegExp>
 #include <QStringList>
 
-#include "graph/datum/wrapper.h"
 #include "graph/datum/datums/shape_input_datum.h"
 #include "graph/datum/datums/shape_output_datum.h"
 #include "graph/datum/datums/script_datum.h"

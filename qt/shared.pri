@@ -6,7 +6,6 @@ SOURCES += \
     ../src/graph/node/proxy.cpp \
     ../src/graph/datum/input.cpp \
     ../src/graph/datum/link.cpp \
-    ../src/graph/datum/wrapper.cpp \
     ../src/graph/node/serializer.cpp \
     ../src/graph/node/deserializer.cpp \
     ../src/graph/hooks/hooks.cpp \
@@ -19,7 +18,6 @@ HEADERS += \
     ../src/graph/node/proxy.h \
     ../src/graph/datum/input.h \
     ../src/graph/datum/link.h \
-    ../src/graph/datum/wrapper.h \
     ../src/graph/node/serializer.h \
     ../src/graph/node/deserializer.h \
     ../src/graph/hooks/hooks.h \
