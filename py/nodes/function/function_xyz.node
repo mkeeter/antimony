@@ -1,0 +1,22 @@
+# Neil Gershenfeld 1/27/15
+
+import fab
+
+title('function prefix xyz')
+
+def function_prefix_xy(x0,y0,z0,x1,y1,z1,fn):
+   from fab.types import Shape, Transform
+   return Shape(
+      fn % locals(),
+      x0,y0,z0,x1,y1,z1)
+
+input('x0',float,-1)
+input('x1',float,1)
+input('y0',float,-1)
+input('y1',float,1)
+input('z0',float,-1)
+input('z1',float,1)
+fn = '-Z/s*f25r+qXqY*f25r+qXqY'
+
+output('shape',function_prefix_xy(x0,y0,z0,x1,y1,z1,fn))
+
