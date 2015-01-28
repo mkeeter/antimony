@@ -79,6 +79,12 @@ signals:
     void datumsChanged();
 
     /*
+     *  Emitted when the order of datums stored in this node has changed.
+     *  (usually through ScriptDatum meta-programming magic).
+     */
+    void datumOrderChanged();
+
+    /*
      *  Emitted when this node's title changes.
      *  (usually only happens for ScriptNodes)
      */

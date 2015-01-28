@@ -197,6 +197,11 @@ PyObject* ScriptDatum::getCurrentValue()
 
     touched.clear();
     datums_changed = false;
+    QStringList datums_before;
+    for (auto o : parent()->findChildren<Datum*>(
+                        QString(), Qt::FindDirectChildrenOnly))
+        if (!o->objectName().startsWith("_"))
+            datums_before.append(o->objectName());
 
     // Swap in a stringIO object for stdout, saving stdout in out
     PyObject* sys_mod = PyImport_ImportModule("sys");
@@ -243,6 +248,20 @@ PyObject* ScriptDatum::getCurrentValue()
 
     if (datums_changed)
         emit(static_cast<Node*>(parent())->datumsChanged());
+
+    // Check to see if all of the datums are in the same order
+    // If not, emit datumOrderChanged (which usually instructs
+    // NodeInspectors to re-order their rows).
+    for (auto o : parent()->findChildren<Datum*>(
+                        QString(), Qt::FindDirectChildrenOnly))
+    {
+        if (!o->objectName().startsWith("_") && !datums_before.isEmpty())
+        {
+            if (o->objectName() != datums_before.first())
+                emit(static_cast<Node*>(parent())->datumOrderChanged());
+            datums_before.removeFirst();
+        }
+    }
 
     QRegExp input("(.*input\\([^(),]+,[^(),]+),[^(),]+(\\).*)");
     while (input.exactMatch(expr))
