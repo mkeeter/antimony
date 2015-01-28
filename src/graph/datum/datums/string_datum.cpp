@@ -1,9 +1,10 @@
 #include "graph/datum/datums/string_datum.h"
+#include "graph/datum/input.h"
 
 StringDatum::StringDatum(QString name, Node* parent)
     : EvalDatum(name, parent)
 {
-    // Nothing to do here
+    input_handler = new SingleInputHandler(this);
 }
 
 StringDatum::StringDatum(QString name, QString expr, Node* parent)
