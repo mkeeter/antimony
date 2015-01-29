@@ -194,9 +194,14 @@ PyObject* ScriptDatum::getCurrentValue()
 
     // Look at all of the datums (other than the script datum and other
     // reserved datums), deleting them if they have not been touched.
+    bool datum_order_changed = false;
     if (out)
     {
-        for (auto d : parent()->findChildren<Datum*>())
+        // Delete any datums that were not touched in the last update cycle,
+        // and set datum_order_changed if the order has changed.
+        for (auto d : parent()->findChildren<Datum*>(
+                            QString(), Qt::FindDirectChildrenOnly))
+
         {
             QString name = d->objectName();
             if (d != this && name.size() && name.at(0) != '_' &&
@@ -205,6 +210,10 @@ PyObject* ScriptDatum::getCurrentValue()
                 datums_changed = true;
                 delete d;
             }
+
+            datum_order_changed |= !name.startsWith("_") &&
+                                   !datums_before.isEmpty() &&
+                                    datums_before.takeFirst() != name;
         }
     }
 
@@ -212,20 +221,9 @@ PyObject* ScriptDatum::getCurrentValue()
 
     if (datums_changed)
         emit(static_cast<Node*>(parent())->datumsChanged());
+    else if (datum_order_changed)
+        emit(static_cast<Node*>(parent())->datumOrderChanged());
 
-    // Check to see if all of the datums are in the same order
-    // If not, emit datumOrderChanged (which usually instructs
-    // NodeInspectors to re-order their rows).
-    for (auto o : parent()->findChildren<Datum*>(
-                        QString(), Qt::FindDirectChildrenOnly))
-    {
-        if (!o->objectName().startsWith("_") && !datums_before.isEmpty())
-        {
-            if (o->objectName() != datums_before.first())
-                emit(static_cast<Node*>(parent())->datumOrderChanged());
-            datums_before.removeFirst();
-        }
-    }
 
     QRegExp input("(.*input\\([^(),]+,[^(),]+),[^(),]+(\\).*)");
     while (input.exactMatch(expr))
