@@ -179,8 +179,9 @@ QPainterPath Connection::path(bool only_bezier) const
     else
         p.lineTo(start + QPointF(15, 0));
 
-    p.cubicTo(start + QPointF(length, 0),
-              end - QPointF(length, 0), end - QPointF(15, 0));
+    p.cubicTo(QPointF(start.x() + length, start.y()),
+              QPointF(end.x() - length, end.y()),
+              QPointF(end.x() - 15, end.y()));
 
     if (!only_bezier)
         p.lineTo(end);
