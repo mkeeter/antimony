@@ -13,16 +13,15 @@ class ScriptDatum : public EvalDatum
 public:
     explicit ScriptDatum(QString name, Node* parent);
     explicit ScriptDatum(QString name, QString expr, Node* parent);
-    virtual ~ScriptDatum();
 
-    PyObject* makeInput(QString name, PyTypeObject* type,
-                        QString value=QString());
-    PyObject* makeOutput(QString name, PyObject* out);
+    void makeInput(QString name, PyTypeObject* type,
+                   QString value=QString());
+    void makeOutput(QString name, PyObject* out);
 
     /*
      *  Sets the title field of the parent node.
      */
-    PyObject* setTitle(QString desc);
+    void setTitle(QString desc);
 
     PyTypeObject* getType() const override { return Py_None->ob_type; }
     bool hasOutput() const override { return false; }
