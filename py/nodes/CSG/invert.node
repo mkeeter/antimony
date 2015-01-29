@@ -1,0 +1,8 @@
+import fab.types
+
+title('invert')
+
+input('shape',fab.types.Shape)
+
+output('transform',fab.types.Shape((~shape).math,shape.bounds))
+
