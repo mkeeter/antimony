@@ -14,7 +14,7 @@ input('x0',float,-1)
 input('x1',float,1)
 input('y0',float,-1)
 input('y1',float,1)
-fn = '-Y/s*f25X*f25X'
+input('fn',str,'-Y/s*f25X*f25X')
 
 output('shape',function_prefix_xy(x0,y0,x1,y1,fn))
 
