@@ -382,7 +382,7 @@ bool App::event(QEvent *event)
 
 QString App::getWindowTitle() const
 {
-    QString t = "antimony [";
+    QString t = "antimony - %1 - [";
     if (!filename.isEmpty())
         t += filename + "]";
     else

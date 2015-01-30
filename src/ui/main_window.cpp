@@ -45,12 +45,22 @@ void MainWindow::setCentralWidget(QWidget* w)
     QMainWindow::setCentralWidget(w);
 
     if (auto c = dynamic_cast<Canvas*>(centralWidget()))
+    {
         c->customizeUI(ui);
+        window_type = "Graph";
+    }
     else if (auto e = dynamic_cast<ScriptPane*>(centralWidget()))
+    {
         e->customizeUI(ui);
+        window_type = "Script";
+    }
     else
+    {
         for (auto v : findChildren<Viewport*>())
             v->customizeUI(ui);
+        window_type = "View";
+    }
+    setWindowTitle(windowTitle().arg(window_type));
 }
 
 void MainWindow::connectActions(App* app)
@@ -91,8 +101,9 @@ void MainWindow::connectActions(App* app)
 
     // Window title
     setWindowTitle(app->getWindowTitle());
-    connect(app, &App::windowTitleChanged,
-            this, &MainWindow::setWindowTitle);
+    connect(app, &App::windowTitleChanged, this,
+            [=](QString title){
+                this->setWindowTitle(title.arg(window_type));});
 }
 
 void MainWindow::setShortcuts()
