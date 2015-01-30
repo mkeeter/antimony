@@ -58,12 +58,14 @@ void UndoDeleteNodeCommand::undo()
 
     // Swap all the pointers!
     for (auto a = nodes.begin(), b = new_nodes.begin();
-            a != nodes.end() && b != new_nodes.end(); ++a, ++b)
+              a != nodes.end() && b != new_nodes.end(); ++a, ++b)
         stack->swapPointer(*a, *b);
 
-    for (auto a = datums.begin(), b = new_datums.begin();
-            a != datums.end() && b != new_datums.end(); ++a, ++b)
-        stack->swapPointer(*a, *b);
+    for (auto a = datums.begin(); a != datums.end(); ++a)
+    {
+        Q_ASSERT(new_datums.contains(a.key()));
+        stack->swapPointer(a.value(), new_datums[a.key()]);
+    }
 
     if (app)
     {
@@ -79,9 +81,12 @@ QList<Node*> UndoDeleteNodeCommand::getNodes() const
     return nodes;
 }
 
-QList<Datum*> UndoDeleteNodeCommand::getDatums() const
+QMap<QString, Datum*> UndoDeleteNodeCommand::getDatums() const
 {
-    return n->findChildren<Datum*>();
+    QMap<QString, Datum*> out;
+    for (auto d : n->findChildren<Datum*>())
+        out[d->objectName()] = d;
+    return out;
 }
 
 void UndoDeleteNodeCommand::swapNode(Node* a, Node* b) const

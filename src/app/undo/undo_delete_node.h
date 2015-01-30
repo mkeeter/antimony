@@ -2,6 +2,7 @@
 #define UNDO_DELETE_NODE_H
 
 #include <QList>
+#include <QMap>
 
 #include "app/undo/undo_command.h"
 
@@ -20,12 +21,12 @@ public:
 
 protected:
     QList<Node*> getNodes() const;
-    QList<Datum*> getDatums() const;
+    QMap<QString, Datum*> getDatums() const;
 
     mutable Node* n;
 
     QList<Node*> nodes;
-    QList<Datum*> datums;
+    QMap<QString, Datum*> datums;
 
     QByteArray data;
 };
