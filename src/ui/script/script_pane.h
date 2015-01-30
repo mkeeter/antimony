@@ -15,8 +15,7 @@ public:
     /*
      *  Connect to appropriate UI actions and modify menus.
      */
-    void setupUI(Ui::MainWindow* ui);
-
+    void customizeUI(Ui::MainWindow* ui);
 
     /*
      *  Override paint event so that we can style the widget with CSS.

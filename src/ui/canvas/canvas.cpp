@@ -46,7 +46,7 @@ Canvas::Canvas(GraphScene* s, QWidget* parent)
     scene = s;
 }
 
-void Canvas::setupUI(Ui::MainWindow* ui)
+void Canvas::customizeUI(Ui::MainWindow* ui)
 {
     ui->menuView->deleteLater();
 

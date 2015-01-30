@@ -50,8 +50,13 @@ Viewport::Viewport(QGraphicsScene* scene, QWidget* parent)
     setViewport(gl);
 }
 
-void Viewport::setupUI(Ui::MainWindow* ui)
+void Viewport::customizeUI(Ui::MainWindow* ui)
 {
+    QActionGroup* view_actions = new QActionGroup(this);
+    view_actions->addAction(ui->actionShaded);
+    view_actions->addAction(ui->actionHeightmap);
+    view_actions->setExclusive(true);
+
     connect(ui->actionShaded, &QAction::triggered,
             [&]{ scene->invalidate(); });
     connect(ui->actionHeightmap, &QAction::triggered,

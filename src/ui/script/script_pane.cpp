@@ -42,9 +42,9 @@ ScriptPane::ScriptPane(ScriptDatum* datum, QWidget* parent)
     onDatumChanged();
 }
 
-void ScriptPane::setupUI(Ui::MainWindow* ui)
+void ScriptPane::customizeUI(Ui::MainWindow* ui)
 {
-    editor->setupUI(ui);
+    editor->customizeUI(ui);
 }
 
 void ScriptPane::onDatumChanged()

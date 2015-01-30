@@ -27,11 +27,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     setAttribute(Qt::WA_DeleteOnClose);
 
-    QActionGroup* view_actions = new QActionGroup(this);
-    view_actions->addAction(ui->actionShaded);
-    view_actions->addAction(ui->actionHeightmap);
-    view_actions->setExclusive(true);
-
     connectActions(App::instance());
     ui->menuEdit->addAction(App::instance()->undoAction());
     ui->menuEdit->addAction(App::instance()->redoAction());
@@ -50,12 +45,12 @@ void MainWindow::setCentralWidget(QWidget* w)
     QMainWindow::setCentralWidget(w);
 
     if (auto c = dynamic_cast<Canvas*>(centralWidget()))
-        c->setupUI(ui);
+        c->customizeUI(ui);
     else if (auto e = dynamic_cast<ScriptPane*>(centralWidget()))
-        e->setupUI(ui);
+        e->customizeUI(ui);
     else
         for (auto v : findChildren<Viewport*>())
-            v->setupUI(ui);
+            v->customizeUI(ui);
 }
 
 void MainWindow::connectActions(App* app)
