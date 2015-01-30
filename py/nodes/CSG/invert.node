@@ -1,8 +1,30 @@
-import fab.types
+# Neil Gershenfeld 1/29/15
+
+import fab
 
 title('invert')
 
-input('shape',fab.types.Shape)
+def invert(shape):
+   from fab.types import Shape, Transform
+   def rectangle_corner(x0,y0,x1,y1):
+      # max(max(x0-X,X-x1),max(y0-Y,Y-y1))
+      return Shape(
+         'aa-f%(x0)gX-Xf%(x1)ga-f%(y0)gY-Yf%(y1)g' % locals(),
+          x0,y0,x1,y1)
+   def cube_corner(x0,y0,z0,x1,y1,z1):
+      # max(max(max(x0-X,X-x1),max(y0-Y,Y-y1)),max(z0-Z,Z-z1))
+      return Shape(
+         'aaa-f%(x0)gX-Xf%(x1)ga-f%(y0)gY-Yf%(y1)ga-f%(z0)gZ-Zf%(z1)g' % locals(),
+          x0,y0,z0,x1,y1,z1)
+   if math.isinf(shape.bounds.zmin):
+      return (rectangle_corner(shape.bounds.xmin,shape.bounds.ymin,
+         shape.bounds.xmax,shape.bounds.ymax)
+         & Shape((~shape).math,shape.bounds))
+   else:
+      return (cube_corner(shape.bounds.xmin,shape.bounds.ymin,shape.bounds.zmin,
+         shape.bounds.xmax,shape.bounds.ymax,shape.bounds.zmax)
+         & Shape((~shape).math,shape.bounds))
 
-output('transform',fab.types.Shape((~shape).math,shape.bounds))
+input('shape',fab.types.Shape)
+output('transform',invert(shape))
 
