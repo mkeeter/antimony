@@ -431,6 +431,16 @@ MainWindow* App::newQuadWindow()
     auto side = view_scene->newViewport();
     auto other = view_scene->newViewport();
 
+    for (auto a : {top, front, side})
+        for (auto b : {top, front, side})
+            if (a != b)
+            {
+                connect(a, &Viewport::scaleChanged,
+                        b, &Viewport::setScale);
+                connect(a, &Viewport::centerChanged,
+                        b, &Viewport::setCenter);
+            }
+
     top->lockAngle(0, 0);
     front->lockAngle(0, -M_PI/2);
     side->lockAngle(-M_PI/2, -M_PI/2);
@@ -441,9 +451,9 @@ MainWindow* App::newQuadWindow()
     side->hideViewSelector();
     other->hideViewSelector();
 
-    g->addWidget(top, 0, 0);
-    g->addWidget(front, 0, 1);
-    g->addWidget(side, 1, 0);
+    g->addWidget(top, 1, 0);
+    g->addWidget(front, 0, 0);
+    g->addWidget(side, 0, 1);
     g->addWidget(other, 1, 1);
     g->setContentsMargins(0, 0, 0, 0);
     g->setSpacing(2);
