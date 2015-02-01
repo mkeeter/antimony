@@ -1,5 +1,23 @@
 # Neil Gershenfeld 1/27/15
 
+# Sine s
+# Cosine c
+# Tangent t
+# Arcsine S
+# Arccosine C
+# Arctangent T
+# Absolute value b
+# Square q
+# Square root r
+# Negation n
+# Addition +
+# Subtraction -
+# Multiplication *
+# Division /
+# Minimum i
+# Maximum a
+# Power p
+
 import fab
 
 title('function prefix xy')
