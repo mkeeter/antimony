@@ -104,10 +104,16 @@ signals:
     void viewChanged();
     void showPorts(bool);
 
+    void centerChanged(QVector3D c);
+    void scaleChanged(float);
+
 public slots:
     void onCopy();
     void onCut();
     void onPaste();
+
+    void setCenter(QVector3D c);
+    void setScale(float s);
 
     void spinTo(float new_yaw, float new_pitch);
 
