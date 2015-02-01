@@ -451,9 +451,9 @@ MainWindow* App::newQuadWindow()
     side->hideViewSelector();
     other->hideViewSelector();
 
-    g->addWidget(top, 0, 0);
-    g->addWidget(front, 0, 1);
-    g->addWidget(side, 1, 0);
+    g->addWidget(top, 1, 0);
+    g->addWidget(front, 0, 0);
+    g->addWidget(side, 0, 1);
     g->addWidget(other, 1, 1);
     g->setContentsMargins(0, 0, 0, 0);
     g->setSpacing(2);
