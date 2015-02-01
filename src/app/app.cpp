@@ -431,6 +431,16 @@ MainWindow* App::newQuadWindow()
     auto side = view_scene->newViewport();
     auto other = view_scene->newViewport();
 
+    for (auto a : {top, front, side})
+        for (auto b : {top, front, side})
+            if (a != b)
+            {
+                connect(a, &Viewport::scaleChanged,
+                        b, &Viewport::setScale);
+                connect(a, &Viewport::centerChanged,
+                        b, &Viewport::setCenter);
+            }
+
     top->lockAngle(0, 0);
     front->lockAngle(0, -M_PI/2);
     side->lockAngle(-M_PI/2, -M_PI/2);
