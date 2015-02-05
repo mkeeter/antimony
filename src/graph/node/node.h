@@ -39,7 +39,7 @@ public:
     void updateName();
 
     /** Returns a Python proxy that calls getDatum when getattr is called */
-    PyObject* proxy();
+    PyObject* proxy(Datum* caller=NULL);
 
     /** Looks up a particular Datum by name, return NULL otherwise. */
     Datum* getDatum(QString name) const;
