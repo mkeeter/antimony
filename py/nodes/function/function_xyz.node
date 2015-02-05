@@ -1,0 +1,48 @@
+# Neil Gershenfeld 1/27/15
+
+# Sine s
+# Cosine c
+# Tangent t
+# Arcsine S
+# Arccosine C
+# Arctangent T
+# Absolute value b
+# Square q
+# Square root r
+# Negation n
+# Addition +
+# Subtraction -
+# Multiplication *
+# Division /
+# Minimum i
+# Maximum a
+# Power p
+
+import fab
+
+title('function prefix xyz')
+
+def function_prefix_xy(x0,y0,z0,x1,y1,z1,fn):
+   from fab.types import Shape, Transform
+   return Shape(
+      fn % locals(),
+      x0,y0,z0,x1,y1,z1)
+
+def cube_corner(x0,y0,z0,x1,y1,z1):
+   from fab.types import Shape, Transform
+   # max(max(max(x0-X,X-x1),max(y0-Y,Y-y1)),max(z0-Z,Z-z1))
+   return Shape(
+      'aaa-f%(x0)gX-Xf%(x1)ga-f%(y0)gY-Yf%(y1)ga-f%(z0)gZ-Zf%(z1)g' % locals(),
+       x0,y0,z0,x1,y1,z1)
+
+input('x0',float,-1)
+input('x1',float,1)
+input('y0',float,-1)
+input('y1',float,1)
+input('z0',float,-1)
+input('z1',float,1)
+
+input('fn',str,'-Z/s*f25r+qXqY*f25r+qXqY')
+
+output('shape',(cube_corner(x0,y0,z0,x1,y1,y1) & function_prefix_xy(x0,y0,z0,x1,y1,z1,fn)))
+

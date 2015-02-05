@@ -1,0 +1,28 @@
+# Neil Gershenfeld 1/24/15
+
+import fab
+
+title('scale z r')
+
+def scale_z_r(part,x0,y0,z0,r0,s0,r1,s1):
+   from fab.types import Shape, Transform
+   dr = r1-r0
+   # Z' = z0 + (Z-z0)*dr/((s1-s0)*sqrt((X-x0)^2+(Y-y0)^2)-s1*r0+s0*r1)
+   # Z = z0 + (Z'-z0)*((s1-s0)*sqrt((X-x0)^2+(Y-y0)^2)-s1*r0+s0*r1)/dr
+   return part.map(Transform(
+      'X','Y',
+      '+f%(z0)g/*-Zf%(z0)gf%(dr)g+-*-f%(s1)gf%(s0)gr+q-Xf%(x0)gq-Yf%(y0)g*f%(s1)gf%(r0)g*f%(s0)gf%(r1)g' % locals(),
+      'X','Y',
+      '+f%(z0)g/*-Zf%(z0)g+-*-f%(s1)gf%(s0)gr+q-Xf%(x0)gq-Yf%(y0)g*f%(s1)gf%(r0)g*f%(s0)gf%(r1)gf%(dr)g' % locals()))
+
+input('x0',float,0)
+input('y0',float,0)
+input('z0',float,0)
+input('r0',float,0)
+input('s0',float,1)
+input('r1',float,1)
+input('s1',float,.5)
+
+input('shape',fab.types.Shape)
+output('transform',scale_z_r(shape,x0,y0,z0,r0,s0,r1,s1))
+

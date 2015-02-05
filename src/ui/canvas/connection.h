@@ -81,7 +81,7 @@ protected:
 
     /** Returns a path for the connection.
      */
-    QPainterPath path() const;
+    QPainterPath path(bool only_bezier=false) const;
 
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,

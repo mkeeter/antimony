@@ -14,7 +14,7 @@ QMAKE_CXXFLAGS += -Werror=switch
 
 GITREV = $$system(git log --pretty=format:'%h' -n 1)
 GITDIFF = $$system(git diff --quiet --exit-code || echo "+")
-GITTAG = $$system(git describe --exact-match --tags)
+GITTAG = $$system(git describe --exact-match --tags 2> /dev/null)
 GITBRANCH = $$system(git rev-parse --abbrev-ref HEAD)
 
 QMAKE_CXXFLAGS += "-D'GITREV=\"$${GITREV}$${GITDIFF}\"'"

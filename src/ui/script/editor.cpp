@@ -51,7 +51,7 @@ ScriptEditor::ScriptEditor(ScriptDatum* datum, QWidget* parent)
     onDatumChanged(); // update tooltip and text
 }
 
-void ScriptEditor::setupUI(Ui::MainWindow* ui)
+void ScriptEditor::customizeUI(Ui::MainWindow* ui)
 {
     ui->menuView->deleteLater();
     ui->menuAdd->deleteLater();

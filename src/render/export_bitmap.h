@@ -9,7 +9,8 @@ class ExportBitmapWorker : public QObject
 {
     Q_OBJECT
 public:
-    explicit ExportBitmapWorker(Shape s, float resolution, QString filename);
+    explicit ExportBitmapWorker(Shape s, float resolution, float mm_per_unit,
+                                QString filename);
 public slots:
     void render();
 signals:
@@ -17,6 +18,7 @@ signals:
 protected:
     Shape shape;
     float resolution;
+    float mm_per_unit;
     QString filename;
 };
 

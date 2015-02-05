@@ -1,0 +1,21 @@
+# Neil Gershenfeld 1/24/15 
+
+import fab
+
+title('cone height')
+
+def cone_height(x0,y0,z0,r,h):
+   from fab.types import Shape, Transform
+   # max(sqrt((X-x0)^2+(Y-y0)^2)-r*(z0+h-Z)/h,z0-Z)
+   return Shape(
+      'a-r+q-Xf%(x0)gq-Yf%(y0)g/*f%(r)g-+f%(z0)gf%(h)gZf%(h)g-f%(z0)gZ' % locals(),
+      x0-r,y0-r,z0,x0+r,y0+r,z0+h)
+
+input('x0',float,0)
+input('y0',float,0)
+input('z0',float,0)
+input('r',float,.5)
+input('height',float,1)
+
+output('shape',cone_height(x0,y0,z0,r,height))
+

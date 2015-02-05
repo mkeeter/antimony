@@ -2,10 +2,9 @@
 #define UNDO_DELETE_NODE_H
 
 #include <QList>
+#include <QMap>
 
 #include "app/undo/undo_command.h"
-
-class NodeRoot;
 
 class UndoDeleteNodeCommand : public UndoCommand
 {
@@ -22,13 +21,12 @@ public:
 
 protected:
     QList<Node*> getNodes() const;
-    QList<Datum*> getDatums() const;
+    QMap<QString, Datum*> getDatums() const;
 
     mutable Node* n;
 
-    NodeRoot* root;
     QList<Node*> nodes;
-    QList<Datum*> datums;
+    QMap<QString, Datum*> datums;
 
     QByteArray data;
 };

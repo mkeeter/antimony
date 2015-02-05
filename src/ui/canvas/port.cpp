@@ -74,6 +74,10 @@ void OutputPort::mousePressEvent(QGraphicsSceneMouseEvent *event)
         c->setDragPos(mapToScene(event->pos()));
         c->grabMouse();
         c->setFocus();
+
+        // Turn off the hover highlighting.
+        hover = false;
+        update();
     }
     else
     {

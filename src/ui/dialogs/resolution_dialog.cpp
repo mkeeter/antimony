@@ -4,12 +4,22 @@
 #include "ui/dialogs/resolution_dialog.h"
 #include "fab/types/shape.h"
 
-ResolutionDialog::ResolutionDialog(Shape* shape, bool dimensions, long max_voxels,
-                                   QWidget* parent)
+ResolutionDialog::ResolutionDialog(Shape* shape, bool dimensions, bool has_units,
+                                   long max_voxels, QWidget* parent)
     : QDialog(parent), shape(shape), ui(new Ui::ResolutionDialog),
       z_bounded(!isinf(shape->bounds.zmax) && !isinf(shape->bounds.zmin))
 {
     ui->setupUi(this);
+
+    if (!has_units)
+    {
+        ui->units->hide();
+        ui->unit_label->hide();
+        layout()->invalidate();
+        adjustSize();
+    }
+
+    // This connection is awkward because of function overloading.
     connect(ui->export_res,
             static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
             this, &ResolutionDialog::onValueChanged);
@@ -18,16 +28,14 @@ ResolutionDialog::ResolutionDialog(Shape* shape, bool dimensions, long max_voxel
     {
         float area = (shape->bounds.xmax - shape->bounds.xmin) *
                      (shape->bounds.ymax - shape->bounds.ymin);
-        ui->export_res->setMaximum(pow(max_voxels / area, 1/2.));
-        ui->export_res->setValue(ui->export_res->maximum() / 4);
+        ui->export_res->setValue(pow(max_voxels / area, 1/2.) / 4.);
     }
     else
     {
         float volume = (shape->bounds.xmax - shape->bounds.xmin) *
                        (shape->bounds.ymax - shape->bounds.ymin) *
                        (shape->bounds.zmax - shape->bounds.zmin);
-        ui->export_res->setMaximum(pow(max_voxels / volume, 1/3.));
-        ui->export_res->setValue(ui->export_res->maximum() / 2.52);
+        ui->export_res->setValue(pow(max_voxels / volume, 1/3.) / 2.52);
     }
 }
 
@@ -44,4 +52,16 @@ void ResolutionDialog::onValueChanged(int i)
 float ResolutionDialog::getResolution() const
 {
     return ui->export_res->value();
+}
+
+
+float ResolutionDialog::getMMperUnit() const
+{
+    QString u = ui->units->currentText();
+
+    if (u == "mm")              return 1;
+    else if (u == "cm")         return 10;
+    else if (u == "inches")     return 25.4;
+
+    return 1;
 }

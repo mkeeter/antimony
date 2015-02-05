@@ -16,9 +16,10 @@ class ResolutionDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit ResolutionDialog(Shape* s, bool dimensions,
+    explicit ResolutionDialog(Shape* s, bool dimensions, bool has_units,
                               long max_voxels=(1<<22), QWidget* parent=0);
     float getResolution() const;
+    float getMMperUnit() const;
 protected slots:
     void onValueChanged(int i);
 protected:

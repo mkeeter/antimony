@@ -16,7 +16,7 @@ public:
     /*
      *  Connect to appropriate UI actions and modify menus.
      */
-    void setupUI(Ui::MainWindow* ui);
+    void customizeUI(Ui::MainWindow* ui);
 
     void setDatum(ScriptDatum* d);
 

@@ -50,8 +50,13 @@ Viewport::Viewport(QGraphicsScene* scene, QWidget* parent)
     setViewport(gl);
 }
 
-void Viewport::setupUI(Ui::MainWindow* ui)
+void Viewport::customizeUI(Ui::MainWindow* ui)
 {
+    QActionGroup* view_actions = new QActionGroup(this);
+    view_actions->addAction(ui->actionShaded);
+    view_actions->addAction(ui->actionHeightmap);
+    view_actions->setExclusive(true);
+
     connect(ui->actionShaded, &QAction::triggered,
             [&]{ scene->invalidate(); });
     connect(ui->actionHeightmap, &QAction::triggered,
@@ -382,6 +387,7 @@ void Viewport::wheelEvent(QWheelEvent *event)
     QVector3D b = sceneToWorld(mapToScene(event->pos()));
     pan(a - b);
     emit(viewChanged());
+    emit(scaleChanged(scale));
 }
 
 void Viewport::leaveEvent(QEvent* event)
@@ -446,6 +452,7 @@ void Viewport::pan(QVector3D d)
     update();
     scene->invalidate(QRect(),QGraphicsScene::ForegroundLayer);
     emit(viewChanged());
+    emit(centerChanged(center));
 }
 
 void Viewport::drawBackground(QPainter* painter, const QRectF& rect)
@@ -570,3 +577,20 @@ void Viewport::onPaste()
         App::instance()->pushStack(new UndoAddNodeCommand(n, "'paste'"));
     }
 }
+
+void Viewport::setCenter(QVector3D c)
+{
+    center = c;
+    update();
+    scene->invalidate(QRect(),QGraphicsScene::ForegroundLayer);
+    emit(viewChanged());
+}
+
+void Viewport::setScale(float s)
+{
+    scale = s;
+    update();
+    scene->invalidate(QRect(),QGraphicsScene::ForegroundLayer);
+    emit(viewChanged());
+}
+

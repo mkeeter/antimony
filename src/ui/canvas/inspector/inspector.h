@@ -77,6 +77,10 @@ public slots:
      */
     void onDatumsChanged();
 
+    /** When datum order changes, update layout.
+     */
+    void onDatumOrderChanged();
+
     /** Change focus to the next text item.
      */
     void focusNext(DatumTextItem* prev);

@@ -59,16 +59,14 @@ private:
 
     /** Adds a particular node to the "Add" menu.
      */
-    void addNodeToMenu(QString category, QString name, QMenu* menu,
-                       QMap<QString, QMenu*>* submenus,
+    void addNodeToMenu(QStringList category, QString name, QMenu* menu,
                        bool recenter, NodeConstructorFunction f,
                        Viewport* v=NULL);
 
-    void populateBuiltIn(QMenu* menu, QMap<QString, QMenu*>* submenus,
-                         bool recenter=true, Viewport* v=NULL);
-    void populateUserScripts(QMenu* menu, QMap<QString, QMenu*>* submenus,
-                             bool recenter=true, Viewport* v=NULL);
+    void populateBuiltIn(QMenu* menu, bool recenter=true, Viewport* v=NULL);
+    void populateUserScripts(QMenu* menu, bool recenter=true, Viewport* v=NULL);
 
+    QString window_type;
     Ui::MainWindow *ui;
 };
 

@@ -63,6 +63,8 @@ NodeInspector::NodeInspector(Node* node)
     // Redo layout when datums change (also only for script nodes)
     connect(node, &Node::datumsChanged,
             this, &NodeInspector::onDatumsChanged);
+    connect(node, &Node::datumOrderChanged,
+            this, &NodeInspector::onDatumOrderChanged);
 
     // Delete oneself when the target node is deleted
     connect(node, &Node::destroyed, this, &NodeInspector::deleteLater);
@@ -136,6 +138,11 @@ void NodeInspector::onLayoutChanged()
 void NodeInspector::onDatumsChanged()
 {
     populateLists(node);
+    onLayoutChanged();
+}
+
+void NodeInspector::onDatumOrderChanged()
+{
     onLayoutChanged();
 }
 

@@ -1,0 +1,26 @@
+# Neil Gershenfeld 1/24/15
+
+import fab
+
+title('scale x y')
+
+def scale_x_y(part,x0,y0,y1,s0,s1):
+   from fab.types import Shape, Transform
+   dy = y1-y0
+   # X' = x0 + (X-x0)*dy/(s1*(Y-y0)+s0*(y1-Y))
+   # X = x0 + (X'-x0)*(s1*(Y-y0)+s0*(y1-Y))/dy
+   return part.map(Transform(
+      '+f%(x0)g/*-Xf%(x0)gf%(dy)g+*f%(s1)g-Yf%(y0)g*f%(s0)g-f%(y1)gY' % locals(),
+      'Y',
+      '+f%(x0)g/*-Xf%(x0)g+*f%(s1)g-Yf%(y0)g*f%(s0)g-f%(y1)gYf%(dy)g' % locals(),
+      'Y'))
+
+input('x0',float,0)
+input('y0',float,-1)
+input('y1',float,1)
+input('s0',float,2)
+input('s1',float,.5)
+
+input('shape',fab.types.Shape)
+output('transform',scale_x_y(shape,x0,y0,y1,s0,s1))
+
