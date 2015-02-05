@@ -17,12 +17,11 @@ PyObject* NodeProxy::getAttr(std::string name)
     {
         // If we have a known caller, then mark that this datum is an upstream node
         // for the caller.
-        bool failed = false;
         if (caller)
         {
             // Try to connect this datum as an upstream datum of the caller
             if (!caller->connectUpstream(datum))
-                failed = true;
+                throw proxy::ProxyException("Recursive loop in lookup.");
 
             // Also connect the node's name as an upstream datum
             // (since if the name changes, the expression may become invalid)
@@ -33,11 +32,7 @@ PyObject* NodeProxy::getAttr(std::string name)
             caller->connectUpstream(name);
         }
 
-        if (failed)
-        {
-            throw proxy::ProxyException("Recursive loop in lookup.");
-        }
-        else if (datum->getValid())
+        if (datum->getValid())
         {
             PyObject* value = datum->getValue();
             Py_INCREF(value);
