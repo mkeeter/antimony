@@ -17,6 +17,7 @@
 # Minimum i
 # Maximum a
 # Power p
+# Float f
 
 import fab
 
