@@ -10,10 +10,16 @@ def cone_edge(x0,x1,y0,y1,z0,z1):
    r = math.sqrt((x1-x0)*(x1-x0)+(y1-y0)*(y1-y0))/2
    x0 = (x0+x1)/2
    y0 = (y0+y1)/2
-   # max(sqrt((X-x0)^2+(Y-y0)^2)-r*(z0+h-Z)/h,z0-Z)
-   return Shape(
-      'a-r+q-Xf%(x0)gq-Yf%(y0)g/*f%(r)g-+f%(z0)gf%(h)gZf%(h)g-f%(z0)gZ' % locals(),
-      x0-r,y0-r,z0,x0+r,y0+r,z0+h)
+   if (h >= 0):
+      # max(sqrt((X-x0)^2+(Y-y0)^2)-r*(z0+h-Z)/h,z0-Z)
+      return Shape(
+         'a-r+q-Xf%(x0)gq-Yf%(y0)g/*f%(r)g-+f%(z0)gf%(h)gZf%(h)g-f%(z0)gZ' % locals(),
+         x0-r,y0-r,z0,x0+r,y0+r,z0+h)
+   else:
+      # max(sqrt((X-x0)^2+(Y-y0)^2)-r*(z0+h-Z)/h,Z-z0)
+      return Shape(
+         'a-r+q-Xf%(x0)gq-Yf%(y0)g/*f%(r)g-+f%(z0)gf%(h)gZf%(h)g-Zf%(z0)g' % locals(),
+         x0-r,y0-r,z0+h,x0+r,y0+r,z0)
 
 input('x0',float,-1)
 input('x1',float,1)
