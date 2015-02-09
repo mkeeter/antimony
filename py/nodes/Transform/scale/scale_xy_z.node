@@ -21,11 +21,11 @@ def scale_xy_z(part,x0,y0,z0,z1,s0,s1):
 
 input('x0',float,0)
 input('y0',float,0)
-input('z0',float,-1)
+input('z0',float,0)
 input('z1',float,1)
-input('s0',float,2)
-input('s1',float,.5)
+input('scale0',float,2)
+input('scale1',float,.5)
 
 input('shape',fab.types.Shape)
-output('transform',scale_xy_z(shape,x0,y0,z0,z1,s0,s1))
+output('transform',scale_xy_z(shape,x0,y0,z0,z1,scale0,scale1))
 

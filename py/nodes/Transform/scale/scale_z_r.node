@@ -19,10 +19,10 @@ input('x0',float,0)
 input('y0',float,0)
 input('z0',float,0)
 input('r0',float,0)
-input('s0',float,1)
 input('r1',float,1)
-input('s1',float,.5)
+input('scale0',float,1)
+input('scale1',float,.5)
 
 input('shape',fab.types.Shape)
-output('transform',scale_z_r(shape,x0,y0,z0,r0,s0,r1,s1))
+output('transform',scale_z_r(shape,x0,y0,z0,r0,scale0,r1,scale1))
 

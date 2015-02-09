@@ -15,7 +15,7 @@ def shear_x_y(part,y0,y1,dx0,dx1):
       '+X/+*f%(dx1)g-Yf%(y0)g*f%(dx0)g-f%(y1)gYf%(dy)g' % locals(),
       'Y'))
 
-input('y0',float,-1)
+input('y0',float,0)
 input('y1',float,1)
 input('dx0',float,-1)
 input('dx1',float,1)
