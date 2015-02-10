@@ -1,9 +1,11 @@
 #include <boost/python.hpp>
+#include <boost/python/raw_function.hpp>
 
 #include "graph/hooks/hooks.h"
 #include "graph/hooks/input.h"
 #include "graph/hooks/output.h"
 #include "graph/hooks/title.h"
+#include "graph/hooks/ui.h"
 
 using namespace boost::python;
 
@@ -23,6 +25,9 @@ BOOST_PYTHON_MODULE(_hooks)
 
     class_<ScriptTitleHook>("ScriptTitleHook", init<>())
         .def("__call__", &ScriptTitleHook::call);
+
+    class_<ScriptUIHooks>("ScriptUIHooks", init<>())
+        .def("point", raw_function(&ScriptUIHooks::point, 3));
 
     register_exception_translator<hooks::HookException>(
             hooks::onHookException);
