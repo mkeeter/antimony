@@ -20,11 +20,10 @@ Control::Control(Node* node)
     connect(node, &Node::destroyed, this, &Control::deleteLater);
 }
 
-QPainterPath Control::shape(QMatrix4x4 m, QMatrix4x4 t) const
+QRectF Control::bounds(QMatrix4x4 m) const
 {
-    QPainterPath p;
-    p.addRect(bounds(m, t));
-    return p;
+    // Default implementation is the bounding rect of shape().
+    return shape(m).boundingRect();
 }
 
 Node* Control::getNode() const

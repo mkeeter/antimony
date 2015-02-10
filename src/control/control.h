@@ -35,24 +35,20 @@ public:
 
     /*
      *  This function is overloaded by children to return bounds.
+     *  By default, returns the bounding box of shape().
      */
-    virtual QRectF bounds(QMatrix4x4 m, QMatrix4x4 t) const=0;
+    virtual QRectF bounds(QMatrix4x4 m) const;
 
     /*
-     *  Equivalent to QGraphicsObject::shape
-     *  By default, returns the bounding rect
+     *  Returns the shape of this object (for selection and highlighting)
      */
-    virtual QPainterPath shape(QMatrix4x4 m, QMatrix4x4 t) const;
+    virtual QPainterPath shape(QMatrix4x4 m) const=0;
 
     /*
      *  This function should be defined by child nodes
      *  m is the world-to-screen transform matrix.
-     *  t is just the rotation component of this matrix
-     *      (used for cylinders and spheres to make lines
-     *       face user at all times)
      */
-    virtual void paint(QMatrix4x4 m, QMatrix4x4 t,
-                       bool highlight, QPainter* painter)=0;
+    virtual void paint(QMatrix4x4 m, bool highlight, QPainter* painter)=0;
 
     /*
      *  Saves watched datum's expressions
