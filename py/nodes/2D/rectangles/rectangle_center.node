@@ -7,10 +7,10 @@ title('rectangle center')
 def rectangle_center(x0,y0,width,height):
    from fab.types import Shape, Transform
    # max(max(x0-width/2-X,X-x0-width/2),max(y0-height/2-Y,Y-y0-height/2))
-   xmin = x0-width/2
-   ymin = y0-height/2
-   xmax = x0+width/2
-   ymax = y0+height/2
+   xmin = x0-width/2.0
+   ymin = y0-height/2.0
+   xmax = x0+width/2.0
+   ymax = y0+height/2.0
    return Shape(
       'aa-f%(xmin)gX-Xf%(xmax)ga-f%(ymin)gY-Yf%(ymax)g' % locals(),
        x0-width/2,y0-height/2,x0+width/2,y0+height/2)

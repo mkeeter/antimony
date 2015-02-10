@@ -7,9 +7,9 @@ title('cone edge')
 def cone_edge(x0,x1,y0,y1,z0,z1):
    from fab.types import Shape, Transform
    h = z1-z0
-   r = math.sqrt((x1-x0)*(x1-x0)+(y1-y0)*(y1-y0))/2
-   x0 = (x0+x1)/2
-   y0 = (y0+y1)/2
+   r = math.sqrt((x1-x0)*(x1-x0)+(y1-y0)*(y1-y0))/2.0
+   x0 = (x0+x1)/2.0
+   y0 = (y0+y1)/2.0
    if (h >= 0):
       # max(sqrt((X-x0)^2+(Y-y0)^2)-r*(z0+h-Z)/h,z0-Z)
       return Shape(

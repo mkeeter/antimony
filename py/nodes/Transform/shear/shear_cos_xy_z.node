@@ -7,8 +7,8 @@ title('shear cos xy z')
 def shear_cos_xy_z(part,z0,z1,ampx,offx,ampy,offy,t0,t1):
    from fab.types import Shape, Transform
    dz = z1-z0
-   t0 = t0*math.pi/180
-   t1 = t1*math.pi/180
+   t0 = t0*math.pi/180.0
+   t1 = t1*math.pi/180.0
    # X' = X-(offx+ampx*math.cos(theta0+(theta1-theta0)*(Z-z0)/dz))
    # X = X'+(offx+ampx*math.cos(theta0+(theta1-theta0)*(Z-z0)/dz))
    # Y' = Y-(offy+ampy*math.cos(theta0+(theta1-theta0)*(Z-z0)/dz))

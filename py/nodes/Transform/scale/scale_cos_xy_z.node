@@ -7,8 +7,8 @@ title('scale cos xy z')
 def scale_cos_xy_z(part,x0,y0,z0,z1,amp,off,t0,t1):
    from fab.types import Shape, Transform
    dz = z1-z0
-   t0 = t0*math.pi/180
-   t1 = t1*math.pi/180
+   t0 = t0*math.pi/180.0
+   t1 = t1*math.pi/180.0
    # X' = x0 + (X-x0)/(off+amp*math.cos(theta0+(theta1-theta0)*(Z-z0)/dz))
    # X = x0 + (X'-x0)*(off+amp*math.cos(theta0+(theta1-theta0)*(Z-z0)/dz))
    # Y' = y0 + (Y-y0)/(off+amp*math.cos(theta0+(theta1-theta0)*(Z-z0)/dz))

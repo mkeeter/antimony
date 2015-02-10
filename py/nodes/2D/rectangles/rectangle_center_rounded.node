@@ -8,10 +8,10 @@ def rectangle_center_rounded(x0,y0,width,height,r):
    from fab.types import Shape, Transform
    def rectangle_center(x0,y0,width,height):
       # max(max(x0-width/2-X,X-x0-width/2),max(y0-height/2-Y,Y-y0-height/2))
-      xmin = x0-width/2
-      ymin = y0-height/2
-      xmax = x0+width/2
-      ymax = y0+height/2
+      xmin = x0-width/2.0
+      ymin = y0-height/2.0
+      xmax = x0+width/2.0
+      ymax = y0+height/2.0
       return Shape(
          'aa-f%(xmin)gX-Xf%(xmax)ga-f%(ymin)gY-Yf%(ymax)g' % locals(),
           x0-width/2,y0-height/2,x0+width/2,y0+height/2)
@@ -21,12 +21,12 @@ def rectangle_center_rounded(x0,y0,width,height,r):
          '-r+q-Xf%(x0)gq-Yf%(y0)gf%(r)g' % locals(),
           x0-r,y0-r,x0+r,y0+r)
    return (
-      rectangle_center(x0,y0,width,height-2*r) |
-      rectangle_center(x0,y0,width-2*r,height) |
-      circle(x0+r-width/2,y0+r-height/2,r) |
-      circle(x0+r-width/2,y0+height/2-r,r) |
-      circle(x0+width/2-r,y0+r-height/2,r) |
-      circle(x0+width/2-r,y0+height/2-r,r)
+      rectangle_center(x0,y0,width,height-2.0*r) |
+      rectangle_center(x0,y0,width-2.0*r,height) |
+      circle(x0+r-width/2.0,y0+r-height/2.0,r) |
+      circle(x0+r-width/2.0,y0+height/2.0-r,r) |
+      circle(x0+width/2.0-r,y0+r-height/2.0,r) |
+      circle(x0+width/2.0-r,y0+height/2.0-r,r)
       )
 
 input('x0',float,0)

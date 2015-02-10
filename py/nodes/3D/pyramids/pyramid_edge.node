@@ -9,8 +9,8 @@ def pyramid_edge(x0,x1,y0,y1,z0,z1):
    w = x1-x0
    d = y1-y0
    h = z1-z0
-   x0 = (x0+x1)/2
-   y0 = (y0+y1)/2
+   x0 = (x0+x1)/2.0
+   y0 = (y0+y1)/2.0
    if (h >= 0):
       # max(Y-y0+(w/2)*(z0+h-Z)/h,
       #    max(y0-(w/2)*(z0+h-Z)/h-Y,
