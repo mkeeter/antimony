@@ -7,6 +7,11 @@
 #include "graph/hooks/title.h"
 #include "graph/hooks/ui.h"
 
+#include "graph/datum/datums/script_datum.h"
+#include "graph/node/node.h"
+
+#include "app/app.h"
+
 using namespace boost::python;
 
 void hooks::onHookException(const hooks::HookException& e)
@@ -52,12 +57,21 @@ void hooks::loadHooks(PyObject* g, ScriptDatum* d)
             _hooks_module, "ScriptOutputHook", NULL);
     auto title_func = PyObject_CallMethod(
             _hooks_module, "ScriptTitleHook", NULL);
+    auto ui_obj = PyObject_CallMethod(
+            _hooks_module, "ScriptUIHooks", NULL);
 
     extract<ScriptInputHook&>(input_func)().datum = d;
     extract<ScriptOutputHook&>(output_func)().datum = d;
     extract<ScriptTitleHook&>(title_func)().datum = d;
 
+    extract<ScriptUIHooks&>(ui_obj)().scene = App::instance()->getViewScene();
+    extract<ScriptUIHooks&>(ui_obj)().node = static_cast<Node*>(d->parent());
+
     PyDict_SetItemString(g, "input", input_func);
     PyDict_SetItemString(g, "output", output_func);
     PyDict_SetItemString(g, "title", title_func);
+
+    auto fab = PyImport_ImportModule("fab");
+    PyObject_SetAttrString(fab, "ui", ui_obj);
+    Py_DECREF(fab);
 }

@@ -4,6 +4,7 @@
 #include <boost/python.hpp>
 
 class ViewportScene;
+class Node;
 
 struct ScriptUIHooks
 {
@@ -11,6 +12,7 @@ struct ScriptUIHooks
     static boost::python::object point(boost::python::tuple args,
                                        boost::python::dict kwargs);
 
+    Node* node;
     ViewportScene* scene;
 };
 

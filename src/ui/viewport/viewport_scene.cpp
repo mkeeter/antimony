@@ -26,6 +26,15 @@ void ViewportScene::registerControl(Control* c)
         makeProxyFor(c, itr.key());
 }
 
+Control* ViewportScene::getControl(Node* n, long index) const
+{
+    if (!controls.contains(n))
+        return NULL;
+    if (!controls[n].contains(index))
+        return NULL;
+    return controls[n][index];
+}
+
 void ViewportScene::makeRenderWorkersFor(Node* n)
 {
     for (auto itr = scenes.begin(); itr != scenes.end(); ++itr)
@@ -122,7 +131,7 @@ void ViewportScene::onDatumsChanged(Node* n)
 
 void ViewportScene::onGlowChange(Node* n, bool g)
 {
-    Q_ASSERT(controls.contains(n));
-    for (auto itr = controls[n].begin(); itr != controls[n].end(); ++itr)
-        itr.value()->setGlow(g);
+    if (controls.contains(n))
+        for (auto itr = controls[n].begin(); itr != controls[n].end(); ++itr)
+            itr.value()->setGlow(g);
 }

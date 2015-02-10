@@ -43,6 +43,11 @@ public:
      */
     void registerControl(Control* c);
 
+    /*
+     *  Looks up a particular control by node and index.
+     */
+    Control* getControl(Node* node, long index) const;
+
 public slots:
     void onGlowChange(Node* n, bool g);
 
@@ -83,7 +88,7 @@ protected:
     void makeRenderWorkerFor(Datum* d, Viewport* v);
 
     QMap<QPointer<Viewport>, QGraphicsScene*> scenes;
-    QMap<QPointer<Node>, QMap<int, Control*>> controls;
+    QMap<QPointer<Node>, QMap<long, Control*>> controls;
     QMap<QPointer<Datum>, QList<QPointer<RenderWorker>>> workers;
 };
 
