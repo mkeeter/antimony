@@ -17,12 +17,11 @@ class Control : public QObject
     Q_OBJECT
 public:
     /*
-     *  A control is a UI representation of a Node.
+     *  A control is a UI object created by certain script hooks.
      *
-     *  node is the target Node (or NULL in special cases)
-     *  parent is a parent Control (as nested controls are allowed)
+     *  node is the target Node
      */
-    explicit Control(Node* node, QObject* parent=0);
+    explicit Control(Node* node);
 
     /** Returns this control's relevant node.
      */
@@ -65,22 +64,16 @@ public:
      */
     void beginDrag();
 
-    /** Called to drag the node around with the mouse.
+    /*
+     *  Called to drag the node around with the mouse.
      */
-    virtual void drag(QVector3D center, QVector3D delta)=0;
+    void drag(QVector3D center);
 
     /*
      *  Pushes an UndoCommand to the stack that undoes the
      *  previous drag operation.
      */
     void endDrag();
-
-    /*
-     *  Overloaded to make buttons inside the Control.
-     *  Returns true if the Control has used the click event
-     *  (which prevents the event from being used for selection)
-     */
-    virtual bool onClick() { return false; }
 
     void setGlow(bool g);
 
@@ -89,36 +82,8 @@ signals:
     void glowChanged(Node* node, bool g);
 
 protected:
-    /** Mark a set of datums as causing a re-render when changed.
-     */
-    void watchDatums(QVector<QString> datums);
-
-    /** Attempts to drag a particular datum's value.
-     */
-    void dragValue(QString name, double delta);
-
-    /** Sets a specific datum's value to the given value.
-     */
-    void setValue(QString name, double new_value);
-
-    /** Returns the color to be used by the default pen.
-     */
-    virtual QColor defaultPenColor() const;
-
-    /** Returns the color to be used by the default brush.
-     */
-    virtual QColor defaultBrushColor() const;
-
-    /** Sets the painter pen to a reasonable default value.
-     */
-    void setDefaultPen(bool highlight, QPainter* painter) const;
-
-    /** Sets the painter brush to a reasonable value.
-     */
-    void setDefaultBrush(bool highlight, QPainter* painter) const;
-
     QPointer<Node> node;
-    QMap<EvalDatum*, QString> watched;
+    QMap<EvalDatum*, QString> datums;
 
     bool glow;
 };
