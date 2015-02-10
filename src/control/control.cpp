@@ -53,7 +53,17 @@ void Control::beginDrag()
 
 void Control::drag(QVector3D center)
 {
-    // Call Python function here
+    auto p = node->proxy();
+    auto x = PyFloat_FromDouble(center.x());
+    auto y = PyFloat_FromDouble(center.y());
+    auto z = PyFloat_FromDouble(center.z());
+
+    PyObject_CallFunctionObjArgs(p, x, y, z);
+
+    Py_DECREF(p);
+    Py_DECREF(x);
+    Py_DECREF(y);
+    Py_DECREF(z);
 }
 
 void Control::endDrag()
