@@ -41,7 +41,7 @@ public:
     /*
      *  Registers a Control object, making proxies.
      */
-    void registerControl(Control* c);
+    void registerControl(Node* n, long index, Control* c);
 
     /*
      *  Looks up a particular control by node and index.

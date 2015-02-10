@@ -15,12 +15,14 @@ ViewportScene::ViewportScene(QObject* parent)
     // Nothing to do here
 }
 
-void ViewportScene::registerControl(Control* c)
+void ViewportScene::registerControl(Node* n, long index, Control* c)
 {
     connect(c, &Control::glowChanged,
             this, &ViewportScene::onGlowChange);
     connect(c, &Control::glowChanged,
             this, &ViewportScene::glowChanged);
+
+    controls[n][index] = c;
 
     for (auto itr = scenes.begin(); itr != scenes.end(); ++itr)
         makeProxyFor(c, itr.key());

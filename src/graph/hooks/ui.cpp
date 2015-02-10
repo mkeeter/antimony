@@ -1,4 +1,5 @@
 #include "graph/hooks/ui.h"
+#include "graph/hooks/hooks.h"
 
 #include "ui/viewport/viewport_scene.h"
 
@@ -27,12 +28,30 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
     if (!c)
     {
         c = new ControlPoint(self.node);
-        self.scene->registerControl(c);
+        self.scene->registerControl(self.node, lasti, c);
     }
 
     auto p = dynamic_cast<ControlPoint*>(c);
     Q_ASSERT(p);
-    p->update(1, 1, 1, 2, QColor(1.0, 0, 0));
+
+    if (len(args) != 4)
+        throw hooks::HookException("Expected x, y, z as arguments");
+
+    // Extract x, y, z as floats from first three arguments.
+    extract<float> x_(args[1]);
+    extract<float> y_(args[2]);
+    extract<float> z_(args[3]);
+    if (!x_.check())
+        throw hooks::HookException("x value must be a number");
+    if (!y_.check())
+        throw hooks::HookException("y value must be a number");
+    if (!z_.check())
+        throw hooks::HookException("z value must be a number");
+    float x = x_();
+    float y = y_();
+    float z = z_();
+
+    p->update(x, y, z, 20, QColor(255, 255, 0));
 
     // Return None
     return object();

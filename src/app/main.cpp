@@ -51,6 +51,8 @@ int main(int argc, char *argv[])
     }
     Py_DECREF(fab);
 
+    //PyRun_InteractiveLoop(stdin, "<stdin>");
+
     if (a.arguments().length() == 2)
         a.loadFile(a.arguments()[1]);
     return a.exec();
