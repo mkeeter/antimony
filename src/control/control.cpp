@@ -42,8 +42,8 @@ void Control::beginDrag()
     // Store all datum expressions so that we can make an undo action
     // that undoes the upcoming drag operation.
     datums.clear();
-    for (auto d : node->findChildren<EvalDatum*>(QString(),
-                Qt::FindDirectChildrenOnly))
+    for (auto d : node->findChildren<EvalDatum*>(
+                QString(), Qt::FindDirectChildrenOnly))
         datums[d] = d->getExpr();
 }
 
