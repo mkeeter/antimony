@@ -20,6 +20,11 @@ Control::Control(Node* node)
     connect(node, &Node::destroyed, this, &Control::deleteLater);
 }
 
+Control::~Control()
+{
+    Py_DECREF(drag_func);
+}
+
 QRectF Control::bounds(QMatrix4x4 m) const
 {
     // Default implementation is the bounding rect of shape().

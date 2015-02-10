@@ -1,6 +1,8 @@
 #ifndef CONTROL_H
 #define CONTROL_H
 
+#include <boost/python.hpp>
+
 #include <QObject>
 #include <QPointer>
 #include <QVector3D>
@@ -23,7 +25,13 @@ public:
      */
     explicit Control(Node* node);
 
-    /** Returns this control's relevant node.
+    /*
+     *  Destructor removes a reference to the drag function.
+     */
+    ~Control();
+
+    /*
+     * Returns this control's relevant node.
      */
     Node* getNode() const;
 
@@ -67,6 +75,9 @@ public:
      */
     void endDrag();
 
+    /*
+     *  Sets the value of glow, emitting redraw if changed.
+     */
     void setGlow(bool g);
 
 signals:
@@ -76,6 +87,8 @@ signals:
 protected:
     QPointer<Node> node;
     QMap<EvalDatum*, QString> datums;
+
+    PyObject* drag_func;
 
     bool glow;
 };
