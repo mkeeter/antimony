@@ -15,7 +15,7 @@ void ControlPoint::update(float x_, float y_, float z_, float r_,
 
     x = x_;
     y = y_;
-    y = z_;
+    z = z_;
     r = r_;
     color = color_;
 
