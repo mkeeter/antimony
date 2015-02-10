@@ -32,17 +32,6 @@ Node* Control::getNode() const
     return node;
 }
 
-double Control::getValue(QString name) const
-{
-    Datum* d = node->getDatum(name);
-    Q_ASSERT(d);
-
-    double v = PyFloat_AsDouble(d->getValue());
-    Q_ASSERT(!PyErr_Occurred());
-
-    return v;
-}
-
 void Control::deleteNode(QString text)
 {
     App::instance()->pushStack(new UndoDeleteMultiCommand({node}, {}, text));

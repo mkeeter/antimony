@@ -27,10 +27,6 @@ public:
      */
     Node* getNode() const;
 
-    /** Gets the value of a specific datum (which must be a double).
-     */
-    double getValue(QString name) const;
-
     /*
      *  Schedules the top-level node for deletion in an undo-able way
      *  text is an optional argument that sets the text in the undo command.
