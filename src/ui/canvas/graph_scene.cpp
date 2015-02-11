@@ -31,6 +31,7 @@ void GraphScene::onGlowChange(Node* n, bool g)
 void GraphScene::makeUIfor(Node* n)
 {
     auto i = new NodeInspector(n);
+    get_inspector_cache[n] = i;
     addItem(i);
     connect(i, &NodeInspector::glowChanged,
             this, &GraphScene::onGlowChange);
@@ -52,12 +53,24 @@ Connection* GraphScene::makeUIfor(Link* link)
 
 NodeInspector* GraphScene::getInspector(Node* node)
 {
+    if (get_inspector_cache.contains(node))
+    {
+        auto c = get_inspector_cache[node];
+        if (!c.isNull() && c->getNode() == node)
+            return c;
+        else
+            get_inspector_cache.remove(node);
+    }
+
     for (auto i : items())
     {
         NodeInspector* c = dynamic_cast<NodeInspector*>(i);
 
         if (c && c->getNode() == node)
+        {
+            get_inspector_cache[node] = c;
             return c;
+        }
     }
     return NULL;
 }
