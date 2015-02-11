@@ -90,6 +90,19 @@ signals:
      */
     void titleChanged(QString new_title);
 
+    /*
+     *  Emitted before evaluating a script that modifies Control objects.
+     *
+     *  Sets the touched flag to false so that afterwards Controls can
+     *  see if they've been touched or not (and delete themselves).
+     */
+    void clearControlTouchedFlag();
+
+    /*
+     *  Used to request that Controls with touched == false delete themselves.
+     */
+    void deleteUntouchedControls();
+
 protected:
     /** Returns a human-readable name based on type.
      */

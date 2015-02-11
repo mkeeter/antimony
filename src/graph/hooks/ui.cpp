@@ -52,6 +52,7 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
     float z = z_();
 
     p->update(x, y, z, 20, QColor(255, 255, 0));
+    p->touch();
 
     // Return None
     return object();

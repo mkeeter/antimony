@@ -80,6 +80,18 @@ public:
      */
     void setGlow(bool g);
 
+    /*
+     *  Set touched to true.
+     *  This should be called in a UI hook to mark that this Control has been
+     *  used in the most recent script evaluation (and hence shouldn't be
+     *  deleted in a pruning pass).
+     */
+    void touch() { touched = true; }
+
+public slots:
+    void clearTouchedFlag();
+    void deleteIfNotTouched();
+
 signals:
     void redraw();
     void glowChanged(Node* node, bool g);
@@ -91,6 +103,7 @@ protected:
     PyObject* drag_func;
 
     bool glow;
+    bool touched;
 };
 
 

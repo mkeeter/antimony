@@ -159,7 +159,10 @@ PyObject* ScriptDatum::getCurrentValue()
     // Assert that there isn't any recursion going on here.
     Q_ASSERT(globals == NULL);
 
+    // Reset all of the touched flags, both on datums and Controls
     touched.clear();
+    emit(static_cast<Node*>(parent())->clearControlTouchedFlag());
+
     datums_changed = false;
     QStringList datums_before;
     for (auto o : parent()->findChildren<Datum*>(
@@ -216,6 +219,9 @@ PyObject* ScriptDatum::getCurrentValue()
                                     datums_before.takeFirst() != name;
         }
     }
+
+    // Request that all untouched Controls delete themselves.
+    emit(static_cast<Node*>(parent())->deleteUntouchedControls());
 
     globals = NULL;
 

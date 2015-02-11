@@ -99,3 +99,14 @@ void Control::setGlow(bool g)
         emit(redraw());
     }
 }
+
+void Control::clearTouchedFlag()
+{
+    touched = false;
+}
+
+void Control::deleteIfNotTouched()
+{
+    if (!touched)
+        deleteLater();
+}
