@@ -225,6 +225,9 @@ PyObject* ScriptDatum::getCurrentValue()
         emit(static_cast<Node*>(parent())->datumOrderChanged());
 
 
+    // Filter out default arguments to input datums, to make the script
+    // simpler to read (because input('x', float, 12.0f) looks odd when
+    // x doesn't have a value of 12 anymore).
     QRegExp input("(.*input\\([^(),]+,[^(),]+),[^(),]+(\\).*)");
     while (input.exactMatch(expr))
     {
