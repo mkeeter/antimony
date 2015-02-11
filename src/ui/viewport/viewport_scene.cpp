@@ -34,6 +34,8 @@ Control* ViewportScene::getControl(Node* n, long index) const
         return NULL;
     if (!controls[n].contains(index))
         return NULL;
+    if (controls[n][index].isNull())
+        return NULL;
     return controls[n][index];
 }
 
@@ -59,10 +61,11 @@ Viewport* ViewportScene::newViewport()
 
     for (auto itr = controls.begin(); itr != controls.end(); ++itr)
         for (auto i = itr.value().begin(); i != itr.value().end(); ++i)
-        {
-            makeProxyFor(i.value(), v);
-            makeRenderWorkersFor(itr.key(), v);
-        }
+            if (!i.value().isNull())
+            {
+                makeProxyFor(i.value(), v);
+                makeRenderWorkersFor(itr.key(), v);
+            }
 
     return v;
 }
@@ -135,5 +138,6 @@ void ViewportScene::onGlowChange(Node* n, bool g)
 {
     if (controls.contains(n))
         for (auto itr = controls[n].begin(); itr != controls[n].end(); ++itr)
-            itr.value()->setGlow(g);
+            if (!itr.value().isNull())
+                itr.value()->setGlow(g);
 }

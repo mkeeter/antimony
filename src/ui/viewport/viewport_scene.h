@@ -88,7 +88,7 @@ protected:
     void makeRenderWorkerFor(Datum* d, Viewport* v);
 
     QMap<QPointer<Viewport>, QGraphicsScene*> scenes;
-    QMap<QPointer<Node>, QMap<long, Control*>> controls;
+    QMap<QPointer<Node>, QMap<long, QPointer<Control>>> controls;
     QMap<QPointer<Datum>, QList<QPointer<RenderWorker>>> workers;
 };
 
