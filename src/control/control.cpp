@@ -15,14 +15,19 @@
 #include "app/undo/undo_delete_multi.h"
 
 Control::Control(Node* node)
-    : QObject(), node(node), glow(false)
+    : QObject(), node(node), glow(false), drag_func(NULL)
 {
+    connect(node, &Node::clearControlTouchedFlag,
+            this, &Control::clearTouchedFlag);
+    connect(node, &Node::deleteUntouchedControls,
+            this, &Control::deleteIfNotTouched);
+
     connect(node, &Node::destroyed, this, &Control::deleteLater);
 }
 
 Control::~Control()
 {
-    Py_DECREF(drag_func);
+    Py_XDECREF(drag_func);
 }
 
 QRectF Control::bounds(QMatrix4x4 m) const
