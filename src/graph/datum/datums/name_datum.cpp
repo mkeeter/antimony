@@ -29,9 +29,14 @@ void NameDatum::onNameChange()
 {
     if (getValid())
     {
-        if (auto d = dynamic_cast<Datum*>(parent()))
-            d->setObjectName(getExpr().trimmed());
-        emit nameChanged(getExpr().trimmed());
+        auto new_name = getExpr().trimmed();
+        if (auto p = dynamic_cast<Node*>(parent()))
+        {
+            p->setObjectName(getExpr().trimmed());
+            for (auto d : p->findChildren<Datum*>(
+                        QString(), Qt::FindDirectChildrenOnly))
+                emit nameChanged(new_name + "." + d->objectName());
+        }
     }
 }
 
