@@ -51,7 +51,33 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
     float y = y_();
     float z = z_();
 
-    p->update(x, y, z, 20, QColor(255, 255, 0));
+    float r = p->getR();
+    if (kwargs.has_key("r"))
+    {
+        extract<float> r_(kwargs["r"]);
+        if (!r_.check())
+            throw hooks::HookException("r value must be a number");
+        r = r_();
+    }
+
+    QColor color = p->getColor();
+    if (kwargs.has_key("color"))
+    {
+        extract<tuple> color_tuple_(kwargs["color"]);
+        if (!color_tuple_.check())
+            throw hooks::HookException("color value must be a (r, g, b) tuple");
+        auto color_tuple = color_tuple_();
+        if (len(color_tuple) != 3)
+            throw hooks::HookException("color tuple must have three values");
+        extract<int> red_(color_tuple[0]);
+        extract<int> green_(color_tuple[1]);
+        extract<int> blue_(color_tuple[2]);
+        if (!red_.check() || !green_.check() || !blue_.check())
+            throw hooks::HookException("color values must be integers");
+        color = QColor(red_(), green_(), blue_());
+    }
+
+    p->update(x, y, z, r, color);
     p->touch();
 
     // Return None

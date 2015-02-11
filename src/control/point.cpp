@@ -2,7 +2,7 @@
 #include "ui/util/colors.h"
 
 ControlPoint::ControlPoint(Node* node)
-    : Control(node)
+    : Control(node), x(0), y(0), z(0), r(10), color(Colors::blue)
 {
     // Nothing to do here
 }
