@@ -174,8 +174,10 @@ PyObject* ScriptDatum::getCurrentValue()
     PyObject* sys_mod = PyImport_ImportModule("sys");
     PyObject* io_mod = PyImport_ImportModule("io");
     PyObject* stdout_obj = PyObject_GetAttrString(sys_mod, "stdout");
+    PyObject* stderr_obj = PyObject_GetAttrString(sys_mod, "stderr");
     PyObject* string_out = PyObject_CallMethod(io_mod, "StringIO", NULL);
     PyObject_SetAttrString(sys_mod, "stdout", string_out);
+    PyObject_SetAttrString(sys_mod, "stderr", string_out);
     Q_ASSERT(!PyErr_Occurred());
 
     PyObject* out = EvalDatum::getCurrentValue();
@@ -189,11 +191,9 @@ PyObject* ScriptDatum::getCurrentValue()
 
     // Swap stdout back into sys.stdout
     PyObject_SetAttrString(sys_mod, "stdout", stdout_obj);
-    Py_DECREF(sys_mod);
-    Py_DECREF(io_mod);
-    Py_DECREF(stdout_obj);
-    Py_DECREF(string_out);
-    Py_DECREF(s);
+    PyObject_SetAttrString(sys_mod, "stderr", stderr_obj);
+    for (auto o : {sys_mod, io_mod, stdout_obj, stderr_obj, string_out, s})
+        Py_DECREF(o);
 
     // Look at all of the datums (other than the script datum and other
     // reserved datums), deleting them if they have not been touched.
