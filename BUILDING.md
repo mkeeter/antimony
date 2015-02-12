@@ -46,15 +46,15 @@ make -j8
 
 ./antimony
 ```
-(the path to `qmake` may vary depending on how Qt 5.4 was installed - try:
+The path to `qmake` may vary depending on how Qt 5.4 was installed; if the above path doesn't work, try
 ```
-~/Qt/5.4/gcc_64/bin/qmake ../qt/antimony.pro)
+~/Qt/5.4/gcc_64/bin/qmake ../qt/antimony.pro
 ```
-If there's an error saying "/usr/bin/ld: cannot find -lGL" while make process, create a symlink to the libGL file:
+If running `make` gives the `/usr/bin/ld: cannot find -lGL`, create a symlink to the `libGL` file:
 ```
 ln -s /usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0 /usr/lib/libGL.so
 ```
-instead of make install use symlink for access antimony from every in terminal by just typing „antimony“:
+You can use `make install`, or set up a symlink to run `antimony` from outside the build directory:
 ```
 ln -s ~/antimony/build/antimony /usr/local/bin/antimony 
 ```
