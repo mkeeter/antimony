@@ -7,10 +7,8 @@
 
 using namespace boost::python;
 
-object ScriptUIHooks::point(tuple args, dict kwargs)
+long ScriptUIHooks::getInstruction()
 {
-    ScriptUIHooks& self = extract<ScriptUIHooks&>(args[0])();
-
     // Get the current bytecode instruction
     // (used to uniquely identify calls to this function)
     auto inspect_module = PyImport_ImportModule("inspect");
@@ -22,6 +20,17 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
     // Clean up these objects immediately
     for (auto o : {inspect_module, frame, f_lasti})
         Py_DECREF(o);
+
+    return lasti;
+}
+
+object ScriptUIHooks::point(tuple args, dict kwargs)
+{
+    ScriptUIHooks& self = extract<ScriptUIHooks&>(args[0])();
+
+    // Find the instruction at which this callback happened
+    // (used as a unique identifier for the Control).
+    long lasti = getInstruction();
 
     // Find a Control if it already exists.
     Control* c = self.scene->getControl(self.node, lasti);

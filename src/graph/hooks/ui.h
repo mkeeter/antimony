@@ -9,6 +9,7 @@ class Node;
 struct ScriptUIHooks
 {
     ScriptUIHooks() : scene(NULL) {}
+    static long getInstruction();
     static boost::python::object point(boost::python::tuple args,
                                        boost::python::dict kwargs);
 
