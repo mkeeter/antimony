@@ -66,7 +66,7 @@ void Control::drag(QVector3D center)
     if (drag_func)
     {
         PyObject_CallFunctionObjArgs(drag_func, p, x, y, z, NULL);
-        if (PyErr_Occurred)
+        if (PyErr_Occurred())
         {
             PyErr_Print();
             PyErr_Clear();
