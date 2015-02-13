@@ -38,7 +38,7 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
     {
         if (kwargs.has_key("drag"))
         {
-            auto d = extract<object&>(kwargs["drag"])().ptr();
+            auto d = extract<object>(kwargs["drag"])().ptr();
             Py_INCREF(d);
             c = new ControlPoint(self.node, d);
         }
