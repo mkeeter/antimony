@@ -38,8 +38,14 @@ void NodeProxy::setAttr(std::string name, object obj)
     }
     Py_DECREF(o);
 
-    std::string txt = extract<std::string>(str(obj))();
-    e->setExpr(QString::fromStdString(txt));
+    auto txt = QString::fromStdString(extract<std::string>(str(obj))());
+
+    // Special case: use QString::number to sanely trim the number of decimal
+    // places that are printed for float values.
+    if (datum->getType() == &PyFloat_Type)
+        txt = QString::number(txt.toFloat());
+
+    e->setExpr(txt);
 }
 
 PyObject* NodeProxy::getAttr(std::string name)
