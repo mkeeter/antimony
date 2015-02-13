@@ -15,7 +15,7 @@
 #include "app/undo/undo_delete_multi.h"
 
 Control::Control(Node* node, PyObject* drag_func)
-    : QObject(), node(node), glow(false), drag_func(drag_func)
+    : QObject(), node(node), drag_func(drag_func), glow(false)
 {
     connect(node, &Node::clearControlTouchedFlag,
             this, &Control::clearTouchedFlag);
