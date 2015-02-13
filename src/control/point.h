@@ -1,12 +1,14 @@
 #ifndef CONTROL_POINT_H
 #define CONTROL_POINT_H
 
+#include <Python.h>
+
 #include "control/control.h"
 
 class ControlPoint : public Control
 {
 public:
-    ControlPoint(Node* node);
+    ControlPoint(Node* node, PyObject* drag_func=NULL);
 
     /*
      *  Updates the node, calling redraw if anything changed.

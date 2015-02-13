@@ -23,7 +23,7 @@ public:
      *
      *  node is the target Node
      */
-    explicit Control(Node* node);
+    explicit Control(Node* node, PyObject* drag_func=NULL);
 
     /*
      *  Destructor removes a reference to the drag function.

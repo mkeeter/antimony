@@ -27,7 +27,17 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
     Control* c = self.scene->getControl(self.node, lasti);
     if (!c)
     {
-        c = new ControlPoint(self.node);
+        if (kwargs.has_key("drag"))
+        {
+            auto d = extract<object&>(kwargs["drag"])().ptr();
+            Py_INCREF(d);
+            c = new ControlPoint(self.node, d);
+        }
+        else
+        {
+            c = new ControlPoint(self.node);
+        }
+
         self.scene->registerControl(self.node, lasti, c);
     }
 

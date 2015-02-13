@@ -14,8 +14,8 @@
 #include "app/undo/undo_change_expr.h"
 #include "app/undo/undo_delete_multi.h"
 
-Control::Control(Node* node)
-    : QObject(), node(node), glow(false), drag_func(NULL)
+Control::Control(Node* node, PyObject* drag_func)
+    : QObject(), node(node), glow(false), drag_func(drag_func)
 {
     connect(node, &Node::clearControlTouchedFlag,
             this, &Control::clearTouchedFlag);
