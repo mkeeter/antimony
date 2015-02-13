@@ -63,7 +63,15 @@ void Control::drag(QVector3D center)
     auto y = PyFloat_FromDouble(center.y());
     auto z = PyFloat_FromDouble(center.z());
 
-    PyObject_CallFunctionObjArgs(p, x, y, z);
+    if (drag_func)
+    {
+        PyObject_CallFunctionObjArgs(drag_func, p, x, y, z, NULL);
+        if (PyErr_Occurred)
+        {
+            PyErr_Print();
+            PyErr_Clear();
+        }
+    }
 
     Py_DECREF(p);
     Py_DECREF(x);
