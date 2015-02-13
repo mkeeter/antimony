@@ -58,7 +58,7 @@ void Control::beginDrag()
 
 void Control::drag(QVector3D center)
 {
-    auto p = node->proxy();
+    auto p = node->mutableProxy();
     auto x = PyFloat_FromDouble(center.x());
     auto y = PyFloat_FromDouble(center.y());
     auto z = PyFloat_FromDouble(center.z());

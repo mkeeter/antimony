@@ -38,8 +38,14 @@ public:
      */
     void updateName();
 
-    /** Returns a Python proxy that calls getDatum when getattr is called */
-    PyObject* proxy(Datum* caller=NULL);
+    /*
+     *  Returns a Python proxy that calls getDatum when getattr is called.
+     *
+     *  If caller is given, calls setUpstream during looking.
+     *  If settable is true, setattr can be called on the proxy object.
+     */
+    PyObject* proxy(Datum* caller=NULL, bool settable=false);
+    PyObject* mutableProxy();
 
     /** Looks up a particular Datum by name, return NULL otherwise. */
     Datum* getDatum(QString name) const;
