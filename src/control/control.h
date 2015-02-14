@@ -88,6 +88,8 @@ public:
      */
     void touch() { touched = true; }
 
+    bool isDragging() const { return is_dragging; }
+
 public slots:
     void clearTouchedFlag();
     void deleteIfNotTouched();
@@ -101,6 +103,7 @@ protected:
     QMap<EvalDatum*, QString> datums;
 
     PyObject* drag_func;
+    bool is_dragging;
 
     bool glow;
     bool touched;

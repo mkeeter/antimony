@@ -54,6 +54,8 @@ void Control::beginDrag()
     for (auto d : node->findChildren<EvalDatum*>(
                 QString(), Qt::FindDirectChildrenOnly))
         datums[d] = d->getExpr();
+
+    is_dragging = true;
 }
 
 void Control::drag(QVector3D center)
@@ -81,6 +83,8 @@ void Control::drag(QVector3D center)
 
 void Control::endDrag()
 {
+    is_dragging = false;
+
     bool started = false;
     for (auto d=datums.begin(); d != datums.end(); ++d)
         if (datums[d.key()] != d.key()->getExpr())

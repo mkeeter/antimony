@@ -60,8 +60,16 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
     float y = y_();
     float z = z_();
 
-    // Find a Control if it already exists.
+    // If this callback happened because we're dragging the generated
+    // Control, don't delete it; otherwise, clear it to make room for
+    // an updated Control.
     Control* c = self.scene->getControl(self.node, lasti);
+    if (c && !c->isDragging())
+    {
+        c->deleteLater();
+        c = NULL;
+    }
+
     if (!c)
     {
         if (kwargs.has_key("drag"))
