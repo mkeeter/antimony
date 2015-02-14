@@ -9,6 +9,36 @@
 
 using namespace boost::python;
 
+
+template <typename T, typename O>
+QVector<T> ScriptUIHooks::_extractList(O obj)
+{
+    QVector<T> out;
+    for (int i=0; i < len(obj); ++i)
+    {
+        extract<T> e(obj[i]);
+        if (!e.check())
+            throw hooks::HookException(
+                    "Failed to extract data from object.");
+        out << e();
+    }
+    return out;
+}
+
+template <typename T>
+QVector<T> ScriptUIHooks::extractList(object obj)
+{
+    auto tuple_ = extract<tuple>(obj);
+    if (tuple_.check())
+        return _extractList<T>(tuple_());
+
+    auto list_ = extract<list>(obj);
+    if (list_.check())
+        return _extractList<T>(list_());
+
+    throw hooks::HookException("Input must be a list or a tuple");
+}
+
 long ScriptUIHooks::getInstruction()
 {
     // Get the current bytecode instruction
@@ -133,18 +163,10 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
     QColor color = p->getColor();
     if (kwargs.has_key("color"))
     {
-        extract<tuple> color_tuple_(kwargs["color"]);
-        if (!color_tuple_.check())
-            throw hooks::HookException("color value must be a (r, g, b) tuple");
-        auto color_tuple = color_tuple_();
-        if (len(color_tuple) != 3)
+        auto rgb = extractList<int>(kwargs["color"]);
+        if (rgb.length() != 3)
             throw hooks::HookException("color tuple must have three values");
-        extract<int> red_(color_tuple[0]);
-        extract<int> green_(color_tuple[1]);
-        extract<int> blue_(color_tuple[2]);
-        if (!red_.check() || !green_.check() || !blue_.check())
-            throw hooks::HookException("color values must be integers");
-        color = QColor(red_(), green_(), blue_());
+        color = QColor(rgb[0], rgb[1], rgb[2]);
     }
 
     p->update(x, y, z, r, color);
