@@ -1,5 +1,7 @@
 #include "graph/hooks/ui.h"
 #include "graph/hooks/hooks.h"
+#include "graph/node/node.h"
+#include "graph/datum/datum.h"
 
 #include "ui/viewport/viewport_scene.h"
 
@@ -24,6 +26,15 @@ long ScriptUIHooks::getInstruction()
     return lasti;
 }
 
+QString ScriptUIHooks::getDatum(PyObject* obj)
+{
+    for (auto d : node->findChildren<Datum*>(
+                QString(), Qt::FindDirectChildrenOnly))
+        if (d->getValue() == obj)
+            return d->objectName();
+    return QString();
+}
+
 object ScriptUIHooks::point(tuple args, dict kwargs)
 {
     ScriptUIHooks& self = extract<ScriptUIHooks&>(args[0])();
@@ -31,27 +42,6 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
     // Find the instruction at which this callback happened
     // (used as a unique identifier for the Control).
     long lasti = getInstruction();
-
-    // Find a Control if it already exists.
-    Control* c = self.scene->getControl(self.node, lasti);
-    if (!c)
-    {
-        if (kwargs.has_key("drag"))
-        {
-            auto d = extract<object>(kwargs["drag"])().ptr();
-            Py_INCREF(d);
-            c = new ControlPoint(self.node, d);
-        }
-        else
-        {
-            c = new ControlPoint(self.node);
-        }
-
-        self.scene->registerControl(self.node, lasti, c);
-    }
-
-    auto p = dynamic_cast<ControlPoint*>(c);
-    Q_ASSERT(p);
 
     if (len(args) != 4)
         throw hooks::HookException("Expected x, y, z as arguments");
@@ -69,6 +59,59 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
     float x = x_();
     float y = y_();
     float z = z_();
+
+    // Find a Control if it already exists.
+    Control* c = self.scene->getControl(self.node, lasti);
+    if (!c)
+    {
+        if (kwargs.has_key("drag"))
+        {
+            auto d = extract<object>(kwargs["drag"])().ptr();
+            Py_INCREF(d);
+            c = new ControlPoint(self.node, d);
+        }
+        else
+        {
+            // Try to automatically generate a drag function by looking to see
+            // if the x, y, z arguments match datum values; if so, make a drag
+            // function that drags these datums.
+            auto px = self.getDatum(extract<object>(args[1])().ptr());
+            auto py = self.getDatum(extract<object>(args[2])().ptr());
+            auto pz = self.getDatum(extract<object>(args[3])().ptr());
+            QString drag =
+                "def drag(this, x, y, z):\n"
+                "    pass\n";
+            if (!px.isNull())
+                drag += QString("    this.%1 = x\n").arg(px);
+            if (!py.isNull())
+                drag += QString("    this.%1 = y\n").arg(py);
+            if (!pz.isNull())
+                drag += QString("    this.%1 = z\n").arg(pz);
+
+            auto globals = PyDict_New();
+            PyDict_SetItemString(globals, "__builtins__", PyEval_GetBuiltins());
+            auto locals = Py_BuildValue("{}");
+            auto out = PyRun_String(
+                    drag.toStdString().c_str(),
+                    Py_file_input, globals, locals);
+            Q_ASSERT(!PyErr_Occurred());
+
+            auto drag_func = PyDict_GetItemString(locals, "drag");
+            Q_ASSERT(drag_func);
+            Py_INCREF(drag_func);
+
+            // Clean up references
+            for (auto obj : {globals, locals, out})
+                Py_DECREF(obj);
+
+            c = new ControlPoint(self.node, drag_func);
+        }
+
+        self.scene->registerControl(self.node, lasti, c);
+    }
+
+    auto p = dynamic_cast<ControlPoint*>(c);
+    Q_ASSERT(p);
 
     float r = p->getR();
     if (kwargs.has_key("r"))
