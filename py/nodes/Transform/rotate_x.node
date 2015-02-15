@@ -1,0 +1,24 @@
+import fab
+
+title('Rotate X')
+
+input('_x', float)
+input('y', float)
+input('z', float)
+input('a', float, 45)
+
+input('input', fab.types.Shape)
+output('shape', fab.shapes.rotate_x(input, a, y, z))
+
+# UI
+rad = math.radians(a)
+fab.ui.wireframe([(_x, y + math.cos(rad), z + math.sin(rad)),
+                  (_x, y, z),
+                  (_x, y + 1, z)], color=fab.color.teal)
+fab.ui.point(_x, y, z, color=fab.color.teal)
+
+def drag_pt(this, x, y, z):
+    this.a = math.degrees(math.atan2(z - this.z, y - this.y))
+fab.ui.point(_x, y + math.cos(rad), z + math.sin(rad), color=fab.color.teal,
+             drag=drag_pt, relative=False)
+
