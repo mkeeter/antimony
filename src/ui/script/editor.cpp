@@ -145,7 +145,7 @@ void ScriptEditor::highlightError(int lineno)
 
     line.cursor = textCursor();
     line.cursor.setPosition(
-            document()->findBlockByLineNumber(lineno - 1).position());
+            document()->findBlockByLineNumber(lineno - 1).position() + 1);
     line.cursor.clearSelection();
 
     setExtraSelections({line});
