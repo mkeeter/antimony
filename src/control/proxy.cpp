@@ -78,17 +78,13 @@ void ControlProxy::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     click_pos = event->pos();
     control->beginDrag();
-
-    if (event->button() != Qt::LeftButton) //|| !control->onClick())
-        QGraphicsObject::mousePressEvent(event);
+    QGraphicsObject::mousePressEvent(event);
 }
 
 void ControlProxy::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
-    Q_UNUSED(event);
-    if (scene()->mouseGrabberItem() == this)
-        ungrabMouse();
     control->endDrag();
+    QGraphicsObject::mouseReleaseEvent(event);
 }
 
 void ControlProxy::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
