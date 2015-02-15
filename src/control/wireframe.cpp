@@ -21,12 +21,19 @@ void ControlWireframe::update(QVector<QVector3D> pts_, float t_, QColor color_)
 
 QPainterPath ControlWireframe::shape(QMatrix4x4 m) const
 {
-    QPainterPath path;
+    QPainterPathStroker s;
+    s.setWidth(20);
+    return s.createStroke(path(m));
+}
+
+QPainterPath ControlWireframe::path(QMatrix4x4 m) const
+{
+    QPainterPath out;
     if (!pts.isEmpty())
-        path.moveTo((m * pts[0]).toPointF());
+        out.moveTo((m * pts[0]).toPointF());
     for (auto p : pts)
-        path.lineTo((m * p).toPointF());
-    return path;
+        out.lineTo((m * p).toPointF());
+    return out;
 }
 
 void ControlWireframe::paint(QMatrix4x4 m, bool highlight, QPainter* painter)
@@ -35,9 +42,9 @@ void ControlWireframe::paint(QMatrix4x4 m, bool highlight, QPainter* painter)
     {
         painter->setBrush(Qt::NoBrush);
         painter->setPen(QPen(QColor(255, 255, 255, Colors::base02.red()), 20));
-        painter->drawPath(shape(m));
+        painter->drawPath(path(m));
     }
 
     painter->setPen(QPen(highlight ? Colors::highlight(color) : color, t));
-    painter->drawPath(shape(m));
+    painter->drawPath(path(m));
 }

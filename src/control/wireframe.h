@@ -22,6 +22,8 @@ public:
     QColor getColor() const { return color; }
 
 protected:
+    QPainterPath path(QMatrix4x4 m) const;
+
     QVector<QVector3D> pts;
     float t;
     QColor color;
