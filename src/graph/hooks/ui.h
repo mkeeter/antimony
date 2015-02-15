@@ -14,6 +14,8 @@ struct ScriptUIHooks
     static long getInstruction();
     static boost::python::object point(boost::python::tuple args,
                                        boost::python::dict kwargs);
+    static boost::python::object wireframe(boost::python::tuple args,
+                                       boost::python::dict kwargs);
 
     /*
      *  Tries to extract an RGB color tuple from kwargs.

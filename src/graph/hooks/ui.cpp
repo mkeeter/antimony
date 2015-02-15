@@ -6,6 +6,7 @@
 #include "ui/viewport/viewport_scene.h"
 
 #include "control/point.h"
+#include "control/wireframe.h"
 
 using namespace boost::python;
 
@@ -205,6 +206,37 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
     p->touch();
 
     // Return None
+    return object();
+}
+
+object ScriptUIHooks::wireframe(tuple args, dict kwargs)
+{
+    ScriptUIHooks& self = extract<ScriptUIHooks&>(args[0])();
+
+    // Find the instruction at which this callback happened
+    // (used as a unique identifier for the Control).
+    long lasti = getInstruction();
+
+    if (len(args) != 2)
+        throw hooks::HookException("Expected list of 3-tuples as argument");
+
+    auto v = extractVectors(extract<object>(args[1])());
+    if (v.isEmpty())
+        throw hooks::HookException("Wireframe must have at least one point");
+
+    ControlWireframe* w = dynamic_cast<ControlWireframe*>(
+            self.scene->getControl(self.node, lasti));
+    if (!w)
+    {
+        w = new ControlWireframe(self.node);
+        self.scene->registerControl(self.node, lasti, w);
+    }
+
+    const float t = getFloat(w->getT(), kwargs, "t");
+    const QColor color = getColor(w->getColor(), kwargs);
+    w->update(v, t, color);
+    w->touch();
+
     return object();
 }
 

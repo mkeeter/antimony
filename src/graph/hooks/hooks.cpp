@@ -44,7 +44,8 @@ BOOST_PYTHON_MODULE(_hooks)
                 "      where this is a representation of the parent\n"
                 "      object and x, y, z are the position to which\n"
                 "      the point has been dragged."
-                );
+                )
+        .def("wireframe", raw_function(&ScriptUIHooks::wireframe, 1));
 
     register_exception_translator<hooks::HookException>(
             hooks::onHookException);
