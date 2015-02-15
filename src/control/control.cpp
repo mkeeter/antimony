@@ -14,18 +14,26 @@
 #include "app/undo/undo_change_expr.h"
 #include "app/undo/undo_delete_multi.h"
 
-Control::Control(Node* node, QObject* parent)
-    : QObject(parent), node(node), glow(false)
+Control::Control(Node* node, PyObject* drag_func)
+    : QObject(), node(node), drag_func(drag_func), glow(false)
 {
-    if (node)
-        connect(node, &Node::destroyed, this, &Control::deleteLater);
+    connect(node, &Node::clearControlTouchedFlag,
+            this, &Control::clearTouchedFlag);
+    connect(node, &Node::deleteUntouchedControls,
+            this, &Control::deleteIfNotTouched);
+
+    connect(node, &Node::destroyed, this, &Control::deleteLater);
 }
 
-QPainterPath Control::shape(QMatrix4x4 m, QMatrix4x4 t) const
+Control::~Control()
 {
-    QPainterPath p;
-    p.addRect(bounds(m, t));
-    return p;
+    Py_XDECREF(drag_func);
+}
+
+QRectF Control::bounds(QMatrix4x4 m) const
+{
+    // Default implementation is the bounding rect of shape().
+    return shape(m).boundingRect();
 }
 
 Node* Control::getNode() const
@@ -33,50 +41,53 @@ Node* Control::getNode() const
     return node;
 }
 
-void Control::watchDatums(QVector<QString> datums)
-{
-    for (auto n : datums)
-    {
-        Datum* d = node->getDatum(n);
-        Q_ASSERT(d);
-        connect(d, &Datum::changed, this, &Control::redraw);
-        if (auto e = dynamic_cast<EvalDatum*>(d))
-            watched[e] = "";
-    }
-}
-
-double Control::getValue(QString name) const
-{
-    Datum* d = node->getDatum(name);
-    Q_ASSERT(d);
-
-    double v = PyFloat_AsDouble(d->getValue());
-    Q_ASSERT(!PyErr_Occurred());
-
-    return v;
-}
-
 void Control::deleteNode(QString text)
 {
-    if (parent())
-        dynamic_cast<Control*>(parent())->deleteNode(text);
-    else
-        App::instance()->pushStack(new UndoDeleteMultiCommand({node}, {}));
+    App::instance()->pushStack(new UndoDeleteMultiCommand({node}, {}, text));
 }
 
 void Control::beginDrag()
 {
-    for (auto d=watched.begin(); d != watched.end(); ++d)
+    // Store all datum expressions so that we can make an undo action
+    // that undoes the upcoming drag operation.
+    datums.clear();
+    for (auto d : node->findChildren<EvalDatum*>(
+                QString(), Qt::FindDirectChildrenOnly))
+        datums[d] = d->getExpr();
+
+    is_dragging = true;
+}
+
+void Control::drag(QVector3D center)
+{
+    auto p = node->mutableProxy();
+    auto x = PyFloat_FromDouble(center.x());
+    auto y = PyFloat_FromDouble(center.y());
+    auto z = PyFloat_FromDouble(center.z());
+
+    if (drag_func)
     {
-        watched[d.key()] = d.key()->getExpr();
+        PyObject_CallFunctionObjArgs(drag_func, p, x, y, z, NULL);
+        if (PyErr_Occurred())
+        {
+            PyErr_Print();
+            PyErr_Clear();
+        }
     }
+
+    Py_DECREF(p);
+    Py_DECREF(x);
+    Py_DECREF(y);
+    Py_DECREF(z);
 }
 
 void Control::endDrag()
 {
+    is_dragging = false;
+
     bool started = false;
-    for (auto d=watched.begin(); d != watched.end(); ++d)
-        if (watched[d.key()] != d.key()->getExpr())
+    for (auto d=datums.begin(); d != datums.end(); ++d)
+        if (datums[d.key()] != d.key()->getExpr())
         {
             if (!started)
             {
@@ -85,7 +96,7 @@ void Control::endDrag()
             }
             App::instance()->pushStack(
                     new UndoChangeExprCommand(
-                        d.key(), watched[d.key()], d.key()->getExpr()));
+                        d.key(), datums[d.key()], d.key()->getExpr()));
         }
 
     if (started)
@@ -98,61 +109,16 @@ void Control::setGlow(bool g)
     {
         glow = g;
         emit(redraw());
-        for (auto c : findChildren<Control*>(
-                    QString(),
-                    Qt::FindDirectChildrenOnly))
-            c->setGlow(g);
     }
 }
 
-void Control::dragValue(QString name, double delta)
+void Control::clearTouchedFlag()
 {
-    Datum* d = node->getDatum(name);
-    Q_ASSERT(d);
-
-    FloatDatum* f = dynamic_cast<FloatDatum*>(d);
-    Q_ASSERT(f);
-
-    f->dragValue(delta);
+    touched = false;
 }
 
-void Control::setValue(QString name, double new_value)
+void Control::deleteIfNotTouched()
 {
-    Datum* d = node->getDatum(name);
-    Q_ASSERT(d);
-
-    FloatDatum* f = dynamic_cast<FloatDatum*>(d);
-    Q_ASSERT(f);
-
-    bool ok = false;
-    f->getExpr().toFloat(&ok);
-    if (ok)
-        f->setExpr(QString::number(new_value));
+    if (!touched)
+        deleteLater();
 }
-
-QColor Control::defaultPenColor() const
-{
-    return Colors::base04;
-}
-
-QColor Control::defaultBrushColor() const
-{
-    return Colors::dim(defaultPenColor());
-}
-
-void Control::setDefaultPen(bool highlight, QPainter *painter) const
-{
-    if (highlight)
-        painter->setPen(QPen(Colors::highlight(defaultPenColor()), 2));
-    else
-        painter->setPen(QPen(defaultPenColor(), 2));
-}
-
-void Control::setDefaultBrush(bool highlight, QPainter *painter) const
-{
-    if (highlight)
-        painter->setBrush(QBrush(Colors::highlight(defaultBrushColor())));
-    else
-        painter->setBrush(QBrush(defaultBrushColor()));
-}
-

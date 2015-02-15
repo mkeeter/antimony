@@ -38,8 +38,14 @@ public:
      */
     void updateName();
 
-    /** Returns a Python proxy that calls getDatum when getattr is called */
-    PyObject* proxy(Datum* caller=NULL);
+    /*
+     *  Returns a Python proxy that calls getDatum when getattr is called.
+     *
+     *  If caller is given, calls setUpstream during looking.
+     *  If settable is true, setattr can be called on the proxy object.
+     */
+    PyObject* proxy(Datum* caller=NULL, bool settable=false);
+    PyObject* mutableProxy();
 
     /** Looks up a particular Datum by name, return NULL otherwise. */
     Datum* getDatum(QString name) const;
@@ -89,6 +95,19 @@ signals:
      *  (usually only happens for ScriptNodes)
      */
     void titleChanged(QString new_title);
+
+    /*
+     *  Emitted before evaluating a script that modifies Control objects.
+     *
+     *  Sets the touched flag to false so that afterwards Controls can
+     *  see if they've been touched or not (and delete themselves).
+     */
+    void clearControlTouchedFlag();
+
+    /*
+     *  Used to request that Controls with touched == false delete themselves.
+     */
+    void deleteUntouchedControls();
 
 protected:
     /** Returns a human-readable name based on type.

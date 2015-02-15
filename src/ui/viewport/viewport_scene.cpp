@@ -15,23 +15,34 @@ ViewportScene::ViewportScene(QObject* parent)
     // Nothing to do here
 }
 
-void ViewportScene::makeUIfor(Node* n)
+void ViewportScene::registerControl(Node* n, long index, Control* c)
 {
-    auto c = makeControlFor(n);
-    controls[n] = c;
-    if (c)
-    {
-        connect(c, &Control::glowChanged,
-                this, &ViewportScene::onGlowChange);
-        connect(c, &Control::glowChanged,
-                this, &ViewportScene::glowChanged);
-    }
+    connect(c, &Control::glowChanged,
+            this, &ViewportScene::onGlowChange);
+    connect(c, &Control::glowChanged,
+            this, &ViewportScene::glowChanged);
+
+    controls[n][index] = c;
 
     for (auto itr = scenes.begin(); itr != scenes.end(); ++itr)
-    {
         makeProxyFor(c, itr.key());
+}
+
+Control* ViewportScene::getControl(Node* n, long index) const
+{
+    if (!controls.contains(n))
+        return NULL;
+    if (!controls[n].contains(index))
+        return NULL;
+    if (controls[n][index].isNull())
+        return NULL;
+    return controls[n][index];
+}
+
+void ViewportScene::makeRenderWorkersFor(Node* n)
+{
+    for (auto itr = scenes.begin(); itr != scenes.end(); ++itr)
         makeRenderWorkersFor(n, itr.key());
-    }
 
     // Behold, the wonders of C++11 and Qt5:
     connect(n, &Node::datumsChanged,
@@ -49,30 +60,28 @@ Viewport* ViewportScene::newViewport()
     prune();
 
     for (auto itr = controls.begin(); itr != controls.end(); ++itr)
-    {
-        makeProxyFor(itr.value(), v);
-        makeRenderWorkersFor(itr.key(), v);
-    }
+        for (auto i = itr.value().begin(); i != itr.value().end(); ++i)
+            if (!i.value().isNull())
+            {
+                makeProxyFor(i.value(), v);
+                makeRenderWorkersFor(itr.key(), v);
+            }
 
     return v;
 }
 
-void ViewportScene::makeProxyFor(Control* c, Viewport* v, ControlProxy* parent)
+void ViewportScene::makeProxyFor(Control* c, Viewport* v)
 {
     if (!c)
         return;
 
-    auto p = new ControlProxy(c, v, parent);
-    if (parent == NULL)
-        scenes[v]->addItem(p);
+    auto p = new ControlProxy(c, v);
+    scenes[v]->addItem(p);
+
     connect(v, &Viewport::viewChanged,
             p, &ControlProxy::redraw);
     connect(c, &ControlProxy::destroyed,
             this, &ViewportScene::prune);
-
-    for (auto f : c->findChildren<Control*>(
-                QString(), Qt::FindDirectChildrenOnly))
-        makeProxyFor(f, v, p);
 }
 
 void ViewportScene::makeRenderWorkerFor(Datum* d, Viewport* v)
@@ -92,7 +101,7 @@ void ViewportScene::makeRenderWorkersFor(Node* n, Viewport* v)
 
 void ViewportScene::prune()
 {
-    QMap<QPointer<Node>, Control*> new_controls;
+    decltype(controls) new_controls;
 
     for (auto itr = controls.begin(); itr != controls.end(); ++itr)
         if (itr.key())
@@ -127,114 +136,8 @@ void ViewportScene::onDatumsChanged(Node* n)
 
 void ViewportScene::onGlowChange(Node* n, bool g)
 {
-    Q_ASSERT(controls.contains(n));
-    if (controls[n])
-        controls[n]->setGlow(g);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-
-#include "control/2d/circle_control.h"
-#include "control/2d/triangle_control.h"
-#include "control/2d/text_control.h"
-#include "control/2d/point2d_control.h"
-#include "control/2d/rectangle_control.h"
-
-#include "control/3d/cube_control.h"
-#include "control/3d/sphere_control.h"
-#include "control/3d/cylinder_control.h"
-#include "control/3d/cone_control.h"
-#include "control/3d/extrude_control.h"
-#include "control/3d/point3d_control.h"
-
-#include "control/deform/attract_control.h"
-#include "control/deform/repel_control.h"
-#include "control/deform/scalex_control.h"
-#include "control/deform/scaley_control.h"
-#include "control/deform/scalez_control.h"
-
-#include "control/transform/rotatex_control.h"
-#include "control/transform/rotatey_control.h"
-#include "control/transform/rotatez_control.h"
-#include "control/transform/reflectx_control.h"
-#include "control/transform/reflecty_control.h"
-#include "control/transform/reflectz_control.h"
-#include "control/transform/recenter_control.h"
-#include "control/transform/translate_control.h"
-
-#include "control/iterate/iterate2d_control.h"
-#include "control/iterate/iterate_polar_control.h"
-
-//#include "control/variable/slider_control.h"
-
-Control* ViewportScene::makeControlFor(Node* node) const
-{
-   switch (node->getNodeType())
-    {
-        case NodeType::CIRCLE:
-            return new CircleControl(node);
-        case NodeType::TRIANGLE:
-            return new TriangleControl(node);
-        case NodeType::POINT2D:
-            return new Point2DControl(node);
-        case NodeType::RECTANGLE:
-            return new RectangleControl(node);
-        case NodeType::CUBE:
-            return new CubeControl(node);
-        case NodeType::SPHERE:
-            return new SphereControl(node);
-        case NodeType::CYLINDER:
-            return new CylinderControl(node);
-        case NodeType::CONE:
-            return new ConeControl(node);
-        case NodeType::EXTRUDE:
-            return new ExtrudeControl(node);
-        case NodeType::POINT3D:
-            return new Point3DControl(node);
-        case NodeType::TEXT:
-            return new TextControl(node);
-        case NodeType::ATTRACT:
-            return new AttractControl(node);
-        case NodeType::REPEL:
-            return new RepelControl(node);
-        case NodeType::SCALEX:
-            return new ScaleXControl(node);
-        case NodeType::SCALEY:
-            return new ScaleYControl(node);
-        case NodeType::SCALEZ:
-            return new ScaleZControl(node);
-        case NodeType::ROTATEX:
-            return new RotateXControl(node);
-        case NodeType::ROTATEY:
-            return new RotateYControl(node);
-        case NodeType::ROTATEZ:
-            return new RotateZControl(node);
-        case NodeType::REFLECTX:
-            return new ReflectXControl(node);
-        case NodeType::REFLECTY:
-            return new ReflectYControl(node);
-        case NodeType::REFLECTZ:
-            return new ReflectZControl(node);
-        case NodeType::RECENTER:
-            return new RecenterControl(node);
-        case NodeType::TRANSLATE:
-            return new TranslateControl(node);
-        case NodeType::ITERATE2D:
-            return new Iterate2DControl(node);
-        case NodeType::ITERATE_POLAR:
-            return new IteratePolarControl(node);
-        case NodeType::UNION:
-        case NodeType::BLEND:
-        case NodeType::INTERSECTION:
-        case NodeType::DIFFERENCE:
-        case NodeType::OFFSET:
-        case NodeType::CLEARANCE:
-        case NodeType::SHELL:
-        case NodeType::SCRIPT:
-        case NodeType::DUMMY:
-            return NULL;
-    }
-   Q_ASSERT(false);
-   return NULL;
+    if (controls.contains(n))
+        for (auto itr = controls[n].begin(); itr != controls[n].end(); ++itr)
+            if (!itr.value().isNull())
+                itr.value()->setGlow(g);
 }

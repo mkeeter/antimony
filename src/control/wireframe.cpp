@@ -1,67 +1,55 @@
 #include "control/wireframe.h"
 #include "ui/util/colors.h"
 
-WireframeControl::WireframeControl(Node* node, QObject* parent)
-    : Control(node, parent)
+ControlWireframe::ControlWireframe(Node* node)
+    : Control(node), t(3), color(Colors::blue), close(false)
 {
     // Nothing to do here
 }
 
-QPainterPath WireframeControl::shape(QMatrix4x4 m, QMatrix4x4 t) const
+void ControlWireframe::update(QVector<QVector3D> pts_, float t_,
+                              QColor color_, bool close_)
 {
-    QPainterPathStroker stroker;
-    stroker.setWidth(4);
-    QPainterPath path = stroker.createStroke(linePath(m, t));
-    path.addPath(pointPath(m, t));
-    return path;
+    bool changed = (pts != pts_) || (t != t_) ||
+                   (color != color_) || (close != close_);
+
+    pts = pts_;
+    t = t_;
+    color = color_;
+    close = close_;
+
+    if (changed)
+        emit(redraw());
 }
 
-QRectF WireframeControl::bounds(QMatrix4x4 m, QMatrix4x4 t) const
+QPainterPath ControlWireframe::shape(QMatrix4x4 m) const
 {
-    QPainterPathStroker stroker;
-    stroker.setWidth(20);
-    QPainterPath path = stroker.createStroke(linePath(m, t));
-    path.addPath(pointPath(m, t));
-    return path.boundingRect();
+    QPainterPathStroker s;
+    s.setWidth(20);
+    return s.createStroke(path(m));
 }
 
-void WireframeControl::paint(QMatrix4x4 m, QMatrix4x4 t,
-                             bool highlight, QPainter* painter)
+QPainterPath ControlWireframe::path(QMatrix4x4 m) const
+{
+    QPainterPath out;
+    if (!pts.isEmpty())
+        out.moveTo((m * pts[0]).toPointF());
+    for (auto p : pts)
+        out.lineTo((m * p).toPointF());
+    if (close && !pts.isEmpty())
+        out.lineTo((m* pts.front()).toPointF());
+    return out;
+}
+
+void ControlWireframe::paint(QMatrix4x4 m, bool highlight, QPainter* painter)
 {
     if (glow)
     {
         painter->setBrush(Qt::NoBrush);
         painter->setPen(QPen(QColor(255, 255, 255, Colors::base02.red()), 20));
-        painter->drawPath(linePath(m, t));
-        painter->drawPath(pointPath(m, t));
+        painter->drawPath(path(m));
     }
 
-    setDefaultPen(highlight, painter);
-    painter->drawPath(linePath(m, t));
-    setDefaultBrush(highlight, painter);
-    painter->drawPath(pointPath(m, t));
-}
-
-QPainterPath WireframeControl::linePath(QMatrix4x4 m, QMatrix4x4 t) const
-{
-    QPainterPath path;
-    for (auto line : lines(m, t))
-    {
-        path.moveTo((m*line.front()).toPointF());
-        for (auto pt : line)
-            path.lineTo((m*pt).toPointF());
-    }
-    return path;
-}
-
-QPainterPath WireframeControl::pointPath(QMatrix4x4 m, QMatrix4x4 t) const
-{
-    QPainterPath path;
-    for (auto ptr : points(m, t))
-    {
-        QPointF pt = (m*ptr.first).toPointF();
-        float r = ptr.second;
-        path.addEllipse(QRectF(pt.x() - r, pt.y() - r, 2*r, 2*r));
-    }
-    return path;
+    painter->setPen(QPen(highlight ? Colors::highlight(color) : color, t));
+    painter->drawPath(path(m));
 }

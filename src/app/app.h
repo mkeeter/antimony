@@ -48,6 +48,7 @@ public:
     NodeRoot* getNodeRoot() const { return root; }
 
     GraphScene* getGraphScene() const { return graph_scene; }
+    ViewportScene* getViewScene() const { return view_scene; }
 
     /*
      *  Returns a window title in the form

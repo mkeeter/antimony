@@ -159,12 +159,6 @@ void Viewport::makeNodeAtCursor(NodeConstructorFunction f)
 
     App::instance()->newNode(n);
     App::instance()->pushStack(new UndoAddNodeCommand(n));
-
-    if (auto proxy = getControlProxy(n))
-    {
-        proxy->setClickPos(scene_pos);
-        proxy->grabMouse();
-    }
 }
 
 float Viewport::getZmax() const

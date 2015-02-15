@@ -7,10 +7,8 @@
 #include "control/control.h"
 #include "ui/viewport/viewport.h"
 
-ControlProxy::ControlProxy(Control* control, Viewport* viewport,
-                           QGraphicsItem* parent)
-    : QGraphicsObject(parent), control(control),
-      viewport(viewport), hover(false)
+ControlProxy::ControlProxy(Control* control, Viewport* viewport)
+    : control(control), viewport(viewport), hover(false)
 {
     setFlags(QGraphicsItem::ItemIsSelectable |
              QGraphicsItem::ItemIsFocusable);
@@ -32,14 +30,14 @@ void ControlProxy::redraw()
 QRectF ControlProxy::boundingRect() const
 {
     return (control && control->getNode())
-        ? control->bounds(getMatrix(), viewport->getTransformMatrix())
+        ? control->bounds(getMatrix())
         : QRectF();
 }
 
 QPainterPath ControlProxy::shape() const
 {
     return (control && control->getNode())
-        ? control->shape(getMatrix(), viewport->getTransformMatrix())
+        ? control->shape(getMatrix())
         : QPainterPath();
 }
 
@@ -51,8 +49,7 @@ void ControlProxy::paint(QPainter* painter,
     Q_UNUSED(widget);
 
     if (control && control->getNode())
-        control->paint(getMatrix(), viewport->getTransformMatrix(),
-                       isSelected() || hover, painter);
+        control->paint(getMatrix(), isSelected() || hover, painter);
 }
 
 void ControlProxy::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
@@ -79,10 +76,10 @@ void ControlProxy::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 void ControlProxy::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    click_pos = event->pos();
+    //click_pos = event->pos();
     control->beginDrag();
 
-    if (event->button() != Qt::LeftButton || !control->onClick())
+    if (event->button() != Qt::LeftButton) //|| !control->onClick())
         QGraphicsObject::mousePressEvent(event);
 }
 
@@ -99,11 +96,11 @@ void ControlProxy::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     QGraphicsObject::mouseMoveEvent(event);
 
     QMatrix4x4 mi = getMatrix().inverted();
-    QVector3D p0 = mi * QVector3D(click_pos);
+    QVector3D p0 = mi * QVector3D();//click_pos);
     QVector3D p1 = mi * QVector3D(event->pos());
 
-    control->drag(p1, p1 - p0);
-    click_pos = event->pos();
+    control->drag(p1);//, p1 - p0);
+    //click_pos = event->pos();
 }
 
 void ControlProxy::keyPressEvent(QKeyEvent* event)

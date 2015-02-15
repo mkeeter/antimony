@@ -49,7 +49,7 @@ void Node::updateName()
         d->setExpr(r->getName(d->getExpr() + "_"));
 }
 
-PyObject* Node::proxy(Datum* caller)
+PyObject* Node::proxy(Datum* caller, bool settable)
 {
     auto _proxy_module = PyImport_ImportModule("_proxy");
     auto p = PyObject_CallMethod(_proxy_module, "NodeProxy", NULL);
@@ -58,9 +58,15 @@ PyObject* Node::proxy(Datum* caller)
     auto& proxy = boost::python::extract<NodeProxy&>(p)();
     proxy.node = this;
     proxy.caller = caller;
+    proxy.settable = settable;
 
     Py_DECREF(_proxy_module);
     return p;
+}
+
+PyObject* Node::mutableProxy()
+{
+    return proxy(NULL, true);
 }
 
 Datum* Node::getDatum(QString name) const

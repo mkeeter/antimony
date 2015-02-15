@@ -159,7 +159,10 @@ PyObject* ScriptDatum::getCurrentValue()
     // Assert that there isn't any recursion going on here.
     Q_ASSERT(globals == NULL);
 
+    // Reset all of the touched flags, both on datums and Controls
     touched.clear();
+    emit(static_cast<Node*>(parent())->clearControlTouchedFlag());
+
     datums_changed = false;
     QStringList datums_before;
     for (auto o : parent()->findChildren<Datum*>(
@@ -171,8 +174,10 @@ PyObject* ScriptDatum::getCurrentValue()
     PyObject* sys_mod = PyImport_ImportModule("sys");
     PyObject* io_mod = PyImport_ImportModule("io");
     PyObject* stdout_obj = PyObject_GetAttrString(sys_mod, "stdout");
+    PyObject* stderr_obj = PyObject_GetAttrString(sys_mod, "stderr");
     PyObject* string_out = PyObject_CallMethod(io_mod, "StringIO", NULL);
     PyObject_SetAttrString(sys_mod, "stdout", string_out);
+    PyObject_SetAttrString(sys_mod, "stderr", string_out);
     Q_ASSERT(!PyErr_Occurred());
 
     PyObject* out = EvalDatum::getCurrentValue();
@@ -186,11 +191,9 @@ PyObject* ScriptDatum::getCurrentValue()
 
     // Swap stdout back into sys.stdout
     PyObject_SetAttrString(sys_mod, "stdout", stdout_obj);
-    Py_DECREF(sys_mod);
-    Py_DECREF(io_mod);
-    Py_DECREF(stdout_obj);
-    Py_DECREF(string_out);
-    Py_DECREF(s);
+    PyObject_SetAttrString(sys_mod, "stderr", stderr_obj);
+    for (auto o : {sys_mod, io_mod, stdout_obj, stderr_obj, string_out, s})
+        Py_DECREF(o);
 
     // Look at all of the datums (other than the script datum and other
     // reserved datums), deleting them if they have not been touched.
@@ -217,6 +220,9 @@ PyObject* ScriptDatum::getCurrentValue()
         }
     }
 
+    // Request that all untouched Controls delete themselves.
+    emit(static_cast<Node*>(parent())->deleteUntouchedControls());
+
     globals = NULL;
 
     if (datums_changed)
@@ -225,6 +231,9 @@ PyObject* ScriptDatum::getCurrentValue()
         emit(static_cast<Node*>(parent())->datumOrderChanged());
 
 
+    // Filter out default arguments to input datums, to make the script
+    // simpler to read (because input('x', float, 12.0f) looks odd when
+    // x doesn't have a value of 12 anymore).
     QRegExp input("(.*input\\([^(),]+,[^(),]+),[^(),]+(\\).*)");
     while (input.exactMatch(expr))
     {
