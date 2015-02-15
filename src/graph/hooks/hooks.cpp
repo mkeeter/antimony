@@ -32,7 +32,7 @@ BOOST_PYTHON_MODULE(_hooks)
         .def("__call__", &ScriptTitleHook::call);
 
     class_<ScriptUIHooks>("ScriptUIHooks", init<>())
-        .def("point", raw_function(&ScriptUIHooks::point, 3),
+        .def("point", raw_function(&ScriptUIHooks::point),
                 "point(x, y, z, r=10, color=(150, 150, 255), drag=None)\n"
                 "    Constructs a point in the 3D viewport\n"
                 "    x, y, z are the point's position\n\n"
@@ -45,7 +45,7 @@ BOOST_PYTHON_MODULE(_hooks)
                 "      object and x, y, z are the position to which\n"
                 "      the point has been dragged."
                 )
-        .def("wireframe", raw_function(&ScriptUIHooks::wireframe, 1));
+        .def("wireframe", raw_function(&ScriptUIHooks::wireframe));
 
     register_exception_translator<hooks::HookException>(
             hooks::onHookException);
