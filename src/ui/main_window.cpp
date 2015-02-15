@@ -210,8 +210,8 @@ void MainWindow::populateUserScripts(QMenu* menu, bool recenter, Viewport* v)
 #endif
 
     QDirIterator itr(path.join("/"), QDirIterator::Subdirectories);
-    QList<QRegExp> title_regexs= {QRegExp(".*title\\('+([^()']+)'+\\).*"),
-                                  QRegExp(".*title\\(\"+([^\"()]+)\"+\\).*")};
+    QList<QRegExp> title_regexs= {QRegExp(".*title\\('+([^']+)'+\\).*"),
+                                  QRegExp(".*title\\(\"+([^\"]+)\"+\\).*")};
 
     // Extract all of valid filenames into a QStringList.
     QStringList node_filenames;
