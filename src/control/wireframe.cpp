@@ -38,8 +38,6 @@ void ControlWireframe::paint(QMatrix4x4 m, bool highlight, QPainter* painter)
         painter->drawPath(shape(m));
     }
 
-    QColor edge = Colors::dim(color);
-    painter->setPen(QPen(highlight ? Colors::highlight(edge) : edge, 2));
-    painter->setBrush(QBrush(highlight ? Colors::highlight(color) : color));
+    painter->setPen(QPen(highlight ? Colors::highlight(color) : color, t));
     painter->drawPath(shape(m));
 }
