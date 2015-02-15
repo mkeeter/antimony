@@ -183,45 +183,6 @@ void MainWindow::addNodeToMenu(QStringList category, QString name, QMenu* menu,
             [=]{ this->createNew(recenter, f, v); });
 }
 
-void MainWindow::populateBuiltIn(QMenu* menu, bool recenter, Viewport* v)
-{
-    auto add = [&](QString category, QString name, NodeConstructor constructor)
-    {
-        addNodeToMenu({category}, name, menu, recenter, constructor, v);
-    };
-
-    add("2D", "Circle", CircleNode);
-    add("2D", "Point", Point2DNode);
-    add("2D", "Triangle", TriangleNode);
-    add("2D", "Rectangle", RectangleNode);
-    add("2D", "Text", TextNode);
-
-    add("3D", "Point", Point3DNode);
-    add("3D", "Cube", CubeNode);
-    add("3D", "Sphere", SphereNode);
-    add("3D", "Cylinder", CylinderNode);
-    add("3D", "Cone", ConeNode);
-    add("3D", "Extrude", ExtrudeNode);
-
-    add("Transform", "Rotate (X)", RotateXNode);
-    add("Transform", "Rotate (Y)", RotateYNode);
-    add("Transform", "Rotate (Z)", RotateZNode);
-    add("Transform", "Reflect (X)", ReflectXNode);
-    add("Transform", "Reflect (Y)", ReflectYNode);
-    add("Transform", "Reflect (Z)", ReflectZNode);
-    add("Transform", "Recenter", RecenterNode);
-    add("Transform", "Translate", TranslateNode);
-
-    add("Iterate", "Iterate (2D)", Iterate2DNode);
-    add("Iterate", "Iterate (polar)", IteratePolarNode);
-
-    add("Deform", "Attract", AttractNode);
-    add("Deform", "Repel", RepelNode);
-    add("Deform", "Scale (X)", ScaleXNode);
-    add("Deform", "Scale (Y)", ScaleYNode);
-    add("Deform", "Scale (Z)", ScaleZNode);
-}
-
 void MainWindow::populateUserScripts(QMenu* menu, bool recenter, Viewport* v)
 {
     auto path = QCoreApplication::applicationDirPath().split("/");
@@ -296,10 +257,10 @@ void MainWindow::populateUserScripts(QMenu* menu, bool recenter, Viewport* v)
 
 void MainWindow::populateMenu(QMenu* menu, bool recenter, Viewport* v)
 {
+    // Hard-code menu names to set their order.
     for (auto c : {"2D", "3D", "CSG", "Transform", "Iterate", "Deform"})
         menu->addMenu(c);
 
-    populateBuiltIn(menu, recenter, v);
     populateUserScripts(menu, recenter, v);
 
     menu->addSeparator();

@@ -63,7 +63,6 @@ private:
                        bool recenter, NodeConstructorFunction f,
                        Viewport* v=NULL);
 
-    void populateBuiltIn(QMenu* menu, bool recenter=true, Viewport* v=NULL);
     void populateUserScripts(QMenu* menu, bool recenter=true, Viewport* v=NULL);
 
     QString window_type;
