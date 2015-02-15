@@ -33,7 +33,7 @@ BOOST_PYTHON_MODULE(_hooks)
 
     class_<ScriptUIHooks>("ScriptUIHooks", init<>())
         .def("point", raw_function(&ScriptUIHooks::point),
-                "point(x, y, z, r=10, color=(150, 150, 255), drag=None)\n"
+                "point(x, y, z, r=5, color=(150, 150, 255), drag=None)\n"
                 "    Constructs a point in the 3D viewport\n"
                 "    x, y, z are the point's position\n\n"
                 "    Valid kwargs:\n"

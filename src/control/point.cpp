@@ -2,7 +2,7 @@
 #include "ui/util/colors.h"
 
 ControlPoint::ControlPoint(Node* node, PyObject* drag_func)
-    : Control(node, drag_func), x(0), y(0), z(0), r(10), color(Colors::blue)
+    : Control(node, drag_func), x(0), y(0), z(0), r(5), color(Colors::blue)
 {
     // Nothing to do here
 }
