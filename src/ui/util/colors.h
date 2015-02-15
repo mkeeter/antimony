@@ -29,6 +29,11 @@ QColor adjust(QColor c, float scale);
 QColor highlight(QColor c);
 QColor dim(QColor c);
 QColor getColor(Datum* d);
+
+/*
+ * Injects a 'colors' module into the fab namespace.
+ */
+void loadColors();
 }
 
 #endif // COLORS_H
