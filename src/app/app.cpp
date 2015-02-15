@@ -481,6 +481,7 @@ MainWindow* App::newEditorWindow(ScriptDatum* datum)
 void App::newNode(Node* n)
 {
     graph_scene->makeUIfor(n);
+    view_scene->makeRenderWorkersFor(n);
 }
 
 void App::makeUI(NodeRoot* r)
