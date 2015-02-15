@@ -13,7 +13,8 @@ public:
     /*
      *  Updates the node, calling redraw if anything changed.
      */
-    void update(float x, float y, float z, float r, QColor color);
+    void update(float x, float y, float z, float r, QColor color,
+                bool relative);
 
     /*
      *  Custom functions for this type of Control

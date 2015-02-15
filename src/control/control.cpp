@@ -15,7 +15,7 @@
 #include "app/undo/undo_delete_multi.h"
 
 Control::Control(Node* node, PyObject* drag_func)
-    : QObject(), node(node), drag_func(drag_func), glow(false)
+    : QObject(), node(node), drag_func(drag_func), glow(false), relative(true)
 {
     connect(node, &Node::clearControlTouchedFlag,
             this, &Control::clearTouchedFlag);
@@ -58,12 +58,12 @@ void Control::beginDrag()
     is_dragging = true;
 }
 
-void Control::drag(QVector3D center)
+void Control::drag(QVector3D center, QVector3D diff)
 {
     auto p = node->mutableProxy();
-    auto x = PyFloat_FromDouble(center.x());
-    auto y = PyFloat_FromDouble(center.y());
-    auto z = PyFloat_FromDouble(center.z());
+    auto x = PyFloat_FromDouble(relative ? diff.x() : center.x());
+    auto y = PyFloat_FromDouble(relative ? diff.y() : center.y());
+    auto z = PyFloat_FromDouble(relative ? diff.z() : center.z());
 
     if (drag_func)
     {

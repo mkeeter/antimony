@@ -161,6 +161,11 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
         }
         else
         {
+            if (kwargs.has_key("relative"))
+                throw hooks::HookException(
+                        "Can't provide 'relative' argument "
+                        "without drag function");
+
             // Try to automatically generate a drag function by looking to see
             // if the x, y, z arguments match datum values; if so, make a drag
             // function that drags these datums.
@@ -171,11 +176,11 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
                 "def drag(this, x, y, z):\n"
                 "    pass\n";
             if (!px.isNull())
-                drag += QString("    this.%1 = x\n").arg(px);
+                drag += QString("    this.%1 += x\n").arg(px);
             if (!py.isNull())
-                drag += QString("    this.%1 = y\n").arg(py);
+                drag += QString("    this.%1 += y\n").arg(py);
             if (!pz.isNull())
-                drag += QString("    this.%1 = z\n").arg(pz);
+                drag += QString("    this.%1 += z\n").arg(pz);
 
             auto globals = PyDict_New();
             PyDict_SetItemString(globals, "__builtins__", PyEval_GetBuiltins());
@@ -201,8 +206,9 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
 
     const float r = getFloat(p->getR(), kwargs, "r");
     const QColor color = getColor(p->getColor(), kwargs);
+    const bool relative = getBool(p->getRelative(), kwargs, "relative");
 
-    p->update(x, y, z, r, color);
+    p->update(x, y, z, r, color, relative);
     p->touch();
 
     // Return None

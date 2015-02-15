@@ -8,16 +8,17 @@ ControlPoint::ControlPoint(Node* node, PyObject* drag_func)
 }
 
 void ControlPoint::update(float x_, float y_, float z_, float r_,
-                          QColor color_)
+                          QColor color_, bool relative_)
 {
     bool changed = (x != x_) || (y != y_) || (z != z_) || (r != r_) ||
-                   (color != color_);
+                   (color != color_) || (relative != relative_);
 
     x = x_;
     y = y_;
     z = z_;
     r = r_;
     color = color_;
+    relative = relative_;
 
     if (changed)
         emit(redraw());

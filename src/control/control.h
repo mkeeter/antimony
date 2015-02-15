@@ -67,7 +67,7 @@ public:
     /*
      *  Called to drag the node around with the mouse.
      */
-    void drag(QVector3D center);
+    void drag(QVector3D center, QVector3D diff);
 
     /*
      *  Pushes an UndoCommand to the stack that undoes the
@@ -90,6 +90,8 @@ public:
 
     bool isDragging() const { return is_dragging; }
 
+    bool getRelative() const { return relative; }
+
 public slots:
     void clearTouchedFlag();
     void deleteIfNotTouched();
@@ -107,6 +109,8 @@ protected:
 
     bool glow;
     bool touched;
+
+    bool relative;
 };
 
 

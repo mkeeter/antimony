@@ -76,7 +76,7 @@ void ControlProxy::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 void ControlProxy::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    //click_pos = event->pos();
+    click_pos = event->pos();
     control->beginDrag();
 
     if (event->button() != Qt::LeftButton) //|| !control->onClick())
@@ -96,11 +96,11 @@ void ControlProxy::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     QGraphicsObject::mouseMoveEvent(event);
 
     QMatrix4x4 mi = getMatrix().inverted();
-    QVector3D p0 = mi * QVector3D();//click_pos);
+    QVector3D p0 = mi * QVector3D(click_pos);
     QVector3D p1 = mi * QVector3D(event->pos());
 
-    control->drag(p1);//, p1 - p0);
-    //click_pos = event->pos();
+    control->drag(p1, p1 - p0);
+    click_pos = event->pos();
 }
 
 void ControlProxy::keyPressEvent(QKeyEvent* event)

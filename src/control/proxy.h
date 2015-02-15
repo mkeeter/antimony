@@ -87,6 +87,7 @@ protected:
     Viewport* viewport;
 
     bool hover;
+    QPointF click_pos;
 };
 
 #endif // CONTROL_PROXY_H
