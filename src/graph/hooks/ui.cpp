@@ -95,15 +95,15 @@ long ScriptUIHooks::getInstruction()
     // (used to uniquely identify calls to this function)
     auto inspect_module = PyImport_ImportModule("inspect");
     auto frame = PyObject_CallMethod(inspect_module, "currentframe", NULL);
-    auto f_lasti = PyObject_GetAttrString(frame, "f_lasti");
-    long lasti = PyLong_AsLong(f_lasti);
+    auto f_lineno = PyObject_GetAttrString(frame, "f_lineno");
+    long lineno = PyLong_AsLong(f_lineno);
     Q_ASSERT(!PyErr_Occurred());
 
     // Clean up these objects immediately
-    for (auto o : {inspect_module, frame, f_lasti})
+    for (auto o : {inspect_module, frame, f_lineno})
         Py_DECREF(o);
 
-    return lasti;
+    return lineno;
 }
 
 QString ScriptUIHooks::getDatum(PyObject* obj)
@@ -121,7 +121,7 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
 
     // Find the instruction at which this callback happened
     // (used as a unique identifier for the Control).
-    long lasti = getInstruction();
+    long lineno = getInstruction();
 
     if (len(args) != 4)
         throw hooks::HookException("Expected x, y, z as arguments");
@@ -144,7 +144,7 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
     // Control, don't delete it; otherwise, clear it to make room for
     // an updated Control.
     ControlPoint* p = dynamic_cast<ControlPoint*>(
-            self.scene->getControl(self.node, lasti));
+            self.scene->getControl(self.node, lineno));
     if (p && !p->isDragging())
     {
         p->deleteLater();
@@ -201,7 +201,7 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
             p = new ControlPoint(self.node, drag_func);
         }
 
-        self.scene->registerControl(self.node, lasti, p);
+        self.scene->registerControl(self.node, lineno, p);
     }
 
     const float r = getFloat(p->getR(), kwargs, "r");
@@ -221,7 +221,7 @@ object ScriptUIHooks::wireframe(tuple args, dict kwargs)
 
     // Find the instruction at which this callback happened
     // (used as a unique identifier for the Control).
-    long lasti = getInstruction();
+    long lineno = getInstruction();
 
     if (len(args) != 2)
         throw hooks::HookException("Expected list of 3-tuples as argument");
@@ -231,11 +231,11 @@ object ScriptUIHooks::wireframe(tuple args, dict kwargs)
         throw hooks::HookException("Wireframe must have at least one point");
 
     ControlWireframe* w = dynamic_cast<ControlWireframe*>(
-            self.scene->getControl(self.node, lasti));
+            self.scene->getControl(self.node, lineno));
     if (!w)
     {
         w = new ControlWireframe(self.node);
-        self.scene->registerControl(self.node, lasti, w);
+        self.scene->registerControl(self.node, lineno, w);
     }
 
     const float t = getFloat(w->getT(), kwargs, "t");
