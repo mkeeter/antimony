@@ -200,16 +200,30 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
     auto p = dynamic_cast<ControlPoint*>(c);
     Q_ASSERT(p);
 
-    float r = p->getR();
-    if (kwargs.has_key("r"))
-    {
-        extract<float> r_(kwargs["r"]);
-        if (!r_.check())
-            throw hooks::HookException("r value must be a number");
-        r = r_();
-    }
+    const float r = getFloat(p->getR(), kwargs, "r");
+    const QColor color = getColor(p->getColor(), kwargs);
 
-    QColor color = p->getColor();
+    p->update(x, y, z, r, color);
+    p->touch();
+
+    // Return None
+    return object();
+}
+
+float ScriptUIHooks::getFloat(float v, dict kwargs, std::string key)
+{
+    if (kwargs.has_key(key))
+    {
+        extract<float> v_(kwargs[key]);
+        if (!v_.check())
+            throw hooks::HookException(key + " value must be a number");
+        v = v_();
+    }
+    return v;
+}
+
+QColor ScriptUIHooks::getColor(QColor color, dict kwargs)
+{
     if (kwargs.has_key("color"))
     {
         auto rgb = extractList<int>(kwargs["color"]);
@@ -217,10 +231,5 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
             throw hooks::HookException("color tuple must have three values");
         color = QColor(rgb[0], rgb[1], rgb[2]);
     }
-
-    p->update(x, y, z, r, color);
-    p->touch();
-
-    // Return None
-    return object();
+    return color;
 }

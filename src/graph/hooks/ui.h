@@ -16,6 +16,22 @@ struct ScriptUIHooks
                                        boost::python::dict kwargs);
 
     /*
+     *  Tries to extract an RGB color tuple from kwargs.
+     *  Returns color if no such argument exists;
+     *  throws a hooks::HookException if the argument exists but is
+     *  incorrectly constructed.
+     */
+    static QColor getColor(QColor color, boost::python::dict kwargs);
+
+    /*
+     *  Tries to get a particular value from kwargs.
+     *  Returns v if no such value exists;
+     *  throws hooks::HookException if the value is there but not a float.
+     */
+    static float getFloat(float v, boost::python::dict kwargs,
+                          std::string key);
+
+    /*
      *  Extracts as tuple or list to a list of the given object type.
      *  Throws a HookException if any single extract() call fails.
      */
