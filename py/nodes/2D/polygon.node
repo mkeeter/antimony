@@ -1,0 +1,34 @@
+# Neil Gershenfeld 2/14/15
+
+import fab
+
+title('polygon')
+
+def polygon_radius(x0,y0,N,r):
+   from fab.types import Shape, Transform
+   # max_n((X-x0)*xn+(Y-y0)*yn-r)
+   s = 'f-1'
+   xmin = 1e10
+   xmax = -1e10
+   ymin = 1e10
+   ymax = -1e10
+   N = int(N)
+   for n in range(N):
+      xn = math.sin((2*math.pi*n)/N)
+      yn = -math.cos((2*math.pi*n)/N)
+      s = 'a'+s+'-+*-Xf'+str(x0)+'f'+str(xn)+'*-Yf'+str(y0)+'f'+str(yn)+'f'+str(r)
+      xv = x0+r*math.sin((2*math.pi*(0.5+n))/N)/math.cos((2*math.pi*0.5)/N)
+      yv = y0-r*math.cos((2*math.pi*(0.5+n))/N)/math.cos((2*math.pi*0.5)/N)
+      if (xv < xmin): xmin = xv
+      if (xv > xmax): xmax = xv
+      if (yv < ymin): ymin = yv
+      if (yv > ymax): ymax = yv
+   return Shape(s,xmin,ymin,xmax,ymax)
+
+input('x0',float,0)
+input('y0',float,0)
+input('N',float,5)
+input('r',float,1)
+
+output('shape',polygon_radius(x0,y0,N,r))
+

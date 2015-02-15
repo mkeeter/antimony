@@ -23,10 +23,10 @@ def scale_xyz(part,x0,y0,z0,sx,sy,sz):
 input('x0',float,0)
 input('y0',float,0)
 input('z0',float,0)
-input('sx',float,2)
-input('sy',float,1)
-input('sz',float,.5)
+input('scalex',float,2)
+input('scaley',float,1)
+input('scalez',float,.5)
 
 input('shape',fab.types.Shape)
-output('transform',scale_xyz(shape,x0,y0,z0,sx,sy,sz))
+output('transform',scale_xyz(shape,x0,y0,z0,scalex,scaley,scalez))
 

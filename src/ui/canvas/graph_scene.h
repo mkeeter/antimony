@@ -79,6 +79,9 @@ signals:
      *  Used to cross-link glow between canvas and viewport.
      */
     void glowChanged(Node* n, bool g);
+
+protected:
+    QHash<Node*, QPointer<NodeInspector>> get_inspector_cache;
 };
 
 #endif

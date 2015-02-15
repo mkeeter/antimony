@@ -6,9 +6,9 @@ title('sphere edge')
 
 def sphere_edge(x0,y0,z0,x1,y1,z1):
    from fab.types import Shape, Transform
-   xmid = (x0+x1)/2
-   ymid = (y0+y1)/2
-   zmid = (z0+z1)/2
+   xmid = (x0+x1)/2.0
+   ymid = (y0+y1)/2.0
+   zmid = (z0+z1)/2.0
    r = math.sqrt((xmid-x0)*(xmid-x0)+(ymid-y0)*(ymid-y0)+(zmid-z0)*(zmid-z0))
    # sqrt((X-xmid)^2+(Y-ymid)^2+(Z-zmid)^2)-r
    return Shape(

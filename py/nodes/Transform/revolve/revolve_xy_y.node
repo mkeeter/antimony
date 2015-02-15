@@ -10,7 +10,7 @@ def revolve_xy_y(part,x0):
    # Z' = Z
    # Y = Y'
    # Z = Z'
-   if (part.bounds.xmin >= x0):
+   if (part.bounds.xmax >= x0):
       # X' = x0+sqrt((X-x0)^2+Z^2)
       # X = x0+sqrt((X'-x0)^2-Z^2)
       d = part.bounds.xmax-x0

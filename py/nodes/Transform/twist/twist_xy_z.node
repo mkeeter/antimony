@@ -6,8 +6,8 @@ title('twist xy z')
 
 def twist_xy_z(part,x0,y0,z0,z1,t0,t1):
    from fab.types import Shape, Transform
-   t0 = math.pi*t0/180
-   t1 = math.pi*t1/180
+   t0 = math.pi*t0/180.0
+   t1 = math.pi*t1/180.0
    dz = z1-z0
    # X' = x0 + (X-x0)*cos((t1*(Z-z0)+t0*(z1-Z))/dz) + (Y-y0)*sin((t1*(Z-z0)+t0*(z1-Z))/dz)
    # Y' = y0 - (X-x0)*sin((t1*(Z-z0)+t0*(z1-Z))/dz) + (Y-y0)*cos((t1*(Z-z0)+t0*(z1-Z))/dz)

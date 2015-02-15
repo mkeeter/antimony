@@ -1,0 +1,35 @@
+# Neil Gershenfeld 2/8/15
+
+import fab
+
+title('shear cos xy z')
+
+def shear_cos_xy_z(part,z0,z1,ampx,offx,ampy,offy,t0,t1):
+   from fab.types import Shape, Transform
+   dz = z1-z0
+   t0 = t0*math.pi/180.0
+   t1 = t1*math.pi/180.0
+   # X' = X-(offx+ampx*math.cos(theta0+(theta1-theta0)*(Z-z0)/dz))
+   # X = X'+(offx+ampx*math.cos(theta0+(theta1-theta0)*(Z-z0)/dz))
+   # Y' = Y-(offy+ampy*math.cos(theta0+(theta1-theta0)*(Z-z0)/dz))
+   # Y = Y'+(offy+ampy*math.cos(theta0+(theta1-theta0)*(Z-z0)/dz))
+   return part.map(Transform(
+      '-X+f%(offx)g*f%(ampx)gc+f%(t0)g/*-f%(t1)gf%(t0)g-Zf%(z0)gf%(dz)g' % locals(),
+      '-Y+f%(offy)g*f%(ampy)gc+f%(t0)g/*-f%(t1)gf%(t0)g-Zf%(z0)gf%(dz)g' % locals(),
+      'Z',
+      '+X+f%(offx)g*f%(ampx)gc+f%(t0)g/*-f%(t1)gf%(t0)g-Zf%(z0)gf%(dz)g' % locals(),
+      '+Y+f%(offy)g*f%(ampy)gc+f%(t0)g/*-f%(t1)gf%(t0)g-Zf%(z0)gf%(dz)g' % locals(),
+      'Z'))
+
+input('z0',float,0)
+input('z1',float,1)
+input('ampx',float,1)
+input('offx',float,0)
+input('ampy',float,1)
+input('offy',float,0)
+input('theta0',float,-45)
+input('theta1',float,45)
+
+input('shape',fab.types.Shape)
+output('transform',shear_cos_xy_z(shape,z0,z1,ampx,offx,ampy,offy,theta0,theta1))
+

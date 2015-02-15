@@ -473,7 +473,7 @@ MainWindow* App::newEditorWindow(ScriptDatum* datum)
 {
     auto m = new MainWindow();
     m->setCentralWidget(new ScriptPane(datum, m));
-    m->resize(400, 600);
+    m->resize(600, 800);
     m->show();
     return m;
 }

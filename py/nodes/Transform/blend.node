@@ -1,0 +1,40 @@
+# Neil Gershenfeld 2/7/15
+
+import fab
+
+title('blend')
+
+def cube_corner(x0,y0,z0,x1,y1,z1):
+   from fab.types import Shape, Transform
+   return Shape(
+       x0,y0,z0,x1,y1,z1)
+
+def blend(shape0,shape1,w):
+   from fab.types import Shape,Transform
+   w = str(weight)
+   s0 = shape0.math
+   s1 = shape1.math
+   xmin = min(shape0.bounds.xmin,shape1.bounds.xmin)
+   xmax = max(shape0.bounds.xmax,shape1.bounds.xmax)
+   ymin = min(shape0.bounds.ymin,shape1.bounds.ymin)
+   ymax = max(shape0.bounds.ymax,shape1.bounds.ymax)
+   # min(min(s0,s1),s0+s1-w))
+   s = 'ii'+s0+s1+'-+'+s0+s1+'f'+w
+   if math.isinf(shape0.bounds.zmin):
+      # max(max(xmin-X,X-xmax),max(ymin-Y,Y-ymax))
+      s = 'a'+s+'aa-f'+str(xmin)+'X-Xf'+str(xmax)+'a-f'+str(ymin)+'Y-Yf'+str(ymax)
+      return Shape(s,xmin,ymin,xmax,ymax)
+   else:
+      zmin = min(shape0.bounds.zmin,shape1.bounds.zmin)
+      zmax = max(shape0.bounds.zmax,shape1.bounds.zmax)
+      # max(max(max(xmin-X,X-xmax),max(ymin-Y,Y-ymax)),max(zmin-Z,Z-zmax))
+      s = 'a'+s+'aaa-f'+str(xmin)+'X-Xf'+str(xmax)+'a-f'+str(ymin)+'Y-Yf'+str(ymax)+'a-f'+str(zmin)+'Z-Zf'+str(zmax)
+      return Shape(s,xmin,ymin,zmin,xmax,ymax,zmax)
+
+input('shape0',fab.types.Shape)
+input('shape1',fab.types.Shape)
+input('weight',float,0.5)
+
+output('transform',blend(shape0,shape1,weight))
+
+
