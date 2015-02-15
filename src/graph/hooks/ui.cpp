@@ -142,20 +142,21 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
     // If this callback happened because we're dragging the generated
     // Control, don't delete it; otherwise, clear it to make room for
     // an updated Control.
-    Control* c = self.scene->getControl(self.node, lasti);
-    if (c && !c->isDragging())
+    ControlPoint* p = dynamic_cast<ControlPoint*>(
+            self.scene->getControl(self.node, lasti));
+    if (p && !p->isDragging())
     {
-        c->deleteLater();
-        c = NULL;
+        p->deleteLater();
+        p = NULL;
     }
 
-    if (!c)
+    if (!p)
     {
         if (kwargs.has_key("drag"))
         {
             auto d = extract<object>(kwargs["drag"])().ptr();
             Py_INCREF(d);
-            c = new ControlPoint(self.node, d);
+            p = new ControlPoint(self.node, d);
         }
         else
         {
@@ -191,14 +192,11 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
             for (auto obj : {globals, locals, out})
                 Py_DECREF(obj);
 
-            c = new ControlPoint(self.node, drag_func);
+            p = new ControlPoint(self.node, drag_func);
         }
 
-        self.scene->registerControl(self.node, lasti, c);
+        self.scene->registerControl(self.node, lasti, p);
     }
-
-    auto p = dynamic_cast<ControlPoint*>(c);
-    Q_ASSERT(p);
 
     const float r = getFloat(p->getR(), kwargs, "r");
     const QColor color = getColor(p->getColor(), kwargs);
