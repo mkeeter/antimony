@@ -10,8 +10,8 @@ input('scale', float, 1)
 output('shape', fab.shapes.text(text, x, y, scale))
 
 # UI
+fab.ui.wireframe([(x, y, 0), (x, y+scale, 0)])
 fab.ui.point(x, y, 0)
 def drag_scale(this, x, y, z):
-    this.scale = y - this.y
+    this.scale += y
 fab.ui.point(x, y + scale, 0, drag=drag_scale)
-fab.ui.wireframe([(x, y, 0), (x, y+scale, 0)])
