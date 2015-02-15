@@ -2,8 +2,10 @@
 #define UI_HOOKS
 
 #include <boost/python.hpp>
+
 #include <QString>
 #include <QVector3D>
+#include <QSet>
 
 class ViewportScene;
 class Node;
@@ -11,7 +13,13 @@ class Node;
 struct ScriptUIHooks
 {
     ScriptUIHooks() : scene(NULL) {}
-    static long getInstruction();
+
+    /*
+     *  Returns the line number at which this function was called.
+     *  Throws HookException if the line number has been seen already.
+     */
+    long getInstruction();
+
     static boost::python::object point(boost::python::tuple args,
                                        boost::python::dict kwargs);
     static boost::python::object wireframe(boost::python::tuple args,
@@ -67,6 +75,8 @@ struct ScriptUIHooks
      *  (or the empty string if no match is found).
      */
     QString getDatum(PyObject* obj);
+
+    QSet<long> instructions;
 
     Node* node;
     ViewportScene* scene;

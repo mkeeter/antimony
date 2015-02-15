@@ -103,6 +103,11 @@ long ScriptUIHooks::getInstruction()
     for (auto o : {inspect_module, frame, f_lineno})
         Py_DECREF(o);
 
+    if (instructions.contains(lineno))
+        throw hooks::HookException(
+                "Cannot declare multiple UI elements on same line.");
+    instructions.insert(lineno);
+
     return lineno;
 }
 
@@ -121,7 +126,7 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
 
     // Find the instruction at which this callback happened
     // (used as a unique identifier for the Control).
-    long lineno = getInstruction();
+    long lineno = self.getInstruction();
 
     if (len(args) != 4)
         throw hooks::HookException("Expected x, y, z as arguments");
@@ -221,7 +226,7 @@ object ScriptUIHooks::wireframe(tuple args, dict kwargs)
 
     // Find the instruction at which this callback happened
     // (used as a unique identifier for the Control).
-    long lineno = getInstruction();
+    long lineno = self.getInstruction();
 
     if (len(args) != 2)
         throw hooks::HookException("Expected list of 3-tuples as argument");
