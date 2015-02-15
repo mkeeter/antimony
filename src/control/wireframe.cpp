@@ -2,18 +2,21 @@
 #include "ui/util/colors.h"
 
 ControlWireframe::ControlWireframe(Node* node)
-    : Control(node), t(10), color(Colors::blue)
+    : Control(node), t(3), color(Colors::blue), close(false)
 {
     // Nothing to do here
 }
 
-void ControlWireframe::update(QVector<QVector3D> pts_, float t_, QColor color_)
+void ControlWireframe::update(QVector<QVector3D> pts_, float t_,
+                              QColor color_, bool close_)
 {
-    bool changed = (pts != pts_) || (t != t_) || (color != color_);
+    bool changed = (pts != pts_) || (t != t_) ||
+                   (color != color_) || (close != close_);
 
     pts = pts_;
     t = t_;
     color = color_;
+    close = close_;
 
     if (changed)
         emit(redraw());
@@ -33,6 +36,8 @@ QPainterPath ControlWireframe::path(QMatrix4x4 m) const
         out.moveTo((m * pts[0]).toPointF());
     for (auto p : pts)
         out.lineTo((m * p).toPointF());
+    if (close && !pts.isEmpty())
+        out.lineTo((m* pts.front()).toPointF());
     return out;
 }
 

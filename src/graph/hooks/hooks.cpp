@@ -46,12 +46,13 @@ BOOST_PYTHON_MODULE(_hooks)
                 "      the point has been dragged."
                 )
         .def("wireframe", raw_function(&ScriptUIHooks::wireframe),
-                "wireframe(pts, t=3, color=(150, 150, 255)\n"
+                "wireframe(pts, t=3, color=(150, 150, 255), close=false)\n"
                 "    Constructs a wireframe in the 3D viewport\n"
                 "    pts is a list of 3-float tuples\n\n"
                 "    Valid kwargs:\n"
                 "    t sets the line's thickness\n"
-                "    color sets the color as a 3-tuple (0-255)"
+                "    color sets the color as a 3-tuple (0-255)\n"
+                "    close makes the loop closed"
                 );
 
     register_exception_translator<hooks::HookException>(

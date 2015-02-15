@@ -234,7 +234,8 @@ object ScriptUIHooks::wireframe(tuple args, dict kwargs)
 
     const float t = getFloat(w->getT(), kwargs, "t");
     const QColor color = getColor(w->getColor(), kwargs);
-    w->update(v, t, color);
+    const bool close = getBool(w->getClose(), kwargs, "close");
+    w->update(v, t, color, close);
     w->touch();
 
     return object();
@@ -250,6 +251,18 @@ float ScriptUIHooks::getFloat(float v, dict kwargs, std::string key)
         v = v_();
     }
     return v;
+}
+
+bool ScriptUIHooks::getBool(bool b, dict kwargs, std::string key)
+{
+    if (kwargs.has_key(key))
+    {
+        extract<bool> b_(kwargs[key]);
+        if (!b_.check())
+            throw hooks::HookException(key + " value must be a boolean");
+        b = b_();
+    }
+    return b;
 }
 
 QColor ScriptUIHooks::getColor(QColor color, dict kwargs)

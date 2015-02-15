@@ -13,13 +13,14 @@ public:
     /*
      * Updates the control, calling redraw if anything changed.
      */
-    void update(QVector<QVector3D> pts, float r, QColor color);
+    void update(QVector<QVector3D> pts, float r, QColor color, bool close);
 
     QPainterPath shape(QMatrix4x4 m) const override;
     void paint(QMatrix4x4 m, bool highlight, QPainter* painter);
 
     float getT() const { return t; }
     QColor getColor() const { return color; }
+    bool getClose() const { return close; }
 
 protected:
     QPainterPath path(QMatrix4x4 m) const;
@@ -27,6 +28,7 @@ protected:
     QVector<QVector3D> pts;
     float t;
     QColor color;
+    bool close;
 };
 
 #endif

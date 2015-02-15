@@ -34,6 +34,14 @@ struct ScriptUIHooks
                           std::string key);
 
     /*
+     *  Tries to extract a boolean value from kwargs.
+     *  Returns b if no value with that key exists;
+     *  throws hooks::HookException if the value is there but not a bool.
+     */
+    static bool getBool(bool b, boost::python::dict kwargs,
+                        std::string key);
+
+    /*
      *  Extracts as tuple or list to a list of the given object type.
      *  Throws a HookException if any single extract() call fails.
      */
