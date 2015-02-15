@@ -3,6 +3,7 @@
 
 #include <boost/python.hpp>
 #include <QString>
+#include <QVector3D>
 
 class ViewportScene;
 class Node;
@@ -28,6 +29,12 @@ struct ScriptUIHooks
      */
     template <typename T>
     static QVector<T> extractList(boost::python::object obj);
+
+    /*
+     *  Converts a (list|tuple) of 3-element (lists|tuples) to vectors.
+     *  Throws a HookException on failure.
+     */
+    static QVector<QVector3D> extractVectors(boost::python::object obj);
 
     /*
      *  Returns the datum name with value == obj

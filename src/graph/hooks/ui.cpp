@@ -9,7 +9,6 @@
 
 using namespace boost::python;
 
-
 template <typename T, typename O>
 QVector<T> ScriptUIHooks::_extractList(O obj)
 {
@@ -37,6 +36,56 @@ QVector<T> ScriptUIHooks::extractList(object obj)
         return _extractList<T>(list_());
 
     throw hooks::HookException("Input must be a list or a tuple");
+}
+
+QVector<QVector3D> ScriptUIHooks::extractVectors(object obj)
+{
+    QVector<QVector3D> out;
+
+    // Try to extract a bunch of tuples from the top-level list.
+    QVector<tuple> tuples;
+    bool got_tuple = true;
+    try {
+        tuples = extractList<tuple>(obj);
+    } catch (hooks::HookException e) {
+        got_tuple = false;
+    }
+
+    if (got_tuple)
+    {
+        for (auto t : tuples)
+        {
+            auto v = extractList<float>(extract<object>(t)());
+            if (v.length() != 3)
+                throw hooks::HookException("Position data must have three terms.");
+            out << QVector3D(v[0], v[1], v[2]);
+        }
+        return out;
+    }
+
+    // Try to extract a bunch of lists from the top-level list.
+    QVector<list> lists;
+    bool got_list = true;
+    try {
+        lists = extractList<list>(obj);
+    } catch (hooks::HookException e) {
+        got_list = false;
+    }
+
+    if (got_list)
+    {
+        for (auto l : lists)
+        {
+            auto v = extractList<float>(extract<object>(l)());
+            if (v.length() != 3)
+                throw hooks::HookException("Position data must have three terms.");
+            out << QVector3D(v[0], v[1], v[2]);
+        }
+        return out;
+    }
+
+    throw hooks::HookException(
+            "Position data must be a list of 3-element lists");
 }
 
 long ScriptUIHooks::getInstruction()
