@@ -262,14 +262,10 @@ void MainWindow::populateUserScripts(QMenu* menu, bool recenter, Viewport* v)
     }
 
     // Sort the list, then populate menus.
-    node_filenames.sort();
+    QMap<QString, QPair<QStringList, NodeConstructorFunction>> nodes;
+    QStringList node_titles;
     for (auto n : node_filenames)
     {
-        auto split = n.split('/');
-        while (split.first() != "nodes")
-            split.removeFirst();
-        split.removeFirst();
-
         QFile file(n);
         if (!file.open(QIODevice::ReadOnly))
             continue;
@@ -277,6 +273,14 @@ void MainWindow::populateUserScripts(QMenu* menu, bool recenter, Viewport* v)
         QTextStream in(&file);
         QString txt = in.readAll();
 
+        // Find the menu structure for this node
+        auto split = n.split('/');
+        while (split.first() != "nodes")
+            split.removeFirst();
+        split.removeFirst();
+
+        // Attempt to extract the title with a regex;
+        // falling back to the node's filename otherwise.
         QString title = split.last().replace(".node","");
         split.removeLast();
         for (auto& regex : title_regexs)
@@ -290,8 +294,15 @@ void MainWindow::populateUserScripts(QMenu* menu, bool recenter, Viewport* v)
                 static_cast<EvalDatum*>(s->getDatum("_script"))->setExpr(txt);
                 return s;
             };
-        addNodeToMenu(split, title, menu, recenter, constructor, v);
+        nodes[title] = QPair<QStringList, NodeConstructorFunction>(
+                split, constructor);
+        node_titles.append(title);
     }
+
+    node_titles.sort();
+    for (auto title : node_titles)
+        addNodeToMenu(nodes[title].first, title, menu,
+                      recenter, nodes[title].second, v);
 }
 
 void MainWindow::populateMenu(QMenu* menu, bool recenter, Viewport* v)
