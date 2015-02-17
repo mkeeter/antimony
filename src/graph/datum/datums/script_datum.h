@@ -53,6 +53,7 @@ protected:
     void modifyGlobalsDict(PyObject* g) override;
 
     PyObject* globals;
+    PyObject* old_ui;
     PyObject* input_func;
     PyObject* output_func;
     PyObject* title_func;

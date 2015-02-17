@@ -36,7 +36,7 @@ int ScriptDatum::getStartToken() const
 void ScriptDatum::modifyGlobalsDict(PyObject* g)
 {
     globals = g;
-    hooks::loadHooks(g, this);
+    old_ui = hooks::loadHooks(g, this);
 }
 
 bool ScriptDatum::isValidName(QString name) const
@@ -181,6 +181,14 @@ PyObject* ScriptDatum::getCurrentValue()
     Q_ASSERT(!PyErr_Occurred());
 
     PyObject* out = EvalDatum::getCurrentValue();
+
+    // Swap old_ui back in to make recursive calls work.
+    if (old_ui)
+    {
+        PyObject* fab_mod = PyImport_ImportModule("fab");
+        PyObject_SetAttrString(fab_mod, "ui", old_ui);
+        Py_DECREF(fab_mod);
+    }
 
     // Get the output from the StringIO object
     PyObject* s = PyObject_CallMethod(string_out, "getvalue", NULL);

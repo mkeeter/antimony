@@ -67,7 +67,7 @@ void hooks::preInit()
     PyImport_AppendInittab("_hooks", PyInit__hooks);
 }
 
-void hooks::loadHooks(PyObject* g, ScriptDatum* d)
+PyObject* hooks::loadHooks(PyObject* g, ScriptDatum* d)
 {
     if (_hooks_module == NULL)
         _hooks_module = PyImport_ImportModule("_hooks");
@@ -93,6 +93,12 @@ void hooks::loadHooks(PyObject* g, ScriptDatum* d)
     PyDict_SetItemString(g, "title", title_func);
 
     auto fab = PyImport_ImportModule("fab");
+    PyObject* old_ui = NULL;
+    if (PyObject_HasAttrString(fab, "ui"))
+        old_ui = PyObject_GetAttrString(fab, "ui");
+
     PyObject_SetAttrString(fab, "ui", ui_obj);
     Py_DECREF(fab);
+
+    return old_ui;
 }
