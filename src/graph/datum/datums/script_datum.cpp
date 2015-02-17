@@ -37,7 +37,7 @@ int ScriptDatum::getStartToken() const
 void ScriptDatum::modifyGlobalsDict(PyObject* g)
 {
     globals = g;
-    hooks::loadHooks(g, this);
+    old_ui = hooks::loadHooks(g, this);
     Colors::loadColors();
 }
 
@@ -183,6 +183,14 @@ PyObject* ScriptDatum::getCurrentValue()
 
     PyObject* out = EvalDatum::getCurrentValue();
 
+    // Swap old_ui back in to make recursive calls work.
+    if (old_ui)
+    {
+        PyObject* fab_mod = PyImport_ImportModule("fab");
+        PyObject_SetAttrString(fab_mod, "ui", old_ui);
+        Py_DECREF(fab_mod);
+    }
+
     // Get the output from the StringIO object
     PyObject* s = PyObject_CallMethod(string_out, "getvalue", NULL);
     wchar_t* w = PyUnicode_AsWideCharString(s, NULL);
@@ -230,7 +238,6 @@ PyObject* ScriptDatum::getCurrentValue()
         emit(static_cast<Node*>(parent())->datumsChanged());
     else if (datum_order_changed)
         emit(static_cast<Node*>(parent())->datumOrderChanged());
-
 
     // Filter out default arguments to input datums, to make the script
     // simpler to read (because input('x', float, 12.0f) looks odd when
