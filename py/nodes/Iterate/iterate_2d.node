@@ -1,0 +1,29 @@
+import fab
+
+title('Iterate (2D)')
+
+input('_x', float)
+input('_y', float)
+input('i', int, 1)
+input('j', int, 1)
+input('dx', float, 1)
+input('dy', float, 1)
+
+input('input', fab.types.Shape)
+output('shape', fab.shapes.iterate2d(input, i, j, dx, dy))
+
+# UI
+fab.ui.wireframe([
+    (_x + dx, _y, 0), (_x, _y, 0), (_x, _y + dy, 0)], color=fab.color.teal)
+fab.ui.wireframe([
+    (_x + dx, _y - 0.3, 0), (_x + dx, _y + 0.3, 0)], color=fab.color.teal)
+fab.ui.wireframe([
+    (_x + 0.3, _y + dy, 0), (_x - 0.3, _y + dy, 0)], color=fab.color.teal)
+
+fab.ui.point(_x, _y, 0, color=fab.color.teal)
+def drag_x(this, dx, dy, dz):
+    this.dx += dx
+fab.ui.point(_x + dx, _y, 0, color=fab.color.teal, drag=drag_x)
+def drag_x(this, dx, dy, dz):
+    this.dy += dy
+fab.ui.point(_x, _y + dy, 0, color=fab.color.teal, drag=drag_x)
