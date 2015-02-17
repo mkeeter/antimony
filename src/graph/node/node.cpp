@@ -1,4 +1,4 @@
-#include <Python.h>
+#include <boost/python.hpp>
 
 #include <QStringList>
 
@@ -49,12 +49,17 @@ void Node::updateName()
         d->setExpr(r->getName(d->getExpr() + "_"));
 }
 
-PyObject* Node::proxy()
+PyObject* Node::proxy(Datum* caller)
 {
-    PyObject* p = PyObject_CallObject(proxyType(), NULL);
-    Q_ASSERT(p);
-    ((NodeProxyObject*)p)->node = this;
-    ((NodeProxyObject*)p)->caller = NULL;
+    auto _proxy_module = PyImport_ImportModule("_proxy");
+    auto p = PyObject_CallMethod(_proxy_module, "NodeProxy", NULL);
+    Q_ASSERT(!PyErr_Occurred());
+
+    auto& proxy = boost::python::extract<NodeProxy&>(p)();
+    proxy.node = this;
+    proxy.caller = caller;
+
+    Py_DECREF(_proxy_module);
     return p;
 }
 

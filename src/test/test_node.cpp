@@ -6,6 +6,7 @@
 #include "test_node.h"
 
 #include "graph/datum/datums/name_datum.h"
+#include "graph/datum/types/eval_datum.h"
 #include "graph/datum/datums/float_datum.h"
 #include "graph/datum/datums/shape_function_datum.h"
 

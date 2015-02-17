@@ -1,7 +1,7 @@
 QT += core gui widgets testlib
 
 CONFIG += testcase
-CONFIG += c++11
+CONFIG += c++11 object_parallel_to_source
 
 DEFINES += ANTIMONY_TESTS
 

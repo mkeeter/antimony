@@ -6,8 +6,8 @@ title('circle edge')
 
 def circle_edge(x0,y0,x1,y1):
    from fab.types import Shape, Transform
-   xmid = (x0+x1)/2
-   ymid = (y0+y1)/2
+   xmid = (x0+x1)/2.0
+   ymid = (y0+y1)/2.0
    r = math.sqrt((xmid-x0)*(xmid-x0)+(ymid-y0)*(ymid-y0))
    # sqrt((X-xmid)^2+(Y-ymid)^2)-r
    return Shape(

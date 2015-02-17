@@ -18,9 +18,9 @@ def scale_xy(part,x0,y0,sx,sy):
 
 input('x0',float,0)
 input('y0',float,0)
-input('sx',float,2)
-input('sy',float,.5)
+input('scalex',float,2)
+input('scaley',float,.5)
 
 input('shape',fab.types.Shape)
-output('transform',scale_xy(shape,x0,y0,sx,sy))
+output('transform',scale_xy(shape,x0,y0,scalex,scaley))
 

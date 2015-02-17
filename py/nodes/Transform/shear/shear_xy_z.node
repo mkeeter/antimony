@@ -19,7 +19,7 @@ def shear_xy_z(part,z0,z1,dx0,dy0,dx1,dy1):
       '+Y/+*f%(dy1)g-Zf%(z0)g*f%(dy0)g-f%(z1)gZf%(dz)g' % locals(),
       'Z'))
 
-input('z0',float,-1)
+input('z0',float,0)
 input('z1',float,1)
 input('dx0',float,-1)
 input('dy0',float,-1)

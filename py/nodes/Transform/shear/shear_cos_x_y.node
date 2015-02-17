@@ -1,0 +1,29 @@
+# Neil Gershenfeld 2/8/15
+
+import fab
+
+title('shear cos x y')
+
+def shear_cos_x_y(part,y0,y1,amp,off,t0,t1):
+   from fab.types import Shape, Transform
+   dy = y1-y0
+   t0 = t0*math.pi/180.0
+   t1 = t1*math.pi/180.0
+   # X' = X-(off+amp*math.cos(theta0+(theta1-theta0)*(Y-y0)/dy))
+   # X = X'+(off+amp*math.cos(theta0+(theta1-theta0)*(Y-y0)/dy))
+   return part.map(Transform(
+      '-X+f%(off)g*f%(amp)gc+f%(t0)g/*-f%(t1)gf%(t0)g-Yf%(y0)gf%(dy)g' % locals(),
+      'Y',
+      '+X+f%(off)g*f%(amp)gc+f%(t0)g/*-f%(t1)gf%(t0)g-Yf%(y0)gf%(dy)g' % locals(),
+      'Y'))
+
+input('y0',float,0)
+input('y1',float,1)
+input('amp',float,1)
+input('off',float,0)
+input('theta0',float,-45)
+input('theta1',float,45)
+
+input('shape',fab.types.Shape)
+output('transform',shear_cos_x_y(shape,y0,y1,amp,off,theta0,theta1))
+

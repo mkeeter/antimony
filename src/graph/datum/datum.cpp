@@ -5,6 +5,7 @@
 #include "graph/datum/datum.h"
 #include "graph/datum/input.h"
 #include "graph/datum/link.h"
+#include "graph/datum/datums/name_datum.h"
 
 #include "graph/node/node.h"
 #include "graph/node/root.h"
@@ -171,7 +172,10 @@ void Datum::postInit()
     if (PyErr_Occurred())
         PyErr_Clear();
 
-    root()->onNameChange(objectName());
+    auto p = dynamic_cast<Node*>(parent());
+    auto n = p ? p->getDatum<NameDatum>("_name") : NULL;
+    if (n)
+        root()->onNameChange(n->getExpr().trimmed() + "." + objectName());
 }
 
 void Datum::onDisconnectRequest(Datum* downstream)

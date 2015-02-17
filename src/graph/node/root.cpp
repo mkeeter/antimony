@@ -60,11 +60,7 @@ PyObject* NodeRoot::proxyDict(Datum* caller)
         NameDatum* name = n->getDatum<NameDatum>("_name");
 
         if (name->getValid())
-        {
-            PyObject* proxy = n->proxy();
-            ((NodeProxyObject*)proxy)->caller = caller;
-            PyDict_SetItem(d, name->getValue(), proxy);
-        }
+            PyDict_SetItem(d, name->getValue(), n->proxy(caller));
     }
     return d;
 }

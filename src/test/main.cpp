@@ -3,6 +3,8 @@
 #include <QtTest/QtTest>
 
 #include "fab/fab.h"
+#include "graph/hooks/hooks.h"
+#include "graph/node/proxy.h"
 
 #include "test_datum.h"
 #include "test_node.h"
@@ -19,6 +21,8 @@ int main(int argc, char *argv[])
     QCoreApplication app(argc, argv);
 
     fab::preInit();
+    hooks::preInit();
+    proxy::preInit();
     Py_Initialize();
 
     QString d = QCoreApplication::applicationDirPath();

@@ -1,0 +1,27 @@
+# Neil Gershenfeld 2/1/15
+
+import fab
+
+title('loft xy z')
+
+def loft_xy_z(shape0,shape1,z0,z1):
+   from fab.types import Shape,Transform
+   # ((z-z0)/(z1-z0))*shape1+((z1-z)/(z1-z0))*shape0
+   dz = z1-z0
+   xmin = min(shape0.bounds.xmin,shape1.bounds.xmin)
+   xmax = max(shape0.bounds.xmax,shape1.bounds.xmax)
+   ymin = min(shape0.bounds.ymin,shape1.bounds.ymin)
+   ymax = max(shape0.bounds.ymax,shape1.bounds.ymax)
+   zmin = z0
+   zmax = z1
+   return Shape(
+      'aa-Zf'+str(z1)+'-f'+str(z0)+'Z+*/-Zf'+str(z0)+'f'+str(dz)+shape1.math+'*/-f'+str(z1)+'Z'+'f'+str(dz)+shape0.math,
+      xmin,ymin,zmin,xmax,ymax,zmax)
+
+input('shape0',fab.types.Shape)
+input('z0',float,0)
+input('shape1',fab.types.Shape)
+input('z1',float,1)
+
+output('transform',loft_xy_z(shape0,shape1,z0,z1))
+

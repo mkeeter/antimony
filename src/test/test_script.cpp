@@ -96,7 +96,7 @@ void TestScript::MakeScriptInput()
 
     n = ScriptNode("s", "0.0", "0.0", "0.0",
                        "input('q', str)", r);
-    QVERIFY(n->getDatum("_script")->getValid() == false);
+    QVERIFY(n->getDatum("_script")->getValid() == true);
     delete n;
 }
 

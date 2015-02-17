@@ -8,6 +8,7 @@
 #include "app/app.h"
 #include "fab/fab.h"
 #include "graph/hooks/hooks.h"
+#include "graph/node/proxy.h"
 
 int main(int argc, char *argv[])
 {
@@ -20,6 +21,7 @@ int main(int argc, char *argv[])
     // Initialize the _fabtypes Python package and the Python interpreter
     fab::preInit();
     hooks::preInit();
+    proxy::preInit();
     Py_Initialize();
 
     // Create the Application object

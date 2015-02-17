@@ -75,7 +75,7 @@ void ScriptPane::onDatumChanged()
     {
         int lines = txt->document()->size().height() + 1;
         QFontMetrics fm(txt->document()->defaultFont());
-        txt->setFixedHeight(lines * fm.lineSpacing());
+        txt->setFixedHeight(std::min(height()/3, lines * fm.lineSpacing()));
     }
 }
 

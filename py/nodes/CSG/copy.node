@@ -1,0 +1,12 @@
+# Neil Gershenfeld 2/14/15
+
+import fab
+
+title('copy')
+
+def copy(part):
+   return part
+   
+input('shape',fab.types.Shape)
+output('copy',copy(shape))
+

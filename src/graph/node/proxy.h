@@ -6,12 +6,22 @@
 class Datum;
 class Node;
 
-typedef struct {
-    PyObject_HEAD
-    Datum* caller;
-    Node* node;
-} NodeProxyObject;
+struct NodeProxy
+{
+    NodeProxy() : node(NULL), caller(NULL) {}
+    PyObject* getAttr(std::string name);
 
-PyObject* proxyType();
+    Node* node;
+    Datum* caller;
+};
+
+namespace proxy {
+    struct ProxyException {
+        ProxyException(std::string m) : message(m) {}
+        std::string message;
+    };
+    void onProxyException(const ProxyException& e);
+    void preInit();
+};
 
 #endif // NODE_PROXY_H
