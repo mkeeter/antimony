@@ -238,7 +238,6 @@ PyObject* ScriptDatum::getCurrentValue()
     else if (datum_order_changed)
         emit(static_cast<Node*>(parent())->datumOrderChanged());
 
-
     // Filter out default arguments to input datums, to make the script
     // simpler to read (because input('x', float, 12.0f) looks odd when
     // x doesn't have a value of 12 anymore).

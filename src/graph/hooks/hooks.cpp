@@ -99,6 +99,7 @@ PyObject* hooks::loadHooks(PyObject* g, ScriptDatum* d)
 
     PyObject_SetAttrString(fab, "ui", ui_obj);
     Py_DECREF(fab);
+    Py_DECREF(ui_obj);
 
     return old_ui;
 }
