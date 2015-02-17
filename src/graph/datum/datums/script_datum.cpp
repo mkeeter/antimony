@@ -15,6 +15,7 @@
 #include "graph/hooks/hooks.h"
 
 #include "fab/fab.h"
+#include "ui/util/colors.h"
 
 ScriptDatum::ScriptDatum(QString name, Node* parent)
     : EvalDatum(name, parent), globals(NULL)
@@ -37,12 +38,12 @@ void ScriptDatum::modifyGlobalsDict(PyObject* g)
 {
     globals = g;
     old_ui = hooks::loadHooks(g, this);
+    Colors::loadColors();
 }
 
 bool ScriptDatum::isValidName(QString name) const
 {
-    return name.size() && name.at(0) != '_' &&
-           name != "script" && !touched.contains(name);
+    return name.size() && name != "_script" && !touched.contains(name);
 }
 
 void ScriptDatum::makeInput(QString name, PyTypeObject *type,

@@ -1,0 +1,23 @@
+import fab
+
+title('Sphere')
+
+input('x', float)
+input('y', float)
+input('z', float)
+input('r', float, 1)
+
+output('shape', fab.shapes.sphere(x, y, z, r))
+
+# UI
+fab.ui.wireframe([
+    (math.cos(i/36. * 2*math.pi) * r + x,
+     math.sin(i/36. * 2*math.pi) * r + y, z)
+    for i in range(36)], close=True)
+fab.ui.wireframe([(x,y,z-r), (x,y,z+r)])
+
+fab.ui.point(x, y, z)
+def drag_r(this, dx, dy, dz):
+    this.r += dz
+fab.ui.point(x, y, z + r, drag=drag_r)
+fab.ui.point(x, y, z - r, drag=drag_r)

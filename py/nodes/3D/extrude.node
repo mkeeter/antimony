@@ -1,0 +1,17 @@
+import fab
+
+title('Extrude')
+
+input('_x', float)
+input('_y', float)
+input('z0', float)
+input('z1', float, 1)
+
+input('input', fab.types.Shape)
+output('shape', fab.shapes.extrude_z(input, z0, z1))
+
+# UI
+fab.ui.wireframe([(_x, _y, z0), (_x, _y, z1)], color=fab.colors.green)
+fab.ui.point(_x, _y, z0, color=fab.color.green)
+fab.ui.point(_x, _y, z1, color=fab.color.green)
+

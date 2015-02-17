@@ -1,6 +1,9 @@
 #include <Python.h>
-#include "ui/util/colors.h"
 
+#include <QVector>
+#include <QPair>
+
+#include "ui/util/colors.h"
 #include "graph/datum/datum.h"
 
 namespace Colors
@@ -57,6 +60,42 @@ QColor getColor(Datum *d)
                                 return green;
         default:                return red;
     }
+}
+
+void loadColors()
+{
+    auto fab = PyImport_ImportModule("fab");
+    auto color_module = PyModule_New("color");
+
+    QVector<QPair<QString, QColor>> colors = {
+        {"red", red},
+        {"orange", orange},
+        {"yellow", yellow},
+        {"green", green},
+        {"teal", teal},
+        {"blue", blue},
+        {"violet", violet},
+        {"brown", brown},
+        {"base00", base00},
+        {"base01", base01},
+        {"base02", base02},
+        {"base03", base03},
+        {"base04", base04},
+        {"base05", base05},
+        {"base06", base06},
+        {"base07", base07}};
+
+    for (auto color : colors)
+        PyObject_SetAttrString(
+                color_module, color.first.toStdString().c_str(),
+                Py_BuildValue(
+                    "(iii)", color.second.red(),
+                    color.second.green(), color.second.blue()));
+
+    PyObject_SetAttrString(fab, "color", color_module);
+    Py_DECREF(fab);
+
+    Q_ASSERT(!PyErr_Occurred());
 }
 
 } // end of Colors namespace
