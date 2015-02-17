@@ -4,8 +4,8 @@ title('Iterate (2D)')
 
 input('_x', float)
 input('_y', float)
-input('i', int, 1)
-input('j', int, 1)
+input('i', int, 2)
+input('j', int, 2)
 input('dx', float, 1)
 input('dy', float, 1)
 
