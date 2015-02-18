@@ -76,6 +76,19 @@ struct ScriptUIHooks
      */
     QString getDatum(PyObject* obj);
 
+    /*
+     *  Constructs a default (relative) drag function.
+     *  x, y, z are names of datums to drag or null strings.
+     */
+    static PyObject* defaultDragFunction(QString x, QString y, QString z);
+
+    /*
+     *  Generates a default drag function from a tuple of datums (or None).
+     *  Throws a HookException if any of the tuple members are neither a datum
+     *  value nor None.
+     */
+    PyObject* tupleDragFunction(boost::python::tuple t);
+
     QSet<long> instructions;
 
     Node* node;

@@ -22,10 +22,5 @@ fab.ui.wireframe([(_x - 0.3, _y, _z),
 fab.ui.wireframe([(_x, _y, _z - 0.3),
                   (_x, _y, _z + 0.3)], color=fab.color.teal)
 
-def drag_delta(this, dx, dy, dz):
-    this.dx += dx
-    this.dy += dy
-    this.dz += dz
-
 fab.ui.point(_x, _y, _z, color=fab.color.teal)
-fab.ui.point(_x + dx, _y + dy, _z + dz, color=fab.color.teal, drag=drag_delta)
+fab.ui.point(_x + dx, _y + dy, _z + dz, color=fab.color.teal, drag=(dx, dy, dz))
