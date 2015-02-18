@@ -113,6 +113,10 @@ long ScriptUIHooks::getInstruction()
 
 QString ScriptUIHooks::getDatum(PyObject* obj)
 {
+    // Special case: None matches no datum.
+    if (obj == Py_None)
+        return QString();
+
     for (auto d : node->findChildren<Datum*>(
                 QString(), Qt::FindDirectChildrenOnly))
         if (d->getValue() == obj)
