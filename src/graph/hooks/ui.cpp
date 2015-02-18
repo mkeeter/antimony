@@ -124,6 +124,59 @@ QString ScriptUIHooks::getDatum(PyObject* obj)
     return QString();
 }
 
+PyObject* ScriptUIHooks::tupleDragFunction(tuple t)
+{
+    if (len(t) != 3)
+        throw hooks::HookException("Must provide three arguments to drag tuple.");
+
+    auto x = extract<object>(t[0])();
+    auto y = extract<object>(t[1])();
+    auto z = extract<object>(t[2])();
+
+    auto xs = getDatum(x.ptr());
+    auto ys = getDatum(y.ptr());
+    auto zs = getDatum(z.ptr());
+
+    if ((xs.isNull() && x.ptr() != Py_None) ||
+        (ys.isNull() && y.ptr() != Py_None) ||
+        (zs.isNull() && z.ptr() != Py_None))
+        throw hooks::HookException(
+                "Arguments to drag tuple must be None or datum values.");
+
+    return defaultDragFunction(xs, ys, zs);
+}
+
+PyObject* ScriptUIHooks::defaultDragFunction(QString x, QString y, QString z)
+{
+    QString drag =
+        "def drag(this, dx, dy, dz):\n"
+        "    pass\n";
+    if (!x.isNull())
+        drag += QString("    this.%1 += dx\n").arg(x);
+    if (!y.isNull())
+        drag += QString("    this.%1 += dy\n").arg(y);
+    if (!z.isNull())
+        drag += QString("    this.%1 += dz\n").arg(z);
+
+    auto globals = PyDict_New();
+    PyDict_SetItemString(globals, "__builtins__", PyEval_GetBuiltins());
+    auto locals = Py_BuildValue("{}");
+    auto out = PyRun_String(
+            drag.toStdString().c_str(),
+            Py_file_input, globals, locals);
+    Q_ASSERT(!PyErr_Occurred());
+
+    auto drag_func = PyDict_GetItemString(locals, "drag");
+    Q_ASSERT(drag_func);
+    Py_INCREF(drag_func);
+
+    // Clean up references
+    for (auto obj : {globals, locals, out})
+        Py_DECREF(obj);
+
+    return drag_func;
+}
+
 object ScriptUIHooks::point(tuple args, dict kwargs)
 {
     ScriptUIHooks& self = extract<ScriptUIHooks&>(args[0])();
@@ -164,9 +217,22 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
     {
         if (kwargs.has_key("drag"))
         {
-            auto d = extract<object>(kwargs["drag"])().ptr();
-            Py_INCREF(d);
-            p = new ControlPoint(self.node, d);
+            // Generate tuple-style drag function
+            auto t = extract<tuple>(kwargs["drag"]);
+            if (t.check())
+            {
+                if (kwargs.has_key("relative"))
+                    throw hooks::HookException(
+                            "Can't provide 'relative' argument "
+                            "with tuple-style drag function");
+                p = new ControlPoint(self.node, self.tupleDragFunction(t()));
+            }
+            else
+            {
+                auto d = extract<object>(kwargs["drag"])().ptr();
+                Py_INCREF(d);
+                p = new ControlPoint(self.node, d);
+            }
         }
         else
         {
@@ -178,36 +244,10 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
             // Try to automatically generate a drag function by looking to see
             // if the x, y, z arguments match datum values; if so, make a drag
             // function that drags these datums.
-            auto px = self.getDatum(extract<object>(args[1])().ptr());
-            auto py = self.getDatum(extract<object>(args[2])().ptr());
-            auto pz = self.getDatum(extract<object>(args[3])().ptr());
-            QString drag =
-                "def drag(this, x, y, z):\n"
-                "    pass\n";
-            if (!px.isNull())
-                drag += QString("    this.%1 += x\n").arg(px);
-            if (!py.isNull())
-                drag += QString("    this.%1 += y\n").arg(py);
-            if (!pz.isNull())
-                drag += QString("    this.%1 += z\n").arg(pz);
-
-            auto globals = PyDict_New();
-            PyDict_SetItemString(globals, "__builtins__", PyEval_GetBuiltins());
-            auto locals = Py_BuildValue("{}");
-            auto out = PyRun_String(
-                    drag.toStdString().c_str(),
-                    Py_file_input, globals, locals);
-            Q_ASSERT(!PyErr_Occurred());
-
-            auto drag_func = PyDict_GetItemString(locals, "drag");
-            Q_ASSERT(drag_func);
-            Py_INCREF(drag_func);
-
-            // Clean up references
-            for (auto obj : {globals, locals, out})
-                Py_DECREF(obj);
-
-            p = new ControlPoint(self.node, drag_func);
+            p = new ControlPoint(self.node, defaultDragFunction(
+                    self.getDatum(extract<object>(args[1])().ptr()),
+                    self.getDatum(extract<object>(args[2])().ptr()),
+                    self.getDatum(extract<object>(args[3])().ptr())));
         }
 
         self.scene->registerControl(self.node, lineno, p);
