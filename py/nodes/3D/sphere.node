@@ -17,7 +17,5 @@ fab.ui.wireframe([
 fab.ui.wireframe([(x,y,z-r), (x,y,z+r)])
 
 fab.ui.point(x, y, z)
-def drag_r(this, dx, dy, dz):
-    this.r += dz
-fab.ui.point(x, y, z + r, drag=drag_r)
-fab.ui.point(x, y, z - r, drag=drag_r)
+fab.ui.point(x, y, z + r, drag=(None, None, r))
+fab.ui.point(x, y, z - r, drag=(None, None, r))

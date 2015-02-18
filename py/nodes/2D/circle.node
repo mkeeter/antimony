@@ -14,6 +14,4 @@ fab.ui.wireframe([
      math.sin(i/36. * 2*math.pi) * r + y, 0)
     for i in range(36)], close=True)
 fab.ui.point(x, y, 0)
-def drag_r(this, dx, dy, dz):
-    this.r += dx
-fab.ui.point(x + r, y, 0, drag=drag_r)
+fab.ui.point(x + r, y, 0, drag=(r, None, None))
