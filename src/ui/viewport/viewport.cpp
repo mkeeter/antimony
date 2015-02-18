@@ -519,8 +519,8 @@ void Viewport::onCopy()
         if (auto proxy = dynamic_cast<ControlProxy*>(i))
         {
             auto n = proxy->getControl()->getNode();
-            auto p = dynamic_cast<NodeRoot*>(n->parent());
-            Q_ASSERT(p);
+            Q_ASSERT(dynamic_cast<NodeRoot*>(n->parent()));
+            auto p = static_cast<NodeRoot*>(n->parent());
 
             NodeRoot temp_root;
             n->setParent(&temp_root);
@@ -539,8 +539,8 @@ void Viewport::onCut()
         if (auto proxy = dynamic_cast<ControlProxy*>(i))
         {
             auto n = proxy->getControl()->getNode();
-            auto p = dynamic_cast<NodeRoot*>(n->parent());
-            Q_ASSERT(p);
+            Q_ASSERT(dynamic_cast<NodeRoot*>(n->parent()));
+            auto p = static_cast<NodeRoot*>(n->parent());
 
             NodeRoot temp_root;
             n->setParent(&temp_root);

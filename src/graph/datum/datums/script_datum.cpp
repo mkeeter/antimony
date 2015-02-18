@@ -55,7 +55,8 @@ void ScriptDatum::makeInput(QString name, PyTypeObject *type,
         throw hooks::HookException(
                 "Cannot have default argument for Shape input.");
 
-    Node* n = dynamic_cast<Node*>(parent());
+    Q_ASSERT(dynamic_cast<Node*>(parent()));
+    Node* n = static_cast<Node*>(parent());
     Datum* d = n->getDatum(name);
 
     // Save that this datum is still present in the script
@@ -77,8 +78,8 @@ void ScriptDatum::makeInput(QString name, PyTypeObject *type,
     {
         datums_changed = true;
 
-        auto n = dynamic_cast<Node*>(parent());
-        Q_ASSERT(n);
+        Q_ASSERT(dynamic_cast<Node*>(parent()));
+        auto n = static_cast<Node*>(parent());
 
         if (type == &PyFloat_Type)
             d = new FloatDatum(name, value.isNull() ? "0.0" : value, n);
@@ -110,7 +111,8 @@ void ScriptDatum::makeOutput(QString name, PyObject *out)
     if (!isValidName(name))
         throw hooks::HookException("Invalid datum name");
 
-    Node* n = dynamic_cast<Node*>(parent());
+    Q_ASSERT(dynamic_cast<Node*>(parent()));
+    Node* n = static_cast<Node*>(parent());
     Datum* d = n->getDatum(name);
 
     // Save that this datum is still present in the script
@@ -130,8 +132,8 @@ void ScriptDatum::makeOutput(QString name, PyObject *out)
     {
         datums_changed = true;
 
-        auto n = dynamic_cast<Node*>(parent());
-        Q_ASSERT(n);
+        Q_ASSERT(dynamic_cast<Node*>(parent()));
+        auto n = static_cast<Node*>(parent());
 
         if (out->ob_type == fab::ShapeType)
             d = new ShapeOutputDatum(name, n);

@@ -38,8 +38,8 @@ void InspectorMenuButton::paint(QPainter* painter,
 
 void InspectorMenuButton::onPressed()
 {
-    NodeInspector* i = dynamic_cast<NodeInspector*>(parentObject());
-    Q_ASSERT(i);
+    Q_ASSERT(dynamic_cast<NodeInspector*>(parentObject()));
+    NodeInspector* i = static_cast<NodeInspector*>(parentObject());
 
     ScriptDatum* s = i->getScriptDatum();
     Q_ASSERT(s);

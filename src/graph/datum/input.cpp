@@ -16,8 +16,8 @@ QList<Datum*> InputHandler::getInputDatums() const
     QList<Datum*> list;
     for (auto link : getLinks())
     {
-        list << dynamic_cast<Datum*>(link->parent());
-        Q_ASSERT(list.back());
+        Q_ASSERT(dynamic_cast<Datum*>(link->parent()));
+        list << static_cast<Datum*>(link->parent());
     }
     return list;
 }
@@ -34,11 +34,11 @@ PyObject* SingleInputHandler::getValue() const
 {
     Q_ASSERT(!in.isNull());
 
-    Datum* source = dynamic_cast<Datum*>(in->parent());
-    Datum* target = dynamic_cast<Datum*>(parent());
+    Q_ASSERT(dynamic_cast<Datum*>(in->parent()));
+    Datum* source = static_cast<Datum*>(in->parent());
 
-    Q_ASSERT(source);
-    Q_ASSERT(target);
+    Q_ASSERT(dynamic_cast<Datum*>(parent()));
+    Datum* target = static_cast<Datum*>(parent());
 
     if (target->connectUpstream(source) && source->getValid())
     {
@@ -54,16 +54,20 @@ PyObject* SingleInputHandler::getValue() const
 
 bool SingleInputHandler::accepts(Link* input) const
 {
+    Q_ASSERT(dynamic_cast<Datum*>(parent()));
+    Q_ASSERT(dynamic_cast<Datum*>(input->parent()));
+
     return in.isNull() &&
-            dynamic_cast<Datum*>(parent())->getType() ==
-            dynamic_cast<Datum*>(input->parent())->getType();
+            static_cast<Datum*>(parent())->getType() ==
+            static_cast<Datum*>(input->parent())->getType();
 }
 
 void SingleInputHandler::addInput(Link* input)
 {
     Q_ASSERT(in.isNull());
     in = QPointer<Link>(input);
-    dynamic_cast<Datum*>(parent())->update();
+    Q_ASSERT(dynamic_cast<Datum*>(parent()));
+    static_cast<Datum*>(parent())->update();
 }
 
 bool SingleInputHandler::hasInput() const
@@ -96,7 +100,8 @@ void SingleInputHandler::deleteInput(Datum *d)
 QString SingleInputHandler::getString() const
 {
     Q_ASSERT(!in.isNull());
-    return dynamic_cast<Datum*>(in->parent())->getString();
+    Q_ASSERT(dynamic_cast<Datum*>(in->parent()));
+    return static_cast<Datum*>(in->parent())->getString();
 }
 
 QList<Link*> SingleInputHandler::getLinks() const
@@ -150,11 +155,10 @@ PyObject* ShapeInputHandler::getValue() const
         }
 
         // Link source and target
-        Datum* source = dynamic_cast<Datum*>(i->parent());
-        Datum* target = dynamic_cast<Datum*>(parent());
-
-        Q_ASSERT(source);
-        Q_ASSERT(target);
+        Q_ASSERT(dynamic_cast<Datum*>(i->parent()));
+        Datum* source = static_cast<Datum*>(i->parent());
+        Q_ASSERT(dynamic_cast<Datum*>(parent()));
+        Datum* target = static_cast<Datum*>(parent());
 
         valid &= target->connectUpstream(source) && source->getValid();
 
@@ -192,15 +196,18 @@ PyObject* ShapeInputHandler::getValue() const
 
 bool ShapeInputHandler::accepts(Link* input) const
 {
-    return dynamic_cast<Datum*>(parent())->getType() ==
-           dynamic_cast<Datum*>(input->parent())->getType();
+    Q_ASSERT(dynamic_cast<Datum*>(parent()));
+    Q_ASSERT(dynamic_cast<Datum*>(input->parent()));
+    return static_cast<Datum*>(parent())->getType() ==
+           static_cast<Datum*>(input->parent())->getType();
 }
 
 void ShapeInputHandler::addInput(Link* input)
 {
     prune();
     in << QPointer<Link>(input);
-    dynamic_cast<Datum*>(parent())->update();
+    Q_ASSERT(dynamic_cast<Datum*>(parent()));
+    static_cast<Datum*>(parent())->update();
 }
 
 bool ShapeInputHandler::hasInput() const

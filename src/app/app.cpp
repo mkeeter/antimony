@@ -81,7 +81,8 @@ App::~App()
 
 App* App::instance()
 {
-    return dynamic_cast<App*>(QApplication::instance());
+    Q_ASSERT(dynamic_cast<App*>(QApplication::instance()));
+    return static_cast<App*>(QApplication::instance());
 }
 
 void App::onAbout()

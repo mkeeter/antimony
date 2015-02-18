@@ -123,8 +123,8 @@ void Canvas::keyPressEvent(QKeyEvent *event)
     {
         QMenu* m = new QMenu(this);
 
-        auto window = dynamic_cast<MainWindow*>(parent());
-        Q_ASSERT(window);
+        Q_ASSERT(dynamic_cast<MainWindow*>(parent()));
+        auto window = static_cast<MainWindow*>(parent());
         window->populateMenu(m, false);
 
         m->exec(QCursor::pos());
@@ -213,8 +213,8 @@ void Canvas::onCopy()
 
         if (!selected.isEmpty())
         {
-            auto p = dynamic_cast<NodeRoot*>(selected[0]->parent());
-            Q_ASSERT(p);
+            Q_ASSERT(dynamic_cast<NodeRoot*>(selected[0]->parent()));
+            auto p = static_cast<NodeRoot*>(selected[0]->parent());
             NodeRoot temp_root;
 
             // Move the nodes to a temporary root for serialization

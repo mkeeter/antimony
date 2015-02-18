@@ -125,7 +125,8 @@ QMap<QString, Shape> NodeRoot::getShapes()
         boost::python::extract<Shape> get_shape(d->getValue());
         Q_ASSERT(get_shape.check());
 
-        Datum* name = dynamic_cast<Node*>(d->parent())->getDatum("_name");
+        Q_ASSERT(dynamic_cast<Node*>(d->parent()));
+        Datum* name = static_cast<Node*>(d->parent())->getDatum("_name");
         wchar_t* w = PyUnicode_AsWideCharString(name->getValue(), 0);
         Q_ASSERT(w);
         out[QString::fromWCharArray(w)] = get_shape();

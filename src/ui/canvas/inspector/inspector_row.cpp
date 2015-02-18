@@ -43,7 +43,8 @@ QRectF InspectorRow::boundingRect() const
 
 float InspectorRow::globalLabelWidth() const
 {
-   return dynamic_cast<NodeInspector*>(parentObject())->labelWidth();
+    Q_ASSERT(dynamic_cast<NodeInspector*>(parentObject()));
+    return static_cast<NodeInspector*>(parentObject())->labelWidth();
 }
 
 void InspectorRow::updateLayout()

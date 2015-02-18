@@ -41,8 +41,8 @@ void Node::setTitle(QString new_title)
 
 void Node::updateName()
 {
-    auto r = dynamic_cast<NodeRoot*>(parent());
-    Q_ASSERT(r);
+    Q_ASSERT(dynamic_cast<NodeRoot*>(parent()));
+    auto r = static_cast<NodeRoot*>(parent());
 
     for (auto d : findChildren<NameDatum*>(QString(),
                                            Qt::FindDirectChildrenOnly))
