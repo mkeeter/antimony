@@ -126,20 +126,26 @@ QString ScriptUIHooks::getDatum(PyObject* obj)
 
 PyObject* ScriptUIHooks::tupleDragFunction(tuple t)
 {
-    if (len(t) != 3)
-        throw hooks::HookException("Must provide three arguments to drag tuple.");
+    if (len(t) != 3 && len(t) != 2)
+        throw hooks::HookException("Must provide 2 or 3 arguments to drag tuple.");
 
     auto x = extract<object>(t[0])();
-    auto y = extract<object>(t[1])();
-    auto z = extract<object>(t[2])();
-
     auto xs = getDatum(x.ptr());
-    auto ys = getDatum(y.ptr());
-    auto zs = getDatum(z.ptr());
 
-    if ((xs.isNull() && x.ptr() != Py_None) ||
-        (ys.isNull() && y.ptr() != Py_None) ||
-        (zs.isNull() && z.ptr() != Py_None))
+    auto y = extract<object>(t[1])();
+    auto ys = getDatum(y.ptr());
+
+    bool invalid_argument = (xs.isNull() && x.ptr() != Py_None) ||
+                            (ys.isNull() && y.ptr() != Py_None);
+    QString zs;
+    if (len(t) == 3)
+    {
+        auto z = extract<object>(t[2])();
+        zs = getDatum(z.ptr());
+        invalid_argument |= (zs.isNull() && z.ptr() != Py_None);
+    }
+
+    if (invalid_argument)
         throw hooks::HookException(
                 "Arguments to drag tuple must be None or datum values.");
 
@@ -185,22 +191,28 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
     // (used as a unique identifier for the Control).
     long lineno = self.getInstruction();
 
-    if (len(args) != 4)
+    if (len(args) != 4 && len(args) != 3)
         throw hooks::HookException("Expected x, y, z as arguments");
 
     // Extract x, y, z as floats from first three arguments.
     extract<float> x_(args[1]);
-    extract<float> y_(args[2]);
-    extract<float> z_(args[3]);
     if (!x_.check())
         throw hooks::HookException("x value must be a number");
+    float x = x_();
+
+    extract<float> y_(args[2]);
     if (!y_.check())
         throw hooks::HookException("y value must be a number");
-    if (!z_.check())
-        throw hooks::HookException("z value must be a number");
-    float x = x_();
     float y = y_();
-    float z = z_();
+
+    float z = 0;
+    if (len(args) == 4)
+    {
+        extract<float> z_(args[3]);
+        if (!z_.check())
+            throw hooks::HookException("z value must be a number");
+        z = z_();
+    }
 
     // If this callback happened because we're dragging the generated
     // Control, don't delete it; otherwise, clear it to make room for
@@ -244,10 +256,20 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
             // Try to automatically generate a drag function by looking to see
             // if the x, y, z arguments match datum values; if so, make a drag
             // function that drags these datums.
-            p = new ControlPoint(self.node, defaultDragFunction(
-                    self.getDatum(extract<object>(args[1])().ptr()),
-                    self.getDatum(extract<object>(args[2])().ptr()),
-                    self.getDatum(extract<object>(args[3])().ptr())));
+            if (len(args) == 4)
+            {
+                p = new ControlPoint(self.node, defaultDragFunction(
+                        self.getDatum(extract<object>(args[1])().ptr()),
+                        self.getDatum(extract<object>(args[2])().ptr()),
+                        self.getDatum(extract<object>(args[3])().ptr())));
+            }
+            else
+            {
+                p = new ControlPoint(self.node, defaultDragFunction(
+                        self.getDatum(extract<object>(args[1])().ptr()),
+                        self.getDatum(extract<object>(args[2])().ptr()),
+                        QString()));
+            }
         }
 
         self.scene->registerControl(self.node, lineno, p);
