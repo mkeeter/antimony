@@ -22,10 +22,17 @@ public:
      */
     void paintEvent(QPaintEvent* event) override;
 
+    /*
+     *  On resize event, adjust the box sizes for output and errors.
+     */
+    void resizeEvent(QResizeEvent* event) override;
+
 protected slots:
     void onDatumChanged();
 
 protected:
+    void resizePanes();
+
     ScriptDatum* d;
 
     ScriptEditor* editor;

@@ -72,6 +72,17 @@ void ScriptPane::onDatumChanged()
         error->show();
     }
 
+    resizePanes();
+}
+
+void ScriptPane::resizeEvent(QResizeEvent* event)
+{
+    resizePanes();
+    QWidget::resizeEvent(event);
+}
+
+void ScriptPane::resizePanes()
+{
     for (auto txt : {output, error})
     {
         int lines = txt->document()->size().height() + 1;
