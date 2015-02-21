@@ -34,6 +34,8 @@ protected:
 
     QList<Datum*> datums;
     QList<QPair<Datum*, Datum*>> connections;
+
+    static int PROTOCOL_VERSION;
 };
 
 #endif // SERIALIZER_H

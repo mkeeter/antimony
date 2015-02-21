@@ -11,6 +11,8 @@
 #include "graph/datum/datums/shape_function_datum.h"
 #include "graph/datum/datums/script_datum.h"
 
+int SceneSerializer::PROTOCOL_VERSION = 2;
+
 SceneSerializer::SceneSerializer(QObject* node_root,
                                  QMap<Node*, QPointF> inspectors)
     : QObject(), node_root(node_root), inspectors(inspectors)
@@ -32,7 +34,7 @@ QByteArray SceneSerializer::run(SerializerMode mode)
 
 void SceneSerializer::run(QDataStream* out, SerializerMode mode)
 {
-    *out << QString("sb") << quint32(2);
+    *out << QString("sb") << quint32(PROTOCOL_VERSION);
     serializeNodes(out, node_root);
 
     if (mode == SERIALIZE_NODES)
