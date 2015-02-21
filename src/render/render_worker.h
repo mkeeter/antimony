@@ -50,6 +50,7 @@ protected:
     QPointer<DepthImageItem> depth_image;
 
     bool running;
+    int starting_refinement;
 
     QPointer<Viewport> viewport;
 };

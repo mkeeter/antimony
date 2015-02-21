@@ -17,7 +17,8 @@
 
 RenderWorker::RenderWorker(Datum* datum, Viewport* viewport)
     : QObject(NULL), datum(datum), thread(NULL), current(NULL),
-      next(NULL), depth_image(NULL), running(false), viewport(viewport)
+      next(NULL), depth_image(NULL), running(false), starting_refinement(4),
+      viewport(viewport)
 {
     connect(datum, &Datum::changed,
             this, &RenderWorker::onDatumChanged);
@@ -86,10 +87,11 @@ void RenderWorker::onDatumChanged()
         // Tell in-progress renders to abort.
         emit(abort());
 
-        next = new RenderTask(datum->getValue(),
-                              viewport->getTransformMatrix(),
-                              viewport->getScale() / (1 << 4),
-                              5);
+        next = new RenderTask(
+                datum->getValue(),
+                viewport->getTransformMatrix(),
+                viewport->getScale() / (1 << starting_refinement),
+                starting_refinement + 1);
 
         if (!running)
             startNextRender();
@@ -100,6 +102,15 @@ void RenderWorker::onTaskFinished()
 {
     if (!hasNoOutput())
         clearImage();
+
+    if (current->hasFinishedRender())
+    {
+        if (current->getRenderTime() < 25)
+            starting_refinement = std::min(starting_refinement,
+                                           current->getRefinement());
+        else
+            starting_refinement = std::min(current->getRefinement() + 1, 5);
+    }
 
     if (current->hasFinishedRender() && hasNoOutput() && viewport)
     {
