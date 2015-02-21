@@ -279,14 +279,14 @@ void Viewport::mousePressEvent(QMouseEvent *event)
         auto menu = new QMenu(static_cast<MainWindow*>(w));
 
         int overlapping = 0;
-        QSet<ControlProxy*> used;
+        QSet<Node*> used;
         for (auto i : items(event->pos()))
         {
             while (i->parentItem())
                 i = i->parentItem();
 
             auto c = dynamic_cast<ControlProxy*>(i);
-            if (c && !used.contains(c))
+            if (c && !used.contains(c->getNode()))
             {
                 overlapping++;
                 auto n = c->getNode();
@@ -294,7 +294,7 @@ void Viewport::mousePressEvent(QMouseEvent *event)
                         n->getName() + " (" + n->getTitle() + ")", menu);
                 a->setData(QVariant::fromValue(i));
                 menu->addAction(a);
-                used << c;
+                used << n;
             }
         }
         if (overlapping > 1)
