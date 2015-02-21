@@ -145,6 +145,13 @@ void App::onSaveAs()
     QString f = QFileDialog::getSaveFileName(NULL, "Save as", "", "*.sb");
     if (!f.isEmpty())
     {
+        if (!QFileInfo(QFileInfo(f).path()).isWritable())
+        {
+            QMessageBox::critical(NULL, "Save As error",
+                    "<b>Save As error:</b><br>"
+                    "Target file is not writable.");
+            return;
+        }
         filename = f;
         emit(windowTitleChanged(getWindowTitle()));
         return onSave();
@@ -221,6 +228,14 @@ void App::onExportSTL()
             NULL, "Export STL", "", "*.stl");
     if (file_name.isEmpty())
         return;
+
+    if (!QFileInfo(QFileInfo(file_name).path()).isWritable())
+    {
+        QMessageBox::critical(NULL, "Export error",
+                "<b>Export error:</b><br>"
+                "Target file is not writable.");
+        return;
+    }
 
     auto exporting_dialog = new ExportingDialog();
 
@@ -306,6 +321,14 @@ void App::onExportHeightmap()
     if (file_name.isEmpty())
         return;
 
+    if (!QFileInfo(QFileInfo(file_name).path()).isWritable())
+    {
+        QMessageBox::critical(NULL, "Export error",
+                "<b>Export error:</b><br>"
+                "Target file is not writable.");
+        return;
+    }
+
     auto exporting_dialog = new ExportingDialog();
 
     auto thread = new QThread();
@@ -346,6 +369,14 @@ void App::onExportJSON()
             NULL, "Export JSON", "", "*.f");
     if (file_name.isEmpty())
         return;
+
+    if (!QFileInfo(QFileInfo(file_name).path()).isWritable())
+    {
+        QMessageBox::critical(NULL, "Export error",
+                "<b>Export error:</b><br>"
+                "Target file is not writable.");
+        return;
+    }
 
     auto exporting_dialog = new ExportingDialog();
 
