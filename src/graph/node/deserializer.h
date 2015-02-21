@@ -29,6 +29,7 @@ protected:
     void deserializeDatum(QDataStream* in, Node* node);
     void deserializeConnections(QDataStream* in);
 
+    quint32 protocol_version;
     NodeRoot* node_root;
     QList<Datum*> datums;
 };

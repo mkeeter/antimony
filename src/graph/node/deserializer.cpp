@@ -35,7 +35,6 @@ bool SceneDeserializer::run(QByteArray in)
 bool SceneDeserializer::run(QDataStream* in)
 {
     QString sb;
-    quint32 protocol_version;
     *in >> sb >> protocol_version;
 
     if (sb != "sb")
@@ -48,7 +47,14 @@ bool SceneDeserializer::run(QDataStream* in)
         failed = true;
         error_message = "File was saved with an older protocol and can no longer be read.";
     }
-    else
+    else if (protocol_version == 2)
+    {
+        warning_message = "Nodes were automatically upgraded for compatability.";
+    }
+
+    // We can load protocol versions 2 and higher
+    // (where version 2 has automatic node upgrading)
+    if (protocol_version >= 2)
     {
         deserializeNodes(in, node_root);
         deserializeConnections(in);
