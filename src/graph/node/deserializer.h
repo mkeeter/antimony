@@ -18,9 +18,6 @@ public:
     bool run(QDataStream* in);
     bool run(QByteArray in);
 
-    bool hasError() const { return failed; }
-    QString errorMessage() const { return error_message; }
-
     QMap<Node*, QPointF> inspectors;
     bool failed;
     QString error_message;
