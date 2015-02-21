@@ -10,4 +10,20 @@ input('input', fab.types.Shape)
 
 output('shape', fab.shapes.attract(input, x, y, z, r))
 
+# UI
+fab.ui.wireframe([
+    (math.cos(i/36. * 2*math.pi) * r + x,
+     math.sin(i/36. * 2*math.pi) * r + y, z)
+    for i in range(36)], close=True, color=fab.color.teal)
+
+# Draw little arrows pointing inwards
+fab.ui.wireframe([(x,y,z-r), (x,y,z - 0.2*r)])
+fab.ui.wireframe([(x,y,z+r), (x,y,z + 0.2*r)], color=fab.color.teal)
+fab.ui.wireframe([(x, y + 0.2*r, z - 0.4*r), (x, y, z - 0.2*r),
+                  (x, y - 0.2*r, z - 0.4*r)], color=fab.color.teal)
+fab.ui.wireframe([(x, y + 0.2*r, z + 0.4*r), (x, y, z + 0.2*r),
+                  (x, y - 0.2*r, z + 0.4*r)], color=fab.color.teal)
+
 fab.ui.point(x, y, z, color=fab.color.teal)
+fab.ui.point(x, y, z + r, drag=(None, None, r), color=fab.color.teal)
+fab.ui.point(x, y, z - r, drag=(None, None, r), color=fab.color.teal)
