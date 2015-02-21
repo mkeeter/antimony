@@ -191,6 +191,12 @@ void App::loadFile(QString f)
                 ds.error_message);
         onNew();
     } else {
+        // If there's a warning message, show it in a box.
+        if (!ds.warning_message.isNull())
+            QMessageBox::information(NULL, "Loading information",
+                    "<b>Loading information:</b><br>" +
+                    ds.warning_message);
+
         makeUI(root);
         graph_scene->setInspectorPositions(ds.inspectors);
 

@@ -21,6 +21,7 @@ public:
     QMap<Node*, QPointF> inspectors;
     bool failed;
     QString error_message;
+    QString warning_message;
 
 protected:
     void deserializeNodes(QDataStream* in, NodeRoot* p);
