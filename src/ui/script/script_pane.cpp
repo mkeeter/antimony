@@ -25,6 +25,7 @@ ScriptPane::ScriptPane(ScriptDatum* datum, QWidget* parent)
     setStyleSheet(QString(
             "QWidget { "
             "   background-color: %1;"
+            "   border: none"
             "}").arg(Colors::base01.name()));
 
     auto layout = new QVBoxLayout;
