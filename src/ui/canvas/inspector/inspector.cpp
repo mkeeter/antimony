@@ -245,8 +245,7 @@ Node* NodeInspector::getNode()
 
 ScriptDatum* NodeInspector::getScriptDatum() const
 {
-    Q_ASSERT(dynamic_cast<ScriptDatum*>(node->getDatum("_script")));
-    return static_cast<ScriptDatum*>(node->getDatum("_script"));
+    return dynamic_cast<ScriptDatum*>(node->getDatum("_script"));
 }
 
 QPointF NodeInspector::datumOutputPosition(Datum* d) const
