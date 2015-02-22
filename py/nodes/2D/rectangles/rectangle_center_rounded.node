@@ -37,3 +37,17 @@ input('r',float,.25)
 
 output('shape',rectangle_center_rounded(x0,y0,width,height,r))
 
+def drag_r(this,x,y,z):
+    dx = this.x0+this.width/2.0-x
+    dy = this.y0+this.height/2.0-y
+    this.r = math.sqrt(dx*dx+dy*dy)
+
+def drag_hw(this,x,y,z):
+   this.width = 2*(x-this.x0)
+   this.height = 2*(y-this.y0)
+
+fab.ui.point(x0,y0)
+fab.ui.point(x0+width/2.0,y0+height/2.0,drag=drag_hw,relative=False)
+fab.ui.point(x0+width/2.0-r/math.sqrt(2),y0+height/2.0-r/math.sqrt(2),drag=drag_r,relative=False)
+
+

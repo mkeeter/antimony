@@ -21,3 +21,11 @@ input('width',float,2)
 input('height',float,1)
 
 output('shape',rectangle_center(x0,y0,width,height))
+
+def drag_hw(this,x,y,z):
+   this.width = 2*(x-this.x0)
+   this.height = 2*(y-this.y0)
+
+fab.ui.point(x0,y0)
+fab.ui.point(x0+width/2.0,y0+height/2.0,drag=drag_hw,relative=False)
+
