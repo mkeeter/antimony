@@ -84,3 +84,15 @@ input('r',float,.25)
 
 output('shape',cube_corner_rounded(x0,y0,z0,x1,y1,z1,r))
 
+def drag_r(this,x,y,z):
+    dx = this.x1-x
+    dy = this.y1-y
+    dz = this.z1-z
+    this.r = math.sqrt(dx*dx+dy*dy+dz*dz)/math.sqrt(3)
+
+fab.ui.point(x0,y0,z0)
+fab.ui.point(x1,y1,z1)
+fab.ui.point(x1-r,y1-r,z1-r,drag=drag_r,relative=False)
+
+
+
