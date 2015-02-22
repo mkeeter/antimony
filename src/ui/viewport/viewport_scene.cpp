@@ -60,12 +60,12 @@ Viewport* ViewportScene::newViewport()
     prune();
 
     for (auto itr = controls.begin(); itr != controls.end(); ++itr)
+    {
         for (auto i = itr.value().begin(); i != itr.value().end(); ++i)
             if (!i.value().isNull())
-            {
                 makeProxyFor(i.value(), v);
-                makeRenderWorkersFor(itr.key(), v);
-            }
+        makeRenderWorkersFor(itr.key(), v);
+    }
 
     return v;
 }
@@ -94,6 +94,9 @@ void ViewportScene::makeRenderWorkerFor(Datum* d, Viewport* v)
 
 void ViewportScene::makeRenderWorkersFor(Node* n, Viewport* v)
 {
+    // Add a dummy (NULL) control so that this node is stored and render
+    // workers are created for it when a new viewport is made.
+    controls[n][-1] = NULL;
     for (auto d : n->findChildren<Datum*>())
         if (RenderWorker::accepts(d))
             makeRenderWorkerFor(d, v);
