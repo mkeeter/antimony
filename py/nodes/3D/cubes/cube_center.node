@@ -32,6 +32,12 @@ def drag_hwd(this,x,y,z):
    this.width = 2*(x-this.x0)
    this.depth = 2*(z-this.z0)
 
+#def drag_hwd(this,x,y,z):
+#   this.height += 2*y
+#   this.width += 2*x
+#   this.depth += 2*z
+
 fab.ui.point(x0,y0)
 fab.ui.point(x0+width/2.0,y0+height/2.0,z0+depth/2.0,drag=drag_hwd,relative=False)
+#fab.ui.point(x0+width/2.0,y0+height/2.0,z0+depth/2.0,drag=drag_hwd)
 
