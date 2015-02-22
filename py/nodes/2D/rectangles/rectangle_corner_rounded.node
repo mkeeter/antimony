@@ -36,9 +36,9 @@ output('shape',rectangle_corner_rounded(x0,y0,x1,y1,r))
 def drag_r(this,x,y,z):
     dx = this.x1-x
     dy = this.y1-y
-    this.r = math.sqrt(dx*dx+dy*dy)
+    this.r = math.sqrt(dx*dx+dy*dy)/math.sqrt(2)
 
 fab.ui.point(x0,y0)
 fab.ui.point(x1,y1)
-fab.ui.point(x1-r/math.sqrt(2),y1-r/math.sqrt(2),drag=drag_r,relative=False)
+fab.ui.point(x1-r,y1-r,drag=drag_r,relative=False)
 
