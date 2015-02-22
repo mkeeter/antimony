@@ -171,7 +171,24 @@ void SceneDeserializer::deserializeConnections(QDataStream* in)
 void SceneDeserializer::upgradeNode(Node* node, NodeType::NodeType type)
 {
     if (type != NodeType::SCRIPT)
+    {
+        // Save the names of all of this node's datums, then remove them
+        // (as they're going to be shuffled around when the script evaluates)
+        QStringList datum_names;
+        while (datums.last()->parent() == node &&
+               datums.last()->objectName() != "_name")
+        {
+            datum_names.prepend(datums.last()->objectName());
+            datums.removeLast();
+        }
+
+        // Make a script datum with the matching upgraded script
         new ScriptDatum("_script", getScript(type), node);
+
+        // Then add back all of the datums (in the same order)
+        for (auto d : datum_names)
+            datums.append(node->findChild<Datum*>(d));
+    }
 }
 
 QString SceneDeserializer::getScript(NodeType::NodeType type) const
