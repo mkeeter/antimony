@@ -3,7 +3,7 @@
 
 import fab
 
-title('pyramid height')
+title('pyramid center')
 
 def pyramid_height(x0,y0,z0,w,h):
    from fab.types import Shape, Transform
@@ -32,4 +32,12 @@ input('height',float,1)
 
 output('shape',pyramid_height(x0,y0,z0,width,height))
 
+def drag_w(this,x,y,z):
+   dx = x-this.x0
+   dy = y-this.y0
+   this.width = 2*math.sqrt(dx*dx+dy*dy)/math.sqrt(2)
+
+fab.ui.point(x0,y0,z0)
+fab.ui.point(x0+width/2.0,y0+width/2.0,z0,drag=drag_w,relative=False)
+fab.ui.point(x0,y0,z0+height,drag=(None,None,height))
 
