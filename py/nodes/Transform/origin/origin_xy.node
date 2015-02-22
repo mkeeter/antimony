@@ -24,3 +24,6 @@ input('y1',float,1)
 input('shape',fab.types.Shape)
 output('transform',origin_xy(shape,x0,y0,x1,y1))
 
+fab.ui.point(x0,y0)
+fab.ui.point(x1,y1)
+
