@@ -5,6 +5,8 @@
 #include <QMap>
 #include <QPointF>
 
+#include "graph/node/enum.h"
+
 class Datum;
 class Node;
 class NodeRoot;
@@ -18,12 +20,10 @@ public:
     bool run(QDataStream* in);
     bool run(QByteArray in);
 
-    bool hasError() const { return failed; }
-    QString errorMessage() const { return error_message; }
-
     QMap<Node*, QPointF> inspectors;
     bool failed;
     QString error_message;
+    QString warning_message;
 
 protected:
     void deserializeNodes(QDataStream* in, NodeRoot* p);
@@ -31,6 +31,11 @@ protected:
     void deserializeDatum(QDataStream* in, Node* node);
     void deserializeConnections(QDataStream* in);
 
+    void upgradeNode(Node* node, NodeType::NodeType type);
+    QString getScript(NodeType::NodeType type) const;
+    QString scriptPath(NodeType::NodeType type) const;
+
+    quint32 protocol_version;
     NodeRoot* node_root;
     QList<Datum*> datums;
 };

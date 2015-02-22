@@ -10,6 +10,8 @@
 
 #include "graph/node/node.h"
 #include "graph/node/root.h"
+#include "graph/datum/types/eval_datum.h"
+#include "graph/node/nodes/meta.h"
 
 #include "ui_main_window.h"
 #include "ui/main_window.h"
@@ -126,15 +128,6 @@ bool MainWindow::isShaded() const
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "graph/node/nodes/2d.h"
-#include "graph/node/nodes/3d.h"
-#include "graph/node/nodes/meta.h"
-#include "graph/node/nodes/transforms.h"
-#include "graph/node/nodes/deform.h"
-#include "graph/node/nodes/iterate.h"
-
-#include "graph/datum/types/eval_datum.h"
-
 void MainWindow::createNew(bool recenter, NodeConstructorFunction f,
                            Viewport* v)
 {
@@ -185,31 +178,8 @@ void MainWindow::addNodeToMenu(QStringList category, QString name, QMenu* menu,
 
 void MainWindow::populateUserScripts(QMenu* menu, bool recenter, Viewport* v)
 {
-    auto path = QCoreApplication::applicationDirPath().split("/");
-
-#if defined Q_OS_MAC
-    // On Mac, the 'nodes' folder should be either in
-    // Antimony.app/Contents/Resources/nodes (when deployed)
-    // or Antimony.app/../sb/nodes (when running from the build directory)
-    path.removeLast(); // Trim the MacOS folder from the path
-
-    // When deployed, the nodes folder is in Resources/sb
-    if (QDir(path.join("/") + "/Resources/nodes").exists())
-    {
-        path.append("Resources");
-    }
-    // Otherwise, assume it's at the same level as antimony.app
-    else
-    {
-        for (int i=0; i < 2; ++i)
-            path.removeLast();
-        path << "sb" << "nodes";
-    }
-#else
-    path << "sb" << "nodes";
-#endif
-
-    QDirIterator itr(path.join("/"), QDirIterator::Subdirectories);
+    QDirIterator itr(App::instance()->nodePath(),
+                     QDirIterator::Subdirectories);
     QList<QRegExp> title_regexs= {QRegExp(".*title\\('+([^']+)'+\\).*"),
                                   QRegExp(".*title\\(\"+([^\"]+)\"+\\).*")};
 
