@@ -25,6 +25,8 @@ public:
     float getR() const { return r; }
     QColor getColor() const { return color; }
 
+    QVector3D pos() const override { return QVector3D(x, y, z); }
+
 protected:
     float x, y, z, r;
     QColor color;

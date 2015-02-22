@@ -92,6 +92,13 @@ public:
 
     bool getRelative() const { return relative; }
 
+    /*
+     *  Returns the position of this control.
+     *  Used to constrain the 2D -> 3D projection problem
+     *  for non-relative dragging.
+     */
+    virtual QVector3D pos() const { return QVector3D(); }
+
 public slots:
     void clearTouchedFlag();
     void deleteIfNotTouched();

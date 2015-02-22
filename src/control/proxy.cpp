@@ -95,7 +95,10 @@ void ControlProxy::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     QVector3D p0 = mi * QVector3D(click_pos);
     QVector3D p1 = mi * QVector3D(event->pos());
 
-    control->drag(p1, p1 - p0);
+    QVector3D eye = (mi*QVector3D(0, 0, -1)).normalized();
+
+    control->drag(p1 + eye * QVector3D::dotProduct(eye, control->pos() - p1),
+                  p1 - p0);
     click_pos = event->pos();
 }
 
