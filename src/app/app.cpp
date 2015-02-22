@@ -443,6 +443,35 @@ void App::setGlobalStyle()
                 .arg(Colors::base04.name()));
 }
 
+QString App::nodePath() const
+{
+    auto path = applicationDirPath().split("/");
+
+#if defined Q_OS_MAC
+    // On Mac, the 'nodes' folder should be either in
+    // Antimony.app/Contents/Resources/nodes (when deployed)
+    // or Antimony.app/../sb/nodes (when running from the build directory)
+    path.removeLast(); // Trim the MacOS folder from the path
+
+    // When deployed, the nodes folder is in Resources/sb
+    if (QDir(path.join("/") + "/Resources/nodes").exists())
+    {
+        path.append("Resources");
+    }
+    // Otherwise, assume it's at the same level as antimony.app
+    else
+    {
+        for (int i=0; i < 2; ++i)
+            path.removeLast();
+        path << "sb" << "nodes";
+    }
+#else
+    path << "sb" << "nodes";
+#endif
+
+    return path.join("/");
+}
+
 MainWindow* App::newCanvasWindow()
 {
     auto m = new MainWindow();
