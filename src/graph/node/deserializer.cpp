@@ -186,6 +186,8 @@ void SceneDeserializer::upgradeNode(Node* node, NodeType::NodeType type)
         new ScriptDatum("_script", getScript(type), node);
 
         // Then add back all of the datums (in the same order)
+        // Any missing datums are replaced by NULL; better hope that
+        // nothing is connected to them!
         for (auto d : datum_names)
             datums.append(node->findChild<Datum*>(d));
     }
