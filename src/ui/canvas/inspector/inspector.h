@@ -36,6 +36,9 @@ public:
 
     Node* getNode();
 
+    /*
+     *  Returns the ScriptDatum for this node or NULL
+     */
     ScriptDatum* getScriptDatum() const;
 
     OutputPort* datumOutputPort(Datum *d) const;

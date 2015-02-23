@@ -19,8 +19,11 @@ def reflect_xz(part,x0,z0):
       '+f%(z0)g-Xf%(x0)g' % locals()))
 
 input('x0',float,0)
+input('y0',float,0)
 input('z0',float,0)
 
 input('shape',fab.types.Shape)
 output('transform',reflect_xz(shape,x0,z0))
+
+fab.ui.point(x0,y0,z0)
 

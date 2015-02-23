@@ -53,6 +53,9 @@ DepthImageItem* RenderTask::getDepthImage(Viewport* viewport)
 
 void RenderTask::render()
 {
+    QTime timer;
+    timer.start();
+
     extract<Shape> get_shape(shape);
 
     Q_ASSERT(get_shape.check());
@@ -70,6 +73,7 @@ void RenderTask::render()
         image->moveToThread(QApplication::instance()->thread());
     }
 
+    time_taken = timer.elapsed();
     emit(finished());
 }
 

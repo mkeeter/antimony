@@ -22,3 +22,4 @@ input('y0',float,0)
 input('shape',fab.types.Shape)
 output('transform',reflect_xy(shape,x0,y0))
 
+fab.ui.point(x0,y0)

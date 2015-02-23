@@ -50,8 +50,9 @@
      <string>Export</string>
     </property>
     <addaction name="actionExportMesh"/>
-    <addaction name="actionExportJSON"/>
     <addaction name="actionExportHeightmap"/>
+    <addaction name="separator"/>
+    <addaction name="actionExportJSON"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -132,11 +133,6 @@
     <string>About</string>
    </property>
   </action>
-  <action name="actionExportJSON">
-   <property name="text">
-    <string>JSON (.f)</string>
-   </property>
-  </action>
   <action name="actionExportHeightmap">
    <property name="text">
     <string>Height-map (.png)</string>
@@ -209,6 +205,11 @@
   <action name="actionCut">
    <property name="text">
     <string>Cut</string>
+   </property>
+  </action>
+  <action name="actionExportJSON">
+   <property name="text">
+    <string>JSON (.f)</string>
    </property>
   </action>
  </widget>

@@ -1,6 +1,8 @@
 #ifndef CONTROL_H
 #define CONTROL_H
 
+#include <boost/python.hpp>
+
 #include <QObject>
 #include <QPointer>
 #include <QVector3D>
@@ -17,20 +19,21 @@ class Control : public QObject
     Q_OBJECT
 public:
     /*
-     *  A control is a UI representation of a Node.
+     *  A control is a UI object created by certain script hooks.
      *
-     *  node is the target Node (or NULL in special cases)
-     *  parent is a parent Control (as nested controls are allowed)
+     *  node is the target Node
      */
-    explicit Control(Node* node, QObject* parent=0);
+    explicit Control(Node* node, PyObject* drag_func=NULL);
 
-    /** Returns this control's relevant node.
+    /*
+     *  Destructor removes a reference to the drag function.
+     */
+    ~Control();
+
+    /*
+     * Returns this control's relevant node.
      */
     Node* getNode() const;
-
-    /** Gets the value of a specific datum (which must be a double).
-     */
-    double getValue(QString name) const;
 
     /*
      *  Schedules the top-level node for deletion in an undo-able way
@@ -40,24 +43,20 @@ public:
 
     /*
      *  This function is overloaded by children to return bounds.
+     *  By default, returns the bounding box of shape().
      */
-    virtual QRectF bounds(QMatrix4x4 m, QMatrix4x4 t) const=0;
+    virtual QRectF bounds(QMatrix4x4 m) const;
 
     /*
-     *  Equivalent to QGraphicsObject::shape
-     *  By default, returns the bounding rect
+     *  Returns the shape of this object (for selection and highlighting)
      */
-    virtual QPainterPath shape(QMatrix4x4 m, QMatrix4x4 t) const;
+    virtual QPainterPath shape(QMatrix4x4 m) const=0;
 
     /*
      *  This function should be defined by child nodes
      *  m is the world-to-screen transform matrix.
-     *  t is just the rotation component of this matrix
-     *      (used for cylinders and spheres to make lines
-     *       face user at all times)
      */
-    virtual void paint(QMatrix4x4 m, QMatrix4x4 t,
-                       bool highlight, QPainter* painter)=0;
+    virtual void paint(QMatrix4x4 m, bool highlight, QPainter* painter)=0;
 
     /*
      *  Saves watched datum's expressions
@@ -65,9 +64,10 @@ public:
      */
     void beginDrag();
 
-    /** Called to drag the node around with the mouse.
+    /*
+     *  Called to drag the node around with the mouse.
      */
-    virtual void drag(QVector3D center, QVector3D delta)=0;
+    void drag(QVector3D center, QVector3D diff);
 
     /*
      *  Pushes an UndoCommand to the stack that undoes the
@@ -76,51 +76,48 @@ public:
     void endDrag();
 
     /*
-     *  Overloaded to make buttons inside the Control.
-     *  Returns true if the Control has used the click event
-     *  (which prevents the event from being used for selection)
+     *  Sets the value of glow, emitting redraw if changed.
      */
-    virtual bool onClick() { return false; }
-
     void setGlow(bool g);
+
+    /*
+     *  Set touched to true.
+     *  This should be called in a UI hook to mark that this Control has been
+     *  used in the most recent script evaluation (and hence shouldn't be
+     *  deleted in a pruning pass).
+     */
+    void touch() { touched = true; }
+
+    bool isDragging() const { return is_dragging; }
+
+    bool getRelative() const { return relative; }
+
+    /*
+     *  Returns the position of this control.
+     *  Used to constrain the 2D -> 3D projection problem
+     *  for non-relative dragging.
+     */
+    virtual QVector3D pos() const { return QVector3D(); }
+
+public slots:
+    void clearTouchedFlag();
+    void deleteIfNotTouched();
 
 signals:
     void redraw();
     void glowChanged(Node* node, bool g);
 
 protected:
-    /** Mark a set of datums as causing a re-render when changed.
-     */
-    void watchDatums(QVector<QString> datums);
-
-    /** Attempts to drag a particular datum's value.
-     */
-    void dragValue(QString name, double delta);
-
-    /** Sets a specific datum's value to the given value.
-     */
-    void setValue(QString name, double new_value);
-
-    /** Returns the color to be used by the default pen.
-     */
-    virtual QColor defaultPenColor() const;
-
-    /** Returns the color to be used by the default brush.
-     */
-    virtual QColor defaultBrushColor() const;
-
-    /** Sets the painter pen to a reasonable default value.
-     */
-    void setDefaultPen(bool highlight, QPainter* painter) const;
-
-    /** Sets the painter brush to a reasonable value.
-     */
-    void setDefaultBrush(bool highlight, QPainter* painter) const;
-
     QPointer<Node> node;
-    QMap<EvalDatum*, QString> watched;
+    QMap<EvalDatum*, QString> datums;
+
+    PyObject* drag_func;
+    bool is_dragging;
 
     bool glow;
+    bool touched;
+
+    bool relative;
 };
 
 

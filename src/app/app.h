@@ -48,6 +48,7 @@ public:
     NodeRoot* getNodeRoot() const { return root; }
 
     GraphScene* getGraphScene() const { return graph_scene; }
+    ViewportScene* getViewScene() const { return view_scene; }
 
     /*
      *  Returns a window title in the form
@@ -56,6 +57,12 @@ public:
      *      antimony [filename.sb]*
      */
     QString getWindowTitle() const;
+
+    /*
+     *  Returns the path to the nodes directory
+     *  (which varies depending on OS).
+     */
+    QString nodePath() const;
 
     QAction* undoAction();
     QAction* redoAction();

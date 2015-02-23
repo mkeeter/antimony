@@ -159,12 +159,6 @@ void Viewport::makeNodeAtCursor(NodeConstructorFunction f)
 
     App::instance()->newNode(n);
     App::instance()->pushStack(new UndoAddNodeCommand(n));
-
-    if (auto proxy = getControlProxy(n))
-    {
-        proxy->setClickPos(scene_pos);
-        proxy->grabMouse();
-    }
 }
 
 float Viewport::getZmax() const
@@ -285,14 +279,14 @@ void Viewport::mousePressEvent(QMouseEvent *event)
         auto menu = new QMenu(static_cast<MainWindow*>(w));
 
         int overlapping = 0;
-        QSet<ControlProxy*> used;
+        QSet<Node*> used;
         for (auto i : items(event->pos()))
         {
             while (i->parentItem())
                 i = i->parentItem();
 
             auto c = dynamic_cast<ControlProxy*>(i);
-            if (c && !used.contains(c))
+            if (c && !used.contains(c->getNode()))
             {
                 overlapping++;
                 auto n = c->getNode();
@@ -300,7 +294,7 @@ void Viewport::mousePressEvent(QMouseEvent *event)
                         n->getName() + " (" + n->getTitle() + ")", menu);
                 a->setData(QVariant::fromValue(i));
                 menu->addAction(a);
-                used << c;
+                used << n;
             }
         }
         if (overlapping > 1)
@@ -525,8 +519,8 @@ void Viewport::onCopy()
         if (auto proxy = dynamic_cast<ControlProxy*>(i))
         {
             auto n = proxy->getControl()->getNode();
-            auto p = dynamic_cast<NodeRoot*>(n->parent());
-            Q_ASSERT(p);
+            Q_ASSERT(dynamic_cast<NodeRoot*>(n->parent()));
+            auto p = static_cast<NodeRoot*>(n->parent());
 
             NodeRoot temp_root;
             n->setParent(&temp_root);
@@ -545,8 +539,8 @@ void Viewport::onCut()
         if (auto proxy = dynamic_cast<ControlProxy*>(i))
         {
             auto n = proxy->getControl()->getNode();
-            auto p = dynamic_cast<NodeRoot*>(n->parent());
-            Q_ASSERT(p);
+            Q_ASSERT(dynamic_cast<NodeRoot*>(n->parent()));
+            auto p = static_cast<NodeRoot*>(n->parent());
 
             NodeRoot temp_root;
             n->setParent(&temp_root);

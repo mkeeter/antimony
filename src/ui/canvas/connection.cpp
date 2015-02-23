@@ -101,8 +101,8 @@ bool Connection::areInspectorsValid() const
 
 Datum* Connection::startDatum() const
 {
-    Datum* d = dynamic_cast<Datum*>(link->parent());
-    Q_ASSERT(d);
+    Q_ASSERT(dynamic_cast<Datum*>(link->parent()));
+    Datum* d = static_cast<Datum*>(link->parent());
     return d;
 }
 
@@ -115,16 +115,16 @@ Datum* Connection::endDatum() const
 
 Node* Connection::startNode() const
 {
-    Node* n = dynamic_cast<Node*>(startDatum()->parent());
-    Q_ASSERT(n);
+    Q_ASSERT(dynamic_cast<Node*>(startDatum()->parent()));
+    Node* n = static_cast<Node*>(startDatum()->parent());
     return n;
 }
 
 Node* Connection::endNode() const
 {
     Q_ASSERT(drag_state == CONNECTED);
-    Node* n = dynamic_cast<Node*>(endDatum()->parent());
-    Q_ASSERT(n);
+    Q_ASSERT(dynamic_cast<Node*>(endDatum()->parent()));
+    Node* n = static_cast<Node*>(endDatum()->parent());
     return n;
 }
 

@@ -26,3 +26,12 @@ input('height',float,2)
 input('depth',float,1)
 
 output('shape',cube_center(x0,y0,z0,width,height,depth))
+
+def drag_hwd(this,x,y,z):
+   this.width += 2*x
+   this.height += 2*y
+   this.depth += 2*z
+
+fab.ui.point(x0,y0)
+fab.ui.point(x0+width/2.0,y0+height/2.0,z0+depth/2.0,drag=drag_hwd)
+

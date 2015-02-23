@@ -18,4 +18,13 @@ input('height',float,2)
 
 output('shape',right_triangle(x0,y0,width,height))
 
+def drag_w(this,x,y,z):
+   this.width = x-this.x0
+
+def drag_h(this,x,y,z):
+   this.height = y-this.y0
+
+fab.ui.point(x0,y0)
+fab.ui.point(x0+width,y0,drag=drag_w,relative=False)
+fab.ui.point(x0,y0+height,drag=drag_h,relative=False)
 

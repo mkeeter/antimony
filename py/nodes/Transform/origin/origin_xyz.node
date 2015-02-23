@@ -30,3 +30,6 @@ input('z1',float,1)
 input('shape',fab.types.Shape)
 output('transform',origin_xyz(shape,x0,y0,z0,x1,y1,z1))
 
+fab.ui.point(x0,y0,z0)
+fab.ui.point(x1,y1,z1)
+

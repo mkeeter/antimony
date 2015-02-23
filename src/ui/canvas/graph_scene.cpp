@@ -33,6 +33,16 @@ void GraphScene::makeUIfor(Node* n)
     auto i = new NodeInspector(n);
     get_inspector_cache[n] = i;
     addItem(i);
+
+    if (views().length() > 0)
+    {
+        Q_ASSERT(dynamic_cast<Canvas*>(views().back()));
+        auto c = static_cast<Canvas*>(views().back());
+        i->setPos(c->mapToScene(c->geometry().center()) -
+                  QPointF(i->boundingRect().width()/2,
+                          i->boundingRect().height()/2));
+    }
+
     connect(i, &NodeInspector::glowChanged,
             this, &GraphScene::onGlowChange);
     connect(i, &NodeInspector::glowChanged,

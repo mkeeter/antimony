@@ -10,6 +10,8 @@
 
 #include "graph/node/node.h"
 #include "graph/node/root.h"
+#include "graph/datum/types/eval_datum.h"
+#include "graph/node/nodes/meta.h"
 
 #include "ui_main_window.h"
 #include "ui/main_window.h"
@@ -126,15 +128,6 @@ bool MainWindow::isShaded() const
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "graph/node/nodes/2d.h"
-#include "graph/node/nodes/3d.h"
-#include "graph/node/nodes/meta.h"
-#include "graph/node/nodes/transforms.h"
-#include "graph/node/nodes/deform.h"
-#include "graph/node/nodes/iterate.h"
-
-#include "graph/datum/types/eval_datum.h"
-
 void MainWindow::createNew(bool recenter, NodeConstructorFunction f,
                            Viewport* v)
 {
@@ -183,74 +176,12 @@ void MainWindow::addNodeToMenu(QStringList category, QString name, QMenu* menu,
             [=]{ this->createNew(recenter, f, v); });
 }
 
-void MainWindow::populateBuiltIn(QMenu* menu, bool recenter, Viewport* v)
-{
-    auto add = [&](QString category, QString name, NodeConstructor constructor)
-    {
-        addNodeToMenu({category}, name, menu, recenter, constructor, v);
-    };
-
-    add("2D", "Circle", CircleNode);
-    add("2D", "Point", Point2DNode);
-    add("2D", "Triangle", TriangleNode);
-    add("2D", "Rectangle", RectangleNode);
-    add("2D", "Text", TextNode);
-
-    add("3D", "Point", Point3DNode);
-    add("3D", "Cube", CubeNode);
-    add("3D", "Sphere", SphereNode);
-    add("3D", "Cylinder", CylinderNode);
-    add("3D", "Cone", ConeNode);
-    add("3D", "Extrude", ExtrudeNode);
-
-    add("Transform", "Rotate (X)", RotateXNode);
-    add("Transform", "Rotate (Y)", RotateYNode);
-    add("Transform", "Rotate (Z)", RotateZNode);
-    add("Transform", "Reflect (X)", ReflectXNode);
-    add("Transform", "Reflect (Y)", ReflectYNode);
-    add("Transform", "Reflect (Z)", ReflectZNode);
-    add("Transform", "Recenter", RecenterNode);
-    add("Transform", "Translate", TranslateNode);
-
-    add("Iterate", "Iterate (2D)", Iterate2DNode);
-    add("Iterate", "Iterate (polar)", IteratePolarNode);
-
-    add("Deform", "Attract", AttractNode);
-    add("Deform", "Repel", RepelNode);
-    add("Deform", "Scale (X)", ScaleXNode);
-    add("Deform", "Scale (Y)", ScaleYNode);
-    add("Deform", "Scale (Z)", ScaleZNode);
-}
-
 void MainWindow::populateUserScripts(QMenu* menu, bool recenter, Viewport* v)
 {
-    auto path = QCoreApplication::applicationDirPath().split("/");
-
-#if defined Q_OS_MAC
-    // On Mac, the 'nodes' folder should be either in
-    // Antimony.app/Contents/Resources/nodes (when deployed)
-    // or Antimony.app/../sb/nodes (when running from the build directory)
-    path.removeLast(); // Trim the MacOS folder from the path
-
-    // When deployed, the nodes folder is in Resources/sb
-    if (QDir(path.join("/") + "/Resources/nodes").exists())
-    {
-        path.append("Resources");
-    }
-    // Otherwise, assume it's at the same level as antimony.app
-    else
-    {
-        for (int i=0; i < 2; ++i)
-            path.removeLast();
-        path << "sb" << "nodes";
-    }
-#else
-    path << "sb" << "nodes";
-#endif
-
-    QDirIterator itr(path.join("/"), QDirIterator::Subdirectories);
-    QList<QRegExp> title_regexs= {QRegExp(".*title\\('+([^()']+)'+\\).*"),
-                                  QRegExp(".*title\\(\"+([^\"()]+)\"+\\).*")};
+    QDirIterator itr(App::instance()->nodePath(),
+                     QDirIterator::Subdirectories);
+    QList<QRegExp> title_regexs= {QRegExp(".*title\\('+([^']+)'+\\).*"),
+                                  QRegExp(".*title\\(\"+([^\"]+)\"+\\).*")};
 
     // Extract all of valid filenames into a QStringList.
     QStringList node_filenames;
@@ -262,14 +193,10 @@ void MainWindow::populateUserScripts(QMenu* menu, bool recenter, Viewport* v)
     }
 
     // Sort the list, then populate menus.
-    node_filenames.sort();
+    QMap<QString, QPair<QStringList, NodeConstructorFunction>> nodes;
+    QStringList node_titles;
     for (auto n : node_filenames)
     {
-        auto split = n.split('/');
-        while (split.first() != "nodes")
-            split.removeFirst();
-        split.removeFirst();
-
         QFile file(n);
         if (!file.open(QIODevice::ReadOnly))
             continue;
@@ -277,6 +204,14 @@ void MainWindow::populateUserScripts(QMenu* menu, bool recenter, Viewport* v)
         QTextStream in(&file);
         QString txt = in.readAll();
 
+        // Find the menu structure for this node
+        auto split = n.split('/');
+        while (split.first() != "nodes")
+            split.removeFirst();
+        split.removeFirst();
+
+        // Attempt to extract the title with a regex;
+        // falling back to the node's filename otherwise.
         QString title = split.last().replace(".node","");
         split.removeLast();
         for (auto& regex : title_regexs)
@@ -290,16 +225,23 @@ void MainWindow::populateUserScripts(QMenu* menu, bool recenter, Viewport* v)
                 static_cast<EvalDatum*>(s->getDatum("_script"))->setExpr(txt);
                 return s;
             };
-        addNodeToMenu(split, title, menu, recenter, constructor, v);
+        nodes[title] = QPair<QStringList, NodeConstructorFunction>(
+                split, constructor);
+        node_titles.append(title);
     }
+
+    node_titles.sort();
+    for (auto title : node_titles)
+        addNodeToMenu(nodes[title].first, title, menu,
+                      recenter, nodes[title].second, v);
 }
 
 void MainWindow::populateMenu(QMenu* menu, bool recenter, Viewport* v)
 {
+    // Hard-code menu names to set their order.
     for (auto c : {"2D", "3D", "CSG", "Transform", "Iterate", "Deform"})
         menu->addMenu(c);
 
-    populateBuiltIn(menu, recenter, v);
     populateUserScripts(menu, recenter, v);
 
     menu->addSeparator();

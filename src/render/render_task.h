@@ -30,6 +30,9 @@ public:
      */
     DepthImageItem* getDepthImage(Viewport* viewport);
 
+    int getRenderTime() const { return time_taken; }
+    int getRefinement() const { return refinement; }
+
 public slots:
     void render();
 signals:
@@ -49,6 +52,8 @@ protected:
     int refinement;
 
     RenderImage* image;
+
+    int time_taken;
 
     friend class RenderWorker;
 };

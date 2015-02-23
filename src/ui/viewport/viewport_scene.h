@@ -8,8 +8,8 @@
 
 class Control;
 class ControlProxy;
-class Node;
 class Datum;
+class Node;
 class Viewport;
 class RenderWorker;
 
@@ -34,9 +34,19 @@ public:
     Viewport* newViewport();
 
     /*
-     *  Creates Controls and DepthImageItems for this node.
+     *  Creates DepthImageItems for this node.
      */
-    void makeUIfor(Node* n);
+    void makeRenderWorkersFor(Node* n);
+
+    /*
+     *  Registers a Control object, making proxies.
+     */
+    void registerControl(Node* n, long index, Control* c);
+
+    /*
+     *  Looks up a particular control by node and index.
+     */
+    Control* getControl(Node* node, long index) const;
 
 public slots:
     void onGlowChange(Node* n, bool g);
@@ -64,7 +74,7 @@ protected:
      *  Creates a ControlProxy that represents the given Control
      *  in the given QGraphicsScene.
      */
-    void makeProxyFor(Control* c, Viewport* v, ControlProxy* parent=NULL);
+    void makeProxyFor(Control* c, Viewport* v);
 
     /*
      *  Creates one or more RenderWorkers to render Datums in the
@@ -77,14 +87,8 @@ protected:
      */
     void makeRenderWorkerFor(Datum* d, Viewport* v);
 
-    /*
-     *  Makes a new control for the given node
-     *  (hardcoded against the node's type code)
-     */
-    Control* makeControlFor(Node* n) const;
-
     QMap<QPointer<Viewport>, QGraphicsScene*> scenes;
-    QMap<QPointer<Node>, Control*> controls;
+    QMap<QPointer<Node>, QMap<long, QPointer<Control>>> controls;
     QMap<QPointer<Datum>, QList<QPointer<RenderWorker>>> workers;
 };
 

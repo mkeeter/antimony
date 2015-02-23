@@ -15,6 +15,7 @@
 #include "graph/hooks/hooks.h"
 
 #include "fab/fab.h"
+#include "ui/util/colors.h"
 
 ScriptDatum::ScriptDatum(QString name, Node* parent)
     : EvalDatum(name, parent), globals(NULL)
@@ -36,13 +37,13 @@ int ScriptDatum::getStartToken() const
 void ScriptDatum::modifyGlobalsDict(PyObject* g)
 {
     globals = g;
-    hooks::loadHooks(g, this);
+    old_ui = hooks::loadHooks(g, this);
+    Colors::loadColors();
 }
 
 bool ScriptDatum::isValidName(QString name) const
 {
-    return name.size() && name.at(0) != '_' &&
-           name != "script" && !touched.contains(name);
+    return name.size() && name != "_script" && !touched.contains(name);
 }
 
 void ScriptDatum::makeInput(QString name, PyTypeObject *type,
@@ -54,7 +55,8 @@ void ScriptDatum::makeInput(QString name, PyTypeObject *type,
         throw hooks::HookException(
                 "Cannot have default argument for Shape input.");
 
-    Node* n = dynamic_cast<Node*>(parent());
+    Q_ASSERT(dynamic_cast<Node*>(parent()));
+    Node* n = static_cast<Node*>(parent());
     Datum* d = n->getDatum(name);
 
     // Save that this datum is still present in the script
@@ -76,8 +78,8 @@ void ScriptDatum::makeInput(QString name, PyTypeObject *type,
     {
         datums_changed = true;
 
-        auto n = dynamic_cast<Node*>(parent());
-        Q_ASSERT(n);
+        Q_ASSERT(dynamic_cast<Node*>(parent()));
+        auto n = static_cast<Node*>(parent());
 
         if (type == &PyFloat_Type)
             d = new FloatDatum(name, value.isNull() ? "0.0" : value, n);
@@ -109,7 +111,8 @@ void ScriptDatum::makeOutput(QString name, PyObject *out)
     if (!isValidName(name))
         throw hooks::HookException("Invalid datum name");
 
-    Node* n = dynamic_cast<Node*>(parent());
+    Q_ASSERT(dynamic_cast<Node*>(parent()));
+    Node* n = static_cast<Node*>(parent());
     Datum* d = n->getDatum(name);
 
     // Save that this datum is still present in the script
@@ -129,8 +132,8 @@ void ScriptDatum::makeOutput(QString name, PyObject *out)
     {
         datums_changed = true;
 
-        auto n = dynamic_cast<Node*>(parent());
-        Q_ASSERT(n);
+        Q_ASSERT(dynamic_cast<Node*>(parent()));
+        auto n = static_cast<Node*>(parent());
 
         if (out->ob_type == fab::ShapeType)
             d = new ShapeOutputDatum(name, n);
@@ -159,7 +162,10 @@ PyObject* ScriptDatum::getCurrentValue()
     // Assert that there isn't any recursion going on here.
     Q_ASSERT(globals == NULL);
 
+    // Reset all of the touched flags, both on datums and Controls
     touched.clear();
+    emit(static_cast<Node*>(parent())->clearControlTouchedFlag());
+
     datums_changed = false;
     QStringList datums_before;
     for (auto o : parent()->findChildren<Datum*>(
@@ -171,11 +177,21 @@ PyObject* ScriptDatum::getCurrentValue()
     PyObject* sys_mod = PyImport_ImportModule("sys");
     PyObject* io_mod = PyImport_ImportModule("io");
     PyObject* stdout_obj = PyObject_GetAttrString(sys_mod, "stdout");
+    PyObject* stderr_obj = PyObject_GetAttrString(sys_mod, "stderr");
     PyObject* string_out = PyObject_CallMethod(io_mod, "StringIO", NULL);
     PyObject_SetAttrString(sys_mod, "stdout", string_out);
+    PyObject_SetAttrString(sys_mod, "stderr", string_out);
     Q_ASSERT(!PyErr_Occurred());
 
     PyObject* out = EvalDatum::getCurrentValue();
+
+    // Swap old_ui back in to make recursive calls work.
+    if (old_ui)
+    {
+        PyObject* fab_mod = PyImport_ImportModule("fab");
+        PyObject_SetAttrString(fab_mod, "ui", old_ui);
+        Py_DECREF(fab_mod);
+    }
 
     // Get the output from the StringIO object
     PyObject* s = PyObject_CallMethod(string_out, "getvalue", NULL);
@@ -186,11 +202,9 @@ PyObject* ScriptDatum::getCurrentValue()
 
     // Swap stdout back into sys.stdout
     PyObject_SetAttrString(sys_mod, "stdout", stdout_obj);
-    Py_DECREF(sys_mod);
-    Py_DECREF(io_mod);
-    Py_DECREF(stdout_obj);
-    Py_DECREF(string_out);
-    Py_DECREF(s);
+    PyObject_SetAttrString(sys_mod, "stderr", stderr_obj);
+    for (auto o : {sys_mod, io_mod, stdout_obj, stderr_obj, string_out, s})
+        Py_DECREF(o);
 
     // Look at all of the datums (other than the script datum and other
     // reserved datums), deleting them if they have not been touched.
@@ -217,6 +231,9 @@ PyObject* ScriptDatum::getCurrentValue()
         }
     }
 
+    // Request that all untouched Controls delete themselves.
+    emit(static_cast<Node*>(parent())->deleteUntouchedControls());
+
     globals = NULL;
 
     if (datums_changed)
@@ -224,7 +241,9 @@ PyObject* ScriptDatum::getCurrentValue()
     else if (datum_order_changed)
         emit(static_cast<Node*>(parent())->datumOrderChanged());
 
-
+    // Filter out default arguments to input datums, to make the script
+    // simpler to read (because input('x', float, 12.0f) looks odd when
+    // x doesn't have a value of 12 anymore).
     QRegExp input("(.*input\\([^(),]+,[^(),]+),[^(),]+(\\).*)");
     while (input.exactMatch(expr))
     {

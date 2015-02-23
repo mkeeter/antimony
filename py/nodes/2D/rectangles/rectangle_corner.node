@@ -17,3 +17,7 @@ input('x1',float,1)
 input('y1',float,.5)
 
 output('shape',rectangle_corner(x0,y0,x1,y1))
+
+fab.ui.point(x0,y0)
+fab.ui.point(x1,y1)
+

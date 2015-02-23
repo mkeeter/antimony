@@ -81,7 +81,7 @@ void DatumTextItem::onDatumChanged()
     // Set tooltip if there was a Python evaluation error.
     if (dynamic_cast<EvalDatum*>(d) && !d->getValid())
     {
-        setToolTip(dynamic_cast<EvalDatum*>(d)->getErrorTraceback());
+        setToolTip(static_cast<EvalDatum*>(d)->getErrorTraceback());
     }
     else
     {

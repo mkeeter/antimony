@@ -81,7 +81,8 @@ App::~App()
 
 App* App::instance()
 {
-    return dynamic_cast<App*>(QApplication::instance());
+    Q_ASSERT(dynamic_cast<App*>(QApplication::instance()));
+    return static_cast<App*>(QApplication::instance());
 }
 
 void App::onAbout()
@@ -144,6 +145,13 @@ void App::onSaveAs()
     QString f = QFileDialog::getSaveFileName(NULL, "Save as", "", "*.sb");
     if (!f.isEmpty())
     {
+        if (!QFileInfo(QFileInfo(f).path()).isWritable())
+        {
+            QMessageBox::critical(NULL, "Save As error",
+                    "<b>Save As error:</b><br>"
+                    "Target file is not writable.");
+            return;
+        }
         filename = f;
         emit(windowTitleChanged(getWindowTitle()));
         return onSave();
@@ -183,6 +191,12 @@ void App::loadFile(QString f)
                 ds.error_message);
         onNew();
     } else {
+        // If there's a warning message, show it in a box.
+        if (!ds.warning_message.isNull())
+            QMessageBox::information(NULL, "Loading information",
+                    "<b>Loading information:</b><br>" +
+                    ds.warning_message);
+
         makeUI(root);
         graph_scene->setInspectorPositions(ds.inspectors);
 
@@ -220,6 +234,14 @@ void App::onExportSTL()
             NULL, "Export STL", "", "*.stl");
     if (file_name.isEmpty())
         return;
+
+    if (!QFileInfo(QFileInfo(file_name).path()).isWritable())
+    {
+        QMessageBox::critical(NULL, "Export error",
+                "<b>Export error:</b><br>"
+                "Target file is not writable.");
+        return;
+    }
 
     auto exporting_dialog = new ExportingDialog();
 
@@ -305,6 +327,14 @@ void App::onExportHeightmap()
     if (file_name.isEmpty())
         return;
 
+    if (!QFileInfo(QFileInfo(file_name).path()).isWritable())
+    {
+        QMessageBox::critical(NULL, "Export error",
+                "<b>Export error:</b><br>"
+                "Target file is not writable.");
+        return;
+    }
+
     auto exporting_dialog = new ExportingDialog();
 
     auto thread = new QThread();
@@ -345,6 +375,14 @@ void App::onExportJSON()
             NULL, "Export JSON", "", "*.f");
     if (file_name.isEmpty())
         return;
+
+    if (!QFileInfo(QFileInfo(file_name).path()).isWritable())
+    {
+        QMessageBox::critical(NULL, "Export error",
+                "<b>Export error:</b><br>"
+                "Target file is not writable.");
+        return;
+    }
 
     auto exporting_dialog = new ExportingDialog();
 
@@ -403,6 +441,35 @@ void App::setGlobalStyle()
             "   font-family: Courier"
             "}").arg(Colors::base03.name())
                 .arg(Colors::base04.name()));
+}
+
+QString App::nodePath() const
+{
+    auto path = applicationDirPath().split("/");
+
+#if defined Q_OS_MAC
+    // On Mac, the 'nodes' folder should be either in
+    // Antimony.app/Contents/Resources/nodes (when deployed)
+    // or Antimony.app/../sb/nodes (when running from the build directory)
+    path.removeLast(); // Trim the MacOS folder from the path
+
+    // When deployed, the nodes folder is in Resources/sb
+    if (QDir(path.join("/") + "/Resources/nodes").exists())
+    {
+        path.append("Resources");
+    }
+    // Otherwise, assume it's at the same level as antimony.app
+    else
+    {
+        for (int i=0; i < 2; ++i)
+            path.removeLast();
+        path << "sb" << "nodes";
+    }
+#else
+    path << "sb" << "nodes";
+#endif
+
+    return path.join("/");
 }
 
 MainWindow* App::newCanvasWindow()
@@ -481,7 +548,7 @@ MainWindow* App::newEditorWindow(ScriptDatum* datum)
 void App::newNode(Node* n)
 {
     graph_scene->makeUIfor(n);
-    view_scene->makeUIfor(n);
+    view_scene->makeRenderWorkersFor(n);
 }
 
 void App::makeUI(NodeRoot* r)

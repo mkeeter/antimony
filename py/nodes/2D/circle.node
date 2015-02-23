@@ -1,0 +1,17 @@
+import fab
+
+title('Circle')
+
+input('x', float)
+input('y', float)
+input('r', float, 1)
+
+output('shape', fab.shapes.circle(x, y, r))
+
+# UI
+fab.ui.wireframe([
+    (math.cos(i/36. * 2*math.pi) * r + x,
+     math.sin(i/36. * 2*math.pi) * r + y, 0)
+    for i in range(36)], close=True)
+fab.ui.point(x, y, 0)
+fab.ui.point(x + r, y, 0, drag=(r, None, None))

@@ -1,0 +1,20 @@
+import fab
+
+title('Scale (Z)')
+
+input('_x', float)
+input('_y', float)
+input('z', float)
+input('s', float, 1)
+input('input', fab.types.Shape)
+output('shape', fab.shapes.scale_z(input, z, s))
+
+# UI
+kwargs = {'color':fab.color.teal}
+fab.ui.wireframe([(_x + 0.2*s, _y, z), (_x - 0.2*s, _y, z)], **kwargs)
+fab.ui.wireframe([(_x, _y, z), (_x, _y, z + s)], **kwargs)
+fab.ui.wireframe([(_x - 0.1*s, _y, z + 0.9*s), (_x, _y, z + s),
+                  (_x + 0.1*s, _y, z + 0.9*s)], **kwargs)
+
+fab.ui.point(_x, _y, z, color=fab.color.teal)
+fab.ui.point(_x, _y, z + s, color=fab.color.teal, drag=(None,None,s))

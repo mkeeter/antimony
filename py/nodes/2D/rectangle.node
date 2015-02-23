@@ -1,0 +1,16 @@
+import fab
+
+title('Rectangle')
+
+input('xmin', float)
+input('ymin', float)
+input('xmax', float, 1)
+input('ymax', float, 1)
+
+output('shape', fab.shapes.rectangle(xmin, xmax, ymin, ymax))
+
+# UI
+fab.ui.wireframe([(xmin, ymin, 0), (xmax, ymin, 0),
+                  (xmax, ymax, 0), (xmin, ymax, 0)], close=True)
+fab.ui.point(xmin, ymin, 0)
+fab.ui.point(xmax, ymax, 0)

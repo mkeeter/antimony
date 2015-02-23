@@ -73,13 +73,12 @@ PyObject* EvalDatum::getCurrentValue()
     if (validateExpr(e))
     {
         PyObject* globals = root()->proxyDict(this);
-        PyObject* locals = Py_BuildValue("{}");
 
         modifyGlobalsDict(globals);
 
         new_value = PyRun_String(
                  e.toStdString().c_str(),
-                 getStartToken(), globals, locals);
+                 getStartToken(), globals, globals);
 
         if (PyErr_Occurred())
         {
@@ -88,7 +87,6 @@ PyObject* EvalDatum::getCurrentValue()
         }
 
         Py_DECREF(globals);
-        Py_DECREF(locals);
 
         new_value = validatePyObject(validateType(new_value));
     }

@@ -67,7 +67,8 @@ void Datum::addLink(Link* input)
     // mostly relevant for shape datums, which are only rendered if they
     // are not used elsewhere in the system.
     emit(connectionChanged());
-    emit(dynamic_cast<Datum*>(input->parent())->connectionChanged());
+    Q_ASSERT(dynamic_cast<Datum*>(input->parent()));
+    emit(static_cast<Datum*>(input->parent())->connectionChanged());
     connect(input, &Link::destroyed, this, &Datum::connectionChanged);
 }
 
@@ -208,8 +209,6 @@ NodeRoot* Datum::root() const
 {
     Q_ASSERT(parent() && dynamic_cast<Node*>(parent()));
 
-    auto root = dynamic_cast<NodeRoot*>(parent()->parent());
-    Q_ASSERT(root);
-
-    return root;
+    Q_ASSERT(dynamic_cast<NodeRoot*>(parent()->parent()));
+    return static_cast<NodeRoot*>(parent()->parent());
 }

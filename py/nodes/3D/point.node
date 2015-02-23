@@ -1,0 +1,11 @@
+import fab
+
+title('Point (3D)')
+
+input('x', float)
+input('y', float)
+input('z', float)
+
+# UI
+fab.ui.point(x, y, z)
+

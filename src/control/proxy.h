@@ -14,8 +14,7 @@ class ControlProxy : public QGraphicsObject
 {
     Q_OBJECT
 public:
-    explicit ControlProxy(Control* control, Viewport* viewport,
-                          QGraphicsItem* parent=NULL);
+    explicit ControlProxy(Control* control, Viewport* viewport);
 
     /*
      *  Returns the bounding rect of the QGraphicsObject by calling
@@ -75,12 +74,6 @@ public:
      */
     Control* getControl() const;
 
-    /*
-     *  Helper function to set click_pos
-     *  (used when inserting objects to start dragging)
-     */
-    void setClickPos(QPointF p) { click_pos = p; }
-
 public slots:
     void redraw();
 
@@ -93,8 +86,8 @@ protected:
     QPointer<Control> control;
     Viewport* viewport;
 
-    QPointF click_pos;
     bool hover;
+    QPointF click_pos;
 };
 
 #endif // CONTROL_PROXY_H

@@ -1,0 +1,18 @@
+import fab
+
+title('Triangle')
+
+input('x0', float)
+input('y0', float)
+input('x1', float, 1)
+input('y1', float, 0)
+input('x2', float, 0)
+input('y2', float, 1)
+
+output('shape', fab.shapes.triangle(x0, y0, x1, y1, x2, y2))
+
+# UI
+fab.ui.wireframe([(x0, y0, 0), (x1, y1, 0), (x2, y2, 0)], close=True)
+fab.ui.point(x0, y0, 0)
+fab.ui.point(x1, y1, 0)
+fab.ui.point(x2, y2, 0)

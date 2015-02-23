@@ -25,6 +25,7 @@ ScriptPane::ScriptPane(ScriptDatum* datum, QWidget* parent)
     setStyleSheet(QString(
             "QWidget { "
             "   background-color: %1;"
+            "   border: none"
             "}").arg(Colors::base01.name()));
 
     auto layout = new QVBoxLayout;
@@ -71,6 +72,17 @@ void ScriptPane::onDatumChanged()
         error->show();
     }
 
+    resizePanes();
+}
+
+void ScriptPane::resizeEvent(QResizeEvent* event)
+{
+    resizePanes();
+    QWidget::resizeEvent(event);
+}
+
+void ScriptPane::resizePanes()
+{
     for (auto txt : {output, error})
     {
         int lines = txt->document()->size().height() + 1;

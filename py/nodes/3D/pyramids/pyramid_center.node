@@ -1,0 +1,43 @@
+
+# Neil Gershenfeld 1/24/15 
+
+import fab
+
+title('pyramid center')
+
+def pyramid_height(x0,y0,z0,w,h):
+   from fab.types import Shape, Transform
+   if (h >= 0):
+      # max(Y-y0+(w/2)*(z0+h-Z)/h,
+      #    max(y0-(w/2)*(z0+h-Z)/h-Y,
+      #    max(X-x0+(w/2)*(z0+h-Z)/h,
+      #    max(x0-(w/2)*(z0+h-Z)/h-X,z0-Z))
+      return Shape(
+         'a-Y+f%(y0)g*/f%(w)gf2/-+f%(z0)gf%(h)gZf%(h)ga--f%(y0)g*/f%(w)gf2/-+f%(z0)gf%(h)gZf%(h)gYa-X+f%(x0)g*/f%(w)gf2/-+f%(z0)gf%(h)gZf%(h)ga--f%(x0)g*/f%(w)gf2/-+f%(z0)gf%(h)gZf%(h)gX-f%(z0)gZ' % locals(),
+         x0-w/2,y0-w/2,z0,x0+w/2,y0+w/2,z0+h)
+   else:
+      # max(Y-y0+(w/2)*(z0+h-Z)/h,
+      #    max(y0-(w/2)*(z0+h-Z)/h-Y,
+      #    max(X-x0+(w/2)*(z0+h-Z)/h,
+      #    max(x0-(w/2)*(z0+h-Z)/h-X,Z-z0))
+      return Shape(
+         'a-Y+f%(y0)g*/f%(w)gf2/-+f%(z0)gf%(h)gZf%(h)ga--f%(y0)g*/f%(w)gf2/-+f%(z0)gf%(h)gZf%(h)gYa-X+f%(x0)g*/f%(w)gf2/-+f%(z0)gf%(h)gZf%(h)ga--f%(x0)g*/f%(w)gf2/-+f%(z0)gf%(h)gZf%(h)gX-Zf%(z0)g' % locals(),
+      x0-w/2,y0-w/2,z0+h,x0+w/2,y0+w/2,z0)
+   
+input('x0',float,0)
+input('y0',float,0)
+input('z0',float,0)
+input('width',float,2)
+input('height',float,1)
+
+output('shape',pyramid_height(x0,y0,z0,width,height))
+
+def drag_w(this,x,y,z):
+   dx = x-this.x0
+   dy = y-this.y0
+   this.width = 2*math.sqrt(dx*dx+dy*dy)/math.sqrt(2)
+
+fab.ui.point(x0,y0,z0)
+fab.ui.point(x0+width/2.0,y0+width/2.0,z0,drag=drag_w,relative=False)
+fab.ui.point(x0,y0,z0+height,drag=(None,None,height))
+
