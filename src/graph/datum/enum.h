@@ -12,7 +12,7 @@ namespace DatumType
         SCRIPT,
         STRING,
         SHAPE_OUTPUT,
-        SHAPE_FUNCTION,
+        SHAPE_FUNCTION, // DEPRECATED, but still here to preserve numbering
         SHAPE_INPUT,
     };
 }

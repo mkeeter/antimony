@@ -8,7 +8,6 @@
 
 #include "graph/datum/datum.h"
 #include "graph/datum/types/eval_datum.h"
-#include "graph/datum/datums/shape_function_datum.h"
 #include "graph/datum/datums/script_datum.h"
 
 int SceneSerializer::PROTOCOL_VERSION = 3;
@@ -90,11 +89,6 @@ void SceneSerializer::serializeDatum(QDataStream* out, Datum* datum)
     if (auto e = dynamic_cast<EvalDatum*>(datum))
     {
         *out << e->getExpr();
-    }
-    else if (auto f = dynamic_cast<FunctionDatum*>(datum))
-    {
-        *out << f->getFunctionName();
-        *out << f->getArguments();
     }
 
     // Save datum and any connections for later
