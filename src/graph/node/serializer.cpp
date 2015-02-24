@@ -11,7 +11,7 @@
 #include "graph/datum/datums/shape_function_datum.h"
 #include "graph/datum/datums/script_datum.h"
 
-int SceneSerializer::PROTOCOL_VERSION = 2;
+int SceneSerializer::PROTOCOL_VERSION = 3;
 
 SceneSerializer::SceneSerializer(QObject* node_root,
                                  QMap<Node*, QPointF> inspectors)
