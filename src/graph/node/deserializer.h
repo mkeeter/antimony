@@ -5,8 +5,6 @@
 #include <QMap>
 #include <QPointF>
 
-#include "graph/node/enum.h"
-
 class Datum;
 class Node;
 class NodeRoot;
@@ -30,10 +28,6 @@ protected:
     void deserializeNode(QDataStream* in, NodeRoot* p);
     void deserializeDatum(QDataStream* in, Node* node);
     void deserializeConnections(QDataStream* in);
-
-    void upgradeNode(Node* node, NodeType::NodeType type);
-    QString getScript(NodeType::NodeType type) const;
-    QString scriptPath(NodeType::NodeType type) const;
 
     quint32 protocol_version;
     NodeRoot* node_root;

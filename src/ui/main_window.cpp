@@ -11,7 +11,6 @@
 #include "graph/node/node.h"
 #include "graph/node/root.h"
 #include "graph/datum/types/eval_datum.h"
-#include "graph/node/nodes/meta.h"
 
 #include "ui_main_window.h"
 #include "ui/main_window.h"

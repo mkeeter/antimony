@@ -55,7 +55,7 @@ void SceneSerializer::serializeNodes(QDataStream* out, QObject* p)
 
 void SceneSerializer::serializeNode(QDataStream* out, Node* node)
 {
-    *out << quint32(node->getNodeType());
+    *out << quint32(0); // Dummy node type, since it doesn't exist anymore.
     *out << node->objectName();
 
     // Serialize position (or default QPointF if not provided)
@@ -70,7 +70,6 @@ void SceneSerializer::serializeNode(QDataStream* out, Node* node)
         if (dynamic_cast<ScriptDatum*>(d))
         {
             Q_ASSERT(deferred == NULL);
-            Q_ASSERT(node->getNodeType() == NodeType::SCRIPT);;
             deferred = d;
         }
         else

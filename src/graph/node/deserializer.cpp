@@ -46,19 +46,18 @@ bool SceneDeserializer::run(QDataStream* in)
         failed = true;
         error_message = "File is not an Antimony file";
     }
-    else if (protocol_version < 2)
+    else if (protocol_version < 3)
     {
         failed = true;
         error_message = "File was saved with an older protocol and can no longer be read.";
     }
-    else if (protocol_version == 2)
+    else if (protocol_version > 3)
     {
-        warning_message = "Non-script nodes were automatically upgraded for compatability.";
+        failed = true;
+        error_message = "File was saved with a newer protocol and cannot yet be read.";
     }
 
-    // We can load protocol versions 2 and higher
-    // (where version 2 has automatic node upgrading)
-    if (protocol_version >= 2)
+    if (!failed)
     {
         deserializeNodes(in, node_root);
         deserializeConnections(in);
@@ -78,17 +77,11 @@ void SceneDeserializer::deserializeNodes(QDataStream* in, NodeRoot* p)
 void SceneDeserializer::deserializeNode(QDataStream* in, NodeRoot* p)
 {
     quint32 t;
-    *in >> t;
+    *in >> t; // Deserialize dummy node type
     QString node_name;
     *in >> node_name;
 
-    NodeType::NodeType node_type = static_cast<NodeType::NodeType>(t);
-
-    // In protocol 3 or later, all nodes are script nodes
-    if (protocol_version >= 3)
-        Q_ASSERT(node_type == NodeType::SCRIPT);
-
-    Node* node = new Node(NodeType::SCRIPT, p);
+    Node* node = new Node(p);
     node->setObjectName(node_name);
 
     // Deserialize inspector position
@@ -100,9 +93,6 @@ void SceneDeserializer::deserializeNode(QDataStream* in, NodeRoot* p)
     *in >> datum_count;
     for (unsigned d=0; d < datum_count; ++d)
         deserializeDatum(in, node);
-
-    if (protocol_version == 2)
-        upgradeNode(node, node_type);
 }
 
 void SceneDeserializer::deserializeDatum(QDataStream* in, Node* node)
@@ -165,80 +155,5 @@ void SceneDeserializer::deserializeConnections(QDataStream* in)
         quint32 source_index, target_index;
         *in >> source_index >> target_index;
         datums[target_index]->addLink(datums[source_index]->linkFrom());
-    }
-}
-
-void SceneDeserializer::upgradeNode(Node* node, NodeType::NodeType type)
-{
-    if (type != NodeType::SCRIPT)
-    {
-        // Save the names of all of this node's datums, then remove them
-        // (as they're going to be shuffled around when the script evaluates)
-        QStringList datum_names;
-        while (datums.last()->parent() == node &&
-               datums.last()->objectName() != "_name")
-        {
-            datum_names.prepend(datums.last()->objectName());
-            datums.removeLast();
-        }
-
-        // Make a script datum with the matching upgraded script
-        new ScriptDatum("_script", getScript(type), node);
-
-        // Then add back all of the datums (in the same order)
-        // Any missing datums are replaced by NULL; better hope that
-        // nothing is connected to them!
-        for (auto d : datum_names)
-            datums.append(node->findChild<Datum*>(d));
-    }
-}
-
-QString SceneDeserializer::getScript(NodeType::NodeType type) const
-{
-    auto path = App::instance()->nodePath() + "/" + scriptPath(type);
-    QFile file(path);
-    file.open(QIODevice::ReadOnly);
-
-    QTextStream in(&file);
-    return in.readAll();
-}
-
-QString SceneDeserializer::scriptPath(NodeType::NodeType type) const
-{
-    switch (type) {
-        case NodeType::CIRCLE:    return "2D/circle.node";
-        case NodeType::TRIANGLE:  return "2D/triangle.node";
-        case NodeType::POINT2D:   return "2D/point.node";
-        case NodeType::RECTANGLE: return "2D/rectangle.node";
-        case NodeType::TEXT:      return "2D/text.node";
-        case NodeType::CUBE:      return "3D/cube.node";
-        case NodeType::CYLINDER:  return "3D/cylinder.node";
-        case NodeType::CONE:      return "3D/cone.node";
-        case NodeType::EXTRUDE:   return "3D/extrude.node";
-        case NodeType::SPHERE:    return "3D/sphere.node";
-        case NodeType::POINT3D:   return "3D/point.node";
-        case NodeType::UNION:     return "CSG/union.node";
-        case NodeType::BLEND:     return "CSG/blend.node";
-        case NodeType::INTERSECTION:  return "CSG/intersection.node";
-        case NodeType::DIFFERENCE:    return "CSG/difference.node";
-        case NodeType::OFFSET:    return "CSG/offset.node";
-        case NodeType::CLEARANCE: return "CSG/clearance.node";
-        case NodeType::SHELL:     return "CSG/shell.node";
-        case NodeType::ATTRACT:   return "Deform/attract.node";
-        case NodeType::REPEL:     return "Deform/repel.node";
-        case NodeType::SCALEX:    return "Deform/scale_x.node";
-        case NodeType::SCALEY:    return "Deform/scale_y.node";
-        case NodeType::SCALEZ:    return "Deform/scale_z.node";
-        case NodeType::ROTATEX:   return "Transform/rotate_x.node";
-        case NodeType::ROTATEY:   return "Transform/rotate_y.node";
-        case NodeType::ROTATEZ:   return "Transform/rotate_z.node";
-        case NodeType::REFLECTX:  return "Transform/reflect_x.node";
-        case NodeType::REFLECTY:  return "Transform/reflect_y.node";
-        case NodeType::REFLECTZ:  return "Transform/reflect_z.node";
-        case NodeType::RECENTER:  return "Transform/recenter.node";
-        case NodeType::TRANSLATE: return "Transform/translate.node";
-        case NodeType::ITERATE2D: return "Iterate/iterate_2d.node";
-        case NodeType::ITERATE_POLAR: return "Iterate/iterate_polar.node";
-        default:    Q_ASSERT(false);
     }
 }
