@@ -152,11 +152,7 @@ QVector3D Viewport::sceneToWorld(QPointF p) const
 
 void Viewport::makeNodeAtCursor(NodeConstructorFunction f)
 {
-    QPointF scene_pos = mapToScene(mapFromGlobal(QCursor::pos()));
-    QVector3D p = sceneToWorld(scene_pos);
-
-    auto n = f(p.x(), p.y(), p.z(), 100 / scale, App::instance()->getNodeRoot());
-
+    auto n = f(App::instance()->getNodeRoot());
     App::instance()->newNode(n);
     App::instance()->pushStack(new UndoAddNodeCommand(n));
 }

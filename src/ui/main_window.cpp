@@ -218,12 +218,7 @@ void MainWindow::populateUserScripts(QMenu* menu, bool recenter, Viewport* v)
                 title = regex.capturedTexts()[1];
 
         NodeConstructorFunction constructor =
-            [=](float x, float y, float z, float scale, NodeRoot *r)
-            {
-                auto s = ScriptNode(x, y, z, scale, r);
-                static_cast<EvalDatum*>(s->getDatum("_script"))->setExpr(txt);
-                return s;
-            };
+            [=](NodeRoot *r){ return ScriptNode(txt, r); };
         nodes[title] = QPair<QStringList, NodeConstructorFunction>(
                 split, constructor);
         node_titles.append(title);

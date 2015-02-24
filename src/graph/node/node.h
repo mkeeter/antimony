@@ -110,9 +110,8 @@ protected:
 };
 
 
-Node* ScriptNode(QString name, QString x, QString y, QString z,
-                 QString script, NodeRoot* parent);
-Node* ScriptNode(float x, float y, float z, float scale,
-                 NodeRoot* parent);
+Node* ScriptNode(QString name, QString script, NodeRoot* parent);
+Node* ScriptNode(QString script, NodeRoot* parent);
+Node* ScriptNode(NodeRoot* parent);
 
 #endif // NODE_H

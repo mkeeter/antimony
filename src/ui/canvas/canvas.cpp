@@ -183,7 +183,7 @@ void Canvas::deleteSelected()
 
 void Canvas::makeNodeAtCursor(NodeConstructorFunction f)
 {
-    auto n = f(0, 0, 0, 1, App::instance()->getNodeRoot());
+    auto n = f(App::instance()->getNodeRoot());
 
     App::instance()->newNode(n);
     App::instance()->pushStack(new UndoAddNodeCommand(n));

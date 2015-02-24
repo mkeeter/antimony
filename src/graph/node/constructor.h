@@ -6,8 +6,7 @@
 class Node;
 class NodeRoot;
 
-typedef Node* (*NodeConstructor)(float, float, float, float, NodeRoot*);
-typedef std::function<Node* (float, float, float, float, NodeRoot*)>
-        NodeConstructorFunction;
+typedef Node* (*NodeConstructor)(NodeRoot*);
+typedef std::function<Node* (NodeRoot*)> NodeConstructorFunction;
 
 #endif

@@ -111,26 +111,22 @@ QSet<Link*> Node::getLinks() const
     return links;
 }
 
-Node* ScriptNode(QString name, QString x, QString y, QString z,
-                 QString script, NodeRoot* parent)
+Node* ScriptNode(QString name, QString script, NodeRoot* parent)
 {
-    Q_UNUSED(x);
-    Q_UNUSED(y);
-    Q_UNUSED(z);
-
     Node* n = new Node(name, parent);
     new ScriptDatum("_script", script, n);
     return n;
 }
 
-Node* ScriptNode(float x, float y, float z, float scale,
-                 NodeRoot* parent)
+Node* ScriptNode(QString script, NodeRoot* parent)
 {
-    Q_UNUSED(x);
-    Q_UNUSED(y);
-    Q_UNUSED(z);
-    Q_UNUSED(scale);
+    Node* n = new Node(parent->getName("a"), parent);
+    new ScriptDatum("_script", script, n);
+    return n;
+}
 
+Node* ScriptNode(NodeRoot* parent)
+{
     Node* n = new Node(parent->getName("a"), parent);
     new ScriptDatum("_script",
              "from fab import shapes\n\n"
