@@ -8,7 +8,7 @@
 
 #include <cmath>
 
-#include "app.h"
+#include "app/app.h"
 #include "app/undo/stack.h"
 #include "app/undo/undo_command.h"
 
