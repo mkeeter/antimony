@@ -474,9 +474,11 @@ void App::onUpdateCheckFinished(QNetworkReply* reply)
     if (available)
         QMessageBox::information(NULL, "Update available", QString(
                 "<b>Update available:</b><br>"
-                "This is version %1.<br>"
-                "Version %2 is available.").arg(current[0])
-                                           .arg(update[0]));
+                "This is version %1<br>"
+                "Version "
+                "<a href=\"https://github.com/mkeeter/antimony/releases/%2\">"
+                "%2</a> is available.").arg(current[0])
+                                       .arg(update[0]));
     else
         QMessageBox::information(NULL, "No update available",
                 "No update is available at this time.");
