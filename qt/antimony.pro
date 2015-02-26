@@ -1,4 +1,4 @@
-QT += core gui widgets opengl
+QT += core gui widgets opengl network
 
 TARGET = antimony
 TEMPLATE = app
