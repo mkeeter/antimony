@@ -472,11 +472,14 @@ void App::onUpdateCheckFinished(QNetworkReply* reply)
         available = true;
 
     if (available)
-        QMessageBox::critical(NULL, "Update available", QString(
+        QMessageBox::information(NULL, "Update available", QString(
                 "<b>Update available:</b><br>"
                 "This is version %1.<br>"
                 "Version %2 is available.").arg(current[0])
                                            .arg(update[0]));
+    else
+        QMessageBox::information(NULL, "No update available",
+                "No update is available at this time.");
 }
 
 bool App::event(QEvent *event)
