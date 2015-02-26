@@ -9,6 +9,7 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QRegularExpression>
 
 #include <cmath>
 
@@ -426,18 +427,56 @@ void App::startUpdateCheck()
 
 void App::onUpdateCheckFinished(QNetworkReply* reply)
 {
+    QRegularExpression ver("(\\d+)\\.(\\d+)\\.(\\d+)([a-z]|)");
+    if (!ver.match(GITTAG).hasMatch())
+    {
+        QMessageBox::critical(NULL, "Update error",
+                "<b>Update error:</b><br>"
+                "Current build is not tagged to any particular version.");
+        return;
+    }
+    auto current = ver.match(GITTAG).capturedTexts();
+
+    if (reply->error() != QNetworkReply::NoError)
+    {
+        QMessageBox::critical(NULL, "Update error",
+                "<b>Update error:</b><br>"
+                "Connection failed.");
+        return;
+    }
+
     QJsonParseError err;
     auto out = QJsonDocument::fromJson(reply->readAll(), &err);
 
     if (err.error != QJsonParseError::NoError)
-        qDebug() << err.errorString();
-    else
-        qDebug() << "No parse error";
+    {
+        QMessageBox::critical(NULL, "Update error",
+                "<b>Update error:</b><br>"
+                "Could not parse JSON file.");
+        return;
+    }
 
     auto latest = out.array()[0].toObject();
-    qDebug() << out;
-    qDebug() << latest;
-    qDebug() << latest["tag_name"].toString();
+    auto update = ver.match(latest["tag_name"].toString()).capturedTexts();
+
+    bool available = false;
+
+    // Check for numerical superiority
+    for (int i=1; i < 4; ++i)
+        if (current[i].toInt() < update[i].toInt())
+            available = true;
+
+    // Check for bug-fix release
+    if (!update[4].isEmpty() && (current[4].isEmpty() ||
+                current[4] < update[4]))
+        available = true;
+
+    if (available)
+        QMessageBox::critical(NULL, "Update available", QString(
+                "<b>Update available:</b><br>"
+                "This is version %1.<br>"
+                "Version %2 is available.").arg(current[0])
+                                           .arg(update[0]));
 }
 
 bool App::event(QEvent *event)
