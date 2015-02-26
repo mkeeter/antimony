@@ -5,6 +5,10 @@
 #include <QThread>
 #include <QGridLayout>
 #include <QDesktopWidget>
+#include <QNetworkRequest>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
 
 #include <cmath>
 
@@ -45,7 +49,8 @@ App::App(int& argc, char** argv) :
     QApplication(argc, argv),
     graph_scene(new GraphScene()),
     view_scene(new ViewportScene()),
-    root(new NodeRoot()), stack(new UndoStack(this))
+    root(new NodeRoot()), stack(new UndoStack(this)),
+    network(new QNetworkAccessManager(this))
 {
     setGlobalStyle();
 
@@ -67,6 +72,11 @@ App::App(int& argc, char** argv) :
             graph_scene, &GraphScene::onGlowChange);
     connect(graph_scene, &GraphScene::glowChanged,
             view_scene, &ViewportScene::onGlowChange);
+
+    connect(network, &QNetworkAccessManager::finished,
+            this, &App::onUpdateCheckFinished);
+
+    startUpdateCheck();
 }
 
 App::~App()
@@ -405,6 +415,29 @@ void App::onExportJSON()
     thread->start();
     exporting_dialog->exec();
     delete exporting_dialog;
+}
+
+void App::startUpdateCheck()
+{
+    QNetworkRequest request;
+    request.setUrl(QUrl("https://api.github.com/repos/mkeeter/antimony/releases"));
+    network->get(request);
+}
+
+void App::onUpdateCheckFinished(QNetworkReply* reply)
+{
+    QJsonParseError err;
+    auto out = QJsonDocument::fromJson(reply->readAll(), &err);
+
+    if (err.error != QJsonParseError::NoError)
+        qDebug() << err.errorString();
+    else
+        qDebug() << "No parse error";
+
+    auto latest = out.array()[0].toObject();
+    qDebug() << out;
+    qDebug() << latest;
+    qDebug() << latest["tag_name"].toString();
 }
 
 bool App::event(QEvent *event)
