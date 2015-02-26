@@ -76,8 +76,6 @@ App::App(int& argc, char** argv) :
 
     connect(network, &QNetworkAccessManager::finished,
             this, &App::onUpdateCheckFinished);
-
-    startUpdateCheck();
 }
 
 App::~App()

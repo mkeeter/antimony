@@ -99,6 +99,8 @@ void MainWindow::connectActions(App* app)
     // Help menu
     connect(ui->actionAbout, &QAction::triggered,
             app, &App::onAbout);
+    connect(ui->actionCheckUpdate, &QAction::triggered,
+            app, &App::startUpdateCheck);
 
     // Window title
     setWindowTitle(app->getWindowTitle());
