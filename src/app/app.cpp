@@ -531,7 +531,7 @@ QString App::nodePath() const
     // When deployed, the nodes folder is in Resources/sb
     if (QDir(path.join("/") + "/Resources/nodes").exists())
     {
-        path.append("Resources");
+        path << "Resources" << "nodes";
     }
     // Otherwise, assume it's at the same level as antimony.app
     else
