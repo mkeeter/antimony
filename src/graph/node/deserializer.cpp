@@ -55,7 +55,7 @@ bool SceneDeserializer::run(QDataStream* in)
         failed = true;
         error_message =
             "File was saved with an older protocol and cannot be read.<br>"
-            "Open it in Antimony 0.7.6b and re-save to upgrade file protocol.";
+            "Open it in Antimony 0.7.6c and re-save to upgrade file protocol.";
     }
     else if (protocol_version > 3)
     {
