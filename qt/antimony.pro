@@ -122,6 +122,6 @@ linux {
     nodes_folder.path = /usr/local/bin/sb/nodes
     nodes_folder.files = ../py/nodes/*
     fab_folder.path = /usr/local/bin/sb/fab
-    fab_folder.files = ../py/nodes/*
+    fab_folder.files = ../py/fab/*
     INSTALLS += executable nodes_folder fab_folder
 }
