@@ -117,6 +117,6 @@ DepthImageItem* RenderImage::addToViewport(Viewport* viewport)
             QVector3D(bounds.xmax - bounds.xmin,
                       bounds.ymax - bounds.ymin,
                       bounds.zmax - bounds.zmin),
-            depth, shaded, color,viewport);
+            depth, shaded, color, viewport);
 }
 
