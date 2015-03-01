@@ -106,6 +106,7 @@ public slots:
     void onSave();
     void onSaveAs();
     void onOpen();
+    void onQuit();
 
     void onExportSTL();
     void onExportHeightmap();

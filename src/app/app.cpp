@@ -169,9 +169,20 @@ void App::onSaveAs()
 
 void App::onOpen()
 {
-    QString f = QFileDialog::getOpenFileName(NULL, "Open", "", "*.sb");
-    if (!f.isEmpty())
-        loadFile(f);
+    if (stack->isClean() || QMessageBox::question(NULL, "Discard unsaved changes?",
+                "Discard unsaved changes?") == QMessageBox::Yes)
+    {
+        QString f = QFileDialog::getOpenFileName(NULL, "Open", "", "*.sb");
+        if (!f.isEmpty())
+            loadFile(f);
+    }
+}
+
+void App::onQuit()
+{
+    if (stack->isClean() || QMessageBox::question(NULL, "Discard unsaved changes?",
+                "Discard unsaved changes?") == QMessageBox::Yes)
+        quit();
 }
 
 void App::loadFile(QString f)

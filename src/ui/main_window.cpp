@@ -76,7 +76,7 @@ void MainWindow::connectActions(App* app)
     connect(ui->actionOpen, &QAction::triggered,
             app, &App::onOpen);
     connect(ui->actionQuit, &QAction::triggered,
-            app, &App::quit);
+            app, &App::onQuit);
     connect(ui->actionClose, &QAction::triggered,
             this, &MainWindow::deleteLater);
 
