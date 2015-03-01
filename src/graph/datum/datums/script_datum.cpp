@@ -43,7 +43,7 @@ void ScriptDatum::modifyGlobalsDict(PyObject* g)
 
 bool ScriptDatum::isValidName(QString name) const
 {
-    return name.size() && name != "_script" && !touched.contains(name);
+    return name.size() && !name.startsWith("__") && !touched.contains(name);
 }
 
 void ScriptDatum::makeInput(QString name, PyTypeObject *type,

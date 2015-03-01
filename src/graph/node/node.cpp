@@ -20,7 +20,7 @@ Node::Node(NodeRoot* parent)
 Node::Node(QString name, NodeRoot* parent)
     : Node(parent)
 {
-    new NameDatum("_name", name, this);
+    new NameDatum("__name", name, this);
 }
 
 void Node::setParent(NodeRoot* root)
@@ -92,7 +92,7 @@ Datum* Node::getDatum(QString name) const
 
 QString Node::getName() const
 {
-    if (auto e = getDatum<EvalDatum>("_name"))
+    if (auto e = getDatum<EvalDatum>("__name"))
         return e->getExpr();
     return "";
 }
@@ -114,21 +114,21 @@ QSet<Link*> Node::getLinks() const
 Node* ScriptNode(QString name, QString script, NodeRoot* parent)
 {
     Node* n = new Node(name, parent);
-    new ScriptDatum("_script", script, n);
+    new ScriptDatum("__script", script, n);
     return n;
 }
 
 Node* ScriptNode(QString script, NodeRoot* parent)
 {
     Node* n = new Node(parent->getName("a"), parent);
-    new ScriptDatum("_script", script, n);
+    new ScriptDatum("__script", script, n);
     return n;
 }
 
 Node* ScriptNode(NodeRoot* parent)
 {
     Node* n = new Node(parent->getName("a"), parent);
-    new ScriptDatum("_script",
+    new ScriptDatum("__script",
              "from fab import shapes\n\n"
              "title('example')\n"
              "output('c', shapes.circle(0, 0, 1))", n);

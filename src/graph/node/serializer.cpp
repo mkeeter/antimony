@@ -15,6 +15,7 @@
 //   Change hard-coded nodes into matching scripts
 // 3 -> 4:
 //   Remove ShapeInputDatum (replace with ShapeDatum)
+//   _name -> __name; _script -> __script
 int SceneSerializer::PROTOCOL_VERSION = 4;
 
 SceneSerializer::SceneSerializer(QObject* node_root,

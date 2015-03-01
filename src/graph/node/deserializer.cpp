@@ -108,6 +108,11 @@ void SceneDeserializer::deserializeDatum(QDataStream* in, Node* node)
     QString name;
     *in >> name;
 
+    if (protocol_version == 3 && name == "_name")
+        name = "__name";
+    if (protocol_version == 3 && name == "_script")
+        name = "__script";
+
     DatumType::DatumType datum_type = static_cast<DatumType::DatumType>(t);
 
     Datum* datum;

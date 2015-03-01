@@ -31,7 +31,7 @@ public:
     void setTitle(QString new_title);
 
     /*
-     *  Updates the NameDatum in _name so that it doesn't collide
+     *  Updates the NameDatum in __name so that it doesn't collide
      *  (used when pasting in nodes)
      */
     void updateName();
