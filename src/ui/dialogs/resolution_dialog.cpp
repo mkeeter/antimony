@@ -1,3 +1,4 @@
+#include <Python.h>
 #include <cmath>
 
 #include "ui_resolution_dialog.h"

@@ -33,7 +33,7 @@ NodeInspector::NodeInspector(Node* node)
       menu_button(getScriptDatum() ? new InspectorMenuButton(this) : NULL),
       dragging(false), border(10), glow(false)
 {
-    if (auto n = node->getDatum("_name"))
+    if (auto n = node->getDatum("__name"))
     {
         name = new DatumTextItem(n, this);
         name->setAsTitle();
@@ -245,7 +245,7 @@ Node* NodeInspector::getNode()
 
 ScriptDatum* NodeInspector::getScriptDatum() const
 {
-    return dynamic_cast<ScriptDatum*>(node->getDatum("_script"));
+    return dynamic_cast<ScriptDatum*>(node->getDatum("__script"));
 }
 
 QPointF NodeInspector::datumOutputPosition(Datum* d) const

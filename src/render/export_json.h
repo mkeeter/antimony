@@ -1,6 +1,7 @@
 #ifndef EXPORT_JSON_H
 #define EXPORT_JSON_H
 
+#include <Python.h>
 #include <QObject>
 #include <QTextStream>
 #include <QMap>

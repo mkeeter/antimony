@@ -18,7 +18,7 @@
 #include "graph/datum/datums/string_datum.h"
 #include "graph/datum/datums/script_datum.h"
 #include "graph/datum/datums/shape_output_datum.h"
-#include "graph/datum/datums/shape_input_datum.h"
+#include "graph/datum/datums/shape_datum.h"
 
 SceneDeserializer::SceneDeserializer(NodeRoot* node_root)
     : QObject(), failed(false), node_root(node_root)
@@ -108,6 +108,11 @@ void SceneDeserializer::deserializeDatum(QDataStream* in, Node* node)
     QString name;
     *in >> name;
 
+    if (protocol_version == 3 && name == "_name")
+        name = "__name";
+    if (protocol_version == 3 && name == "_script")
+        name = "__script";
+
     DatumType::DatumType datum_type = static_cast<DatumType::DatumType>(t);
 
     Datum* datum;
@@ -126,15 +131,20 @@ void SceneDeserializer::deserializeDatum(QDataStream* in, Node* node)
             datum = new StringDatum(name, node); break;
         case DatumType::SCRIPT:
             datum = new ScriptDatum(name, node); break;
-        case DatumType::SHAPE_INPUT:
-            datum = new ShapeInputDatum(name, node); break;
         case DatumType::SHAPE_OUTPUT:
             datum = new ShapeOutputDatum(name, node); break;
+        case DatumType::SHAPE_INPUT: // Automatically upgrade SHAPE_INPUT to SHAPE
+        case DatumType::SHAPE:
+            datum = new ShapeDatum(name, node); break;
         case DatumType::SHAPE_FUNCTION:
+            datum = NULL;
             Q_ASSERT(false); // this is a deprecated Datum type.
     }
 
-    if (auto e = dynamic_cast<EvalDatum*>(datum))
+    auto e = dynamic_cast<EvalDatum*>(datum);
+    // Special case when upgrading SHAPE_INPUT datums to SHAPE datums:
+    // They weren't serialized with an expression, so don't try to read it.
+    if (e && !(protocol_version == 3 && datum_type == DatumType::SHAPE_INPUT))
     {
         QString expr;
         *in >> expr;

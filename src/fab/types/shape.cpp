@@ -1,3 +1,5 @@
+#include <boost/python.hpp>
+
 #include <cstdlib>
 #include <cmath>
 
@@ -11,6 +13,16 @@ Shape::Shape()
     : math(""), bounds(Bounds()), tree(NULL)
 {
     // Nothing to do here
+}
+
+Shape::Shape(boost::python::object obj)
+    : Shape()
+{
+    if (obj.ptr() != Py_None)
+        throw fab::ShapeError();
+
+    math = "f1.0";
+    tree = std::shared_ptr<MathTree>(parse(math.c_str()), free_tree);
 }
 
 Shape::Shape(std::string math)
@@ -37,9 +49,7 @@ Shape::Shape(std::string math, Bounds bounds)
     : math(math), bounds(bounds), tree(parse(math.c_str()), free_tree)
 {
     if (tree == NULL)
-    {
         throw fab::ParseError();
-    }
 }
 
 Shape Shape::map(Transform t) const

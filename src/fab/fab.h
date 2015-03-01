@@ -6,9 +6,13 @@
 namespace fab
 {
     struct ParseError {};
+    struct ShapeError {};
 
     /** Callback that raises a Python runtime exception. */
     void onParseError(ParseError const& e);
+
+    /** Callback that raises a Python runtime exception. */
+    void onShapeError(ShapeError const& e);
 
     /** Loads the fab module in Python's namespace.
      *

@@ -1,3 +1,5 @@
+#include <Python.h>
+
 #include <QFile>
 #include <QDebug>
 #include <cmath>
