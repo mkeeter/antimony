@@ -1,0 +1,10 @@
+import fab
+
+title('Set color (RGB)')
+
+input("shape", fab.types.Shape)
+input("r", int)
+input("g", int)
+input("b", int)
+
+output("out", fab.shapes.set_color(shape, r, g, b))
