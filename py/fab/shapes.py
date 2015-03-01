@@ -35,8 +35,9 @@ def buffer(a):
 def set_color(a, r, g, b):
     """ Applies a given color to an input shape a and returns it.
     """
-    a._r, a._g, a._b = r, g, b
-    return a
+    q = Shape(a.math, a.bounds)
+    q._r, q._g, q._b = r, g, b
+    return q
 
 ################################################################################
 
