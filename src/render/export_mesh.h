@@ -1,6 +1,7 @@
 #ifndef EXPORT_MESH_H
 #define EXPORT_MESH_H
 
+#include <Python.h>
 #include <QObject>
 
 #include "fab/types/shape.h"

@@ -1,3 +1,4 @@
+#include <Python.h>
 #include <QDebug>
 
 #include "render/export_mesh.h"

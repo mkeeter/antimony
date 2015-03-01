@@ -13,7 +13,8 @@ namespace DatumType
         STRING,
         SHAPE_OUTPUT,
         SHAPE_FUNCTION, // DEPRECATED, but still here to preserve numbering
-        SHAPE_INPUT,
+        SHAPE_INPUT, // DEPRECATED, but still here to preserve numbering
+        SHAPE
     };
 }
 

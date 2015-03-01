@@ -3,7 +3,7 @@
 #include <QRegExp>
 #include <QStringList>
 
-#include "graph/datum/datums/shape_input_datum.h"
+#include "graph/datum/datums/shape_datum.h"
 #include "graph/datum/datums/shape_output_datum.h"
 #include "graph/datum/datums/script_datum.h"
 #include "graph/datum/datums/float_datum.h"
@@ -66,7 +66,7 @@ void ScriptDatum::makeInput(QString name, PyTypeObject *type,
         (type == &PyFloat_Type)     ? DatumType::FLOAT :
         (type == &PyLong_Type)      ? DatumType::INT :
         (type == &PyUnicode_Type)   ? DatumType::STRING :
-        (type == fab::ShapeType)    ? DatumType::SHAPE_INPUT : -1;
+        (type == fab::ShapeType)    ? DatumType::SHAPE: -1;
 
     if (d != NULL && d->getDatumType() != datum_type)
     {
@@ -88,7 +88,7 @@ void ScriptDatum::makeInput(QString name, PyTypeObject *type,
         else if (type == &PyUnicode_Type)
             d = new StringDatum(name, value.isNull() ? "hello" : value, n);
         else if (type == fab::ShapeType)
-            d = new ShapeInputDatum(name, n);
+            d = new ShapeDatum(name, n);
         else
             throw hooks::HookException("Invalid datum type.");
     }

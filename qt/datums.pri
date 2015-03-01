@@ -11,6 +11,7 @@ SOURCES += \
     ../src/graph/datum/datums/string_datum.cpp \
     ../src/graph/datum/datums/shape_output_datum.cpp \
     ../src/graph/datum/datums/shape_input_datum.cpp \
+    ../src/graph/datum/datums/shape_datum.cpp \
 
 HEADERS += \
     ../src/graph/datum/datum.h \
@@ -25,4 +26,5 @@ HEADERS += \
     ../src/graph/datum/datums/string_datum.h \
     ../src/graph/datum/datums/shape_output_datum.h \
     ../src/graph/datum/datums/shape_input_datum.h \
+    ../src/graph/datum/datums/shape_datum.h \
 

@@ -12,6 +12,12 @@ void fab::onParseError(const fab::ParseError &e)
     PyErr_SetString(PyExc_RuntimeError, "Failed to parse math expression");
 }
 
+void fab::onShapeError(const fab::ShapeError& e)
+{
+    (void)e;
+    PyErr_SetString(PyExc_RuntimeError, "Could not construct Shape object.");
+}
+
 BOOST_PYTHON_MODULE(_fabtypes)
 {
     class_<Bounds>("Bounds", init<>())
@@ -25,6 +31,7 @@ BOOST_PYTHON_MODULE(_fabtypes)
             .def_readonly("zmax", &Bounds::zmax);
 
     class_<Shape>("Shape", init<std::string>())
+            .def(init<object>())
             .def(init<std::string, float, float, float, float>())
             .def(init<std::string, float, float, float, float, float, float>())
             .def(init<std::string, Bounds>())

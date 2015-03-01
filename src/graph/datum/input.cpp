@@ -122,23 +122,6 @@ ShapeInputHandler::ShapeInputHandler(Datum* parent)
 
 PyObject* ShapeInputHandler::getValue() const
 {
-    // If there are no legitimate inputs, then return an empty shape.
-    if (inputCount() == 0)
-    {
-        PyObject* globals = Py_BuildValue("{}");
-        PyDict_SetItemString(globals, "__builtins__", PyEval_GetBuiltins());
-        PyObject* locals = Py_BuildValue("{}");
-
-        PyObject* out = PyRun_String(
-                "__import__('fab').types.Shape('f1.0', 0, 0, 0, 0, 0, 0)",
-               Py_eval_input, globals, locals);
-
-        Py_DECREF(globals);
-        Py_DECREF(locals);
-
-        return out;
-    }
-
     // Otherwise, OR together all of the input shapes
     // (or return NULL if any of them are invalid)
     PyObject* out = NULL;
@@ -163,9 +146,7 @@ PyObject* ShapeInputHandler::getValue() const
         valid &= target->connectUpstream(source) && source->getValid();
 
         if (!valid)
-        {
             continue;
-        }
 
         if (out == NULL)
         {
@@ -212,19 +193,15 @@ void ShapeInputHandler::addInput(Link* input)
 
 bool ShapeInputHandler::hasInput() const
 {
-    return true;
+    return inputCount() != 0;
 }
 
 void ShapeInputHandler::prune()
 {
     QList<QPointer<Link>> new_in;
     for (auto i : in)
-    {
         if (!i.isNull())
-        {
             new_in << i;
-        }
-    }
     in = new_in;
 }
 
@@ -232,12 +209,8 @@ int ShapeInputHandler::inputCount() const
 {
     int count = 0;
     for (auto i : in)
-    {
         if (!i.isNull())
-        {
             count++;
-        }
-    }
     return count;
 }
 
@@ -260,17 +233,11 @@ QString ShapeInputHandler::getString() const
 {
     int count = inputCount();
     if (count == 0)
-    {
         return QString("No inputs.");
-    }
     else if (count == 1)
-    {
         return QString("1 input.");
-    }
     else
-    {
         return QString::number(in.length()) + " inputs";
-    }
 }
 
 QList<Link*> ShapeInputHandler::getLinks() const

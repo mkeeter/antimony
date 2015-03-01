@@ -1,6 +1,8 @@
 #ifndef SHAPE_H
 #define SHAPE_H
 
+#include <boost/python.hpp>
+
 #include <string>
 #include <memory>
 
@@ -14,6 +16,7 @@ struct Shape
 {
     /* Constructors all throw fab::ParseError if parsing fails. */
     explicit Shape();
+    Shape(boost::python::object obj);
     Shape(std::string math);
     Shape(std::string math, float xmin, float ymin,
               float xmax, float ymax);

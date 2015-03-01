@@ -19,6 +19,7 @@
 #include "graph/datum/datums/script_datum.h"
 #include "graph/datum/datums/shape_output_datum.h"
 #include "graph/datum/datums/shape_input_datum.h"
+#include "graph/datum/datums/shape_datum.h"
 
 SceneDeserializer::SceneDeserializer(NodeRoot* node_root)
     : QObject(), failed(false), node_root(node_root)
@@ -130,6 +131,8 @@ void SceneDeserializer::deserializeDatum(QDataStream* in, Node* node)
             datum = new ShapeInputDatum(name, node); break;
         case DatumType::SHAPE_OUTPUT:
             datum = new ShapeOutputDatum(name, node); break;
+        case DatumType::SHAPE:
+            datum = new ShapeDatum(name, node); break;
         case DatumType::SHAPE_FUNCTION:
             Q_ASSERT(false); // this is a deprecated Datum type.
     }
