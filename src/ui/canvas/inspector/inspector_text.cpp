@@ -199,7 +199,7 @@ void DatumTextItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     else if (i && i->getValid() && (event->modifiers() & Qt::ShiftModifier))
     {
         drag_accumulated += (event->screenPos() -
-                             event->lastScreenPos()).x() / 60.;
+                             event->lastScreenPos()).x() / 30.;
         int q = drag_accumulated;
         drag_accumulated -= q;
         i->dragValue(q);
