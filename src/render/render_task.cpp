@@ -14,7 +14,7 @@
 using namespace boost::python;
 
 RenderTask::RenderTask(PyObject *s, QMatrix4x4 matrix,
-                           float scale, int refinement)
+                       float scale, int refinement)
     : QObject(NULL), shape(s), matrix(matrix),
       scale(scale), refinement(refinement), image(NULL)
 {

@@ -5,6 +5,7 @@
 #include <QImage>
 #include <QGraphicsPixmapItem>
 #include <QVector3D>
+#include <QColor>
 
 #include <cstdint>
 
@@ -21,12 +22,15 @@ public:
     explicit RenderImage(Bounds b, QVector3D pos, float scale);
     void render(Shape* shape);
     void applyGradient(bool direction);
+
     DepthImageItem* addToViewport(Viewport* viewport);
 
     /** Sets the normals in the shaded image.
      *  (used for 2D image shading).
      */
     void setNormals(float xy, float z);
+
+    void setColor(QColor color_) { color = color_; }
 
 public slots:
     void halt();
@@ -49,6 +53,8 @@ protected:
 
     /** Used to halt render operations; set by the halt() slot. */
     int halt_flag;
+
+    QColor color;
 
     friend class RenderTask;
 };
