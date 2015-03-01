@@ -308,10 +308,16 @@ object ScriptUIHooks::wireframe(tuple args, dict kwargs)
         self.scene->registerControl(self.node, lineno, w);
     }
 
+    PyObject* drag_func = self.getDragFunction(kwargs);
+    if (!drag_func && kwargs.has_key("relative"))
+        throw hooks::HookException(
+                "Can't provide 'relative' argument "
+                "without drag function");
+
     const float t = getFloat(w->getT(), kwargs, "t");
     const QColor color = getColor(w->getColor(), kwargs);
     const bool close = getBool(w->getClose(), kwargs, "close");
-    w->update(v, t, color, close);
+    w->update(v, t, color, close, drag_func);
     w->touch();
 
     return object();

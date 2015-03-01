@@ -13,7 +13,8 @@ public:
     /*
      * Updates the control, calling redraw if anything changed.
      */
-    void update(QVector<QVector3D> pts, float r, QColor color, bool close);
+    void update(QVector<QVector3D> pts, float r, QColor color, bool close,
+                PyObject* drag_func);
 
     QPainterPath shape(QMatrix4x4 m) const override;
     void paint(QMatrix4x4 m, bool highlight, QPainter* painter);

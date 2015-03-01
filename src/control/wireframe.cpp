@@ -8,7 +8,8 @@ ControlWireframe::ControlWireframe(Node* node)
 }
 
 void ControlWireframe::update(QVector<QVector3D> pts_, float t_,
-                              QColor color_, bool close_)
+                              QColor color_, bool close_,
+                              PyObject* drag_func_)
 {
     bool changed = (pts != pts_) || (t != t_) ||
                    (color != color_) || (close != close_);
@@ -20,6 +21,8 @@ void ControlWireframe::update(QVector<QVector3D> pts_, float t_,
 
     if (changed)
         emit(redraw());
+
+    setDragFunc(drag_func_);
 }
 
 QPainterPath ControlWireframe::shape(QMatrix4x4 m) const
