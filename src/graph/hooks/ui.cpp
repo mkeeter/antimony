@@ -317,7 +317,8 @@ object ScriptUIHooks::wireframe(tuple args, dict kwargs)
     const float t = getFloat(w->getT(), kwargs, "t");
     const QColor color = getColor(w->getColor(), kwargs);
     const bool close = getBool(w->getClose(), kwargs, "close");
-    w->update(v, t, color, close, drag_func);
+    const bool relative = getBool(w->getRelative(), kwargs, "relative");
+    w->update(v, t, color, close, relative, drag_func);
     w->touch();
 
     return object();
