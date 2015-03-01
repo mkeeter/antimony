@@ -16,7 +16,6 @@ Shape::Shape()
 }
 
 Shape::Shape(boost::python::object obj)
-    : Shape()
 {
     if (obj.ptr() != Py_None)
         throw fab::ShapeError();
