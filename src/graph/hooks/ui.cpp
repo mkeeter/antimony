@@ -303,6 +303,7 @@ object ScriptUIHooks::wireframe(tuple args, dict kwargs)
 
     ControlWireframe* w = dynamic_cast<ControlWireframe*>(
             self.scene->getControl(self.node, lineno));
+
     if (!w)
     {
         w = new ControlWireframe(self.node);

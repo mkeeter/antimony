@@ -30,6 +30,13 @@ Control::~Control()
     Py_XDECREF(drag_func);
 }
 
+void Control::setDragFunc(PyObject* new_drag_func)
+{
+    Q_ASSERT(!isDragging());
+    Py_XDECREF(drag_func);
+    drag_func = new_drag_func;
+}
+
 QRectF Control::bounds(QMatrix4x4 m) const
 {
     // Default implementation is the bounding rect of shape().
