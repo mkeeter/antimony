@@ -31,6 +31,7 @@ struct Shape
     Bounds bounds;
 
     std::shared_ptr<MathTree> tree;
+    int r, g, b;
 };
 
 Shape operator~(const Shape& a);
