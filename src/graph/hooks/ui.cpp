@@ -183,6 +183,32 @@ PyObject* ScriptUIHooks::defaultDragFunction(QString x, QString y, QString z)
     return drag_func;
 }
 
+
+PyObject* ScriptUIHooks::getDragFunction(dict kwargs)
+{
+    if (kwargs.has_key("drag"))
+    {
+        // Generate tuple-style drag function if kwargs['drag'] is a tuple.
+        auto t = extract<tuple>(kwargs["drag"]);
+        if (t.check())
+        {
+            if (kwargs.has_key("relative"))
+                throw hooks::HookException(
+                        "Can't provide 'relative' argument "
+                        "with tuple-style drag function");
+            return tupleDragFunction(t());
+        }
+        else
+        {
+            // Otherwise, assume that kwargs['drag'] is callable and use it.
+            auto d = extract<object>(kwargs["drag"])().ptr();
+            Py_INCREF(d);
+            return d;
+        }
+    }
+    return NULL;
+}
+
 object ScriptUIHooks::point(tuple args, dict kwargs)
 {
     ScriptUIHooks& self = extract<ScriptUIHooks&>(args[0])();
@@ -214,64 +240,11 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
         z = z_();
     }
 
-    // If this callback happened because we're dragging the generated
-    // Control, don't delete it; otherwise, clear it to make room for
-    // an updated Control.
     ControlPoint* p = dynamic_cast<ControlPoint*>(
             self.scene->getControl(self.node, lineno));
-    if (p && !p->isDragging())
-    {
-        p->deleteLater();
-        p = NULL;
-    }
-
     if (!p)
     {
-        if (kwargs.has_key("drag"))
-        {
-            // Generate tuple-style drag function
-            auto t = extract<tuple>(kwargs["drag"]);
-            if (t.check())
-            {
-                if (kwargs.has_key("relative"))
-                    throw hooks::HookException(
-                            "Can't provide 'relative' argument "
-                            "with tuple-style drag function");
-                p = new ControlPoint(self.node, self.tupleDragFunction(t()));
-            }
-            else
-            {
-                auto d = extract<object>(kwargs["drag"])().ptr();
-                Py_INCREF(d);
-                p = new ControlPoint(self.node, d);
-            }
-        }
-        else
-        {
-            if (kwargs.has_key("relative"))
-                throw hooks::HookException(
-                        "Can't provide 'relative' argument "
-                        "without drag function");
-
-            // Try to automatically generate a drag function by looking to see
-            // if the x, y, z arguments match datum values; if so, make a drag
-            // function that drags these datums.
-            if (len(args) == 4)
-            {
-                p = new ControlPoint(self.node, defaultDragFunction(
-                        self.getDatum(extract<object>(args[1])().ptr()),
-                        self.getDatum(extract<object>(args[2])().ptr()),
-                        self.getDatum(extract<object>(args[3])().ptr())));
-            }
-            else
-            {
-                p = new ControlPoint(self.node, defaultDragFunction(
-                        self.getDatum(extract<object>(args[1])().ptr()),
-                        self.getDatum(extract<object>(args[2])().ptr()),
-                        QString()));
-            }
-        }
-
+        p = new ControlPoint(self.node);
         self.scene->registerControl(self.node, lineno, p);
     }
 
@@ -279,7 +252,32 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
     const QColor color = getColor(p->getColor(), kwargs);
     const bool relative = getBool(p->getRelative(), kwargs, "relative");
 
-    p->update(x, y, z, r, color, relative);
+    PyObject* drag_func = self.getDragFunction(kwargs);
+    // If we didn't get a drag function from the kwarg dict,
+    // make a default drag function from datum matching.
+    if (!drag_func)
+    {
+        if (kwargs.has_key("relative"))
+            throw hooks::HookException(
+                    "Can't provide 'relative' argument "
+                    "without drag function");
+
+        // Try to automatically generate a drag function by looking to see
+        // if the x, y, z arguments match datum values; if so, make a drag
+        // function that drags these datums.
+        if (len(args) == 4)
+            drag_func = defaultDragFunction(
+                    self.getDatum(extract<object>(args[1])().ptr()),
+                    self.getDatum(extract<object>(args[2])().ptr()),
+                    self.getDatum(extract<object>(args[3])().ptr()));
+        else
+            drag_func = defaultDragFunction(
+                    self.getDatum(extract<object>(args[1])().ptr()),
+                    self.getDatum(extract<object>(args[2])().ptr()),
+                    QString());
+    }
+
+    p->update(x, y, z, r, color, relative, drag_func);
     p->touch();
 
     // Return None
@@ -303,16 +301,24 @@ object ScriptUIHooks::wireframe(tuple args, dict kwargs)
 
     ControlWireframe* w = dynamic_cast<ControlWireframe*>(
             self.scene->getControl(self.node, lineno));
+
     if (!w)
     {
         w = new ControlWireframe(self.node);
         self.scene->registerControl(self.node, lineno, w);
     }
 
+    PyObject* drag_func = self.getDragFunction(kwargs);
+    if (!drag_func && kwargs.has_key("relative"))
+        throw hooks::HookException(
+                "Can't provide 'relative' argument "
+                "without drag function");
+
     const float t = getFloat(w->getT(), kwargs, "t");
     const QColor color = getColor(w->getColor(), kwargs);
     const bool close = getBool(w->getClose(), kwargs, "close");
-    w->update(v, t, color, close);
+    const bool relative = getBool(w->getRelative(), kwargs, "relative");
+    w->update(v, t, color, close, relative, drag_func);
     w->touch();
 
     return object();

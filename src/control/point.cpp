@@ -8,7 +8,7 @@ ControlPoint::ControlPoint(Node* node, PyObject* drag_func)
 }
 
 void ControlPoint::update(float x_, float y_, float z_, float r_,
-                          QColor color_, bool relative_)
+                          QColor color_, bool relative_, PyObject* drag_func)
 {
     bool changed = (x != x_) || (y != y_) || (z != z_) || (r != r_) ||
                    (color != color_) || (relative != relative_);
@@ -22,6 +22,8 @@ void ControlPoint::update(float x_, float y_, float z_, float r_,
 
     if (changed)
         emit(redraw());
+
+    setDragFunc(drag_func);
 }
 
 QPainterPath ControlPoint::shape(QMatrix4x4 m) const
