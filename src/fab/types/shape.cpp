@@ -10,12 +10,13 @@
 #include "fab/types/shape.h"
 
 Shape::Shape()
-    : math(""), bounds(Bounds()), tree(NULL)
+    : math(""), bounds(Bounds()), tree(NULL), r(-1), g(-1), b(-1)
 {
     // Nothing to do here
 }
 
 Shape::Shape(boost::python::object obj)
+    : tree(NULL), r(-1), g(-1), b(-1)
 {
     if (obj.ptr() != Py_None)
         throw fab::ShapeError();
@@ -45,7 +46,8 @@ Shape::Shape(std::string math, float xmin, float ymin, float zmin,
 }
 
 Shape::Shape(std::string math, Bounds bounds)
-    : math(math), bounds(bounds), tree(parse(math.c_str()), free_tree)
+    : math(math), bounds(bounds), tree(parse(math.c_str()), free_tree),
+      r(-1), g(-1), b(-1)
 {
     if (tree == NULL)
         throw fab::ParseError();

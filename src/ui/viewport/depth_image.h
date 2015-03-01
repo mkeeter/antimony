@@ -3,6 +3,7 @@
 
 #include <QGraphicsObject>
 #include <QImage>
+#include <QColor>
 #include <QPointer>
 #include <QVector3D>
 #include <QtGui/QOpenGLFunctions>
@@ -15,7 +16,8 @@ class DepthImageItem : public QGraphicsObject, protected QOpenGLFunctions
     Q_OBJECT
 public:
     DepthImageItem(QVector3D pos, QVector3D size,
-                   QImage depth, QImage shaded, Viewport* viewport);
+                   QImage depth, QImage shaded, QColor color,
+                   Viewport* viewport);
     ~DepthImageItem();
     QRectF boundingRect() const;
 
@@ -47,6 +49,8 @@ protected:
 
     QImage depth;
     QImage shaded;
+    QColor color;
+
     QPointer<Viewport> viewport;
 
     GLuint depth_tex;

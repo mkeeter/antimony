@@ -14,7 +14,7 @@
 using namespace boost::python;
 
 RenderTask::RenderTask(PyObject *s, QMatrix4x4 matrix,
-                           float scale, int refinement)
+                       float scale, int refinement)
     : QObject(NULL), shape(s), matrix(matrix),
       scale(scale), refinement(refinement), image(NULL)
 {
@@ -91,6 +91,9 @@ void RenderTask::render3d(Shape s)
             scale);
     connect(this, &RenderTask::halt, image, &RenderImage::halt);
     image->render(&transformed);
+
+    if (s.r != -1 && s.g != -1 && s.g != -1)
+        image->setColor(QColor(s.r, s.g, s.b));
 }
 
 void RenderTask::render2d(Shape s)
@@ -125,6 +128,9 @@ void RenderTask::render2d(Shape s)
 
     if (matrix(1,2))
         image->applyGradient(matrix(2,2) > 0);
+
+    if (s.r != -1 && s.g != -1 && s.g != -1)
+        image->setColor(QColor(s.r, s.g, s.b));
 
     image->setNormals(
         sqrt(pow(matrix(0,2),2) + pow(matrix(1,2),2)),

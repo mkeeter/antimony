@@ -9,10 +9,12 @@ uniform float dz_local;
 uniform float zmin_global;
 uniform float dz_global;
 
+uniform vec3 color;
+
 vec4 shade(vec4 norm)
 {
-    vec3 light = vec3(0.99, 0.96, 0.89);
-    vec3 dark = vec3(0.20, 0.25, 0.3);
+    vec3 light = vec3(0.99 * color.r, 0.96 * color.g, 0.89 * color.b);
+    vec3 dark = vec3(0.20 * color.r, 0.25 * color.g, 0.3 * color.b);
 
     float a = dot(norm.xyz, vec3(0.57, 0.57, 0.57));
     float b = dot(norm.xyz, vec3(-0.57, -0.57, 0.57));

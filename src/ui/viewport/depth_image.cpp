@@ -11,10 +11,10 @@
 #include "ui/viewport/viewport.h"
 
 DepthImageItem::DepthImageItem(QVector3D pos, QVector3D size,
-                               QImage depth, QImage shaded,
+                               QImage depth, QImage shaded, QColor color,
                                Viewport* viewport)
     : QGraphicsObject(), pos(pos), size(size), depth(depth), shaded(shaded),
-      viewport(viewport), delete_me(false)
+      color(color), viewport(viewport), delete_me(false)
 {
     connect(viewport, &Viewport::viewChanged, this, &DepthImageItem::reposition);
     reposition();
@@ -160,6 +160,9 @@ void DepthImageItem::loadSharedShaderVariables(QOpenGLShaderProgram* shader)
     glUniform1f(shader->uniformLocation("zmin_local"), zmin);
     glUniform1f(shader->uniformLocation("dz_global"), dz_global);
     glUniform1f(shader->uniformLocation("zmin_global"), zmin_global);
+
+    glUniform3f(shader->uniformLocation("color"),
+                color.redF(), color.greenF(), color.blueF());
 }
 
 void DepthImageItem::paintShaded()
