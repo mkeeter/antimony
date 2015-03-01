@@ -32,7 +32,6 @@ Control::~Control()
 
 void Control::setDragFunc(PyObject* new_drag_func)
 {
-    Q_ASSERT(!isDragging());
     Py_XDECREF(drag_func);
     drag_func = new_drag_func;
 }

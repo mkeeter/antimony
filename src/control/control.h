@@ -39,7 +39,7 @@ public:
      *  Swaps in a new drag_func, removing a reference from the old one.
      *  Steals a reference from new_drag_func.
      */
-    void setDragFunc(PyObject* new_drag_func) const;
+    void setDragFunc(PyObject* new_drag_func);
 
     /*
      *  Schedules the top-level node for deletion in an undo-able way
