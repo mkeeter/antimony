@@ -10,7 +10,12 @@
 #include "graph/datum/types/eval_datum.h"
 #include "graph/datum/datums/script_datum.h"
 
-int SceneSerializer::PROTOCOL_VERSION = 3;
+// Protocol version change-log:
+// 2 -> 3:
+//   Change hard-coded nodes into matching scripts
+// 3 -> 4:
+//   Remove ShapeInputDatum (replace with ShapeDatum)
+int SceneSerializer::PROTOCOL_VERSION = 4;
 
 SceneSerializer::SceneSerializer(QObject* node_root,
                                  QMap<Node*, QPointF> inspectors)
