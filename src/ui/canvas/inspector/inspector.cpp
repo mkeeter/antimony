@@ -297,7 +297,20 @@ void NodeInspector::setShowHidden(bool h)
         show_hidden = h;
         onLayoutChanged();
         prepareGeometryChange();
+        emit(hiddenChanged());
     }
+}
+
+bool NodeInspector::isDatumHidden(Datum* d) const
+{
+    OutputPort* o = datumOutputPort(d);
+    InputPort* i = datumInputPort(d);
+
+    if (o)
+        return !o->isVisible();
+    if (i)
+        return !i->isVisible();
+    return false;
 }
 
 void NodeInspector::mouseMoveEvent(QGraphicsSceneMouseEvent* event)

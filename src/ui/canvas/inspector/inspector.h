@@ -43,8 +43,11 @@ public:
     QPointF datumOutputPosition(Datum* d) const;
     QPointF datumInputPosition(Datum* d) const;
 
+    bool isDatumHidden(Datum* d) const;
+
 signals:
     void moved();
+    void hiddenChanged();
     void glowChanged(Node* node, bool g);
 
 public slots:
