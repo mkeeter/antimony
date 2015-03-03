@@ -14,6 +14,7 @@
 InspectorScriptButton::InspectorScriptButton(ScriptDatum* s, QGraphicsItem* parent)
     : GraphicsButton(parent), script(s)
 {
+    setToolTip("Edit script");
     connect(this, &GraphicsButton::pressed,
             this, &InspectorScriptButton::onPressed);
 }
@@ -51,6 +52,7 @@ InspectorShowHiddenButton::InspectorShowHiddenButton(
 {
     connect(this, &GraphicsButton::pressed,
             this, &InspectorShowHiddenButton::onPressed);
+    setToolTip("Show hidden datums");
 }
 
 QRectF InspectorShowHiddenButton::boundingRect() const
