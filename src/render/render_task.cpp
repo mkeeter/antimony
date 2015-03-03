@@ -16,7 +16,8 @@ using namespace boost::python;
 RenderTask::RenderTask(PyObject *s, QMatrix4x4 matrix,
                        float scale, int refinement)
     : QObject(NULL), shape(s), matrix(matrix),
-      scale(scale), refinement(refinement), image(NULL)
+      scale(scale), refinement(refinement), image(NULL),
+      is_empty(false)
 {
     Py_INCREF(shape);
 }
@@ -71,6 +72,10 @@ void RenderTask::render()
         else
             render3d(s);
         image->moveToThread(QApplication::instance()->thread());
+    }
+    else
+    {
+        is_empty = true;
     }
 
     time_taken = timer.elapsed();
