@@ -13,7 +13,6 @@
 #include "ui/canvas/inspector/inspector_title.h"
 #include "ui/canvas/inspector/inspector_text.h"
 #include "ui/canvas/inspector/inspector_row.h"
-#include "ui/canvas/inspector/inspector_menu.h"
 #include "ui/canvas/port.h"
 #include "ui/canvas/graph_scene.h"
 

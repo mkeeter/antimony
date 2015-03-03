@@ -3,7 +3,7 @@
 #include "ui/canvas/inspector/inspector_title.h"
 #include "ui/canvas/inspector/inspector_text.h"
 #include "ui/canvas/inspector/inspector.h"
-#include "ui/canvas/inspector/inspector_menu.h"
+#include "ui/canvas/inspector/inspector_buttons.h"
 
 #include "graph/node/node.h"
 #include "graph/datum/datums/script_datum.h"
@@ -13,7 +13,7 @@
 InspectorTitle::InspectorTitle(Node* n, NodeInspector* parent)
     : QGraphicsObject(parent),
       title(new QGraphicsTextItem(n->getTitle(), this)),
-      script_button(new InspectorMenuButton(
+      script_button(new InspectorScriptButton(
                   n->getDatum<ScriptDatum>("__script"), this)),
       padding(20)
 
