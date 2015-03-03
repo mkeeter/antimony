@@ -1,7 +1,7 @@
 #ifndef INSPECTOR_BUTTONS_H
 #define INSPECTOR_BUTTONS_H
 
-#include <QPointer.h>
+#include <QPointer>
 
 #include "ui/util/button.h"
 
