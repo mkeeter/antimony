@@ -40,7 +40,7 @@ void InspectorScriptButton::paint(QPainter* painter,
 
 void InspectorScriptButton::onPressed()
 {
-    Q_ASSERT(!s.isNull());
+    Q_ASSERT(!script.isNull());
     App::instance()->newEditorWindow(script);
 }
 
