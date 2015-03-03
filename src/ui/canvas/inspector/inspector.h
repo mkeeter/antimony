@@ -17,6 +17,7 @@ class InspectorRow;
 class InspectorMenuButton;
 class InputPort;
 class OutputPort;
+class InspectorTitle;
 
 class DatumTextItem;
 
@@ -36,19 +37,17 @@ public:
 
     Node* getNode();
 
-    /*
-     *  Returns the ScriptDatum for this node or NULL
-     */
-    ScriptDatum* getScriptDatum() const;
-
     OutputPort* datumOutputPort(Datum *d) const;
     InputPort* datumInputPort(Datum* d) const;
 
     QPointF datumOutputPosition(Datum* d) const;
     QPointF datumInputPosition(Datum* d) const;
 
+    bool isDatumHidden(Datum* d) const;
+
 signals:
     void moved();
+    void hiddenChanged();
     void glowChanged(Node* node, bool g);
 
 public slots:
@@ -95,6 +94,7 @@ public slots:
     void setDragging(bool d) { dragging = d; }
 
     void setGlow(bool g);
+    void setShowHidden(bool h);
 
 protected:
     /*
@@ -104,17 +104,15 @@ protected:
 
     /** Returns the width of the largest label.
      */
-    float labelWidth() const;
+    float maxLabelWidth() const;
 
     /** Fills in the grid from the source node.
      */
     void populateLists(Node* node);
 
     QPointer<Node> node;
+    InspectorTitle* title_row;
     QMap<Datum*, InspectorRow*> rows;
-    DatumTextItem* name;
-    QGraphicsTextItem* title;
-    InspectorMenuButton* menu_button;
 
     // Ugly hack because simply grabbing the mouse doesn't set up all of the
     // magic that QGraphicsScene uses to drag items: upon first insertion,
@@ -127,7 +125,11 @@ protected:
     // Boolean to determine whether to draw glow
     bool glow;
 
+    // Boolean to determine whether to show hidden datums.
+    bool show_hidden;
+
     friend class InspectorRow;
+    friend class InspectorTitle;
 };
 
 #endif // INSPECTOR_H

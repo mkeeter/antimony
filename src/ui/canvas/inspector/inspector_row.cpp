@@ -22,9 +22,13 @@ InspectorRow::InspectorRow(Datum* d, NodeInspector* parent)
       editor(new DatumTextItem(d, this))
 {
     label->setDefaultTextColor(Colors::base04);
+
     connect(static_cast<DatumTextItem*>(editor),
             &DatumTextItem::boundsChanged,
-            this, &InspectorRow::updateLayout);
+            [=](){
+            if(this->updateLayout())
+                emit(layoutChanged()); });
+
     connect(static_cast<DatumTextItem*>(editor),
             &DatumTextItem::tabPressed,
             parent, &NodeInspector::focusNext);
@@ -35,21 +39,40 @@ InspectorRow::InspectorRow(Datum* d, NodeInspector* parent)
 
 QRectF InspectorRow::boundingRect() const
 {
-    float height = editor->boundingRect().height();
-
-    float width = 15 + globalLabelWidth() + 10 + 150 + 5 + 15;
+    const float height = editor->boundingRect().height();
+    const float width = 15      // Input port
+        + labelWidth()    // Datum name
+        + 10        // Padding
+        + editor->boundingRect().width()    // Text field
+        + 5         // Padding
+        + 15;       // Output port
     return QRectF(0, 0, width, height);
 }
 
-float InspectorRow::globalLabelWidth() const
+float InspectorRow::minWidth() const
 {
-    Q_ASSERT(dynamic_cast<NodeInspector*>(parentObject()));
-    return static_cast<NodeInspector*>(parentObject())->labelWidth();
+    return 15       // Input port
+           + labelWidth() +  // Datum name
+           + 10     // Padding
+           + 150    // Text field
+           + 5      // Padding
+           + 15;    // Output port
 }
 
-void InspectorRow::updateLayout()
+void InspectorRow::setWidth(float width)
 {
-    float label_width = globalLabelWidth();
+    editor->setTextWidth(150 + width - minWidth());
+}
+
+float InspectorRow::labelWidth() const
+{
+    Q_ASSERT(dynamic_cast<NodeInspector*>(parentObject()));
+    return static_cast<NodeInspector*>(parentObject())->maxLabelWidth();
+}
+
+bool InspectorRow::updateLayout()
+{
+    float label_width = labelWidth();
     QRectF bbox = boundingRect();
     bool changed = false;
 
@@ -71,7 +94,7 @@ void InspectorRow::updateLayout()
         label->setPos(lpos);
     }
 
-    QPointF epos(label_width + 25, 0);
+    QPointF epos(15 + label_width + 10, 0);
     if (editor->pos() != epos)
     {
         changed = true;
@@ -89,10 +112,7 @@ void InspectorRow::updateLayout()
         }
     }
 
-    if (changed)
-    {
-        emit(layoutChanged());
-    }
+    return changed;
 }
 
 void InspectorRow::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
