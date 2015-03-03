@@ -11,6 +11,7 @@
 #include "graph/node/node.h"
 #include "graph/node/root.h"
 #include "graph/datum/types/eval_datum.h"
+#include "graph/datum/datums/script_datum.h"
 
 #include "ui_main_window.h"
 #include "ui/main_window.h"
@@ -54,6 +55,8 @@ void MainWindow::setCentralWidget(QWidget* w)
     {
         e->customizeUI(ui);
         window_type = "Script";
+        connect(e->getDatum(), &ScriptDatum::destroyed,
+                this, &MainWindow::close);
     }
     else
     {
