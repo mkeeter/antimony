@@ -26,7 +26,8 @@ class InspectorShowHiddenButton : public GraphicsButton
 {
     Q_OBJECT
 public:
-    InspectorShowHiddenButton(NodeInspector* parent);
+    InspectorShowHiddenButton(QGraphicsItem* parent,
+                              NodeInspector* inspector);
     QRectF boundingRect() const override;
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
                QWidget* widget=0) override;
@@ -34,5 +35,6 @@ protected slots:
     void onPressed();
 protected:
     bool toggled;
+    NodeInspector* inspector;
 };
 #endif

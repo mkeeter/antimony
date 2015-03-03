@@ -15,6 +15,7 @@ InspectorTitle::InspectorTitle(Node* n, NodeInspector* parent)
       title(new QGraphicsTextItem(n->getTitle(), this)),
       script_button(new InspectorScriptButton(
                   n->getDatum<ScriptDatum>("__script"), this)),
+      show_hidden_button(new InspectorShowHiddenButton(this, parent)),
       padding(20)
 
 {
@@ -54,6 +55,8 @@ QRectF InspectorTitle::boundingRect() const
         padding +
         title->boundingRect().width()
         + 2
+        + show_hidden_button->boundingRect().width()
+        + 4
         + script_button->boundingRect().width();
     return QRectF(0, 0, width, height);
 }
@@ -63,6 +66,8 @@ float InspectorTitle::minWidth() const
     return name->boundingRect().width() + 20 // padding
         + title->boundingRect().width() // title
         + 2 // more padding
+        + show_hidden_button->boundingRect().width()
+        + 4 // more padding
         + script_button->boundingRect().width();
 }
 
@@ -74,6 +79,7 @@ void InspectorTitle::setWidth(float width)
 bool InspectorTitle::updateLayout()
 {
     bool changed = false;
+    const float h = boundingRect().height();
 
     //
     // Name stays put at 0,0
@@ -87,8 +93,16 @@ bool InspectorTitle::updateLayout()
         title->setPos(tpos);
     }
 
-    x += title->boundingRect().width();
-    QPointF spos(x, 0);
+    x += title->boundingRect().width() + 2;
+    QPointF hpos(x, (h - show_hidden_button->boundingRect().height())/2);
+    if (hpos != show_hidden_button->pos())
+    {
+        changed = true;
+        show_hidden_button->setPos(hpos);
+    }
+
+    x += show_hidden_button->boundingRect().width() + 4;
+    QPointF spos(x, (h - script_button->boundingRect().height()) / 2);
     if (spos != script_button->pos())
     {
         changed = true;

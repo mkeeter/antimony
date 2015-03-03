@@ -20,7 +20,7 @@ InspectorScriptButton::InspectorScriptButton(ScriptDatum* s, QGraphicsItem* pare
 
 QRectF InspectorScriptButton::boundingRect() const
 {
-    return QRectF(0, 0, 20, 20);
+    return QRectF(0, 0, 16, 15);
 }
 
 void InspectorScriptButton::paint(QPainter* painter,
@@ -32,9 +32,9 @@ void InspectorScriptButton::paint(QPainter* painter,
 
     painter->setPen(Qt::NoPen);
     painter->setBrush(hover ? Colors::base05 : Colors::base04);
-    painter->drawRect(2, 2, 16, 3);
-    painter->drawRect(2, 8, 16, 3);
-    painter->drawRect(2, 14, 16, 3);
+    painter->drawRect(0, 0, 16, 3);
+    painter->drawRect(0, 6, 16, 3);
+    painter->drawRect(0, 12, 16, 3);
 }
 
 void InspectorScriptButton::onPressed()
@@ -45,8 +45,9 @@ void InspectorScriptButton::onPressed()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-InspectorShowHiddenButton::InspectorShowHiddenButton(NodeInspector* parent)
-    : GraphicsButton(parent)
+InspectorShowHiddenButton::InspectorShowHiddenButton(
+        QGraphicsItem* parent, NodeInspector* inspector)
+    : GraphicsButton(parent), inspector(inspector)
 {
     connect(this, &GraphicsButton::pressed,
             this, &InspectorShowHiddenButton::onPressed);
@@ -54,7 +55,7 @@ InspectorShowHiddenButton::InspectorShowHiddenButton(NodeInspector* parent)
 
 QRectF InspectorShowHiddenButton::boundingRect() const
 {
-    return QRectF(0, 0, 20, 20);
+    return QRectF(0, 0, 10, 15);
 }
 
 void InspectorShowHiddenButton::paint(QPainter* painter,
@@ -65,10 +66,10 @@ void InspectorShowHiddenButton::paint(QPainter* painter,
     Q_UNUSED(widget);
 
     painter->setPen(Qt::NoPen);
-    painter->setBrush(hover ? Colors::base05 : Colors::base04);
-    painter->drawRect(2, 2, 16, 3);
-    painter->drawRect(2, 8, 16, 3);
-    painter->drawRect(2, 14, 16, 3);
+    painter->setBrush(hover ? Colors::base06 :
+                      toggled ? Colors::base04 : Colors::base02);
+    painter->drawRect(0, 12, 10, 3);
+    painter->drawEllipse(3, 4, 4, 4);
 }
 
 void InspectorShowHiddenButton::onPressed()
