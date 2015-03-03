@@ -17,6 +17,7 @@ class InspectorRow;
 class InspectorMenuButton;
 class InputPort;
 class OutputPort;
+class InspectorTitle;
 
 class DatumTextItem;
 
@@ -35,11 +36,6 @@ public:
                QWidget *widget) override;
 
     Node* getNode();
-
-    /*
-     *  Returns the ScriptDatum for this node or NULL
-     */
-    ScriptDatum* getScriptDatum() const;
 
     OutputPort* datumOutputPort(Datum *d) const;
     InputPort* datumInputPort(Datum* d) const;
@@ -111,10 +107,8 @@ protected:
     void populateLists(Node* node);
 
     QPointer<Node> node;
+    InspectorTitle* title_row;
     QMap<Datum*, InspectorRow*> rows;
-    DatumTextItem* name;
-    QGraphicsTextItem* title;
-    InspectorMenuButton* menu_button;
 
     // Ugly hack because simply grabbing the mouse doesn't set up all of the
     // magic that QGraphicsScene uses to drag items: upon first insertion,
@@ -128,6 +122,7 @@ protected:
     bool glow;
 
     friend class InspectorRow;
+    friend class InspectorTitle;
 };
 
 #endif // INSPECTOR_H

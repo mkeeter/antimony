@@ -25,7 +25,11 @@ public:
     float minWidth() const;
 
 public slots:
-    void updateLayout();
+    /*
+     *  Updates the row's layout.
+     *  Returns true if anything changed.
+     */
+    bool updateLayout();
 
 signals:
     void layoutChanged();

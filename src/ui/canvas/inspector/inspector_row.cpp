@@ -22,9 +22,13 @@ InspectorRow::InspectorRow(Datum* d, NodeInspector* parent)
       editor(new DatumTextItem(d, this))
 {
     label->setDefaultTextColor(Colors::base04);
+
     connect(static_cast<DatumTextItem*>(editor),
             &DatumTextItem::boundsChanged,
-            this, &InspectorRow::updateLayout);
+            [=](){
+            if(this->updateLayout())
+                emit(layoutChanged()); });
+
     connect(static_cast<DatumTextItem*>(editor),
             &DatumTextItem::tabPressed,
             parent, &NodeInspector::focusNext);
@@ -74,7 +78,7 @@ float InspectorRow::globalLabelWidth() const
     return static_cast<NodeInspector*>(parentObject())->maxLabelWidth();
 }
 
-void InspectorRow::updateLayout()
+bool InspectorRow::updateLayout()
 {
     float label_width = globalLabelWidth();
     QRectF bbox = boundingRect();
@@ -116,10 +120,7 @@ void InspectorRow::updateLayout()
         }
     }
 
-    if (changed)
-    {
-        emit(layoutChanged());
-    }
+    return changed;
 }
 
 void InspectorRow::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,

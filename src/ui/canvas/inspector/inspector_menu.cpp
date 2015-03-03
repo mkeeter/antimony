@@ -5,13 +5,13 @@
 #include <QAction>
 
 #include "ui/canvas/inspector/inspector_menu.h"
-#include "ui/canvas/inspector/inspector.h"
 
+#include "graph/datum/datums/script_datum.h"
 #include "ui/util/colors.h"
 #include "app/app.h"
 
-InspectorMenuButton::InspectorMenuButton(NodeInspector* parent)
-    : GraphicsButton(parent)
+InspectorMenuButton::InspectorMenuButton(ScriptDatum* s, QGraphicsItem* parent)
+    : GraphicsButton(parent), script(s)
 {
     connect(this, &GraphicsButton::pressed,
             this, &InspectorMenuButton::onPressed);
@@ -38,11 +38,6 @@ void InspectorMenuButton::paint(QPainter* painter,
 
 void InspectorMenuButton::onPressed()
 {
-    Q_ASSERT(dynamic_cast<NodeInspector*>(parentObject()));
-    NodeInspector* i = static_cast<NodeInspector*>(parentObject());
-
-    ScriptDatum* s = i->getScriptDatum();
-    Q_ASSERT(s);
-
-    App::instance()->newEditorWindow(s);
+    Q_ASSERT(!s.isNull());
+    App::instance()->newEditorWindow(script);
 }

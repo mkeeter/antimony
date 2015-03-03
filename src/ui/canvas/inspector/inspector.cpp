@@ -10,6 +10,7 @@
 #include "ui/main_window.h"
 
 #include "ui/canvas/inspector/inspector.h"
+#include "ui/canvas/inspector/inspector_title.h"
 #include "ui/canvas/inspector/inspector_text.h"
 #include "ui/canvas/inspector/inspector_row.h"
 #include "ui/canvas/inspector/inspector_menu.h"
@@ -28,37 +29,13 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 NodeInspector::NodeInspector(Node* node)
-    : node(node), name(NULL),
-      title(new QGraphicsTextItem(node->getTitle(), this)),
-      menu_button(getScriptDatum() ? new InspectorMenuButton(this) : NULL),
+    : node(node), title_row(new InspectorTitle(node, this)),
       dragging(false), border(10), glow(false)
 {
-    if (auto n = node->getDatum("__name"))
-    {
-        name = new DatumTextItem(n, this);
-        name->setAsTitle();
-        name->setPos(6, 2);
-        connect(n, &Datum::changed,
-                this, &NodeInspector::onLayoutChanged);
-    }
-
     setFlags(QGraphicsItem::ItemIsMovable |
              QGraphicsItem::ItemIsSelectable |
              QGraphicsItem::ItemSendsGeometryChanges);
     setAcceptHoverEvents(true);
-
-    title->setPos(6, 2);
-    title->setDefaultTextColor(Colors::base06);
-    auto f = title->font();
-    f.setBold(true);
-    title->setFont(f);
-
-    // Make connections for dynamic title changing
-    // (which only happens for ScriptNodes)
-    connect(node, &Node::titleChanged,
-            title, &QGraphicsTextItem::setPlainText);
-    connect(node, &Node::titleChanged,
-            [=](QString){ this->onLayoutChanged(); });
 
     // Redo layout when datums change (also only for script nodes)
     connect(node, &Node::datumsChanged,
@@ -82,10 +59,8 @@ float NodeInspector::maxLabelWidth() const
 
 QRectF NodeInspector::boundingRect() const
 {
-    float height = title->boundingRect().height() + 4;
-    float width =  title->boundingRect().width() +
-                   name->boundingRect().width() + 24 +
-                   (menu_button ? menu_button->boundingRect().width() : 0);
+    float height = title_row->boundingRect().height() + 4;
+    float width =  title_row->boundingRect().width() + 6;
 
     for (auto row : rows)
     {
@@ -97,21 +72,10 @@ QRectF NodeInspector::boundingRect() const
 
 void NodeInspector::onLayoutChanged()
 {
-    // Right-align the title block
-    if (name)
-        title->setPos(
-                boundingRect().right() - border - title->boundingRect().width()
-                - (menu_button ? menu_button->boundingRect().width() : 0)
-                - 6, 2);
-
-    // Position the menu to the far right of the title bar
-    if (menu_button)
-        menu_button->setPos(boundingRect().right() - border -
-                            menu_button->boundingRect().width() - 3, 5);
-
+    // Add inspector rows in the order they appear.
     if (node)
     {
-        float y = 2 + title->boundingRect().height() + 4;
+        float y = 2 + title_row->boundingRect().height() + 4;
         for (Datum* d : node->findChildren<Datum*>())
         {
             if (rows.contains(d))
@@ -180,7 +144,7 @@ void NodeInspector::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     painter->drawRoundedRect(r, 8, 8);
 
     painter->setBrush(Colors::base03);
-    QRectF br = title->boundingRect();
+    QRectF br = title_row->boundingRect();
     br.setWidth(r.width());
     br.setHeight(br.height() + 2);
     painter->drawRoundedRect(br, 8, 8);
@@ -231,11 +195,6 @@ OutputPort* NodeInspector::datumOutputPort(Datum *d) const
 Node* NodeInspector::getNode()
 {
     return node;
-}
-
-ScriptDatum* NodeInspector::getScriptDatum() const
-{
-    return dynamic_cast<ScriptDatum*>(node->getDatum("__script"));
 }
 
 QPointF NodeInspector::datumOutputPosition(Datum* d) const
