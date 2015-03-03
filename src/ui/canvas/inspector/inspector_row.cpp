@@ -59,10 +59,8 @@ float InspectorRow::minWidth() const
            + 15;    // Output port
 }
 
-#include <QDebug>
 void InspectorRow::setWidth(float width)
 {
-    qDebug() << width << 150 + width - minWidth();
     editor->setTextWidth(150 + width - minWidth());
 }
 

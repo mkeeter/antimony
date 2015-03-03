@@ -46,6 +46,10 @@ NodeInspector::NodeInspector(Node* node)
     connect(node, &Node::datumOrderChanged,
             this, &NodeInspector::onDatumOrderChanged);
 
+    // When the title row changes, redo layout as well.
+    connect(title_row, &InspectorTitle::layoutChanged,
+            this, &NodeInspector::onLayoutChanged);
+
     // Delete oneself when the target node is deleted
     connect(node, &Node::destroyed, this, &NodeInspector::deleteLater);
 
