@@ -21,6 +21,9 @@ public:
     DatumTextItem* editor;
     QRectF boundingRect() const;
 
+    void setWidth(float width);
+    float minWidth() const;
+
 public slots:
     void updateLayout();
 

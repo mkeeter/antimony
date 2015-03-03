@@ -72,21 +72,11 @@ NodeInspector::NodeInspector(Node* node)
     populateLists(node);
 }
 
-float NodeInspector::labelWidth() const
+float NodeInspector::maxLabelWidth() const
 {
     float label_width = 0;
     for (auto row : rows)
         label_width = fmax(label_width, row->label->boundingRect().width());
-
-    // Special case if the name field is getting too long -- pad the label
-    // width so that the name field fits without overlapping into the title
-    // field (forgive the hard-coded magic numbers)
-    if (name)
-    {
-        int free_space = label_width + 145 - title->boundingRect().width();
-        if (name->boundingRect().width() > free_space)
-            label_width += name->boundingRect().width() - free_space;
-    }
     return label_width;
 }
 

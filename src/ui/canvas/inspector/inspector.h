@@ -104,7 +104,7 @@ protected:
 
     /** Returns the width of the largest label.
      */
-    float labelWidth() const;
+    float maxLabelWidth() const;
 
     /** Fills in the grid from the source node.
      */

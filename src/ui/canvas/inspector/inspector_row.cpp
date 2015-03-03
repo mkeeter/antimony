@@ -35,16 +35,43 @@ InspectorRow::InspectorRow(Datum* d, NodeInspector* parent)
 
 QRectF InspectorRow::boundingRect() const
 {
-    float height = editor->boundingRect().height();
-
-    float width = 15 + globalLabelWidth() + 10 + 150 + 5 + 15;
+    const float height = editor->boundingRect().height();
+    const float width = 15      // Input port
+        + globalLabelWidth()    // Datum name
+        + 10        // Padding
+        + editor->boundingRect().width()    // Text field
+        + 5         // Padding
+        + 15;       // Output port
     return QRectF(0, 0, width, height);
+}
+
+float InspectorRow::minWidth() const
+{
+    return 15       // Input port
+           + label->boundingRect().width() +  // Datum name
+           + 10     // Padding
+           + 150    // Text field
+           + 5      // Padding
+           + 15;    // Output port
+}
+
+void InspectorRow::setWidth(float width)
+{
+    float text_width = width
+        - 15    // Input port
+        - label->boundingRect().width()     // Datum name
+        - 10    // Padding
+        - 5     // Padding
+        - 15;   // Output port
+
+    Q_ASSERT(text_width >= 150);
+    editor->setTextWidth(text_width);
 }
 
 float InspectorRow::globalLabelWidth() const
 {
     Q_ASSERT(dynamic_cast<NodeInspector*>(parentObject()));
-    return static_cast<NodeInspector*>(parentObject())->labelWidth();
+    return static_cast<NodeInspector*>(parentObject())->maxLabelWidth();
 }
 
 void InspectorRow::updateLayout()
