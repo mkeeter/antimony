@@ -98,7 +98,7 @@ void InspectorRow::updateLayout()
         label->setPos(lpos);
     }
 
-    QPointF epos(label_width + 25, 0);
+    QPointF epos(15 + label_width + 10, 0);
     if (editor->pos() != epos)
     {
         changed = true;
