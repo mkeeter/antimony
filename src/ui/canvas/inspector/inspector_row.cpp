@@ -41,7 +41,7 @@ QRectF InspectorRow::boundingRect() const
 {
     const float height = editor->boundingRect().height();
     const float width = 15      // Input port
-        + globalLabelWidth()    // Datum name
+        + labelWidth()    // Datum name
         + 10        // Padding
         + editor->boundingRect().width()    // Text field
         + 5         // Padding
@@ -52,7 +52,7 @@ QRectF InspectorRow::boundingRect() const
 float InspectorRow::minWidth() const
 {
     return 15       // Input port
-           + globalLabelWidth() +  // Datum name
+           + labelWidth() +  // Datum name
            + 10     // Padding
            + 150    // Text field
            + 5      // Padding
@@ -66,7 +66,7 @@ void InspectorRow::setWidth(float width)
     editor->setTextWidth(150 + width - minWidth());
 }
 
-float InspectorRow::globalLabelWidth() const
+float InspectorRow::labelWidth() const
 {
     Q_ASSERT(dynamic_cast<NodeInspector*>(parentObject()));
     return static_cast<NodeInspector*>(parentObject())->maxLabelWidth();
@@ -74,7 +74,7 @@ float InspectorRow::globalLabelWidth() const
 
 bool InspectorRow::updateLayout()
 {
-    float label_width = globalLabelWidth();
+    float label_width = labelWidth();
     QRectF bbox = boundingRect();
     bool changed = false;
 

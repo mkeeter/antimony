@@ -37,7 +37,7 @@ signals:
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget) override;
-    float globalLabelWidth() const;
+    float labelWidth() const;
 
     friend class NodeInspector;
 };
