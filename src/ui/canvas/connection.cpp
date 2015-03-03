@@ -65,6 +65,7 @@ void Connection::onHiddenChanged()
         hide();
     else
         show();
+    prepareGeometryChange();
 }
 
 GraphScene* Connection::gscene() const
