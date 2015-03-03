@@ -32,6 +32,9 @@ NodeInspector::NodeInspector(Node* node)
     : node(node), title_row(new InspectorTitle(node, this)),
       dragging(false), border(10), glow(false)
 {
+    // Bump the title row down a little bit.
+    title_row->setPos(4, 2);
+
     setFlags(QGraphicsItem::ItemIsMovable |
              QGraphicsItem::ItemIsSelectable |
              QGraphicsItem::ItemSendsGeometryChanges);
@@ -60,7 +63,7 @@ float NodeInspector::maxLabelWidth() const
 QRectF NodeInspector::boundingRect() const
 {
     float height = title_row->boundingRect().height() + 4;
-    float width =  title_row->boundingRect().width() + 6;
+    float width =  title_row->boundingRect().width() + 8;
 
     for (auto row : rows)
     {
@@ -72,6 +75,12 @@ QRectF NodeInspector::boundingRect() const
 
 void NodeInspector::onLayoutChanged()
 {
+    float min_width = title_row->minWidth();
+    for (auto r : rows)
+        min_width = fmax(min_width, r->minWidth());
+    title_row->setWidth(min_width);
+    title_row->updateLayout();
+
     // Add inspector rows in the order they appear.
     if (node)
     {
@@ -80,6 +89,7 @@ void NodeInspector::onLayoutChanged()
         {
             if (rows.contains(d))
             {
+                rows[d]->setWidth(min_width);
                 rows[d]->updateLayout();
                 rows[d]->setPos(0, y);
                 y += 4 + rows[d]->boundingRect().height();

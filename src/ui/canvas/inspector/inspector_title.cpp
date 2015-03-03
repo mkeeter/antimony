@@ -66,6 +66,11 @@ float InspectorTitle::minWidth() const
         + script_button->boundingRect().width();
 }
 
+void InspectorTitle::setWidth(float width)
+{
+    padding = 20 + width - minWidth();
+}
+
 bool InspectorTitle::updateLayout()
 {
     bool changed = false;
