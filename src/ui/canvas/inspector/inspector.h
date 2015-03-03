@@ -91,6 +91,7 @@ public slots:
     void setDragging(bool d) { dragging = d; }
 
     void setGlow(bool g);
+    void setShowHidden(bool h);
 
 protected:
     /*
@@ -120,6 +121,9 @@ protected:
 
     // Boolean to determine whether to draw glow
     bool glow;
+
+    // Boolean to determine whether to show hidden datums.
+    bool show_hidden;
 
     friend class InspectorRow;
     friend class InspectorTitle;

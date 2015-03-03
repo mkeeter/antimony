@@ -75,4 +75,5 @@ void InspectorShowHiddenButton::paint(QPainter* painter,
 void InspectorShowHiddenButton::onPressed()
 {
     toggled = !toggled;
+    inspector->setShowHidden(toggled);
 }

@@ -29,7 +29,7 @@
 
 NodeInspector::NodeInspector(Node* node)
     : node(node), title_row(new InspectorTitle(node, this)),
-      dragging(false), border(10), glow(false)
+      dragging(false), border(10), glow(false), show_hidden(false)
 {
     // Bump the title row down a little bit.
     title_row->setPos(4, 2);
@@ -68,10 +68,13 @@ QRectF NodeInspector::boundingRect() const
     float height = title_row->boundingRect().height() + 4;
     float width =  title_row->boundingRect().width() + 8;
 
-    for (auto row : rows)
+    for (auto row=rows.begin(); row != rows.end(); ++row)
     {
-        height += row->boundingRect().height() + 4;
-        width = fmax(width, row->boundingRect().width());
+        if (show_hidden || !row.key()->objectName().startsWith("_"))
+        {
+            height += row.value()->boundingRect().height() + 4;
+            width = fmax(width, row.value()->boundingRect().width());
+        }
     }
     return QRectF(-border, -border, width + 2*border, height + 2*border);
 }
@@ -92,10 +95,18 @@ void NodeInspector::onLayoutChanged()
         {
             if (rows.contains(d))
             {
-                rows[d]->setWidth(min_width);
-                rows[d]->updateLayout();
-                rows[d]->setPos(0, y);
-                y += 4 + rows[d]->boundingRect().height();
+                if (show_hidden || !d->objectName().startsWith("_"))
+                {
+                    rows[d]->show();
+                    rows[d]->setWidth(min_width);
+                    rows[d]->updateLayout();
+                    rows[d]->setPos(0, y);
+                    y += 4 + rows[d]->boundingRect().height();
+                }
+                else
+                {
+                    rows[d]->hide();
+                }
             }
         }
         prepareGeometryChange();
@@ -120,7 +131,7 @@ void NodeInspector::populateLists(Node *node)
     for (Datum* d : node->findChildren<Datum*>(
                 QString(), Qt::FindDirectChildrenOnly))
     {
-        if (!d->objectName().startsWith("_") && !rows.contains(d))
+        if (!d->objectName().startsWith("__") && !rows.contains(d))
         {
             rows[d] = new InspectorRow(d, this);
             connect(rows[d], &InspectorRow::layoutChanged,
@@ -275,6 +286,16 @@ void NodeInspector::setGlow(bool g)
     if (g != glow)
     {
         glow = g;
+        prepareGeometryChange();
+    }
+}
+
+void NodeInspector::setShowHidden(bool h)
+{
+    if (h != show_hidden)
+    {
+        show_hidden = h;
+        onLayoutChanged();
         prepareGeometryChange();
     }
 }
