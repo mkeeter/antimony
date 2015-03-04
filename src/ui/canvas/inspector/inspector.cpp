@@ -65,6 +65,10 @@ float NodeInspector::maxLabelWidth() const
 
 QRectF NodeInspector::boundingRect() const
 {
+    // Special case if the node is being deleted
+    if (node.isNull())
+        return QRectF();
+
     float height = title_row->boundingRect().height() + 4;
     float width =  title_row->boundingRect().width() + 8;
 
