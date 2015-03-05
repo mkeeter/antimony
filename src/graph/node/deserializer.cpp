@@ -57,6 +57,13 @@ bool SceneDeserializer::run(QDataStream* in)
             "File was saved with an older protocol and cannot be read.<br>"
             "Open it in Antimony 0.7.6c and re-save to upgrade file protocol.";
     }
+    else if (protocol_version == 3)
+    {
+        failed = true;
+        error_message =
+            "File was saved with an older protocol and cannot be read.<br>"
+            "Open it in Antimony 0.7.7 and re-save to upgrade file protocol.";
+    }
     else if (protocol_version > 4)
     {
         failed = true;
@@ -133,18 +140,15 @@ void SceneDeserializer::deserializeDatum(QDataStream* in, Node* node)
             datum = new ScriptDatum(name, node); break;
         case DatumType::SHAPE_OUTPUT:
             datum = new ShapeOutputDatum(name, node); break;
-        case DatumType::SHAPE_INPUT: // Automatically upgrade SHAPE_INPUT to SHAPE
         case DatumType::SHAPE:
             datum = new ShapeDatum(name, node); break;
+        case DatumType::SHAPE_INPUT:
         case DatumType::SHAPE_FUNCTION:
             datum = NULL;
             Q_ASSERT(false); // this is a deprecated Datum type.
     }
 
-    auto e = dynamic_cast<EvalDatum*>(datum);
-    // Special case when upgrading SHAPE_INPUT datums to SHAPE datums:
-    // They weren't serialized with an expression, so don't try to read it.
-    if (e && !(protocol_version == 3 && datum_type == DatumType::SHAPE_INPUT))
+    if (auto e = dynamic_cast<EvalDatum*>(datum))
     {
         QString expr;
         *in >> expr;
