@@ -77,6 +77,13 @@ struct ScriptUIHooks
     QString getDatum(PyObject* obj);
 
     /*
+     *  Extracts the drag function from kwargs['drag'].
+     *  kwargs['drag'] is either a tuple or a callback.
+     *  Returns NULL if kwargs['drag'] doesn't exist.
+     */
+    PyObject* getDragFunction(boost::python::dict kwargs);
+
+    /*
      *  Constructs a default (relative) drag function.
      *  x, y, z are names of datums to drag or null strings.
      */

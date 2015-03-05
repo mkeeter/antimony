@@ -42,6 +42,8 @@
     <addaction name="actionSave"/>
     <addaction name="actionSaveAs"/>
     <addaction name="separator"/>
+    <addaction name="actionCheckUpdate"/>
+    <addaction name="separator"/>
     <addaction name="actionClose"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -71,6 +73,8 @@
     </property>
     <addaction name="actionHeightmap"/>
     <addaction name="actionShaded"/>
+    <addaction name="separator"/>
+    <addaction name="actionHideUI"/>
    </widget>
    <widget class="QMenu" name="menuWindow">
     <property name="title">
@@ -210,6 +214,19 @@
   <action name="actionExportJSON">
    <property name="text">
     <string>JSON (.f)</string>
+   </property>
+  </action>
+  <action name="actionCheckUpdate">
+   <property name="text">
+    <string>Check for updates</string>
+   </property>
+  </action>
+  <action name="actionHideUI">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide UI</string>
    </property>
   </action>
  </widget>

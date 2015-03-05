@@ -16,7 +16,7 @@ RenderImage::RenderImage(Bounds b, QVector3D pos, float scale)
             (b.ymax - b.ymin) * scale,
             QImage::Format_RGB32),
       shaded(depth.width(), depth.height(), depth.format()),
-      halt_flag(0)
+      halt_flag(0), color(255, 255, 255)
 {
     // Nothing to do here
     // (render() must be called explicity)
@@ -116,6 +116,7 @@ DepthImageItem* RenderImage::addToViewport(Viewport* viewport)
     return new DepthImageItem(pos,
             QVector3D(bounds.xmax - bounds.xmin,
                       bounds.ymax - bounds.ymin,
-                      bounds.zmax - bounds.zmin), depth, shaded, viewport);
+                      bounds.zmax - bounds.zmin),
+            depth, shaded, color, viewport);
 }
 

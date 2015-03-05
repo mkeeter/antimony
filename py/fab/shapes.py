@@ -32,6 +32,13 @@ def shell(a, o):
 def buffer(a):
     return a
 
+def set_color(a, r, g, b):
+    """ Applies a given color to an input shape a and returns it.
+    """
+    q = Shape(a.math, a.bounds)
+    q._r, q._g, q._b = r, g, b
+    return q
+
 ################################################################################
 
 def circle(x0, y0, r):

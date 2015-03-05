@@ -1,6 +1,7 @@
 #ifndef EXPORT_BITMAP_H
 #define EXPORT_BITMAP_H
 
+#include <Python.h>
 #include <QObject>
 
 #include "fab/types/shape.h"

@@ -10,9 +10,9 @@
 #include "ui/main_window.h"
 
 #include "ui/canvas/inspector/inspector.h"
+#include "ui/canvas/inspector/inspector_title.h"
 #include "ui/canvas/inspector/inspector_text.h"
 #include "ui/canvas/inspector/inspector_row.h"
-#include "ui/canvas/inspector/inspector_menu.h"
 #include "ui/canvas/port.h"
 #include "ui/canvas/graph_scene.h"
 
@@ -28,37 +28,16 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 NodeInspector::NodeInspector(Node* node)
-    : node(node), name(NULL),
-      title(new QGraphicsTextItem(node->getTitle(), this)),
-      menu_button(getScriptDatum() ? new InspectorMenuButton(this) : NULL),
-      dragging(false), border(10), glow(false)
+    : node(node), title_row(new InspectorTitle(node, this)),
+      dragging(false), border(10), glow(false), show_hidden(false)
 {
-    if (auto n = node->getDatum("_name"))
-    {
-        name = new DatumTextItem(n, this);
-        name->setAsTitle();
-        name->setPos(6, 2);
-        connect(n, &Datum::changed,
-                this, &NodeInspector::onLayoutChanged);
-    }
+    // Bump the title row down a little bit.
+    title_row->setPos(4, 2);
 
     setFlags(QGraphicsItem::ItemIsMovable |
              QGraphicsItem::ItemIsSelectable |
              QGraphicsItem::ItemSendsGeometryChanges);
     setAcceptHoverEvents(true);
-
-    title->setPos(6, 2);
-    title->setDefaultTextColor(Colors::base06);
-    auto f = title->font();
-    f.setBold(true);
-    title->setFont(f);
-
-    // Make connections for dynamic title changing
-    // (which only happens for ScriptNodes)
-    connect(node, &Node::titleChanged,
-            title, &QGraphicsTextItem::setPlainText);
-    connect(node, &Node::titleChanged,
-            [=](QString){ this->onLayoutChanged(); });
 
     // Redo layout when datums change (also only for script nodes)
     connect(node, &Node::datumsChanged,
@@ -66,69 +45,72 @@ NodeInspector::NodeInspector(Node* node)
     connect(node, &Node::datumOrderChanged,
             this, &NodeInspector::onDatumOrderChanged);
 
+    // When the title row changes, redo layout as well.
+    connect(title_row, &InspectorTitle::layoutChanged,
+            this, &NodeInspector::onLayoutChanged);
+
     // Delete oneself when the target node is deleted
     connect(node, &Node::destroyed, this, &NodeInspector::deleteLater);
 
     populateLists(node);
 }
 
-float NodeInspector::labelWidth() const
+float NodeInspector::maxLabelWidth() const
 {
     float label_width = 0;
     for (auto row : rows)
         label_width = fmax(label_width, row->label->boundingRect().width());
-
-    // Special case if the name field is getting too long -- pad the label
-    // width so that the name field fits without overlapping into the title
-    // field (forgive the hard-coded magic numbers)
-    if (name)
-    {
-        int free_space = label_width + 145 - title->boundingRect().width();
-        if (name->boundingRect().width() > free_space)
-            label_width += name->boundingRect().width() - free_space;
-    }
     return label_width;
 }
 
 QRectF NodeInspector::boundingRect() const
 {
-    float height = title->boundingRect().height() + 4;
-    float width =  title->boundingRect().width() +
-                   name->boundingRect().width() + 24 +
-                   (menu_button ? menu_button->boundingRect().width() : 0);
+    // Special case if the node is being deleted
+    if (node.isNull())
+        return QRectF();
 
-    for (auto row : rows)
+    float height = title_row->boundingRect().height() + 4;
+    float width =  title_row->boundingRect().width() + 8;
+
+    for (auto row=rows.begin(); row != rows.end(); ++row)
     {
-        height += row->boundingRect().height() + 4;
-        width = fmax(width, row->boundingRect().width());
+        if (show_hidden || !row.key()->objectName().startsWith("_"))
+        {
+            height += row.value()->boundingRect().height() + 4;
+            width = fmax(width, row.value()->boundingRect().width());
+        }
     }
     return QRectF(-border, -border, width + 2*border, height + 2*border);
 }
 
 void NodeInspector::onLayoutChanged()
 {
-    // Right-align the title block
-    if (name)
-        title->setPos(
-                boundingRect().right() - border - title->boundingRect().width()
-                - (menu_button ? menu_button->boundingRect().width() : 0)
-                - 6, 2);
+    float min_width = title_row->minWidth();
+    for (auto r : rows)
+        min_width = fmax(min_width, r->minWidth());
+    title_row->setWidth(min_width);
+    title_row->updateLayout();
 
-    // Position the menu to the far right of the title bar
-    if (menu_button)
-        menu_button->setPos(boundingRect().right() - border -
-                            menu_button->boundingRect().width() - 3, 5);
-
+    // Add inspector rows in the order they appear.
     if (node)
     {
-        float y = 2 + title->boundingRect().height() + 4;
+        float y = 2 + title_row->boundingRect().height() + 4;
         for (Datum* d : node->findChildren<Datum*>())
         {
             if (rows.contains(d))
             {
-                rows[d]->updateLayout();
-                rows[d]->setPos(0, y);
-                y += 4 + rows[d]->boundingRect().height();
+                if (show_hidden || !d->objectName().startsWith("_"))
+                {
+                    rows[d]->show();
+                    rows[d]->setWidth(min_width);
+                    rows[d]->updateLayout();
+                    rows[d]->setPos(0, y);
+                    y += 4 + rows[d]->boundingRect().height();
+                }
+                else
+                {
+                    rows[d]->hide();
+                }
             }
         }
         prepareGeometryChange();
@@ -153,7 +135,7 @@ void NodeInspector::populateLists(Node *node)
     for (Datum* d : node->findChildren<Datum*>(
                 QString(), Qt::FindDirectChildrenOnly))
     {
-        if (!d->objectName().startsWith("_") && !rows.contains(d))
+        if (!d->objectName().startsWith("__") && !rows.contains(d))
         {
             rows[d] = new InspectorRow(d, this);
             connect(rows[d], &InspectorRow::layoutChanged,
@@ -190,7 +172,7 @@ void NodeInspector::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     painter->drawRoundedRect(r, 8, 8);
 
     painter->setBrush(Colors::base03);
-    QRectF br = title->boundingRect();
+    QRectF br = title_row->boundingRect();
     br.setWidth(r.width());
     br.setHeight(br.height() + 2);
     painter->drawRoundedRect(br, 8, 8);
@@ -241,11 +223,6 @@ OutputPort* NodeInspector::datumOutputPort(Datum *d) const
 Node* NodeInspector::getNode()
 {
     return node;
-}
-
-ScriptDatum* NodeInspector::getScriptDatum() const
-{
-    return dynamic_cast<ScriptDatum*>(node->getDatum("_script"));
 }
 
 QPointF NodeInspector::datumOutputPosition(Datum* d) const
@@ -315,6 +292,29 @@ void NodeInspector::setGlow(bool g)
         glow = g;
         prepareGeometryChange();
     }
+}
+
+void NodeInspector::setShowHidden(bool h)
+{
+    if (h != show_hidden)
+    {
+        show_hidden = h;
+        onLayoutChanged();
+        prepareGeometryChange();
+        emit(hiddenChanged());
+    }
+}
+
+bool NodeInspector::isDatumHidden(Datum* d) const
+{
+    OutputPort* o = datumOutputPort(d);
+    InputPort* i = datumInputPort(d);
+
+    if (o)
+        return !o->isVisible();
+    if (i)
+        return !i->isVisible();
+    return false;
 }
 
 void NodeInspector::mouseMoveEvent(QGraphicsSceneMouseEvent* event)

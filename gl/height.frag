@@ -8,6 +8,8 @@ uniform float dz_local;
 uniform float zmin_global;
 uniform float dz_global;
 
+uniform vec3 color;
+
 void main() {
     vec4 depth = texture2D(depth_tex, texture_coord);
 
@@ -17,5 +19,7 @@ void main() {
     if (depth.r == 0.0f)
         fd_global = 0.0f;
 
-    gl_FragColor = vec4(fd_global, fd_global, fd_global, 1.0f);
+    gl_FragColor = vec4(color.r * fd_global,
+                        color.g * fd_global,
+                        color.b * fd_global, 1.0f);
 }

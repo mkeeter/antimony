@@ -62,6 +62,10 @@ void Viewport::customizeUI(Ui::MainWindow* ui)
     connect(ui->actionHeightmap, &QAction::triggered,
             [&]{ scene->invalidate(); });
 
+    connect(ui->actionHideUI, &QAction::triggered,
+            [&](bool b){ if (b) hideUI();
+                         else   showUI(); });
+
     connect(ui->actionCopy, &QAction::triggered,
             this, &Viewport::onCopy);
     connect(ui->actionCut, &QAction::triggered,
@@ -152,11 +156,7 @@ QVector3D Viewport::sceneToWorld(QPointF p) const
 
 void Viewport::makeNodeAtCursor(NodeConstructorFunction f)
 {
-    QPointF scene_pos = mapToScene(mapFromGlobal(QCursor::pos()));
-    QVector3D p = sceneToWorld(scene_pos);
-
-    auto n = f(p.x(), p.y(), p.z(), 100 / scale, App::instance()->getNodeRoot());
-
+    auto n = f(App::instance()->getNodeRoot());
     App::instance()->newNode(n);
     App::instance()->pushStack(new UndoAddNodeCommand(n));
 }
@@ -397,11 +397,7 @@ void Viewport::keyPressEvent(QKeyEvent *event)
     if (event->isAccepted())
         return;
 
-    if (event->key() == Qt::Key_Alt)
-    {
-        hideUI();
-    }
-    else if (event->key() == Qt::Key_A &&
+    if (event->key() == Qt::Key_A &&
                 (event->modifiers() & Qt::ShiftModifier))
     {
         QObject* w = this;
@@ -419,11 +415,6 @@ void Viewport::keyPressEvent(QKeyEvent *event)
 void Viewport::keyReleaseEvent(QKeyEvent *event)
 {
     QGraphicsView::keyPressEvent(event);
-    if (event->isAccepted())
-        return;
-
-    if (event->key() == Qt::Key_Alt)
-        showUI();
 }
 
 void Viewport::hideUI()

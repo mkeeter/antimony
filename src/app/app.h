@@ -3,6 +3,8 @@
 
 #include <QApplication>
 #include <QAction>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
 
 class GraphScene;
 class ViewportScene;
@@ -104,10 +106,14 @@ public slots:
     void onSave();
     void onSaveAs();
     void onOpen();
+    void onQuit();
 
     void onExportSTL();
     void onExportHeightmap();
     void onExportJSON();
+
+    void startUpdateCheck();
+    void onUpdateCheckFinished(QNetworkReply* reply);
 
 private:
 
@@ -120,6 +126,8 @@ private:
     QString filename;
     NodeRoot* root;
     UndoStack* stack;
+
+    QNetworkAccessManager* network;
 };
 
 #endif // APP_H

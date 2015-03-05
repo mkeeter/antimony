@@ -21,8 +21,15 @@ public:
     DatumTextItem* editor;
     QRectF boundingRect() const;
 
+    void setWidth(float width);
+    float minWidth() const;
+
 public slots:
-    void updateLayout();
+    /*
+     *  Updates the row's layout.
+     *  Returns true if anything changed.
+     */
+    bool updateLayout();
 
 signals:
     void layoutChanged();
@@ -30,7 +37,7 @@ signals:
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget) override;
-    float globalLabelWidth() const;
+    float labelWidth() const;
 
     friend class NodeInspector;
 };

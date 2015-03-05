@@ -135,6 +135,7 @@ void Canvas::keyPressEvent(QKeyEvent *event)
 void Canvas::drawBackground(QPainter* painter, const QRectF& rect)
 {
     painter->setBrush(Colors::base00);
+    painter->setPen(Qt::NoPen);
     painter->drawRect(rect);
 
     const int d = 20;
@@ -183,7 +184,7 @@ void Canvas::deleteSelected()
 
 void Canvas::makeNodeAtCursor(NodeConstructorFunction f)
 {
-    auto n = f(0, 0, 0, 1, App::instance()->getNodeRoot());
+    auto n = f(App::instance()->getNodeRoot());
 
     App::instance()->newNode(n);
     App::instance()->pushStack(new UndoAddNodeCommand(n));

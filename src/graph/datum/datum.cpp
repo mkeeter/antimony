@@ -174,7 +174,7 @@ void Datum::postInit()
         PyErr_Clear();
 
     auto p = dynamic_cast<Node*>(parent());
-    auto n = p ? p->getDatum<NameDatum>("_name") : NULL;
+    auto n = p ? p->getDatum<NameDatum>("__name") : NULL;
     if (n)
         root()->onNameChange(n->getExpr().trimmed() + "." + objectName());
 }

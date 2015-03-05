@@ -54,6 +54,7 @@ protected:
     RenderImage* image;
 
     int time_taken;
+    bool is_empty;
 
     friend class RenderWorker;
 };

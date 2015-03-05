@@ -11,7 +11,7 @@
 #include "graph/node/node.h"
 #include "graph/node/root.h"
 #include "graph/datum/types/eval_datum.h"
-#include "graph/node/nodes/meta.h"
+#include "graph/datum/datums/script_datum.h"
 
 #include "ui_main_window.h"
 #include "ui/main_window.h"
@@ -55,6 +55,8 @@ void MainWindow::setCentralWidget(QWidget* w)
     {
         e->customizeUI(ui);
         window_type = "Script";
+        connect(e->getDatum(), &ScriptDatum::destroyed,
+                this, &MainWindow::close);
     }
     else
     {
@@ -77,7 +79,7 @@ void MainWindow::connectActions(App* app)
     connect(ui->actionOpen, &QAction::triggered,
             app, &App::onOpen);
     connect(ui->actionQuit, &QAction::triggered,
-            app, &App::quit);
+            app, &App::onQuit);
     connect(ui->actionClose, &QAction::triggered,
             this, &MainWindow::deleteLater);
 
@@ -100,6 +102,8 @@ void MainWindow::connectActions(App* app)
     // Help menu
     connect(ui->actionAbout, &QAction::triggered,
             app, &App::onAbout);
+    connect(ui->actionCheckUpdate, &QAction::triggered,
+            app, &App::startUpdateCheck);
 
     // Window title
     setWindowTitle(app->getWindowTitle());
@@ -219,12 +223,7 @@ void MainWindow::populateUserScripts(QMenu* menu, bool recenter, Viewport* v)
                 title = regex.capturedTexts()[1];
 
         NodeConstructorFunction constructor =
-            [=](float x, float y, float z, float scale, NodeRoot *r)
-            {
-                auto s = ScriptNode(x, y, z, scale, r);
-                static_cast<EvalDatum*>(s->getDatum("_script"))->setExpr(txt);
-                return s;
-            };
+            [=](NodeRoot *r){ return ScriptNode(txt, r); };
         nodes[title] = QPair<QStringList, NodeConstructorFunction>(
                 split, constructor);
         node_titles.append(title);

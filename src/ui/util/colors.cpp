@@ -57,6 +57,7 @@ QColor getColor(Datum *d)
         case DatumType::SHAPE_INPUT:
         case DatumType::SHAPE_FUNCTION:
         case DatumType::SHAPE_OUTPUT:
+        case DatumType::SHAPE:
                                 return green;
         default:                return red;
     }

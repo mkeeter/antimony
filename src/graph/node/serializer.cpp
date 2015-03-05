@@ -8,10 +8,15 @@
 
 #include "graph/datum/datum.h"
 #include "graph/datum/types/eval_datum.h"
-#include "graph/datum/datums/shape_function_datum.h"
 #include "graph/datum/datums/script_datum.h"
 
-int SceneSerializer::PROTOCOL_VERSION = 3;
+// Protocol version change-log:
+// 2 -> 3:
+//   Change hard-coded nodes into matching scripts
+// 3 -> 4:
+//   Remove ShapeInputDatum (replace with ShapeDatum)
+//   _name -> __name; _script -> __script
+int SceneSerializer::PROTOCOL_VERSION = 4;
 
 SceneSerializer::SceneSerializer(QObject* node_root,
                                  QMap<Node*, QPointF> inspectors)
@@ -55,7 +60,7 @@ void SceneSerializer::serializeNodes(QDataStream* out, QObject* p)
 
 void SceneSerializer::serializeNode(QDataStream* out, Node* node)
 {
-    *out << quint32(node->getNodeType());
+    *out << quint32(0); // Dummy node type, since it doesn't exist anymore.
     *out << node->objectName();
 
     // Serialize position (or default QPointF if not provided)
@@ -70,7 +75,6 @@ void SceneSerializer::serializeNode(QDataStream* out, Node* node)
         if (dynamic_cast<ScriptDatum*>(d))
         {
             Q_ASSERT(deferred == NULL);
-            Q_ASSERT(node->getNodeType() == NodeType::SCRIPT);;
             deferred = d;
         }
         else
@@ -91,11 +95,6 @@ void SceneSerializer::serializeDatum(QDataStream* out, Datum* datum)
     if (auto e = dynamic_cast<EvalDatum*>(datum))
     {
         *out << e->getExpr();
-    }
-    else if (auto f = dynamic_cast<FunctionDatum*>(datum))
-    {
-        *out << f->getFunctionName();
-        *out << f->getArguments();
     }
 
     // Save datum and any connections for later

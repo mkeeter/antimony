@@ -68,7 +68,7 @@ PyObject* NodeProxy::getAttr(std::string name)
         Q_ASSERT(dynamic_cast<Node*>(datum->parent()));
         Node* n = static_cast<Node*>(datum->parent());
 
-        auto name = n->getDatum("_name");
+        auto name = n->getDatum("__name");
         Q_ASSERT(name);
         caller->connectUpstream(name);
     }

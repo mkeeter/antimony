@@ -25,6 +25,7 @@ public:
      */
     explicit Control(Node* node, PyObject* drag_func=NULL);
 
+    void deleteLater();
     /*
      *  Destructor removes a reference to the drag function.
      */
@@ -34,6 +35,12 @@ public:
      * Returns this control's relevant node.
      */
     Node* getNode() const;
+
+    /*
+     *  Swaps in a new drag_func, removing a reference from the old one.
+     *  Steals a reference from new_drag_func.
+     */
+    void setDragFunc(PyObject* new_drag_func);
 
     /*
      *  Schedules the top-level node for deletion in an undo-able way
@@ -99,6 +106,7 @@ public:
      */
     virtual QVector3D pos() const { return QVector3D(); }
 
+    bool isDeleteScheduled() const { return delete_scheduled; }
 public slots:
     void clearTouchedFlag();
     void deleteIfNotTouched();
@@ -118,6 +126,13 @@ protected:
     bool touched;
 
     bool relative;
+
+    /*
+     *  Set when deleteLater is called
+     *  (because otherwise things can go wrong where getControl
+     *   return this Control but it's about to be deleted).
+     */
+    bool delete_scheduled;
 };
 
 

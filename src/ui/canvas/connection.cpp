@@ -37,11 +37,15 @@ void Connection::makeSceneConnections()
 {
     connect(startInspector(), &NodeInspector::moved,
             this, &Connection::onInspectorMoved);
+    connect(startInspector(), &NodeInspector::hiddenChanged,
+            this, &Connection::onHiddenChanged);
 
     if (link->hasTarget())
     {
         connect(endInspector(), &NodeInspector::moved,
                 this, &Connection::onInspectorMoved);
+        connect(endInspector(), &NodeInspector::hiddenChanged,
+                this, &Connection::onHiddenChanged);
     }
 
     auto s = scene();
@@ -53,6 +57,15 @@ void Connection::onInspectorMoved()
 {
     if (areInspectorsValid())
         prepareGeometryChange();
+}
+
+void Connection::onHiddenChanged()
+{
+    if (isHidden())
+        hide();
+    else
+        show();
+    prepareGeometryChange();
 }
 
 GraphScene* Connection::gscene() const
@@ -161,6 +174,15 @@ QPointF Connection::endPos() const
     }
 }
 
+bool Connection::isHidden() const
+{
+    if (startInspector()->isDatumHidden(startDatum()))
+        return true;
+    if (drag_state == CONNECTED && endInspector()->isDatumHidden(endDatum()))
+        return true;
+    return false;
+}
+
 QPainterPath Connection::path(bool only_bezier) const
 {
     QPointF start = startPos();
@@ -261,6 +283,8 @@ void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
         connect(endInspector(), &NodeInspector::moved,
                 this, &Connection::onInspectorMoved);
+        connect(endInspector(), &NodeInspector::hiddenChanged,
+                this, &Connection::onHiddenChanged);
 
         App::instance()->pushStack(new UndoAddLinkCommand(link));
     }

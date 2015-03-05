@@ -18,6 +18,11 @@ public:
     void customizeUI(Ui::MainWindow* ui);
 
     /*
+     *  Returns the target datum.
+     */
+    ScriptDatum* getDatum() const { return d; }
+
+    /*
      *  Override paint event so that we can style the widget with CSS.
      */
     void paintEvent(QPaintEvent* event) override;

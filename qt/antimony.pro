@@ -1,4 +1,4 @@
-QT += core gui widgets opengl
+QT += core gui widgets opengl network
 
 TARGET = antimony
 TEMPLATE = app
@@ -42,9 +42,10 @@ SOURCES += \
     ../src/ui/canvas/canvas.cpp \
     ../src/ui/canvas/graph_scene.cpp \
     ../src/ui/canvas/inspector/inspector.cpp \
+    ../src/ui/canvas/inspector/inspector_title.cpp \
     ../src/ui/canvas/inspector/inspector_text.cpp \
     ../src/ui/canvas/inspector/inspector_row.cpp \
-    ../src/ui/canvas/inspector/inspector_menu.cpp \
+    ../src/ui/canvas/inspector/inspector_buttons.cpp \
     ../src/ui/canvas/connection.cpp \
     ../src/ui/canvas/port.cpp \
     ../src/ui/viewport/viewport.cpp \
@@ -80,9 +81,10 @@ HEADERS += \
     ../src/ui/canvas/canvas.h \
     ../src/ui/canvas/graph_scene.h \
     ../src/ui/canvas/inspector/inspector.h \
+    ../src/ui/canvas/inspector/inspector_title.h \
     ../src/ui/canvas/inspector/inspector_text.h \
     ../src/ui/canvas/inspector/inspector_row.h \
-    ../src/ui/canvas/inspector/inspector_menu.h \
+    ../src/ui/canvas/inspector/inspector_buttons.h \
     ../src/ui/canvas/port.h \
     ../src/ui/canvas/connection.h \
     ../src/ui/viewport/viewport.h \
@@ -122,6 +124,6 @@ linux {
     nodes_folder.path = /usr/local/bin/sb/nodes
     nodes_folder.files = ../py/nodes/*
     fab_folder.path = /usr/local/bin/sb/fab
-    fab_folder.files = ../py/nodes/*
+    fab_folder.files = ../py/fab/*
     INSTALLS += executable nodes_folder fab_folder
 }

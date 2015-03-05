@@ -1,0 +1,5 @@
+import fab
+
+title('Hide')
+
+input('shape',fab.types.Shape)

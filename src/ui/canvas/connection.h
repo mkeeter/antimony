@@ -29,6 +29,7 @@ public:
 
 public slots:
     void onInspectorMoved();
+    void onHiddenChanged();
 
 protected:
     GraphScene* gscene() const;
@@ -50,6 +51,7 @@ protected:
     bool areDatumsValid() const;
     bool areNodesValid() const;
     bool areInspectorsValid() const;
+    bool isHidden() const;
 
     /** Checks to see whether we're on a valid port
      *  (and adjust drag_state accordingly).

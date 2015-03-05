@@ -39,7 +39,6 @@ RenderWorker::RenderWorker(Datum* datum, Viewport* viewport)
 
 RenderWorker::~RenderWorker()
 {
-    qDebug() << "Deleting RenderWorker";
     if (depth_image)
         depth_image->deleteLater();
 }
@@ -116,6 +115,10 @@ void RenderWorker::onTaskFinished()
     {
         clearImage();
         depth_image = current->getDepthImage(viewport);
+    }
+    else if (current->is_empty)
+    {
+        clearImage();
     }
 
     if (!next)

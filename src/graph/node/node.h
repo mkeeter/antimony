@@ -6,8 +6,6 @@
 #include <QObject>
 #include <QSet>
 
-#include "graph/node/enum.h"
-
 class Control;
 class Datum;
 class Link;
@@ -18,8 +16,8 @@ class Node : public QObject
 {
     Q_OBJECT
 public:
-    explicit Node(NodeType::NodeType type, NodeRoot* parent);
-    explicit Node(NodeType::NodeType type, QString name, NodeRoot* parent);
+    explicit Node(NodeRoot* parent);
+    explicit Node(QString name, NodeRoot* parent);
 
     /*
      *  On setParent, update NameDatums to check for collisions.
@@ -33,7 +31,7 @@ public:
     void setTitle(QString new_title);
 
     /*
-     *  Updates the NameDatum in _name so that it doesn't collide
+     *  Updates the NameDatum in __name so that it doesn't collide
      *  (used when pasting in nodes)
      */
     void updateName();
@@ -57,10 +55,6 @@ public:
     {
         return dynamic_cast<T*>(getDatum(name));
     }
-
-    /** Returns the NodeType of this node (used in creating Controls)
-     */
-    NodeType::NodeType getNodeType() const { return type; }
 
     /** Get this node's name.
      */
@@ -110,13 +104,14 @@ signals:
     void deleteUntouchedControls();
 
 protected:
-    /** Returns a human-readable name based on type.
-     */
-    QString getDefaultTitle() const;
 
-    const NodeType::NodeType type;
     Control* control;
     QString title;
 };
+
+
+Node* ScriptNode(QString name, QString script, NodeRoot* parent);
+Node* ScriptNode(QString script, NodeRoot* parent);
+Node* ScriptNode(NodeRoot* parent);
 
 #endif // NODE_H
