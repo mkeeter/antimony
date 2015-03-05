@@ -62,6 +62,10 @@ void Viewport::customizeUI(Ui::MainWindow* ui)
     connect(ui->actionHeightmap, &QAction::triggered,
             [&]{ scene->invalidate(); });
 
+    connect(ui->actionHideUI, &QAction::triggered,
+            [&](bool b){ if (b) hideUI();
+                         else   showUI(); });
+
     connect(ui->actionCopy, &QAction::triggered,
             this, &Viewport::onCopy);
     connect(ui->actionCut, &QAction::triggered,
@@ -393,11 +397,7 @@ void Viewport::keyPressEvent(QKeyEvent *event)
     if (event->isAccepted())
         return;
 
-    if (event->key() == Qt::Key_Alt)
-    {
-        hideUI();
-    }
-    else if (event->key() == Qt::Key_A &&
+    if (event->key() == Qt::Key_A &&
                 (event->modifiers() & Qt::ShiftModifier))
     {
         QObject* w = this;
@@ -415,11 +415,6 @@ void Viewport::keyPressEvent(QKeyEvent *event)
 void Viewport::keyReleaseEvent(QKeyEvent *event)
 {
     QGraphicsView::keyPressEvent(event);
-    if (event->isAccepted())
-        return;
-
-    if (event->key() == Qt::Key_Alt)
-        showUI();
 }
 
 void Viewport::hideUI()
