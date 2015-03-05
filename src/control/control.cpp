@@ -15,7 +15,8 @@
 #include "app/undo/undo_delete_multi.h"
 
 Control::Control(Node* node, PyObject* drag_func)
-    : QObject(), node(node), drag_func(drag_func), glow(false), relative(true)
+    : QObject(), node(node), drag_func(drag_func), glow(false),
+      relative(true), delete_scheduled(false)
 {
     connect(node, &Node::clearControlTouchedFlag,
             this, &Control::clearTouchedFlag);
@@ -23,6 +24,12 @@ Control::Control(Node* node, PyObject* drag_func)
             this, &Control::deleteIfNotTouched);
 
     connect(node, &Node::destroyed, this, &Control::deleteLater);
+}
+
+void Control::deleteLater()
+{
+    delete_scheduled = true;
+    QObject::deleteLater();
 }
 
 Control::~Control()
