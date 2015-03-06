@@ -5,6 +5,7 @@
 #include <QMenu>
 #include <QClipboard>
 #include <QMimeData>
+#include <QJsonDocument>
 
 #include <cmath>
 
@@ -223,8 +224,10 @@ void Canvas::onCopy()
                 n->setParent(&temp_root);
 
             auto data = new QMimeData();
-            data->setData("sb::canvas", SceneSerializer(
-                        &temp_root, scene->inspectorPositions()).run());
+            data->setData("sb::canvas", QJsonDocument(
+                        SceneSerializer(
+                            &temp_root,
+                            scene->inspectorPositions()).run()).toJson());
             QApplication::clipboard()->setMimeData(data);
 
             for (auto n : selected)
@@ -255,7 +258,8 @@ void Canvas::onPaste()
         {
             NodeRoot temp_root;
             SceneDeserializer ds(&temp_root);
-            ds.run(data->data("sb::canvas"));
+            ds.run(QJsonDocument::fromJson(
+                        data->data("sb::canvas")).object());
 
             for (auto& i : ds.inspectors)
                 i += QPointF(10, 10);
