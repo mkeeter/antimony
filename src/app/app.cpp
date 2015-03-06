@@ -143,8 +143,7 @@ void App::onSave()
     SceneSerializer ss(root,
                        graph_scene->inspectorPositions());
 
-    QDataStream out(&file);
-    ss.run(&out);
+    file.write(QJsonDocument(ss.run()).toJson());
 
     stack->setClean();
 }
@@ -200,9 +199,8 @@ void App::loadFile(QString f)
         return;
     }
 
-    QDataStream in(&file);
     SceneDeserializer ds(root);
-    ds.run(&in);
+    ds.run(QJsonDocument::fromJson(file.readAll()).object());
 
     if (ds.failed == true)
     {
