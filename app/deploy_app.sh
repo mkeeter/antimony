@@ -22,7 +22,7 @@ cd antimony.app/Contents/PlugIns
 rm -rf accessible audio imageformats mediaservice playlistformats position printsupport qml1tooling sensorgestures sensors
 
 cd ../Frameworks
-rm -rf QtDeclarative.framework QtMultimedia.framework QtMultimediaWidgets.framework QtNetwork.framework QtPositioning.framework QtQml.framework QtQuick.framework QtScript.framework QtSensors.framework QtSql.framework QtXmlPatterns.framework
+rm -rf QtDeclarative.framework QtMultimedia.framework QtMultimediaWidgets.framework QtPositioning.framework QtQml.framework QtQuick.framework QtScript.framework QtSensors.framework QtSql.framework QtXmlPatterns.framework
 cp -r /usr/local/Frameworks/Python.framework .
 install_name_tool -change /usr/local/Frameworks/Python.framework/Versions/3.4/Python \
                          @executable_path/../Frameworks/Python.framework/Versions/3.4/Python \
