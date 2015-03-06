@@ -19,147 +19,109 @@ SceneDeserializer::SceneDeserializer(NodeRoot* node_root)
     // Nothing to do here
 }
 
-bool SceneDeserializer::run(QByteArray in)
+bool SceneDeserializer::run(QJsonObject in)
 {
-    QBuffer buffer(&in);
-    buffer.open(QBuffer::ReadOnly);
-
-    QDataStream stream(&buffer);
-    return run(&stream);
-}
-
-bool SceneDeserializer::run(QDataStream* in)
-{
-    QString sb;
-    *in >> sb >> protocol_version;
-
-    if (sb != "sb")
+    // Check that the "type" field is "sb"
+    if (in.find("type") == in.end() || in["type"].toString() != "sb")
     {
         failed = true;
         error_message = "File is not an Antimony file";
     }
-    else if (protocol_version < 2)
+
+    // Check file saving protocol
+    if (in.find("protocol") == in.end())
     {
         failed = true;
-        error_message = "File was saved with an older protocol and can no longer be read.";
+        error_message = "Could not detect protocol";
     }
-    else if (protocol_version == 2)
+    else
     {
-        failed = true;
-        error_message =
-            "File was saved with an older protocol and cannot be read.<br>"
-            "Open it in Antimony 0.7.6c and re-save to upgrade file protocol.";
+        protocol_version = in["protocol"].toDouble();
+        if (protocol_version < 5)
+        {
+            failed = true;
+            error_message = "File was saved with a older protocol and cannot yet be read.";
+        }
+        else if (protocol_version > 5)
+        {
+            failed = true;
+            error_message = "File was saved with a newer protocol and cannot yet be read.";
+        }
     }
-    else if (protocol_version == 3)
+
+    // Make sure there's a "nodes" array
+    if (in.find("nodes") == in.end() || !in["nodes"].isArray())
     {
         failed = true;
-        error_message =
-            "File was saved with an older protocol and cannot be read.<br>"
-            "Open it in Antimony 0.7.7 and re-save to upgrade file protocol.";
-    }
-    else if (protocol_version > 4)
-    {
-        failed = true;
-        error_message = "File was saved with a newer protocol and cannot yet be read.";
+        error_message = "File does not contain any nodes.";
     }
 
     if (!failed)
     {
-        deserializeNodes(in, node_root);
-        deserializeConnections(in);
+        deserializeNodes(in["nodes"].toArray(), node_root);
+        if (in.find("connections") != in.end())
+            deserializeConnections(in["connections"].toArray());
     }
 
     return failed;
 }
 
-void SceneDeserializer::deserializeNodes(QDataStream* in, NodeRoot* p)
+void SceneDeserializer::deserializeNodes(QJsonArray in, NodeRoot* p)
 {
-    quint32 count;
-    *in >> count;
-    for (unsigned i=0; i < count; ++i)
-        deserializeNode(in, p);
+    for (auto n : in)
+        deserializeNode(n.toObject(), p);
 }
 
-void SceneDeserializer::deserializeNode(QDataStream* in, NodeRoot* p)
+void SceneDeserializer::deserializeNode(QJsonObject in, NodeRoot* p)
 {
-    quint32 t;
-    *in >> t; // Deserialize dummy node type
-    QString node_name;
-    *in >> node_name;
-
     Node* node = new Node(p);
-    node->setObjectName(node_name);
 
     // Deserialize inspector position
-    QPointF i;
-    *in >> i;
-    inspectors[node] = i;
+    auto a = in["inspector"].toArray();
+    inspectors[node] = QPointF(a[0].toDouble(), a[1].toDouble());
 
-    quint32 datum_count;
-    *in >> datum_count;
-    for (unsigned d=0; d < datum_count; ++d)
-        deserializeDatum(in, node);
+    for (auto d : in["datums"].toArray())
+        deserializeDatum(d.toObject(), node);
+
+    nodes << node;
 }
 
-void SceneDeserializer::deserializeDatum(QDataStream* in, Node* node)
+void SceneDeserializer::deserializeDatum(QJsonObject in, Node* node)
 {
-    quint32 t;
-    *in >> t;
-    QString name;
-    *in >> name;
+    QString type = in["type"].toString();
+    QString name = in["name"].toString();
 
-    if (protocol_version == 3 && name == "_name")
-        name = "__name";
-    if (protocol_version == 3 && name == "_script")
-        name = "__script";
-
-    DatumType::DatumType datum_type = static_cast<DatumType::DatumType>(t);
-
-    Datum* datum;
-
-    switch (datum_type)
-    {
-        case DatumType::FLOAT:
-            datum = new FloatDatum(name, node); break;
-        case DatumType::FLOAT_OUTPUT:
-            datum = new FloatOutputDatum(name, node); break;
-        case DatumType::INT:
-            datum = new IntDatum(name, node); break;
-        case DatumType::NAME:
-            datum = new NameDatum(name, node); break;
-        case DatumType::STRING:
-            datum = new StringDatum(name, node); break;
-        case DatumType::SCRIPT:
-            datum = new ScriptDatum(name, node); break;
-        case DatumType::SHAPE_OUTPUT:
-            datum = new ShapeOutputDatum(name, node); break;
-        case DatumType::SHAPE:
-            datum = new ShapeDatum(name, node); break;
-        case DatumType::SHAPE_INPUT:
-        case DatumType::SHAPE_FUNCTION:
-            datum = NULL;
-            Q_ASSERT(false); // this is a deprecated Datum type.
-    }
+    Datum* datum = Datum::fromTypeString(type, name, node);
 
     if (auto e = dynamic_cast<EvalDatum*>(datum))
     {
-        QString expr;
-        *in >> expr;
-        e->setExpr(expr);
+        if (in["expr"].isArray())
+        {
+            QStringList a;
+            for (auto line : in["expr"].toArray())
+                a.append(line.toString());
+            e->setExpr(a.join("\n"));
+        }
+        else
+        {
+            e->setExpr(in["expr"].toString());
+        }
     }
-
-    datums << datum;
 }
 
-void SceneDeserializer::deserializeConnections(QDataStream* in)
+void SceneDeserializer::deserializeConnections(QJsonArray in)
 {
-    quint32 count;
-    *in >> count;
-
-    for (unsigned i=0; i < count; ++i)
+    for (auto c_ : in)
     {
-        quint32 source_index, target_index;
-        *in >> source_index >> target_index;
-        datums[target_index]->addLink(datums[source_index]->linkFrom());
+        auto c = c_.toArray();
+        auto start = c[0].toArray();
+        auto end = c[0].toArray();
+
+        auto start_datum = nodes[start[0].toDouble()]->findChild<Datum*>(
+                start[1].toString(), Qt::FindDirectChildrenOnly);
+        auto end_datum = nodes[end[0].toDouble()]->findChild<Datum*>(
+                end[1].toString(), Qt::FindDirectChildrenOnly);
+
+        end_datum->addLink(start_datum->linkFrom());
     }
 }
