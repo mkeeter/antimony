@@ -29,6 +29,9 @@ public:
     DatumType::DatumType getDatumType() const override
         { return DatumType::SCRIPT; }
 
+    static QString typeString() { return "script"; }
+    QString getDatumTypeString() const override { return typeString(); }
+
     QString getOutput() const { return output; }
 protected:
 

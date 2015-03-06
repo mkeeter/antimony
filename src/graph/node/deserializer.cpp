@@ -11,14 +11,7 @@
 #include "graph/node/node.h"
 #include "graph/node/root.h"
 
-#include "graph/datum/datums/float_datum.h"
-#include "graph/datum/datums/float_output_datum.h"
-#include "graph/datum/datums/int_datum.h"
-#include "graph/datum/datums/name_datum.h"
-#include "graph/datum/datums/string_datum.h"
-#include "graph/datum/datums/script_datum.h"
-#include "graph/datum/datums/shape_output_datum.h"
-#include "graph/datum/datums/shape_datum.h"
+#include "graph/datum/types/eval_datum.h"
 
 SceneDeserializer::SceneDeserializer(NodeRoot* node_root)
     : QObject(), failed(false), node_root(node_root)

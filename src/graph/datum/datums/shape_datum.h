@@ -16,6 +16,9 @@ public:
     DatumType::DatumType getDatumType() const override
         { return DatumType::SHAPE; }
 
+    static QString typeString() { return "shape"; }
+    QString getDatumTypeString() const override { return typeString(); }
+
     // Always return false for hasOutput, otherwise that output port
     // will be seen as something that should be rendered.
     bool hasOutput() const { return false; }

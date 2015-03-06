@@ -10,6 +10,15 @@
 #include "graph/node/node.h"
 #include "graph/node/root.h"
 
+#include "graph/datum/datums/float_datum.h"
+#include "graph/datum/datums/float_output_datum.h"
+#include "graph/datum/datums/int_datum.h"
+#include "graph/datum/datums/name_datum.h"
+#include "graph/datum/datums/string_datum.h"
+#include "graph/datum/datums/script_datum.h"
+#include "graph/datum/datums/shape_output_datum.h"
+#include "graph/datum/datums/shape_datum.h"
+
 Datum::Datum(QString name, Node* parent)
     : QObject(parent), value(NULL), valid(false), input_handler(NULL),
       post_init_called(false)
@@ -23,6 +32,29 @@ Datum::~Datum()
     // (to prevent recursive loops in a partially-destroyed object)
     emit disconnectFrom(this);
     Py_XDECREF(value);
+}
+
+Datum* Datum::fromTypeString(QString type, QString name, Node* parent)
+{
+    if (type == FloatDatum::typeString())
+        return new FloatDatum(name, parent);
+    else if (type == FloatOutputDatum::typeString())
+        return new FloatOutputDatum(name, parent);
+    else if (type == IntDatum::typeString())
+        return new IntDatum(name, parent);
+    else if (type == NameDatum::typeString())
+        return new NameDatum(name, parent);
+    else if (type == StringDatum::typeString())
+        return new StringDatum(name, parent);
+    else if (type == ScriptDatum::typeString())
+        return new ScriptDatum(name, parent);
+    else if (type == ShapeOutputDatum::typeString())
+        return new ShapeOutputDatum(name, parent);
+    else if (type == ShapeDatum::typeString())
+        return new ShapeDatum(name, parent);
+
+    Q_ASSERT(false);
+    return NULL;
 }
 
 bool Datum::hasInputValue() const

@@ -13,6 +13,9 @@ public:
     DatumType::DatumType getDatumType() const override
         { return DatumType::STRING; }
 
+    static QString typeString() { return "string"; }
+    QString getDatumTypeString() const override { return typeString(); }
+
 protected:
     QString prepareExpr(QString s) const override;
     PyObject* getCurrentValue() override;
