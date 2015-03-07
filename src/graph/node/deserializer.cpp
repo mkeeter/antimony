@@ -115,7 +115,7 @@ void SceneDeserializer::deserializeConnections(QJsonArray in)
     {
         auto c = c_.toArray();
         auto start = c[0].toArray();
-        auto end = c[0].toArray();
+        auto end = c[1].toArray();
 
         auto start_datum = nodes[start[0].toDouble()]->findChild<Datum*>(
                 start[1].toString(), Qt::FindDirectChildrenOnly);
