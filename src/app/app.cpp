@@ -218,6 +218,12 @@ void App::loadFile(QString f)
                     dso.error_message);
             onNew();
         }
+        else
+        {
+            makeUI(root);
+            graph_scene->setInspectorPositions(dso.inspectors);
+            emit(windowTitleChanged(getWindowTitle()));
+        }
     } else {
         // If there's a warning message, show it in a box.
         if (!ds.warning_message.isNull())
