@@ -6,33 +6,35 @@
 #include <QPair>
 #include <QMap>
 #include <QPointF>
+#include <QJsonObject>
+#include <QJsonArray>
 
 class Datum;
 class Node;
+class NodeRoot;
 
 class SceneSerializer : public QObject
 {
     Q_OBJECT
 public:
     explicit SceneSerializer(
-            QObject* node_root,
+            NodeRoot* node_root,
             QMap<Node*, QPointF> inspectors=QMap<Node*, QPointF>());
 
     enum SerializerMode { SERIALIZE_ALL, SERIALIZE_NODES };
 
-    void run(QDataStream* out, SerializerMode mode=SERIALIZE_ALL);
-    QByteArray run(SerializerMode mode=SERIALIZE_ALL);
+    QJsonObject run(SerializerMode mode=SERIALIZE_ALL);
 
 protected:
-    void serializeNodes(QDataStream* out, QObject* p);
-    void serializeNode(QDataStream* out, Node* node);
-    void serializeDatum(QDataStream* out, Datum* datum);
-    void serializeConnections(QDataStream* out);
+    QJsonArray serializeNodes(NodeRoot* r);
+    QJsonObject serializeNode(Node* node);
+    QJsonObject serializeDatum(Datum* datum);
+    QJsonArray serializeConnections();
 
-    QObject* node_root;
+    NodeRoot* node_root;
     QMap<Node*, QPointF> inspectors;
 
-    QList<Datum*> datums;
+    QList<Node*> nodes;
     QList<QPair<Datum*, Datum*>> connections;
 
     static int PROTOCOL_VERSION;

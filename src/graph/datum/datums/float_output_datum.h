@@ -12,6 +12,9 @@ public:
     DatumType::DatumType getDatumType() const override
         { return DatumType::FLOAT_OUTPUT; }
 
+    static QString typeString() { return "float output"; }
+    QString getDatumTypeString() const override { return typeString(); }
+
     QString getString() const override;
 };
 

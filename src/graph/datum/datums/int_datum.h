@@ -14,6 +14,9 @@ public:
     DatumType::DatumType getDatumType() const override
         { return DatumType::INT; }
 
+    static QString typeString() { return "int"; }
+    QString getDatumTypeString() const override { return typeString(); }
+
     /*
      *  Attempts to add delta to the current value.
      *

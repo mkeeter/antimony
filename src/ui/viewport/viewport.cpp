@@ -10,6 +10,7 @@
 #include <QSurfaceFormat>
 #include <QMimeData>
 #include <QMenu>
+#include <QJsonDocument>
 
 #include <cmath>
 
@@ -516,7 +517,8 @@ void Viewport::onCopy()
             NodeRoot temp_root;
             n->setParent(&temp_root);
             auto data = new QMimeData();
-            data->setData("sb::viewport", SceneSerializer(&temp_root).run());
+            data->setData("sb::viewport",
+                    QJsonDocument(SceneSerializer(&temp_root).run()).toJson());
             n->setParent(p);
 
             QApplication::clipboard()->setMimeData(data);
@@ -536,7 +538,8 @@ void Viewport::onCut()
             NodeRoot temp_root;
             n->setParent(&temp_root);
             auto data = new QMimeData();
-            data->setData("sb::viewport", SceneSerializer(&temp_root).run());
+            data->setData("sb::viewport",
+                    QJsonDocument(SceneSerializer(&temp_root).run()).toJson());
             n->setParent(p);
 
             QApplication::clipboard()->setMimeData(data);
@@ -552,7 +555,7 @@ void Viewport::onPaste()
     {
         NodeRoot temp_root;
         SceneDeserializer ds(&temp_root);
-        ds.run(data->data("sb::viewport"));
+        ds.run(QJsonDocument::fromJson(data->data("sb::viewport")).object());
 
         auto n = temp_root.findChild<Node*>();
         n->setParent(App::instance()->getNodeRoot());

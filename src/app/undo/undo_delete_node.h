@@ -3,6 +3,7 @@
 
 #include <QList>
 #include <QMap>
+#include <QJsonObject>
 
 #include "app/undo/undo_command.h"
 
@@ -28,7 +29,7 @@ protected:
     QList<Node*> nodes;
     QMap<QString, Datum*> datums;
 
-    QByteArray data;
+    QJsonObject data;
 };
 
 #endif

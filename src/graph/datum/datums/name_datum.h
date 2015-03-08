@@ -15,6 +15,9 @@ public:
     DatumType::DatumType getDatumType() const override
         { return DatumType::NAME; }
 
+    static QString typeString() { return "name"; }
+    QString getDatumTypeString() const override { return typeString(); }
+
 signals:
     void nameChanged(QString new_name);
 public slots:
