@@ -2,6 +2,8 @@
 
 #include <QFile>
 #include <QDebug>
+#include <QJsonValue>
+#include <QJsonDocument>
 #include <cmath>
 
 #include "render/export_json.h"
@@ -14,83 +16,61 @@ ExportJSONWorker::ExportJSONWorker(QMap<QString, Shape> s, QString filename,
     // Nothing to do here.
 }
 
-void ExportJSONWorker::writeBounds(Shape* shape, QTextStream* out)
+QJsonObject ExportJSONWorker::writeBounds(Shape* shape)
 {
-    *out << "    \"bounds\": {\n";
-    *out << "      \"xmin\": " << shape->bounds.xmin << ",\n";
-    *out << "      \"ymin\": " << shape->bounds.ymin << ",\n";
-    *out << "      \"zmin\": ";
-    if (isinf(shape->bounds.zmin))
-    {
-        *out << "null,\n";
-    }
-    else
-    {
-        *out << shape->bounds.zmin << ",\n";
-    }
-    *out << "      \"xmax\": " << shape->bounds.xmax << ",\n";
-    *out << "      \"ymax\": " << shape->bounds.ymax << ",\n";
-    *out << "      \"zmax\": ";
-    if (isinf(shape->bounds.zmax))
-    {
-        *out << "null\n";
-    }
-    else
-    {
-        *out << shape->bounds.zmin << "\n";
-    }
-    *out << "    },\n";
+    QJsonObject bounds;
+    bounds["xmin"] = shape->bounds.xmin;
+    bounds["ymin"] = shape->bounds.ymin;
+    bounds["zmin"] = isinf(shape->bounds.zmin) ? QJsonValue()
+                                               : shape->bounds.zmin;
+    bounds["xmax"] = shape->bounds.xmax;
+    bounds["ymax"] = shape->bounds.ymax;
+    bounds["zmax"] = isinf(shape->bounds.zmax) ? QJsonValue()
+                                               : shape->bounds.zmax;
+    return bounds;
 }
 
-void ExportJSONWorker::writeColor(Shape* shape, QTextStream* out)
+QJsonObject ExportJSONWorker::writeColor(Shape* shape)
 {
-    Q_UNUSED(shape);
-    // You can have any color you like, as long as it's white.
-    *out << "    \"color\": {\n";
-    *out << "      \"R\": \"f255\",\n";
-    *out << "      \"G\": \"f255\",\n";
-    *out << "      \"B\": \"f255\"\n";
-    *out << "    }\n";
+    QJsonObject color;
+    color["R"] = "f" + QString::number(shape->r > 0 ? shape->r : 255);
+    color["G"] = "f" + QString::number(shape->g > 0 ? shape->g : 255);
+    color["B"] = "f" + QString::number(shape->b > 0 ? shape->b : 255);
+    return color;
 }
 
-void ExportJSONWorker::writeBody(Shape* shape, QTextStream* out)
+QJsonObject ExportJSONWorker::writeBody(Shape* shape)
 {
-    *out << "    \"body\": {\n";
+    QJsonObject body;
+
     if (format == EXPORT_JSON_INFIX)
     {
-        *out << "      \"format\": \"infix\",\n";
-        *out << "      \"string\": \""
-             << print_node_ss(shape->tree->head).c_str();
-    } else if (format == EXPORT_JSON_PREFIX) {
-        *out << "      \"format\": \"prefix\",\n";
-        *out << "      \"string\": \""
-             << shape->math.c_str();
+        body["format"] = "infix";
+        body["string"] = print_node_ss(shape->tree->head).c_str();
     }
-
-    *out << "\"\n    },\n";
+    else if (format == EXPORT_JSON_PREFIX)
+    {
+        body["format"] = "prefix";
+        body["string"] = shape->math.c_str();
+    }
+    return body;
 }
 
 void ExportJSONWorker::run()
 {
-    QFile output_file(filename);
-    output_file.open(QFile::WriteOnly);
-    QTextStream out(&output_file);
-
-    out << "{\n";
+    QJsonObject out;
     for (auto s=shapes.begin(); s != shapes.end(); ++s)
     {
-        out << "  \"" << s.key() << "\": {\n";
-        writeBody(&s.value(), &out);
-        writeBounds(&s.value(), &out);
-        writeColor(&s.value(), &out);
-        out << "  }";
-        if (s + 1 != shapes.end())
-        {
-            out << ",";
-        }
-        out << "\n";
+        QJsonObject o;
+        o["body"] = writeBody(&s.value());
+        o["bounds"] = writeBounds(&s.value());
+        o["color"] = writeColor(&s.value());
+        out[s.key()] = o;
     }
-    out << "}";
+
+    QFile output_file(filename);
+    output_file.open(QFile::WriteOnly);
+    output_file.write(QJsonDocument(out).toJson());
 
     emit(finished());
 }
