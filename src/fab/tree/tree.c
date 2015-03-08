@@ -47,6 +47,7 @@ void free_tree(MathTree* tree)
     free(tree->nodes);
     free(tree->active);
     free(tree->constants);
+    free(tree->disabled);
 
     free(tree);
 }
