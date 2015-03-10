@@ -87,6 +87,73 @@ Vec3f zero_crossing(const float d[8],
     return (Vec3f){x0 + p*dx, y0 + p*dy, z0 + p*dz};
 }
 
+_STATIC_
+void get_corner_values(float* d, const Region packed, const Region r, float* data)
+{
+    for (int i=0; i < 8; ++i)
+    {
+        // Figure out where this bit of data lives in the larger eval_r array.
+        const unsigned index =
+            (r.imin - packed.imin + ((i & 4) ? r.ni : 0)) +
+            (r.jmin - packed.jmin + ((i & 2) ? r.nj : 0))
+                * (packed.ni+1) +
+            (r.kmin - packed.kmin + ((i & 1) ? r.nk : 0))
+                * (packed.ni+1) * (packed.nj+1);
+
+        d[i] = data[index];
+    }
+}
+
+_STATIC_
+void push_vert(float x, float y, float z,
+               float** const verts, unsigned* const count,
+               unsigned* const allocated)
+{
+    if ((*count) + 3 >= (*allocated))
+    {
+        *allocated *= 2;
+        *verts = realloc(*verts, sizeof(float)*(*allocated));
+    }
+
+    (*verts)[(*count)++] = x;
+    (*verts)[(*count)++] = y;
+    (*verts)[(*count)++] = z;
+}
+
+_STATIC_
+void triangulate_tet(const Region r, float* d, int t,
+                     float** const verts, unsigned* const count,
+                     unsigned* const allocated)
+{
+    // Find vertex positions for this tetrahedron
+    uint8_t vertices[] = {0, 7, VERTEX_LOOP[t], VERTEX_LOOP[t+1]};
+
+    // Figure out which of the sixteen possible combinations
+    // we're currently experiencing.
+    uint8_t lookup = 0;
+    for (int v=3; v>=0; --v) {
+        lookup = (lookup << 1) + (d[vertices[v]] < 0);
+    }
+
+    // Iterate over (up to) two triangles in this tetrahedron
+    for (int i=0; i < 2; ++i)
+    {
+        if (EDGE_MAP[lookup][i][0][0] == -1)    break;
+
+        // ...and insert vertices into the mesh.
+        for (int v=0; v < 3; ++v)
+        {
+            const Vec3f vertex = zero_crossing(d,
+                    vertices[EDGE_MAP[lookup][i][v][0]],
+                    vertices[EDGE_MAP[lookup][i][v][1]]);
+            push_vert(vertex.x * (r.X[1] - r.X[0]) + r.X[0],
+                      vertex.y * (r.Y[1] - r.Y[0]) + r.Y[0],
+                      vertex.z * (r.Z[1] - r.Z[0]) + r.Z[0],
+                      verts, count, allocated);
+        }
+    }
+}
+
 
 _STATIC_
 void triangulate_voxel(MathTree* tree, const Region r,
@@ -148,56 +215,12 @@ void triangulate_voxel(MathTree* tree, const Region r,
 
     // Find corner distance values for this voxel
     float d[8];
-    for (int i=0; i < 8; ++i)
-    {
-        // Figure out where this bit of data lives in the larger eval_r array.
-        const unsigned index =
-            (r.imin - packed.imin + ((i & 4) ? r.ni : 0)) +
-            (r.jmin - packed.jmin + ((i & 2) ? r.nj : 0))
-                * (packed.ni+1) +
-            (r.kmin - packed.kmin + ((i & 1) ? r.nk : 0))
-                * (packed.ni+1) * (packed.nj+1);
-
-        d[i] = data[index];
-    }
+    get_corner_values(d, packed, r, data);
 
     // Loop over the six tetrahedra that make up a voxel cell
     for (int t=0; t < 6; ++t)
     {
-        // Find vertex positions for this tetrahedron
-        uint8_t vertices[] = {0, 7, VERTEX_LOOP[t], VERTEX_LOOP[t+1]};
-
-        // Figure out which of the sixteen possible combinations
-        // we're currently experiencing.
-        uint8_t lookup = 0;
-        for (int v=3; v>=0; --v) {
-            lookup = (lookup << 1) + (d[vertices[v]] < 0);
-        }
-
-        // Iterate over (up to) two triangles in this tetrahedron
-        for (int i=0; i < 2; ++i)
-        {
-            if (EDGE_MAP[lookup][i][0][0] == -1)    break;
-
-            // Do we need to allocate more space for incoming vertices?
-            // If so, double the buffer size.
-            if ((*count) + 9 >= (*allocated))
-            {
-                *allocated *= 2;
-                *verts = realloc(*verts, sizeof(float)*(*allocated));
-            }
-
-            // ...and insert vertices into the mesh.
-            for (int v=0; v < 3; ++v)
-            {
-                const Vec3f vertex = zero_crossing(d,
-                        vertices[EDGE_MAP[lookup][i][v][0]],
-                        vertices[EDGE_MAP[lookup][i][v][1]]);
-                (*verts)[(*count)++] = vertex.x * (r.X[1] - r.X[0]) + r.X[0];
-                (*verts)[(*count)++] = vertex.y * (r.Y[1] - r.Y[0]) + r.Y[0];
-                (*verts)[(*count)++] = vertex.z * (r.Z[1] - r.Z[0]) + r.Z[0];
-            }
-        }
+        triangulate_tet(r, d, t, verts, count, allocated);
     }
 
 }
