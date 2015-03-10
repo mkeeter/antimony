@@ -3,49 +3,56 @@
 
 #include "tree/math/math_r.h"
 
-float* add_r(float* A, float* B, float* R, int c)
+float* add_r(const float* restrict A, const float* restrict B,
+             float* restrict R, int c)
 {
     for (int q = 0; q < c; ++q)
         R[q] = A[q] + B[q];
     return R;
 }
 
-float* sub_r(float* A, float* B, float* R, int c)
+float* sub_r(const float* restrict A, const float* restrict  B,
+             float* restrict R, int c)
 {
     for (int q = 0; q < c; ++q)
         R[q] = A[q] - B[q];
     return R;
 }
 
-float* mul_r(float* A, float* B, float* R, int c)
+float* mul_r(const float* restrict A, const float* restrict B,
+             float* R, int c)
 {
     for (int q = 0; q < c; ++q)
         R[q] = A[q] * B[q];
     return R;
 }
 
-float* div_r(float* A, float* B, float* R, int c)
+float* div_r(const float* restrict A, const float* restrict B,
+             float* R, int c)
 {
     for (int q = 0; q < c; ++q)
         R[q] = A[q] / B[q];
     return R;
 }
 
-float* min_r(float* A, float* B, float* R, int c)
+float* min_r(const float* restrict A, const float* restrict B,
+             float* R, int c)
 {
     for (int q = 0; q < c; ++q)
         R[q] = fmin(A[q], B[q]);
     return R;
 }
 
-float* max_r(float* A, float* B, float* R, int c)
+float* max_r(const float* restrict A, const float* restrict B,
+             float* R, int c)
 {
     for (int q = 0; q < c; ++q)
         R[q] = fmax(A[q], B[q]);
     return R;
 }
 
-float* pow_r(float* A, float* B, float* R, int c)
+float* pow_r(const float* restrict A, const float* restrict B,
+             float* R, int c)
 {
     for (int q = 0; q < c; ++q)
         R[q] = pow(A[q], B[q]);
@@ -54,21 +61,21 @@ float* pow_r(float* A, float* B, float* R, int c)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-float* abs_r(float* A, float* R, int c)
+float* abs_r(const float* restrict A, float* R, int c)
 {
     for (int q=0; q < c; ++q)
         R[q] = fabs(A[q]);
     return R;
 }
 
-float* square_r(float* A, float* R, int c)
+float* square_r(const float* restrict A, float* R, int c)
 {
     for (int q = 0; q < c; ++q)
         R[q] = A[q]*A[q];
     return R;
 }
 
-float* sqrt_r(float* A, float* R, int c)
+float* sqrt_r(const float* restrict A, float* R, int c)
 {
     for (int q = 0; q < c; ++q)
         if (A[q] < 0)   R[q] = 0;
@@ -76,35 +83,35 @@ float* sqrt_r(float* A, float* R, int c)
     return R;
 }
 
-float* sin_r(float* A, float* R, int c)
+float* sin_r(const float* restrict A, float* R, int c)
 {
     for (int q = 0; q < c; ++q)
         R[q] = sin(A[q]);
     return R;
 }
 
-float* cos_r(float* A, float* R, int c)
+float* cos_r(const float* restrict A, float* R, int c)
 {
     for (int q = 0; q < c; ++q)
         R[q] = cos(A[q]);
     return R;
 }
 
-float* tan_r(float* A, float* R, int c)
+float* tan_r(const float* restrict A, float* R, int c)
 {
     for (int q = 0; q < c; ++q)
         R[q] = tan(A[q]);
     return R;
 }
 
-float* asin_r(float* A, float* R, int c)
+float* asin_r(const float* restrict A, float* R, int c)
 {
     for (int q = 0; q < c; ++q)
         R[q] = asin(A[q]);
     return R;
 }
 
-float* acos_r(float* A, float* R, int c)
+float* acos_r(const float* restrict A, float* R, int c)
 {
     for (int q = 0; q < c; ++q) {
         if (A[q] < -1)      R[q] = M_PI;
@@ -114,21 +121,21 @@ float* acos_r(float* A, float* R, int c)
     return R;
 }
 
-float* atan_r(float* A, float* R, int c)
+float* atan_r(const float* restrict A, float* R, int c)
 {
     for (int q = 0; q < c; ++q)
         R[q] = atan(A[q]);
     return R;
 }
 
-float* neg_r(float* A, float* R, int c)
+float* neg_r(const float* restrict A, float* R, int c)
 {
     for (int q = 0; q < c; ++q)
         R[q] = -A[q];
     return R;
 }
 
-float* exp_r(float* A, float* R, int c)
+float* exp_r(const float* restrict A, float* R, int c)
 {
     for (int q = 0; q < c; ++q)
         R[q] = exp(A[q]);
@@ -137,19 +144,19 @@ float* exp_r(float* A, float* R, int c)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-float* X_r(float* X, float* R, int c)
+float* X_r(const float* restrict X, float* R, int c)
 {
     memcpy(R, X,c*sizeof(float));
     return R;
 }
 
-float* Y_r(float* Y, float* R, int c)
+float* Y_r(const float* restrict Y, float* R, int c)
 {
     memcpy(R, Y, c*sizeof(float));
     return R;
 }
 
-float* Z_r(float* Z, float* R, int c)
+float* Z_r(const float* restrict Z, float* R, int c)
 {
     memcpy(R, Z, c*sizeof(float));
     return R;

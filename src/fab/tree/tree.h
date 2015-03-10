@@ -4,23 +4,11 @@
 #include <stdint.h>
 
 #include "tree/node/opcodes.h"
+#include "util/ustack.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/** @struct ustack_
-    @brief A simple FIFO stack of unsigned integers.
-*/
-typedef struct ustack_ {
-    /** @var count
-    Stored value */
-    unsigned count;
-
-    /** @var next
-    Next item in the stack */
-    struct ustack_* next;
-} ustack;
 
 /** @struct MathTree_
     @brief A structure containing nodes organized by rank and opcode.
@@ -36,7 +24,7 @@ typedef struct MathTree_ {
 
     /** @var disabled
     Stacks of disabled node counts, indexed by level */
-    ustack**  disabled;
+    ustack*  disabled;
 
     /** @var num_levels
     Number of levels in this tree */
