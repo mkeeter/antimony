@@ -207,6 +207,29 @@ void tristate_clear_zero_crossing_cache(tristate* t)
 
 Vec3f eval_zero_crossing(Vec3f v0, Vec3f v1, MathTree* tree, tristate* t)
 {
+    float p = 0.5;
+    float step = 0.25;
+
+    for (int iteration=0; iteration < 4; ++iteration)
+    {
+        const float r = eval_f(tree,
+            v0.x * (1 - p) + v1.x * p,
+            v0.y * (1 - p) + v1.y * p,
+            v0.z * (1 - p) + v1.z * p);
+
+        if (r < 0)          p += step;
+        else if (r > 0)     p -= step;
+        else                break;
+
+        step /= 2;
+    }
+    return (Vec3f){v0.x * (1 - p) + v1.x * p,
+                   v0.y * (1 - p) + v1.y * p,
+                   v0.z * (1 - p) + v1.z * p};
+}
+
+Vec3f eval_zero_crossing_(Vec3f v0, Vec3f v1, MathTree* tree, tristate* t)
+{
     for (int i=0; i < MIN_VOLUME; ++i)
     {
         float f = i / (float)(MIN_VOLUME - 1);
