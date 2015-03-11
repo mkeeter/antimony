@@ -56,6 +56,9 @@ typedef struct {
     float* x;
     float* y;
     float* z;
+
+    Vec3f cached_zero_crossing[64];
+    bool has_cached_zero_crossing[64];
 } tristate;
 
 
@@ -178,6 +181,29 @@ float interpolate(const float d[8],
     return c;
 }
 
+bool tristate_has_cached_zero_crossing(tristate* t, uint8_t v0, uint8_t v1)
+{
+    return t->has_cached_zero_crossing[(v0 << 3) | v1];
+}
+
+Vec3f tristate_cached_zero_crossing(tristate* t, uint8_t v0, uint8_t v1)
+{
+    return t->cached_zero_crossing[(v0 << 3) | v1];
+}
+
+Vec3f tristate_cache_zero_crossing(tristate* t, uint8_t v0, uint8_t v1, Vec3f v)
+{
+    t->cached_zero_crossing[(v0 << 3) | v1] = v;
+    t->cached_zero_crossing[(v1 << 3) | v0] = v;
+    t->has_cached_zero_crossing[(v0 << 3) | v1] = true;
+    t->has_cached_zero_crossing[(v1 << 3) | v0] = true;
+}
+
+void tristate_clear_zero_crossing_cache(tristate* t)
+{
+    for (int i=0; i < 64; i++)
+        t->has_cached_zero_crossing[i] = false;
+}
 
 Vec3f eval_zero_crossing(Vec3f v0, Vec3f v1, MathTree* tree, tristate* t)
 {
@@ -252,6 +278,9 @@ void tristate_process_tet(const Region r, float* d, int tet,
     for (int v=3; v>=0; --v)
         lookup = (lookup << 1) + (d[vertices[v]] < 0);
 
+    // Clear the cache of zero crossing locations
+    tristate_clear_zero_crossing_cache(t);
+
     // Iterate over (up to) two triangles in this tetrahedron
     for (int i=0; i < 2; ++i)
     {
@@ -265,15 +294,23 @@ void tristate_process_tet(const Region r, float* d, int tet,
             const uint8_t v0 = vertices[EDGE_MAP[lookup][i][v][0]];
             const uint8_t v1 = vertices[EDGE_MAP[lookup][i][v][1]];
 
-
-            const Vec3f vertex_exact = eval_zero_crossing(
-                    (Vec3f){(v0 & 4) ? r.X[1] : r.X[0],
-                            (v0 & 2) ? r.Y[1] : r.Y[0],
-                            (v0 & 1) ? r.Z[1] : r.Z[0]},
-                    (Vec3f){(v1 & 4) ? r.X[1] : r.X[0],
-                            (v1 & 2) ? r.Y[1] : r.Y[0],
-                            (v1 & 1) ? r.Z[1] : r.Z[0]},
-                    tree, t);
+            Vec3f vertex_exact;
+            if (tristate_has_cached_zero_crossing(t, v0, v1))
+            {
+                vertex_exact = tristate_cached_zero_crossing(t, v0, v1);
+            }
+            else
+            {
+                vertex_exact = eval_zero_crossing(
+                        (Vec3f){(v0 & 4) ? r.X[1] : r.X[0],
+                                (v0 & 2) ? r.Y[1] : r.Y[0],
+                                (v0 & 1) ? r.Z[1] : r.Z[0]},
+                        (Vec3f){(v1 & 4) ? r.X[1] : r.X[0],
+                                (v1 & 2) ? r.Y[1] : r.Y[0],
+                                (v1 & 1) ? r.Z[1] : r.Z[0]},
+                        tree, t);
+                tristate_cache_zero_crossing(t, v0, v1, vertex_exact);
+            }
 
             tristate_push_vert(vertex_exact.x, vertex_exact.y, vertex_exact.z, t);
 #else
