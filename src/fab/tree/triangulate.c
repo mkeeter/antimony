@@ -51,6 +51,11 @@ typedef struct {
     float* X;
     float* Y;
     float* Z;
+
+    // Buffers used in eval_zero_crossing
+    float* x;
+    float* y;
+    float* z;
 } tristate;
 
 
@@ -66,6 +71,9 @@ tristate* tristate_new()
         .X=malloc(sizeof(float)*MIN_VOLUME),
         .Y=malloc(sizeof(float)*MIN_VOLUME),
         .Z=malloc(sizeof(float)*MIN_VOLUME),
+        .x=malloc(sizeof(float)*MIN_VOLUME),
+        .y=malloc(sizeof(float)*MIN_VOLUME),
+        .z=malloc(sizeof(float)*MIN_VOLUME),
     };
     return t;
 }
@@ -76,6 +84,9 @@ void tristate_free(tristate* t)
     free(t->X);
     free(t->Y);
     free(t->Z);
+    free(t->x);
+    free(t->y);
+    free(t->z);
     free(t->data);
 }
 
@@ -168,6 +179,35 @@ float interpolate(const float d[8],
 }
 
 
+Vec3f eval_zero_crossing(Vec3f v0, Vec3f v1, MathTree* tree, tristate* t)
+{
+    for (int i=0; i < MIN_VOLUME; ++i)
+    {
+        float f = i / (float)(MIN_VOLUME - 1);
+        t->x[i] = v0.x * (1 - f) + v1.x * f;
+        t->y[i] = v0.y * (1 - f) + v1.y * f;
+        t->z[i] = v0.z * (1 - f) + v1.z * f;
+    }
+
+    Region r = (Region){
+        .X = t->x,
+        .Y = t->y,
+        .Z = t->z,
+        .voxels = MIN_VOLUME
+    };
+
+    float* out = eval_r(tree, r);
+
+    for (int i=0; i < MIN_VOLUME; i++)
+        if (out[i] >= 0)
+            return (Vec3f){t->x[i], t->y[i], t->z[i]};
+
+    printf("Zero crossing detection failed!\n");
+    return (Vec3f){(v0.x + v1.x) / 2,
+                   (v0.y + v1.y) / 2,
+                   (v0.z + v1.z) / 2};
+}
+
 // Finds the zero crossing on the line between two vertices of a unit cube.
 // d is sample values at the cube's corners.
 _STATIC_
@@ -201,7 +241,7 @@ Vec3f zero_crossing(const float d[8],
 }
 
 void tristate_process_tet(const Region r, float* d, int tet,
-                          tristate* t)
+                          MathTree* tree, tristate* t)
 {
     // Find vertex positions for this tetrahedron
     uint8_t vertices[] = {0, 7, VERTEX_LOOP[tet], VERTEX_LOOP[tet+1]};
@@ -221,12 +261,29 @@ void tristate_process_tet(const Region r, float* d, int tet,
         // ...and insert vertices into the mesh.
         for (int v=0; v < 3; ++v)
         {
+#if 1
+            const uint8_t v0 = vertices[EDGE_MAP[lookup][i][v][0]];
+            const uint8_t v1 = vertices[EDGE_MAP[lookup][i][v][1]];
+
+
+            const Vec3f vertex_exact = eval_zero_crossing(
+                    (Vec3f){(v0 & 4) ? r.X[1] : r.X[0],
+                            (v0 & 2) ? r.Y[1] : r.Y[0],
+                            (v0 & 1) ? r.Z[1] : r.Z[0]},
+                    (Vec3f){(v1 & 4) ? r.X[1] : r.X[0],
+                            (v1 & 2) ? r.Y[1] : r.Y[0],
+                            (v1 & 1) ? r.Z[1] : r.Z[0]},
+                    tree, t);
+
+            tristate_push_vert(vertex_exact.x, vertex_exact.y, vertex_exact.z, t);
+#else
             const Vec3f vertex = zero_crossing(d,
                     vertices[EDGE_MAP[lookup][i][v][0]],
                     vertices[EDGE_MAP[lookup][i][v][1]]);
             tristate_push_vert(vertex.x * (r.X[1] - r.X[0]) + r.X[0],
                                vertex.y * (r.Y[1] - r.Y[0]) + r.Y[0],
                                vertex.z * (r.Z[1] - r.Z[0]) + r.Z[0], t);
+#endif
         }
     }
 }
@@ -258,7 +315,7 @@ void triangulate_region(tristate* t, MathTree* tree, const Region r)
 
         // Loop over the six tetrahedra that make up a voxel cell
         for (int tet=0; tet < 6; ++tet)
-            tristate_process_tet(r, d, tet, t);
+            tristate_process_tet(r, d, tet, tree, t);
     }
 
     // If this stage of the recursion loaded data into the buffer,

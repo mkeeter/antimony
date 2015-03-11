@@ -1,5 +1,6 @@
 #include <Python.h>
 #include <QDebug>
+#include <QTime>
 
 #include "render/export_mesh.h"
 
@@ -46,7 +47,10 @@ void ExportMeshWorker::render()
                 shape.bounds.ymax + dy,
                 shape.bounds.zmax + dz);
 
+    QTime time;
+    time.start();
     triangulate(shape.tree.get(), r, &verts, &count);
+    qDebug() << time.elapsed();
     save_stl(verts, count, filename.toStdString().c_str());
     free_arrays(&r);
     free(verts);
