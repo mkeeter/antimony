@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
 
 #include "triangulate.h"
 
@@ -34,6 +36,117 @@ static const int EDGE_MAP[16][2][3][2] = {
     {{{-1,-1}, {-1,-1}, {-1,-1}}, {{-1,-1}, {-1,-1}, {-1,-1}}}, // 3210
 };
 
+typedef struct {
+    // Triangle buffer
+    float* verts;
+    unsigned count;
+    unsigned allocated;
+
+    // Cached region and data from an eval_r call
+    Region packed;
+    float* data;
+    bool has_data;
+
+    // Buffers used for eval_r
+    float* X;
+    float* Y;
+    float* Z;
+} tristate;
+
+
+tristate* tristate_new()
+{
+    tristate* t = (tristate*)malloc(sizeof(tristate));
+    *t = (tristate){
+        .verts=NULL,
+        .count=0,
+        .allocated=0,
+        .data=malloc(sizeof(float)*MIN_VOLUME),
+        .has_data=false,
+        .X=malloc(sizeof(float)*MIN_VOLUME),
+        .Y=malloc(sizeof(float)*MIN_VOLUME),
+        .Z=malloc(sizeof(float)*MIN_VOLUME),
+    };
+    return t;
+}
+
+void tristate_free(tristate* t)
+{
+    free(t->verts);
+    free(t->X);
+    free(t->Y);
+    free(t->Z);
+    free(t->data);
+}
+
+void tristate_push_vert(float x, float y, float z, tristate* t)
+{
+    if (t->allocated == 0)
+    {
+        t->allocated = 3;
+        t->verts = malloc(t->allocated * sizeof(float));
+    }
+    else if (t->count + 3 >= t->allocated)
+    {
+        t->allocated *= 2;
+        t->verts = realloc(t->verts, sizeof(float)*(t->allocated));
+    }
+
+    (t->verts)[t->count++] = x;
+    (t->verts)[t->count++] = y;
+    (t->verts)[t->count++] = z;
+}
+
+void tristate_load_packed(MathTree* tree, tristate* t, Region r)
+{
+    // Only load the packed matrix if we have few enough voxels.
+    const unsigned voxels = (r.ni+1) * (r.nj+1) * (r.nk+1);
+    if (voxels >= MIN_VOLUME)
+        return;
+
+    // Flatten a 3D region into a 1D list of points that
+    // touches every point in the region, one by one.
+    int q = 0;
+    for (unsigned k=0; k <= r.nk; ++k) {
+        for (unsigned j=0; j <= r.nj; ++j) {
+            for (unsigned i=0; i <= r.ni; ++i) {
+                t->X[q] = r.X[i];
+                t->Y[q] = r.Y[j];
+                t->Z[q] = r.Z[k];
+                q++;
+            }
+        }
+    }
+
+    // Make a dummy region that has the newly-flattened point arrays as the
+    // X, Y, Z coordinate data arrays (so that we can run eval_r on it).
+    t->packed = (Region) {
+        .imin=r.imin, .jmin=r.jmin, .kmin=r.kmin,
+        .ni=r.ni, .nj=r.nj, .nk=r.nk,
+        .X=t->X, .Y=t->Y, .Z=t->Z, .voxels=voxels};
+
+    // Run eval_r and copy the data out
+    memcpy(t->data, eval_r(tree, t->packed), voxels * sizeof(float));
+    t->has_data = true;
+}
+
+void tristate_get_corner_data(tristate* t, const Region r, float d[8])
+{
+    // Populates an 8-element array with the function evaluation
+    // results from the corner of a single-voxel region.
+    for (int i=0; i < 8; ++i)
+    {
+        // Figure out where this bit of data lives in the larger eval_r array.
+        const unsigned index =
+            (r.imin - t->packed.imin + ((i & 4) ? r.ni : 0)) +
+            (r.jmin - t->packed.jmin + ((i & 2) ? r.nj : 0))
+                * (t->packed.ni+1) +
+            (r.kmin - t->packed.kmin + ((i & 1) ? r.nk : 0))
+                * (t->packed.ni+1) * (t->packed.nj+1);
+
+        d[i] = t->data[index];
+    }
+}
 
 // Performs trilinear interpolation, where d is an array of corner values
 // on a unit cube (d[0] at (0,0,0), d[1] at (0,0,1), d[2] at (0,1,0), etc.
@@ -87,58 +200,23 @@ Vec3f zero_crossing(const float d[8],
     return (Vec3f){x0 + p*dx, y0 + p*dy, z0 + p*dz};
 }
 
-_STATIC_
-void get_corner_values(float* d, const Region packed, const Region r, float* data)
-{
-    for (int i=0; i < 8; ++i)
-    {
-        // Figure out where this bit of data lives in the larger eval_r array.
-        const unsigned index =
-            (r.imin - packed.imin + ((i & 4) ? r.ni : 0)) +
-            (r.jmin - packed.jmin + ((i & 2) ? r.nj : 0))
-                * (packed.ni+1) +
-            (r.kmin - packed.kmin + ((i & 1) ? r.nk : 0))
-                * (packed.ni+1) * (packed.nj+1);
-
-        d[i] = data[index];
-    }
-}
-
-_STATIC_
-void push_vert(float x, float y, float z,
-               float** const verts, unsigned* const count,
-               unsigned* const allocated)
-{
-    if ((*count) + 3 >= (*allocated))
-    {
-        *allocated *= 2;
-        *verts = realloc(*verts, sizeof(float)*(*allocated));
-    }
-
-    (*verts)[(*count)++] = x;
-    (*verts)[(*count)++] = y;
-    (*verts)[(*count)++] = z;
-}
-
-_STATIC_
-void triangulate_tet(const Region r, float* d, int t,
-                     float** const verts, unsigned* const count,
-                     unsigned* const allocated)
+void tristate_process_tet(const Region r, float* d, int tet,
+                          tristate* t)
 {
     // Find vertex positions for this tetrahedron
-    uint8_t vertices[] = {0, 7, VERTEX_LOOP[t], VERTEX_LOOP[t+1]};
+    uint8_t vertices[] = {0, 7, VERTEX_LOOP[tet], VERTEX_LOOP[tet+1]};
 
     // Figure out which of the sixteen possible combinations
     // we're currently experiencing.
     uint8_t lookup = 0;
-    for (int v=3; v>=0; --v) {
+    for (int v=3; v>=0; --v)
         lookup = (lookup << 1) + (d[vertices[v]] < 0);
-    }
 
     // Iterate over (up to) two triangles in this tetrahedron
     for (int i=0; i < 2; ++i)
     {
-        if (EDGE_MAP[lookup][i][0][0] == -1)    break;
+        if (EDGE_MAP[lookup][i][0][0] == -1)
+            break;
 
         // ...and insert vertices into the mesh.
         for (int v=0; v < 3; ++v)
@@ -146,55 +224,21 @@ void triangulate_tet(const Region r, float* d, int t,
             const Vec3f vertex = zero_crossing(d,
                     vertices[EDGE_MAP[lookup][i][v][0]],
                     vertices[EDGE_MAP[lookup][i][v][1]]);
-            push_vert(vertex.x * (r.X[1] - r.X[0]) + r.X[0],
-                      vertex.y * (r.Y[1] - r.Y[0]) + r.Y[0],
-                      vertex.z * (r.Z[1] - r.Z[0]) + r.Z[0],
-                      verts, count, allocated);
+            tristate_push_vert(vertex.x * (r.X[1] - r.X[0]) + r.X[0],
+                               vertex.y * (r.Y[1] - r.Y[0]) + r.Y[0],
+                               vertex.z * (r.Z[1] - r.Z[0]) + r.Z[0], t);
         }
     }
 }
 
-
-_STATIC_
-void triangulate_voxel(MathTree* tree, const Region r,
-                       float** const verts, unsigned* const count,
-                       unsigned* const allocated,
-                       Region packed, const float* data)
+void triangulate_region(tristate* t, MathTree* tree, const Region r)
 {
     // If we can calculate all of the points in this region with a single
     // eval_r call, then do so.  This large chunk will be used in future
     // recursive calls to make things more efficient.
-    const unsigned voxels = (r.ni+1)*(r.nj+1)*(r.nk+1);
-    if (!data && voxels < MIN_VOLUME)
-    {
-        packed = r;
-
-        // Copy the X, Y, Z vectors into a flattened matrix form.
-        packed.X = malloc(voxels*sizeof(float));
-        packed.Y = malloc(voxels*sizeof(float));
-        packed.Z = malloc(voxels*sizeof(float));
-
-        int q = 0;
-        for (int k = 0; k <= r.nk; ++k) {
-            for (int j = 0; j <= r.nj; ++j) {
-                for (int i = 0; i <= r.ni; ++i) {
-                    packed.X[q] = r.X[i];
-                    packed.Y[q] = r.Y[j];
-                    packed.Z[q] = r.Z[k];
-                    q++;
-                }
-            }
-        }
-        // Update the voxel count
-        packed.voxels = voxels;
-
-        data = eval_r(tree, packed);
-
-        // Free the allocated matrices
-        free(packed.X);
-        free(packed.Y);
-        free(packed.Z);
-    }
+    bool loaded_data = !t->has_data;
+    if (loaded_data)
+        tristate_load_packed(tree, t, r);
 
     // If we have greater than one voxel, subdivide and recurse.
     if (r.voxels > 1)
@@ -202,27 +246,26 @@ void triangulate_voxel(MathTree* tree, const Region r,
         Region octants[8];
         const uint8_t split = octsect(r, octants);
         for (int i=0; i < 8; ++i)
-        {
             if (split & (1 << i))
-            {
-                triangulate_voxel(tree, octants[i],
-                                  verts, count, allocated,
-                                  packed, data);
-            }
-        }
-        return;
+                triangulate_region(t, tree, octants[i]);
     }
-
-    // Find corner distance values for this voxel
-    float d[8];
-    get_corner_values(d, packed, r, data);
-
-    // Loop over the six tetrahedra that make up a voxel cell
-    for (int t=0; t < 6; ++t)
+    else
     {
-        triangulate_tet(r, d, t, verts, count, allocated);
+        // Load corner values from this voxel
+        // (from the packed data array)
+        float d[8];
+        tristate_get_corner_data(t, r, d);
+
+        // Loop over the six tetrahedra that make up a voxel cell
+        for (int tet=0; tet < 6; ++tet)
+            tristate_process_tet(r, d, tet, t);
     }
 
+    // If this stage of the recursion loaded data into the buffer,
+    // clear the has_data flag (so that future stages will re-run
+    // eval_r on their portion of the space).
+    if (loaded_data)
+        t->has_data = false;
 }
 
 // Finds an array of vertices (as x,y,z float triplets).
@@ -230,16 +273,17 @@ void triangulate_voxel(MathTree* tree, const Region r,
 void triangulate(MathTree* tree, const Region r,
                  float** const verts, unsigned* const count)
 {
-    float* v = malloc(9*sizeof(float));
-    *count = 0;
-    unsigned allocated = 9;
+    // Make a triangulation state struct.
+    tristate* t = tristate_new();
 
-    Region packed;
-    triangulate_voxel(tree, r, &v, count, &allocated, packed, NULL);
-    *verts = realloc(v, (*count)*sizeof(float));
-}
+    // Top-level call to the recursive triangulation function.
+    triangulate_region(t, tree, r);
 
-void free_mesh(float* const verts)
-{
-    free(verts);
+    // Copy data from tristate struct to output pointers.
+    *verts = malloc(t->count * sizeof(float));
+    memcpy(*verts, t->verts, t->count * sizeof(float));
+    *count = t->count;
+
+    // Free the triangulation state struct.
+    tristate_free(t);
 }
