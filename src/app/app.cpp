@@ -689,7 +689,8 @@ void App::makeUI(NodeRoot* r)
     // Now that all links are created and all nodes are under the same
     // root (in case of address-by-name), run update on every datum.
     for (auto d : datums)
-        d->update();
+        if (!d->getValid())
+            d->update();
 }
 
 Connection* App::newLink(Link* link)
