@@ -93,7 +93,7 @@ void tristate_free(tristate* t)
     free(t->data);
 }
 
-void tristate_push_vert(float x, float y, float z, tristate* t)
+void tristate_push_vert(Vec3f v, tristate* t)
 {
     if (t->allocated == 0)
     {
@@ -106,9 +106,9 @@ void tristate_push_vert(float x, float y, float z, tristate* t)
         t->verts = realloc(t->verts, sizeof(float)*(t->allocated));
     }
 
-    (t->verts)[t->count++] = x;
-    (t->verts)[t->count++] = y;
-    (t->verts)[t->count++] = z;
+    (t->verts)[t->count++] = v.x;
+    (t->verts)[t->count++] = v.y;
+    (t->verts)[t->count++] = v.z;
 }
 
 void tristate_load_packed(MathTree* tree, tristate* t, Region r)
@@ -174,25 +174,6 @@ void tristate_get_corner_data(tristate* t, const Region r, float d[8])
     }
 }
 
-// Performs trilinear interpolation, where d is an array of corner values
-// on a unit cube (d[0] at (0,0,0), d[1] at (0,0,1), d[2] at (0,1,0), etc.
-_STATIC_
-float interpolate(const float d[8],
-                  const float x, const float y, const float z)
-{
-    const float c00 = d[0]*(1-x) + d[4]*x;
-    const float c01 = d[1]*(1-x) + d[5]*x;
-    const float c10 = d[2]*(1-x) + d[6]*x;
-    const float c11 = d[3]*(1-x) + d[7]*x;
-
-    const float  c0 =  c00*(1-y) + c10*y;
-    const float  c1 =  c01*(1-y) + c11*y;
-
-    const float   c =   c0*(1-z) + c1*z;
-
-    return c;
-}
-
 bool tristate_has_cached_zero_crossing(tristate* t, uint8_t v0, uint8_t v1)
 {
     return t->has_cached_zero_crossing[(v0 << 3) | v1];
@@ -217,7 +198,7 @@ void tristate_clear_zero_crossing_cache(tristate* t)
         t->has_cached_zero_crossing[i] = false;
 }
 
-Vec3f eval_zero_crossing(Vec3f v0, Vec3f v1, MathTree* tree, tristate* t)
+Vec3f eval_zero_crossing(Vec3f v0, Vec3f v1, MathTree* tree)
 {
     float p = 0.5;
     float step = 0.25;
@@ -240,66 +221,6 @@ Vec3f eval_zero_crossing(Vec3f v0, Vec3f v1, MathTree* tree, tristate* t)
                    v0.z * (1 - p) + v1.z * p};
 }
 
-Vec3f eval_zero_crossing_(Vec3f v0, Vec3f v1, MathTree* tree, tristate* t)
-{
-    for (int i=0; i < MIN_VOLUME; ++i)
-    {
-        float f = i / (float)(MIN_VOLUME - 1);
-        t->x[i] = v0.x * (1 - f) + v1.x * f;
-        t->y[i] = v0.y * (1 - f) + v1.y * f;
-        t->z[i] = v0.z * (1 - f) + v1.z * f;
-    }
-
-    Region r = (Region){
-        .X = t->x,
-        .Y = t->y,
-        .Z = t->z,
-        .voxels = MIN_VOLUME
-    };
-
-    float* out = eval_r(tree, r);
-
-    for (int i=0; i < MIN_VOLUME; i++)
-        if (out[i] >= 0)
-            return (Vec3f){t->x[i], t->y[i], t->z[i]};
-
-    printf("Zero crossing detection failed!\n");
-    return (Vec3f){(v0.x + v1.x) / 2,
-                   (v0.y + v1.y) / 2,
-                   (v0.z + v1.z) / 2};
-}
-
-// Finds the zero crossing on the line between two vertices of a unit cube.
-// d is sample values at the cube's corners.
-_STATIC_
-Vec3f zero_crossing(const float d[8],
-                    const uint8_t v0, const uint8_t v1)
-{
-    const float x0 =  (v0 & 4) ? 1 : 0,
-                y0 =  (v0 & 2) ? 1 : 0,
-                z0 =  (v0 & 1) ? 1 : 0;
-
-    const float dx = ((v1 & 4) ? 1 : 0) - x0,
-                dy = ((v1 & 2) ? 1 : 0) - y0,
-                dz = ((v1 & 1) ? 1 : 0) - z0;
-
-    float p = 0.5;
-    float step = 0.25;
-
-    // Binary search along the edge to find the zero crossing
-    for (int iteration=0; iteration < 16; ++iteration)
-    {
-        const float r = interpolate(d, x0 + p*dx, y0 + p*dy, z0 + p*dz);
-
-        if      (r < -EPSILON)  p += step;
-        else if (r > EPSILON)   p -= step;
-        else                    break;
-
-        step /= 2;
-    }
-
-    return (Vec3f){x0 + p*dx, y0 + p*dy, z0 + p*dz};
-}
 
 void tristate_process_tet(const Region r, float* d, int tet,
                           MathTree* tree, tristate* t)
@@ -325,37 +246,23 @@ void tristate_process_tet(const Region r, float* d, int tet,
         // ...and insert vertices into the mesh.
         for (int v=0; v < 3; ++v)
         {
-#if 1
             const uint8_t v0 = vertices[EDGE_MAP[lookup][i][v][0]];
             const uint8_t v1 = vertices[EDGE_MAP[lookup][i][v][1]];
 
-            Vec3f vertex_exact;
-            if (tristate_has_cached_zero_crossing(t, v0, v1))
+            if (!tristate_has_cached_zero_crossing(t, v0, v1))
             {
-                vertex_exact = tristate_cached_zero_crossing(t, v0, v1);
-            }
-            else
-            {
-                vertex_exact = eval_zero_crossing(
+                const Vec3f v = eval_zero_crossing(
                         (Vec3f){(v0 & 4) ? r.X[1] : r.X[0],
                                 (v0 & 2) ? r.Y[1] : r.Y[0],
                                 (v0 & 1) ? r.Z[1] : r.Z[0]},
                         (Vec3f){(v1 & 4) ? r.X[1] : r.X[0],
                                 (v1 & 2) ? r.Y[1] : r.Y[0],
                                 (v1 & 1) ? r.Z[1] : r.Z[0]},
-                        tree, t);
-                tristate_cache_zero_crossing(t, v0, v1, vertex_exact);
+                        tree);
+                tristate_cache_zero_crossing(t, v0, v1, v);
             }
 
-            tristate_push_vert(vertex_exact.x, vertex_exact.y, vertex_exact.z, t);
-#else
-            const Vec3f vertex = zero_crossing(d,
-                    vertices[EDGE_MAP[lookup][i][v][0]],
-                    vertices[EDGE_MAP[lookup][i][v][1]]);
-            tristate_push_vert(vertex.x * (r.X[1] - r.X[0]) + r.X[0],
-                               vertex.y * (r.Y[1] - r.Y[0]) + r.Y[0],
-                               vertex.z * (r.Z[1] - r.Z[0]) + r.Z[0], t);
-#endif
+            tristate_push_vert(tristate_cached_zero_crossing(t, v0, v1), t);
         }
     }
 }
