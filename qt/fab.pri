@@ -16,6 +16,7 @@ SOURCES += \
     ../src/fab/formats/stl.c \
     ../src/fab/util/region.c \
     ../src/fab/util/ustack.c \
+    ../src/fab/util/vec3f.c \
     ../src/fab/types/shape.cpp \
     ../src/fab/fab.cpp \
     ../src/fab/types/bounds.cpp \

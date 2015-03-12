@@ -36,6 +36,15 @@ static const int EDGE_MAP[16][2][3][2] = {
     {{{-1,-1}, {-1,-1}, {-1,-1}}, {{-1,-1}, {-1,-1}, {-1,-1}}}, // 3210
 };
 
+// Node in a linked list of interpolations to run
+typedef struct interpolate_command_ {
+    enum {INTERPOLATE, CACHED, END_OF_VOXEL} cmd;
+    Vec3f v0;
+    Vec3f v1;
+    unsigned cached;
+    struct interpolate_command_* next;
+} interpolate_command;
+
 typedef struct {
     // Triangle buffer
     float* verts;
@@ -47,6 +56,9 @@ typedef struct {
     float* data;
     bool has_data;
 
+    // MathTree that we're evaluating
+    MathTree* tree;
+
     // Buffers used for eval_r
     float* X;
     float* Y;
@@ -57,12 +69,12 @@ typedef struct {
     float* y;
     float* z;
 
-    Vec3f cached_zero_crossing[64];
-    bool has_cached_zero_crossing[64];
+    // Queue of interpolation commands to be run soon
+    interpolate_command* queue;
 } tristate;
 
 
-tristate* tristate_new()
+tristate* tristate_new(MathTree* tree)
 {
     tristate* t = (tristate*)malloc(sizeof(tristate));
     *t = (tristate){
@@ -71,6 +83,7 @@ tristate* tristate_new()
         .allocated=0,
         .data=malloc(sizeof(float)*MIN_VOLUME),
         .has_data=false,
+        .tree=tree,
         .X=malloc(sizeof(float)*MIN_VOLUME),
         .Y=malloc(sizeof(float)*MIN_VOLUME),
         .Z=malloc(sizeof(float)*MIN_VOLUME),
@@ -111,13 +124,15 @@ void tristate_push_vert(Vec3f v, tristate* t)
     (t->verts)[t->count++] = v.z;
 }
 
-void tristate_load_packed(MathTree* tree, tristate* t, Region r)
+// Evaluates a region voxel-by-voxel, storing the output in the data
+// member of the tristate struct.
+void tristate_load_packed(tristate* t, Region r)
 {
     // Do a bit of interval arithmetic for tree pruning
-    eval_i(tree, (Interval){r.X[0], r.X[r.ni]},
-                 (Interval){r.Y[0], r.Y[r.nj]},
-                 (Interval){r.Z[0], r.Z[r.nk]});
-    disable_nodes(tree);
+    eval_i(t->tree, (Interval){r.X[0], r.X[r.ni]},
+                    (Interval){r.Y[0], r.Y[r.nj]},
+                    (Interval){r.Z[0], r.Z[r.nk]});
+    disable_nodes(t->tree);
 
     // Only load the packed matrix if we have few enough voxels.
     const unsigned voxels = (r.ni+1) * (r.nj+1) * (r.nk+1);
@@ -146,13 +161,13 @@ void tristate_load_packed(MathTree* tree, tristate* t, Region r)
         .X=t->X, .Y=t->Y, .Z=t->Z, .voxels=voxels};
 
     // Run eval_r and copy the data out
-    memcpy(t->data, eval_r(tree, t->packed), voxels * sizeof(float));
+    memcpy(t->data, eval_r(t->tree, t->packed), voxels * sizeof(float));
     t->has_data = true;
 }
 
-void tristate_unload_packed(tristate* t, MathTree* tree)
+void tristate_unload_packed(tristate* t)
 {
-    enable_nodes(tree);
+    enable_nodes(t->tree);
     t->has_data = false;
 }
 
@@ -174,56 +189,138 @@ void tristate_get_corner_data(tristate* t, const Region r, float d[8])
     }
 }
 
-bool tristate_has_cached_zero_crossing(tristate* t, uint8_t v0, uint8_t v1)
+void eval_zero_crossings(Vec3f* v0, Vec3f* v1, unsigned count, tristate* t)
 {
-    return t->has_cached_zero_crossing[(v0 << 3) | v1];
-}
+    float p[count];
+    for (int i=0; i < count; ++i)
+        p[i] = 0.5;
 
-Vec3f tristate_cached_zero_crossing(tristate* t, uint8_t v0, uint8_t v1)
-{
-    return t->cached_zero_crossing[(v0 << 3) | v1];
-}
-
-Vec3f tristate_cache_zero_crossing(tristate* t, uint8_t v0, uint8_t v1, Vec3f v)
-{
-    t->cached_zero_crossing[(v0 << 3) | v1] = v;
-    t->cached_zero_crossing[(v1 << 3) | v0] = v;
-    t->has_cached_zero_crossing[(v0 << 3) | v1] = true;
-    t->has_cached_zero_crossing[(v1 << 3) | v0] = true;
-}
-
-void tristate_clear_zero_crossing_cache(tristate* t)
-{
-    for (int i=0; i < 64; i++)
-        t->has_cached_zero_crossing[i] = false;
-}
-
-Vec3f eval_zero_crossing(Vec3f v0, Vec3f v1, MathTree* tree)
-{
-    float p = 0.5;
     float step = 0.25;
+
+    Region dummy = (Region){
+        .X = t->x,
+        .Y = t->y,
+        .Z = t->z,
+        .voxels = count};
 
     for (int iteration=0; iteration < 4; ++iteration)
     {
-        const float r = eval_f(tree,
-            v0.x * (1 - p) + v1.x * p,
-            v0.y * (1 - p) + v1.y * p,
-            v0.z * (1 - p) + v1.z * p);
+        // Load new data into the x, y, z arrays.
+        for (int i=0; i < count; i++)
+        {
+            dummy.X[i] = v0[i].x * (1 - p[i]) + v1[i].x * p[i];
+            dummy.Y[i] = v0[i].y * (1 - p[i]) + v1[i].y * p[i];
+            dummy.Z[i] = v0[i].z * (1 - p[i]) + v1[i].z * p[i];
+        }
+        float* out = eval_r(t->tree, dummy);
 
-        if (r < 0)          p += step;
-        else if (r > 0)     p -= step;
-        else                break;
+        for (int i=0; i < count; i++)
+            if      (out[i] < 0)    p[i] += step;
+            else if (out[i] > 0)    p[i] -= step;
 
         step /= 2;
     }
-    return (Vec3f){v0.x * (1 - p) + v1.x * p,
-                   v0.y * (1 - p) + v1.y * p,
-                   v0.z * (1 - p) + v1.z * p};
+
+}
+
+// Flushes out a queue of interpolation commands
+void tristate_flush_queue(tristate* t)
+{
+    Vec3f low[MIN_VOLUME];
+    Vec3f high[MIN_VOLUME];
+
+    interpolate_command* list = t->queue;
+
+    unsigned count=0;
+    while (list)
+    {
+        if (list->cmd == INTERPOLATE)
+        {
+            low[count] = list->v0;
+            high[count] = list->v1;
+            count++;
+        }
+        list = list->next;
+    }
+
+    if (count)
+        eval_zero_crossings(low, high, count, t);
+
+    // Next, go through and actually load vertices
+    // (either directly or from the cache)
+    // and delete the linked list.
+    count = 0;
+    list = t->queue;
+    while (list)
+    {
+        if (list->cmd == INTERPOLATE)
+        {
+            tristate_push_vert(
+                    (Vec3f){t->x[count], t->y[count], t->z[count]}, t);
+            count++;
+        }
+        else if (list->cmd == CACHED)
+        {
+            unsigned c = list->cached;
+            tristate_push_vert((Vec3f){t->x[c], t->y[c], t->z[c]}, t);
+        }
+
+        interpolate_command* next = list->next;
+        free(list);
+        list = next;
+    }
+
+    t->queue = NULL;
+}
+
+// Push an END_OF_VOXEL command to the command queue.
+void tristate_end_voxel(tristate* t)
+{
+    interpolate_command* cmd = malloc(sizeof(interpolate_command));
+    (*cmd) = (interpolate_command){ .cmd=END_OF_VOXEL, .next=NULL };
+
+    interpolate_command** list = &(t->queue);
+    while (*list)
+        list = &((*list)->next);
+    *list = cmd;
+}
+
+// Schedule an interpolate calculation in the queue.
+void tristate_interpolate_between(tristate* t, Vec3f v0, Vec3f v1)
+{
+    interpolate_command* cmd = malloc(sizeof(interpolate_command));
+    *cmd = (interpolate_command){
+        .cmd=INTERPOLATE, .v0=v0, .v1=v1, .next=NULL};
+
+
+    // Walk through the list, looking for duplicates.
+    // If we find the same operation, then switch to a CACHED lookup instead.
+    unsigned count = 0;
+    interpolate_command** list = &(t->queue);
+    while (*list)
+    {
+        if ((*list)->cmd == INTERPOLATE)
+        {
+            if ((vec3f_eq(v0, (*list)->v0) && vec3f_eq(v1, (*list)->v1) ||
+                (vec3f_eq(v1, (*list)->v0) && vec3f_eq(v1, (*list)->v0))))
+            {
+                cmd->cmd = CACHED;
+                cmd->cached = count;
+            }
+            count++;
+        }
+        list = &((*list)->next);
+    }
+
+    (*list) = cmd;
+    if (cmd->cmd == INTERPOLATE && (++count) == MIN_VOLUME)
+        tristate_flush_queue(t);
 }
 
 
+
 void tristate_process_tet(const Region r, float* d, int tet,
-                          MathTree* tree, tristate* t)
+                          tristate* t)
 {
     // Find vertex positions for this tetrahedron
     uint8_t vertices[] = {0, 7, VERTEX_LOOP[tet], VERTEX_LOOP[tet+1]};
@@ -233,9 +330,6 @@ void tristate_process_tet(const Region r, float* d, int tet,
     uint8_t lookup = 0;
     for (int v=3; v>=0; --v)
         lookup = (lookup << 1) + (d[vertices[v]] < 0);
-
-    // Clear the cache of zero crossing locations
-    tristate_clear_zero_crossing_cache(t);
 
     // Iterate over (up to) two triangles in this tetrahedron
     for (int i=0; i < 2; ++i)
@@ -249,32 +343,25 @@ void tristate_process_tet(const Region r, float* d, int tet,
             const uint8_t v0 = vertices[EDGE_MAP[lookup][i][v][0]];
             const uint8_t v1 = vertices[EDGE_MAP[lookup][i][v][1]];
 
-            if (!tristate_has_cached_zero_crossing(t, v0, v1))
-            {
-                const Vec3f v = eval_zero_crossing(
+            tristate_interpolate_between(t,
                         (Vec3f){(v0 & 4) ? r.X[1] : r.X[0],
                                 (v0 & 2) ? r.Y[1] : r.Y[0],
                                 (v0 & 1) ? r.Z[1] : r.Z[0]},
                         (Vec3f){(v1 & 4) ? r.X[1] : r.X[0],
                                 (v1 & 2) ? r.Y[1] : r.Y[0],
-                                (v1 & 1) ? r.Z[1] : r.Z[0]},
-                        tree);
-                tristate_cache_zero_crossing(t, v0, v1, v);
-            }
-
-            tristate_push_vert(tristate_cached_zero_crossing(t, v0, v1), t);
+                                (v1 & 1) ? r.Z[1] : r.Z[0]});
         }
     }
 }
 
-void triangulate_region(tristate* t, MathTree* tree, const Region r)
+void triangulate_region(tristate* t, const Region r)
 {
     // If we can calculate all of the points in this region with a single
     // eval_r call, then do so.  This large chunk will be used in future
     // recursive calls to make things more efficient.
     bool loaded_data = !t->has_data;
     if (loaded_data)
-        tristate_load_packed(tree, t, r);
+        tristate_load_packed(t, r);
 
     // If we have greater than one voxel, subdivide and recurse.
     if (r.voxels > 1)
@@ -283,7 +370,7 @@ void triangulate_region(tristate* t, MathTree* tree, const Region r)
         const uint8_t split = octsect(r, octants);
         for (int i=0; i < 8; ++i)
             if (split & (1 << i))
-                triangulate_region(t, tree, octants[i]);
+                triangulate_region(t, octants[i]);
     }
     else
     {
@@ -294,15 +381,22 @@ void triangulate_region(tristate* t, MathTree* tree, const Region r)
 
         // Loop over the six tetrahedra that make up a voxel cell
         for (int tet=0; tet < 6; ++tet)
-            tristate_process_tet(r, d, tet, tree, t);
+            tristate_process_tet(r, d, tet, t);
     }
+
+    // Mark that a voxel has ended
+    // (which will eventually trigger decimation)
+    tristate_end_voxel(t);
 
     // If this stage of the recursion loaded data into the buffer,
     // clear the has_data flag (so that future stages will re-run
     // eval_r on their portion of the space) and re-enable disabled
     // nodes.
     if (loaded_data)
-        tristate_unload_packed(t, tree);
+    {
+        tristate_flush_queue(t);
+        tristate_unload_packed(t);
+    }
 }
 
 // Finds an array of vertices (as x,y,z float triplets).
@@ -311,10 +405,10 @@ void triangulate(MathTree* tree, const Region r,
                  float** const verts, unsigned* const count)
 {
     // Make a triangulation state struct.
-    tristate* t = tristate_new();
+    tristate* t = tristate_new(tree);
 
     // Top-level call to the recursive triangulation function.
-    triangulate_region(t, tree, r);
+    triangulate_region(t, r);
 
     // Copy data from tristate struct to output pointers.
     *verts = malloc(t->count * sizeof(float));
