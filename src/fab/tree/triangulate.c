@@ -113,6 +113,12 @@ void tristate_push_vert(float x, float y, float z, tristate* t)
 
 void tristate_load_packed(MathTree* tree, tristate* t, Region r)
 {
+    // Do a bit of interval arithmetic for tree pruning
+    eval_i(tree, (Interval){r.X[0], r.X[r.ni]},
+                 (Interval){r.Y[0], r.Y[r.nj]},
+                 (Interval){r.Z[0], r.Z[r.nk]});
+    disable_nodes(tree);
+
     // Only load the packed matrix if we have few enough voxels.
     const unsigned voxels = (r.ni+1) * (r.nj+1) * (r.nk+1);
     if (voxels >= MIN_VOLUME)
@@ -142,6 +148,12 @@ void tristate_load_packed(MathTree* tree, tristate* t, Region r)
     // Run eval_r and copy the data out
     memcpy(t->data, eval_r(tree, t->packed), voxels * sizeof(float));
     t->has_data = true;
+}
+
+void tristate_unload_packed(tristate* t, MathTree* tree)
+{
+    enable_nodes(tree);
+    t->has_data = false;
 }
 
 void tristate_get_corner_data(tristate* t, const Region r, float d[8])
@@ -380,9 +392,10 @@ void triangulate_region(tristate* t, MathTree* tree, const Region r)
 
     // If this stage of the recursion loaded data into the buffer,
     // clear the has_data flag (so that future stages will re-run
-    // eval_r on their portion of the space).
+    // eval_r on their portion of the space) and re-enable disabled
+    // nodes.
     if (loaded_data)
-        t->has_data = false;
+        tristate_unload_packed(t, tree);
 }
 
 // Finds an array of vertices (as x,y,z float triplets).
