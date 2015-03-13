@@ -2,12 +2,14 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#include <math.h>
 
 #include "triangulate.h"
 
 #include "tree/tree.h"
 #include "tree/eval.h"
 #include "util/constants.h"
+#include "util/vec3f.h"
 
 static const uint8_t VERTEX_LOOP[] = {6, 4, 5, 1, 3, 2, 6};
 
@@ -64,10 +66,15 @@ typedef struct {
     float* Y;
     float* Z;
 
-    // Buffers used in eval_zero_crossing
-    float* x;
-    float* y;
-    float* z;
+    // Buffers used in eval_zero_crossings
+    float* ex;
+    float* ey;
+    float* ez;
+
+    // Buffers used in evaluating normals
+    float* nx;
+    float* ny;
+    float* nz;
 
     // Queue of interpolation commands to be run soon
     interpolate_command* queue;
@@ -87,9 +94,12 @@ tristate* tristate_new(MathTree* tree)
         .X=malloc(sizeof(float)*MIN_VOLUME),
         .Y=malloc(sizeof(float)*MIN_VOLUME),
         .Z=malloc(sizeof(float)*MIN_VOLUME),
-        .x=malloc(sizeof(float)*MIN_VOLUME),
-        .y=malloc(sizeof(float)*MIN_VOLUME),
-        .z=malloc(sizeof(float)*MIN_VOLUME),
+        .ex=malloc(sizeof(float)*MIN_VOLUME),
+        .ey=malloc(sizeof(float)*MIN_VOLUME),
+        .ez=malloc(sizeof(float)*MIN_VOLUME),
+        .nx=malloc(sizeof(float)*MIN_VOLUME),
+        .ny=malloc(sizeof(float)*MIN_VOLUME),
+        .nz=malloc(sizeof(float)*MIN_VOLUME),
     };
     return t;
 }
@@ -100,13 +110,17 @@ void tristate_free(tristate* t)
     free(t->X);
     free(t->Y);
     free(t->Z);
-    free(t->x);
-    free(t->y);
-    free(t->z);
+    free(t->ex);
+    free(t->ey);
+    free(t->ez);
+    free(t->nx);
+    free(t->ny);
+    free(t->nz);
     free(t->data);
 }
 
-void tristate_push_vert(Vec3f v, tristate* t)
+// Loads a vertex into the tristate structure.
+void tristate_push_vert_(Vec3f v, tristate* t)
 {
     if (t->allocated == 0)
     {
@@ -122,6 +136,139 @@ void tristate_push_vert(Vec3f v, tristate* t)
     (t->verts)[t->count++] = v.x;
     (t->verts)[t->count++] = v.y;
     (t->verts)[t->count++] = v.z;
+}
+
+// Returns the normals of the most recent triangle pushed
+// to the tristate struct.
+void tristate_get_normals(tristate* t, Vec3f* normals)
+{
+    int c = t->count - 9;
+    Region dummy = (Region){
+        .X = t->nx,
+        .Y = t->ny,
+        .Z = t->nz,
+        .voxels = 12};
+
+    // Get a small value for epsilon by taking 1/10th the smallest edge length
+    // (this will be our sampling step for normal estimation).
+    const float len_a = sqrt(pow(t->verts[c] - t->verts[c+3], 2) +
+                             pow(t->verts[c+1] - t->verts[c+4], 2) +
+                             pow(t->verts[c+2] - t->verts[c+5], 2));
+    const float len_b = sqrt(pow(t->verts[c] - t->verts[c+6], 2) +
+                             pow(t->verts[c+1] - t->verts[c+7], 2) +
+                             pow(t->verts[c+2] - t->verts[c+8], 2));
+    const float len_c = sqrt(pow(t->verts[c+3] - t->verts[c+6], 2) +
+                             pow(t->verts[c+4] - t->verts[c+7], 2) +
+                             pow(t->verts[c+5] - t->verts[c+8], 2));
+    const float epsilon = fmin(len_a, fmin(len_b, len_c)) / 10.0f;
+
+    // Load small offset points to estimate normals.
+    for (int i=0; i < 3; ++i)
+    {
+        dummy.X[i*4]     = t->verts[c];
+        dummy.X[i*4 + 1] = t->verts[c] + epsilon;
+        dummy.X[i*4 + 2] = t->verts[c];
+        dummy.X[i*4 + 3] = t->verts[c];
+        c++;
+
+        dummy.Y[i*4]     = t->verts[c];
+        dummy.Y[i*4 + 1] = t->verts[c];
+        dummy.Y[i*4 + 2] = t->verts[c] + epsilon;
+        dummy.Y[i*4 + 3] = t->verts[c];
+        c++;
+
+        dummy.Z[i*4]     = t->verts[c];
+        dummy.Z[i*4 + 1] = t->verts[c];
+        dummy.Z[i*4 + 2] = t->verts[c];
+        dummy.Z[i*4 + 3] = t->verts[c] + epsilon;
+        c++;
+    }
+    float* out = eval_r(t->tree, dummy);
+
+    // Extract normals from the evaluated data.
+    for (int i=0; i < 3; ++i)
+    {
+        const float dx = out[i*4 + 1] - out[i*4];
+        const float dy = out[i*4 + 2] - out[i*4];
+        const float dz = out[i*4 + 3] - out[i*4];
+        const float len = sqrt(pow(dx, 2) + pow(dy, 2) + pow(dz, 2));
+        normals[i] = len == 0 ? (Vec3f){0,0,0} :
+            (Vec3f){.x = dx/len, .y = dy/len, .z = dz/len};
+    }
+}
+
+void tristate_check_feature(tristate* t)
+{
+    Vec3f normals[3];
+    tristate_get_normals(t, normals);
+
+    // If any of the normals could not be estimated, return immediately.
+    for (int i=0; i < 3; ++i)
+        if (normals[i].x == 0 && normals[i].y == 0 && normals[i].z == 0)
+            return;
+
+    const float ab = vec3f_dot(normals[0], normals[1]);
+    const float bc = vec3f_dot(normals[1], normals[2]);
+    const float ca = vec3f_dot(normals[2], normals[0]);
+
+    if (ab < 0.95 && bc < 0.95 && ca < 0.95)
+    {
+        printf("Got corner at position");
+        int c = t->count - 9;
+        for (int i=0; i < 3; i++)
+        {
+            printf("%.2f %.2f %.2f    ", t->verts[c], t->verts[c+1], t->verts[c+2]);
+            c += 3;
+        }
+        printf("\n");
+        // Handle corner feature
+    }
+    else if (ab >= 0.95 && bc < 0.95 && ca < 0.95)
+    {
+        printf("Got AB, C edge at position");
+        int c = t->count - 9;
+        for (int i=0; i < 3; i++)
+        {
+            printf("%.2f %.2f %.2f    ", t->verts[c], t->verts[c+1], t->verts[c+2]);
+            c += 3;
+        }
+        printf("\n");
+        // Handle edge feature with ab, c
+    }
+    else if (ab < 0.95 && bc >= 0.95 && ca < 0.95)
+    {
+        printf("Got BC, A edge at position");
+        int c = t->count - 9;
+        for (int i=0; i < 3; i++)
+        {
+            printf("%.2f %.2f %.2f    ", t->verts[c], t->verts[c+1], t->verts[c+2]);
+            c += 3;
+        }
+        printf("\n");
+        // Handle edge feature with bc, a
+    }
+    else if (ab < 0.95 && bc < 0.95 && ca >= 0.95)
+    {
+        printf("Got B, CA edge at position");
+        int c = t->count - 9;
+        for (int i=0; i < 3; i++)
+        {
+            printf("%.2f %.2f %.2f    ", t->verts[c], t->verts[c+1], t->verts[c+2]);
+            c += 3;
+        }
+        printf("\n");
+        // Handle edge feature with ca, b
+    }
+}
+
+// Loads a vertex into the tristate structure.
+// If this vertex completes a triangle, check for features.
+void tristate_push_vert(Vec3f v, tristate* t)
+{
+    tristate_push_vert_(v, t);
+
+    if (t->count % 9 == 0)
+        tristate_check_feature(t);
 }
 
 // Evaluates a region voxel-by-voxel, storing the output in the data
@@ -192,21 +339,21 @@ void tristate_get_corner_data(tristate* t, const Region r, float d[8])
 void eval_zero_crossings(Vec3f* v0, Vec3f* v1, unsigned count, tristate* t)
 {
     float p[count];
-    for (int i=0; i < count; ++i)
+    for (unsigned i=0; i < count; ++i)
         p[i] = 0.5;
 
     float step = 0.25;
 
     Region dummy = (Region){
-        .X = t->x,
-        .Y = t->y,
-        .Z = t->z,
+        .X = t->ex,
+        .Y = t->ey,
+        .Z = t->ez,
         .voxels = count};
 
     for (int iteration=0; iteration < 8; ++iteration)
     {
         // Load new data into the x, y, z arrays.
-        for (int i=0; i < count; i++)
+        for (unsigned i=0; i < count; i++)
         {
             dummy.X[i] = v0[i].x * (1 - p[i]) + v1[i].x * p[i];
             dummy.Y[i] = v0[i].y * (1 - p[i]) + v1[i].y * p[i];
@@ -214,7 +361,7 @@ void eval_zero_crossings(Vec3f* v0, Vec3f* v1, unsigned count, tristate* t)
         }
         float* out = eval_r(t->tree, dummy);
 
-        for (int i=0; i < count; i++)
+        for (unsigned i=0; i < count; i++)
             if      (out[i] < 0)    p[i] += step;
             else if (out[i] > 0)    p[i] -= step;
 
@@ -231,6 +378,8 @@ void tristate_flush_queue(tristate* t)
 
     interpolate_command* list = t->queue;
 
+    // Go through the list, saving a list of vertex pairs on which
+    // interpolation should be run into low and high.
     unsigned count=0;
     while (list)
     {
@@ -256,13 +405,13 @@ void tristate_flush_queue(tristate* t)
         if (list->cmd == INTERPOLATE)
         {
             tristate_push_vert(
-                    (Vec3f){t->x[count], t->y[count], t->z[count]}, t);
+                    (Vec3f){t->ex[count], t->ey[count], t->ez[count]}, t);
             count++;
         }
         else if (list->cmd == CACHED)
         {
             unsigned c = list->cached;
-            tristate_push_vert((Vec3f){t->x[c], t->y[c], t->z[c]}, t);
+            tristate_push_vert((Vec3f){t->ex[c], t->ey[c], t->ez[c]}, t);
         }
 
         interpolate_command* next = list->next;
@@ -301,8 +450,8 @@ void tristate_interpolate_between(tristate* t, Vec3f v0, Vec3f v1)
     {
         if ((*list)->cmd == INTERPOLATE)
         {
-            if ((vec3f_eq(v0, (*list)->v0) && vec3f_eq(v1, (*list)->v1) ||
-                (vec3f_eq(v1, (*list)->v0) && vec3f_eq(v1, (*list)->v0))))
+            if ((vec3f_eq(v0, (*list)->v0) && vec3f_eq(v1, (*list)->v1)) ||
+                (vec3f_eq(v1, (*list)->v0) && vec3f_eq(v1, (*list)->v0)))
             {
                 cmd->cmd = CACHED;
                 cmd->cached = count;
