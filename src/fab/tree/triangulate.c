@@ -203,7 +203,7 @@ void eval_zero_crossings(Vec3f* v0, Vec3f* v1, unsigned count, tristate* t)
         .Z = t->z,
         .voxels = count};
 
-    for (int iteration=0; iteration < 4; ++iteration)
+    for (int iteration=0; iteration < 8; ++iteration)
     {
         // Load new data into the x, y, z arrays.
         for (int i=0; i < count; i++)
