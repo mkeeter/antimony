@@ -653,6 +653,7 @@ void App::newNode(Node* n)
 
 void App::makeUI(NodeRoot* r)
 {
+    QList<Node*> nodes;
     QList<Datum*> datums;
     QMap<Datum*, QList<Link*>> links;
 
@@ -673,7 +674,8 @@ void App::makeUI(NodeRoot* r)
                 k->setParent(NULL);
             }
         }
-        newNode(n);
+        graph_scene->makeUIfor(n);
+        nodes.append(n);
     }
 
     for (auto i = links.begin(); i != links.end(); ++i)
@@ -691,6 +693,13 @@ void App::makeUI(NodeRoot* r)
     for (auto d : datums)
         if (!d->getValid())
             d->update();
+
+    // Finally, make render workers for all of the new nodes.
+    // This needs to happen after connections are made; otherwise
+    // we end up with a ton of RenderWorkers that all start rendering
+    // at once (and eat up all of the threads).
+    for (auto n : nodes)
+        view_scene->makeRenderWorkersFor(n);
 }
 
 Connection* App::newLink(Link* link)
