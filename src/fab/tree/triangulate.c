@@ -197,6 +197,41 @@ void tristate_get_normals(tristate* t, Vec3f* normals)
     }
 }
 
+void tristate_process_feature(tristate* t)
+{
+    // Get triangle vertices
+    const float xa = t->verts[t->count - 9];
+    const float ya = t->verts[t->count - 8];
+    const float za = t->verts[t->count - 7];
+    const float xb = t->verts[t->count - 6];
+    const float yb = t->verts[t->count - 5];
+    const float zb = t->verts[t->count - 4];
+    const float xc = t->verts[t->count - 3];
+    const float yc = t->verts[t->count - 2];
+    const float zc = t->verts[t->count - 1];
+
+    // Pick out a new center point
+    const float xd = (xa + xb + xc) / 3;
+    const float yd = (ya + yb + yc) / 3;
+    const float zd = (za + zb + zc) / 3;
+
+    t->count -= 9;
+    tristate_push_vert_((Vec3f){xa, ya, za}, t);
+    tristate_push_vert_((Vec3f){xb, yb, zb}, t);
+    tristate_push_vert_((Vec3f){xd, yd, zd}, t);
+    // tristate_mark_swappable
+
+    tristate_push_vert_((Vec3f){xb, yb, zb}, t);
+    tristate_push_vert_((Vec3f){xc, yc, zc}, t);
+    tristate_push_vert_((Vec3f){xd, yd, zd}, t);
+    // tristate_mark_swappable
+
+    tristate_push_vert_((Vec3f){xc, yc, zc}, t);
+    tristate_push_vert_((Vec3f){xa, ya, za}, t);
+    tristate_push_vert_((Vec3f){xd, yd, zd}, t);
+    // tristate_mark_swappable
+}
+
 void tristate_check_feature(tristate* t)
 {
     Vec3f normals[3];
@@ -213,51 +248,19 @@ void tristate_check_feature(tristate* t)
 
     if (ab < 0.95 && bc < 0.95 && ca < 0.95)
     {
-        printf("Got corner at position");
-        int c = t->count - 9;
-        for (int i=0; i < 3; i++)
-        {
-            printf("%.2f %.2f %.2f    ", t->verts[c], t->verts[c+1], t->verts[c+2]);
-            c += 3;
-        }
-        printf("\n");
-        // Handle corner feature
+        tristate_process_feature(t);
     }
     else if (ab >= 0.95 && bc < 0.95 && ca < 0.95)
     {
-        printf("Got AB, C edge at position");
-        int c = t->count - 9;
-        for (int i=0; i < 3; i++)
-        {
-            printf("%.2f %.2f %.2f    ", t->verts[c], t->verts[c+1], t->verts[c+2]);
-            c += 3;
-        }
-        printf("\n");
-        // Handle edge feature with ab, c
+        tristate_process_feature(t);
     }
     else if (ab < 0.95 && bc >= 0.95 && ca < 0.95)
     {
-        printf("Got BC, A edge at position");
-        int c = t->count - 9;
-        for (int i=0; i < 3; i++)
-        {
-            printf("%.2f %.2f %.2f    ", t->verts[c], t->verts[c+1], t->verts[c+2]);
-            c += 3;
-        }
-        printf("\n");
-        // Handle edge feature with bc, a
+        tristate_process_feature(t);
     }
     else if (ab < 0.95 && bc < 0.95 && ca >= 0.95)
     {
-        printf("Got B, CA edge at position");
-        int c = t->count - 9;
-        for (int i=0; i < 3; i++)
-        {
-            printf("%.2f %.2f %.2f    ", t->verts[c], t->verts[c+1], t->verts[c+2]);
-            c += 3;
-        }
-        printf("\n");
-        // Handle edge feature with ca, b
+        tristate_process_feature(t);
     }
 }
 
