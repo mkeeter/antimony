@@ -38,6 +38,8 @@ static const int EDGE_MAP[16][2][3][2] = {
     {{{-1,-1}, {-1,-1}, {-1,-1}}, {{-1,-1}, {-1,-1}, {-1,-1}}}, // 3210
 };
 
+////////////////////////////////////////////////////////////////////////////////
+
 // Node in a linked list of interpolations to run
 typedef struct interpolate_command_ {
     enum {INTERPOLATE, CACHED, END_OF_VOXEL} cmd;
@@ -46,6 +48,16 @@ typedef struct interpolate_command_ {
     unsigned cached;
     struct interpolate_command_* next;
 } interpolate_command;
+
+// Swappable edge linked list.
+typedef struct swappable_edge_ {
+    Vec3f v0;
+    Vec3f v1;
+    unsigned index;
+    struct swappable_edge_* next;
+} swappable_edge;
+
+////////////////////////////////////////////////////////////////////////////////
 
 typedef struct {
     // Triangle buffer
@@ -78,6 +90,9 @@ typedef struct {
 
     // Queue of interpolation commands to be run soon
     interpolate_command* queue;
+
+    // List of swappable edges
+    swappable_edge* swappable;
 } tristate;
 
 
@@ -100,6 +115,8 @@ tristate* tristate_new(MathTree* tree)
         .nx=malloc(sizeof(float)*MIN_VOLUME),
         .ny=malloc(sizeof(float)*MIN_VOLUME),
         .nz=malloc(sizeof(float)*MIN_VOLUME),
+        .queue=NULL,
+        .swappable=NULL,
     };
     return t;
 }
@@ -197,6 +214,48 @@ void tristate_get_normals(tristate* t, Vec3f* normals)
     }
 }
 
+// Mark that the first edge of the most recent triangle is swappable
+// (as part of feature detection / extraction).
+void tristate_mark_swappable(tristate* t)
+{
+    const Vec3f v0 = (Vec3f){t->verts[t->count-9],
+                             t->verts[t->count-8],
+                             t->verts[t->count-7]};
+    const Vec3f v1 = (Vec3f){t->verts[t->count-6],
+                             t->verts[t->count-5],
+                             t->verts[t->count-4]};
+
+    swappable_edge** s = &(t->swappable);
+    while (*s)
+    {
+        printf("%.2f, %.2f, %.2f, %.2f\n", v0, v1, (*s)->v0, (*s)->v1);
+        // If we find a matched pair for this swappable edge,
+        // - Perform the swap
+        // - Cut the other edge out of the swappable list
+        // - Return immediately
+        if (vec3f_eq((*s)->v0, v1) && vec3f_eq((*s)->v1, v0))
+        {
+            const unsigned a = (*s)->index;
+            const unsigned b = t->count - 9;
+
+            for (int i=0; i < 3; ++i)
+            {
+                t->verts[a + 3 + i] = t->verts[b + 6 + i];
+                t->verts[b + 3 + i] = t->verts[a + 6 + i];
+            }
+
+            // Cut this node out of the list
+            swappable_edge* tmp = *s;
+            *s = (*s)->next;
+            free(tmp);
+            return;
+        }
+        s = &(*s)->next;
+    }
+    *s = (swappable_edge*)malloc(sizeof(swappable_edge));
+    **s = (swappable_edge){ .v0=v0, .v1=v1, .index=t->count-9 };
+}
+
 void tristate_process_feature(tristate* t)
 {
     // Get triangle vertices
@@ -219,17 +278,17 @@ void tristate_process_feature(tristate* t)
     tristate_push_vert_((Vec3f){xa, ya, za}, t);
     tristate_push_vert_((Vec3f){xb, yb, zb}, t);
     tristate_push_vert_((Vec3f){xd, yd, zd}, t);
-    // tristate_mark_swappable
+    tristate_mark_swappable(t);
 
     tristate_push_vert_((Vec3f){xb, yb, zb}, t);
     tristate_push_vert_((Vec3f){xc, yc, zc}, t);
     tristate_push_vert_((Vec3f){xd, yd, zd}, t);
-    // tristate_mark_swappable
+    tristate_mark_swappable(t);
 
     tristate_push_vert_((Vec3f){xc, yc, zc}, t);
     tristate_push_vert_((Vec3f){xa, ya, za}, t);
     tristate_push_vert_((Vec3f){xd, yd, zd}, t);
-    // tristate_mark_swappable
+    tristate_mark_swappable(t);
 }
 
 void tristate_check_feature(tristate* t)
