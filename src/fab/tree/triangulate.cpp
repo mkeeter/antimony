@@ -38,169 +38,73 @@ static const int EDGE_MAP[16][2][3][2] = {
     {{{-1,-1}, {-1,-1}, {-1,-1}}, {{-1,-1}, {-1,-1}, {-1,-1}}}, // 3210
 };
 
-////////////////////////////////////////////////////////////////////////////////
 
-// Node in a linked list of interpolations to run
-typedef struct interpolate_command_ {
-    enum {INTERPOLATE, CACHED, END_OF_VOXEL} cmd;
-    Vec3f v0;
-    Vec3f v1;
-    unsigned cached;
-    struct interpolate_command_* next;
-} interpolate_command;
-
-// Swappable edge linked list.
-typedef struct swappable_edge_ {
-    Vec3f v0;
-    Vec3f v1;
-    unsigned index;
-    struct swappable_edge_* next;
-} swappable_edge;
-
-////////////////////////////////////////////////////////////////////////////////
-
-typedef struct {
-    // Triangle buffer
-    float* verts;
-    unsigned count;
-    unsigned allocated;
-
-    // Cached region and data from an eval_r call
-    Region packed;
-    float* data;
-    bool has_data;
-
-    // MathTree that we're evaluating
-    MathTree* tree;
-
-    // Buffers used for eval_r
-    float* X;
-    float* Y;
-    float* Z;
-
-    // Buffers used in eval_zero_crossings
-    float* ex;
-    float* ey;
-    float* ez;
-
-    // Buffers used in evaluating normals
-    float* nx;
-    float* ny;
-    float* nz;
-
-    // Queue of interpolation commands to be run soon
-    interpolate_command* queue;
-
-    // List of swappable edges
-    swappable_edge* swappable;
-} tristate;
-
-
-tristate* tristate_new(MathTree* tree)
+Mesher::Mesher(MathTree* tree)
+    : has_data(false), tree(tree),
+      X(new float[MIN_VOLUME]),
+      Y(new float[MIN_VOLUME]),
+      Z(new float[MIN_VOLUME]),
+      ex(new float[MIN_VOLUME]),
+      ey(new float[MIN_VOLUME]),
+      ez(new float[MIN_VOLUME]),
+      nx(new float[MIN_VOLUME]),
+      ny(new float[MIN_VOLUME]),
+      nz(new float[MIN_VOLUME])
 {
-    tristate* t = (tristate*)malloc(sizeof(tristate));
-    *t = (tristate){
-        .verts=NULL,
-        .count=0,
-        .allocated=0,
-        .data=malloc(sizeof(float)*MIN_VOLUME),
-        .has_data=false,
-        .tree=tree,
-        .X=malloc(sizeof(float)*MIN_VOLUME),
-        .Y=malloc(sizeof(float)*MIN_VOLUME),
-        .Z=malloc(sizeof(float)*MIN_VOLUME),
-        .ex=malloc(sizeof(float)*MIN_VOLUME),
-        .ey=malloc(sizeof(float)*MIN_VOLUME),
-        .ez=malloc(sizeof(float)*MIN_VOLUME),
-        .nx=malloc(sizeof(float)*MIN_VOLUME),
-        .ny=malloc(sizeof(float)*MIN_VOLUME),
-        .nz=malloc(sizeof(float)*MIN_VOLUME),
-        .queue=NULL,
-        .swappable=NULL,
-    };
-    return t;
+    // Nothing to do here
 }
 
-void tristate_free(tristate* t)
+Mesher::~Mesher()
 {
-    free(t->verts);
-    free(t->X);
-    free(t->Y);
-    free(t->Z);
-    free(t->ex);
-    free(t->ey);
-    free(t->ez);
-    free(t->nx);
-    free(t->ny);
-    free(t->nz);
-    free(t->data);
+    for (auto ptr : {X, Y, Z, ex, ey, ez, nx, ny, nz})
+        delete [] ptr;
 }
 
-// Loads a vertex into the tristate structure.
-void tristate_push_vert_(Vec3f v, tristate* t)
-{
-    if (t->allocated == 0)
-    {
-        t->allocated = 3;
-        t->verts = malloc(t->allocated * sizeof(float));
-    }
-    else if (t->count + 3 >= t->allocated)
-    {
-        t->allocated *= 2;
-        t->verts = realloc(t->verts, sizeof(float)*(t->allocated));
-    }
-
-    (t->verts)[t->count++] = v.x;
-    (t->verts)[t->count++] = v.y;
-    (t->verts)[t->count++] = v.z;
-}
 
 // Returns the normals of the most recent triangle pushed
 // to the tristate struct.
-void tristate_get_normals(tristate* t, Vec3f* normals)
+void Mesher::get_normals(Vec3f* normals)
 {
-    int c = t->count - 9;
+   int c = verts.size()- 9;
     Region dummy = (Region){
-        .X = t->nx,
-        .Y = t->ny,
-        .Z = t->nz,
+        .X = nx, .Y = ny, .Z = nz,
         .voxels = 12};
 
     // Get a small value for epsilon by taking 1/10th the smallest edge length
     // (this will be our sampling step for normal estimation).
-    const float len_a = sqrt(pow(t->verts[c] - t->verts[c+3], 2) +
-                             pow(t->verts[c+1] - t->verts[c+4], 2) +
-                             pow(t->verts[c+2] - t->verts[c+5], 2));
-    const float len_b = sqrt(pow(t->verts[c] - t->verts[c+6], 2) +
-                             pow(t->verts[c+1] - t->verts[c+7], 2) +
-                             pow(t->verts[c+2] - t->verts[c+8], 2));
-    const float len_c = sqrt(pow(t->verts[c+3] - t->verts[c+6], 2) +
-                             pow(t->verts[c+4] - t->verts[c+7], 2) +
-                             pow(t->verts[c+5] - t->verts[c+8], 2));
+    const float len_a = sqrt(pow(verts[c] - verts[c+3], 2) +
+                             pow(verts[c+1] - verts[c+4], 2) +
+                             pow(verts[c+2] - verts[c+5], 2));
+    const float len_b = sqrt(pow(verts[c] - verts[c+6], 2) +
+                             pow(verts[c+1] - verts[c+7], 2) +
+                             pow(verts[c+2] - verts[c+8], 2));
+    const float len_c = sqrt(pow(verts[c+3] - verts[c+6], 2) +
+                             pow(verts[c+4] - verts[c+7], 2) +
+                             pow(verts[c+5] - verts[c+8], 2));
     const float epsilon = fmin(len_a, fmin(len_b, len_c)) / 10.0f;
 
     // Load small offset points to estimate normals.
     for (int i=0; i < 3; ++i)
     {
-        dummy.X[i*4]     = t->verts[c];
-        dummy.X[i*4 + 1] = t->verts[c] + epsilon;
-        dummy.X[i*4 + 2] = t->verts[c];
-        dummy.X[i*4 + 3] = t->verts[c];
+        dummy.X[i*4]     = verts[c];
+        dummy.X[i*4 + 1] = verts[c] + epsilon;
+        dummy.X[i*4 + 2] = verts[c];
+        dummy.X[i*4 + 3] = verts[c];
         c++;
 
-        dummy.Y[i*4]     = t->verts[c];
-        dummy.Y[i*4 + 1] = t->verts[c];
-        dummy.Y[i*4 + 2] = t->verts[c] + epsilon;
-        dummy.Y[i*4 + 3] = t->verts[c];
+        dummy.Y[i*4]     = verts[c];
+        dummy.Y[i*4 + 1] = verts[c];
+        dummy.Y[i*4 + 2] = verts[c] + epsilon;
+        dummy.Y[i*4 + 3] = verts[c];
         c++;
 
-        dummy.Z[i*4]     = t->verts[c];
-        dummy.Z[i*4 + 1] = t->verts[c];
-        dummy.Z[i*4 + 2] = t->verts[c];
-        dummy.Z[i*4 + 3] = t->verts[c] + epsilon;
+        dummy.Z[i*4]     = verts[c];
+        dummy.Z[i*4 + 1] = verts[c];
+        dummy.Z[i*4 + 2] = verts[c];
+        dummy.Z[i*4 + 3] = verts[c] + epsilon;
         c++;
     }
-    float* out = eval_r(t->tree, dummy);
+    float* out = eval_r(tree, dummy);
 
     // Extract normals from the evaluated data.
     for (int i=0; i < 3; ++i)
@@ -214,6 +118,7 @@ void tristate_get_normals(tristate* t, Vec3f* normals)
     }
 }
 
+/*
 // Mark that the first edge of the most recent triangle is swappable
 // (as part of feature detection / extraction).
 void tristate_mark_swappable(tristate* t)
@@ -228,7 +133,6 @@ void tristate_mark_swappable(tristate* t)
     swappable_edge** s = &(t->swappable);
     while (*s)
     {
-        printf("%.2f, %.2f, %.2f, %.2f\n", v0, v1, (*s)->v0, (*s)->v1);
         // If we find a matched pair for this swappable edge,
         // - Perform the swap
         // - Cut the other edge out of the swappable list
@@ -255,46 +159,50 @@ void tristate_mark_swappable(tristate* t)
     *s = (swappable_edge*)malloc(sizeof(swappable_edge));
     **s = (swappable_edge){ .v0=v0, .v1=v1, .index=t->count-9 };
 }
+*/
 
-void tristate_process_feature(tristate* t)
+void Mesher::process_feature()
 {
     // Get triangle vertices
-    const float xa = t->verts[t->count - 9];
-    const float ya = t->verts[t->count - 8];
-    const float za = t->verts[t->count - 7];
-    const float xb = t->verts[t->count - 6];
-    const float yb = t->verts[t->count - 5];
-    const float zb = t->verts[t->count - 4];
-    const float xc = t->verts[t->count - 3];
-    const float yc = t->verts[t->count - 2];
-    const float zc = t->verts[t->count - 1];
+    unsigned c = verts.size();
+    const float xa = verts[c - 9];
+    const float ya = verts[c - 8];
+    const float za = verts[c - 7];
+    const float xb = verts[c - 6];
+    const float yb = verts[c - 5];
+    const float zb = verts[c - 4];
+    const float xc = verts[c - 3];
+    const float yc = verts[c - 2];
+    const float zc = verts[c - 1];
 
     // Pick out a new center point
     const float xd = (xa + xb + xc) / 3;
     const float yd = (ya + yb + yc) / 3;
     const float zd = (za + zb + zc) / 3;
 
-    t->count -= 9;
-    tristate_push_vert_((Vec3f){xa, ya, za}, t);
-    tristate_push_vert_((Vec3f){xb, yb, zb}, t);
-    tristate_push_vert_((Vec3f){xd, yd, zd}, t);
-    tristate_mark_swappable(t);
+    for (int i=0; i < 8; ++i)
+        verts.pop_back();
 
-    tristate_push_vert_((Vec3f){xb, yb, zb}, t);
-    tristate_push_vert_((Vec3f){xc, yc, zc}, t);
-    tristate_push_vert_((Vec3f){xd, yd, zd}, t);
-    tristate_mark_swappable(t);
+    verts.push_back((Vec3f){xa, ya, za});
+    verts.push_back((Vec3f){xb, yb, zb});
+    verts.push_back((Vec3f){xd, yd, zd});
+    //tristate_mark_swappable(t);
 
-    tristate_push_vert_((Vec3f){xc, yc, zc}, t);
-    tristate_push_vert_((Vec3f){xa, ya, za}, t);
-    tristate_push_vert_((Vec3f){xd, yd, zd}, t);
-    tristate_mark_swappable(t);
+    verts.push_back((Vec3f){xb, yb, zb});
+    verts.push_back((Vec3f){xc, yc, zc});
+    verts.push_back((Vec3f){xd, yd, zd});
+    //tristate_mark_swappable(t);
+
+    verts.push_back((Vec3f){xc, yc, zc});
+    verts.push_back((Vec3f){xa, ya, za});
+    verts.push_back((Vec3f){xd, yd, zd});
+    //tristate_mark_swappable(t);
 }
 
-void tristate_check_feature(tristate* t)
+void Mesher::check_feature()
 {
     Vec3f normals[3];
-    tristate_get_normals(t, normals);
+    get_normals(normals);
 
     // If any of the normals could not be estimated, return immediately.
     for (int i=0; i < 3; ++i)
@@ -307,41 +215,41 @@ void tristate_check_feature(tristate* t)
 
     if (ab < 0.95 && bc < 0.95 && ca < 0.95)
     {
-        tristate_process_feature(t);
+        process_feature();
     }
     else if (ab >= 0.95 && bc < 0.95 && ca < 0.95)
     {
-        tristate_process_feature(t);
+        process_feature();
     }
     else if (ab < 0.95 && bc >= 0.95 && ca < 0.95)
     {
-        tristate_process_feature(t);
+        process_feature();
     }
     else if (ab < 0.95 && bc < 0.95 && ca >= 0.95)
     {
-        tristate_process_feature(t);
+        process_feature();
     }
 }
 
-// Loads a vertex into the tristate structure.
+// Loads a vertex into the vertex list.
 // If this vertex completes a triangle, check for features.
-void tristate_push_vert(Vec3f v, tristate* t)
+void Mesher::push_vert(const Vec3f& v)
 {
-    tristate_push_vert_(v, t);
+    verts.push_back(v);
 
-    if (t->count % 9 == 0)
-        tristate_check_feature(t);
+    if (verts.size() % 9 == 0)
+        check_feature();
 }
 
 // Evaluates a region voxel-by-voxel, storing the output in the data
 // member of the tristate struct.
-void tristate_load_packed(tristate* t, Region r)
+void Mesher::load_packed(const Region& r)
 {
-    // Do a bit of interval arithmetic for tree pruning
-    eval_i(t->tree, (Interval){r.X[0], r.X[r.ni]},
-                    (Interval){r.Y[0], r.Y[r.nj]},
-                    (Interval){r.Z[0], r.Z[r.nk]});
-    disable_nodes(t->tree);
+    // Do a round of interval evaluation for tree pruning
+    eval_i(tree, (Interval){r.X[0], r.X[r.ni]},
+                 (Interval){r.Y[0], r.Y[r.nj]},
+                 (Interval){r.Z[0], r.Z[r.nk]});
+    disable_nodes(tree);
 
     // Only load the packed matrix if we have few enough voxels.
     const unsigned voxels = (r.ni+1) * (r.nj+1) * (r.nk+1);
@@ -354,9 +262,9 @@ void tristate_load_packed(tristate* t, Region r)
     for (unsigned k=0; k <= r.nk; ++k) {
         for (unsigned j=0; j <= r.nj; ++j) {
             for (unsigned i=0; i <= r.ni; ++i) {
-                t->X[q] = r.X[i];
-                t->Y[q] = r.Y[j];
-                t->Z[q] = r.Z[k];
+                X[q] = r.X[i];
+                Y[q] = r.Y[j];
+                Z[q] = r.Z[k];
                 q++;
             }
         }
@@ -364,23 +272,23 @@ void tristate_load_packed(tristate* t, Region r)
 
     // Make a dummy region that has the newly-flattened point arrays as the
     // X, Y, Z coordinate data arrays (so that we can run eval_r on it).
-    t->packed = (Region) {
+    packed = (Region) {
         .imin=r.imin, .jmin=r.jmin, .kmin=r.kmin,
         .ni=r.ni, .nj=r.nj, .nk=r.nk,
-        .X=t->X, .Y=t->Y, .Z=t->Z, .voxels=voxels};
+        .X=X, .Y=Y, .Z=Z, .voxels=voxels};
 
     // Run eval_r and copy the data out
-    memcpy(t->data, eval_r(t->tree, t->packed), voxels * sizeof(float));
-    t->has_data = true;
+    memcpy(data, eval_r(tree, packed), voxels * sizeof(float));
+    has_data = true;
 }
 
-void tristate_unload_packed(tristate* t)
+void Mesher::unload_packed()
 {
-    enable_nodes(t->tree);
-    t->has_data = false;
+    enable_nodes(tree);
+    has_data = false;
 }
 
-void tristate_get_corner_data(tristate* t, const Region r, float d[8])
+void Mesher::get_corner_data(const Region& r, float d[8])
 {
     // Populates an 8-element array with the function evaluation
     // results from the corner of a single-voxel region.
@@ -388,17 +296,17 @@ void tristate_get_corner_data(tristate* t, const Region r, float d[8])
     {
         // Figure out where this bit of data lives in the larger eval_r array.
         const unsigned index =
-            (r.imin - t->packed.imin + ((i & 4) ? r.ni : 0)) +
-            (r.jmin - t->packed.jmin + ((i & 2) ? r.nj : 0))
-                * (t->packed.ni+1) +
-            (r.kmin - t->packed.kmin + ((i & 1) ? r.nk : 0))
-                * (t->packed.ni+1) * (t->packed.nj+1);
+            (r.imin - packed.imin + ((i & 4) ? r.ni : 0)) +
+            (r.jmin - packed.jmin + ((i & 2) ? r.nj : 0))
+                * (packed.ni+1) +
+            (r.kmin - packed.kmin + ((i & 1) ? r.nk : 0))
+                * (packed.ni+1) * (packed.nj+1);
 
-        d[i] = t->data[index];
+        d[i] = data[index];
     }
 }
 
-void eval_zero_crossings(Vec3f* v0, Vec3f* v1, unsigned count, tristate* t)
+void Mesher::eval_zero_crossings(Vec3f* v0, Vec3f* v1, unsigned count)
 {
     float p[count];
     for (unsigned i=0; i < count; ++i)
@@ -407,9 +315,9 @@ void eval_zero_crossings(Vec3f* v0, Vec3f* v1, unsigned count, tristate* t)
     float step = 0.25;
 
     Region dummy = (Region){
-        .X = t->ex,
-        .Y = t->ey,
-        .Z = t->ez,
+        .X = ex,
+        .Y = ey,
+        .Z = ez,
         .voxels = count};
 
     for (int iteration=0; iteration < 8; ++iteration)
@@ -421,7 +329,7 @@ void eval_zero_crossings(Vec3f* v0, Vec3f* v1, unsigned count, tristate* t)
             dummy.Y[i] = v0[i].y * (1 - p[i]) + v1[i].y * p[i];
             dummy.Z[i] = v0[i].z * (1 - p[i]) + v1[i].z * p[i];
         }
-        float* out = eval_r(t->tree, dummy);
+        float* out = eval_r(tree, dummy);
 
         for (unsigned i=0; i < count; i++)
             if      (out[i] < 0)    p[i] += step;
@@ -433,105 +341,84 @@ void eval_zero_crossings(Vec3f* v0, Vec3f* v1, unsigned count, tristate* t)
 }
 
 // Flushes out a queue of interpolation commands
-void tristate_flush_queue(tristate* t)
+void Mesher::flush_queue()
 {
     Vec3f low[MIN_VOLUME];
     Vec3f high[MIN_VOLUME];
 
-    interpolate_command* list = t->queue;
-
     // Go through the list, saving a list of vertex pairs on which
     // interpolation should be run into low and high.
     unsigned count=0;
-    while (list)
+    for (auto c : queue)
     {
-        if (list->cmd == INTERPOLATE)
+        if (c.cmd == INTERPOLATE)
         {
-            low[count] = list->v0;
-            high[count] = list->v1;
+            low[count] = c.v0;
+            high[count] = c.v1;
             count++;
         }
-        list = list->next;
     }
 
     if (count)
-        eval_zero_crossings(low, high, count, t);
+        eval_zero_crossings(low, high, count);
 
     // Next, go through and actually load vertices
     // (either directly or from the cache)
-    // and delete the linked list.
     count = 0;
-    list = t->queue;
-    while (list)
+    for (auto c : queue)
     {
-        if (list->cmd == INTERPOLATE)
+        if (c->cmd == InterpolateCommand::INTERPOLATE)
         {
-            tristate_push_vert(
-                    (Vec3f){t->ex[count], t->ey[count], t->ez[count]}, t);
+            push_vert((Vec3f){ex[count], ey[count], ez[count]});
             count++;
         }
-        else if (list->cmd == CACHED)
+        else if (c->cmd == InterpolateCommand::CACHED)
         {
-            unsigned c = list->cached;
-            tristate_push_vert((Vec3f){t->ex[c], t->ey[c], t->ez[c]}, t);
+            unsigned c = c->cached;
+            push_vert((Vec3f){ex[c], ey[c], ez[c]});
         }
-
-        interpolate_command* next = list->next;
-        free(list);
-        list = next;
     }
-
-    t->queue = NULL;
+    queue.clear();
 }
 
 // Push an END_OF_VOXEL command to the command queue.
-void tristate_end_voxel(tristate* t)
+void Mesher::end_voxel()
 {
-    interpolate_command* cmd = malloc(sizeof(interpolate_command));
-    (*cmd) = (interpolate_command){ .cmd=END_OF_VOXEL, .next=NULL };
-
-    interpolate_command** list = &(t->queue);
-    while (*list)
-        list = &((*list)->next);
-    *list = cmd;
+    queue.push_back((InterpolateCommand){
+            .cmd=InterpolateCommand::END_OF_VOXEL});
 }
 
 // Schedule an interpolate calculation in the queue.
-void tristate_interpolate_between(tristate* t, Vec3f v0, Vec3f v1)
+void Mesher::interpolate_between(const Vec3f& v0, const Vec3f& v1);
 {
-    interpolate_command* cmd = malloc(sizeof(interpolate_command));
-    *cmd = (interpolate_command){
-        .cmd=INTERPOLATE, .v0=v0, .v1=v1, .next=NULL};
-
+    InterpolateCommand cmd = (InterpolateCommand){
+        .cmd=INTERPOLATE, .v0=v0, .v1=v1};
 
     // Walk through the list, looking for duplicates.
     // If we find the same operation, then switch to a CACHED lookup instead.
     unsigned count = 0;
-    interpolate_command** list = &(t->queue);
-    while (*list)
+    for (auto c : queue)
     {
-        if ((*list)->cmd == INTERPOLATE)
+        if (c.cmd == InterpolateCommand::INTERPOLATE)
         {
-            if ((vec3f_eq(v0, (*list)->v0) && vec3f_eq(v1, (*list)->v1)) ||
-                (vec3f_eq(v1, (*list)->v0) && vec3f_eq(v1, (*list)->v0)))
+            if ((vec3f_eq(v0, c->v0) && vec3f_eq(v1, c->v1)) ||
+                (vec3f_eq(v1, c->v0) && vec3f_eq(v1, c->v0)))
             {
-                cmd->cmd = CACHED;
+                cmd->cmd = InterpolateCommand::CACHED;
                 cmd->cached = count;
             }
             count++;
         }
-        list = &((*list)->next);
     }
 
-    (*list) = cmd;
-    if (cmd->cmd == INTERPOLATE && (++count) == MIN_VOLUME)
-        tristate_flush_queue(t);
+    queue.push_back(c);
+    if (cmd->cmd == INTERPOLATE && queue.size() == MIN_VOLUME)
+        flush_queue(t);
 }
 
 
 
-void tristate_process_tet(const Region r, float* d, int tet,
-                          tristate* t)
+void Mesher::process_tet(const Region& r, const float* const d, const int tet)
 {
     // Find vertex positions for this tetrahedron
     uint8_t vertices[] = {0, 7, VERTEX_LOOP[tet], VERTEX_LOOP[tet+1]};
@@ -554,7 +441,7 @@ void tristate_process_tet(const Region r, float* d, int tet,
             const uint8_t v0 = vertices[EDGE_MAP[lookup][i][v][0]];
             const uint8_t v1 = vertices[EDGE_MAP[lookup][i][v][1]];
 
-            tristate_interpolate_between(t,
+            interpolate_between(
                         (Vec3f){(v0 & 4) ? r.X[1] : r.X[0],
                                 (v0 & 2) ? r.Y[1] : r.Y[0],
                                 (v0 & 1) ? r.Z[1] : r.Z[0]},
@@ -565,14 +452,14 @@ void tristate_process_tet(const Region r, float* d, int tet,
     }
 }
 
-void triangulate_region(tristate* t, const Region r)
+void Mesher::triangulate_region(const Region& r)
 {
     // If we can calculate all of the points in this region with a single
     // eval_r call, then do so.  This large chunk will be used in future
     // recursive calls to make things more efficient.
-    bool loaded_data = !t->has_data;
+    bool loaded_data = !has_data;
     if (loaded_data)
-        tristate_load_packed(t, r);
+        load_packed(r);
 
     // If we have greater than one voxel, subdivide and recurse.
     if (r.voxels > 1)
@@ -581,23 +468,23 @@ void triangulate_region(tristate* t, const Region r)
         const uint8_t split = octsect(r, octants);
         for (int i=0; i < 8; ++i)
             if (split & (1 << i))
-                triangulate_region(t, octants[i]);
+                triangulate_region(octants[i]);
     }
     else
     {
         // Load corner values from this voxel
         // (from the packed data array)
         float d[8];
-        tristate_get_corner_data(t, r, d);
+        get_corner_data(r, d);
 
         // Loop over the six tetrahedra that make up a voxel cell
         for (int tet=0; tet < 6; ++tet)
-            tristate_process_tet(r, d, tet, t);
+            process_tet(r, d, tet);
     }
 
     // Mark that a voxel has ended
     // (which will eventually trigger decimation)
-    tristate_end_voxel(t);
+    end_voxel();
 
     // If this stage of the recursion loaded data into the buffer,
     // clear the has_data flag (so that future stages will re-run
@@ -605,8 +492,8 @@ void triangulate_region(tristate* t, const Region r)
     // nodes.
     if (loaded_data)
     {
-        tristate_flush_queue(t);
-        tristate_unload_packed(t);
+        flush_queue();
+        unload_packed();
     }
 }
 
@@ -615,17 +502,13 @@ void triangulate_region(tristate* t, const Region r)
 void triangulate(MathTree* tree, const Region r,
                  float** const verts, unsigned* const count)
 {
-    // Make a triangulation state struct.
-    tristate* t = tristate_new(tree);
+    Mesher t(tree);
 
     // Top-level call to the recursive triangulation function.
-    triangulate_region(t, r);
+    t.triangulate_region(r);
 
     // Copy data from tristate struct to output pointers.
-    *verts = malloc(t->count * sizeof(float));
-    memcpy(*verts, t->verts, t->count * sizeof(float));
-    *count = t->count;
-
-    // Free the triangulation state struct.
-    tristate_free(t);
+    *verts = malloc(t.verts.size() * sizeof(float));
+    memcpy(*verts, t.verts.data(), t.verts.size() * sizeof(float));
+    *count = t.verts.size();
 }

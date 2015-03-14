@@ -3,7 +3,7 @@ SOURCES += \
     ../src/fab/tree/render.c \
     ../src/fab/tree/tree.c \
     ../src/fab/tree/parser.c \
-    ../src/fab/tree/triangulate.c \
+    ../src/fab/tree/triangulate.cpp \
     ../src/fab/tree/math/math_f.c \
     ../src/fab/tree/math/math_i.c \
     ../src/fab/tree/math/math_r.c \
