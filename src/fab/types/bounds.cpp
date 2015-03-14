@@ -48,7 +48,7 @@ Bounds Bounds::map(Transform t) const
             throw fab::ParseError();
         }
         x_out = eval_i(tree, x, y, z);
-        free(tree);
+        free_tree(tree);
     }
 
     if (t.y_reverse.length())
@@ -59,7 +59,7 @@ Bounds Bounds::map(Transform t) const
             throw fab::ParseError();
         }
         y_out = eval_i(tree, x, y, z);
-        free(tree);
+        free_tree(tree);
     }
 
     if (t.z_reverse.length())
@@ -70,7 +70,7 @@ Bounds Bounds::map(Transform t) const
             throw fab::ParseError();
         }
         z_out = eval_i(tree, x, y, z);
-        free(tree);
+        free_tree(tree);
     }
 
     return Bounds(x_out.lower, y_out.lower, z_out.lower,
