@@ -48,7 +48,7 @@ DepthImageItem* RenderTask::getDepthImage(Viewport* viewport)
     Q_ASSERT(image);
 
     auto d = image->addToViewport(viewport);
-    image->deleteLater();
+    delete image;
     image = NULL;
 
     return d;
