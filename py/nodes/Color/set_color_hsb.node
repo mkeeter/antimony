@@ -1,0 +1,53 @@
+import fab
+
+title('Set color (HSB)')
+
+input("shape", fab.types.Shape)
+input("hue", float)
+input("saturation", float)
+input("brightness", float)
+
+# copied from Java's HSBtoRGB
+# http://www.docjar.com/html/api/java/awt/Color.java.html
+
+r = 0
+g = 0
+b = 0
+
+if saturation == 0:
+  r = g = b = int(brightness * 255.0 + 0.5)
+else:
+  h = (hue - float(math.floor(hue))) * 6.0
+  f = h - float(math.floor(h))
+  p = brightness * (1-saturation)
+  q = brightness * (1-saturation*f)
+  t = brightness * (1-(saturation*(1-f)))
+
+  h = int(h)
+
+  if(h==0):
+    r = int(brightness * 255.0 + 0.5)
+    g = int(t * 255.0 + 0.5)
+    b = int(p * 255.0 + 0.5)
+  elif(h==1):
+    r = int(q * 255.0 + 0.5)
+    g = int(brightness * 255.0 + 0.5)
+    b = int(p * 255.0 + 0.5)
+  elif(h==2):
+    r = int(p * 255.0 + 0.5)
+    g = int(brightness * 255.0 + 0.5)
+    b = int(t * 255.0 + 0.5)
+  elif(h==3):
+    r = int(p * 255.0 + 0.5)
+    g = int(q * 255.0 + 0.5)
+    b = int(brightness * 255.0 + 0.5)
+  elif(h==4):
+    r = int(t * 255.0 + 0.5)
+    g = int(p * 255.0 + 0.5)
+    b = int(brightness * 255.0 + 0.5)
+  elif(h==5):
+    r = int(brightness * 255.0 + 0.5)
+    g = int(p * 255.0 + 0.5)
+    b = int(q * 255.0 + 0.5)
+
+output("out", fab.shapes.set_color(shape, r, g, b))

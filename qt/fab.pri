@@ -15,6 +15,7 @@ SOURCES += \
     ../src/fab/formats/png.c \
     ../src/fab/formats/stl.c \
     ../src/fab/util/region.c \
+    ../src/fab/util/ustack.c \
     ../src/fab/types/shape.cpp \
     ../src/fab/fab.cpp \
     ../src/fab/types/bounds.cpp \
@@ -37,6 +38,7 @@ HEADERS += \
     ../src/fab/formats/png.h \
     ../src/fab/formats/stl.h \
     ../src/fab/util/region.h \
+    ../src/fab/util/ustack.h \
     ../src/fab/types/shape.h \
     ../src/fab/fab.h \
     ../src/fab/types/bounds.h \

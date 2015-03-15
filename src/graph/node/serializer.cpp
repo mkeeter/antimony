@@ -1,10 +1,10 @@
 #include <Python.h>
 
-#include <QDataStream>
-#include <QBuffer>
+#include <QStringList>
 
 #include "graph/node/serializer.h"
 #include "graph/node/node.h"
+#include "graph/node/root.h"
 
 #include "graph/datum/datum.h"
 #include "graph/datum/types/eval_datum.h"
@@ -16,106 +16,125 @@
 // 3 -> 4:
 //   Remove ShapeInputDatum (replace with ShapeDatum)
 //   _name -> __name; _script -> __script
-int SceneSerializer::PROTOCOL_VERSION = 4;
+// 4 -> 5:
+//   Switch to plain-text.
+int SceneSerializer::PROTOCOL_VERSION = 5;
 
-SceneSerializer::SceneSerializer(QObject* node_root,
+SceneSerializer::SceneSerializer(NodeRoot* node_root,
                                  QMap<Node*, QPointF> inspectors)
     : QObject(), node_root(node_root), inspectors(inspectors)
 {
     // Nothing to do here.
 }
 
-QByteArray SceneSerializer::run(SerializerMode mode)
+QJsonObject SceneSerializer::run(SerializerMode mode)
 {
-    QBuffer buffer;
-    buffer.open(QBuffer::WriteOnly);
+    QJsonObject out;
+    out["type"] = "sb";
+    out["protocol"] = PROTOCOL_VERSION;
 
-    QDataStream stream(&buffer);
-    run(&stream, mode);
-    buffer.seek(0);
+    out["nodes"] = serializeNodes(node_root);
 
-    return buffer.data();
+    if (mode == SERIALIZE_ALL)
+        out["connections"] = serializeConnections();
+    return out;
 }
 
-void SceneSerializer::run(QDataStream* out, SerializerMode mode)
+QJsonArray SceneSerializer::serializeNodes(NodeRoot* r)
 {
-    *out << QString("sb") << quint32(PROTOCOL_VERSION);
-    serializeNodes(out, node_root);
-
-    if (mode == SERIALIZE_NODES)
-        connections.clear();
-
-    serializeConnections(out);
-}
-
-void SceneSerializer::serializeNodes(QDataStream* out, QObject* p)
-{
-    auto nodes = p->findChildren<Node*>(
+    QJsonArray out;
+    nodes = r->findChildren<Node*>(
             QString(), Qt::FindDirectChildrenOnly);
-    *out << quint32(nodes.length());
 
     for (auto node : nodes)
-        serializeNode(out, node);
+        out.append(serializeNode(node));
+
+    return out;
 }
 
-void SceneSerializer::serializeNode(QDataStream* out, Node* node)
+QJsonObject SceneSerializer::serializeNode(Node* node)
 {
-    *out << quint32(0); // Dummy node type, since it doesn't exist anymore.
-    *out << node->objectName();
+    QJsonObject out;
 
-    // Serialize position (or default QPointF if not provided)
-    *out << (inspectors.contains(node) ? inspectors[node] : QPointF());
+    out["inspector"] = QJsonArray({
+            inspectors[node].x(),
+            inspectors[node].y()});
+
+    QJsonArray datum_array;
 
     Datum* deferred = NULL;
-    auto datums = node->findChildren<Datum*>(QString(),
-                                             Qt::FindDirectChildrenOnly);
-    *out << quint32(datums.length());
+    auto datums = node->findChildren<Datum*>(
+            QString(), Qt::FindDirectChildrenOnly);
+
     for (auto d : datums)
-    {
         if (dynamic_cast<ScriptDatum*>(d))
-        {
-            Q_ASSERT(deferred == NULL);
             deferred = d;
-        }
         else
-        {
-            serializeDatum(out, d);
-        }
-    }
+            datum_array.append(serializeDatum(d));
 
     if (deferred)
-        serializeDatum(out, deferred);
+        datum_array.append(serializeDatum(deferred));
+
+    out["datums"] = datum_array;
+
+    return out;
 }
 
-void SceneSerializer::serializeDatum(QDataStream* out, Datum* datum)
+QJsonObject SceneSerializer::serializeDatum(Datum* datum)
 {
-    *out << quint32(datum->getDatumType());
-    *out << datum->objectName();
+    QJsonObject out;
+    out["type"] = datum->getDatumTypeString();
+    out["name"] = datum->objectName();
 
     if (auto e = dynamic_cast<EvalDatum*>(datum))
     {
-        *out << e->getExpr();
+        auto expr = e->getExpr();
+        if (expr.contains("\n"))
+        {
+            auto a = QJsonArray();
+            for (auto line : expr.split("\n"))
+                a.append(line);
+            out["expr"] = a;
+        }
+        else
+        {
+            out["expr"] = expr;
+        }
     }
 
     // Save datum and any connections for later
     // (as connections are serialized separately,
     // once all of the datums have been written).
-    datums << datum;
     for (auto d : datum->getInputDatums())
         connections << QPair<Datum*, Datum*>(d, datum);
+
+    return out;
 }
 
-void SceneSerializer::serializeConnections(QDataStream* out)
+QJsonArray SceneSerializer::serializeConnections()
 {
-    // Only serialize connections for which we have serialized both datums
-    // (prevents edge cases in copy-paste)
-    QList<QPair<Datum*, Datum*>> valid;
+    QJsonArray out;
     for (auto p : connections)
-        if (datums.contains(p.first) && datums.contains(p.second))
-            valid << p;
+    {
+        QJsonArray start;
+        QJsonArray end;
 
-    *out << quint32(valid.length());
-    for (auto p : valid)
-        *out << quint32(datums.indexOf(p.first))
-             << quint32(datums.indexOf(p.second));
+        // Only serialize connections for which we have serialized
+        // both datums (prevents edge cases in copy-paste)
+        auto start_node = static_cast<Node*>(p.first->parent());
+        auto end_node = static_cast<Node*>(p.second->parent());
+
+        if (nodes.contains(start_node) && nodes.contains(end_node))
+        {
+            start.append(nodes.indexOf(start_node));
+            start.append(p.first->objectName());
+
+            end.append(nodes.indexOf(end_node));
+            end.append(p.second->objectName());
+
+            out.append(QJsonArray({start, end}));
+        }
+    }
+
+    return out;
 }

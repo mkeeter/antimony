@@ -24,6 +24,8 @@ RenderTask::RenderTask(PyObject *s, QMatrix4x4 matrix,
 
 RenderTask::~RenderTask()
 {
+    if (image)
+        delete image;
     Py_DECREF(shape);
 }
 
@@ -46,7 +48,7 @@ DepthImageItem* RenderTask::getDepthImage(Viewport* viewport)
     Q_ASSERT(image);
 
     auto d = image->addToViewport(viewport);
-    image->deleteLater();
+    delete image;
     image = NULL;
 
     return d;

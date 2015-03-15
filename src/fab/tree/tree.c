@@ -16,7 +16,7 @@ MathTree* new_tree(unsigned num_levels, unsigned num_constants)
         .active     = num_levels ?
                         calloc(num_levels, sizeof(unsigned)) : NULL,
         .disabled   = num_levels ?
-                        calloc(num_levels, sizeof(ustack*)) : NULL,
+                        calloc(num_levels, sizeof(ustack)) : NULL,
         .constants  = num_constants ?
                         malloc(sizeof(Node*)*num_constants) : NULL,
 
@@ -38,6 +38,7 @@ void free_tree(MathTree* tree)
             free(tree->nodes[level][n]);
         }
         free(tree->nodes[level]);
+        free(tree->disabled[level].data);
     }
 
     for (unsigned c=0; c < tree->num_constants; ++c) {
@@ -47,6 +48,7 @@ void free_tree(MathTree* tree)
     free(tree->nodes);
     free(tree->active);
     free(tree->constants);
+    free(tree->disabled);
 
     free(tree);
 }
@@ -126,7 +128,7 @@ void disable_node(MathTree* tree, int level, int n)
     tree->nodes[level][back] = node;
 
     // Finally, increase the count of disabled nodes
-    tree->disabled[level]->count++;
+    ustack_increment(&tree->disabled[level]);
 }
 
 
@@ -181,9 +183,7 @@ void disable_nodes(MathTree* tree)
 
         // Save the number of nodes disabled in this pass so that
         // we can reverse the operation later.
-        ustack* tmp = tree->disabled[level];
-        tree->disabled[level] = malloc(sizeof(ustack));
-        *(tree->disabled[level]) = (ustack){0, tmp};
+        ustack_push(&tree->disabled[level], 0);
 
         for (int n=0; n < tree->active[level]; ++n) {
             Node* node = tree->nodes[level][n];
@@ -235,10 +235,7 @@ void disable_nodes(MathTree* tree)
 void enable_nodes(MathTree* tree)
 {
     for (int level=tree->num_levels-1; level >= 0; --level) {
-        tree->active[level] += tree->disabled[level]->count;
-        ustack* next = tree->disabled[level]->next;
-        free(tree->disabled[level]);
-        tree->disabled[level] = next;
+        tree->active[level] += ustack_pop(&tree->disabled[level]);
     }
 }
 

@@ -100,3 +100,16 @@ void proxy::preInit()
 {
     PyImport_AppendInittab("_proxy", PyInit__proxy);
 }
+
+PyObject* proxy::proxy_init = NULL;
+
+PyObject* proxy::proxyConstructor()
+{
+    if (proxy_init == NULL)
+    {
+        auto _proxy_module = PyImport_ImportModule("_proxy");
+        proxy_init = PyObject_GetAttrString(_proxy_module, "NodeProxy");
+        Py_DECREF(_proxy_module);
+    }
+    return proxy_init;
+}

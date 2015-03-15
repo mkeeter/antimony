@@ -52,8 +52,7 @@ void Node::updateName()
 
 PyObject* Node::proxy(Datum* caller, bool settable)
 {
-    auto _proxy_module = PyImport_ImportModule("_proxy");
-    auto p = PyObject_CallMethod(_proxy_module, "NodeProxy", NULL);
+    auto p = PyObject_CallObject(proxy::proxyConstructor(), NULL);
     Q_ASSERT(!PyErr_Occurred());
 
     auto& proxy = boost::python::extract<NodeProxy&>(p)();
@@ -61,7 +60,6 @@ PyObject* Node::proxy(Datum* caller, bool settable)
     proxy.caller = caller;
     proxy.settable = settable;
 
-    Py_DECREF(_proxy_module);
     return p;
 }
 

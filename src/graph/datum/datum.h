@@ -29,6 +29,9 @@ public:
      *  (used in serialiation).
      */
     virtual DatumType::DatumType getDatumType() const=0;
+    virtual QString getDatumTypeString() const=0;
+
+    static Datum* fromTypeString(QString type, QString name, Node* parent);
 
     /** Returns desired Python type
      *

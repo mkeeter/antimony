@@ -3,7 +3,7 @@
 
 #include <Python.h>
 #include <QObject>
-#include <QTextStream>
+#include <QJsonObject>
 #include <QMap>
 
 #include "fab/types/shape.h"
@@ -22,9 +22,9 @@ public slots:
 signals:
     void finished();
 protected:
-    void writeBounds(Shape* shape, QTextStream* out);
-    void writeBody(Shape* shape, QTextStream* out);
-    void writeColor(Shape* shape, QTextStream* out);
+    QJsonObject writeBounds(Shape* shape);
+    QJsonObject writeBody(Shape* shape);
+    QJsonObject writeColor(Shape* shape);
 
     QMap<QString, Shape> shapes;
     QString filename;

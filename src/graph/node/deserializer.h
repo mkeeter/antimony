@@ -4,8 +4,9 @@
 #include <QObject>
 #include <QMap>
 #include <QPointF>
+#include <QJsonObject>
+#include <QJsonArray>
 
-class Datum;
 class Node;
 class NodeRoot;
 
@@ -15,8 +16,7 @@ class SceneDeserializer : public QObject
 public:
     explicit SceneDeserializer(NodeRoot* node_root);
 
-    bool run(QDataStream* in);
-    bool run(QByteArray in);
+    bool run(QJsonObject in);
 
     QMap<Node*, QPointF> inspectors;
     bool failed;
@@ -24,14 +24,14 @@ public:
     QString warning_message;
 
 protected:
-    void deserializeNodes(QDataStream* in, NodeRoot* p);
-    void deserializeNode(QDataStream* in, NodeRoot* p);
-    void deserializeDatum(QDataStream* in, Node* node);
-    void deserializeConnections(QDataStream* in);
+    void deserializeNodes(QJsonArray in, NodeRoot* p);
+    void deserializeNode(QJsonObject in, NodeRoot* p);
+    void deserializeDatum(QJsonObject in, Node* node);
+    void deserializeConnections(QJsonArray in);
 
     quint32 protocol_version;
     NodeRoot* node_root;
-    QList<Datum*> datums;
+    QList<Node*> nodes;
 };
 
 #endif // DESERIALIZER_H

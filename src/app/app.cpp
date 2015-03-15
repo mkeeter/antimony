@@ -34,6 +34,7 @@
 #include "graph/datum/link.h"
 #include "graph/node/serializer.h"
 #include "graph/node/deserializer.h"
+#include "graph/node/deserializer_old.h"
 
 #include "fab/types/shape.h"
 
@@ -143,8 +144,7 @@ void App::onSave()
     SceneSerializer ss(root,
                        graph_scene->inspectorPositions());
 
-    QDataStream out(&file);
-    ss.run(&out);
+    file.write(QJsonDocument(ss.run()).toJson());
 
     stack->setClean();
 }
@@ -200,16 +200,30 @@ void App::loadFile(QString f)
         return;
     }
 
-    QDataStream in(&file);
     SceneDeserializer ds(root);
-    ds.run(&in);
+    ds.run(QJsonDocument::fromJson(file.readAll()).object());
 
     if (ds.failed == true)
     {
-        QMessageBox::critical(NULL, "Loading error",
-                "<b>Loading error:</b><br>" +
-                ds.error_message);
-        onNew();
+        // Attempt to load the file with the old deserializer
+        file.reset();
+        QDataStream in(&file);
+        SceneDeserializerOld dso(root);
+        dso.run(&in);
+
+        if (dso.failed)
+        {
+            QMessageBox::critical(NULL, "Loading error",
+                    "<b>Loading error:</b><br>" +
+                    dso.error_message);
+            onNew();
+        }
+        else
+        {
+            makeUI(root);
+            graph_scene->setInspectorPositions(dso.inspectors);
+            emit(windowTitleChanged(getWindowTitle()));
+        }
     } else {
         // If there's a warning message, show it in a box.
         if (!ds.warning_message.isNull())
@@ -639,6 +653,7 @@ void App::newNode(Node* n)
 
 void App::makeUI(NodeRoot* r)
 {
+    QList<Node*> nodes;
     QList<Datum*> datums;
     QMap<Datum*, QList<Link*>> links;
 
@@ -659,7 +674,8 @@ void App::makeUI(NodeRoot* r)
                 k->setParent(NULL);
             }
         }
-        newNode(n);
+        graph_scene->makeUIfor(n);
+        nodes.append(n);
     }
 
     for (auto i = links.begin(); i != links.end(); ++i)
@@ -675,7 +691,15 @@ void App::makeUI(NodeRoot* r)
     // Now that all links are created and all nodes are under the same
     // root (in case of address-by-name), run update on every datum.
     for (auto d : datums)
-        d->update();
+        if (!d->getValid())
+            d->update();
+
+    // Finally, make render workers for all of the new nodes.
+    // This needs to happen after connections are made; otherwise
+    // we end up with a ton of RenderWorkers that all start rendering
+    // at once (and eat up all of the threads).
+    for (auto n : nodes)
+        view_scene->makeRenderWorkersFor(n);
 }
 
 Connection* App::newLink(Link* link)

@@ -11,6 +11,9 @@ public:
     PyTypeObject* getType() const override;
     DatumType::DatumType getDatumType() const override
         { return DatumType::SHAPE_OUTPUT; }
+
+    static QString typeString() { return "shape output"; }
+    QString getDatumTypeString() const override { return typeString(); }
 };
 
 #endif

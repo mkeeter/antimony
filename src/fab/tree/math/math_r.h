@@ -12,33 +12,33 @@ extern "C" {
 */
 
 // Binary functions
-float* add_r(float* A, float* B, float* R, int c);
-float* sub_r(float* A, float* B, float* R, int c);
-float* mul_r(float* A, float* B, float* R, int c);
-float* div_r(float* A, float* B, float* R, int c);
+float* add_r(const float* A, const float* B, float* R, int c);
+float* sub_r(const float* A, const float* B, float* R, int c);
+float* mul_r(const float* A, const float* B, float* R, int c);
+float* div_r(const float* A, const float* B, float* R, int c);
 
-float* min_r(float* A, float* B, float* R, int c);
-float* max_r(float* A, float* B, float* R, int c);
+float* min_r(const float* A, const float* B, float* R, int c);
+float* max_r(const float* A, const float* B, float* R, int c);
 
-float* pow_r(float* A, float* B, float* R, int c);
+float* pow_r(const float* A, const float* B, float* R, int c);
 
 // Unary functions
-float* abs_r(float* A, float* R, int c);
-float* square_r(float* A, float* R, int c);
-float* sqrt_r(float* A, float* R, int c);
-float* sin_r(float* A, float* R, int c);
-float* cos_r(float* A, float* R, int c);
-float* tan_r(float* A, float* R, int c);
-float* asin_r(float* A, float* R, int c);
-float* acos_r(float* A, float* R, int c);
-float* atan_r(float* A, float* R, int c);
-float* neg_r(float* A, float* R, int c);
-float* exp_r(float* A, float* R, int c);
+float* abs_r(const float* A, float* R, int c);
+float* square_r(const float* A, float* R, int c);
+float* sqrt_r(const float* A, float* R, int c);
+float* sin_r(const float* A, float* R, int c);
+float* cos_r(const float* A, float* R, int c);
+float* tan_r(const float* A, float* R, int c);
+float* asin_r(const float* A, float* R, int c);
+float* acos_r(const float* A, float* R, int c);
+float* atan_r(const float* A, float* R, int c);
+float* neg_r(const float* A, float* R, int c);
+float* exp_r(const float* A, float* R, int c);
 
 // Variables
-float* X_r(float* X, float* R, int c);
-float* Y_r(float* Y, float* R, int c);
-float* Z_r(float* Z, float* R, int c);
+float* X_r(const float* X, float* R, int c);
+float* Y_r(const float* Y, float* R, int c);
+float* Z_r(const float* Z, float* R, int c);
 
 #ifdef __cplusplus
 }
