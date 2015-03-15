@@ -95,9 +95,10 @@ void DepthImageItem::paint(QPainter *painter,
                            const QStyleOptionGraphicsItem *option,
                            QWidget *widget)
 {
-    Q_UNUSED(painter);
     Q_UNUSED(option);
     Q_UNUSED(widget);
+
+    painter->beginNativePainting();
 
     viewport->getQuadVertices()->bind();
 
@@ -112,6 +113,8 @@ void DepthImageItem::paint(QPainter *painter,
         paintHeightmap();
 
     viewport->getQuadVertices()->release();
+
+    painter->endNativePainting();
 
     if (delete_me)
         deleteLater();
