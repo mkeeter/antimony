@@ -114,8 +114,8 @@ RESOURCES += \
     ../gl/gl.qrc \
 
 macx {
-    QMAKE_INFO_PLIST = ../app/Info.plist
-    ICON = ../app/sb.icns
+    QMAKE_INFO_PLIST = ../deploy/mac/Info.plist
+    ICON = ../deploy/mac/sb.icns
 }
 
 linux {

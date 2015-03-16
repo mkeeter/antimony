@@ -8,7 +8,7 @@ fi
 
 RELEASE=`git describe --exact-match --tags || echo "($(git rev-parse --abbrev-ref HEAD))"`
 
-cd ../build-$1
+cd ../../build-$1
 make clean
 make qmake
 rm -rf antimony.app
