@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <list>
+#include <map>
+#include <array>
 
 #include "util/region.h"
 #include "util/vec3f.h"
@@ -15,12 +17,6 @@ struct InterpolateCommand {
     Vec3f v0;
     Vec3f v1;
     unsigned cached;
-};
-
-struct SwappableEdge {
-    Vec3f v0;
-    Vec3f v1;
-    unsigned index;
 };
 
 class Mesher {
@@ -45,6 +41,9 @@ protected:
     void end_voxel();
     void interpolate_between(const Vec3f& v0, const Vec3f& v1);
     void process_tet(const Region& r, const float* const d, const int tet);
+
+    // Marks that the first edge of the most recent triangle can be swapped.
+    void mark_swappable();
 
     // Cached region and data from an eval_r call
     Region packed;
@@ -72,8 +71,7 @@ protected:
     // Queue of interpolation commands to be run soon
     std::list<InterpolateCommand> queue;
 
-    // List of swappable edges
-    std::list<SwappableEdge> swappable;
+    std::map<std::array<float, 6>, unsigned> swappable;
 };
 
 void triangulate(struct MathTree_* tree, Region r,

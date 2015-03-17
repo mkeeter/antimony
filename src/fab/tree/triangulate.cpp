@@ -119,48 +119,35 @@ void Mesher::get_normals(Vec3f* normals)
     }
 }
 
-/*
 // Mark that the first edge of the most recent triangle is swappable
 // (as part of feature detection / extraction).
-void tristate_mark_swappable(tristate* t)
+void Mesher::mark_swappable()
 {
-    const Vec3f v0 = (Vec3f){t->verts[t->count-9],
-                             t->verts[t->count-8],
-                             t->verts[t->count-7]};
-    const Vec3f v1 = (Vec3f){t->verts[t->count-6],
-                             t->verts[t->count-5],
-                             t->verts[t->count-4]};
+    const unsigned c = verts.size();
+    std::array<float, 6> key = {{
+        verts[c-9], verts[c-8], verts[c-7],
+        verts[c-6], verts[c-5], verts[c-4]}};
 
-    swappable_edge** s = &(t->swappable);
-    while (*s)
+    auto found = swappable.find(key);
+    if (found != swappable.end())
     {
-        // If we find a matched pair for this swappable edge,
-        // - Perform the swap
-        // - Cut the other edge out of the swappable list
-        // - Return immediately
-        if (vec3f_eq((*s)->v0, v1) && vec3f_eq((*s)->v1, v0))
+        const unsigned a = found->second;
+        const unsigned b = c - 9;
+
+        for (int i=0; i < 3; ++i)
         {
-            const unsigned a = (*s)->index;
-            const unsigned b = t->count - 9;
-
-            for (int i=0; i < 3; ++i)
-            {
-                t->verts[a + 3 + i] = t->verts[b + 6 + i];
-                t->verts[b + 3 + i] = t->verts[a + 6 + i];
-            }
-
-            // Cut this node out of the list
-            swappable_edge* tmp = *s;
-            *s = (*s)->next;
-            free(tmp);
-            return;
+            verts[a + 3 + i] = verts[b + 6 + i];
+            verts[b + 3 + i] = verts[a + 6 + i];
         }
-        s = &(*s)->next;
     }
-    *s = (swappable_edge*)malloc(sizeof(swappable_edge));
-    **s = (swappable_edge){ .v0=v0, .v1=v1, .index=t->count-9 };
+    else
+    {
+        std::array<float, 6> reversed = {{
+            verts[c-6], verts[c-5], verts[c-4],
+            verts[c-9], verts[c-8], verts[c-7]}};
+        swappable[reversed] = c - 9;
+    }
 }
-*/
 
 void Mesher::process_feature()
 {
@@ -187,15 +174,15 @@ void Mesher::process_feature()
     // Add the new (split) triangles
     for (auto i : {xa, ya, za, xb, yb, zb, xd, yd, zd})
         verts.push_back(i);
-    //mark_swappable();
+    mark_swappable();
 
     for (auto i : {xb, yb, zb, xc, yc, zc, xd, yd, zd})
         verts.push_back(i);
-    //mark_swappable();
+    mark_swappable();
 
     for (auto i : {xc, yc, zc, xa, ya, za, xd, yd, zd})
         verts.push_back(i);
-    //mark_swappable();
+    mark_swappable();
 }
 
 void Mesher::check_feature()
