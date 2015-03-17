@@ -181,7 +181,7 @@ void Mesher::process_feature()
     const float yd = (ya + yb + yc) / 3;
     const float zd = (za + zb + zc) / 3;
 
-    for (int i=0; i < 8; ++i)
+    for (int i=0; i < 9; ++i)
         verts.pop_back();
 
     // Add the new (split) triangles
