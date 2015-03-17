@@ -45,13 +45,13 @@ protected:
     // Marks that the first edge of the most recent triangle can be swapped.
     void mark_swappable();
 
+    // MathTree that we're evaluating
+    struct MathTree_* tree;
+
     // Cached region and data from an eval_r call
     Region packed;
     float* data;
     bool has_data;
-
-    // MathTree that we're evaluating
-    struct MathTree_* tree;
 
     // Buffers used for eval_r
     float* X;

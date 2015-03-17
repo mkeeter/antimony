@@ -40,8 +40,7 @@ static const int EDGE_MAP[16][2][3][2] = {
 
 
 Mesher::Mesher(MathTree* tree)
-    : has_data(false), tree(tree),
-      data(new float[MIN_VOLUME]),
+    : tree(tree), data(new float[MIN_VOLUME]), has_data(false),
       X(new float[MIN_VOLUME]),
       Y(new float[MIN_VOLUME]),
       Z(new float[MIN_VOLUME]),
