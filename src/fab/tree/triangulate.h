@@ -28,6 +28,8 @@ public:
     Mesher(struct MathTree_* tree);
     ~Mesher();
 
+    void triangulate_region(const Region& r);
+
     // Actual vertices
     std::vector<float> verts;
 protected:
@@ -43,7 +45,6 @@ protected:
     void end_voxel();
     void interpolate_between(const Vec3f& v0, const Vec3f& v1);
     void process_tet(const Region& r, const float* const d, const int tet);
-    void triangulate_region(const Region& r);
 
     // Cached region and data from an eval_r call
     Region packed;

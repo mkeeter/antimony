@@ -183,20 +183,18 @@ void Mesher::process_feature()
     for (int i=0; i < 8; ++i)
         verts.pop_back();
 
-    verts.push_back((Vec3f){xa, ya, za});
-    verts.push_back((Vec3f){xb, yb, zb});
-    verts.push_back((Vec3f){xd, yd, zd});
-    //tristate_mark_swappable(t);
+    // Add the new (split) triangles
+    for (auto i : {xa, ya, za, xb, yb, zb, xd, yd, zd})
+        verts.push_back(i);
+    //mark_swappable();
 
-    verts.push_back((Vec3f){xb, yb, zb});
-    verts.push_back((Vec3f){xc, yc, zc});
-    verts.push_back((Vec3f){xd, yd, zd});
-    //tristate_mark_swappable(t);
+    for (auto i : {xb, yb, zb, xc, yc, zc, xd, yd, zd})
+        verts.push_back(i);
+    //mark_swappable();
 
-    verts.push_back((Vec3f){xc, yc, zc});
-    verts.push_back((Vec3f){xa, ya, za});
-    verts.push_back((Vec3f){xd, yd, zd});
-    //tristate_mark_swappable(t);
+    for (auto i : {xc, yc, zc, xa, ya, za, xd, yd, zd})
+        verts.push_back(i);
+    //mark_swappable();
 }
 
 void Mesher::check_feature()
@@ -235,7 +233,9 @@ void Mesher::check_feature()
 // If this vertex completes a triangle, check for features.
 void Mesher::push_vert(const Vec3f& v)
 {
-    verts.push_back(v);
+    verts.push_back(v.x);
+    verts.push_back(v.y);
+    verts.push_back(v.z);
 
     if (verts.size() % 9 == 0)
         check_feature();
@@ -351,7 +351,7 @@ void Mesher::flush_queue()
     unsigned count=0;
     for (auto c : queue)
     {
-        if (c.cmd == INTERPOLATE)
+        if (c.cmd == InterpolateCommand::INTERPOLATE)
         {
             low[count] = c.v0;
             high[count] = c.v1;
@@ -367,15 +367,15 @@ void Mesher::flush_queue()
     count = 0;
     for (auto c : queue)
     {
-        if (c->cmd == InterpolateCommand::INTERPOLATE)
+        if (c.cmd == InterpolateCommand::INTERPOLATE)
         {
             push_vert((Vec3f){ex[count], ey[count], ez[count]});
             count++;
         }
-        else if (c->cmd == InterpolateCommand::CACHED)
+        else if (c.cmd == InterpolateCommand::CACHED)
         {
-            unsigned c = c->cached;
-            push_vert((Vec3f){ex[c], ey[c], ez[c]});
+            unsigned i = c.cached;
+            push_vert((Vec3f){ex[i], ey[i], ez[i]});
         }
     }
     queue.clear();
@@ -389,10 +389,10 @@ void Mesher::end_voxel()
 }
 
 // Schedule an interpolate calculation in the queue.
-void Mesher::interpolate_between(const Vec3f& v0, const Vec3f& v1);
+void Mesher::interpolate_between(const Vec3f& v0, const Vec3f& v1)
 {
-    InterpolateCommand cmd = (InterpolateCommand){
-        .cmd=INTERPOLATE, .v0=v0, .v1=v1};
+    InterpolateCommand next = (InterpolateCommand){
+        .cmd=InterpolateCommand::INTERPOLATE, .v0=v0, .v1=v1};
 
     // Walk through the list, looking for duplicates.
     // If we find the same operation, then switch to a CACHED lookup instead.
@@ -401,19 +401,20 @@ void Mesher::interpolate_between(const Vec3f& v0, const Vec3f& v1);
     {
         if (c.cmd == InterpolateCommand::INTERPOLATE)
         {
-            if ((vec3f_eq(v0, c->v0) && vec3f_eq(v1, c->v1)) ||
-                (vec3f_eq(v1, c->v0) && vec3f_eq(v1, c->v0)))
+            if ((vec3f_eq(v0, c.v0) && vec3f_eq(v1, c.v1)) ||
+                (vec3f_eq(v1, c.v0) && vec3f_eq(v1, c.v0)))
             {
-                cmd->cmd = InterpolateCommand::CACHED;
-                cmd->cached = count;
+                next.cmd = InterpolateCommand::CACHED;
+                next.cached = count;
             }
             count++;
         }
     }
 
-    queue.push_back(c);
-    if (cmd->cmd == INTERPOLATE && queue.size() == MIN_VOLUME)
-        flush_queue(t);
+    queue.push_back(next);
+    if (next.cmd == InterpolateCommand::INTERPOLATE &&
+            queue.size() == MIN_VOLUME)
+        flush_queue();
 }
 
 
@@ -508,7 +509,7 @@ void triangulate(MathTree* tree, const Region r,
     t.triangulate_region(r);
 
     // Copy data from tristate struct to output pointers.
-    *verts = malloc(t.verts.size() * sizeof(float));
+    *verts = (float*)malloc(t.verts.size() * sizeof(float));
     memcpy(*verts, t.verts.data(), t.verts.size() * sizeof(float));
     *count = t.verts.size();
 }
