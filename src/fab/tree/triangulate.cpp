@@ -41,6 +41,7 @@ static const int EDGE_MAP[16][2][3][2] = {
 
 Mesher::Mesher(MathTree* tree)
     : has_data(false), tree(tree),
+      data(new float[MIN_VOLUME]),
       X(new float[MIN_VOLUME]),
       Y(new float[MIN_VOLUME]),
       Z(new float[MIN_VOLUME]),
@@ -56,7 +57,7 @@ Mesher::Mesher(MathTree* tree)
 
 Mesher::~Mesher()
 {
-    for (auto ptr : {X, Y, Z, ex, ey, ez, nx, ny, nz})
+    for (auto ptr : {data, X, Y, Z, ex, ey, ez, nx, ny, nz})
         delete [] ptr;
 }
 
