@@ -224,15 +224,18 @@ void Mesher::process_feature(Mesher::FeatureType t, Vec3f* normals)
     // Add the new (split) triangles
     for (auto i : {xa, ya, za, xb, yb, zb, xd, yd, zd})
         verts.push_back(i);
-    mark_swappable();
+    if (t != FEATURE_EDGE_AB_C)
+        mark_swappable();
 
     for (auto i : {xb, yb, zb, xc, yc, zc, xd, yd, zd})
         verts.push_back(i);
-    mark_swappable();
+    if (t != FEATURE_EDGE_BC_A)
+        mark_swappable();
 
     for (auto i : {xc, yc, zc, xa, ya, za, xd, yd, zd})
         verts.push_back(i);
-    mark_swappable();
+    if (t != FEATURE_EDGE_CA_B)
+        mark_swappable();
 }
 
 void Mesher::check_feature()
