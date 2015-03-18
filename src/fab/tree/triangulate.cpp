@@ -140,6 +140,7 @@ void Mesher::mark_swappable()
             verts[a + 3 + i] = verts[b + 6 + i];
             verts[b + 3 + i] = verts[a + 6 + i];
         }
+        swappable.erase(found);
     }
     else
     {
