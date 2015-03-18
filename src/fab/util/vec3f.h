@@ -17,6 +17,7 @@ typedef struct Vec3f_ {
 
 bool vec3f_eq(Vec3f a, Vec3f b);
 float vec3f_dot(Vec3f a, Vec3f );
+Vec3f vec3f_cross(Vec3f a, Vec3f );
 
 #ifdef __cplusplus
 }
