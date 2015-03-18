@@ -531,9 +531,9 @@ Vec3f Mesher::edge_normal(const Vec3f& a_, const Vec3f& b_, const Vec3f& c_)
 
     Eigen::Vector3d out = (b-a).cross(c-a).cross(b-a);
 
-    return (Vec3f){static_cast<float>(out[0]),
-                   static_cast<float>(out[1]),
-                   static_cast<float>(out[2])};
+    return (Vec3f){static_cast<float>(out[0] / out.norm()),
+                   static_cast<float>(out[1] / out.norm()),
+                   static_cast<float>(out[2] / out.norm())};
 }
 
 void Mesher::triangulate_region(const Region& r)
