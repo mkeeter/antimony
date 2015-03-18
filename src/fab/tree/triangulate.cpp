@@ -271,23 +271,23 @@ void Mesher::check_feature()
         else if (fabs(vec3f_dot(normals[i], tri_norm)) >= same)
             return;
 
-    const float ab = vec3f_dot(normals[0], normals[1]);
-    const float bc = vec3f_dot(normals[1], normals[2]);
-    const float ca = vec3f_dot(normals[2], normals[0]);
+    const float ab = fabs(vec3f_dot(normals[0], normals[1]));
+    const float bc = fabs(vec3f_dot(normals[1], normals[2]));
+    const float ca = fabs(vec3f_dot(normals[2], normals[0]));
 
-    if (ab < 0.95 && bc < 0.95 && ca < 0.95)
+    if (ab < same && bc < same && ca < same)
     {
         process_feature(FEATURE_CORNER, normals);
     }
-    else if (ab >= 0.95 && bc < 0.95 && ca < 0.95)
+    else if (ab >= same && bc < same && ca < same)
     {
         process_feature(FEATURE_EDGE_AB_C, normals);
     }
-    else if (ab < 0.95 && bc >= 0.95 && ca < 0.95)
+    else if (ab < same && bc >= same && ca < same)
     {
         process_feature(FEATURE_EDGE_BC_A, normals);
     }
-    else if (ab < 0.95 && bc < 0.95 && ca >= 0.95)
+    else if (ab < same && bc < same && ca >= same)
     {
         process_feature(FEATURE_EDGE_CA_B, normals);
     }
