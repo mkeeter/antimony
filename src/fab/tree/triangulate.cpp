@@ -150,6 +150,20 @@ void Mesher::mark_swappable()
     }
 }
 
+Vec3f Mesher::edge_feature_point(const Vec3f& a, const Vec3f& na,
+                                 const Vec3f& b, const Vec3f& nb,
+                                 const Vec3f& c)
+{
+    // Find two combined edge normals
+    Vec3f n_ab = edge_normal(a, b, c);
+    Vec3f n_bc = edge_normal(b, c, a);
+
+    Vec3f p0 = plane_intersection(a, na, b, nb, a, n_ab);
+    Vec3f p1 = plane_intersection(a, na, b, nb, b, n_bc);
+
+    return (Vec3f){(p0.x + p1.x)/2, (p0.y + p1.y)/2, (p0.z + p1.z)/2};
+}
+
 void Mesher::process_feature(Mesher::FeatureType t, Vec3f* normals)
 {
     // Get triangle vertices
@@ -165,25 +179,44 @@ void Mesher::process_feature(Mesher::FeatureType t, Vec3f* normals)
     const float zc = verts[c - 1];
 
 
-    float xd, yd, zd;
-
     // Pick out a new center point
-    if (t == FEATURE_CORNER && 0)
+    Vec3f intersection = (Vec3f){
+        (xa + xb + xc) / 3,
+        (ya + yb + yc) / 3,
+        (za + zb + zc) / 3};
+
+    if (t == FEATURE_CORNER)
     {
-        const Vec3f intersection = plane_intersection(
+        intersection = plane_intersection(
                 (Vec3f){xa, ya, za}, normals[0],
                 (Vec3f){xb, yb, zb}, normals[1],
                 (Vec3f){xc, yc, zc}, normals[2]);
-        xd = intersection.x;
-        yd = intersection.y;
-        zd = intersection.z;
     }
-    else
+    else if (t == FEATURE_EDGE_AB_C)
     {
-        xd = (xa + xb + xc) / 3;
-        yd = (ya + yb + yc) / 3;
-        zd = (za + zb + zc) / 3;
+        intersection = edge_feature_point(
+                (Vec3f){xb, yb, zb}, normals[1],
+                (Vec3f){xc, yc, zc}, normals[2],
+                (Vec3f){xa, ya, za});
     }
+    else if (t == FEATURE_EDGE_BC_A)
+    {
+        intersection = edge_feature_point(
+                (Vec3f){xc, yc, zc}, normals[2],
+                (Vec3f){xa, ya, za}, normals[0],
+                (Vec3f){xb, yb, zb});
+    }
+    else if (t == FEATURE_EDGE_CA_B)
+    {
+        intersection = edge_feature_point(
+                (Vec3f){xa, ya, za}, normals[0],
+                (Vec3f){xb, yb, zb}, normals[1],
+                (Vec3f){xc, yc, zc});
+    }
+
+    const float xd = intersection.x;
+    const float yd = intersection.y;
+    const float zd = intersection.z;
 
     for (int i=0; i < 9; ++i)
         verts.pop_back();
@@ -222,15 +255,15 @@ void Mesher::check_feature()
     }
     else if (ab >= 0.95 && bc < 0.95 && ca < 0.95)
     {
-        process_feature(FEATURE_EDGE, normals);
+        process_feature(FEATURE_EDGE_AB_C, normals);
     }
     else if (ab < 0.95 && bc >= 0.95 && ca < 0.95)
     {
-        process_feature(FEATURE_EDGE, normals);
+        process_feature(FEATURE_EDGE_BC_A, normals);
     }
     else if (ab < 0.95 && bc < 0.95 && ca >= 0.95)
     {
-        process_feature(FEATURE_EDGE, normals);
+        process_feature(FEATURE_EDGE_CA_B, normals);
     }
 }
 
@@ -481,6 +514,19 @@ Vec3f Mesher::plane_intersection(const Vec3f& pa_, const Vec3f& na_,
         (pa.dot(na)*nb.cross(nc) +
          pb.dot(nb)*nc.cross(na) +
          pc.dot(nc)*na.cross(nb)) / n.determinant();
+
+    return (Vec3f){static_cast<float>(out[0]),
+                   static_cast<float>(out[1]),
+                   static_cast<float>(out[2])};
+}
+
+Vec3f Mesher::edge_normal(const Vec3f& a_, const Vec3f& b_, const Vec3f& c_)
+{
+    Eigen::Vector3d a(a_.x, a_.y, a_.z),
+                    b(b_.x, b_.y, b_.z),
+                    c(c_.x, c_.y, c_.z);
+
+    Eigen::Vector3d out = (b-a).cross(c-a).cross(b-a);
 
     return (Vec3f){static_cast<float>(out[0]),
                    static_cast<float>(out[1]),

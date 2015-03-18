@@ -29,7 +29,8 @@ public:
     // Actual vertices
     std::vector<float> verts;
 protected:
-    enum FeatureType { FEATURE_CORNER, FEATURE_EDGE };
+    enum FeatureType { FEATURE_CORNER, FEATURE_EDGE_AB_C,
+                       FEATURE_EDGE_BC_A, FEATURE_EDGE_CA_B };
 
     void get_normals(Vec3f* normals);
     void process_feature(FeatureType t, Vec3f* normals);
@@ -44,9 +45,21 @@ protected:
     void interpolate_between(const Vec3f& v0, const Vec3f& v1);
     void process_tet(const Region& r, const float* const d, const int tet);
 
+    // Finds the intersection of three planes, each defined by
+    // point-on-plane and normal vectors.
     Vec3f plane_intersection(const Vec3f& xa_, const Vec3f& na_,
                              const Vec3f& xb_, const Vec3f& nb_,
                              const Vec3f& xc_, const Vec3f& nc_);
+
+    // Returns the edge location for a triangle with A and C on the
+    // same face (and B on a different face)
+    Vec3f edge_feature_point(const Vec3f& a, const Vec3f& na,
+                             const Vec3f& b, const Vec3f& nb,
+                             const Vec3f& c);
+
+    // Finds the normal of a plane perpendicular to triangle abc
+    // and containing edge ab.
+    Vec3f edge_normal(const Vec3f& a, const Vec3f& b, const Vec3f& c);
 
     // Marks that the first edge of the most recent triangle can be swapped.
     void mark_swappable();
