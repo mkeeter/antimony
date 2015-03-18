@@ -46,6 +46,7 @@ HEADERS += \
     ../src/fab/types/transform.h
 
 INCLUDEPATH += ../src/fab
+INCLUDEPATH += ../vendor
 DEFINES += '_STATIC_= '
 
 linux {

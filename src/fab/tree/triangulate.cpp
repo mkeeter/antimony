@@ -11,6 +11,8 @@
 #include "util/constants.h"
 #include "util/vec3f.h"
 
+#include "Eigen/Dense"
+
 static const uint8_t VERTEX_LOOP[] = {6, 4, 5, 1, 3, 2, 6};
 
 // Based on which vertices are filled, this map tells you which
@@ -148,7 +150,7 @@ void Mesher::mark_swappable()
     }
 }
 
-void Mesher::process_feature()
+void Mesher::process_feature(Mesher::FeatureType t, Vec3f* normals)
 {
     // Get triangle vertices
     unsigned c = verts.size();
@@ -162,10 +164,26 @@ void Mesher::process_feature()
     const float yc = verts[c - 2];
     const float zc = verts[c - 1];
 
+
+    float xd, yd, zd;
+
     // Pick out a new center point
-    const float xd = (xa + xb + xc) / 3;
-    const float yd = (ya + yb + yc) / 3;
-    const float zd = (za + zb + zc) / 3;
+    if (t == FEATURE_CORNER && 0)
+    {
+        const Vec3f intersection = plane_intersection(
+                (Vec3f){xa, ya, za}, normals[0],
+                (Vec3f){xb, yb, zb}, normals[1],
+                (Vec3f){xc, yc, zc}, normals[2]);
+        xd = intersection.x;
+        yd = intersection.y;
+        zd = intersection.z;
+    }
+    else
+    {
+        xd = (xa + xb + xc) / 3;
+        yd = (ya + yb + yc) / 3;
+        zd = (za + zb + zc) / 3;
+    }
 
     for (int i=0; i < 9; ++i)
         verts.pop_back();
@@ -200,19 +218,19 @@ void Mesher::check_feature()
 
     if (ab < 0.95 && bc < 0.95 && ca < 0.95)
     {
-        process_feature();
+        process_feature(FEATURE_CORNER, normals);
     }
     else if (ab >= 0.95 && bc < 0.95 && ca < 0.95)
     {
-        process_feature();
+        process_feature(FEATURE_EDGE, normals);
     }
     else if (ab < 0.95 && bc >= 0.95 && ca < 0.95)
     {
-        process_feature();
+        process_feature(FEATURE_EDGE, normals);
     }
     else if (ab < 0.95 && bc < 0.95 && ca >= 0.95)
     {
-        process_feature();
+        process_feature(FEATURE_EDGE, normals);
     }
 }
 
@@ -438,6 +456,35 @@ void Mesher::process_tet(const Region& r, const float* const d, const int tet)
                                 (v1 & 1) ? r.Z[1] : r.Z[0]});
         }
     }
+}
+
+Vec3f Mesher::plane_intersection(const Vec3f& pa_, const Vec3f& na_,
+                                 const Vec3f& pb_, const Vec3f& nb_,
+                                 const Vec3f& pc_, const Vec3f& nc_)
+{
+    Eigen::Vector3d pa(pa_.x, pa_.y, pa_.z),
+                    na(na_.x, na_.y, na_.z),
+                    pb(pb_.x, pb_.y, pb_.z),
+                    nb(nb_.x, nb_.y, nb_.z),
+                    pc(pc_.x, pc_.y, pc_.z),
+                    nc(nc_.x, nc_.y, nc_.z);
+
+    Eigen::Matrix3d n;
+    n.col(0) << na;
+    n.col(1) << nb;
+    n.col(2) << nc;
+
+    // Graphics Gems 1
+    // Intersection of Three Planes
+    // Ronald Goldman
+    Eigen::Vector3d out =
+        (pa.dot(na)*nb.cross(nc) +
+         pb.dot(nb)*nc.cross(na) +
+         pc.dot(nc)*na.cross(nb)) / n.determinant();
+
+    return (Vec3f){static_cast<float>(out[0]),
+                   static_cast<float>(out[1]),
+                   static_cast<float>(out[2])};
 }
 
 void Mesher::triangulate_region(const Region& r)

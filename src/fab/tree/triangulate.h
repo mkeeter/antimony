@@ -29,8 +29,10 @@ public:
     // Actual vertices
     std::vector<float> verts;
 protected:
+    enum FeatureType { FEATURE_CORNER, FEATURE_EDGE };
+
     void get_normals(Vec3f* normals);
-    void process_feature();
+    void process_feature(FeatureType t, Vec3f* normals);
     void check_feature();
     void push_vert(const Vec3f& v);
     void load_packed(const Region& r);
@@ -41,6 +43,10 @@ protected:
     void end_voxel();
     void interpolate_between(const Vec3f& v0, const Vec3f& v1);
     void process_tet(const Region& r, const float* const d, const int tet);
+
+    Vec3f plane_intersection(const Vec3f& xa_, const Vec3f& na_,
+                             const Vec3f& xb_, const Vec3f& nb_,
+                             const Vec3f& xc_, const Vec3f& nc_);
 
     // Marks that the first edge of the most recent triangle can be swapped.
     void mark_swappable();
