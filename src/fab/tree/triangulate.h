@@ -47,15 +47,18 @@ protected:
 
     // Finds the intersection of three planes, each defined by
     // point-on-plane and normal vectors.
+    // If the determinant is 0, return fallback.
     Vec3f plane_intersection(const Vec3f& xa_, const Vec3f& na_,
                              const Vec3f& xb_, const Vec3f& nb_,
-                             const Vec3f& xc_, const Vec3f& nc_);
+                             const Vec3f& xc_, const Vec3f& nc_,
+                             const Vec3f& fallback);
 
     // Returns the edge location for a triangle with A and C on the
-    // same face (and B on a different face)
+    // same face (and B on a different face).
+    // If the determinant is 0, return fallback.
     Vec3f edge_feature_point(const Vec3f& a, const Vec3f& na,
                              const Vec3f& b, const Vec3f& nb,
-                             const Vec3f& c);
+                             const Vec3f& c, const Vec3f& fallback);
 
     // Finds the normal of a plane perpendicular to triangle abc
     // and containing edge ab.

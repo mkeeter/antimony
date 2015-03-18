@@ -152,14 +152,14 @@ void Mesher::mark_swappable()
 
 Vec3f Mesher::edge_feature_point(const Vec3f& a, const Vec3f& na,
                                  const Vec3f& b, const Vec3f& nb,
-                                 const Vec3f& c)
+                                 const Vec3f& c, const Vec3f& fallback)
 {
     // Find two combined edge normals
     Vec3f n_ab = edge_normal(a, b, c);
     Vec3f n_bc = edge_normal(b, c, a);
 
-    Vec3f p0 = plane_intersection(a, na, b, nb, a, n_ab);
-    Vec3f p1 = plane_intersection(a, na, b, nb, b, n_bc);
+    Vec3f p0 = plane_intersection(a, na, b, nb, a, n_ab, fallback);
+    Vec3f p1 = plane_intersection(a, na, b, nb, b, n_bc, fallback);
 
     return (Vec3f){(p0.x + p1.x)/2, (p0.y + p1.y)/2, (p0.z + p1.z)/2};
 }
@@ -190,28 +190,28 @@ void Mesher::process_feature(Mesher::FeatureType t, Vec3f* normals)
         intersection = plane_intersection(
                 (Vec3f){xa, ya, za}, normals[0],
                 (Vec3f){xb, yb, zb}, normals[1],
-                (Vec3f){xc, yc, zc}, normals[2]);
+                (Vec3f){xc, yc, zc}, normals[2], intersection);
     }
     else if (t == FEATURE_EDGE_AB_C)
     {
         intersection = edge_feature_point(
                 (Vec3f){xb, yb, zb}, normals[1],
                 (Vec3f){xc, yc, zc}, normals[2],
-                (Vec3f){xa, ya, za});
+                (Vec3f){xa, ya, za}, intersection);
     }
     else if (t == FEATURE_EDGE_BC_A)
     {
         intersection = edge_feature_point(
                 (Vec3f){xc, yc, zc}, normals[2],
                 (Vec3f){xa, ya, za}, normals[0],
-                (Vec3f){xb, yb, zb});
+                (Vec3f){xb, yb, zb}, intersection);
     }
     else if (t == FEATURE_EDGE_CA_B)
     {
         intersection = edge_feature_point(
                 (Vec3f){xa, ya, za}, normals[0],
                 (Vec3f){xb, yb, zb}, normals[1],
-                (Vec3f){xc, yc, zc});
+                (Vec3f){xc, yc, zc}, intersection);
     }
 
     const float xd = intersection.x;
@@ -496,7 +496,8 @@ void Mesher::process_tet(const Region& r, const float* const d, const int tet)
 
 Vec3f Mesher::plane_intersection(const Vec3f& pa_, const Vec3f& na_,
                                  const Vec3f& pb_, const Vec3f& nb_,
-                                 const Vec3f& pc_, const Vec3f& nc_)
+                                 const Vec3f& pc_, const Vec3f& nc_,
+                                 const Vec3f& fallback)
 {
     Eigen::Vector3d pa(pa_.x, pa_.y, pa_.z),
                     na(na_.x, na_.y, na_.z),
@@ -510,13 +511,17 @@ Vec3f Mesher::plane_intersection(const Vec3f& pa_, const Vec3f& na_,
     n.col(1) << nb;
     n.col(2) << nc;
 
+    const double det = n.determinant();
+    if (fabs(det) <= 0.01)
+        return fallback;
+
     // Graphics Gems 1
     // Intersection of Three Planes
     // Ronald Goldman
     Eigen::Vector3d out =
         (pa.dot(na)*nb.cross(nc) +
          pb.dot(nb)*nc.cross(na) +
-         pc.dot(nc)*na.cross(nb)) / n.determinant();
+         pc.dot(nc)*na.cross(nb)) / det;
 
     return (Vec3f){static_cast<float>(out[0]),
                    static_cast<float>(out[1]),
