@@ -33,6 +33,12 @@ protected:
                        FEATURE_EDGE_BC_A, FEATURE_EDGE_CA_B };
 
     void get_normals(Vec3f* normals);
+
+    /*
+     * Returns the normal of the most recent triangle added to the mesh.
+     */
+    Vec3f get_triangle_normal() const;
+
     void process_feature(FeatureType t, Vec3f* normals);
     void check_feature();
     void push_vert(const Vec3f& v);

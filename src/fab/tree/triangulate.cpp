@@ -120,6 +120,20 @@ void Mesher::get_normals(Vec3f* normals)
     }
 }
 
+Vec3f Mesher::get_triangle_normal() const
+{
+    const unsigned c = verts.size();
+    const Vec3f n = vec3f_cross(
+            (Vec3f){verts[c-6] - verts[c-9],
+                    verts[c-5] - verts[c-8],
+                    verts[c-4] - verts[c-7]},
+            (Vec3f){verts[c-3] - verts[c-9],
+                    verts[c-2] - verts[c-8],
+                    verts[c-1] - verts[c-7]});
+    const float length = sqrt(pow(n.x, 2) + pow(n.y, 2) + pow(n.z, 2));
+    return (Vec3f){ n.x / length, n.y / length, n.z / length };
+}
+
 // Mark that the first edge of the most recent triangle is swappable
 // (as part of feature detection / extraction).
 void Mesher::mark_swappable()
@@ -243,10 +257,18 @@ void Mesher::check_feature()
 {
     Vec3f normals[3];
     get_normals(normals);
+    Vec3f tri_norm = get_triangle_normal();
 
-    // If any of the normals could not be estimated, return immediately.
+    // This is threshold for deciding that two normals are the same
+    // (when they are dot-producted together)
+    const float same = 0.95;
+
+    // If any of the normals could not be estimated or any of the triangle
+    // point normals agree with the triangle's normal, return immediately.
     for (int i=0; i < 3; ++i)
         if (normals[i].x == 0 && normals[i].y == 0 && normals[i].z == 0)
+            return;
+        else if (fabs(vec3f_dot(normals[i], tri_norm)) >= same)
             return;
 
     const float ab = vec3f_dot(normals[0], normals[1]);
