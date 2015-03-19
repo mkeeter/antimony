@@ -282,6 +282,7 @@ void App::onExportSTL()
     auto thread = new QThread();
     auto worker = new ExportMeshWorker(
             s, resolution_dialog->getResolution(),
+            resolution_dialog->getDetectEdges(),
             file_name);
     delete resolution_dialog;
     worker->moveToThread(thread);

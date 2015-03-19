@@ -21,7 +21,7 @@ struct InterpolateCommand {
 
 class Mesher {
 public:
-    Mesher(struct MathTree_* tree);
+    Mesher(struct MathTree_* tree, bool detect_edges);
     ~Mesher();
 
     void triangulate_region(const Region& r);
@@ -89,6 +89,7 @@ protected:
 
     // MathTree that we're evaluating
     struct MathTree_* tree;
+    bool detect_edges;
 
     // Cached region and data from an eval_r call
     Region packed;
@@ -116,7 +117,7 @@ protected:
     std::map<std::array<float, 6>, unsigned> swappable;
 };
 
-void triangulate(struct MathTree_* tree, Region r,
+void triangulate(struct MathTree_* tree, Region r, bool detect_edges,
                  float** const verts, unsigned* const count);
 
 #endif

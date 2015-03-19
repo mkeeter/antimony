@@ -16,9 +16,14 @@ ResolutionDialog::ResolutionDialog(Shape* shape, bool dimensions, bool has_units
     {
         ui->units->hide();
         ui->unit_label->hide();
-        layout()->invalidate();
-        adjustSize();
     }
+
+    if (dimensions == RESOLUTION_DIALOG_2D)
+        ui->detect_edges->hide();
+
+    // Re-do the layout, since things may have just been hidden
+    layout()->invalidate();
+    adjustSize();
 
     // This connection is awkward because of function overloading.
     connect(ui->export_res,
@@ -65,4 +70,9 @@ float ResolutionDialog::getMMperUnit() const
     else if (u == "inches")     return 25.4;
 
     return 1;
+}
+
+bool ResolutionDialog::getDetectEdges() const
+{
+    return ui->detect_edges->isChecked();
 }

@@ -41,8 +41,9 @@ static const int EDGE_MAP[16][2][3][2] = {
 };
 
 
-Mesher::Mesher(MathTree* tree)
-    : tree(tree), data(new float[MIN_VOLUME]), has_data(false),
+Mesher::Mesher(MathTree* tree, bool detect_edges)
+    : tree(tree), detect_edges(detect_edges),
+      data(new float[MIN_VOLUME]), has_data(false),
       X(new float[MIN_VOLUME]),
       Y(new float[MIN_VOLUME]),
       Z(new float[MIN_VOLUME]),
@@ -345,7 +346,7 @@ void Mesher::push_vert(const Vec3f& v)
     verts.push_back(v.y);
     verts.push_back(v.z);
 
-    if (verts.size() % 9 == 0)
+    if (detect_edges && verts.size() % 9 == 0)
         check_feature();
 }
 
@@ -655,10 +656,10 @@ void Mesher::triangulate_region(const Region& r)
 
 // Finds an array of vertices (as x,y,z float triplets).
 // Sets *count to the number of vertices returned.
-void triangulate(MathTree* tree, const Region r,
+void triangulate(MathTree* tree, const Region r, bool detect_edges,
                  float** const verts, unsigned* const count)
 {
-    Mesher t(tree);
+    Mesher t(tree, detect_edges);
 
     // Top-level call to the recursive triangulation function.
     t.triangulate_region(r);
