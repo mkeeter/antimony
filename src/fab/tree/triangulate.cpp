@@ -236,11 +236,7 @@ bool Mesher::process_feature(Mesher::FeatureType t, Vec3f* normals)
                                (Vec3f){xb, yb, zb},
                                (Vec3f){xc, yc, zc}, intersection))
         {
-            intersection = (Vec3f){
-                (xa + xb + xc) / 3,
-                (ya + yb + yc) / 3,
-                (za + zb + zc) / 3};
-            printf("Point not in triangle\n");
+            return false;
         }
     }
     else if (t == FEATURE_EDGE_AB_C)
@@ -287,6 +283,8 @@ bool Mesher::process_feature(Mesher::FeatureType t, Vec3f* normals)
         verts.push_back(i);
     if (t != FEATURE_EDGE_CA_B)
         mark_swappable();
+
+    return true;
 }
 
 void Mesher::check_feature()
@@ -313,7 +311,17 @@ void Mesher::check_feature()
 
     if (ab < same && bc < same && ca < same)
     {
-        process_feature(FEATURE_CORNER, normals);
+        // If adding the point for the corner feature failed,
+        // then pick the best-fitting edge and use it instead.
+        if (!process_feature(FEATURE_CORNER, normals))
+        {
+            if (ab >= bc && ab >= ca)
+                process_feature(FEATURE_EDGE_AB_C, normals);
+            else if (bc >= ab && bc >= ca)
+                process_feature(FEATURE_EDGE_BC_A, normals);
+            else
+                process_feature(FEATURE_EDGE_CA_B, normals);
+        }
     }
     else if (ab >= same && bc < same && ca < same)
     {
