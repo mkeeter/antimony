@@ -39,7 +39,16 @@ protected:
      */
     Vec3f get_triangle_normal() const;
 
-    void process_feature(FeatureType t, Vec3f* normals);
+    /*
+     *  Processes a sharp feature in the most recent triangle.
+     *  normals is an array of 3 normals at the triangle's corners.
+     *
+     *  Returns false if this was a corner feature with a point that lies
+     *  outside of the triangle's bounds (and was thus not handled);
+     *  otherwise returns true.
+     */
+    bool process_feature(FeatureType t, Vec3f* normals);
+
     void check_feature();
     void push_vert(const Vec3f& v);
     void load_packed(const Region& r);
@@ -65,6 +74,11 @@ protected:
     Vec3f edge_feature_point(const Vec3f& a, const Vec3f& na,
                              const Vec3f& b, const Vec3f& nb,
                              const Vec3f& c, const Vec3f& fallback);
+
+    // Checks whether point p_ is in the triangle abc
+    // (when projected into the same plane)
+    bool point_in_triangle(const Vec3f& a_, const Vec3f& b_, const Vec3f& c_,
+                           const Vec3f& p_);
 
     // Finds the normal of a plane perpendicular to triangle abc
     // and containing edge ab.

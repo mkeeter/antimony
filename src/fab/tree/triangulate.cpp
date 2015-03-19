@@ -179,7 +179,32 @@ Vec3f Mesher::edge_feature_point(const Vec3f& a, const Vec3f& na,
     return (Vec3f){(p0.x + p1.x)/2, (p0.y + p1.y)/2, (p0.z + p1.z)/2};
 }
 
-void Mesher::process_feature(Mesher::FeatureType t, Vec3f* normals)
+bool Mesher::point_in_triangle(const Vec3f& a_, const Vec3f& b_,
+                               const Vec3f& c_, const Vec3f& p_)
+{
+    Eigen::Vector3d a(a_.x, a_.y, a_.z),
+                    b(b_.x, b_.y, b_.z),
+                    c(c_.x, c_.y, c_.z),
+                    p(p_.x, p_.y, p_.z);
+
+    // Triangle's normal
+    Eigen::Vector3d n = (b - a).cross(c - a).normalized();
+
+    // Projected point
+    Eigen::Vector3d proj = p - n*(p - a).dot(n);
+
+    // Check that the point is on the correct side of the three
+    // lines in the triangle; returning false otherwise.
+    if ((proj - a).cross(c - a).dot(n) <= 0)
+        return false;
+    if ((proj - b).cross(a - b).dot(n) <= 0)
+        return false;
+    if ((proj - c).cross(b - c).dot(n) <= 0)
+        return false;
+    return true;
+}
+
+bool Mesher::process_feature(Mesher::FeatureType t, Vec3f* normals)
 {
     // Get triangle vertices
     unsigned c = verts.size();
@@ -206,6 +231,17 @@ void Mesher::process_feature(Mesher::FeatureType t, Vec3f* normals)
                 (Vec3f){xa, ya, za}, normals[0],
                 (Vec3f){xb, yb, zb}, normals[1],
                 (Vec3f){xc, yc, zc}, normals[2], intersection);
+
+        if (!point_in_triangle((Vec3f){xa, ya, za},
+                               (Vec3f){xb, yb, zb},
+                               (Vec3f){xc, yc, zc}, intersection))
+        {
+            intersection = (Vec3f){
+                (xa + xb + xc) / 3,
+                (ya + yb + yc) / 3,
+                (za + zb + zc) / 3};
+            printf("Point not in triangle\n");
+        }
     }
     else if (t == FEATURE_EDGE_AB_C)
     {
