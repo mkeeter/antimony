@@ -523,8 +523,7 @@ void Mesher::interpolate_between(const Vec3f& v0, const Vec3f& v1)
     }
 
     queue.push_back(next);
-    if (next.cmd == InterpolateCommand::INTERPOLATE &&
-            queue.size() == MIN_VOLUME)
+    if (next.cmd == InterpolateCommand::INTERPOLATE && count + 1 == MIN_VOLUME)
         flush_queue();
 }
 
