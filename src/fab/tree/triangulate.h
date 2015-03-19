@@ -51,7 +51,13 @@ protected:
 
     void check_feature();
     void push_vert(const Vec3f& v);
-    void load_packed(const Region& r);
+
+    /*
+     *  Attempts to evaluate every voxel in the given region.
+     *  Returns false if there are too many voxels; true on success.
+     */
+    bool load_packed(const Region& r);
+
     void unload_packed();
     void get_corner_data(const Region& r, float d[8]);
     void eval_zero_crossings(Vec3f* v0, Vec3f* v1, unsigned count);

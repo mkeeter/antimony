@@ -352,18 +352,18 @@ void Mesher::push_vert(const Vec3f& v)
 
 // Evaluates a region voxel-by-voxel, storing the output in the data
 // member of the tristate struct.
-void Mesher::load_packed(const Region& r)
+bool Mesher::load_packed(const Region& r)
 {
+    // Only load the packed matrix if we have few enough voxels.
+    const unsigned voxels = (r.ni+1) * (r.nj+1) * (r.nk+1);
+    if (voxels >= MIN_VOLUME)
+        return false;
+
     // Do a round of interval evaluation for tree pruning
     eval_i(tree, (Interval){r.X[0], r.X[r.ni]},
                  (Interval){r.Y[0], r.Y[r.nj]},
                  (Interval){r.Z[0], r.Z[r.nk]});
     disable_nodes(tree);
-
-    // Only load the packed matrix if we have few enough voxels.
-    const unsigned voxels = (r.ni+1) * (r.nj+1) * (r.nk+1);
-    if (voxels >= MIN_VOLUME)
-        return;
 
     // Flatten a 3D region into a 1D list of points that
     // touches every point in the region, one by one.
@@ -389,6 +389,8 @@ void Mesher::load_packed(const Region& r)
     // Run eval_r and copy the data out
     memcpy(data, eval_r(tree, packed), voxels * sizeof(float));
     has_data = true;
+
+    return true;
 }
 
 void Mesher::unload_packed()
@@ -616,7 +618,7 @@ void Mesher::triangulate_region(const Region& r)
     // recursive calls to make things more efficient.
     bool loaded_data = !has_data;
     if (loaded_data)
-        load_packed(r);
+        loaded_data = load_packed(r);
 
     // If we have greater than one voxel, subdivide and recurse.
     if (r.voxels > 1)
