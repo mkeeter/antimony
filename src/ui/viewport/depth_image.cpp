@@ -30,6 +30,7 @@ DepthImageItem::~DepthImageItem()
         static_cast<QOpenGLWidget*>(viewport->viewport())->makeCurrent();
         glDeleteTextures(1, &depth_tex);
         glDeleteTextures(1, &shaded_tex);
+        static_cast<QOpenGLWidget*>(viewport->viewport())->doneCurrent();
     }
 }
 
