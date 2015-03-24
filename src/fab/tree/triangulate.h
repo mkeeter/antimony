@@ -79,7 +79,8 @@ protected:
     // If the determinant is 0, return fallback.
     Vec3f edge_feature_point(const Vec3f& a, const Vec3f& na,
                              const Vec3f& b, const Vec3f& nb,
-                             const Vec3f& c, const Vec3f& fallback);
+                             const Vec3f& c, const Vec3f& nc,
+                             const Vec3f& fallback);
 
     // Checks whether point p_ is in the triangle abc
     // (when projected into the same plane)

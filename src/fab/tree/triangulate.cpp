@@ -168,7 +168,8 @@ void Mesher::mark_swappable()
 
 Vec3f Mesher::edge_feature_point(const Vec3f& a, const Vec3f& na,
                                  const Vec3f& b, const Vec3f& nb,
-                                 const Vec3f& c, const Vec3f& fallback)
+                                 const Vec3f& c, const Vec3f& nc,
+                                 const Vec3f& fallback)
 {
     // Find two combined edge normals
     Vec3f n_ab = edge_normal(a, b, c);
@@ -245,21 +246,21 @@ bool Mesher::process_feature(Mesher::FeatureType t, Vec3f* normals)
         intersection = edge_feature_point(
                 (Vec3f){xb, yb, zb}, normals[1],
                 (Vec3f){xc, yc, zc}, normals[2],
-                (Vec3f){xa, ya, za}, intersection);
+                (Vec3f){xa, ya, za}, normals[0], intersection);
     }
     else if (t == FEATURE_EDGE_BC_A)
     {
         intersection = edge_feature_point(
                 (Vec3f){xc, yc, zc}, normals[2],
                 (Vec3f){xa, ya, za}, normals[0],
-                (Vec3f){xb, yb, zb}, intersection);
+                (Vec3f){xb, yb, zb}, normals[1], intersection);
     }
     else if (t == FEATURE_EDGE_CA_B)
     {
         intersection = edge_feature_point(
                 (Vec3f){xa, ya, za}, normals[0],
                 (Vec3f){xb, yb, zb}, normals[1],
-                (Vec3f){xc, yc, zc}, intersection);
+                (Vec3f){xc, yc, zc}, normals[2], intersection);
     }
 
     const float xd = intersection.x;
