@@ -74,6 +74,13 @@ protected:
                              const Vec3f& xc_, const Vec3f& nc_,
                              const Vec3f& fallback);
 
+    // Given two planes (one containing point a with normal na, the other
+    // containing point b with normal nb), find the point closest to c that
+    // is on the edge representing the intersection of the planes.
+    Vec3f plane_plane_point(const Vec3f& a, const Vec3f& na,
+                            const Vec3f& b, const Vec3f& nb,
+                            const Vec3f& c);
+
     // Returns the edge location for a triangle with A and C on the
     // same face (and B on a different face).
     // If the determinant is 0, return fallback.

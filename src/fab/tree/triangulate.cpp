@@ -166,6 +166,65 @@ void Mesher::mark_swappable()
     }
 }
 
+Vec3f Mesher::plane_plane_point(const Vec3f& a, const Vec3f& na,
+                                const Vec3f& b, const Vec3f& nb,
+                                const Vec3f& c)
+{
+    // Convert into Hessian normal form
+    const float pa = -vec3f_dot(na, a);
+    const float pb = -vec3f_dot(nb, b);
+
+    // Finding the edge direction is easy:
+    const Vec3f edge = vec3f_cross(na, nb);
+
+    // Finding a point on the edge is a bit tricker.
+    // We collapse the undetermined system by setting x, y, or z=0
+    // (depending on the edge's normal).
+    float eq1[2];
+    float eq2[2];
+    char zeroed;
+    if (fabs(edge.x) > 0.01)
+    {
+        eq1[0] = na.y; eq1[1] = na.z;
+        eq2[0] = nb.y; eq2[1] = nb.z;
+        zeroed = 'x';
+    }
+    else if (fabs(edge.y) > 0.01)
+    {
+        eq1[0] = na.x; eq1[1] = na.z;
+        eq2[0] = nb.x; eq2[1] = nb.z;
+        zeroed = 'y';
+    } else {
+        eq1[0] = na.x; eq1[1] = na.y;
+        eq2[0] = nb.x; eq2[1] = nb.y;
+        zeroed = 'z';
+    }
+
+    // Then, solve the pair of simultaneous equations
+    const float z = (-pa + eq1[0]/eq2[0]*pb) /
+                    ((eq1[1] - eq1[0]/eq2[0]) * eq2[1]);
+    const float y = (-pa - eq1[1]*z) / eq1[0];
+
+    // Lastly, create the point at the right place, depending on which
+    // term had been zeroed to collapse the underdetermined system.
+    Vec3f edge_pt;
+    if (zeroed == 'x')
+        edge_pt = (Vec3f){0, y, z};
+    else if (zeroed == 'y')
+        edge_pt = (Vec3f){y, 0, z};
+    else
+        edge_pt = (Vec3f){y, z, 0};
+
+    // Lastly, work out the point on the edge that is the closest to the
+    // provided point c.
+    const float t = vec3f_dot(edge, (Vec3f){c.x - edge_pt.x,
+                                            c.y - edge_pt.y,
+                                            c.z - edge_pt.z});
+    return (Vec3f){edge_pt.x + t * edge.x,
+                   edge_pt.y + t * edge.y,
+                   edge_pt.z + t * edge.z};
+}
+
 Vec3f Mesher::edge_feature_point(const Vec3f& a, const Vec3f& na,
                                  const Vec3f& b, const Vec3f& nb,
                                  const Vec3f& c, const Vec3f& nc,
