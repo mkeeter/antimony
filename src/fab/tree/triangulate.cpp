@@ -359,7 +359,6 @@ void Mesher::check_feature()
 {
     Vec3f normals[3];
     get_normals(normals);
-    Vec3f tri_norm = get_triangle_normal();
 
     // This is threshold for deciding that two normals are the same
     // (when they are dot-producted together)
@@ -369,8 +368,6 @@ void Mesher::check_feature()
     // point normals agree with the triangle's normal, return immediately.
     for (int i=0; i < 3; ++i)
         if (normals[i].x == 0 && normals[i].y == 0 && normals[i].z == 0)
-            return;
-        else if (fabs(vec3f_dot(normals[i], tri_norm)) >= same)
             return;
 
     const float ab = fabs(vec3f_dot(normals[0], normals[1]));
