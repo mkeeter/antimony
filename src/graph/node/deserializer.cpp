@@ -25,7 +25,10 @@ bool SceneDeserializer::run(QJsonObject in)
     if (in.find("type") == in.end() || in["type"].toString() != "sb")
     {
         failed = true;
-        error_message = "File is not an Antimony file";
+        error_message = "Could not recognize file.<br><br>"
+                        "If this file was saved in Antimony 0.7.7 or earlier, "
+                        "open it in Antimony 0.7.8 and re-save to upgrade to the current file format.";
+        return failed;
     }
 
     // Check file saving protocol
@@ -33,6 +36,7 @@ bool SceneDeserializer::run(QJsonObject in)
     {
         failed = true;
         error_message = "Could not detect protocol";
+        return failed;
     }
     else
     {
@@ -41,11 +45,13 @@ bool SceneDeserializer::run(QJsonObject in)
         {
             failed = true;
             error_message = "File was saved with a older protocol and cannot yet be read.";
+            return failed;
         }
         else if (protocol_version > 5)
         {
             failed = true;
             error_message = "File was saved with a newer protocol and cannot yet be read.";
+            return failed;
         }
     }
 
@@ -54,16 +60,14 @@ bool SceneDeserializer::run(QJsonObject in)
     {
         failed = true;
         error_message = "File does not contain any nodes.";
+        return failed;
     }
 
-    if (!failed)
-    {
-        deserializeNodes(in["nodes"].toArray(), node_root);
-        if (in.find("connections") != in.end())
-            deserializeConnections(in["connections"].toArray());
-    }
+    deserializeNodes(in["nodes"].toArray(), node_root);
+    if (in.find("connections") != in.end())
+        deserializeConnections(in["connections"].toArray());
 
-    return failed;
+    return false;
 }
 
 void SceneDeserializer::deserializeNodes(QJsonArray in, NodeRoot* p)

@@ -24,6 +24,9 @@ namespace proxy {
     };
     void onProxyException(const ProxyException& e);
     void preInit();
+    PyObject* proxyConstructor();
+
+    extern PyObject* proxy_init;
 };
 
 #endif // NODE_PROXY_H

@@ -87,14 +87,18 @@ void loadColors()
         {"base07", base07}};
 
     for (auto color : colors)
+    {
+        auto c = Py_BuildValue(
+                "(iii)", color.second.red(),
+                color.second.green(), color.second.blue());
         PyObject_SetAttrString(
-                color_module, color.first.toStdString().c_str(),
-                Py_BuildValue(
-                    "(iii)", color.second.red(),
-                    color.second.green(), color.second.blue()));
+                color_module, color.first.toStdString().c_str(), c);
+        Py_DECREF(c);
+    }
 
     PyObject_SetAttrString(fab, "color", color_module);
     Py_DECREF(fab);
+    Py_DECREF(color_module);
 
     Q_ASSERT(!PyErr_Occurred());
 }

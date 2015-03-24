@@ -38,6 +38,7 @@ void free_tree(MathTree* tree)
             free(tree->nodes[level][n]);
         }
         free(tree->nodes[level]);
+        free(tree->disabled[level].data);
     }
 
     for (unsigned c=0; c < tree->num_constants; ++c) {

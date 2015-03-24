@@ -443,10 +443,12 @@ void Viewport::pan(QVector3D d)
 
 void Viewport::drawBackground(QPainter* painter, const QRectF& rect)
 {
-    Q_UNUSED(painter);
     Q_UNUSED(rect);
+
+    painter->beginNativePainting();
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    painter->endNativePainting();
 }
 
 void Viewport::drawForeground(QPainter* painter, const QRectF& rect)
