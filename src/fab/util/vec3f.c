@@ -17,3 +17,8 @@ Vec3f vec3f_cross(Vec3f a, Vec3f b)
         a.z*b.x - a.x*b.z,
         a.x*b.y - a.y*b.x};
 }
+
+float vec3f_len(Vec3f a)
+{
+    return sqrt(pow(a.x, 2) + pow(a.y, 2) + pow(a.z, 2));
+}

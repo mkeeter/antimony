@@ -234,10 +234,17 @@ Vec3f Mesher::edge_feature_point(const Vec3f& a, const Vec3f& na,
     Vec3f n_ab = edge_normal(a, b, c);
     Vec3f n_bc = edge_normal(b, c, a);
 
-    Vec3f p0 = plane_intersection(a, na, b, nb, a, n_ab, fallback);
-    Vec3f p1 = plane_intersection(a, na, b, nb, b, n_bc, fallback);
+    Vec3f center = (Vec3f){(a.x + b.x + c.x)/3,
+                           (a.y + b.y + c.y)/3,
+                           (a.z + b.z + c.z)/3};
 
-    return (Vec3f){(p0.x + p1.x)/2, (p0.y + p1.y)/2, (p0.z + p1.z)/2};
+    Vec3f p0 = plane_intersection(a, na, b, nb, center, n_ab, fallback);
+    Vec3f p1 = plane_intersection(c, nc, b, nb, center, n_bc, fallback);
+
+    Vec3f d0 = (Vec3f){p0.x - center.x, p0.y - center.y, p0.z - center.z};
+    Vec3f d1 = (Vec3f){p1.x - center.x, p1.y - center.y, p1.z - center.z};
+
+    return vec3f_len(d0) < vec3f_len(d1) ? p0 : p1;
 }
 
 bool Mesher::point_in_triangle(const Vec3f& a_, const Vec3f& b_,
