@@ -714,13 +714,13 @@ float* Mesher::get_verts(unsigned* count)
     // There are 9 floats in each triangle
     *count = triangles.size() * 9;
 
-    float* v = (float*)malloc(sizeof(float) * (*count));
+    float* out = (float*)malloc(sizeof(float) * (*count));
 
     unsigned i = 0;
     for (auto t : triangles)
         for (auto v : {t.a, t.b, t.c})
             for (int j=0; j < 3; ++j)
-                v[i++] = v[j];
+                out[i++] = v[j];
 
-    return v;
+    return out;
 }
