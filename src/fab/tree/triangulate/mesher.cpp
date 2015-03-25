@@ -504,7 +504,7 @@ void Mesher::eval_zero_crossings(Vec3f* v0, Vec3f* v1, unsigned count)
         {
             dummy.X[i] = v0[i][0] * (1 - p[i]) + v1[i][0] * p[i];
             dummy.Y[i] = v0[i][1] * (1 - p[i]) + v1[i][1] * p[i];
-            dummy.Z[i] = v0[i][1] * (1 - p[i]) + v1[i][2] * p[i];
+            dummy.Z[i] = v0[i][2] * (1 - p[i]) + v1[i][2] * p[i];
         }
         float* out = eval_r(tree, dummy);
 
