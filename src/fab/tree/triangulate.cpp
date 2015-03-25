@@ -123,15 +123,15 @@ void Mesher::get_normals(Vec3f* normals)
 
 Vec3f Mesher::get_triangle_normal(int index) const
 {
-    // Let c point at the end of the target triangle
-    const unsigned c = (index < 0) ? verts.size() : (index + 9);
+    // Let c point at the beginning of the target triangle
+    const unsigned c = (index < 0) ? (verts.size() - 9) : index;
     const Vec3f n = vec3f_cross(
-            (Vec3f){verts[c-6] - verts[c-9],
-                    verts[c-5] - verts[c-8],
-                    verts[c-4] - verts[c-7]},
-            (Vec3f){verts[c-3] - verts[c-9],
-                    verts[c-2] - verts[c-8],
-                    verts[c-1] - verts[c-7]});
+            (Vec3f){verts[c+3] - verts[c],
+                    verts[c+4] - verts[c+1],
+                    verts[c+5] - verts[c+2]},
+            (Vec3f){verts[c+6] - verts[c],
+                    verts[c+7] - verts[c+1],
+                    verts[c+8] - verts[c+2]});
     const float length = vec3f_len(n);
     return (Vec3f){ n.x / length, n.y / length, n.z / length };
 }
