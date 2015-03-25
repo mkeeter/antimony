@@ -4,6 +4,8 @@ SOURCES += \
     ../src/fab/tree/tree.c \
     ../src/fab/tree/parser.c \
     ../src/fab/tree/triangulate.cpp \
+    ../src/fab/tree/triangulate/mesher.cpp \
+    ../src/fab/tree/triangulate/triangle.cpp \
     ../src/fab/tree/math/math_f.c \
     ../src/fab/tree/math/math_i.c \
     ../src/fab/tree/math/math_r.c \
@@ -16,7 +18,6 @@ SOURCES += \
     ../src/fab/formats/stl.c \
     ../src/fab/util/region.c \
     ../src/fab/util/ustack.c \
-    ../src/fab/util/vec3f.c \
     ../src/fab/types/shape.cpp \
     ../src/fab/fab.cpp \
     ../src/fab/types/bounds.cpp \
@@ -28,6 +29,8 @@ HEADERS += \
     ../src/fab/tree/tree.h \
     ../src/fab/tree/parser.h \
     ../src/fab/tree/triangulate.h \
+    ../src/fab/tree/triangulate/mesher.h \
+    ../src/fab/tree/triangulate/triangle.h \
     ../src/fab/tree/math/math_f.h \
     ../src/fab/tree/math/math_i.h \
     ../src/fab/tree/math/math_r.h \

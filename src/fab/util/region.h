@@ -3,8 +3,6 @@
 
 #include <stdint.h>
 
-#include "util/vec3f.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
