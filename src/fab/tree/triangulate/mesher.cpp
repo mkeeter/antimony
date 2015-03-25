@@ -276,74 +276,49 @@ bool Mesher::point_in_triangle(const Vec3f& a, const Vec3f& b,
     return true;
 }
 
-bool Mesher::process_feature(Mesher::FeatureType type, const Triangle& tri,
+void Mesher::process_feature(Mesher::FeatureType type, const Triangle& tri,
                              const Triangle& normals)
 {
-    /*
     // Pick out a new center point
     Vec3f intersection = (tri.a + tri.b + tri.c) / 3;
 
     if (type == FEATURE_CORNER)
     {
-        intersection = plane_intersection(
-                (Vec3f){xa, ya, za}, normals[0],
-                (Vec3f){xb, yb, zb}, normals[1],
-                (Vec3f){xc, yc, zc}, normals[2], intersection);
-
-        if (!point_in_triangle((Vec3f){xa, ya, za},
-                               (Vec3f){xb, yb, zb},
-                               (Vec3f){xc, yc, zc}, intersection))
-        {
-            return false;
-        }
+        intersection = plane_intersection(tri.a, normals.a,
+                                          tri.b, normals.b,
+                                          tri.c, normals.c, intersection);
     }
     else if (type == FEATURE_EDGE_AB_C)
     {
-        intersection = edge_feature_point(
-                (Vec3f){xb, yb, zb}, normals[1],
-                (Vec3f){xc, yc, zc}, normals[2],
-                (Vec3f){xa, ya, za}, normals[0], intersection);
+        intersection = edge_feature_point(tri.b, normals.b,
+                                          tri.c, normals.c,
+                                          tri.a, normals.a, intersection);
     }
     else if (type == FEATURE_EDGE_BC_A)
     {
-        intersection = edge_feature_point(
-                (Vec3f){xc, yc, zc}, normals[2],
-                (Vec3f){xa, ya, za}, normals[0],
-                (Vec3f){xb, yb, zb}, normals[1], intersection);
+        intersection = edge_feature_point(tri.c, normals.c,
+                                          tri.a, normals.a,
+                                          tri.b, normals.b, intersection);
     }
     else if (type == FEATURE_EDGE_CA_B)
     {
-        intersection = edge_feature_point(
-                (Vec3f){xa, ya, za}, normals[0],
-                (Vec3f){xb, yb, zb}, normals[1],
-                (Vec3f){xc, yc, zc}, normals[2], intersection);
+        intersection = edge_feature_point(tri.a, normals.a,
+                                          tri.b, normals.b,
+                                          tri.c, normals.c, intersection);
     }
 
-    const float xd = intersection.x;
-    const float yd = intersection.y;
-    const float zd = intersection.z;
-
-    for (int i=0; i < 9; ++i)
-        verts.pop_back();
-
     // Add the new (split) triangles
-    for (auto i : {xa, ya, za, xb, yb, zb, xd, yd, zd})
-        verts.push_back(i);
-    if (t != FEATURE_EDGE_AB_C)
+    triangles.push_back(Triangle(tri.a, tri.b, intersection));
+    if (type != FEATURE_EDGE_AB_C)
         mark_swappable();
 
-    for (auto i : {xb, yb, zb, xc, yc, zc, xd, yd, zd})
-        verts.push_back(i);
-    if (t != FEATURE_EDGE_BC_A)
+    triangles.push_back(Triangle(tri.b, tri.c, intersection));
+    if (type != FEATURE_EDGE_BC_A)
         mark_swappable();
 
-    for (auto i : {xc, yc, zc, xa, ya, za, xd, yd, zd})
-        verts.push_back(i);
-    if (t != FEATURE_EDGE_CA_B)
+    triangles.push_back(Triangle(tri.c, tri.a, intersection));
+    if (type != FEATURE_EDGE_CA_B)
         mark_swappable();
-
-        */
-    return true;
 }
 
 void Mesher::add_triangle(const Triangle& t)
@@ -373,35 +348,15 @@ void Mesher::add_triangle(const Triangle& t)
     const float same = 0.95;
 
     if (ab < same && bc < same && ca < same)
-    {
-        // If adding the point for the corner feature failed,
-        // then pick the best-fitting edge and use it instead.
-        if (!process_feature(FEATURE_CORNER, t, normals))
-        {
-            if (ab >= bc && ab >= ca)
-                process_feature(FEATURE_EDGE_AB_C, t, normals);
-            else if (bc >= ab && bc >= ca)
-                process_feature(FEATURE_EDGE_BC_A, t, normals);
-            else
-                process_feature(FEATURE_EDGE_CA_B, t, normals);
-        }
-    }
+        process_feature(FEATURE_CORNER, t, normals);
     else if (ab >= same && bc < same && ca < same)
-    {
         process_feature(FEATURE_EDGE_AB_C, t, normals);
-    }
     else if (ab < same && bc >= same && ca < same)
-    {
         process_feature(FEATURE_EDGE_BC_A, t, normals);
-    }
     else if (ab < same && bc < same && ca >= same)
-    {
         process_feature(FEATURE_EDGE_CA_B, t, normals);
-    }
     else
-    {
         triangles.push_back(t);
-    }
 }
 
 // Loads a vertex into the vertex list.
@@ -415,6 +370,7 @@ void Mesher::push_vert(const float x, const float y, const float z)
         triangle.clear();
     }
 }
+
 
 // Evaluates a region voxel-by-voxel, storing the output in the data
 // member of the tristate struct.

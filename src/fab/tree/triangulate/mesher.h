@@ -55,7 +55,7 @@ protected:
      *  outside of the triangle's bounds (and was thus not handled);
      *  otherwise returns true and pushes a triangle fan to the mesh.
      */
-    bool process_feature(FeatureType type, const Triangle& tri,
+    void process_feature(FeatureType type, const Triangle& tri,
                          const Triangle& normals);
 
     /*
