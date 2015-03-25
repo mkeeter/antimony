@@ -37,7 +37,7 @@ protected:
     /*
      * Returns the normal of the most recent triangle added to the mesh.
      */
-    Vec3f get_triangle_normal() const;
+    Vec3f get_triangle_normal(int index=-1) const;
 
     /*
      *  Processes a sharp feature in the most recent triangle.
