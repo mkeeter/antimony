@@ -132,7 +132,7 @@ Vec3f Mesher::get_triangle_normal(int index) const
             (Vec3f){verts[c-3] - verts[c-9],
                     verts[c-2] - verts[c-8],
                     verts[c-1] - verts[c-7]});
-    const float length = sqrt(pow(n.x, 2) + pow(n.y, 2) + pow(n.z, 2));
+    const float length = vec3f_len(n);
     return (Vec3f){ n.x / length, n.y / length, n.z / length };
 }
 
