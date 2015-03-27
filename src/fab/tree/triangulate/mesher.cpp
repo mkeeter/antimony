@@ -856,8 +856,6 @@ void Mesher::triangulate_voxel(const Region& r, const float* const d)
                                r.Y[VERTEX_OFFSET[v1][1]],
                                r.Z[VERTEX_OFFSET[v1][2]]);
 
-        if (!((d[v0] < 0) ^ (d[v1] < 0)))
-            printf("ruh roh %f %f\n", d[v0], d[v1]);
         if (d[v0] < 0)
             interpolate_between(p0, p1);
         else
