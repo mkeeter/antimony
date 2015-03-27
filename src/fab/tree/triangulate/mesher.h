@@ -48,34 +48,10 @@ protected:
     Triangle get_normals(const Triangle& t);
 
     /*
-     *  Processes a sharp feature in the most recent triangle.
-     *
-     *  Returns false if this was a corner feature with a point that lies
-     *  outside of the triangle's bounds (and was thus not handled);
-     *  otherwise returns true and pushes a triangle fan to the mesh.
-     */
-    void process_feature(FeatureType type, const Triangle& tri,
-                         const Triangle& normals);
-
-    /*
      *  Records another vertex.
      *  Calls add_triangle if this vertex completes a triangle.
      */
     void push_vert(const float x, const float y, const float z);
-
-    /*
-     *  Adds a new triangle to the mesh.
-     *  Splits it into a triangle fan if a feature is detected and
-     *  detect_edges is true.
-     */
-    void add_triangle(const Triangle& t);
-
-    /*
-     *  Checks to see if any sharp features are detected.
-     *  If no features are found, push the triangle to our triangle set;
-     *  otherwise, push a triangle fan and store swappable edges.
-     */
-    void add_triangle();
 
     /*
      *  Attempts to evaluate every voxel in the given region.
@@ -119,38 +95,6 @@ protected:
      *      d is the corner values
      */
     void triangulate_voxel(const Region& r, const float* const d);
-
-    // Finds the intersection of three planes, each defined by
-    // point-on-plane and normal vectors.
-    // If the determinant is 0, return fallback.
-    Vec3f plane_intersection(const Vec3f& xa_, const Vec3f& na_,
-                             const Vec3f& xb_, const Vec3f& nb_,
-                             const Vec3f& xc_, const Vec3f& nc_,
-                             const Vec3f& fallback);
-
-    // Given two planes (one containing point a with normal na, the other
-    // containing point b with normal nb), find the point closest to c that
-    // is on the edge representing the intersection of the planes.
-    Vec3f plane_plane_point(const Vec3f& a, const Vec3f& na,
-                            const Vec3f& b, const Vec3f& nb,
-                            const Vec3f& c);
-
-    // Returns the edge location for a triangle with A and C on the
-    // same face (and B on a different face).
-    // If the determinant is 0, return fallback.
-    Vec3f edge_feature_point(const Vec3f& a, const Vec3f& na,
-                             const Vec3f& b, const Vec3f& nb,
-                             const Vec3f& c, const Vec3f& nc,
-                             const Vec3f& fallback);
-
-    // Checks whether point p_ is in the triangle abc
-    // (when projected into the same plane)
-    bool point_in_triangle(const Vec3f& a_, const Vec3f& b_, const Vec3f& c_,
-                           const Vec3f& p_);
-
-    // Finds the normal of a plane perpendicular to triangle abc
-    // and containing edge ab.
-    Vec3f edge_normal(const Vec3f& a, const Vec3f& b, const Vec3f& c);
 
     // Marks that the first edge of the most recent triangle can be swapped.
     void mark_swappable();
