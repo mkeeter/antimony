@@ -8,14 +8,13 @@
 
 #include "tree/triangulate/triangle.h"
 
-#include "util/constants.h"
 #include "util/region.h"
 
 // Forward declaration of MathTree
 struct MathTree_;
 
 struct InterpolateCommand {
-    enum {INTERPOLATE, CACHED, END_OF_VOXEL} cmd;
+    enum {INTERPOLATE, CACHED, END_OF_VOXEL, END_OF_FAN} cmd;
     Vec3f v0;
     Vec3f v1;
     unsigned cached;
@@ -115,12 +114,11 @@ protected:
     void interpolate_between(const Vec3f& v0, const Vec3f& v1);
 
     /*
-     *  Evaluates the given tetrahedron.
+     *  Evaluates the given voxel.
      *      r is the voxel region
      *      d is the corner values
-     *      tet is the tetrahedron's number.
      */
-    void process_tet(const Region& r, const float* const d, const int tet);
+    void triangulate_voxel(const Region& r, const float* const d);
 
     // Finds the intersection of three planes, each defined by
     // point-on-plane and normal vectors.
@@ -190,6 +188,7 @@ protected:
     // List of existing triangles
     std::list<Triangle> triangles;
 
+    std::list<Triangle>::iterator fan_start;
     std::map<std::array<float, 6>, std::list<Triangle>::iterator> swappable;
 };
 
