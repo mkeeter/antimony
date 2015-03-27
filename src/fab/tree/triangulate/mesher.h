@@ -45,7 +45,7 @@ protected:
      *  Finds the normals of each vertex on the triangle.
      *  Returns a Triangle with the corners as the new normals.
      */
-    Triangle get_normals(const Triangle& t);
+     std::list<Vec3f> get_normals(const std::list<Vec3f>& t);
 
     /*
      *  Records another vertex.

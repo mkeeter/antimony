@@ -314,24 +314,30 @@ Mesher::~Mesher()
 }
 
 
-// Returns the normals of the provided triangle.
-Triangle Mesher::get_normals(const Triangle& t)
+// Estimate the normals of a set of points.
+std::list<Vec3f> Mesher::get_normals(const std::list<Vec3f>& points)
 {
-    // Get a small value for epsilon by taking 1/10th the smallest edge length
-    // (this will be our sampling step for normal estimation).
-    const float len_a = (t.a - t.b).norm();
-    const float len_b = (t.b - t.c).norm();
-    const float len_c = (t.c - t.a).norm();
-    const float epsilon = fmin(len_a, fmin(len_b, len_c)) / 10.0f;
+    // Find epsilon as the single shortest side length divided by 10.
+    float epsilon = INFINITY;
+    auto j = points.begin();
+    j++;
+    for (auto i = points.begin(); j != points.end(); ++i, ++j)
+    {
+        if (j != points.end())
+        {
+            auto d = *j - *i;
+            epsilon = fmin(epsilon, d.norm() / 10.0f);
+        }
+    }
 
     // We'll be evaluating a dummy region to numerically estimate gradients
     Region dummy = (Region){
         .X = nx, .Y = ny, .Z = nz,
-        .voxels = 12};
+        .voxels = points.size() * 4};
 
     // Load position data into the dummy region
     int i=0;
-    for (auto v : {t.a, t.b, t.c})
+    for (auto v : points)
     {
         dummy.X[i]   = v[0];
         dummy.X[i+1] = v[0] + epsilon;
@@ -353,14 +359,14 @@ Triangle Mesher::get_normals(const Triangle& t)
     float* out = eval_r(tree, dummy);
 
     // Extract normals from the evaluated data.
-    Triangle normals;
+    std::list<Vec3f> normals;
     i = 0;
-    for (auto n : {&normals.a, &normals.b, &normals.c})
+    for (auto v : points)
     {
         const float dx = out[i+1] - out[i];
         const float dy = out[i+2] - out[i];
         const float dz = out[i+3] - out[i];
-        *n = Vec3f(dx, dy, dz).normalized();
+        normals.push_back(Vec3f(dx, dy, dz).normalized());
         i += 4;
     }
 
