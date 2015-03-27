@@ -301,7 +301,8 @@ Mesher::Mesher(MathTree* tree, bool detect_edges)
       ez(new float[MIN_VOLUME]),
       nx(new float[MIN_VOLUME]),
       ny(new float[MIN_VOLUME]),
-      nz(new float[MIN_VOLUME])
+      nz(new float[MIN_VOLUME]),
+      fan_start(triangles.end())
 {
     // Nothing to do here
 }
@@ -370,6 +371,54 @@ Triangle Mesher::get_normals(const Triangle& t)
 // (as part of feature detection / extraction).
 void Mesher::mark_swappable()
 {
+}
+
+std::list<Vec3f> Mesher::get_contour()
+{
+    std::list<Vec3f> contour = {fan_start->a};
+
+    while (contour.size() == 1 || contour.front() != contour.back())
+    {
+        for (auto itr=fan_start; itr != triangles.end(); ++itr)
+        {
+            const auto& t = *itr;
+            if (contour.back() == t.a)
+            {
+                const auto ab = t.b - t.a;
+                if ((ab[0] != 0) + (ab[1] != 0) + (ab[2] != 0) < 3)
+                {
+                    contour.push_back(t.b);
+                    break;
+                }
+            }
+
+            if (contour.back() == t.b)
+            {
+                const auto bc = t.c - t.b;
+                if ((bc[0] != 0) + (bc[1] != 0) + (bc[2] != 0))
+                {
+                    contour.push_back(t.c);
+                    break;
+                }
+            }
+
+            if (contour.back() == t.c)
+            {
+                const auto ca = t.a - t.c;
+                if ((ca[0] != 0) + (ca[1] != 0) + (ca[2] != 0))
+                {
+                    contour.push_back(t.a);
+                    break;
+                }
+            }
+        }
+    }
+    return contour;
+}
+
+void Mesher::check_feature()
+{
+    printf("Got contour with %i points\n", get_contour().size());
 }
 
 // Loads a vertex into the vertex list.
@@ -530,8 +579,7 @@ void Mesher::flush_queue()
         }
         else if (c.cmd == InterpolateCommand::END_OF_FAN)
         {
-            // Check for features here
-
+            check_feature();
             fan_start = triangles.end();
         }
     }

@@ -99,6 +99,17 @@ protected:
     // Marks that the first edge of the most recent triangle can be swapped.
     void mark_swappable();
 
+    /*
+     *  Check the most recent fan (from fan_start to triangles.end())
+     *  for features and process them if they are found.
+     */
+    void check_feature();
+
+    /*
+     *  Returns a closed contour that traces the most recent fan.
+     */
+    std::list<Vec3f> get_contour();
+
     // MathTree that we're evaluating
     struct MathTree_* tree;
     bool detect_edges;
