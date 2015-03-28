@@ -697,7 +697,8 @@ void Mesher::flush_queue()
         }
         else if (c.cmd == InterpolateCommand::END_OF_FAN)
         {
-            check_feature();
+            if (detect_edges)
+                check_feature();
             fan_start = triangles.end();
         }
     }
