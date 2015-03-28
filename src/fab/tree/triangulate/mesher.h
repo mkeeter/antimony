@@ -93,8 +93,11 @@ protected:
      */
     void triangulate_voxel(const Region& r, const float* const d);
 
-    // Marks that the first edge of the most recent triangle can be swapped.
-    void mark_swappable();
+    /*
+     *  Marks that the first edge of this triangle is swappable,
+     *  and performs the swap if a match is found.
+     */
+    void push_swappable_triangle(Triangle t);
 
     /*
      *  Check the most recent fan (from fan_start to triangles.end())
@@ -141,7 +144,7 @@ protected:
     std::list<Triangle> triangles;
 
     std::list<Triangle>::iterator fan_start;
-    std::map<std::array<float, 6>, std::list<Triangle>::iterator> swappable;
+    std::map<std::array<double, 6>, std::list<Triangle>::iterator> swappable;
 };
 
 #endif

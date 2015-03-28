@@ -377,8 +377,32 @@ std::list<Vec3f> Mesher::get_normals(const std::list<Vec3f>& points)
 
 // Mark that the first edge of the most recent triangle is swappable
 // (as part of feature detection / extraction).
-void Mesher::mark_swappable()
+void Mesher::push_swappable_triangle(Triangle t)
 {
+    std::array<double, 6> key = {{
+        t.a[0], t.a[1], t.a[2],
+        t.b[0], t.b[1], t.b[2]}};
+
+    auto found = swappable.find(key);
+    if (found != swappable.end())
+    {
+        found->second->b = t.c;
+        t.b = found->second->c;
+        triangles.push_back(t);
+        swappable.erase(found);
+    }
+    else
+    {
+        std::array<double, 6> reversed = {{
+            t.b[0], t.b[1], t.b[2],
+            t.a[0], t.a[1], t.a[2]}};
+        triangles.push_back(t);
+
+        // Store an iterator pointing to the new triangle.
+        auto itr = triangles.end();
+        itr--;
+        swappable[reversed] = itr;
+    }
 }
 
 std::list<Vec3f> Mesher::get_contour()
@@ -511,7 +535,7 @@ void Mesher::check_feature()
         auto p1 = contour.begin();
         p1++;
         while (p1 != contour.end())
-            triangles.push_back(Triangle(*(p0++), *(p1++), new_pt));
+            push_swappable_triangle(Triangle(*(p0++), *(p1++), new_pt));
     }
 }
 
