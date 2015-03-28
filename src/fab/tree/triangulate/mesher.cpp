@@ -434,7 +434,7 @@ std::list<Vec3f> Mesher::get_contour()
             if (contour.back() == t.b)
             {
                 const auto bc = t.c - t.b;
-                if ((bc[0] != 0) + (bc[1] != 0) + (bc[2] != 0))
+                if ((bc[0] != 0) + (bc[1] != 0) + (bc[2] != 0) < 3)
                 {
                     contour.push_back(t.c);
                     break;
@@ -444,7 +444,7 @@ std::list<Vec3f> Mesher::get_contour()
             if (contour.back() == t.c)
             {
                 const auto ca = t.a - t.c;
-                if ((ca[0] != 0) + (ca[1] != 0) + (ca[2] != 0))
+                if ((ca[0] != 0) + (ca[1] != 0) + (ca[2] != 0) < 3)
                 {
                     contour.push_back(t.a);
                     break;
