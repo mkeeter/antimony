@@ -38,9 +38,6 @@ public:
     float* get_verts(unsigned* count);
 
 protected:
-    enum FeatureType { FEATURE_CORNER, FEATURE_EDGE_AB_C,
-                       FEATURE_EDGE_BC_A, FEATURE_EDGE_CA_B };
-
     /*
      *  Finds the normals of each vertex on the triangle.
      *  Returns a Triangle with the corners as the new normals.

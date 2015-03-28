@@ -424,7 +424,38 @@ std::list<Vec3f> Mesher::get_contour()
 
 void Mesher::check_feature()
 {
-    printf("Got contour with %i points\n", get_contour().size());
+    const auto contour = get_contour();
+    const auto normals = get_normals(contour);
+
+    // Find the largest cone and the normals that enclose
+    // the largest angle as n0, n1.
+    float theta = 1;
+    Vec3f n0, n1;
+    for (auto i : normals)
+    {
+        for (auto j : normals)
+        {
+            float dot = i.dot(j);
+            if (dot < theta)
+            {
+                theta = dot;
+                n0 = i;
+                n1 = j;
+            }
+        }
+    }
+
+    if (theta > 0.9)
+        return;
+
+    const Vec3f nstar = n0.cross(n1);
+    float phi = 0;
+    for (auto i : normals)
+        phi = fmax(phi, fabs(nstar.dot(i)));
+
+    bool edge = phi < 0.7;
+
+    printf("%f %f\n", theta, phi);
 }
 
 // Loads a vertex into the vertex list.
