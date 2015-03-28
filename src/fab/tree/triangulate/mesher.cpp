@@ -467,12 +467,10 @@ void Mesher::check_feature()
 
 
     // Construct one of the matrices for use in our least-square fit.
-    /*
-    Eigen::MatrixX3d A;
+    Eigen::MatrixX3d A(normals.size(), 3);
     int i=0;
     for (auto n : normals)
-        A.row(i++) << n;
-        */
+        A.row(i++) << n.transpose();
 
     // Erase this triangle fan, as we'll be inserting a vertex in the center.
     triangles.erase(fan_start, triangles.end());
