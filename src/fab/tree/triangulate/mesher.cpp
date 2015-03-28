@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "tree/triangulate/mesher.h"
 
 #include "tree/tree.h"
@@ -465,33 +467,52 @@ void Mesher::check_feature()
         center += c;
     center /= contour.size();
 
-
-    // Construct one of the matrices for use in our least-square fit.
+    // Construct the matrices for use in our least-square fit.
     Eigen::MatrixX3d A(normals.size(), 3);
-    int i=0;
-    for (auto n : normals)
-        A.row(i++) << n.transpose();
+    {
+        int i=0;
+        for (auto n : normals)
+            A.row(i++) << n.transpose();
+    }
+
+    // When building the second matrix, shift position values to be centered
+    // about the origin (because that's what the least-squares fit will
+    // minimize).
+    Eigen::VectorXd B(normals.size(), 1);
+    {
+        auto n = normals.begin();
+        auto c = contour.begin();
+        int i=0;
+        while (n != normals.end())
+            B.row(i++) << (n++)->dot(*(c++) - center);
+    }
+
+    // Use singular value decomposition to solve the least-squares fit.
+    Eigen::JacobiSVD<Eigen::MatrixX3d> svd(A, Eigen::ComputeFullU |
+                                              Eigen::ComputeFullV);
+
+    // Set the smallest singular value to zero to make fitting happier.
+    if (edge)
+    {
+        auto singular = svd.singularValues();
+        svd.setThreshold(singular.minCoeff() / singular.maxCoeff() * 1.01);
+    }
+
+    // Solve for the new point's position.
+    const Vec3f new_pt = svd.solve(B) + center;
 
     // Erase this triangle fan, as we'll be inserting a vertex in the center.
     triangles.erase(fan_start, triangles.end());
 
-    contour.push_back(contour.front());
-    Vec3f new_pt = center;
-
     // Construct a new triangle fan.
-    auto p0 = contour.begin();
-    auto p1 = contour.begin();
-    p1++;
-    while (p1 != contour.end())
-        triangles.push_back(Triangle(*(p0++), *(p1++), new_pt));
-
-    /*
-    Eigen::Matrix1Xd B;
-    i = 0;
-    for (auto 
-    */
-
-    printf("%f %f\n", theta, phi);
+    contour.push_back(contour.front());
+    {
+        auto p0 = contour.begin();
+        auto p1 = contour.begin();
+        p1++;
+        while (p1 != contour.end())
+            triangles.push_back(Triangle(*(p0++), *(p1++), new_pt));
+    }
 }
 
 // Loads a vertex into the vertex list.
