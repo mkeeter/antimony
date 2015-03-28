@@ -722,12 +722,21 @@ void Mesher::flush_queue()
         {
             if (detect_edges)
             {
-                // Clear voxel_end.  When more triangles are pushed to
-                // the mesh, voxel_end will need to be adjusted so that
-                // it points to the first triangle outside of the voxel.
+                // Clear voxel_end
+                // (it will be reset when the next triangle is pushed)
                 voxel_end = triangles.end();
-                while (voxel_start != voxel_end)
+
+                // Then, iterate until no more features are found in
+                // the current voxel.
+                while (voxel_start != voxel_end &&
+                       voxel_start != triangles.end())
+                {
                     check_feature();
+                }
+
+                // Clear voxel_start
+                // (it will be reset when the next triangle is pushed)
+                voxel_start = triangles.end();
             }
         }
     }
