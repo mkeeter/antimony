@@ -328,7 +328,7 @@ std::list<Vec3f> Mesher::get_normals(const std::list<Vec3f>& points)
         if (j != points.end())
         {
             auto d = *j - *i;
-            epsilon = fmin(epsilon, d.norm() / 10.0f);
+            epsilon = fmin(epsilon, d.norm() / 100.0f);
         }
     }
 
