@@ -14,7 +14,7 @@
 struct MathTree_;
 
 struct InterpolateCommand {
-    enum {INTERPOLATE, CACHED, END_OF_VOXEL, END_OF_FAN} cmd;
+    enum {INTERPOLATE, CACHED, END_OF_VOXEL} cmd;
     Vec3f v0;
     Vec3f v1;
     unsigned cached;
@@ -77,11 +77,6 @@ protected:
     void flush_queue();
 
     /*
-     *  Pushes an END_VOXEL tag to the command queue.
-     */
-    void end_voxel();
-
-    /*
      *  Schedules an interpolation command in the command queue.
      */
     void interpolate_between(const Vec3f& v0, const Vec3f& v1);
@@ -100,13 +95,16 @@ protected:
     void push_swappable_triangle(Triangle t);
 
     /*
-     *  Check the most recent fan (from fan_start to triangles.end())
+     *  Check the most recent fan (from voxel_start to triangles.end())
      *  for features and process them if they are found.
      */
     void check_feature();
 
     /*
      *  Returns a closed contour that traces the most recent fan.
+     *
+     *  Modifies triangles, voxel_start, and fan_start so that the
+     *  most recent fan is stored between fan_start and voxel_start.
      */
     std::list<Vec3f> get_contour();
 
@@ -143,6 +141,8 @@ protected:
     // List of existing triangles
     std::list<Triangle> triangles;
 
+    std::list<Triangle>::iterator voxel_start;
+    std::list<Triangle>::iterator voxel_end;
     std::list<Triangle>::iterator fan_start;
     std::map<std::array<double, 6>, std::list<Triangle>::iterator> swappable;
 };

@@ -304,7 +304,7 @@ Mesher::Mesher(MathTree* tree, bool detect_edges)
       nx(new float[MIN_VOLUME]),
       ny(new float[MIN_VOLUME]),
       nz(new float[MIN_VOLUME]),
-      fan_start(triangles.end())
+      voxel_start(triangles.end())
 {
     // Nothing to do here
 }
@@ -403,15 +403,22 @@ void Mesher::push_swappable_triangle(Triangle t)
         itr--;
         swappable[reversed] = itr;
     }
+
+    // Adjust voxel_end so that it points to the first new triangle.
+    if (voxel_end == triangles.end())
+        voxel_end--;
 }
 
 std::list<Vec3f> Mesher::get_contour()
 {
-    std::list<Vec3f> contour = {fan_start->a};
+    std::list<Vec3f> contour = {voxel_start->a};
+    fan_start = voxel_start;
+    voxel_start++;
 
     while (contour.size() == 1 || contour.front() != contour.back())
     {
-        for (auto itr=fan_start; itr != triangles.end(); ++itr)
+        std::list<Triangle>::iterator itr;
+        for (itr=fan_start; itr != voxel_end; ++itr)
         {
             const auto& t = *itr;
             if (contour.back() == t.a)
@@ -442,6 +449,22 @@ std::list<Vec3f> Mesher::get_contour()
                     contour.push_back(t.a);
                     break;
                 }
+            }
+        }
+        // If we broke out of the loop (meaning itr is pointing to a relevant
+        // triangle which should be moved forward to before voxel_start), then
+        // push the list around and update iterators appropriately.
+        if (itr != voxel_end)
+        {
+            if (itr == voxel_start)
+            {
+                voxel_start++;
+            }
+            else if (itr != fan_start)
+            {
+                const Triangle t = *itr;
+                triangles.erase(itr);
+                triangles.insert(voxel_start, t);
             }
         }
     }
@@ -526,7 +549,7 @@ void Mesher::check_feature()
     const Vec3f new_pt = svd.solve(B) + center;
 
     // Erase this triangle fan, as we'll be inserting a vertex in the center.
-    triangles.erase(fan_start, triangles.end());
+    triangles.erase(fan_start, voxel_start);
 
     // Construct a new triangle fan.
     contour.push_back(contour.front());
@@ -549,11 +572,11 @@ void Mesher::push_vert(const float x, const float y, const float z)
         triangles.push_back(Triangle(triangle[0], triangle[1], triangle[2]));
         triangle.clear();
 
-        // If this is the first triangle being constructed (or fan_start has
+        // If this is the first triangle being constructed (or voxel_start has
         // just been cleared), store an iterator to this triangle so that we
         // know where the next triangle fan begins.
-        if (fan_start == triangles.end())
-            fan_start--;
+        if (voxel_start == triangles.end())
+            voxel_start--;
     }
 }
 
@@ -695,21 +718,20 @@ void Mesher::flush_queue()
             unsigned i = c.cached;
             push_vert(ex[i], ey[i], ez[i]);
         }
-        else if (c.cmd == InterpolateCommand::END_OF_FAN)
+        else if (c.cmd == InterpolateCommand::END_OF_VOXEL)
         {
             if (detect_edges)
-                check_feature();
-            fan_start = triangles.end();
+            {
+                // Clear voxel_end.  When more triangles are pushed to
+                // the mesh, voxel_end will need to be adjusted so that
+                // it points to the first triangle outside of the voxel.
+                voxel_end = triangles.end();
+                while (voxel_start != voxel_end)
+                    check_feature();
+            }
         }
     }
     queue.clear();
-}
-
-// Push an END_OF_VOXEL command to the command queue.
-void Mesher::end_voxel()
-{
-    queue.push_back((InterpolateCommand){
-            .cmd=InterpolateCommand::END_OF_VOXEL});
 }
 
 // Schedule an interpolate calculation in the queue.
@@ -766,34 +788,6 @@ void Mesher::triangulate_voxel(const Region& r, const float* const d)
             interpolate_between(p0, p1);
         else
             interpolate_between(p1, p0);
-
-        // At the end of a triangle, check to see if the next triangle
-        // is disconnected.  If so, push an END_FAN message to the queue
-        // (which tells edge detection to run on the previous set of
-        // triangles)
-        if (i % 3 == 2)
-        {
-            bool end_fan = true;
-            // Loop over the next three vertices.  If any of them agree with
-            // the previous three vertices, then mark that the fan continues
-            // (otherwise, leave end_fan = true)
-            for (int j=1; j <= 3; ++j)
-            {
-                if (TRIANGLE_CONNECTION_TABLE[lookup][i+j] == -1)
-                    break;
-
-                for (int k=0; k < 3; ++k)
-                    if (TRIANGLE_CONNECTION_TABLE[lookup][i+j] ==
-                        TRIANGLE_CONNECTION_TABLE[lookup][i-k])
-                    {
-                        end_fan = false;
-                    }
-            }
-
-            if (end_fan)
-                queue.push_back((InterpolateCommand){
-                        .cmd=InterpolateCommand::END_OF_FAN});
-        }
     }
 }
 
@@ -828,7 +822,8 @@ void Mesher::triangulate_region(const Region& r)
 
     // Mark that a voxel has ended
     // (which will eventually trigger decimation)
-    end_voxel();
+    queue.push_back((InterpolateCommand){
+            .cmd=InterpolateCommand::END_OF_VOXEL});
 
     // If this stage of the recursion loaded data into the buffer,
     // clear the has_data flag (so that future stages will re-run
