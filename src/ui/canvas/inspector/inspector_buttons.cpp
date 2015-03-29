@@ -89,6 +89,7 @@ InspectorExportButton::InspectorExportButton(QGraphicsItem* parent)
     connect(this, &GraphicsButton::pressed,
             this, &InspectorExportButton::onPressed);
     setToolTip("Export");
+    hide();
 }
 
 QRectF InspectorExportButton::boundingRect() const
@@ -115,12 +116,14 @@ void InspectorExportButton::clearWorker()
     if (worker)
         worker->deleteLater();
     worker.clear();
+    hide();
 }
 
 void InspectorExportButton::setWorker(ExportWorker* w)
 {
     clearWorker();
     worker = w;
+    show();
 }
 
 void InspectorExportButton::onPressed()
