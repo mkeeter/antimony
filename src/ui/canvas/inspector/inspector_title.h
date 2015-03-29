@@ -9,6 +9,7 @@ class NodeInspector;
 class DatumTextItem;
 class InspectorScriptButton;
 class InspectorShowHiddenButton;
+class InspectorExportButton;
 class ScriptDatum;
 
 class InspectorTitle : public QGraphicsObject
@@ -37,6 +38,7 @@ protected:
     QGraphicsTextItem* title;
     InspectorScriptButton* script_button;
     InspectorShowHiddenButton* show_hidden_button;
+    InspectorExportButton* export_button;
 
     float padding;
 };

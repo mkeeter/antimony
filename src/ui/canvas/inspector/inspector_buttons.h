@@ -7,6 +7,7 @@
 
 class ScriptDatum;
 class NodeInspector;
+class ExportWorker;
 
 class InspectorScriptButton : public GraphicsButton
 {
@@ -37,4 +38,21 @@ protected:
     bool toggled;
     NodeInspector* inspector;
 };
+
+class InspectorExportButton : public GraphicsButton
+{
+    Q_OBJECT
+public:
+    InspectorExportButton(QGraphicsItem* parent);
+    QRectF boundingRect() const override;
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
+               QWidget* widget=0) override;
+    void clearWorker();
+    void setWorker(ExportWorker* w);
+protected slots:
+    void onPressed();
+protected:
+    QPointer<ExportWorker> worker;
+};
+
 #endif
