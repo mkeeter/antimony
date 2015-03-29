@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>176</width>
-    <height>216</height>
+    <width>225</width>
+    <height>238</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -71,6 +71,13 @@
     <widget class="QLabel" name="export_size">
      <property name="text">
       <string>255 x 255 x 255</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QRadioButton" name="detect_edges">
+     <property name="text">
+      <string>Detect edges (experimental)</string>
      </property>
     </widget>
    </item>

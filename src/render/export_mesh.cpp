@@ -1,5 +1,6 @@
 #include <Python.h>
 #include <QDebug>
+#include <QTime>
 
 #include "render/export_mesh.h"
 
@@ -8,8 +9,10 @@
 #include "fab/tree/triangulate.h"
 #include "fab/util/region.h"
 
-ExportMeshWorker::ExportMeshWorker(Shape s, float resolution, QString filename)
-    : QObject(), shape(s), resolution(resolution), filename(filename)
+ExportMeshWorker::ExportMeshWorker(Shape s, float resolution,
+                                   bool detect_edges, QString filename)
+    : QObject(), shape(s), resolution(resolution),
+      detect_edges(detect_edges), filename(filename)
 {
     qDebug() << shape.math.c_str();
     float dx = (shape.bounds.xmax - shape.bounds.xmin) / 20;
@@ -46,10 +49,15 @@ void ExportMeshWorker::render()
                 shape.bounds.ymax + dy,
                 shape.bounds.zmax + dz);
 
-    triangulate(shape.tree.get(), r, &verts, &count);
+    QTime time;
+    time.start();
+    triangulate(shape.tree.get(), r, detect_edges, &verts, &count);
+    qDebug() << time.elapsed();
+
     save_stl(verts, count, filename.toStdString().c_str());
     free_arrays(&r);
     free(verts);
+
     qDebug() << "Done.";
     emit(finished());
 }

@@ -10,7 +10,8 @@ class ExportMeshWorker : public QObject
 {
     Q_OBJECT
 public:
-    explicit ExportMeshWorker(Shape s, float resolution, QString filename);
+    explicit ExportMeshWorker(Shape s, float resolution,
+                              bool detect_edges, QString filename);
 public slots:
     void render();
 signals:
@@ -18,6 +19,7 @@ signals:
 protected:
     Shape shape;
     float resolution;
+    bool detect_edges;
     QString filename;
 };
 

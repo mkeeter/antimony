@@ -1,21 +1,14 @@
 #ifndef TRIANGULATE_H
 #define TRIANGULATE_H
 
+#include <vector>
+#include <list>
+#include <map>
+#include <array>
+
 #include "util/region.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-struct MathTree_;
-
-void triangulate(struct MathTree_* tree, Region r,
+void triangulate(struct MathTree_* tree, Region r, bool detect_edges,
                  float** const verts, unsigned* const count);
-
-void free_mesh(float* const verts);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif
