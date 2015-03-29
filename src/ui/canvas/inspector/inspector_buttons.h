@@ -9,6 +9,8 @@ class ScriptDatum;
 class NodeInspector;
 class ExportWorker;
 
+////////////////////////////////////////////////////////////////////////////////
+
 class InspectorScriptButton : public GraphicsButton
 {
     Q_OBJECT
@@ -22,6 +24,8 @@ protected slots:
 protected:
     QPointer<ScriptDatum> script;
 };
+
+////////////////////////////////////////////////////////////////////////////////
 
 class InspectorShowHiddenButton : public GraphicsButton
 {
@@ -38,6 +42,8 @@ protected:
     bool toggled;
     NodeInspector* inspector;
 };
+
+////////////////////////////////////////////////////////////////////////////////
 
 class InspectorExportButton : public GraphicsButton
 {

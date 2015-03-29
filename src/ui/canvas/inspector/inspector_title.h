@@ -7,10 +7,8 @@
 class Node;
 class NodeInspector;
 class DatumTextItem;
-class InspectorScriptButton;
-class InspectorShowHiddenButton;
-class InspectorExportButton;
 class ScriptDatum;
+class GraphicsButton;
 
 class InspectorTitle : public QGraphicsObject
 {
@@ -36,9 +34,7 @@ signals:
 protected:
     DatumTextItem* name;
     QGraphicsTextItem* title;
-    InspectorScriptButton* script_button;
-    InspectorShowHiddenButton* show_hidden_button;
-    InspectorExportButton* export_button;
+    QList<GraphicsButton*> buttons;
 
     float padding;
 };
