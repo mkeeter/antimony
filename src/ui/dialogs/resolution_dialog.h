@@ -20,7 +20,7 @@ public:
                               long max_voxels=(1<<22), QWidget* parent=0);
     float getResolution() const;
     float getMMperUnit() const;
-    bool getDetectEdges() const;
+    bool getDetectFeatures() const;
 protected slots:
     void onValueChanged(int i);
 protected:

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>225</width>
+    <width>239</width>
     <height>238</height>
    </rect>
   </property>
@@ -75,9 +75,9 @@
     </widget>
    </item>
    <item>
-    <widget class="QRadioButton" name="detect_edges">
+    <widget class="QRadioButton" name="detect_features">
      <property name="text">
-      <string>Detect edges (experimental)</string>
+      <string>Detect features (experimental)</string>
      </property>
     </widget>
    </item>

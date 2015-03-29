@@ -37,7 +37,6 @@
 
 #include "fab/types/shape.h"
 
-#include "render/export_mesh.h"
 #include "render/export_json.h"
 #include "render/export_bitmap.h"
 
@@ -224,6 +223,7 @@ void App::loadFile(QString f)
 
 void App::onExportSTL()
 {
+    /*
     Shape s = root->getCombinedShape();
     if (!s.tree)
     {
@@ -285,6 +285,7 @@ void App::onExportSTL()
     thread->start();
     exporting_dialog->exec();
     delete exporting_dialog;
+    */
 }
 
 void App::onExportHeightmap()

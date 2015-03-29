@@ -19,7 +19,7 @@ ResolutionDialog::ResolutionDialog(Shape* shape, bool dimensions, bool has_units
     }
 
     if (dimensions == RESOLUTION_DIALOG_2D)
-        ui->detect_edges->hide();
+        ui->detect_features->hide();
 
     // Re-do the layout, since things may have just been hidden
     layout()->invalidate();
@@ -72,7 +72,7 @@ float ResolutionDialog::getMMperUnit() const
     return 1;
 }
 
-bool ResolutionDialog::getDetectEdges() const
+bool ResolutionDialog::getDetectFeatures() const
 {
-    return ui->detect_edges->isChecked();
+    return ui->detect_features->isChecked();
 }
