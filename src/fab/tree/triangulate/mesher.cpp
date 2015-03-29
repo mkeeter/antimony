@@ -335,7 +335,7 @@ std::list<Vec3f> Mesher::get_normals(const std::list<Vec3f>& points)
     // We'll be evaluating a dummy region to numerically estimate gradients
     Region dummy = (Region){
         .X = nx, .Y = ny, .Z = nz,
-        .voxels = points.size() * 4};
+        .voxels = points.size() * 7};
 
     // Load position data into the dummy region
     int i=0;
@@ -345,17 +345,26 @@ std::list<Vec3f> Mesher::get_normals(const std::list<Vec3f>& points)
         dummy.X[i+1] = v[0] + epsilon;
         dummy.X[i+2] = v[0];
         dummy.X[i+3] = v[0];
+        dummy.X[i+4] = v[0] - epsilon;
+        dummy.X[i+5] = v[0];
+        dummy.X[i+6] = v[0];
 
         dummy.Y[i]   = v[1];
         dummy.Y[i+1] = v[1];
         dummy.Y[i+2] = v[1] + epsilon;
         dummy.Y[i+3] = v[1];
+        dummy.Y[i+4] = v[1];
+        dummy.Y[i+5] = v[1] - epsilon;
+        dummy.Y[i+6] = v[1];
 
         dummy.Z[i]   = v[2];
         dummy.Z[i+1] = v[2];
         dummy.Z[i+2] = v[2];
         dummy.Z[i+3] = v[2] + epsilon;
-        i += 4;
+        dummy.Z[i+4] = v[2];
+        dummy.Z[i+5] = v[2];
+        dummy.Z[i+6] = v[2] - epsilon;
+        i += 7;
     }
 
     float* out = eval_r(tree, dummy);
@@ -365,11 +374,11 @@ std::list<Vec3f> Mesher::get_normals(const std::list<Vec3f>& points)
     i = 0;
     for (auto v : points)
     {
-        const float dx = out[i+1] - out[i];
-        const float dy = out[i+2] - out[i];
-        const float dz = out[i+3] - out[i];
+        const float dx = (out[i+1] - out[i]) - (out[i+4] - out[i]);
+        const float dy = (out[i+2] - out[i]) - (out[i+5] - out[i]);
+        const float dz = (out[i+3] - out[i]) - (out[i+6] - out[i]);
         normals.push_back(Vec3f(dx, dy, dz).normalized());
-        i += 4;
+        i += 7;
     }
 
     return normals;
