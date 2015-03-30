@@ -27,7 +27,7 @@ void ExportHeightmapWorker::run()
     if (resolution == -1)
     {
         auto resolution_dialog = new ResolutionDialog(
-                &shape, RESOLUTION_DIALOG_2D, true);
+                &shape, RESOLUTION_DIALOG_2D, HAS_UNITS);
         if (!resolution_dialog->exec())
             return;
         _resolution = resolution_dialog->getResolution();

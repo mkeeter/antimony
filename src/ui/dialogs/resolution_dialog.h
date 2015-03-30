@@ -12,6 +12,9 @@ struct Shape;
 #define RESOLUTION_DIALOG_2D 0
 #define RESOLUTION_DIALOG_3D 1
 
+#define HAS_UNITS 1
+#define UNITLESS 0
+
 class ResolutionDialog : public QDialog
 {
     Q_OBJECT
