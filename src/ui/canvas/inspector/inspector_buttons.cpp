@@ -50,7 +50,7 @@ void InspectorScriptButton::onPressed()
 
 InspectorShowHiddenButton::InspectorShowHiddenButton(
         QGraphicsItem* parent, NodeInspector* inspector)
-    : GraphicsButton(parent), inspector(inspector)
+    : GraphicsButton(parent), toggled(false), inspector(inspector)
 {
     connect(this, &GraphicsButton::pressed,
             this, &InspectorShowHiddenButton::onPressed);
