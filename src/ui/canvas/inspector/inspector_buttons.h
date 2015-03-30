@@ -55,6 +55,7 @@ public:
                QWidget* widget=0) override;
     void clearWorker();
     void setWorker(ExportWorker* w);
+    bool hasWorker() const { return !worker.isNull(); }
 protected slots:
     void onPressed();
 protected:

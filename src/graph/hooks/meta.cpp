@@ -14,6 +14,9 @@ using namespace boost::python;
 object ScriptMetaHooks::export_stl(tuple args, dict kwargs)
 {
     ScriptMetaHooks& self = extract<ScriptMetaHooks&>(args[0])();
+    if (self.button->hasWorker())
+        throw hooks::HookException(
+                "Cannot define multiple export tasks in a single script.");
 
     if (len(args) != 2)
         throw hooks::HookException(
