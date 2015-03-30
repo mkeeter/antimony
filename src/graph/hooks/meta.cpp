@@ -43,6 +43,15 @@ object ScriptMetaHooks::export_stl(tuple args, dict kwargs)
         bounds = bounds_();
     }
 
+    // Sanity-check bounds
+    if (isinf(bounds.xmin) || isinf(bounds.xmax) ||
+        isinf(bounds.ymin) || isinf(bounds.ymax) ||
+        isinf(bounds.zmin) || isinf(bounds.zmax))
+    {
+        throw hooks::HookException(
+                "Exporting mesh with invalid (infinite) bounds");
+    }
+
     bool pad = true;
     if (kwargs.has_key("pad"))
     {
@@ -53,13 +62,13 @@ object ScriptMetaHooks::export_stl(tuple args, dict kwargs)
         pad = pad_();
     }
 
-    // Sanity-check bounds
-    if (isinf(bounds.xmin) || isinf(bounds.xmax) ||
-        isinf(bounds.ymin) || isinf(bounds.ymax) ||
-        isinf(bounds.zmin) || isinf(bounds.zmax))
+    if (pad)
     {
-        throw hooks::HookException(
-                "Exporting mesh with invalid (infinite) bounds");
+        float dx = (bounds.xmax - bounds.xmin) / 20;
+        float dy = (bounds.ymax - bounds.ymin) / 20;
+        float dz = (bounds.zmax - bounds.zmin) / 20;
+        bounds = Bounds(bounds.xmin - dx, bounds.ymin - dy, bounds.zmin - dz,
+                        bounds.xmax + dx, bounds.ymax + dy, bounds.zmax + dz);
     }
 
     QString filename;
