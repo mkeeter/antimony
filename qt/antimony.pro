@@ -62,7 +62,6 @@ SOURCES += \
     ../src/render/render_task.cpp \
     ../src/render/render_worker.cpp \
     ../src/render/render_image.cpp \
-    ../src/render/export_json.cpp \
     ../src/export/export_mesh.cpp \
     ../src/export/export_heightmap.cpp \
 
@@ -101,7 +100,6 @@ HEADERS += \
     ../src/render/render_task.h \
     ../src/render/render_worker.h \
     ../src/render/render_image.h \
-    ../src/render/export_json.h \
     ../src/export/export_mesh.h \
     ../src/export/export_worker.h \
     ../src/export/export_heightmap.h \

@@ -47,15 +47,6 @@
     <addaction name="actionClose"/>
     <addaction name="actionQuit"/>
    </widget>
-   <widget class="QMenu" name="menuExport">
-    <property name="title">
-     <string>Export</string>
-    </property>
-    <addaction name="actionExportMesh"/>
-    <addaction name="actionExportHeightmap"/>
-    <addaction name="separator"/>
-    <addaction name="actionExportJSON"/>
-   </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
      <string>Help</string>
@@ -98,7 +89,6 @@
    <addaction name="menuEdit"/>
    <addaction name="menuAdd"/>
    <addaction name="menuView"/>
-   <addaction name="menuExport"/>
    <addaction name="menuWindow"/>
    <addaction name="menuHelp"/>
   </widget>
@@ -127,19 +117,9 @@
     <string>Quit</string>
    </property>
   </action>
-  <action name="actionExportMesh">
-   <property name="text">
-    <string>Mesh (.stl)</string>
-   </property>
-  </action>
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
-   </property>
-  </action>
-  <action name="actionExportHeightmap">
-   <property name="text">
-    <string>Height-map (.png)</string>
    </property>
   </action>
   <action name="actionControls">
@@ -209,11 +189,6 @@
   <action name="actionCut">
    <property name="text">
     <string>Cut</string>
-   </property>
-  </action>
-  <action name="actionExportJSON">
-   <property name="text">
-    <string>JSON (.f)</string>
    </property>
   </action>
   <action name="actionCheckUpdate">

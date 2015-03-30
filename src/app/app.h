@@ -108,10 +108,6 @@ public slots:
     void onOpen();
     void onQuit();
 
-    void onExportSTL();
-    void onExportHeightmap();
-    void onExportJSON();
-
     void startUpdateCheck();
     void onUpdateCheckFinished(QNetworkReply* reply);
 
