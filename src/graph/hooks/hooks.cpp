@@ -6,11 +6,18 @@
 #include "graph/hooks/output.h"
 #include "graph/hooks/title.h"
 #include "graph/hooks/ui.h"
+#include "graph/hooks/meta.h"
 
 #include "graph/datum/datums/script_datum.h"
 #include "graph/node/node.h"
 
 #include "app/app.h"
+
+// Unfortunate coupling of core UI code, but this is
+// necessary to properly set up the export button hooks.
+#include "ui/canvas/graph_scene.h"
+#include "ui/canvas/inspector/inspector_buttons.h"
+#include "ui/canvas/inspector/inspector.h"
 
 using namespace boost::python;
 
@@ -55,6 +62,38 @@ BOOST_PYTHON_MODULE(_hooks)
                 "    close makes the loop closed"
                 );
 
+    class_<ScriptMetaHooks>("ScriptMetaHooks", init<>())
+        .def("export_stl", raw_function(&ScriptMetaHooks::export_stl),
+                "export_stl(shape, bounds=None, pad=True, filename=None,\n"
+                "           resolution=None, detect_features=False)\n"
+                "    Registers a .stl exporter for the given shape.\n"
+                "    Valid kwargs:\n"
+                "    bounds is either a fab.types.Bounds object or None.\n"
+                "      If it is None, bounds are taken from the shape.\n"
+                "    pad sets whether bounds should be padded a small amount\n"
+                "      (to prevent edge conditions at the models' edges)\n"
+                "    filename sets the filename.\n"
+                "      If None, a dialog will open to select a file.\n"
+                "    resolution sets the resolution.\n"
+                "      If None, a dialog will open to select the resolution.\n"
+                "    detect_features enables feature detection (experimental)"
+                )
+        .def("export_heightmap", raw_function(&ScriptMetaHooks::export_heightmap),
+                "export_heightmap(shape, bounds=None, pad=True, filename=None,\n"
+                "                 resolution=None, mm_per_unit=25.4)\n"
+                "    Registers a .stl exporter for the given shape.\n"
+                "    Valid kwargs:\n"
+                "    bounds is either a fab.types.Bounds object or None.\n"
+                "      If it is None, bounds are taken from the shape.\n"
+                "    pad sets whether bounds should be padded a small amount\n"
+                "      (to prevent edge conditions at the models' edges)\n"
+                "    filename sets the filename.\n"
+                "      If None, a dialog will open to select a file.\n"
+                "    resolution sets the resolution.\n"
+                "      If None, a dialog will open to select the resolution.\n"
+                "    mm_per_unit maps Antimony to real-world units."
+                );
+
     register_exception_translator<hooks::HookException>(
             hooks::onHookException);
 }
@@ -80,17 +119,30 @@ PyObject* hooks::loadHooks(PyObject* g, ScriptDatum* d)
             _hooks_module, "ScriptTitleHook", NULL);
     auto ui_obj = PyObject_CallMethod(
             _hooks_module, "ScriptUIHooks", NULL);
+    auto meta_obj = PyObject_CallMethod(
+            _hooks_module, "ScriptMetaHooks", NULL);
 
     extract<ScriptInputHook&>(input_func)().datum = d;
     extract<ScriptOutputHook&>(output_func)().datum = d;
     extract<ScriptTitleHook&>(title_func)().datum = d;
 
+    auto node = static_cast<Node*>(d->parent());
     extract<ScriptUIHooks&>(ui_obj)().scene = App::instance()->getViewScene();
-    extract<ScriptUIHooks&>(ui_obj)().node = static_cast<Node*>(d->parent());
+    extract<ScriptUIHooks&>(ui_obj)().node = node;
+
+    // Hook the 'meta' object to the relevant NodeInspector's output button.
+    auto inspector = App::instance()->getGraphScene()->getInspector(node);
+    if (inspector)
+    {
+        auto export_button = inspector->getButton<InspectorExportButton>();
+        export_button->clearWorker();
+        extract<ScriptMetaHooks&>(meta_obj)().button = export_button;
+    }
 
     PyDict_SetItemString(g, "input", input_func);
     PyDict_SetItemString(g, "output", output_func);
     PyDict_SetItemString(g, "title", title_func);
+    PyDict_SetItemString(g, "meta", meta_obj);
 
     auto fab = PyImport_ImportModule("fab");
     PyObject* old_ui = NULL;

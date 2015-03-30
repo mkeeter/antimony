@@ -7,9 +7,8 @@
 class Node;
 class NodeInspector;
 class DatumTextItem;
-class InspectorScriptButton;
-class InspectorShowHiddenButton;
 class ScriptDatum;
+class GraphicsButton;
 
 class InspectorTitle : public QGraphicsObject
 {
@@ -17,6 +16,14 @@ class InspectorTitle : public QGraphicsObject
 public:
     explicit InspectorTitle(Node* n, NodeInspector* parent);
     QRectF boundingRect() const;
+
+    template <typename T> T* getButton() const
+    {
+        for (auto b : buttons)
+            if (auto d = dynamic_cast<T*>(b))
+                return d;
+        return NULL;
+    }
 
     float minWidth() const;
     void setWidth(float width);
@@ -35,8 +42,7 @@ signals:
 protected:
     DatumTextItem* name;
     QGraphicsTextItem* title;
-    InspectorScriptButton* script_button;
-    InspectorShowHiddenButton* show_hidden_button;
+    QList<GraphicsButton*> buttons;
 
     float padding;
 };
