@@ -55,6 +55,10 @@ InspectorShowHiddenButton::InspectorShowHiddenButton(
     connect(this, &GraphicsButton::pressed,
             this, &InspectorShowHiddenButton::onPressed);
     setToolTip("Show hidden datums");
+
+    connect(inspector->getNode(), &Node::datumsChanged,
+            this, &InspectorShowHiddenButton::onDatumsChanged);
+    onDatumsChanged();
 }
 
 QRectF InspectorShowHiddenButton::boundingRect() const
@@ -80,6 +84,28 @@ void InspectorShowHiddenButton::onPressed()
 {
     toggled = !toggled;
     inspector->setShowHidden(toggled);
+}
+
+void InspectorShowHiddenButton::onDatumsChanged()
+{
+    auto node = inspector->getNode();
+
+    for (auto d : node->findChildren<Datum*>(
+                QString(), Qt::FindDirectChildrenOnly))
+    {
+        if (d->objectName().startsWith("_") &&
+            !d->objectName().startsWith("__"))
+        {
+            if (!isVisible())
+            {
+                show();
+                return;
+            }
+        }
+    }
+
+    if (isVisible())
+        hide();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

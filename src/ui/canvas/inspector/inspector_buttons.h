@@ -38,6 +38,7 @@ public:
                QWidget* widget=0) override;
 protected slots:
     void onPressed();
+    void onDatumsChanged();
 protected:
     bool toggled;
     NodeInspector* inspector;
