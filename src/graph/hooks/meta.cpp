@@ -33,6 +33,16 @@ object ScriptMetaHooks::export_stl(tuple args, dict kwargs)
         bounds = bounds_();
     }
 
+    bool pad = true;
+    if (kwargs.has_key("pad"))
+    {
+        extract<bool> pad_(kwargs["pad"]);
+        if (!pad_.check())
+            throw hooks::HookException(
+                    "pad argument must be a boolean.");
+        pad = pad_();
+    }
+
     // Sanity-check bounds
     if (isinf(bounds.xmin) || isinf(bounds.xmax) ||
         isinf(bounds.ymin) || isinf(bounds.ymax) ||
@@ -52,6 +62,25 @@ object ScriptMetaHooks::export_stl(tuple args, dict kwargs)
         filename = QString::fromStdString(filename_());
     }
 
+    float resolution = -1;
+    if (kwargs.has_key("resolution"))
+    {
+        extract<float> resolution_(kwargs["resolution"]);
+        if (!resolution_.check())
+            throw hooks::HookException(
+                    "resolution argument must be a float");
+        resolution = resolution_();
+    }
+
+    bool refine_features = false;
+    if (kwargs.has_key("refine_features"))
+    {
+        extract<bool> refine_features_(kwargs["refine_features"]);
+        if (!refine_features_.check())
+            throw hooks::HookException(
+                    "refine_features argument must be a boolean.");
+        refine_features = refine_features_();
+    }
     printf("export_stl called\n");
     return object();
 }
