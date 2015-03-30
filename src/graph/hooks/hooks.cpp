@@ -111,14 +111,16 @@ PyObject* hooks::loadHooks(PyObject* g, ScriptDatum* d)
     extract<ScriptOutputHook&>(output_func)().datum = d;
     extract<ScriptTitleHook&>(title_func)().datum = d;
 
+    auto node = static_cast<Node*>(d->parent());
     extract<ScriptUIHooks&>(ui_obj)().scene = App::instance()->getViewScene();
-    extract<ScriptUIHooks&>(ui_obj)().node = static_cast<Node*>(d->parent());
+    extract<ScriptUIHooks&>(ui_obj)().node = node;
 
-    extract<ScriptMetaHooks&>(meta_obj)().node = static_cast<Node*>(d->parent());
-    extract<ScriptMetaHooks&>(meta_obj)().button =
-        App::instance()->getGraphScene()->getInspector(
-                static_cast<Node*>(d->parent()))->
+    extract<ScriptMetaHooks&>(meta_obj)().node = node;
+    auto export_button =
+        App::instance()->getGraphScene()->getInspector(node)->
                 getButton<InspectorExportButton>();
+    export_button->clearWorker();
+    extract<ScriptMetaHooks&>(meta_obj)().button = export_button;
 
     PyDict_SetItemString(g, "input", input_func);
     PyDict_SetItemString(g, "output", output_func);
