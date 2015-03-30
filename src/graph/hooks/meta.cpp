@@ -3,6 +3,7 @@
 
 #include "ui/canvas/inspector/inspector_buttons.h"
 #include "export/export_mesh.h"
+#include "export/export_heightmap.h"
 
 #include <QString>
 
@@ -122,5 +123,58 @@ object ScriptMetaHooks::export_stl(tuple args, dict kwargs)
 
     self.button->setWorker(new ExportMeshWorker(
                 shape, bounds, filename, resolution, refine_features));
+    return object();
+}
+
+object ScriptMetaHooks::export_heightmap(tuple args, dict kwargs)
+{
+    ScriptMetaHooks& self = extract<ScriptMetaHooks&>(args[0])();
+
+    // Fail immediately if no button is attached.
+    if (!self.button)
+        return object();
+
+    if (self.button->hasWorker())
+        throw hooks::HookException(
+                "Cannot define multiple export tasks in a single script.");
+
+    if (len(args) != 2)
+        throw hooks::HookException(
+                "export_stl must be called with shape as first argument.");
+
+    Shape shape = get_shape(args);
+
+    Bounds bounds = shape.bounds;
+    if (kwargs.has_key("bounds"))
+        bounds = get_bounds(kwargs);
+
+    // Sanity-check bounds
+    if (isinf(bounds.xmin) || isinf(bounds.xmax) ||
+        isinf(bounds.ymin) || isinf(bounds.ymax))
+    {
+        throw hooks::HookException(
+                "Exporting heightmap with invalid (infinite) bounds");
+    }
+
+    bool pad = get_pad(kwargs);
+
+    if (pad)
+        bounds = pad_bounds(bounds);
+
+    QString filename = get_filename(kwargs);
+    float resolution = get_resolution(kwargs);;
+
+    float mm_per_unit = 25.4;
+    if (kwargs.has_key("mm_per_unit"))
+    {
+        extract<bool> mm_per_unit_(kwargs["mm_per_unit"]);
+        if (!mm_per_unit_.check())
+            throw hooks::HookException(
+                    "mm_per_unit argument must be a float.");
+        mm_per_unit = mm_per_unit_();
+    }
+
+    self.button->setWorker(new ExportHeightmapWorker(
+                shape, bounds, filename, resolution, mm_per_unit));
     return object();
 }

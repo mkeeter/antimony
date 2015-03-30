@@ -38,7 +38,6 @@
 #include "fab/types/shape.h"
 
 #include "render/export_json.h"
-#include "render/export_bitmap.h"
 
 #ifndef GITREV
 #warning "Git revision not defined!"
@@ -290,6 +289,7 @@ void App::onExportSTL()
 
 void App::onExportHeightmap()
 {
+    /*
     // Verify that we are not mixing 2D and 3D shapes.
     // (for shapes that have non-zero bounds)
     {
@@ -378,6 +378,7 @@ void App::onExportHeightmap()
     thread->start();
     exporting_dialog->exec();
     delete exporting_dialog;
+    */
 }
 
 void App::onExportJSON()

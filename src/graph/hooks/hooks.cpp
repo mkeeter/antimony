@@ -77,6 +77,21 @@ BOOST_PYTHON_MODULE(_hooks)
                 "    resolution sets the resolution.\n"
                 "      If None, a dialog will open to select the resolution.\n"
                 "    detect_features enables feature detection (experimental)"
+                )
+        .def("export_heightmap", raw_function(&ScriptMetaHooks::export_heightmap),
+                "export_heightmap(shape, bounds=None, pad=True, filename=None,\n"
+                "                 resolution=None, mm_per_unit=25.4)\n"
+                "    Registers a .stl exporter for the given shape.\n"
+                "    Valid kwargs:\n"
+                "    bounds is either a fab.types.Bounds object or None.\n"
+                "      If it is None, bounds are taken from the shape.\n"
+                "    pad sets whether bounds should be padded a small amount\n"
+                "      (to prevent edge conditions at the models' edges)\n"
+                "    filename sets the filename.\n"
+                "      If None, a dialog will open to select a file.\n"
+                "    resolution sets the resolution.\n"
+                "      If None, a dialog will open to select the resolution.\n"
+                "    mm_per_unit maps Antimony to real-world units."
                 );
 
     register_exception_translator<hooks::HookException>(

@@ -18,6 +18,9 @@ struct ScriptMetaHooks
     static boost::python::object export_stl(
             boost::python::tuple args,
             boost::python::dict kwargs);
+    static boost::python::object export_heightmap(
+            boost::python::tuple args,
+            boost::python::dict kwargs);
 
     static Shape get_shape(boost::python::tuple args);
     static Bounds get_bounds(boost::python::dict kwargs);
