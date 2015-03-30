@@ -40,7 +40,7 @@ cd ../../..
 cp -r sb/fab antimony.app/Contents/Frameworks/Python.framework/Versions/3.4/lib/python3.4/fab
 cp -r sb/nodes antimony.app/Contents/Resources
 
-sed -i "" "s/0\.0\.0/$RELEASE/g" antimony.app/Contents/Info.plist
+sed -i "" "s:0\.0\.0:$RELEASE:g" antimony.app/Contents/Info.plist
 
 mkdir antimony
 cp ../README.md ./antimony/README.txt
