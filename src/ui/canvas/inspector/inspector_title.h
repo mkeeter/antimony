@@ -36,6 +36,12 @@ public slots:
      *  Returns true if anything changed.
      */
     bool updateLayout();
+
+    /*
+     *  When the buttons change, call prepareGeometryChange and emit
+     *  layoutChanged.
+     */
+    void onButtonsChanged();
 signals:
     void layoutChanged();
 

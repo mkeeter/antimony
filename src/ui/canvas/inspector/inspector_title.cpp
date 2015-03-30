@@ -47,6 +47,10 @@ InspectorTitle::InspectorTitle(Node* n, NodeInspector* parent)
             if(this->updateLayout())
                 emit(layoutChanged()); });
 
+    for (auto b : buttons)
+        connect(b, &QGraphicsObject::visibleChanged,
+                this, &InspectorTitle::onButtonsChanged);
+
     // The layout needs to be redone once padding is set
     // (which is dependent on the parent NodeInspector)
 }
@@ -125,4 +129,10 @@ void InspectorTitle::paint(QPainter *painter,
     Q_UNUSED(option);
     Q_UNUSED(widget);
     // Nothing to do here
+}
+
+void InspectorTitle::onButtonsChanged()
+{
+    prepareGeometryChange();
+    emit(layoutChanged());
 }

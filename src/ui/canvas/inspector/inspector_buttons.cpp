@@ -119,10 +119,7 @@ void InspectorExportButton::clearWorker()
     worker.clear();
 
     if (isVisible())
-    {
         hide();
-        emit(static_cast<InspectorTitle*>(parentItem())->layoutChanged());
-    }
 }
 
 void InspectorExportButton::setWorker(ExportWorker* w)
@@ -130,10 +127,7 @@ void InspectorExportButton::setWorker(ExportWorker* w)
     clearWorker();
     worker = w;
     if (!isVisible())
-    {
         show();
-        emit(static_cast<InspectorTitle*>(parentItem())->layoutChanged());
-    }
 }
 
 void InspectorExportButton::onPressed()
