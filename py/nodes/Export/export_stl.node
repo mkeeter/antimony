@@ -1,0 +1,6 @@
+import fab
+
+title('Export (.stl)')
+
+input('input', fab.types.Shape)
+meta.export_stl(input)
