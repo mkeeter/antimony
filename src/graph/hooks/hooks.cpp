@@ -13,6 +13,12 @@
 
 #include "app/app.h"
 
+// Unfortunate coupling of core UI code, but this is
+// necessary to properly set up the export button hooks.
+#include "ui/canvas/graph_scene.h"
+#include "ui/canvas/inspector/inspector_buttons.h"
+#include "ui/canvas/inspector/inspector.h"
+
 using namespace boost::python;
 
 void hooks::onHookException(const hooks::HookException& e)
@@ -107,7 +113,12 @@ PyObject* hooks::loadHooks(PyObject* g, ScriptDatum* d)
 
     extract<ScriptUIHooks&>(ui_obj)().scene = App::instance()->getViewScene();
     extract<ScriptUIHooks&>(ui_obj)().node = static_cast<Node*>(d->parent());
+
     extract<ScriptMetaHooks&>(meta_obj)().node = static_cast<Node*>(d->parent());
+    extract<ScriptMetaHooks&>(meta_obj)().button =
+        App::instance()->getGraphScene()->getInspector(
+                static_cast<Node*>(d->parent()))->
+                getButton<InspectorExportButton>();
 
     PyDict_SetItemString(g, "input", input_func);
     PyDict_SetItemString(g, "output", output_func);

@@ -17,6 +17,14 @@ public:
     explicit InspectorTitle(Node* n, NodeInspector* parent);
     QRectF boundingRect() const;
 
+    template <typename T> T* getButton() const
+    {
+        for (auto b : buttons)
+            if (auto d = dynamic_cast<T*>(b))
+                return d;
+        return NULL;
+    }
+
     float minWidth() const;
     void setWidth(float width);
 
