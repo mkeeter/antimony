@@ -6,6 +6,7 @@
 
 #include "ui/canvas/inspector/inspector_buttons.h"
 #include "ui/canvas/inspector/inspector.h"
+#include "ui/canvas/inspector/inspector_title.h"
 
 #include "graph/datum/datums/script_datum.h"
 #include "ui/util/colors.h"
@@ -116,14 +117,23 @@ void InspectorExportButton::clearWorker()
     if (worker)
         worker->deleteLater();
     worker.clear();
-    hide();
+
+    if (isVisible())
+    {
+        hide();
+        emit(static_cast<InspectorTitle*>(parentItem())->layoutChanged());
+    }
 }
 
 void InspectorExportButton::setWorker(ExportWorker* w)
 {
     clearWorker();
     worker = w;
-    show();
+    if (!isVisible())
+    {
+        show();
+        emit(static_cast<InspectorTitle*>(parentItem())->layoutChanged());
+    }
 }
 
 void InspectorExportButton::onPressed()
