@@ -4,6 +4,9 @@
 #include "fab/types/bounds.h"
 #include "fab/types/shape.h"
 
+#include "ui/canvas/inspector/inspector_buttons.h"
+#include "export/export_mesh.h"
+
 #include <QString>
 
 using namespace boost::python;
@@ -16,7 +19,6 @@ object ScriptMetaHooks::export_stl(tuple args, dict kwargs)
         throw hooks::HookException(
                 "export_stl must be called with shape as first argument.");
 
-    PyObject_Print(extract<object>(args[1])().ptr(), stdout, 0);
     extract<Shape> shape_(args[1]);
     if (!shape_.check())
         throw hooks::HookException(
@@ -81,6 +83,8 @@ object ScriptMetaHooks::export_stl(tuple args, dict kwargs)
                     "refine_features argument must be a boolean.");
         refine_features = refine_features_();
     }
-    printf("export_stl called\n");
+
+    self.button->setWorker(new ExportMeshWorker(
+                shape, bounds, filename, resolution, refine_features));
     return object();
 }
