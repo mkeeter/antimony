@@ -8,13 +8,12 @@ class InspectorExportButton;
 
 struct ScriptMetaHooks
 {
-    ScriptMetaHooks() : node(NULL), button(NULL) {}
+    ScriptMetaHooks() : button(NULL) {}
 
     static boost::python::object export_stl(
             boost::python::tuple args,
             boost::python::dict kwargs);
 
-    Node* node;
     InspectorExportButton* button;
 };
 

@@ -115,7 +115,7 @@ PyObject* hooks::loadHooks(PyObject* g, ScriptDatum* d)
     extract<ScriptUIHooks&>(ui_obj)().scene = App::instance()->getViewScene();
     extract<ScriptUIHooks&>(ui_obj)().node = node;
 
-    extract<ScriptMetaHooks&>(meta_obj)().node = node;
+    // Hook the 'meta' object to the relevant NodeInspector's output button.
     auto inspector = App::instance()->getGraphScene()->getInspector(node);
     if (inspector)
     {
