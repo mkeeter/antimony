@@ -352,16 +352,23 @@ QString App::nodePath() const
 MainWindow* App::newCanvasWindow()
 {
     auto m = new MainWindow();
-    m->setCentralWidget(graph_scene->newCanvas());
+    auto c = graph_scene->newCanvas();
+    m->setCentralWidget(c);
     m->show();
+
+    connect(this, &App::jumpTo,
+            c, &Canvas::onJumpTo);
     return m;
 }
 
 MainWindow* App::newViewportWindow()
 {
     auto m = new MainWindow();
-    m->setCentralWidget(view_scene->newViewport());
+    auto v = view_scene->newViewport();
+    m->setCentralWidget(v);
     m->show();
+    connect(v, &Viewport::jumpTo,
+            this, &App::jumpTo);
     return m;
 }
 
@@ -384,6 +391,10 @@ MainWindow* App::newQuadWindow()
                 connect(a, &Viewport::centerChanged,
                         b, &Viewport::setCenter);
             }
+
+    for (auto v : {top, front, side, other})
+        connect(v, &Viewport::jumpTo,
+                this, &App::jumpTo);
 
     top->lockAngle(0, 0);
     front->lockAngle(0, -M_PI/2);

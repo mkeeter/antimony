@@ -277,39 +277,62 @@ void Viewport::mousePressEvent(QMouseEvent *event)
         while (!dynamic_cast<MainWindow*>(w))
             w = w->parent();
         Q_ASSERT(w);
+
+        // Make a new menu object
         auto menu = new QMenu(static_cast<MainWindow*>(w));
 
         int overlapping = 0;
         QSet<Node*> used;
+
+        // Special menu item to trigger a jump to event in the graph
+        QAction* jump_to = NULL;
         for (auto i : items(event->pos()))
         {
+            // Find the top-level parent of this graphics item
             while (i->parentItem())
                 i = i->parentItem();
 
             auto c = dynamic_cast<ControlProxy*>(i);
             if (c && !used.contains(c->getNode()))
             {
-                overlapping++;
                 auto n = c->getNode();
-                auto a = new QAction(
-                        n->getName() + " (" + n->getTitle() + ")", menu);
+                QString desc = n->getName() + " (" + n->getTitle() + ")";
+
+                if (jump_to == NULL)
+                {
+                    jump_to = new QAction("Show " + desc + " in graph", menu);
+                    jump_to->setData(QVariant::fromValue(i));
+                    menu->addAction(jump_to);
+                    menu->addSeparator();
+                    connect(jump_to, &QAction::triggered,
+                            [=](){ emit jumpTo(n); });
+                }
+
+                overlapping++;
+                auto a = new QAction(desc, menu);
                 a->setData(QVariant::fromValue(i));
                 menu->addAction(a);
                 used << n;
             }
         }
-        if (overlapping > 1)
+
+        // If there was only one item in this location, remove all of the
+        // menu options other than 'jump to' (which in this case are the
+        // separator and the single 'raise' command).
+        if (overlapping == 1)
+            while (menu->actions().back() != jump_to)
+                menu->removeAction(menu->actions().back());
+
+        QAction* chosen = menu->exec(QCursor::pos());
+        if (chosen && chosen != jump_to)
         {
-            QAction* chosen = menu->exec(QCursor::pos());
-            if (chosen)
-            {
-                if (raised)
-                    raised->setZValue(0);
-                raised = static_cast<ControlProxy*>(
-                        chosen->data().value<QGraphicsItem*>());
-                raised->setZValue(0.1);
-            }
+            if (raised)
+                raised->setZValue(0);
+            raised = static_cast<ControlProxy*>(
+                    chosen->data().value<QGraphicsItem*>());
+            raised->setZValue(0.1);
         }
+
         menu->deleteLater();
     }
 
