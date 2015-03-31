@@ -295,10 +295,40 @@ void Canvas::onJumpTo(Node* node)
     auto inspector = getNodeInspector(node);
     Q_ASSERT(inspector);
 
-    auto anim = new QPropertyAnimation(this, "sceneRect");
-    anim->setDuration(500);
-    anim->setStartValue(sceneRect());
-    anim->setEndValue(inspector->sceneBoundingRect());
+    auto a = new QPropertyAnimation(this, "CENTER");
+    a->setDuration(100);
+    a->setStartValue(getCenter());
+    a->setEndValue(inspector->sceneBoundingRect().center());
+    auto b = new QPropertyAnimation(this, "ZOOM");
+    b->setDuration(100);
+    b->setStartValue(getZoom());
+    b->setEndValue(1);
+    b->setEasingCurve(QEasingCurve::InQuart);
 
-    anim->start(QPropertyAnimation::DeleteWhenStopped);
+    a->start(QPropertyAnimation::DeleteWhenStopped);
+    b->start(QPropertyAnimation::DeleteWhenStopped);
+}
+
+void Canvas::setCenter(QPointF p)
+{
+    auto t = sceneRect();
+    setSceneRect(sceneRect().translated(p.x() - t.center().x(),
+                                        p.y() - t.center().y()));
+}
+
+QPointF Canvas::getCenter() const
+{
+    auto t = sceneRect();
+    return QPointF(t.center().x(), t.center().y());
+}
+
+void Canvas::setZoom(float z)
+{
+    auto t = transform();
+    scale(z / t.m11(), z / t.m22());
+}
+
+float Canvas::getZoom() const
+{
+    return transform().m11();
 }

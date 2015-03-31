@@ -74,6 +74,16 @@ protected:
     void pan(QVector3D d);
 
     /*
+     *  Properties used to animate zooming to a particular node.
+     */
+    void setCenter(QPointF p);
+    QPointF getCenter() const;
+    Q_PROPERTY(QPointF CENTER READ getCenter WRITE setCenter);
+    void setZoom(float z);
+    float getZoom() const;
+    Q_PROPERTY(float ZOOM READ getZoom WRITE setZoom);
+
+    /*
      *  Deletes all selected objects in an undo-able way
      */
     void deleteSelected();
