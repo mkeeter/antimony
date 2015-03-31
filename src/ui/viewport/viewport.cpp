@@ -305,7 +305,7 @@ void Viewport::mousePressEvent(QMouseEvent *event)
                     menu->addAction(jump_to);
                     menu->addSeparator();
                     connect(jump_to, &QAction::triggered,
-                            [&](){ emit jumpTo(n); });
+                            [=](){ emit jumpTo(n); });
                 }
 
                 overlapping++;
