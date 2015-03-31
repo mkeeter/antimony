@@ -6,6 +6,7 @@
 #include <QClipboard>
 #include <QMimeData>
 #include <QJsonDocument>
+#include <QPropertyAnimation>
 
 #include <cmath>
 
@@ -287,4 +288,17 @@ void Canvas::onPaste()
             scene->setInspectorPositions(ds.inspectors);
         }
     }
+}
+
+void Canvas::onJumpTo(Node* node)
+{
+    auto inspector = getNodeInspector(node);
+    Q_ASSERT(inspector);
+
+    auto anim = new QPropertyAnimation(this, "sceneRect");
+    anim->setDuration(500);
+    anim->setStartValue(sceneRect());
+    anim->setEndValue(inspector->sceneBoundingRect());
+
+    anim->start(QPropertyAnimation::DeleteWhenStopped);
 }

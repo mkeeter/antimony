@@ -79,6 +79,7 @@ public:
 
 signals:
     void windowTitleChanged(QString new_title);
+    void jumpTo(Node* node);
 
 public slots:
     /*

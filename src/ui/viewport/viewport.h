@@ -103,6 +103,7 @@ public:
 signals:
     void viewChanged();
     void showPorts(bool);
+    void jumpTo(Node* node);
 
     void centerChanged(QVector3D c);
     void scaleChanged(float);

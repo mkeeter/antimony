@@ -36,6 +36,8 @@ public slots:
     void onCut();
     void onPaste();
 
+    void onJumpTo(Node* node);
+
 protected:
     /** On mouse press, save click position (for panning).
      */
