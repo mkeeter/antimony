@@ -299,6 +299,7 @@ void Canvas::onJumpTo(Node* node)
     a->setDuration(100);
     a->setStartValue(getCenter());
     a->setEndValue(inspector->sceneBoundingRect().center());
+
     auto b = new QPropertyAnimation(this, "ZOOM");
     b->setDuration(100);
     b->setStartValue(getZoom());
