@@ -333,9 +333,11 @@ std::list<Vec3f> Mesher::get_normals(const std::list<Vec3f>& points)
     }
 
     // We'll be evaluating a dummy region to numerically estimate gradients
-    Region dummy = (Region){
-        .X = nx, .Y = ny, .Z = nz,
-        .voxels = points.size() * 7};
+    Region dummy;
+    dummy.voxels = points.size() * 7;
+    dummy.X = nx;
+    dummy.Y = ny;
+    dummy.Z = nz;
 
     // Load position data into the dummy region
     int i=0;
@@ -621,10 +623,16 @@ bool Mesher::load_packed(const Region& r)
 
     // Make a dummy region that has the newly-flattened point arrays as the
     // X, Y, Z coordinate data arrays (so that we can run eval_r on it).
-    packed = (Region) {
-        .imin=r.imin, .jmin=r.jmin, .kmin=r.kmin,
-        .ni=r.ni, .nj=r.nj, .nk=r.nk,
-        .X=X, .Y=Y, .Z=Z, .voxels=voxels};
+    packed.imin = r.imin;
+    packed.jmin = r.jmin;
+    packed.kmin = r.kmin;
+    packed.ni = r.ni;
+    packed.nj = r.nj;
+    packed.nk = r.nk;
+    packed.X = X;
+    packed.Y = Y;
+    packed.Z = Z;
+    packed.voxels = voxels;
 
     // Run eval_r and copy the data out
     memcpy(data, eval_r(tree, packed), voxels * sizeof(float));
@@ -665,11 +673,11 @@ void Mesher::eval_zero_crossings(Vec3f* v0, Vec3f* v1, unsigned count)
 
     float step = 0.25;
 
-    Region dummy = (Region){
-        .X = ex,
-        .Y = ey,
-        .Z = ez,
-        .voxels = count};
+    Region dummy;
+    dummy.X = ex;
+    dummy.Y = ey;
+    dummy.Z = ez;
+    dummy.voxels = count;
 
     for (int iteration=0; iteration < 8; ++iteration)
     {
