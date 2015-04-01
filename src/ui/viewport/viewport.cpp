@@ -323,7 +323,9 @@ void Viewport::mousePressEvent(QMouseEvent *event)
             while (menu->actions().back() != jump_to)
                 menu->removeAction(menu->actions().back());
 
-        QAction* chosen = menu->exec(QCursor::pos());
+        // If we have items in the menu, run it and get the resulting action.
+        QAction* chosen = (overlapping > 0) ? menu->exec(QCursor::pos())
+                                            : NULL;
         if (chosen && chosen != jump_to)
         {
             if (raised)
