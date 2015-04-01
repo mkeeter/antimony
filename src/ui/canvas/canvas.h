@@ -38,9 +38,6 @@ public slots:
 
     void onJumpTo(Node* node);
 
-signals:
-    void jumpTo(Node* node);
-
 protected:
     /** On mouse press, save click position (for panning).
      */

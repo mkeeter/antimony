@@ -343,8 +343,18 @@ void NodeInspector::mousePressEvent(QGraphicsSceneMouseEvent* event)
 
     if (event->button() == Qt::RightButton)
     {
+        QString desc = node->getName() + " (" + node->getTitle() + ")";
+
         auto menu = new QMenu();
-        menu->addAction(new QAction("Hello, world!\n", menu));
+        auto jump_to = new QAction("Show " + desc + " in viewport", menu);
+
+        menu->addAction(jump_to);
+        connect(jump_to, &QAction::triggered,
+                [=](){
+                    emit static_cast<GraphScene*>(
+                        scene())->jumpTo(node);
+                });
+
         menu->exec(QCursor::pos());
         delete menu;
     }

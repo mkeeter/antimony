@@ -358,8 +358,6 @@ MainWindow* App::newCanvasWindow()
 
     connect(this, &App::jumpToInGraph,
             c, &Canvas::onJumpTo);
-    connect(c, &Canvas::jumpTo,
-            this, &App::jumpToInViewport);
 
     return m;
 }

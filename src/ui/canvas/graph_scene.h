@@ -80,6 +80,11 @@ signals:
      */
     void glowChanged(Node* n, bool g);
 
+    /*
+     *  Tells viewports to jump to the selected node.
+     */
+    void jumpTo(Node* node);
+
 protected:
     QHash<Node*, QPointer<NodeInspector>> get_inspector_cache;
 };
