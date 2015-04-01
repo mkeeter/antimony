@@ -601,10 +601,9 @@ bool Mesher::load_packed(const Region& r)
     if (voxels >= MIN_VOLUME)
         return false;
 
-    // Do a round of interval evaluation for tree pruning
-    eval_i(tree, (Interval){r.X[0], r.X[r.ni]},
-                 (Interval){r.Y[0], r.Y[r.nj]},
-                 (Interval){r.Z[0], r.Z[r.nk]});
+    // We've already run interval evaluation for this region
+    // (at the beginning of triangulate_region), so here we'll
+    // just disable inactive nodes.
     disable_nodes(tree);
 
     // Flatten a 3D region into a 1D list of points that
@@ -819,12 +818,26 @@ void Mesher::triangulate_voxel(const Region& r, const float* const d)
 
 void Mesher::triangulate_region(const Region& r)
 {
+    // Do a round of interval evaluation to skip empty regions.
+    auto interval = eval_i(tree, (Interval){r.X[0], r.X[r.ni]},
+                                 (Interval){r.Y[0], r.Y[r.nj]},
+                                 (Interval){r.Z[0], r.Z[r.nk]});
+    if (interval.lower > 0 || interval.upper < 0)
+        return;
+
     // If we can calculate all of the points in this region with a single
     // eval_r call, then do so.  This large chunk will be used in future
     // recursive calls to make things more efficient.
-    bool loaded_data = !has_data;
-    if (loaded_data)
+    bool loaded_data;
+    if (!has_data)
+    {
+        loaded_data = true;
         loaded_data = load_packed(r);
+    }
+    else
+    {
+        loaded_data = false;
+    }
 
     // If we have greater than one voxel, subdivide and recurse.
     if (r.voxels > 1)
