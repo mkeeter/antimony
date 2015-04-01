@@ -219,15 +219,16 @@ void Viewport::hideViewSelector()
     view_selector->hide();
 }
 
-ControlProxy* Viewport::getControlProxy(Node* n)
+QList<ControlProxy*> Viewport::getControlProxies(Node* n)
 {
+    QList<ControlProxy*> out;
     for (auto i : items())
     {
         auto p = dynamic_cast<ControlProxy*>(i);
         if (p && p->getNode() == n && !p->getControl()->parent())
-            return p;
+            out << p;
     }
-    return NULL;
+    return out;
 }
 
 QOpenGLBuffer* Viewport::getQuadVertices()
@@ -595,11 +596,15 @@ void Viewport::onPaste()
 
 void Viewport::onJumpTo(Node* n)
 {
-    auto p = getControlProxy(n);
-    if (!p)
+    auto proxies = getControlProxies(n);
+    if (!proxies.length())
         return;
 
-    auto pos = p->getControl()->pos();
+    QVector3D pos;
+    for (auto p : proxies)
+        pos += p->getControl()->pos();
+    pos /= proxies.length();
+
     auto a = new QPropertyAnimation(this, "center");
     a->setDuration(100);
     a->setStartValue(center);

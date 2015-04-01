@@ -88,9 +88,9 @@ public:
     void hideViewSelector();
 
     /*
-     *  Look up which top-level ControlProxy is attached to the given node.
+     *  Look up which ControlProxys is attached to the given node.
      */
-    ControlProxy* getControlProxy(Node* n);
+    QList<ControlProxy*> getControlProxies(Node* n);
 
     /*
      *  Getter functions so that DepthImageItems can use these shared objects.
