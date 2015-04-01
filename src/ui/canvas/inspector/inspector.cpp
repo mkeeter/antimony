@@ -344,7 +344,7 @@ void NodeInspector::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     {
         ungrabMouse();
     }
-    else
+    else if (event->button() == Qt::LeftButton)
     {
         // Store an Undo command for this drag
         auto delta = event->scenePos() -
