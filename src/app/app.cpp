@@ -356,8 +356,11 @@ MainWindow* App::newCanvasWindow()
     m->setCentralWidget(c);
     m->show();
 
-    connect(this, &App::jumpTo,
+    connect(this, &App::jumpToInGraph,
             c, &Canvas::onJumpTo);
+    connect(c, &Canvas::jumpTo,
+            this, &App::jumpToInViewport);
+
     return m;
 }
 
@@ -368,7 +371,9 @@ MainWindow* App::newViewportWindow()
     m->setCentralWidget(v);
     m->show();
     connect(v, &Viewport::jumpTo,
-            this, &App::jumpTo);
+            this, &App::jumpToInGraph);
+    connect(this, &App::jumpToInViewport,
+            v, &Viewport::onJumpTo);
     return m;
 }
 
@@ -393,8 +398,12 @@ MainWindow* App::newQuadWindow()
             }
 
     for (auto v : {top, front, side, other})
+    {
         connect(v, &Viewport::jumpTo,
-                this, &App::jumpTo);
+                this, &App::jumpToInGraph);
+        connect(this, &App::jumpToInViewport,
+                v, &Viewport::onJumpTo);
+    }
 
     top->lockAngle(0, 0);
     front->lockAngle(0, -M_PI/2);

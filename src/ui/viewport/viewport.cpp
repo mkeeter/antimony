@@ -593,6 +593,21 @@ void Viewport::onPaste()
     }
 }
 
+void Viewport::onJumpTo(Node* n)
+{
+    auto p = getControlProxy(n);
+    if (!p)
+        return;
+
+    auto pos = p->getControl()->pos();
+    auto a = new QPropertyAnimation(this, "center");
+    a->setDuration(100);
+    a->setStartValue(center);
+    a->setEndValue(pos);
+
+    a->start(QPropertyAnimation::DeleteWhenStopped);
+}
+
 void Viewport::setCenter(QVector3D c)
 {
     center = c;
