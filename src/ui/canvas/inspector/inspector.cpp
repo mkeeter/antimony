@@ -6,6 +6,7 @@
 #include <QKeyEvent>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
+#include <QMenu>
 
 #include "ui/main_window.h"
 
@@ -336,6 +337,29 @@ void NodeInspector::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     }
 }
 
+void NodeInspector::mousePressEvent(QGraphicsSceneMouseEvent* event)
+{
+    QGraphicsItem::mousePressEvent(event);
+
+    if (event->button() == Qt::RightButton)
+    {
+        QString desc = node->getName() + " (" + node->getTitle() + ")";
+
+        auto menu = new QMenu();
+        auto jump_to = new QAction("Show " + desc + " in viewport", menu);
+
+        menu->addAction(jump_to);
+        connect(jump_to, &QAction::triggered,
+                [=](){
+                    emit static_cast<GraphScene*>(
+                        scene())->jumpTo(node);
+                });
+
+        menu->exec(QCursor::pos());
+        delete menu;
+    }
+}
+
 void NodeInspector::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     QGraphicsItem::mouseReleaseEvent(event);
@@ -344,7 +368,7 @@ void NodeInspector::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     {
         ungrabMouse();
     }
-    else
+    else if (event->button() == Qt::LeftButton)
     {
         // Store an Undo command for this drag
         auto delta = event->scenePos() -

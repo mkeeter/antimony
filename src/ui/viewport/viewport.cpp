@@ -219,15 +219,16 @@ void Viewport::hideViewSelector()
     view_selector->hide();
 }
 
-ControlProxy* Viewport::getControlProxy(Node* n)
+QList<ControlProxy*> Viewport::getControlProxies(Node* n)
 {
+    QList<ControlProxy*> out;
     for (auto i : items())
     {
         auto p = dynamic_cast<ControlProxy*>(i);
         if (p && p->getNode() == n && !p->getControl()->parent())
-            return p;
+            out << p;
     }
-    return NULL;
+    return out;
 }
 
 QOpenGLBuffer* Viewport::getQuadVertices()
@@ -591,6 +592,31 @@ void Viewport::onPaste()
         App::instance()->newNode(n);
         App::instance()->pushStack(new UndoAddNodeCommand(n, "'paste'"));
     }
+}
+
+void Viewport::onJumpTo(Node* n)
+{
+    auto proxies = getControlProxies(n);
+    float area_sum = 0;
+    if (!proxies.length())
+        return;
+
+    QVector3D pos;
+    for (auto p : proxies)
+    {
+        const float area = p->boundingRect().width() *
+                           p->boundingRect().height();
+        pos += p->getControl()->pos() * area;
+        area_sum += area;
+    }
+    pos /= area_sum;
+
+    auto a = new QPropertyAnimation(this, "center");
+    a->setDuration(100);
+    a->setStartValue(center);
+    a->setEndValue(pos);
+
+    a->start(QPropertyAnimation::DeleteWhenStopped);
 }
 
 void Viewport::setCenter(QVector3D c)

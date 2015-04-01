@@ -79,7 +79,8 @@ public:
 
 signals:
     void windowTitleChanged(QString new_title);
-    void jumpTo(Node* node);
+    void jumpToInViewport(Node* node);
+    void jumpToInGraph(Node* node);
 
 public slots:
     /*

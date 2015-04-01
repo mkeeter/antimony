@@ -65,6 +65,11 @@ public slots:
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
 
     /*
+     *  On mouse press, open a 'jump to node' menu
+     */
+    void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
+
+    /*
      *  On mouse move, fake the left button being held down.
      */
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
