@@ -13,14 +13,13 @@
 DepthImageItem::DepthImageItem(QVector3D pos, QVector3D size,
                                QImage depth, QImage shaded, QColor color,
                                Viewport* viewport)
-    : QGraphicsObject(), pos(pos), size(size), depth(depth), shaded(shaded),
+    : QObject(viewport), pos(pos), size(size), depth(depth), shaded(shaded),
       color(color), viewport(viewport)
 {
-    connect(viewport, &Viewport::viewChanged, this, &DepthImageItem::reposition);
-    reposition();
-    setZValue(-20);
     initializeGL();
-    viewport->scene->addItem(this);
+
+    // Force a redraw of the viewport when this object is created.
+    viewport->scene->invalidate(QRect(), QGraphicsScene::BackgroundLayer);
 }
 
 DepthImageItem::~DepthImageItem()
@@ -73,28 +72,8 @@ void DepthImageItem::initializeGL()
     static_cast<QOpenGLWidget*>(viewport->viewport())->doneCurrent();
 }
 
-void DepthImageItem::reposition()
+void DepthImageItem::paint()
 {
-    setPos(viewport->worldToScene(pos));
-    prepareGeometryChange();
-}
-
-QRectF DepthImageItem::boundingRect() const
-{
-    float sx = size.x() * viewport->getScale();
-    float sy = size.y() * viewport->getScale();
-    return QRectF(-sx/2, -sy/2, sx, sy);
-}
-
-void DepthImageItem::paint(QPainter *painter,
-                           const QStyleOptionGraphicsItem *option,
-                           QWidget *widget)
-{
-    Q_UNUSED(option);
-    Q_UNUSED(widget);
-
-    painter->beginNativePainting();
-
     viewport->getQuadVertices()->bind();
 
     // Find the parent MainWindow of our Viewport
@@ -108,8 +87,6 @@ void DepthImageItem::paint(QPainter *painter,
         paintHeightmap();
 
     viewport->getQuadVertices()->release();
-
-    painter->endNativePainting();
 }
 
 void DepthImageItem::loadSharedShaderVariables(QOpenGLShaderProgram* shader)
