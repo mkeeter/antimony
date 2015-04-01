@@ -597,13 +597,19 @@ void Viewport::onPaste()
 void Viewport::onJumpTo(Node* n)
 {
     auto proxies = getControlProxies(n);
+    float area_sum = 0;
     if (!proxies.length())
         return;
 
     QVector3D pos;
     for (auto p : proxies)
-        pos += p->getControl()->pos();
-    pos /= proxies.length();
+    {
+        const float area = p->boundingRect().width() *
+                           p->boundingRect().height();
+        pos += p->getControl()->pos() * area;
+        area_sum += area;
+    }
+    pos /= area_sum;
 
     auto a = new QPropertyAnimation(this, "center");
     a->setDuration(100);
