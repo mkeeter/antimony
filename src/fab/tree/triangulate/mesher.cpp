@@ -855,14 +855,14 @@ void Mesher::triangulate_region(const Region& r)
         float d[8];
         get_corner_data(r, d);
 
-        // Loop over the six tetrahedra that make up a voxel cell
+        // Triangulate this particular voxel
         triangulate_voxel(r, d);
-    }
 
-    // Mark that a voxel has ended
-    // (which will eventually trigger decimation)
-    queue.push_back((InterpolateCommand){
-            .cmd=InterpolateCommand::END_OF_VOXEL});
+        // Mark that a voxel has ended
+        // (which triggers mesh refinment)
+        queue.push_back((InterpolateCommand){
+                .cmd=InterpolateCommand::END_OF_VOXEL});
+    }
 
     // If this stage of the recursion loaded data into the buffer,
     // clear the has_data flag (so that future stages will re-run
