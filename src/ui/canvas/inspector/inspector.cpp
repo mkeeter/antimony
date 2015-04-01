@@ -6,6 +6,7 @@
 #include <QKeyEvent>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
+#include <QMenu>
 
 #include "ui/main_window.h"
 
@@ -333,6 +334,19 @@ void NodeInspector::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     else
     {
         QGraphicsItem::mouseMoveEvent(event);
+    }
+}
+
+void NodeInspector::mousePressEvent(QGraphicsSceneMouseEvent* event)
+{
+    QGraphicsItem::mousePressEvent(event);
+
+    if (event->button() == Qt::RightButton)
+    {
+        auto menu = new QMenu();
+        menu->addAction(new QAction("Hello, world!\n", menu));
+        menu->exec(QCursor::pos());
+        delete menu;
     }
 }
 
