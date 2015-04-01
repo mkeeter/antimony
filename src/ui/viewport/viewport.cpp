@@ -474,6 +474,9 @@ void Viewport::drawBackground(QPainter* painter, const QRectF& rect)
     painter->beginNativePainting();
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    for (auto d : findChildren<DepthImageItem*>())
+        d->paint();
     painter->endNativePainting();
 }
 
@@ -623,7 +626,7 @@ void Viewport::setCenter(QVector3D c)
 {
     center = c;
     update();
-    scene->invalidate(QRect(),QGraphicsScene::ForegroundLayer);
+    scene->invalidate(QRect(), QGraphicsScene::ForegroundLayer);
     emit(viewChanged());
 }
 
@@ -631,7 +634,7 @@ void Viewport::setScale(float s)
 {
     scale = s;
     update();
-    scene->invalidate(QRect(),QGraphicsScene::ForegroundLayer);
+    scene->invalidate(QRect(), QGraphicsScene::ForegroundLayer);
     emit(viewChanged());
 }
 

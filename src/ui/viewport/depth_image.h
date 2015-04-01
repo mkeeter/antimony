@@ -11,7 +11,7 @@
 
 class Viewport;
 
-class DepthImageItem : public QGraphicsObject, protected QOpenGLFunctions
+class DepthImageItem : public QObject, protected QOpenGLFunctions
 {
     Q_OBJECT
 public:
@@ -19,17 +19,14 @@ public:
                    QImage depth, QImage shaded, QColor color,
                    Viewport* viewport);
     ~DepthImageItem();
-    QRectF boundingRect() const;
 
+    void paint();
 
-    /** Position of lower-left corner (in original scene units) */
+    /** Position of center (in original scene units) */
     const QVector3D pos;
 
     /** Scale (in rotated scene coordinates) */
     const QVector3D size;
-
-public slots:
-    void reposition();
 
 protected:
     void initializeGL();
@@ -39,8 +36,6 @@ protected:
     /** Loads variables that are shared between height-map and shaded shaders.
      */
     void loadSharedShaderVariables(QOpenGLShaderProgram* shader);
-
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
     QImage depth;
     QImage shaded;
