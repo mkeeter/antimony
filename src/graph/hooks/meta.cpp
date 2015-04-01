@@ -111,18 +111,18 @@ object ScriptMetaHooks::export_stl(tuple args, dict kwargs)
     QString filename = get_filename(kwargs);
     float resolution = get_resolution(kwargs);;
 
-    bool refine_features = false;
-    if (kwargs.has_key("refine_features"))
+    bool detect_features = false;
+    if (kwargs.has_key("detect_features"))
     {
-        extract<bool> refine_features_(kwargs["refine_features"]);
-        if (!refine_features_.check())
+        extract<bool> detect_features_(kwargs["detect_features"]);
+        if (!detect_features_.check())
             throw hooks::HookException(
-                    "refine_features argument must be a boolean.");
-        refine_features = refine_features_();
+                    "detect_features argument must be a boolean.");
+        detect_features = detect_features_();
     }
 
     self.button->setWorker(new ExportMeshWorker(
-                shape, bounds, filename, resolution, refine_features));
+                shape, bounds, filename, resolution, detect_features));
     return object();
 }
 
