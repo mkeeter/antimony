@@ -165,20 +165,18 @@ void Viewport::makeNodeAtCursor(NodeConstructorFunction f)
 float Viewport::getZmax() const
 {
     float zmax = -INFINITY;
-    for (auto i : scene->items())
-        if (DepthImageItem* p = dynamic_cast<DepthImageItem*>(i))
-            zmax = fmax((getTransformMatrix() * p->pos).z() + p->size.z()/2,
-                        zmax);
+    for (auto p : findChildren<DepthImageItem*>())
+        zmax = fmax((getTransformMatrix() * p->pos).z() + p->size.z()/2,
+                    zmax);
     return zmax;
 }
 
 float Viewport::getZmin() const
 {
     float zmin = INFINITY;
-    for (auto i : scene->items())
-        if (DepthImageItem* p = dynamic_cast<DepthImageItem*>(i))
-            zmin = fmin((getTransformMatrix() * p->pos).z() - p->size.z()/2,
-                        zmin);
+    for (auto p : findChildren<DepthImageItem*>())
+        zmin = fmin((getTransformMatrix() * p->pos).z() - p->size.z()/2,
+                    zmin);
     return zmin;
 }
 
