@@ -1,5 +1,6 @@
 #include <Python.h>
 
+#include <QCoreApplication>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMessageBox>
@@ -52,9 +53,11 @@ void ExportHeightmapWorker::run()
 
     auto exporting_dialog = new ExportingDialog();
 
+    int halt = 0;
     auto thread = new QThread();
     auto task = new ExportHeightmapTask(
-            shape, bounds, _resolution, _mm_per_unit, _filename);
+            shape, bounds, _resolution,
+            _mm_per_unit, _filename, &halt);
     task->moveToThread(thread);
 
     connect(thread, &QThread::started,
@@ -69,7 +72,14 @@ void ExportHeightmapWorker::run()
             exporting_dialog, &ExportingDialog::accept);
 
     thread->start();
-    exporting_dialog->exec();
+    // If the dialog was cancelled, set the halt flag and wait for the
+    // thread to finish (processing events all the while).
+    if (exporting_dialog->exec() == QDialog::Rejected)
+    {
+        halt = 1;
+        while (thread->isRunning())
+            QCoreApplication::processEvents();
+    }
     delete exporting_dialog;
 }
 
@@ -99,8 +109,7 @@ void ExportHeightmapTask::render()
         d16_rows[i] = d16 + (r.ni * i);
 
     memset(d16, 0, 2 * r.ni * r.nj);
-    int halt_flag = 0;
-    render16(shape.tree.get(), r, d16_rows, &halt_flag);
+    render16(shape.tree.get(), r, d16_rows, halt);
 
     // These bounds will be stored to give the .png real-world units.
     float bounds[6] = {
@@ -115,9 +124,9 @@ void ExportHeightmapTask::render()
     for (unsigned i=0; i < r.nj; ++i)
         d16_rows[r.nj - i - 1] = d16 + (r.ni * i);
 
-    printf("Saving file to %s\n", filename.toStdString().c_str());
-    save_png16L(filename.toStdString().c_str(), r.ni, r.nj,
-                bounds, d16_rows);
+    if (!*halt)
+        save_png16L(filename.toStdString().c_str(), r.ni, r.nj,
+                    bounds, d16_rows);
 
     free_arrays(&r);
     delete [] d16;
