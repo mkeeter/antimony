@@ -480,6 +480,33 @@ std::list<Vec3f> Mesher::get_contour()
         }
     }
 
+    // Special case to catch triangles that are part of a particular fan but
+    // don't have any edges in the contour (which can happen!).
+    for (auto itr=voxel_start;  itr != voxel_end; ++itr)
+    {
+        bool vert_match[3] = {false, false, false};
+        for (auto c : contour)
+        {
+            vert_match[0] |= (itr->a) == c;
+            vert_match[1] |= (itr->b) == c;
+            vert_match[2] |= (itr->c) == c;
+        }
+
+        if (vert_match[0] && vert_match[1] && vert_match[2])
+        {
+            if (itr == voxel_start)
+            {
+                voxel_start++;
+            }
+            else if (itr != fan_start)
+            {
+                const Triangle t = *itr;
+                triangles.erase(itr);
+                triangles.insert(voxel_start, t);
+            }
+        }
+    }
+
     // Remove the last point of the contour, since it's a closed loop.
     contour.pop_back();
     return contour;
