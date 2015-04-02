@@ -22,7 +22,7 @@ struct InterpolateCommand {
 
 class Mesher {
 public:
-    Mesher(struct MathTree_* tree, bool detect_edges);
+    Mesher(struct MathTree_* tree, bool detect_edges, volatile int* halt);
     ~Mesher();
 
     /*
@@ -111,6 +111,7 @@ protected:
     // MathTree that we're evaluating
     struct MathTree_* tree;
     bool detect_edges;
+    volatile int* halt;
 
     // Cached region and data from an eval_r call
     Region packed;

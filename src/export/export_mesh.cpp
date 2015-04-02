@@ -1,5 +1,6 @@
 #include <Python.h>
 
+#include <QCoreApplication>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMessageBox>
@@ -50,9 +51,11 @@ void ExportMeshWorker::run()
 
     auto exporting_dialog = new ExportingDialog();
 
+    int halt = 0;
     auto thread = new QThread();
     auto task = new ExportMeshTask(
-            shape, bounds, _resolution, _detect_features, _filename);
+            shape, bounds, _resolution,
+            _detect_features, _filename, &halt);
     task->moveToThread(thread);
 
     connect(thread, &QThread::started,
@@ -67,7 +70,15 @@ void ExportMeshWorker::run()
             exporting_dialog, &ExportingDialog::accept);
 
     thread->start();
-    exporting_dialog->exec();
+
+    // If the dialog was cancelled, set the halt flag and wait for the
+    // thread to finish (processing events all the while).
+    if (exporting_dialog->exec() == QDialog::Rejected)
+    {
+        halt = 1;
+        while (thread->isRunning())
+            QCoreApplication::processEvents();
+    }
     delete exporting_dialog;
 }
 
@@ -92,7 +103,7 @@ void ExportMeshTask::render()
 
     QTime time;
     time.start();
-    triangulate(shape.tree.get(), r, detect_features, &verts, &count);
+    triangulate(shape.tree.get(), r, detect_features, halt, &verts, &count);
     qDebug() << time.elapsed();
 
     save_stl(verts, count, filename.toStdString().c_str());

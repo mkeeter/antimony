@@ -292,8 +292,8 @@ static const int8_t TRIANGLE_CONNECTION_TABLE[256][16] =
 };
 
 
-Mesher::Mesher(MathTree* tree, bool detect_edges)
-    : tree(tree), detect_edges(detect_edges),
+Mesher::Mesher(MathTree* tree, bool detect_edges, volatile int* halt)
+    : tree(tree), detect_edges(detect_edges), halt(halt),
       data(new float[MIN_VOLUME]), has_data(false),
       X(new float[MIN_VOLUME]),
       Y(new float[MIN_VOLUME]),
@@ -845,6 +845,10 @@ void Mesher::triangulate_voxel(const Region& r, const float* const d)
 
 void Mesher::triangulate_region(const Region& r)
 {
+    // Early abort if the halt flag is set
+    if (*halt)
+        return;
+
     // Do a round of interval evaluation to skip empty regions.
     auto interval = eval_i(tree, (Interval){r.X[0], r.X[r.ni]},
                                  (Interval){r.Y[0], r.Y[r.nj]},
@@ -857,14 +861,9 @@ void Mesher::triangulate_region(const Region& r)
     // recursive calls to make things more efficient.
     bool loaded_data;
     if (!has_data)
-    {
-        loaded_data = true;
         loaded_data = load_packed(r);
-    }
     else
-    {
         loaded_data = false;
-    }
 
     // If we have greater than one voxel, subdivide and recurse.
     if (r.voxels > 1)

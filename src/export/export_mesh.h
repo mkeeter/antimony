@@ -26,8 +26,10 @@ class ExportMeshTask : public QObject
 {
     Q_OBJECT
 public:
-    explicit ExportMeshTask(Shape s, Bounds b, float r, bool d, QString f)
-        : shape(s), bounds(b), resolution(r), detect_features(d), filename(f)
+    explicit ExportMeshTask(Shape s, Bounds b, float r, bool d,
+                            QString f, volatile int* halt)
+        : shape(s), bounds(b), resolution(r),
+          detect_features(d), filename(f), halt(halt)
         {}
 public slots:
     void render();
@@ -39,6 +41,8 @@ protected:
     float resolution;
     bool detect_features;
     QString filename;
+
+    volatile int* halt;
 };
 
 #endif
