@@ -26,8 +26,8 @@ DepthImageItem::~DepthImageItem()
 {
     if (viewport)
     {
-        auto v =  static_cast<QOpenGLWidget*>(viewport->viewport());
-        if (v->isValid())
+        auto v =  dynamic_cast<QOpenGLWidget*>(viewport->viewport());
+        if (v && v->isValid())
         {
             static_cast<QOpenGLWidget*>(viewport->viewport())->makeCurrent();
             glDeleteTextures(1, &depth_tex);
