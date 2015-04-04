@@ -89,6 +89,14 @@ protected:
     void triangulate_voxel(const Region& r, const float* const d);
 
     /*
+     *  Evaluates the given tetrahedron in a voxel.
+     *      r is the voxel region
+     *      d is the corner values
+     *      t is the tetrahedron's ID.
+     */
+    void triangulate_tet(const Region& r, const float* const d, const int t);
+
+    /*
      *  Marks that the first edge of this triangle is swappable,
      *  and performs the swap if a match is found.
      */
