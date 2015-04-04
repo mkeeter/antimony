@@ -1,4 +1,5 @@
 #include <iostream>
+#include <set>
 
 #include "tree/triangulate/mesher.h"
 
@@ -167,10 +168,11 @@ void Mesher::push_swappable_triangle(Triangle t)
 
 std::list<Vec3f> Mesher::get_contour()
 {
-    // Dummy Vec3f for the vertex on the tet-mesh diagonal
-    auto center = voxel_start->a;
+    std::set<std::array<float, 3>> in_fan;
 
     std::list<Vec3f> contour = {voxel_start->a};
+    in_fan.insert(voxel_start->a_());
+
     fan_start = voxel_start;
     voxel_start++;
 
@@ -231,28 +233,18 @@ std::list<Vec3f> Mesher::get_contour()
         // bump over to the next point on the first triangle.
         else
         {
-            center = contour.back();
             contour.pop_back();
             contour.push_back(fan_start->b);
         }
-
     }
 
     // Special case to catch triangles that are part of a particular fan but
     // don't have any edges in the contour (which can happen!).
     for (auto itr=voxel_start;  itr != voxel_end; ++itr)
     {
-        bool vert_match[3] = {itr->a == center,
-                              itr->b == center,
-                              itr->c == center};
-        for (auto c : contour)
-        {
-            vert_match[0] |= (itr->a) == c;
-            vert_match[1] |= (itr->b) == c;
-            vert_match[2] |= (itr->c) == c;
-        }
-
-        if (vert_match[0] && vert_match[1] && vert_match[2])
+        if (in_fan.count(itr->a_()) &&
+            in_fan.count(itr->b_()) &&
+            in_fan.count(itr->c_()))
         {
             if (itr == voxel_start)
             {
