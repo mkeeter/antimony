@@ -172,6 +172,8 @@ std::list<Vec3f> Mesher::get_contour()
 
     std::list<Vec3f> contour = {voxel_start->a};
     in_fan.insert(voxel_start->a_());
+    in_fan.insert(voxel_start->b_());
+    in_fan.insert(voxel_start->c_());
 
     fan_start = voxel_start;
     voxel_start++;
@@ -217,6 +219,10 @@ std::list<Vec3f> Mesher::get_contour()
         // push the list around and update iterators appropriately.
         if (itr != voxel_end)
         {
+            in_fan.insert(itr->a_());
+            in_fan.insert(itr->b_());
+            in_fan.insert(itr->c_());
+
             if (itr == voxel_start)
             {
                 voxel_start++;
