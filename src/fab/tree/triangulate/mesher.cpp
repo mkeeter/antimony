@@ -167,6 +167,9 @@ void Mesher::push_swappable_triangle(Triangle t)
 
 std::list<Vec3f> Mesher::get_contour()
 {
+    // Dummy Vec3f for the vertex on the tet-mesh diagonal
+    auto center = voxel_start->a;
+
     std::list<Vec3f> contour = {voxel_start->a};
     fan_start = voxel_start;
     voxel_start++;
@@ -223,13 +226,25 @@ std::list<Vec3f> Mesher::get_contour()
                 triangles.insert(voxel_start, t);
             }
         }
+        // Special case for marching tetrahedrons: if the first point was on
+        // the diagonal of the voxel, it won't have found a match, so we'll
+        // bump over to the next point on the first triangle.
+        else
+        {
+            center = contour.back();
+            contour.pop_back();
+            contour.push_back(fan_start->b);
+        }
+
     }
 
     // Special case to catch triangles that are part of a particular fan but
     // don't have any edges in the contour (which can happen!).
     for (auto itr=voxel_start;  itr != voxel_end; ++itr)
     {
-        bool vert_match[3] = {false, false, false};
+        bool vert_match[3] = {itr->a == center,
+                              itr->b == center,
+                              itr->c == center};
         for (auto c : contour)
         {
             vert_match[0] |= (itr->a) == c;
