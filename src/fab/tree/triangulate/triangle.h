@@ -17,6 +17,14 @@ struct Triangle {
     std::array<float, 3> b_() const;
     std::array<float, 3> c_() const;
 
+    std::array<float, 6> ab_() const;
+    std::array<float, 6> bc_() const;
+    std::array<float, 6> ca_() const;
+
+    std::array<float, 6> ba_() const;
+    std::array<float, 6> cb_() const;
+    std::array<float, 6> ac_() const;
+
     /*
      *  Calculate the normal of this triangle.
      */
