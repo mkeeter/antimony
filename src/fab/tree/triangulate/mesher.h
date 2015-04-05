@@ -153,7 +153,7 @@ protected:
     std::list<Triangle>::iterator voxel_start;
     std::list<Triangle>::iterator voxel_end;
     std::list<Triangle>::iterator fan_start;
-    std::map<std::array<double, 6>, std::list<Triangle>::iterator> swappable;
+    std::map<std::array<float, 6>, std::list<Triangle>::iterator> swappable;
 };
 
 #endif
