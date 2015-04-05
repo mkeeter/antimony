@@ -60,9 +60,9 @@ std::array<float, 6> Triangle::ba_() const
     return {{static_cast<float>(b[0]),
              static_cast<float>(b[1]),
              static_cast<float>(b[2]),
-             static_cast<float>(c[0]),
-             static_cast<float>(c[1]),
-             static_cast<float>(c[2])}};
+             static_cast<float>(a[0]),
+             static_cast<float>(a[1]),
+             static_cast<float>(a[2])}};
 }
 
 std::array<float, 6> Triangle::cb_() const
