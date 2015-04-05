@@ -429,8 +429,10 @@ void Mesher::unload_packed()
     has_data = false;
 }
 
-void Mesher::get_corner_data(const Region& r, float d[8])
+bool Mesher::get_corner_data(const Region& r, float d[8])
 {
+    bool has_positive = false;
+    bool has_negative = false;
     // Populates an 8-element array with the function evaluation
     // results from the corner of a single-voxel region.
     for (int i=0; i < 8; ++i)
@@ -444,7 +446,12 @@ void Mesher::get_corner_data(const Region& r, float d[8])
                 * (packed.ni+1) * (packed.nj+1);
 
         d[i] = data[index];
+
+        has_negative |= d[i] < 0;
+        has_positive |= d[i] >= 0;
     }
+
+    return has_positive && has_negative;
 }
 
 void Mesher::eval_zero_crossings(Vec3f* v0, Vec3f* v1, unsigned count)
@@ -647,15 +654,17 @@ void Mesher::triangulate_region(const Region& r)
         // Load corner values from this voxel
         // (from the packed data array)
         float d[8];
-        get_corner_data(r, d);
 
-        // Triangulate this particular voxel
-        triangulate_voxel(r, d);
+        if (get_corner_data(r, d))
+        {
+            // Triangulate this particular voxel
+            triangulate_voxel(r, d);
 
-        // Mark that a voxel has ended
-        // (which triggers mesh refinment)
-        queue.push_back((InterpolateCommand){
-                .cmd=InterpolateCommand::END_OF_VOXEL});
+            // Mark that a voxel has ended
+            // (which triggers mesh refinment)
+            queue.push_back((InterpolateCommand){
+                    .cmd=InterpolateCommand::END_OF_VOXEL});
+        }
     }
 
     // If this stage of the recursion loaded data into the buffer,

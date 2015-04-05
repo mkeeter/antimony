@@ -59,8 +59,9 @@ protected:
 
     /*
      *  Looks up the corner values for the given region, storing them in d.
+     *  Returns true if this voxel has anything of interest in it.
      */
-    void get_corner_data(const Region& r, float d[8]);
+    bool get_corner_data(const Region& r, float d[8]);
 
     /*
      *  Performs binary search on a set of edges.
