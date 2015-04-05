@@ -205,32 +205,20 @@ std::list<Vec3f> Mesher::get_contour()
             const auto& t = *itr;
             if (contour.back() == t.a && valid_edges.count(t.ab_()))
             {
-                const auto ab = t.b - t.a;
-                if ((ab[0] != 0) + (ab[1] != 0) + (ab[2] != 0) < 3)
-                {
-                    contour.push_back(t.b);
-                    break;
-                }
+                contour.push_back(t.b);
+                break;
             }
 
             if (contour.back() == t.b && valid_edges.count(t.bc_()))
             {
-                const auto bc = t.c - t.b;
-                if ((bc[0] != 0) + (bc[1] != 0) + (bc[2] != 0) < 3)
-                {
-                    contour.push_back(t.c);
-                    break;
-                }
+                contour.push_back(t.c);
+                break;
             }
 
             if (contour.back() == t.c && valid_edges.count(t.ca_()))
             {
-                const auto ca = t.a - t.c;
-                if ((ca[0] != 0) + (ca[1] != 0) + (ca[2] != 0) < 3)
-                {
-                    contour.push_back(t.a);
-                    break;
-                }
+                contour.push_back(t.a);
+                break;
             }
         }
         // If we broke out of the loop (meaning itr is pointing to a relevant
