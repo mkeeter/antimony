@@ -81,6 +81,9 @@ std::list<Vec3f> Mesher::get_normals(const std::list<Vec3f>& points)
     // We'll be evaluating a dummy region to numerically estimate gradients
     Region dummy;
     dummy.voxels = points.size() * 7;
+    if (dummy.voxels >= MIN_VOLUME)
+        std::cerr << "Error: too many normals to calculate at once!"
+                  << std::endl;
     dummy.X = nx;
     dummy.Y = ny;
     dummy.Z = nz;
