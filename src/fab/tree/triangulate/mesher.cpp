@@ -168,6 +168,25 @@ void Mesher::push_swappable_triangle(Triangle t)
 
 std::list<Vec3f> Mesher::get_contour()
 {
+    std::set<std::array<float, 6>> valid_edges;
+    for (auto itr=voxel_start; itr != voxel_end; ++itr)
+    {
+        if (valid_edges.count(itr->ba_()))
+            valid_edges.erase(itr->ba_());
+        else
+            valid_edges.insert(itr->ab_());
+
+        if (valid_edges.count(itr->cb_()))
+            valid_edges.erase(itr->cb_());
+        else
+            valid_edges.insert(itr->bc_());
+
+        if (valid_edges.count(itr->ac_()))
+            valid_edges.erase(itr->ac_());
+        else
+            valid_edges.insert(itr->ca_());
+    }
+
     std::set<std::array<float, 3>> in_fan;
 
     std::list<Vec3f> contour = {voxel_start->a};
@@ -184,7 +203,7 @@ std::list<Vec3f> Mesher::get_contour()
         for (itr=fan_start; itr != voxel_end; ++itr)
         {
             const auto& t = *itr;
-            if (contour.back() == t.a)
+            if (contour.back() == t.a && valid_edges.count(t.ab_()))
             {
                 const auto ab = t.b - t.a;
                 if ((ab[0] != 0) + (ab[1] != 0) + (ab[2] != 0) < 3)
@@ -194,7 +213,7 @@ std::list<Vec3f> Mesher::get_contour()
                 }
             }
 
-            if (contour.back() == t.b)
+            if (contour.back() == t.b && valid_edges.count(t.bc_()))
             {
                 const auto bc = t.c - t.b;
                 if ((bc[0] != 0) + (bc[1] != 0) + (bc[2] != 0) < 3)
@@ -204,7 +223,7 @@ std::list<Vec3f> Mesher::get_contour()
                 }
             }
 
-            if (contour.back() == t.c)
+            if (contour.back() == t.c && valid_edges.count(t.ca_()))
             {
                 const auto ca = t.a - t.c;
                 if ((ca[0] != 0) + (ca[1] != 0) + (ca[2] != 0) < 3)
@@ -233,14 +252,6 @@ std::list<Vec3f> Mesher::get_contour()
                 triangles.erase(itr);
                 triangles.insert(voxel_start, t);
             }
-        }
-        // Special case for marching tetrahedrons: if the first point was on
-        // the diagonal of the voxel, it won't have found a match, so we'll
-        // bump over to the next point on the first triangle.
-        else
-        {
-            contour.pop_back();
-            contour.push_back(fan_start->b);
         }
     }
 
