@@ -164,6 +164,8 @@ void Mesher::push_swappable_triangle(Triangle t)
 
 std::list<Vec3f> Mesher::get_contour()
 {
+    // Find all of the singular edges in this fan
+    // (edges that aren't shared between multiple triangles).
     std::set<std::array<float, 6>> valid_edges;
     for (auto itr=voxel_start; itr != voxel_end; ++itr)
     {
