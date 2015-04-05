@@ -256,8 +256,9 @@ std::list<Vec3f> Mesher::get_contour()
             else if (itr != fan_start)
             {
                 const Triangle t = *itr;
-                triangles.erase(itr);
                 triangles.insert(voxel_start, t);
+                itr = triangles.erase(itr);
+                itr--;
             }
         }
     }
