@@ -82,10 +82,11 @@ Exporting files
 ---------------
 The export workflow in Antimony is a bit non-traditional.
 
-To export a particular shape, create a node in the Export menu then connect
-the target shape to its input port.  If the shape is a valid target for export,
-a right-pointing arrow icon will appear in the top right corner of the node's
-graph representation; clicking on this arrow will start the export task.
+To export a particular shape, create a node from the Export category then
+connect the target shape to its input port.  If the shape is a valid target
+for export, a right-pointing arrow icon will appear in the top right corner
+of the node's graph representation; clicking on this arrow will start the
+export task.
 
 This means that multiple export tasks can be defined for different parts of
 a model; details like resolution and even target filename can also be
