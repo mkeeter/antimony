@@ -34,6 +34,7 @@ DepthImageItem::~DepthImageItem()
             glDeleteTextures(1, &shaded_tex);
             static_cast<QOpenGLWidget*>(viewport->viewport())->doneCurrent();
         }
+        viewport->scene->invalidate(QRect(), QGraphicsScene::BackgroundLayer);
     }
 }
 
