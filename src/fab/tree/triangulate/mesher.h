@@ -59,8 +59,9 @@ protected:
 
     /*
      *  Looks up the corner values for the given region, storing them in d.
+     *  Returns true if this voxel has anything of interest in it.
      */
-    void get_corner_data(const Region& r, float d[8]);
+    bool get_corner_data(const Region& r, float d[8]);
 
     /*
      *  Performs binary search on a set of edges.
@@ -89,6 +90,14 @@ protected:
     void triangulate_voxel(const Region& r, const float* const d);
 
     /*
+     *  Evaluates the given tetrahedron in a voxel.
+     *      r is the voxel region
+     *      d is the corner values
+     *      t is the tetrahedron's ID.
+     */
+    void triangulate_tet(const Region& r, const float* const d, const int t);
+
+    /*
      *  Marks that the first edge of this triangle is swappable,
      *  and performs the swap if a match is found.
      */
@@ -99,6 +108,17 @@ protected:
      *  for features and process them if they are found.
      */
     void check_feature();
+
+    /*
+     *  Removes duplicates from the triangle list.
+     */
+    void remove_dupes();
+
+    /*
+     *  Removes triangles with edges that aren't connected to the
+     *  rest of the mesh (which happens sometimes when refining geometry).
+     */
+    void prune_flags();
 
     /*
      *  Returns a closed contour that traces the most recent fan.
@@ -145,7 +165,7 @@ protected:
     std::list<Triangle>::iterator voxel_start;
     std::list<Triangle>::iterator voxel_end;
     std::list<Triangle>::iterator fan_start;
-    std::map<std::array<double, 6>, std::list<Triangle>::iterator> swappable;
+    std::map<std::array<float, 6>, std::list<Triangle>::iterator> swappable;
 };
 
 #endif
