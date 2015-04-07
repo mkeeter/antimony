@@ -34,7 +34,8 @@ RenderWorker::RenderWorker(Datum* datum, Viewport* viewport)
             this, &RenderWorker::deleteIfNotRunning);
     connect(viewport, &Viewport::viewChanged,
             this, &RenderWorker::onDatumChanged);
-    emit(datum->changed());
+
+    onDatumChanged();
 }
 
 RenderWorker::~RenderWorker()
