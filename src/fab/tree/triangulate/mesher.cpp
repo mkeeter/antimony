@@ -357,6 +357,70 @@ void Mesher::check_feature()
     }
 }
 
+void Mesher::remove_dupes()
+{
+    std::map<std::array<float, 3>, size_t> verts;
+    std::set<std::array<size_t, 3>> tris;
+    size_t vertex_id = 0;
+
+    for (auto itr=triangles.begin(); itr != triangles.end(); ++itr)
+    {
+        std::array<size_t, 3> t;
+        int i=0;
+        // For each vertex, find whether it's already in our vertex
+        // set.  Create an array t with vertex indicies.
+        for (auto v : {itr->a_(), itr->b_(), itr->c_()})
+        {
+            auto k = verts.find(v);
+            if (k != verts.end())
+            {
+                t[i++] = k->second;
+            }
+            else
+            {
+                verts[v] = vertex_id;
+                t[i++] = vertex_id;
+                vertex_id++;
+            }
+        }
+
+        // Check to see if there are any other triangles that use these
+        // three vertices; if so, delete this triangle.
+        std::sort(t.begin(), t.end());
+        if (tris.count(t))
+        {
+            itr = triangles.erase(itr);
+            itr--;
+        }
+        else
+        {
+            tris.insert(t);
+        }
+    }
+}
+
+void Mesher::prune_flags()
+{
+    std::set<std::array<float, 6>> edges;
+    for (auto t : triangles)
+    {
+        edges.insert(t.ab_());
+        edges.insert(t.bc_());
+        edges.insert(t.ca_());
+    }
+
+    for (auto itr=triangles.begin(); itr != triangles.end(); ++itr)
+    {
+        if (!edges.count(itr->ba_()) ||
+            !edges.count(itr->cb_()) ||
+            !edges.count(itr->ac_()))
+        {
+            itr = triangles.erase(itr);
+            itr--;
+        }
+    }
+}
+
 // Loads a vertex into the vertex list.
 // If this vertex completes a triangle, check for features.
 void Mesher::push_vert(const float x, const float y, const float z)
@@ -681,6 +745,12 @@ void Mesher::triangulate_region(const Region& r)
 
 float* Mesher::get_verts(unsigned* count)
 {
+    if (detect_edges)
+    {
+        remove_dupes();
+        prune_flags();
+    }
+
     // There are 9 floats in each triangle
     *count = triangles.size() * 9;
 

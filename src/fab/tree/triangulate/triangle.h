@@ -25,6 +25,8 @@ struct Triangle {
     std::array<float, 6> cb_() const;
     std::array<float, 6> ac_() const;
 
+    std::array<float, 9> abc_() const;
+
     /*
      *  Calculate the normal of this triangle.
      */

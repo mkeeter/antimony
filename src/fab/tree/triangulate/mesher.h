@@ -110,6 +110,17 @@ protected:
     void check_feature();
 
     /*
+     *  Removes duplicates from the triangle list.
+     */
+    void remove_dupes();
+
+    /*
+     *  Removes triangles with edges that aren't connected to the
+     *  rest of the mesh (which happens sometimes when refining geometry).
+     */
+    void prune_flags();
+
+    /*
      *  Returns a closed contour that traces the most recent fan.
      *
      *  Modifies triangles, voxel_start, and fan_start so that the
