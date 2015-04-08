@@ -24,6 +24,11 @@ DepthImageItem::DepthImageItem(QVector3D pos, QVector3D size,
 
 DepthImageItem::~DepthImageItem()
 {
+    clearTextures();
+}
+
+void DepthImageItem::clearTextures()
+{
     if (viewport)
     {
         auto v =  dynamic_cast<QOpenGLWidget*>(viewport->viewport());
@@ -36,6 +41,7 @@ DepthImageItem::~DepthImageItem()
         }
         viewport->scene->invalidate(QRect(), QGraphicsScene::BackgroundLayer);
     }
+    viewport.clear();
 }
 
 void DepthImageItem::initializeGL()
