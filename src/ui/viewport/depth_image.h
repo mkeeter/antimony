@@ -20,6 +20,12 @@ public:
                    Viewport* viewport);
     ~DepthImageItem();
 
+    /*
+     *  Releases OpenGL texture objects and clears the viewport pointer
+     *  (called on deletion and by the Viewport destructor)
+     */
+    void clearTextures();
+
     void paint();
 
     /** Position of center (in original scene units) */

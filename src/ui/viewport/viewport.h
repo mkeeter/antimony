@@ -25,6 +25,8 @@ class Viewport : public QGraphicsView
 public:
     explicit Viewport(QGraphicsScene* scene, QWidget* parent=0);
 
+    virtual ~Viewport();
+
     /*
      *  Connect to appropriate UI actions and modify menus.
      */

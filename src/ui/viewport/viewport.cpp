@@ -51,6 +51,12 @@ Viewport::Viewport(QGraphicsScene* scene, QWidget* parent)
     setViewport(gl);
 }
 
+Viewport::~Viewport()
+{
+    for (auto d : findChildren<DepthImageItem*>())
+        d->clearTextures();
+}
+
 void Viewport::customizeUI(Ui::MainWindow* ui)
 {
     QActionGroup* view_actions = new QActionGroup(this);

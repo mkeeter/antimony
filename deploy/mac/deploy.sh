@@ -45,6 +45,7 @@ sed -i "" "s:0\.0\.0:$RELEASE:g" antimony.app/Contents/Info.plist
 mkdir antimony
 cp ../README.md ./antimony/README.txt
 cp ../doc/USAGE.md ./antimony/USAGE.txt
+cp ../doc/SCRIPTING.md ./antimony/SCRIPTING.txt
 mv antimony.app ./antimony
 hdiutil create antimony.dmg -volname "Antimony $RELEASE" -srcfolder antimony
 rm -rf antimony
