@@ -79,6 +79,8 @@ public:
 
 signals:
     void windowTitleChanged(QString new_title);
+    void jumpToInViewport(Node* node);
+    void jumpToInGraph(Node* node);
 
 public slots:
     /*
@@ -107,10 +109,6 @@ public slots:
     void onSaveAs();
     void onOpen();
     void onQuit();
-
-    void onExportSTL();
-    void onExportHeightmap();
-    void onExportJSON();
 
     void startUpdateCheck();
     void onUpdateCheckFinished(QNetworkReply* reply);

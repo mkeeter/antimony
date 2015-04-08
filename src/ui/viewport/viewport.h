@@ -25,6 +25,8 @@ class Viewport : public QGraphicsView
 public:
     explicit Viewport(QGraphicsScene* scene, QWidget* parent=0);
 
+    virtual ~Viewport();
+
     /*
      *  Connect to appropriate UI actions and modify menus.
      */
@@ -88,9 +90,9 @@ public:
     void hideViewSelector();
 
     /*
-     *  Look up which top-level ControlProxy is attached to the given node.
+     *  Look up which ControlProxys is attached to the given node.
      */
-    ControlProxy* getControlProxy(Node* n);
+    QList<ControlProxy*> getControlProxies(Node* n);
 
     /*
      *  Getter functions so that DepthImageItems can use these shared objects.
@@ -103,6 +105,7 @@ public:
 signals:
     void viewChanged();
     void showPorts(bool);
+    void jumpTo(Node* node);
 
     void centerChanged(QVector3D c);
     void scaleChanged(float);
@@ -111,6 +114,7 @@ public slots:
     void onCopy();
     void onCut();
     void onPaste();
+    void onJumpTo(Node* n);
 
     void setCenter(QVector3D c);
     void setScale(float s);
@@ -196,6 +200,8 @@ protected:
     float pitch;
     float yaw;
     bool angle_locked;
+
+    Q_PROPERTY(QVector3D center READ getCenter WRITE setCenter)
 
     /* Right-clicking allows users to raise a particular Control
      * (to make overlapping work).  This value keeps track of

@@ -2,6 +2,7 @@
 #define INSPECTOR_H
 
 #include "graph/node/node.h"
+#include "ui/canvas/inspector/inspector_title.h"
 
 #include <QWidget>
 #include <QLineEdit>
@@ -13,11 +14,9 @@ class ScriptDatum;
 class Node;
 class Canvas;
 
-class InspectorRow;
-class InspectorMenuButton;
 class InputPort;
 class OutputPort;
-class InspectorTitle;
+class InspectorRow;
 
 class DatumTextItem;
 
@@ -36,6 +35,11 @@ public:
                QWidget *widget) override;
 
     Node* getNode();
+
+    template <typename T> T* getButton() const
+    {
+        return title_row->getButton<T>();
+    }
 
     OutputPort* datumOutputPort(Datum *d) const;
     InputPort* datumInputPort(Datum* d) const;
@@ -59,6 +63,11 @@ public slots:
      *  On mouse move, fake the left button being held down.
      */
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+
+    /*
+     *  On mouse press, open a 'jump to node' menu
+     */
+    void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
 
     /*
      *  On mouse move, fake the left button being held down.

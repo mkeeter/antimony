@@ -91,14 +91,6 @@ void MainWindow::connectActions(App* app)
     connect(ui->actionNewQuad, &QAction::triggered,
             app, &App::newQuadWindow);
 
-    // Export menu
-    connect(ui->actionExportMesh, &QAction::triggered,
-            app, &App::onExportSTL);
-    connect(ui->actionExportHeightmap, &QAction::triggered,
-            app, &App::onExportHeightmap);
-    connect(ui->actionExportJSON, &QAction::triggered,
-            app, &App::onExportJSON);
-
     // Help menu
     connect(ui->actionAbout, &QAction::triggered,
             app, &App::onAbout);

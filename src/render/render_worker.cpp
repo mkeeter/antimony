@@ -34,7 +34,8 @@ RenderWorker::RenderWorker(Datum* datum, Viewport* viewport)
             this, &RenderWorker::deleteIfNotRunning);
     connect(viewport, &Viewport::viewChanged,
             this, &RenderWorker::onDatumChanged);
-    emit(datum->changed());
+
+    onDatumChanged();
 }
 
 RenderWorker::~RenderWorker()
@@ -53,6 +54,12 @@ void RenderWorker::deleteIfNotRunning()
     // If this worker isn't running, call deleteLater.
     // In the case that it is running, we check the deletion conditions
     // at the beginning of onThreadFinished (so we'll get deleted then).
+    if (depth_image)
+    {
+        depth_image->deleteLater();
+        depth_image = NULL;
+    }
+
     if (!running)
         deleteLater();
 }
@@ -78,7 +85,7 @@ bool RenderWorker::hasNoOutput()
 
 void RenderWorker::onDatumChanged()
 {
-    if (datum->getValid() && datum->getValue() && hasNoOutput())
+    if (datum && datum->getValid() && datum->getValue() && hasNoOutput())
     {
         if (next)
             next->deleteLater();

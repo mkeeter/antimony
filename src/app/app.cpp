@@ -34,13 +34,8 @@
 #include "graph/datum/link.h"
 #include "graph/node/serializer.h"
 #include "graph/node/deserializer.h"
-#include "graph/node/deserializer_old.h"
 
 #include "fab/types/shape.h"
-
-#include "render/export_mesh.h"
-#include "render/export_json.h"
-#include "render/export_bitmap.h"
 
 #ifndef GITREV
 #warning "Git revision not defined!"
@@ -205,25 +200,10 @@ void App::loadFile(QString f)
 
     if (ds.failed == true)
     {
-        // Attempt to load the file with the old deserializer
-        file.reset();
-        QDataStream in(&file);
-        SceneDeserializerOld dso(root);
-        dso.run(&in);
-
-        if (dso.failed)
-        {
-            QMessageBox::critical(NULL, "Loading error",
-                    "<b>Loading error:</b><br>" +
-                    dso.error_message);
-            onNew();
-        }
-        else
-        {
-            makeUI(root);
-            graph_scene->setInspectorPositions(dso.inspectors);
-            emit(windowTitleChanged(getWindowTitle()));
-        }
+        QMessageBox::critical(NULL, "Loading error",
+                "<b>Loading error:</b><br>" +
+                ds.error_message);
+        onNew();
     } else {
         // If there's a warning message, show it in a box.
         if (!ds.warning_message.isNull())
@@ -236,209 +216,6 @@ void App::loadFile(QString f)
 
         emit(windowTitleChanged(getWindowTitle()));
     }
-}
-
-void App::onExportSTL()
-{
-    Shape s = root->getCombinedShape();
-    if (!s.tree)
-    {
-        QMessageBox::critical(NULL, "Export error",
-                "<b>Export error:</b><br>"
-                "Cannot export without any shapes in the scene.");
-        return;
-    }
-    if (isinf(s.bounds.xmin) || isinf(s.bounds.xmax) ||
-        isinf(s.bounds.ymin) || isinf(s.bounds.ymax) ||
-        isinf(s.bounds.zmin) || isinf(s.bounds.zmax))
-    {
-        QMessageBox::critical(NULL, "Export error",
-                "<b>Export error:</b><br>"
-                "Some shapes do not have 3D bounds;<br>"
-                "cannot export mesh.");
-        return;
-    }
-
-    auto resolution_dialog = new ResolutionDialog(
-            &s, RESOLUTION_DIALOG_3D, false);
-    if (!resolution_dialog->exec())
-        return;
-
-    QString file_name = QFileDialog::getSaveFileName(
-            NULL, "Export STL", "", "*.stl");
-    if (file_name.isEmpty())
-        return;
-
-    if (!QFileInfo(QFileInfo(file_name).path()).isWritable())
-    {
-        QMessageBox::critical(NULL, "Export error",
-                "<b>Export error:</b><br>"
-                "Target file is not writable.");
-        return;
-    }
-
-    auto exporting_dialog = new ExportingDialog();
-
-    auto thread = new QThread();
-    auto worker = new ExportMeshWorker(
-            s, resolution_dialog->getResolution(),
-            file_name);
-    delete resolution_dialog;
-    worker->moveToThread(thread);
-
-    connect(thread, &QThread::started,
-            worker, &ExportMeshWorker::render);
-    connect(worker, &ExportMeshWorker::finished,
-            thread, &QThread::quit);
-    connect(thread, &QThread::finished,
-            thread, &QThread::deleteLater);
-    connect(thread, &QThread::finished,
-            worker, &ExportMeshWorker::deleteLater);
-    connect(thread, &QThread::destroyed,
-            exporting_dialog, &ExportingDialog::accept);
-
-    thread->start();
-    exporting_dialog->exec();
-    delete exporting_dialog;
-}
-
-void App::onExportHeightmap()
-{
-    // Verify that we are not mixing 2D and 3D shapes.
-    // (for shapes that have non-zero bounds)
-    {
-        QMap<QString, Shape> shapes = root->getShapes();
-        bool has_2d = false;
-        bool has_3d = false;
-        for (auto s=shapes.begin(); s != shapes.end(); ++s)
-        {
-            if (s->bounds.xmin != s->bounds.xmax ||
-                s->bounds.ymin != s->bounds.ymax ||
-                s->bounds.zmin != s->bounds.zmax)
-            {
-                if (isinf(s->bounds.zmin) || isinf(s->bounds.zmax))
-                    has_2d = true;
-                else
-                    has_3d = true;
-            }
-        }
-
-        if (has_2d && has_3d)
-        {
-            QMessageBox::critical(NULL, "Export error",
-                    "<b>Export error:</b><br>"
-                    "Cannot export with a mix of 2D and 3D shapes in the scene.");
-            return;
-        }
-    }
-
-    Shape s = root->getCombinedShape();
-    if (!s.tree)
-    {
-        QMessageBox::critical(NULL, "Export error",
-                "<b>Export error:</b><br>"
-                "Cannot export without any shapes in the scene.");
-        return;
-    }
-    if (isinf(s.bounds.xmin) || isinf(s.bounds.xmax) ||
-        isinf(s.bounds.ymin) || isinf(s.bounds.ymax))
-    {
-        QMessageBox::critical(NULL, "Export error",
-                "<b>Export error:</b><br>"
-                "Some shapes do not have 2D bounds;<br>"
-                "cannot export mesh.");
-        return;
-    }
-
-    // Make a ResolutionDialog for 2D export
-    auto resolution_dialog = new ResolutionDialog(
-            &s, RESOLUTION_DIALOG_2D, true);
-    if (!resolution_dialog->exec())
-        return;
-
-    QString file_name = QFileDialog::getSaveFileName(
-            NULL, "Export .png", "", "*.png");
-    if (file_name.isEmpty())
-        return;
-
-    if (!QFileInfo(QFileInfo(file_name).path()).isWritable())
-    {
-        QMessageBox::critical(NULL, "Export error",
-                "<b>Export error:</b><br>"
-                "Target file is not writable.");
-        return;
-    }
-
-    auto exporting_dialog = new ExportingDialog();
-
-    auto thread = new QThread();
-    auto worker = new ExportBitmapWorker(
-            s, resolution_dialog->getResolution(),
-            resolution_dialog->getMMperUnit(), file_name);
-    delete resolution_dialog;
-    worker->moveToThread(thread);
-
-    connect(thread, &QThread::started,
-            worker, &ExportBitmapWorker::render);
-    connect(worker, &ExportBitmapWorker::finished,
-            thread, &QThread::quit);
-    connect(thread, &QThread::finished,
-            thread, &QThread::deleteLater);
-    connect(thread, &QThread::finished,
-            worker, &ExportBitmapWorker::deleteLater);
-    connect(thread, &QThread::destroyed,
-            exporting_dialog, &ExportingDialog::accept);
-
-    thread->start();
-    exporting_dialog->exec();
-    delete exporting_dialog;
-}
-
-void App::onExportJSON()
-{
-    QMap<QString, Shape> s = root->getShapes();
-    if (s.isEmpty())
-    {
-        QMessageBox::critical(NULL, "Export error",
-                "<b>Export error:</b><br>"
-                "Cannot export without any shapes in the scene.");
-        return;
-    }
-
-    QString file_name = QFileDialog::getSaveFileName(
-            NULL, "Export JSON", "", "*.f");
-    if (file_name.isEmpty())
-        return;
-
-    if (!QFileInfo(QFileInfo(file_name).path()).isWritable())
-    {
-        QMessageBox::critical(NULL, "Export error",
-                "<b>Export error:</b><br>"
-                "Target file is not writable.");
-        return;
-    }
-
-    auto exporting_dialog = new ExportingDialog();
-
-    // Prepare to export (in infix notation)
-    auto thread = new QThread();
-    auto worker = new ExportJSONWorker(s, file_name, EXPORT_JSON_INFIX);
-    worker->moveToThread(thread);
-
-    connect(thread, &QThread::started,
-            worker, &ExportJSONWorker::run);
-    connect(worker, &ExportJSONWorker::finished,
-            thread, &QThread::quit);
-    connect(thread, &QThread::finished,
-            thread, &QThread::deleteLater);
-    connect(thread, &QThread::finished,
-            worker, &ExportJSONWorker::deleteLater);
-    connect(thread, &QThread::destroyed,
-            exporting_dialog, &ExportingDialog::accept);
-
-    thread->start();
-    exporting_dialog->exec();
-    delete exporting_dialog;
 }
 
 void App::startUpdateCheck()
@@ -575,16 +352,26 @@ QString App::nodePath() const
 MainWindow* App::newCanvasWindow()
 {
     auto m = new MainWindow();
-    m->setCentralWidget(graph_scene->newCanvas());
+    auto c = graph_scene->newCanvas();
+    m->setCentralWidget(c);
     m->show();
+
+    connect(this, &App::jumpToInGraph,
+            c, &Canvas::onJumpTo);
+
     return m;
 }
 
 MainWindow* App::newViewportWindow()
 {
     auto m = new MainWindow();
-    m->setCentralWidget(view_scene->newViewport());
+    auto v = view_scene->newViewport();
+    m->setCentralWidget(v);
     m->show();
+    connect(v, &Viewport::jumpTo,
+            this, &App::jumpToInGraph);
+    connect(this, &App::jumpToInViewport,
+            v, &Viewport::onJumpTo);
     return m;
 }
 
@@ -607,6 +394,14 @@ MainWindow* App::newQuadWindow()
                 connect(a, &Viewport::centerChanged,
                         b, &Viewport::setCenter);
             }
+
+    for (auto v : {top, front, side, other})
+    {
+        connect(v, &Viewport::jumpTo,
+                this, &App::jumpToInGraph);
+        connect(this, &App::jumpToInViewport,
+                v, &Viewport::onJumpTo);
+    }
 
     top->lockAngle(0, 0);
     front->lockAngle(0, -M_PI/2);

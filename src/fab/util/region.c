@@ -7,7 +7,6 @@
 #include "tree/node/opcodes.h"
 
 #include "util/region.h"
-#include "util/vec3f.h"
 
 void build_arrays(Region* const R,
                   const float xmin, const float ymin, const float zmin,

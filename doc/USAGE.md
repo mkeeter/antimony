@@ -3,10 +3,12 @@ User's Guide to Antimony
 
 Antimony is a tool for computer-aided design (CAD).
 
+Window types
+------------
+
 There are three window types, each of which gives a different perspective on the scene.
 
-Graph window
-------------
+### Graph window
 The graph window shows a graph representation of the current model.
 
 Pan with the left mouse button;
@@ -39,8 +41,7 @@ While dragging, pressing Spacebar will snap the connection to the nearest valid 
 
 Any shape datum with an unconnected output port will be rendered.
 
-3D viewport
------------
+### 3D viewport
 The 3D viewport shows a 2D or 3D view of the current model.
 It is rendered and refined in real time.
 
@@ -60,8 +61,7 @@ These controls can be dragged with the left mouse button.
 If multiple controls are overlapping,
 right-clicking will open up a list and one can be chosen to raise above the others.
 
-Script editor
--------------
+### Script editor
 A script editor is used to edit the Python code of a Script node.
 To open the script editor,
 add a Script node in the graph view
@@ -78,15 +78,16 @@ or an error occurred respectively).
 
 When an error occurs, the relevant line will be highlighted in red.
 
-Scripting is standard Python 3.x with a few extra functions:
-- `input(name, type)` creates an input datum of the given type
-and injects it into the namespace.  `name` must be a string
-and `type` must be either `float`, `int`, or `fab.types.Shape`
-(or simply `Shape` depending on how it was imported).
-- `output(name, value)` creates an output datum with the given name and value
-(the type is automatically determined and must be either `float` or `Shape`)
-- `title(value)` sets the title of the node,
-which is shown in a graph window in the upper-right corner of the node.
+Exporting files
+---------------
+The export workflow in Antimony is a bit non-traditional.
 
-Note that `input` and `output` will create new rows in the graph view
-for the datums that they add to the node.
+To export a particular shape, create a node from the Export category then
+connect the target shape to its input port.  If the shape is a valid target
+for export, a right-pointing arrow icon will appear in the top right corner
+of the node's graph representation; clicking on this arrow will start the
+export task.
+
+This means that multiple export tasks can be defined for different parts of
+a model; details like resolution and even target filename can also be
+hard-coded by editing the export node's script.

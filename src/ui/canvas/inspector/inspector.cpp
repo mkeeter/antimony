@@ -6,6 +6,7 @@
 #include <QKeyEvent>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
+#include <QMenu>
 
 #include "ui/main_window.h"
 
@@ -28,12 +29,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 NodeInspector::NodeInspector(Node* node)
-    : node(node), title_row(new InspectorTitle(node, this)),
-      dragging(false), border(10), glow(false), show_hidden(false)
+    : node(node), title_row(NULL), dragging(false), border(10), glow(false),
+      show_hidden(false)
 {
-    // Bump the title row down a little bit.
-    title_row->setPos(4, 2);
-
     setFlags(QGraphicsItem::ItemIsMovable |
              QGraphicsItem::ItemIsSelectable |
              QGraphicsItem::ItemSendsGeometryChanges);
@@ -44,6 +42,15 @@ NodeInspector::NodeInspector(Node* node)
             this, &NodeInspector::onDatumsChanged);
     connect(node, &Node::datumOrderChanged,
             this, &NodeInspector::onDatumOrderChanged);
+
+    // Construct the title row here (rather than in the colon initialization)
+    // so that it gets datumsChanged events after the inspector (this prevents
+    // a crash when certain buttons change their visibility before the
+    // inspector has time to react).
+    title_row = new InspectorTitle(node, this);
+    // Bump the title row down a little bit.
+    title_row->setPos(4, 2);
+
 
     // When the title row changes, redo layout as well.
     connect(title_row, &InspectorTitle::layoutChanged,
@@ -330,6 +337,29 @@ void NodeInspector::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     }
 }
 
+void NodeInspector::mousePressEvent(QGraphicsSceneMouseEvent* event)
+{
+    QGraphicsItem::mousePressEvent(event);
+
+    if (event->button() == Qt::RightButton)
+    {
+        QString desc = node->getName() + " (" + node->getTitle() + ")";
+
+        auto menu = new QMenu();
+        auto jump_to = new QAction("Show " + desc + " in viewport", menu);
+
+        menu->addAction(jump_to);
+        connect(jump_to, &QAction::triggered,
+                [=](){
+                    emit static_cast<GraphScene*>(
+                        scene())->jumpTo(node);
+                });
+
+        menu->exec(QCursor::pos());
+        delete menu;
+    }
+}
+
 void NodeInspector::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     QGraphicsItem::mouseReleaseEvent(event);
@@ -338,7 +368,7 @@ void NodeInspector::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     {
         ungrabMouse();
     }
-    else
+    else if (event->button() == Qt::LeftButton)
     {
         // Store an Undo command for this drag
         auto delta = event->scenePos() -

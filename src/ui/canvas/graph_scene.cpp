@@ -15,7 +15,8 @@
 GraphScene::GraphScene(QObject* parent)
     : QGraphicsScene(parent)
 {
-    // Nothing to do here
+    connect(this, &GraphScene::jumpTo,
+            App::instance(), &App::jumpToInViewport);
 }
 
 Canvas* GraphScene::newCanvas()

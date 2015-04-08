@@ -51,6 +51,12 @@ Viewport::Viewport(QGraphicsScene* scene, QWidget* parent)
     setViewport(gl);
 }
 
+Viewport::~Viewport()
+{
+    for (auto d : findChildren<DepthImageItem*>())
+        d->clearTextures();
+}
+
 void Viewport::customizeUI(Ui::MainWindow* ui)
 {
     QActionGroup* view_actions = new QActionGroup(this);
@@ -165,20 +171,18 @@ void Viewport::makeNodeAtCursor(NodeConstructorFunction f)
 float Viewport::getZmax() const
 {
     float zmax = -INFINITY;
-    for (auto i : scene->items())
-        if (DepthImageItem* p = dynamic_cast<DepthImageItem*>(i))
-            zmax = fmax((getTransformMatrix() * p->pos).z() + p->size.z()/2,
-                        zmax);
+    for (auto p : findChildren<DepthImageItem*>())
+        zmax = fmax((getTransformMatrix() * p->pos).z() + p->size.z()/2,
+                    zmax);
     return zmax;
 }
 
 float Viewport::getZmin() const
 {
     float zmin = INFINITY;
-    for (auto i : scene->items())
-        if (DepthImageItem* p = dynamic_cast<DepthImageItem*>(i))
-            zmin = fmin((getTransformMatrix() * p->pos).z() - p->size.z()/2,
-                        zmin);
+    for (auto p : findChildren<DepthImageItem*>())
+        zmin = fmin((getTransformMatrix() * p->pos).z() - p->size.z()/2,
+                    zmin);
     return zmin;
 }
 
@@ -219,15 +223,16 @@ void Viewport::hideViewSelector()
     view_selector->hide();
 }
 
-ControlProxy* Viewport::getControlProxy(Node* n)
+QList<ControlProxy*> Viewport::getControlProxies(Node* n)
 {
+    QList<ControlProxy*> out;
     for (auto i : items())
     {
         auto p = dynamic_cast<ControlProxy*>(i);
         if (p && p->getNode() == n && !p->getControl()->parent())
-            return p;
+            out << p;
     }
-    return NULL;
+    return out;
 }
 
 QOpenGLBuffer* Viewport::getQuadVertices()
@@ -277,39 +282,64 @@ void Viewport::mousePressEvent(QMouseEvent *event)
         while (!dynamic_cast<MainWindow*>(w))
             w = w->parent();
         Q_ASSERT(w);
+
+        // Make a new menu object
         auto menu = new QMenu(static_cast<MainWindow*>(w));
 
         int overlapping = 0;
         QSet<Node*> used;
+
+        // Special menu item to trigger a jump to event in the graph
+        QAction* jump_to = NULL;
         for (auto i : items(event->pos()))
         {
+            // Find the top-level parent of this graphics item
             while (i->parentItem())
                 i = i->parentItem();
 
             auto c = dynamic_cast<ControlProxy*>(i);
             if (c && !used.contains(c->getNode()))
             {
-                overlapping++;
                 auto n = c->getNode();
-                auto a = new QAction(
-                        n->getName() + " (" + n->getTitle() + ")", menu);
+                QString desc = n->getName() + " (" + n->getTitle() + ")";
+
+                if (jump_to == NULL)
+                {
+                    jump_to = new QAction("Show " + desc + " in graph", menu);
+                    jump_to->setData(QVariant::fromValue(i));
+                    menu->addAction(jump_to);
+                    menu->addSeparator();
+                    connect(jump_to, &QAction::triggered,
+                            [=](){ emit jumpTo(n); });
+                }
+
+                overlapping++;
+                auto a = new QAction(desc, menu);
                 a->setData(QVariant::fromValue(i));
                 menu->addAction(a);
                 used << n;
             }
         }
-        if (overlapping > 1)
+
+        // If there was only one item in this location, remove all of the
+        // menu options other than 'jump to' (which in this case are the
+        // separator and the single 'raise' command).
+        if (overlapping == 1)
+            while (menu->actions().back() != jump_to)
+                menu->removeAction(menu->actions().back());
+
+        // If we have items in the menu, run it and get the resulting action.
+        QAction* chosen = (overlapping > 0) ? menu->exec(QCursor::pos())
+                                            : NULL;
+        if (chosen && chosen != jump_to)
         {
-            QAction* chosen = menu->exec(QCursor::pos());
-            if (chosen)
-            {
-                if (raised)
-                    raised->setZValue(0);
-                raised = static_cast<ControlProxy*>(
-                        chosen->data().value<QGraphicsItem*>());
-                raised->setZValue(0.1);
-            }
+            if (raised)
+                raised->setZValue(0);
+            raised = static_cast<ControlProxy*>(
+                    chosen->data().value<QGraphicsItem*>());
+            raised->setZValue(0.1);
         }
+
         menu->deleteLater();
     }
 
@@ -448,6 +478,9 @@ void Viewport::drawBackground(QPainter* painter, const QRectF& rect)
     painter->beginNativePainting();
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    for (auto d : findChildren<DepthImageItem*>())
+        d->paint();
     painter->endNativePainting();
 }
 
@@ -568,11 +601,36 @@ void Viewport::onPaste()
     }
 }
 
+void Viewport::onJumpTo(Node* n)
+{
+    auto proxies = getControlProxies(n);
+    float area_sum = 0;
+    if (!proxies.length())
+        return;
+
+    QVector3D pos;
+    for (auto p : proxies)
+    {
+        const float area = p->boundingRect().width() *
+                           p->boundingRect().height();
+        pos += p->getControl()->pos() * area;
+        area_sum += area;
+    }
+    pos /= area_sum;
+
+    auto a = new QPropertyAnimation(this, "center");
+    a->setDuration(100);
+    a->setStartValue(center);
+    a->setEndValue(pos);
+
+    a->start(QPropertyAnimation::DeleteWhenStopped);
+}
+
 void Viewport::setCenter(QVector3D c)
 {
     center = c;
     update();
-    scene->invalidate(QRect(),QGraphicsScene::ForegroundLayer);
+    scene->invalidate(QRect(), QGraphicsScene::ForegroundLayer);
     emit(viewChanged());
 }
 
@@ -580,7 +638,7 @@ void Viewport::setScale(float s)
 {
     scale = s;
     update();
-    scene->invalidate(QRect(),QGraphicsScene::ForegroundLayer);
+    scene->invalidate(QRect(), QGraphicsScene::ForegroundLayer);
     emit(viewChanged());
 }
 
