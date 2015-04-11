@@ -36,13 +36,12 @@ void render8(MathTree* tree, Region region,
              uint8_t** img, volatile int* halt,
              void (*callback)())
 {
-    if (callback)   (*callback)();
-
     // Special interrupt system, set asynchronously by on high
     if (*halt)  return;
 
     // Render pixel-by-pixel if we're below a certain size.
     if (region.voxels > 0 && region.voxels < MIN_VOLUME) {
+        if (callback)   (*callback)();
         region8(tree, region, img);
         return;
     }
