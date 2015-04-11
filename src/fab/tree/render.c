@@ -153,7 +153,7 @@ void region8(MathTree* tree, Region region, uint8_t** img)
 ////////////////////////////////////////////////////////////////////////////////
 
 void get_normals8(MathTree* tree,
-                  float* X, float* Y, float* Z,
+                  float* restrict X, float* restrict Y, float* restrict Z,
                   unsigned count, float epsilon,
                   float (*normals)[3])
 {
@@ -185,7 +185,6 @@ void get_normals8(MathTree* tree,
     for (int i=0; i < count; ++i)   Z[i] += epsilon;
     result = eval_r(tree, dummy);
     memmove(dz, result, count*sizeof(float));
-    for (int i=0; i < count; ++i)   Z[i] -= epsilon;
 
     // Calculate normals and copy over.
     for (int i=0; i < count; ++i)
