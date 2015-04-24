@@ -1,24 +1,19 @@
 #ifndef VIEWPORT_SCENE_H
 #define VIEWPORT_SCENE_H
 
-#include <Python.h>
-
 #include <QPointer>
 #include <QGraphicsScene>
 #include <QMap>
 #include <QSet>
 #include <QList>
 
+#include "util/hash.h"
+
 class Control;
 class ControlProxy;
 class Datum;
 class Node;
 class Viewport;
-
-// Qt doesn't provide a qHash function for arbitrary QPointers,
-// so we'll define our own here.
-uint qHash(const QPointer<Datum>& d);
-uint qHash(const QPointer<Viewport>& v);
 
 class ViewportScene : public QObject
 {

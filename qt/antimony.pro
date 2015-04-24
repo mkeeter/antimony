@@ -103,6 +103,7 @@ HEADERS += \
     ../src/export/export_mesh.h \
     ../src/export/export_worker.h \
     ../src/export/export_heightmap.h \
+    ../src/util/hash.h \
 
 FORMS += \
     ../src/ui/forms/main_window.ui \

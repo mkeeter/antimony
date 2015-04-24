@@ -137,14 +137,3 @@ void ViewportScene::onGlowChange(Node* n, bool g)
             if (!itr.value().isNull())
                 itr.value()->setGlow(g);
 }
-
-////////////////////////////////////////////////////////////////////////////////
-
-uint qHash(const QPointer<Datum>& d) {
-    return qHash(d.operator->());
-}
-
-uint qHash(const QPointer<Viewport>& v) {
-    return qHash(v.operator->());
-}
-
