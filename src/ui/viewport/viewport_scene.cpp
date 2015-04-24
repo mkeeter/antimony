@@ -106,7 +106,7 @@ void ViewportScene::prune()
             new_controls[itr.key()] = itr.value();
     controls = new_controls;
 
-    QMap<QPointer<Viewport>, QGraphicsScene*> new_scenes;
+    decltype(scenes) new_scenes;
     for (auto itr = scenes.begin(); itr != scenes.end(); ++itr)
         if (itr.key())
             new_scenes[itr.key()] = itr.value();
