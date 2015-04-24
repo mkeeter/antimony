@@ -24,8 +24,8 @@ void ViewportScene::registerControl(Node* n, long index, Control* c)
 
     controls[n][index] = c;
 
-    for (auto itr = scenes.begin(); itr != scenes.end(); ++itr)
-        makeProxyFor(c, itr.key());
+    for (auto v : viewports)
+        makeProxyFor(c, v);
 }
 
 Control* ViewportScene::getControl(Node* n, long index) const
@@ -41,8 +41,8 @@ Control* ViewportScene::getControl(Node* n, long index) const
 
 void ViewportScene::makeRenderWorkersFor(Node* n)
 {
-    for (auto itr = scenes.begin(); itr != scenes.end(); ++itr)
-        makeRenderWorkersFor(n, itr.key());
+    for (auto v : viewports)
+        makeRenderWorkersFor(n, v);
 
     // Behold, the wonders of C++11 and Qt5:
     connect(n, &Node::datumsChanged,
@@ -55,7 +55,7 @@ Viewport* ViewportScene::newViewport()
     auto v = new Viewport(s);
     connect(v, &QObject::destroyed, s, &QObject::deleteLater);
     connect(s, &QObject::destroyed, this, &ViewportScene::prune);
-    scenes[v] = s;
+    viewports << v;
 
     prune();
 
@@ -106,11 +106,11 @@ void ViewportScene::prune()
             new_controls[itr.key()] = itr.value();
     controls = new_controls;
 
-    decltype(scenes) new_scenes;
-    for (auto itr = scenes.begin(); itr != scenes.end(); ++itr)
-        if (itr.key())
-            new_scenes[itr.key()] = itr.value();
-    scenes = new_scenes;
+    decltype(viewports) new_viewports;
+    for (auto itr : viewports)
+        if (itr)
+            new_viewports << itr;
+    viewports = new_viewports;
 
     decltype(workers) new_workers;
     for (auto itr : workers)
@@ -125,8 +125,8 @@ void ViewportScene::onDatumsChanged(Node* n)
 
     for (auto d : n->findChildren<Datum*>())
         if (RenderWorker::accepts(d) && !workers.contains(d))
-            for (auto v = scenes.begin(); v != scenes.end(); ++v)
-                makeRenderWorkerFor(d, v.key());
+            for (auto v : viewports)
+                makeRenderWorkerFor(d, v);
 }
 
 
@@ -142,5 +142,9 @@ void ViewportScene::onGlowChange(Node* n, bool g)
 
 uint qHash(const QPointer<Datum>& d) {
     return qHash(d.operator->());
+}
+
+uint qHash(const QPointer<Viewport>& v) {
+    return qHash(v.operator->());
 }
 

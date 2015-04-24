@@ -18,6 +18,7 @@ class Viewport;
 // Qt doesn't provide a qHash function for arbitrary QPointers,
 // so we'll define our own here.
 uint qHash(const QPointer<Datum>& d);
+uint qHash(const QPointer<Viewport>& v);
 
 class ViewportScene : public QObject
 {
@@ -93,7 +94,8 @@ protected:
      */
     void makeRenderWorkerFor(Datum* d, Viewport* v);
 
-    QMap<QPointer<Viewport>, QGraphicsScene*> scenes;
+    /* Stores viewports for which we've made a QGraphicsScene */
+    QSet<QPointer<Viewport>> viewports;
     QMap<QPointer<Node>, QMap<long, QPointer<Control>>> controls;
 
     /* Stores Datums for which we have created RenderWorkers */
