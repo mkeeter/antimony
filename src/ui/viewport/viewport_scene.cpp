@@ -75,12 +75,7 @@ void ViewportScene::makeProxyFor(Control* c, Viewport* v)
     if (!c)
         return;
 
-    auto p = new ControlProxy(c, v);
-    scenes[v]->addItem(p);
-
-    connect(v, &Viewport::viewChanged,
-            p, &ControlProxy::redraw);
-    connect(c, &ControlProxy::destroyed,
+    connect(new ControlProxy(c, v), &ControlProxy::destroyed,
             this, &ViewportScene::prune);
 }
 

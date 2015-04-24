@@ -18,8 +18,13 @@ ControlProxy::ControlProxy(Control* control, Viewport* viewport)
             this, &ControlProxy::deleteLater);
     connect(viewport, &Viewport::destroyed,
             this, &ControlProxy::deleteLater);
+
     connect(control, &Control::redraw,
             this, &ControlProxy::redraw);
+    connect(viewport, &Viewport::viewChanged,
+            this, &ControlProxy::redraw);
+
+    viewport->scene->addItem(this);
 }
 
 void ControlProxy::redraw()
