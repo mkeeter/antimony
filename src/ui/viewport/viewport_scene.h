@@ -1,9 +1,12 @@
 #ifndef VIEWPORT_SCENE_H
 #define VIEWPORT_SCENE_H
 
+#include <Python.h>
+
 #include <QPointer>
 #include <QGraphicsScene>
 #include <QMap>
+#include <QSet>
 #include <QList>
 
 class Control;
@@ -11,7 +14,10 @@ class ControlProxy;
 class Datum;
 class Node;
 class Viewport;
-class RenderWorker;
+
+// Qt doesn't provide a qHash function for arbitrary QPointers,
+// so we'll define our own here.
+uint qHash(const QPointer<Datum>& d);
 
 class ViewportScene : public QObject
 {
@@ -89,7 +95,9 @@ protected:
 
     QMap<QPointer<Viewport>, QGraphicsScene*> scenes;
     QMap<QPointer<Node>, QMap<long, QPointer<Control>>> controls;
-    QMap<QPointer<Datum>, QList<QPointer<RenderWorker>>> workers;
+
+    /* Stores Datums for which we have created RenderWorkers */
+    QSet<QPointer<Datum>> workers;
 };
 
 #endif // VIEWPORT_SCENE_H

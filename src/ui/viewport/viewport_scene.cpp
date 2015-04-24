@@ -81,10 +81,9 @@ void ViewportScene::makeProxyFor(Control* c, Viewport* v)
 
 void ViewportScene::makeRenderWorkerFor(Datum* d, Viewport* v)
 {
-    auto w = new RenderWorker(d, v);
-    workers[d] << w;
-    connect(w, &RenderWorker::destroyed,
+    connect(new RenderWorker(d, v), &RenderWorker::destroyed,
             this, &ViewportScene::prune);
+    workers << d;
 }
 
 void ViewportScene::makeRenderWorkersFor(Node* n, Viewport* v)
@@ -92,6 +91,7 @@ void ViewportScene::makeRenderWorkersFor(Node* n, Viewport* v)
     // Add a dummy (NULL) control so that this node is stored and render
     // workers are created for it when a new viewport is made.
     controls[n][-1] = NULL;
+
     for (auto d : n->findChildren<Datum*>())
         if (RenderWorker::accepts(d))
             makeRenderWorkerFor(d, v);
@@ -113,11 +113,9 @@ void ViewportScene::prune()
     scenes = new_scenes;
 
     decltype(workers) new_workers;
-    for (auto itr = workers.begin(); itr != workers.end(); ++itr)
-        if (itr.key())
-            for (auto w : workers[itr.key()])
-                if (w)
-                    new_workers[itr.key()] << w;
+    for (auto itr : workers)
+        if (itr)
+            new_workers << itr;
     new_workers = workers;
 }
 
@@ -139,3 +137,10 @@ void ViewportScene::onGlowChange(Node* n, bool g)
             if (!itr.value().isNull())
                 itr.value()->setGlow(g);
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+uint qHash(const QPointer<Datum>& d) {
+    return qHash(d.operator->());
+}
+
