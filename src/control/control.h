@@ -107,6 +107,7 @@ public:
     virtual QVector3D pos() const { return QVector3D(); }
 
     bool isDeleteScheduled() const { return delete_scheduled; }
+
 public slots:
     void clearTouchedFlag();
     void deleteIfNotTouched();
@@ -114,6 +115,7 @@ public slots:
 signals:
     void redraw();
     void glowChanged(Node* node, bool g);
+    void changeProxySelection(bool g);
 
 protected:
     QPointer<Node> node;
@@ -122,6 +124,8 @@ protected:
     PyObject* drag_func;
     bool is_dragging;
 
+    // Defines whether the top-level ControlRoot for this node
+    // has been selected.
     bool glow;
     bool touched;
 
