@@ -16,9 +16,9 @@ public:
     Control* get(long index) const;
     void makeProxiesFor(Viewport* v);
 
-protected:
     void prune();
 
+protected:
     QMap<long, QPointer<Control>> controls;
     Node* node;
 };

@@ -87,7 +87,10 @@ void ViewportScene::prune()
 
     for (auto itr = controls.begin(); itr != controls.end(); ++itr)
         if (itr.key())
+        {
             new_controls[itr.key()] = itr.value();
+            new_controls[itr.key()]->prune();
+        }
     controls = new_controls;
 
     decltype(viewports) new_viewports;
