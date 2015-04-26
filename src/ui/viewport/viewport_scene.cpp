@@ -7,6 +7,7 @@
 #include "graph/node/node.h"
 #include "graph/datum/datum.h"
 #include "control/control.h"
+#include "control/root.h"
 #include "control/proxy.h"
 
 ViewportScene::ViewportScene(QObject* parent)
@@ -22,21 +23,19 @@ void ViewportScene::registerControl(Node* n, long index, Control* c)
     connect(c, &Control::glowChanged,
             this, &ViewportScene::glowChanged);
 
-    controls[n][index] = c;
+    if (!controls.contains(n))
+        controls[n] = QSharedPointer<ControlRoot>(new ControlRoot(n));
+    controls[n]->registerControl(index, c);
 
     for (auto v : viewports)
-        makeProxyFor(c, v);
+        new ControlProxy(c, v);
 }
 
 Control* ViewportScene::getControl(Node* n, long index) const
 {
     if (!controls.contains(n))
         return NULL;
-    if (!controls[n].contains(index))
-        return NULL;
-    if (controls[n][index].isNull())
-        return NULL;
-    return controls[n][index];
+    return controls[n]->get(index);
 }
 
 void ViewportScene::makeRenderWorkersFor(Node* n)
@@ -60,24 +59,12 @@ Viewport* ViewportScene::newViewport()
     prune();
 
     for (auto itr = controls.begin(); itr != controls.end(); ++itr)
-        for (auto i = itr.value().begin(); i != itr.value().end(); ++i)
-            if (!i.value().isNull())
-                makeProxyFor(i.value(), v);
+        itr.value()->makeProxiesFor(v);
 
     for (auto w : workers)
-        if (!w.isNull())
-            makeRenderWorkerFor(w, v);
+        makeRenderWorkerFor(w, v);
 
     return v;
-}
-
-void ViewportScene::makeProxyFor(Control* c, Viewport* v)
-{
-    if (!c)
-        return;
-
-    connect(new ControlProxy(c, v), &ControlProxy::destroyed,
-            this, &ViewportScene::prune);
 }
 
 void ViewportScene::makeRenderWorkerFor(Datum* d, Viewport* v)
@@ -129,8 +116,10 @@ void ViewportScene::onDatumsChanged(Node* n)
 
 void ViewportScene::onGlowChange(Node* n, bool g)
 {
+    /*
     if (controls.contains(n))
         for (auto itr = controls[n].begin(); itr != controls[n].end(); ++itr)
             if (!itr.value().isNull())
                 itr.value()->setGlow(g);
+                */
 }

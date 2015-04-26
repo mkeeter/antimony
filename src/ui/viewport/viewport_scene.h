@@ -2,6 +2,7 @@
 #define VIEWPORT_SCENE_H
 
 #include <QPointer>
+#include <QSharedPointer>
 #include <QGraphicsScene>
 #include <QMap>
 #include <QSet>
@@ -10,6 +11,7 @@
 #include "util/hash.h"
 
 class Control;
+class ControlRoot;
 class ControlProxy;
 class Datum;
 class Node;
@@ -91,7 +93,11 @@ protected:
 
     /* Stores viewports for which we've made a QGraphicsScene */
     QSet<QPointer<Viewport>> viewports;
-    QMap<QPointer<Node>, QMap<long, QPointer<Control>>> controls;
+
+    /* Score a set of top-level control roots
+     * (which manage highlighting and glowing)
+     */
+    QMap<QPointer<Node>, QSharedPointer<ControlRoot>> controls;
 
     /* Stores Datums for which we have created RenderWorkers */
     QSet<QPointer<Datum>> workers;
