@@ -26,7 +26,7 @@ ControlProxy::ControlProxy(Control* control, Viewport* viewport)
             this, &ControlProxy::redraw);
 
     connect(control, &Control::changeProxySelection,
-            [&](bool s){ this->setSelected(s); });
+            this, &ControlProxy::selectProxy);
 
     viewport->scene->addItem(this);
 }
@@ -34,6 +34,13 @@ ControlProxy::ControlProxy(Control* control, Viewport* viewport)
 void ControlProxy::redraw()
 {
     prepareGeometryChange();
+}
+
+void ControlProxy::selectProxy(bool s)
+{
+    changing_selection = true;
+    setSelected(s);
+    changing_selection = false;
 }
 
 QRectF ControlProxy::boundingRect() const

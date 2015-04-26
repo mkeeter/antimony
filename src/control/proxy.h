@@ -83,6 +83,9 @@ public:
 public slots:
     void redraw();
 
+protected slots:
+    void selectProxy(bool s);
+
 protected:
     /*
      *  Looks up the transform matrix for this proxy's viewport.
