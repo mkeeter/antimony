@@ -4,12 +4,15 @@
 #include <QObject>
 #include <QMap>
 
+#include "util/hash.h"
+
 class Node;
 class Control;
 class Viewport;
 
 class ControlRoot : public QObject
 {
+    Q_OBJECT
 public:
     ControlRoot(Node* n);
     void registerControl(long index, Control* c);
@@ -19,6 +22,9 @@ public:
     void setGlow(bool g);
 
     void prune();
+
+signals:
+    void changeProxySelection(bool b);
 
 protected:
     QMap<long, QPointer<Control>> controls;

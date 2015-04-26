@@ -115,7 +115,16 @@ public slots:
 signals:
     void redraw();
     void glowChanged(Node* node, bool g);
+
+    /*
+     *  When emitted, changes selection status of children proxies.
+     */
     void changeProxySelection(bool g);
+
+    /*
+     *  When emitted, informs the parent ControlRoot of a selection change.
+     */
+    void proxySelectionChanged(bool g);
 
 protected:
     QPointer<Node> node;

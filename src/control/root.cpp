@@ -13,6 +13,10 @@ ControlRoot::ControlRoot(Node* n)
 void ControlRoot::registerControl(long index, Control* c)
 {
     controls[index] = c;
+    connect(c, &Control::proxySelectionChanged,
+            this, &ControlRoot::changeProxySelection);
+    connect(this, &ControlRoot::changeProxySelection,
+            c, &Control::changeProxySelection);
 }
 
 Control* ControlRoot::get(long index) const

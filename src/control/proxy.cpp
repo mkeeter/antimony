@@ -148,7 +148,7 @@ QVariant ControlProxy::itemChange(GraphicsItemChange change, const QVariant &val
     if (!changing_selection && change == QGraphicsItem::ItemSelectedChange)
     {
         changing_selection = true;
-        emit(control->changeProxySelection(value.toBool()));
+        emit(control->proxySelectionChanged(value.toBool()));
         changing_selection = false;
     }
 
