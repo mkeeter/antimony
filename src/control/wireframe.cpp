@@ -48,13 +48,7 @@ QPainterPath ControlWireframe::path(QMatrix4x4 m) const
 
 void ControlWireframe::paint(QMatrix4x4 m, bool highlight, QPainter* painter)
 {
-    if (glow)
-    {
-        painter->setBrush(Qt::NoBrush);
-        painter->setPen(QPen(QColor(255, 255, 255, Colors::base02.red()), 20));
-        painter->drawPath(path(m));
-    }
-
-    painter->setPen(QPen(highlight ? Colors::highlight(color) : color, t));
+    painter->setPen(QPen((highlight || glow) ? Colors::highlight(color)
+                                             : color, t));
     painter->drawPath(path(m));
 }

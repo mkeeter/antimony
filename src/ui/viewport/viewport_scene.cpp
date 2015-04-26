@@ -119,10 +119,6 @@ void ViewportScene::onDatumsChanged(Node* n)
 
 void ViewportScene::onGlowChange(Node* n, bool g)
 {
-    /*
     if (controls.contains(n))
-        for (auto itr = controls[n].begin(); itr != controls[n].end(); ++itr)
-            if (!itr.value().isNull())
-                itr.value()->setGlow(g);
-                */
+        controls[n]->setGlow(g);
 }

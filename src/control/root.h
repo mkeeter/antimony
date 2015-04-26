@@ -16,6 +16,8 @@ public:
     Control* get(long index) const;
     void makeProxiesFor(Viewport* v);
 
+    void setGlow(bool g);
+
     void prune();
 
 protected:

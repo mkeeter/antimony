@@ -36,15 +36,10 @@ QPainterPath ControlPoint::shape(QMatrix4x4 m) const
 
 void ControlPoint::paint(QMatrix4x4 m, bool highlight, QPainter* painter)
 {
-    if (glow)
-    {
-        painter->setBrush(Qt::NoBrush);
-        painter->setPen(QPen(QColor(255, 255, 255, Colors::base02.red()), 20));
-        painter->drawPath(shape(m));
-    }
-
     QColor edge = Colors::dim(color);
-    painter->setPen(QPen(highlight ? Colors::highlight(edge) : edge, 2));
-    painter->setBrush(QBrush(highlight ? Colors::highlight(color) : color));
+    painter->setPen(QPen((highlight || glow) ? Colors::highlight(edge)
+                                             : edge, 2));
+    painter->setBrush(QBrush((highlight || glow) ? Colors::highlight(color)
+                                                 : color));
     painter->drawPath(shape(m));
 }

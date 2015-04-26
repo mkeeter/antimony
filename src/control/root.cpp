@@ -22,6 +22,13 @@ Control* ControlRoot::get(long index) const
     return controls[index];
 }
 
+void ControlRoot::setGlow(bool g)
+{
+    for (auto itr=controls.begin(); itr != controls.end(); ++itr)
+        if (!itr.value().isNull())
+            itr.value()->setGlow(g);
+}
+
 void ControlRoot::makeProxiesFor(Viewport* v)
 {
     prune();
