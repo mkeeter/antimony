@@ -40,8 +40,14 @@ Control* ViewportScene::getControl(Node* n, long index) const
 
 void ViewportScene::makeRenderWorkersFor(Node* n)
 {
-    for (auto v : viewports)
-        makeRenderWorkersFor(n, v);
+    for (auto d : n->findChildren<Datum*>())
+        if (RenderWorker::accepts(d))
+        {
+            workers.insert(d);
+            for (auto v : viewports)
+                connect(new RenderWorker(d, v), &RenderWorker::destroyed,
+                        this, &ViewportScene::prune);
+        }
 
     // Behold, the wonders of C++11 and Qt5:
     connect(n, &Node::datumsChanged,
@@ -61,24 +67,12 @@ Viewport* ViewportScene::newViewport()
     for (auto itr = controls.begin(); itr != controls.end(); ++itr)
         itr.value()->makeProxiesFor(v);
 
+    // Make new render workers for the added viewport
     for (auto w : workers)
-        makeRenderWorkerFor(w, v);
+        connect(new RenderWorker(w, v), &RenderWorker::destroyed,
+                this, &ViewportScene::prune);
 
     return v;
-}
-
-void ViewportScene::makeRenderWorkerFor(Datum* d, Viewport* v)
-{
-    connect(new RenderWorker(d, v), &RenderWorker::destroyed,
-            this, &ViewportScene::prune);
-    workers << d;
-}
-
-void ViewportScene::makeRenderWorkersFor(Node* n, Viewport* v)
-{
-    for (auto d : n->findChildren<Datum*>())
-        if (RenderWorker::accepts(d))
-            makeRenderWorkerFor(d, v);
 }
 
 void ViewportScene::prune()
@@ -112,8 +106,12 @@ void ViewportScene::onDatumsChanged(Node* n)
 
     for (auto d : n->findChildren<Datum*>())
         if (RenderWorker::accepts(d) && !workers.contains(d))
+        {
+            workers.insert(d);
             for (auto v : viewports)
-                makeRenderWorkerFor(d, v);
+                connect(new RenderWorker(d, v), &RenderWorker::destroyed,
+                        this, &ViewportScene::prune);
+        }
 }
 
 

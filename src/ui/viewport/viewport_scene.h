@@ -80,17 +80,6 @@ protected:
      */
     void makeProxyFor(Control* c, Viewport* v);
 
-    /*
-     *  Creates one or more RenderWorkers to render Datums in the
-     *  given node that produces Shapes.
-     */
-    void makeRenderWorkersFor(Node* n, Viewport* v);
-
-    /*
-     *  Make a RenderWorker for the specified Datum in the given Viewport.
-     */
-    void makeRenderWorkerFor(Datum* d, Viewport* v);
-
     /* Stores viewports for which we've made a QGraphicsScene */
     QSet<QPointer<Viewport>> viewports;
 
