@@ -97,7 +97,7 @@ void ViewportScene::prune()
     for (auto itr : workers)
         if (itr)
             new_workers << itr;
-    new_workers = workers;
+    workers = new_workers;
 }
 
 void ViewportScene::onDatumsChanged(Node* n)
