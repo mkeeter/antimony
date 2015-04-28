@@ -5,7 +5,7 @@
 #include "control/proxy.h"
 
 ControlRoot::ControlRoot(Node* n)
-    : node(n)
+    : node(n), selected(false)
 {
     // Nothing to do here
 }
@@ -15,6 +15,8 @@ void ControlRoot::registerControl(long index, Control* c)
     controls[index] = c;
     connect(c, &Control::proxySelectionChanged,
             this, &ControlRoot::changeProxySelection);
+    connect(c, &Control::proxySelectionChanged,
+            [=](bool s){ this->selected = s; });
     connect(this, &ControlRoot::changeProxySelection,
             c, &Control::changeProxySelection);
 }
@@ -38,7 +40,11 @@ void ControlRoot::makeProxiesFor(Viewport* v)
     prune();
 
     for (auto itr = controls.begin(); itr != controls.end(); ++itr)
-        new ControlProxy(itr.value(), v);
+    {
+        auto p = new ControlProxy(itr.value(), v);
+        if (selected)
+            p->selectProxy(selected);
+    }
 }
 
 void ControlRoot::prune()

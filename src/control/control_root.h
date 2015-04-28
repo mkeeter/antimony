@@ -29,6 +29,8 @@ signals:
 protected:
     QMap<long, QPointer<Control>> controls;
     Node* node;
+
+    bool selected;
 };
 
 #endif

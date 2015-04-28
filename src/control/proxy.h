@@ -82,8 +82,6 @@ public:
 
 public slots:
     void redraw();
-
-protected slots:
     void selectProxy(bool s);
 
 protected:
