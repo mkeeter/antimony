@@ -1,6 +1,6 @@
 #include <Python.h>
 
-#include "control/root.h"
+#include "control/control_root.h"
 #include "control/control.h"
 #include "control/proxy.h"
 

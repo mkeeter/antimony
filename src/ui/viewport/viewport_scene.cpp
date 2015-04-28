@@ -7,7 +7,7 @@
 #include "graph/node/node.h"
 #include "graph/datum/datum.h"
 #include "control/control.h"
-#include "control/root.h"
+#include "control/control_root.h"
 #include "control/proxy.h"
 
 ViewportScene::ViewportScene(QObject* parent)
