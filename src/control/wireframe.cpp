@@ -52,3 +52,23 @@ void ControlWireframe::paint(QMatrix4x4 m, bool highlight, QPainter* painter)
                                              : color, t));
     painter->drawPath(path(m));
 }
+
+QVector3D ControlWireframe::pos() const
+{
+    QVector3D center;
+    int count = 0;
+
+    for (auto p : pts)
+    {
+        center += p;
+        count++;
+    }
+
+    if (close && !pts.isEmpty())
+    {
+        center += pts.front();
+        count++;
+    }
+
+    return center / count;
+}

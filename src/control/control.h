@@ -104,7 +104,7 @@ public:
      *  Used to constrain the 2D -> 3D projection problem
      *  for non-relative dragging.
      */
-    virtual QVector3D pos() const { return QVector3D(); }
+    virtual QVector3D pos() const=0;
 
     bool isDeleteScheduled() const { return delete_scheduled; }
 
