@@ -90,6 +90,11 @@ public:
     void hideViewSelector();
 
     /*
+     *  Checks of ui_hidden is set.
+     */
+    bool isUIhidden() const { return ui_hidden; }
+
+    /*
      *  Look up which ControlProxys is attached to the given node.
      */
     QList<ControlProxy*> getControlProxies(Node* n);
@@ -218,6 +223,7 @@ protected:
     QOpenGLBuffer quad_vertices;
 
     bool gl_initialized;
+    bool ui_hidden;
 };
 
 #endif // VIEWPORT_H

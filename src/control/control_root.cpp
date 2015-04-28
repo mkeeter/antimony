@@ -4,6 +4,8 @@
 #include "control/control.h"
 #include "control/proxy.h"
 
+#include "ui/viewport/viewport.h"
+
 ControlRoot::ControlRoot(Node* n)
     : node(n), selected(false)
 {

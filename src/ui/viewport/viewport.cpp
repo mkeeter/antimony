@@ -39,7 +39,7 @@ Viewport::Viewport(QGraphicsScene* scene, QWidget* parent)
     : QGraphicsView(parent), scene(scene),
       scale(100), pitch(0), yaw(0), angle_locked(false),
       view_selector(new ViewSelector(this)),
-      gl_initialized(false)
+      gl_initialized(false), ui_hidden(false)
 {
     setScene(scene);
     setStyleSheet("QGraphicsView { border-style: none; }");
@@ -450,6 +450,7 @@ void Viewport::keyReleaseEvent(QKeyEvent *event)
 
 void Viewport::hideUI()
 {
+    ui_hidden = true;
     for (auto i : scene->items())
         if (auto c = dynamic_cast<ControlProxy*>(i))
             c->hide();
@@ -457,6 +458,7 @@ void Viewport::hideUI()
 
 void Viewport::showUI()
 {
+    ui_hidden = false;
     for (auto i : scene->items())
         if (auto c = dynamic_cast<ControlProxy*>(i))
             c->show();

@@ -29,6 +29,9 @@ ControlProxy::ControlProxy(Control* control, Viewport* viewport)
             this, &ControlProxy::selectProxy);
 
     viewport->scene->addItem(this);
+
+    if (viewport->isUIhidden())
+        hide();
 }
 
 void ControlProxy::redraw()
