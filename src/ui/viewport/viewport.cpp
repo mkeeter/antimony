@@ -45,7 +45,7 @@ Viewport::Viewport(QGraphicsScene* scene, QWidget* parent)
     setStyleSheet("QGraphicsView { border-style: none; }");
 
     setSceneRect(-width()/2, -height()/2, width(), height());
-    setRenderHints(QPainter::Antialiasing);
+    //setRenderHints(QPainter::Antialiasing);
 
     auto gl = new QOpenGLWidget(this);
     setViewport(gl);

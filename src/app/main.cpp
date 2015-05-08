@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     // Set the default OpenGL version to be 2.1 with sample buffers
     QSurfaceFormat format;
     format.setVersion(2, 1);
-    format.setSamples(2);
+    //format.setSamples(2);
     QSurfaceFormat::setDefaultFormat(format);
 
     // Initialize the _fabtypes Python package and the Python interpreter
