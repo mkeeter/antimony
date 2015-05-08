@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 
     //PyRun_InteractiveLoop(stdin, "<stdin>");
 
-    if (a.arguments().length() == 2)
-        a.loadFile(a.arguments()[1]);
+    if (a.arguments().length() >= 2 && !a.arguments().last().startsWith("--"))
+        a.loadFile(a.arguments().last());
     return a.exec();
 }

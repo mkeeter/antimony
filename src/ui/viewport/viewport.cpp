@@ -64,6 +64,11 @@ void Viewport::customizeUI(Ui::MainWindow* ui)
     view_actions->addAction(ui->actionHeightmap);
     view_actions->setExclusive(true);
 
+    // Accept the global command-line argument '--heightmap'
+    // to always open scenes in height-map view.
+    if (App::instance()->arguments().contains("--heightmap"))
+        ui->actionHeightmap->setChecked(true);
+
     connect(ui->actionShaded, &QAction::triggered,
             [&]{ scene->invalidate(); });
     connect(ui->actionHeightmap, &QAction::triggered,
