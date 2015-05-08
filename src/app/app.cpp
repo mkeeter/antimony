@@ -51,16 +51,6 @@ App::App(int& argc, char** argv) :
 {
     setGlobalStyle();
 
-    QDesktopWidget desktop;
-
-    auto v = newViewportWindow();
-    v->move((desktop.geometry().width() - v->width()) / 2 - 25,
-            (desktop.geometry().height() - v->height()) / 2 - 25);
-
-    auto c = newCanvasWindow();
-    c->move((desktop.geometry().width() - c->width()) / 2 + 25,
-            (desktop.geometry().height() - c->height()) / 2 + 25);
-
     // When the clean flag on the undo stack changes, update window titles
     connect(stack, &QUndoStack::cleanChanged,
             [&](bool){ emit(windowTitleChanged(getWindowTitle())); });
@@ -82,6 +72,19 @@ App::~App()
 
     // Prevent segfault-inducing callback during stack destruction
     disconnect(stack, 0, 0, 0);
+}
+
+void App::makeDefaultWindows()
+{
+    QDesktopWidget desktop;
+
+    auto v = newViewportWindow();
+    v->move((desktop.geometry().width() - v->width()) / 2 - 25,
+            (desktop.geometry().height() - v->height()) / 2 - 25);
+
+    auto c = newCanvasWindow();
+    c->move((desktop.geometry().width() - c->width()) / 2 + 25,
+            (desktop.geometry().height() - c->height()) / 2 + 25);
 }
 
 App* App::instance()
