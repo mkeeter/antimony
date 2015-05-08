@@ -6,11 +6,18 @@
 #include <QClipboard>
 #include <QDebug>
 #include <QPropertyAnimation>
-#include <QOpenGLWidget>
 #include <QSurfaceFormat>
 #include <QMimeData>
 #include <QMenu>
 #include <QJsonDocument>
+
+#ifndef OLD_GL
+#include <QOpenGLWidget>
+#define GL_WIDGET QOpenGLWidget
+#else
+#include <QGLWidget>
+#define GL_WIDGET QGLWidget
+#endif
 
 #include <cmath>
 
@@ -47,7 +54,7 @@ Viewport::Viewport(QGraphicsScene* scene, QWidget* parent)
     setSceneRect(-width()/2, -height()/2, width(), height());
     setRenderHints(QPainter::Antialiasing);
 
-    auto gl = new QOpenGLWidget(this);
+    auto gl = new GL_WIDGET(this);
     setViewport(gl);
 }
 
