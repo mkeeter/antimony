@@ -42,6 +42,8 @@ def set_color(a, r, g, b):
 ################################################################################
 
 def circle(x0, y0, r):
+    """ Defines a circle from a center point and radius.
+    """
     # sqrt((X-x0)**2 + (Y-y0)**2) - r
     r = abs(r)
     return Shape(
@@ -49,9 +51,19 @@ def circle(x0, y0, r):
                               ('-Yf%g' % y0) if y0 else 'Y', r),
             x0 - r, y0 - r, x0 + r, y0 + r)
 
+def circle_edge(x0, y0, x1, y1):
+    """ Defines a circle from two points on its radius.
+    """
+    xmid = (x0+x1)/2.0
+    ymid = (y0+y1)/2.0
+    r = math.sqrt((xmid-x0)**2 +(ymid-y0)**2)
+    return circle(xmid, ymid, r)
+
 ################################################################################
 
 def triangle(x0, y0, x1, y1, x2, y2):
+    """ Defines a triangle from three points.
+    """
     # Find the angles of the points about the center
     xm = (x0 + x1 + x2) / 3.
     ym = (y0 + y1 + y2) / 3.
