@@ -93,6 +93,12 @@ def triangle(x0, y0, x1, y1, x2, y2):
             min(x0, x1, x2), min(y0, y1, y2),
             max(x0, x1, x2), max(y0, y1, y2))
 
+def right_triangle(x0,y0,w,h):
+   # max(max(x0-X,y0-Y),X-(x0*(Y-y0)+(x0+w)*(y0+h-Y))/h)
+   return Shape(
+      'aa-f%(x0)gX-f%(y0)gY-X/+*f%(x0)g-Yf%(y0)g*+f%(x0)gf%(w)g-+f%(y0)gf%(h)gYf%(h)g' % locals(),
+       x0,y0,x0+w,y0+h)
+
 ################################################################################
 
 def rectangle(x0, x1, y0, y1):
