@@ -102,6 +102,10 @@ def rectangle(x0, x1, y0, y1):
             x0, y0, x1, y1)
 
 def rounded_rectangle(x0, x1, y0, y1, r):
+    """ Returns a rectangle with rounded corners.
+        r is a roundedness fraction between 0 (not rounded)
+        and 1 (completely rounded)
+    """
     r *= min(x1 - x0, y1 - y0)/2
     return (
         rectangle(x0, x1, y0+r, y1-r) |
