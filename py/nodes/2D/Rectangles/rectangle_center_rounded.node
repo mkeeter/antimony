@@ -20,7 +20,13 @@ r_ = r * min(width, height)/2
 output('shape', fab.shapes.rounded_rectangle(xmin, xmax, ymin, ymax, r))
 
 def drag_r(this, x, y, z):
-    r = 1 - (y - this.y0) / float(this.height) * 2
+    if abs(this.width) < abs(this.height):
+        d = abs(this.width)
+        mid = this.y0 + this.height/2 - d/2
+    else:
+        d = abs(this.width)
+        mid = this.y0
+    r = 1 - (y - mid) / (d/2)
     this.r = float(min(1, max(0, r)))
 
 def drag_hw(this, x, y, z):
