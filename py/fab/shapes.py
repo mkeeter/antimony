@@ -1,4 +1,6 @@
 import math
+import functools
+import operator
 
 from fab.types import Shape, Transform
 
@@ -58,6 +60,20 @@ def circle_edge(x0, y0, x1, y1):
     ymid = (y0+y1)/2.0
     r = math.sqrt((xmid-x0)**2 +(ymid-y0)**2)
     return circle(xmid, ymid, r)
+
+def polygon_radius(x, y, r, N):
+    """ Makes a polygon with a center-to-vertex distance r
+        The polygon is oriented so that the bottom is always flat.
+    """
+    # Find the center-to-edge distance
+    r_ = -r * math.cos(math.pi / N)
+    # Make an offset half-region shape
+    half = Shape('-f%gY' % r_, 0, 0, 0, 0)
+    # Take the union of a bunch of rotated half-region shapes
+    p = functools.reduce(operator.and_,
+            [rotate(half, 360./N * i) for i in range(N)])
+    # Apply appropriate bounds and return
+    return Shape(p.math, -r, -r, r, r)
 
 ################################################################################
 
@@ -304,8 +320,6 @@ def iterate2d(part, i, j, dx, dy):
     if i < 1 or j < 1:
         raise ValueError("Invalid value for iteration")
 
-    import functools
-    import operator
     return functools.reduce(operator.or_,
             [move(functools.reduce(operator.or_,
                     [move(part, a*dx, 0, 0) for a in range(i)]), 0, b*dy, 0)
@@ -318,8 +332,6 @@ def iterate_polar(part, x, y, n):
     if n < 1:
         raise ValueError("Invalid count for iteration")
 
-    import functools
-    import operator
     return functools.reduce(operator.or_,
             [rotate(part, 360./n * i, x, y)
              for i in range(n)])
