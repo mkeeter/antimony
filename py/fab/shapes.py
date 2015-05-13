@@ -351,11 +351,11 @@ def iterate_polar(part, x, y, n):
 
 ################################################################################
 
-def blend(p0, p1, amount):
-    joint = p0 | p1
+def blend(a, b, amount):
+    joint = a | b
 
-    # sqrt(abs(p0)) + sqrt(abs(p1)) - amount
-    fillet = Shape('-+rb%srb%sf%g' % (p0.math, p1.math, amount),
+    # sqrt(abs(a)) + sqrt(abs(b)) - amount
+    fillet = Shape('-+rb%srb%sf%g' % (a.math, b.math, amount),
                        joint.bounds)
     return joint | fillet
 
