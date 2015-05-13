@@ -359,6 +359,13 @@ def blend(p0, p1, amount):
                        joint.bounds)
     return joint | fillet
 
+def morph(a, b, weight):
+    """ Morphs between two shapes.
+    """
+    # shape = weight*a+(1-weight)*b
+    s = "+*f%g%s*f%g%s" % (weight, a.math, 1-weight, b.math)
+    return Shape(s, (a | b).bounds)
+
 ################################################################################
 
 def cylinder(x0, y0, z0, z1, r):
