@@ -41,6 +41,19 @@ def set_color(a, r, g, b):
     q._r, q._g, q._b = r, g, b
     return q
 
+def invert(a):
+    """ Inverts a shape within its existing bounds.
+    """
+    if a.bounds.is_bounded_xyz():
+        return cube(a.bounds.xmin, a.bounds.xmax,
+                    a.bounds.ymin, a.bounds.zmax,
+                    a.bounds.zmin, a.bounds.zmax) & (~a)
+    elif a.bounds.is_bounded_xy():
+        return rectangle(a.bounds.xmin, a.bounds.xmax,
+                         a.bounds.ymin, a.bounds.ymax) & (~a)
+    else:
+        return Shape("f1.0", 0, 0, 0, 0)
+
 ################################################################################
 
 def circle(x0, y0, r):
