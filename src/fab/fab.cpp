@@ -35,8 +35,7 @@ BOOST_PYTHON_MODULE(_fabtypes)
             .def("is_bounded_xyz", &Bounds::is_bounded_xyz,
                  "Returns True if both all bounds are non-infinite.");
 
-    class_<Shape>("Shape", init<std::string>())
-            .def(init<object>())
+    class_<Shape>("Shape", init<>())
             .def(init<std::string>())
             .def(init<std::string, float, float, float, float>())
             .def(init<std::string, float, float, float, float, float, float>())
