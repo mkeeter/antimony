@@ -230,7 +230,7 @@ void MainWindow::populateUserScripts(QMenu* menu, bool recenter, Viewport* v)
 void MainWindow::populateMenu(QMenu* menu, bool recenter, Viewport* v)
 {
     // Hard-code menu names to set their order.
-    for (auto c : {"2D", "3D", "CSG", "Iterate", "Deform"})
+    for (auto c : {"2D", "3D", "CSG", "Transform"})
         menu->addMenu(c);
 
     populateUserScripts(menu, recenter, v);
