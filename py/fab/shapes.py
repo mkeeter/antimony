@@ -549,7 +549,6 @@ def attract(part, x, y, z, r):
         x, y, z)
 
 def repel(part, x, y, z, r):
-
     # Shift the part so that it is centered
     part = move(part, -x, -y, -z)
 
@@ -564,6 +563,28 @@ def repel(part, x, y, z, r):
         part.bounds.xmin - b, part.bounds.ymin - b, part.bounds.zmin - b,
         part.bounds.xmax + b, part.bounds.ymax + b, part.bounds.zmax + b),
         x, y, z)
+
+################################################################################
+
+def twist_xy_z(part, x, y, z0, z1, t0, t1):
+    # First, we'll move and scale so that the relevant part of the model
+    # is at x=y=0 and scaled so that z is between 0 and 1.
+    p1 = scale_z(move(part, -x, -y, -z0), 0, 1.0/(z1 - z0))
+
+    t0 = math.pi * t0 / 180.0
+    t1 = math.pi * t1 / 180.0
+
+    # X' =  X*cos(t1*z + t0*(1-z)) + Y*sin(t1*z + t0*(1-z))
+    # Y' = -X*sin(t1*z + t0*(1-z)) + Y*cos(t1*z + t0*(1-z))
+    # X =  X*cos(t1*z + t0*(1-z)) - Y*sin(t1*z + t0*(1-z))
+    # Y =  X*sin(t1*z + t0*(1-z)) + Y*cos(t1*z + t0*(1-z))
+    p2 = p1.map(Transform(
+        '+*Xc+*f%(t1)gZ*f%(t0)g-f1Z*Ys+*f%(t1)gZ*f%(t0)g-f1Z' % locals(),
+        '+n*Xs+*f%(t1)gZ*f%(t0)g-f1Z*Yc+*f%(t1)gZ*f%(t0)g-f1Z' % locals(),
+        '-*Xc+*f%(t1)gZ*f%(t0)g-f1Z*Ys+*f%(t1)gZ*f%(t0)g-f1Z' % locals(),
+        '+*Xs+*f%(t1)gZ*f%(t0)g-f1Z*Yc+*f%(t1)gZ*f%(t0)g-f1Z' % locals()))
+
+    return move(scale_z(p2, 0, z1 - z0), x, y, z0)
 
 ################################################################################
 
