@@ -182,6 +182,12 @@ def move(part, dx, dy, dz=0):
 
 translate = move
 
+def origin_xy(a, x0, y0, x1, y1):
+    return move(a, x1 - x0, y1 - y0)
+
+def origin_xyz(a, x0, y0, z0, x1, y1, z1):
+    return move(a, x1 - x0, y1 - y0, z1 - z0)
+
 ################################################################################
 
 def recenter(part, x, y, z):

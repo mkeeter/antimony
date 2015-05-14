@@ -1,29 +1,21 @@
 # Neil Gershenfeld 1/25/15
+# Matt Keeter 6/13/15
 
 import fab
 
-title('origin xy')
+title('Set origin (XY)')
 
-def origin_xy(part,x0,y0,x1,y1):
-   from fab.types import Shape, Transform
-   # X' = X+x0-x1
-   # Y' = Y+y0-y1
-   # X = X'+x1-x0
-   # Y = Y'+y1-y0
-   return part.map(Transform(
-      '-+Xf%(x0)gf%(x1)g' % locals(),
-      '-+Yf%(y0)gf%(y1)g' % locals(),
-      '-+Xf%(x1)gf%(x0)g' % locals(),
-      '-+Yf%(y1)gf%(y0)g' % locals()))
+input('a',fab.types.Shape)
 
-input('x0',float,0)
-input('y0',float,0)
-input('x1',float,1)
-input('y1',float,1)
+input('x0', float, 0)
+input('y0', float, 0)
+input('x1', float, 1)
+input('y1', float, 1)
 
-input('shape',fab.types.Shape)
-output('transform',origin_xy(shape,x0,y0,x1,y1))
+output('out', fab.shapes.origin_xy(a, x0, y0, x1, y1))
 
-fab.ui.point(x0,y0)
-fab.ui.point(x1,y1)
+# UI
+fab.ui.wireframe([(x0, y0, 0), (x1, y1, 0)], color=fab.color.green)
+fab.ui.point(x0, y0, color=fab.color.green)
+fab.ui.point(x1, y1, color=fab.color.green)
 
