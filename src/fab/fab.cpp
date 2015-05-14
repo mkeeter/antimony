@@ -64,6 +64,7 @@ BOOST_PYTHON_MODULE(_fabtypes)
             .def_readonly("z_reverse", &Transform::z_reverse);
 
     register_exception_translator<fab::ParseError>(fab::onParseError);
+    register_exception_translator<fab::ShapeError>(fab::onShapeError);
 }
 
 
