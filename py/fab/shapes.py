@@ -298,6 +298,27 @@ def extrude_z(part, z0, z1):
 
 ################################################################################
 
+def loft_xy_z(a, b, z0, z1):
+    """ Creates a blended loft between two shapes.
+
+        Input shapes should be 2D (in the XY plane).
+        The resulting loft will be shape a at z0 and b at z1.
+    """
+    # ((z-z0)/(z1-z0))*b + ((z1-z)/(z1-z0))*a
+    # In the prefix string below, we add caps at z0 and z1 then
+    # factor out the division by (z1 - z0)
+    dz = z1 - z0
+    a_, b_ = a.math, b.math
+    return Shape(('aa-Zf%(z1)g-f%(z0)g' +
+                  'Z/+*-Zf%(z0)g%(b_)s' +
+                     '*-f%(z1)gZ%(a_)sf%(dz)g') % locals(),
+                min(a.bounds.xmin, b.bounds.xmin),
+                min(a.bounds.ymin, b.bounds.ymin), z0,
+                max(a.bounds.xmax, b.bounds.xmax),
+                max(a.bounds.ymax, b.bounds.ymax), z1)
+
+################################################################################
+
 def shear_x_y(part, y0, y1, dx0, dx1):
     dx = dx1 - dx0
     dy = y1 - y0
