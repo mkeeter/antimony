@@ -588,6 +588,20 @@ def twist_xy_z(part, x, y, z0, z1, t0, t1):
 
 ################################################################################
 
+def function_prefix_xy(fn, xmin, xmax, ymin, ymax):
+    """ Takes an arbitrary prefix math-string and makes it a function.
+        Returns the function intersected with the given bounding rectangle.
+    """
+    return Shape(fn) & rectangle(xmin, xmax, ymin, ymax)
+
+def function_prefix_xyz(fn, xmin, xmax, ymin, ymax, zmin, zmax):
+    """ Takes an arbitrary prefix math-string and makes it a function.
+        Returns the function intersected with the given bounding cube.
+    """
+    return Shape(fn) & cube(xmin, xmax, ymin, ymax, zmin, zmax)
+
+################################################################################
+
 def text(text, x, y, height=1, align='LB'):
     if text == '':
         return Shape("f1.0", 0, 0, 0, 0)

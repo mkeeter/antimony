@@ -1,5 +1,7 @@
 # Neil Gershenfeld 1/27/15
+# Matt Keeter 6/14/15
 
+# Prefix math-string cheat-sheet:
 # Sine s
 # Cosine c
 # Tangent t
@@ -21,26 +23,13 @@
 
 import fab
 
-title('function prefix xy')
+title('Function (prefix, XY)')
 
-def function_prefix_xy(x0,y0,x1,y1,fn):
-   from fab.types import Shape, Transform
-   return Shape(
-      fn % locals(),
-      x0,y0,x1,y1)
+input('fn', str, '-Y/s*f25X*f25X')
+input('xmin', float, -1)
+input('xmax', float, 1)
+input('ymin', float, -1)
+input('ymax', float, 1)
 
-def rectangle_corner(x0,y0,x1,y1):
-   from fab.types import Shape, Transform
-   # max(max(x0-X,X-x1),max(y0-Y,Y-y1))
-   return Shape(
-      'aa-f%(x0)gX-Xf%(x1)ga-f%(y0)gY-Yf%(y1)g' % locals(),
-       x0,y0,x1,y1)
-       
-input('x0',float,-1)
-input('x1',float,1)
-input('y0',float,-1)
-input('y1',float,1)
-input('fn',str,'-Y/s*f25X*f25X')
-
-output('shape',(rectangle_corner(x0,y0,x1,y1) & function_prefix_xy(x0,y0,x1,y1,fn)))
+output('shape', fab.shapes.function_prefix_xy(fn, xmin, xmax, ymin, ymax))
 
