@@ -491,28 +491,36 @@ def taper_xy_z(part, x0, y0, z0, z1, s0, s1):
 
 ################################################################################
 
-def revolve_y(part):
+def revolve_y(a):
     ''' Revolve a part in the XY plane about the Y axis. '''
-    #   X' = sqrt(X**2 + Z**2)
-    p = part.map('r+qXqZ', '', '', '')
-    return Shape(
-            p.math,
-            min(-abs(part.xmin), -abs(part.xmax)),
-            max( abs(part.xmin),  abs(part.xmax)),
-            part.ymin, part.ymax,
-            part.xmin, part.xmax)
+    #   X' = +/- sqrt(X**2 + Z**2)
+    pos = a.map(Transform('r+qXqZ', '', '', '', '', ''))
+    neg = a.map(Transform('nr+qXqZ', '', '', '', '', ''))
+    m = max(abs(a.bounds.xmin), abs(a.bounds.xmax))
+    return Shape((pos | neg).math, -m, a.bounds.ymin, -m,
+                                    m, a.bounds.ymax,  m)
 
 
-def revolve_x(part):
+def revolve_x(a):
     ''' Revolve a part in the XY plane about the X axis. '''
-    #   Y' = sqrt(Y**2 + Z**2)
-    p = part.map('', 'r+qYqZ', '', '')
-    return Shape(
-            p.math,
-            part.xmin, part.xmax,
-            min(-abs(part.ymin), -abs(part.ymax)),
-            max( abs(part.ymin),  abs(part.ymax)),
-            part.ymin, part.ymax)
+    #   Y' = +/- sqrt(Y**2 + Z**2)
+    pos = a.map(Transform('', 'r+qYqZ', '', '', '', ''))
+    neg = a.map(Transform('', 'nr+qYqZ', '', '', '', ''))
+    m = max(abs(a.bounds.ymin), abs(a.bounds.ymax))
+    return Shape((pos | neg).math, a.bounds.xmin, -m, -m,
+                                   a.bounds.xmax,  m,  m)
+
+def revolve_xy_x(a, y):
+    """ Revolves the given shape about the x-axis
+        (offset by the given y value)
+    """
+    return move(revolve_x(move(a, 0, -y)), 0, y)
+
+def revolve_xy_y(a, x):
+    """ Revolves the given shape about the y-axis
+        (offset by the given x value)
+    """
+    return move(revolve_y(move(a, -x, 0)), x, 0)
 
 ################################################################################
 
