@@ -34,7 +34,7 @@ sudo apt-get install build-essential
 sudo apt-get install libpng-dev
 sudo apt-get install python3-dev
 sudo apt-get install libboost-all-dev
-sudo apt-get install libgl1-mesa-dev-lts-utopic
+sudo apt-get install libgl1-mesa-dev
 
 git clone https://github.com/mkeeter/antimony
 cd antimony
