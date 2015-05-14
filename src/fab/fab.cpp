@@ -37,6 +37,7 @@ BOOST_PYTHON_MODULE(_fabtypes)
 
     class_<Shape>("Shape", init<std::string>())
             .def(init<object>())
+            .def(init<std::string>())
             .def(init<std::string, float, float, float, float>())
             .def(init<std::string, float, float, float, float, float, float>())
             .def(init<std::string, Bounds>())
