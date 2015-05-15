@@ -37,9 +37,9 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* doc)
     QTextCharFormat quote_format;
     quote_format.setForeground(Colors::brown);
     rules << QPair<QRegularExpression, QTextCharFormat>(
-            QRegularExpression("\\\".*\\\""), quote_format);
+            QRegularExpression("\\\"[^\\\"]*\\\""), quote_format);
     rules << QPair<QRegularExpression, QTextCharFormat>(
-            QRegularExpression("\\'.*\\'"), quote_format);
+            QRegularExpression("\\'[^\\']*\\'"), quote_format);
 
     // String that can be prepended to a regex to make it detect negative
     // numbers (but not subtraction).  Note that a closing parenthesis is
