@@ -52,25 +52,31 @@ You can use `make install`, or set up a symlink to run `antimony` from outside t
 ln -s ~/antimony/build/antimony /usr/local/bin/antimony 
 ```
 
-Caveats
-=======
+### Caveats
+
 The path to `qmake` may vary depending on how Qt 5.4 was installed; if the above path doesn't work, try
 ```
 ~/Qt/5.4/gcc_64/bin/qmake ../qt/antimony.pro
 ```
+
 --------------------------------------------------------------------------------
+
 If running `make` gives the `/usr/bin/ld: cannot find -lGL`, create a symlink to the `libGL` file:
 ```
 ln -s /usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0 /usr/lib/libGL.so
 ```
+
 --------------------------------------------------------------------------------
+
 If the top menu bar is not appearing in Ubuntu with a non-Unity
 desktop environment (e.g. `gnome-session-flashback`), run
 ```
 sudo apt-get remove appmenu-qt5
 ```
 to make it appear.
+
 --------------------------------------------------------------------------------
+
 On some systems (e.g. Fedora 21), the name for `boost::python` is different.
 
 Change [this line](https://github.com/mkeeter/antimony/blob/develop/qt/shared.pri#L44) to read
