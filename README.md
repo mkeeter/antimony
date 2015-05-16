@@ -11,7 +11,7 @@ For more details and screenshots, look at [this writeup](http://mattkeeter.com/p
 *Antimony* is still under active development and should be considered
 alpha software.  It is suitable for experimental and non-mission-critical use.
 
-To get started, refer to the [build instructions](https://github.com/mkeeter/antimony/blob/master/BUILDING.md)
+To get started, refer to the [build instructions](https://github.com/mkeeter/antimony/blob/develop/BUILDING.md)
 or download a [release build](https://github.com/mkeeter/antimony/releases).
 
 ## License
