@@ -1,4 +1,6 @@
 import math
+import functools
+import operator
 
 from fab.types import Shape, Transform
 
@@ -39,9 +41,24 @@ def set_color(a, r, g, b):
     q._r, q._g, q._b = r, g, b
     return q
 
+def invert(a):
+    """ Inverts a shape within its existing bounds.
+    """
+    if a.bounds.is_bounded_xyz():
+        return cube(a.bounds.xmin, a.bounds.xmax,
+                    a.bounds.ymin, a.bounds.zmax,
+                    a.bounds.zmin, a.bounds.zmax) & (~a)
+    elif a.bounds.is_bounded_xy():
+        return rectangle(a.bounds.xmin, a.bounds.xmax,
+                         a.bounds.ymin, a.bounds.ymax) & (~a)
+    else:
+        return Shape("f1.0", 0, 0, 0, 0)
+
 ################################################################################
 
 def circle(x0, y0, r):
+    """ Defines a circle from a center point and radius.
+    """
     # sqrt((X-x0)**2 + (Y-y0)**2) - r
     r = abs(r)
     return Shape(
@@ -49,9 +66,33 @@ def circle(x0, y0, r):
                               ('-Yf%g' % y0) if y0 else 'Y', r),
             x0 - r, y0 - r, x0 + r, y0 + r)
 
+def circle_edge(x0, y0, x1, y1):
+    """ Defines a circle from two points on its radius.
+    """
+    xmid = (x0+x1)/2.0
+    ymid = (y0+y1)/2.0
+    r = math.sqrt((xmid-x0)**2 +(ymid-y0)**2)
+    return circle(xmid, ymid, r)
+
+def polygon_radius(x, y, r, N):
+    """ Makes a polygon with a center-to-vertex distance r
+        The polygon is oriented so that the bottom is always flat.
+    """
+    # Find the center-to-edge distance
+    r_ = -r * math.cos(math.pi / N)
+    # Make an offset half-region shape
+    half = Shape('-f%gY' % r_, 0, 0, 0, 0)
+    # Take the union of a bunch of rotated half-region shapes
+    p = functools.reduce(operator.and_,
+            [rotate(half, 360./N * i) for i in range(N)])
+    # Apply appropriate bounds and return
+    return Shape(p.math, -r, -r, r, r)
+
 ################################################################################
 
 def triangle(x0, y0, x1, y1, x2, y2):
+    """ Defines a triangle from three points.
+    """
     # Find the angles of the points about the center
     xm = (x0 + x1 + x2) / 3.
     ym = (y0 + y1 + y2) / 3.
@@ -81,6 +122,12 @@ def triangle(x0, y0, x1, y1, x2, y2):
             min(x0, x1, x2), min(y0, y1, y2),
             max(x0, x1, x2), max(y0, y1, y2))
 
+def right_triangle(x0,y0,w,h):
+   # max(max(x0-X,y0-Y),X-(x0*(Y-y0)+(x0+w)*(y0+h-Y))/h)
+   return Shape(
+      'aa-f%(x0)gX-f%(y0)gY-X/+*f%(x0)g-Yf%(y0)g*+f%(x0)gf%(w)g-+f%(y0)gf%(h)gYf%(h)g' % locals(),
+       x0,y0,x0+w,y0+h)
+
 ################################################################################
 
 def rectangle(x0, x1, y0, y1):
@@ -90,6 +137,10 @@ def rectangle(x0, x1, y0, y1):
             x0, y0, x1, y1)
 
 def rounded_rectangle(x0, x1, y0, y1, r):
+    """ Returns a rectangle with rounded corners.
+        r is a roundedness fraction between 0 (not rounded)
+        and 1 (completely rounded)
+    """
     r *= min(x1 - x0, y1 - y0)/2
     return (
         rectangle(x0, x1, y0+r, y1-r) |
@@ -130,6 +181,12 @@ def move(part, dx, dy, dz=0):
         '+Xf%g' % dx, '+Yf%g' % dy, '+Zf%g' % dz))
 
 translate = move
+
+def origin_xy(a, x0, y0, x1, y1):
+    return move(a, x1 - x0, y1 - y0)
+
+def origin_xyz(a, x0, y0, z0, x1, y1, z1):
+    return move(a, x1 - x0, y1 - y0, z1 - z0)
 
 ################################################################################
 
@@ -247,6 +304,27 @@ def extrude_z(part, z0, z1):
 
 ################################################################################
 
+def loft_xy_z(a, b, z0, z1):
+    """ Creates a blended loft between two shapes.
+
+        Input shapes should be 2D (in the XY plane).
+        The resulting loft will be shape a at z0 and b at z1.
+    """
+    # ((z-z0)/(z1-z0))*b + ((z1-z)/(z1-z0))*a
+    # In the prefix string below, we add caps at z0 and z1 then
+    # factor out the division by (z1 - z0)
+    dz = z1 - z0
+    a_, b_ = a.math, b.math
+    return Shape(('aa-Zf%(z1)g-f%(z0)g' +
+                  'Z/+*-Zf%(z0)g%(b_)s' +
+                     '*-f%(z1)gZ%(a_)sf%(dz)g') % locals(),
+                min(a.bounds.xmin, b.bounds.xmin),
+                min(a.bounds.ymin, b.bounds.ymin), z0,
+                max(a.bounds.xmax, b.bounds.xmax),
+                max(a.bounds.ymax, b.bounds.ymax), z1)
+
+################################################################################
+
 def shear_x_y(part, y0, y1, dx0, dx1):
     dx = dx1 - dx0
     dy = y1 - y0
@@ -282,8 +360,6 @@ def iterate2d(part, i, j, dx, dy):
     if i < 1 or j < 1:
         raise ValueError("Invalid value for iteration")
 
-    import functools
-    import operator
     return functools.reduce(operator.or_,
             [move(functools.reduce(operator.or_,
                     [move(part, a*dx, 0, 0) for a in range(i)]), 0, b*dy, 0)
@@ -296,21 +372,26 @@ def iterate_polar(part, x, y, n):
     if n < 1:
         raise ValueError("Invalid count for iteration")
 
-    import functools
-    import operator
     return functools.reduce(operator.or_,
             [rotate(part, 360./n * i, x, y)
              for i in range(n)])
 
 ################################################################################
 
-def blend(p0, p1, amount):
-    joint = p0 | p1
+def blend(a, b, amount):
+    joint = a | b
 
-    # sqrt(abs(p0)) + sqrt(abs(p1)) - amount
-    fillet = Shape('-+rb%srb%sf%g' % (p0.math, p1.math, amount),
+    # sqrt(abs(a)) + sqrt(abs(b)) - amount
+    fillet = Shape('-+rb%srb%sf%g' % (a.math, b.math, amount),
                        joint.bounds)
     return joint | fillet
+
+def morph(a, b, weight):
+    """ Morphs between two shapes.
+    """
+    # shape = weight*a+(1-weight)*b
+    s = "+*f%g%s*f%g%s" % (weight, a.math, 1-weight, b.math)
+    return Shape(s, (a | b).bounds)
 
 ################################################################################
 
@@ -416,28 +497,36 @@ def taper_xy_z(part, x0, y0, z0, z1, s0, s1):
 
 ################################################################################
 
-def revolve_y(part):
+def revolve_y(a):
     ''' Revolve a part in the XY plane about the Y axis. '''
-    #   X' = sqrt(X**2 + Z**2)
-    p = part.map('r+qXqZ', '', '', '')
-    return Shape(
-            p.math,
-            min(-abs(part.xmin), -abs(part.xmax)),
-            max( abs(part.xmin),  abs(part.xmax)),
-            part.ymin, part.ymax,
-            part.xmin, part.xmax)
+    #   X' = +/- sqrt(X**2 + Z**2)
+    pos = a.map(Transform('r+qXqZ', '', '', '', '', ''))
+    neg = a.map(Transform('nr+qXqZ', '', '', '', '', ''))
+    m = max(abs(a.bounds.xmin), abs(a.bounds.xmax))
+    return Shape((pos | neg).math, -m, a.bounds.ymin, -m,
+                                    m, a.bounds.ymax,  m)
 
 
-def revolve_x(part):
+def revolve_x(a):
     ''' Revolve a part in the XY plane about the X axis. '''
-    #   Y' = sqrt(Y**2 + Z**2)
-    p = part.map('', 'r+qYqZ', '', '')
-    return Shape(
-            p.math,
-            part.xmin, part.xmax,
-            min(-abs(part.ymin), -abs(part.ymax)),
-            max( abs(part.ymin),  abs(part.ymax)),
-            part.ymin, part.ymax)
+    #   Y' = +/- sqrt(Y**2 + Z**2)
+    pos = a.map(Transform('', 'r+qYqZ', '', '', '', ''))
+    neg = a.map(Transform('', 'nr+qYqZ', '', '', '', ''))
+    m = max(abs(a.bounds.ymin), abs(a.bounds.ymax))
+    return Shape((pos | neg).math, a.bounds.xmin, -m, -m,
+                                   a.bounds.xmax,  m,  m)
+
+def revolve_xy_x(a, y):
+    """ Revolves the given shape about the x-axis
+        (offset by the given y value)
+    """
+    return move(revolve_x(move(a, 0, -y)), 0, y)
+
+def revolve_xy_y(a, x):
+    """ Revolves the given shape about the y-axis
+        (offset by the given x value)
+    """
+    return move(revolve_y(move(a, -x, 0)), x, 0)
 
 ################################################################################
 
@@ -460,7 +549,6 @@ def attract(part, x, y, z, r):
         x, y, z)
 
 def repel(part, x, y, z, r):
-
     # Shift the part so that it is centered
     part = move(part, -x, -y, -z)
 
@@ -475,6 +563,42 @@ def repel(part, x, y, z, r):
         part.bounds.xmin - b, part.bounds.ymin - b, part.bounds.zmin - b,
         part.bounds.xmax + b, part.bounds.ymax + b, part.bounds.zmax + b),
         x, y, z)
+
+################################################################################
+
+def twist_xy_z(part, x, y, z0, z1, t0, t1):
+    # First, we'll move and scale so that the relevant part of the model
+    # is at x=y=0 and scaled so that z is between 0 and 1.
+    p1 = scale_z(move(part, -x, -y, -z0), 0, 1.0/(z1 - z0))
+
+    t0 = math.pi * t0 / 180.0
+    t1 = math.pi * t1 / 180.0
+
+    # X' =  X*cos(t1*z + t0*(1-z)) + Y*sin(t1*z + t0*(1-z))
+    # Y' = -X*sin(t1*z + t0*(1-z)) + Y*cos(t1*z + t0*(1-z))
+    # X =  X*cos(t1*z + t0*(1-z)) - Y*sin(t1*z + t0*(1-z))
+    # Y =  X*sin(t1*z + t0*(1-z)) + Y*cos(t1*z + t0*(1-z))
+    p2 = p1.map(Transform(
+        '+*Xc+*f%(t1)gZ*f%(t0)g-f1Z*Ys+*f%(t1)gZ*f%(t0)g-f1Z' % locals(),
+        '+n*Xs+*f%(t1)gZ*f%(t0)g-f1Z*Yc+*f%(t1)gZ*f%(t0)g-f1Z' % locals(),
+        '-*Xc+*f%(t1)gZ*f%(t0)g-f1Z*Ys+*f%(t1)gZ*f%(t0)g-f1Z' % locals(),
+        '+*Xs+*f%(t1)gZ*f%(t0)g-f1Z*Yc+*f%(t1)gZ*f%(t0)g-f1Z' % locals()))
+
+    return move(scale_z(p2, 0, z1 - z0), x, y, z0)
+
+################################################################################
+
+def function_prefix_xy(fn, xmin, xmax, ymin, ymax):
+    """ Takes an arbitrary prefix math-string and makes it a function.
+        Returns the function intersected with the given bounding rectangle.
+    """
+    return Shape(fn) & rectangle(xmin, xmax, ymin, ymax)
+
+def function_prefix_xyz(fn, xmin, xmax, ymin, ymax, zmin, zmax):
+    """ Takes an arbitrary prefix math-string and makes it a function.
+        Returns the function intersected with the given bounding cube.
+    """
+    return Shape(fn) & cube(xmin, xmax, ymin, ymax, zmin, zmax)
 
 ################################################################################
 

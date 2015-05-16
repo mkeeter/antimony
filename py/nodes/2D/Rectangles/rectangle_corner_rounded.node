@@ -1,0 +1,37 @@
+# Neil Gershenfeld 1/24/15
+# Matt Keeter 6/11/15
+
+import fab
+
+title('Rounded rectangle (corner)')
+
+input('x0', float, -1)
+input('y0', float, -1)
+input('x1', float, 1)
+input('y1', float, 1)
+input('r', float, 0.5)
+
+# This is the circle's radius in actual units (not a 0-1 fraction)
+r_ = r * min(x1 - x0, y1 - y0) / 2
+
+output('shape', fab.shapes.rounded_rectangle(x0, x1, y0, y1, r))
+
+def drag_r(this, x, y, z):
+    if abs(this.x1 - this.x0) < abs(this.y1 - this.y0):
+        d = abs(this.x1 - this.x0)
+        mid = this.y1 - d / 2
+    else:
+        d = abs(this.y1 - this.y0)
+        mid = (this.y0 + this.y1) / 2
+    r = 1 - (y - mid) / (d/2)
+    this.r = float(min(1, max(0, r)))
+
+# UI
+fab.ui.wireframe(
+        [(x0, y0, 0), (x1, y0, 0), (x1, y1, 0), (x0, y1, 0)],
+        close=True)
+fab.ui.wireframe([(x1 - r_, y1, 0), (x1, y1 - r_, 0)])
+fab.ui.point(x0, y0)
+fab.ui.point(x1, y1)
+fab.ui.point(x1, y1 - r_, drag=drag_r, relative=False)
+

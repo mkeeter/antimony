@@ -1,0 +1,35 @@
+# Neil Gershenfeld 1/27/15
+# Matt Keeter 6/14/15
+
+# Prefix math-string cheat-sheet:
+# Sine s
+# Cosine c
+# Tangent t
+# Arcsine S
+# Arccosine C
+# Arctangent T
+# Absolute value b
+# Square q
+# Square root r
+# Negation n
+# Addition +
+# Subtraction -
+# Multiplication *
+# Division /
+# Minimum i
+# Maximum a
+# Power p
+# Float f
+
+import fab
+
+title('Function (prefix, XY)')
+
+input('fn', str, '-Y/s*f25X*f25X')
+input('xmin', float, -1)
+input('xmax', float, 1)
+input('ymin', float, -1)
+input('ymax', float, 1)
+
+output('shape', fab.shapes.function_prefix_xy(fn, xmin, xmax, ymin, ymax))
+

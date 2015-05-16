@@ -19,6 +19,9 @@ public:
 
     float xmin, ymin, zmin;
     float xmax, ymax, zmax;
+
+    bool is_bounded_xy() const;
+    bool is_bounded_xyz() const;
 };
 
 #endif // BOUNDS_H

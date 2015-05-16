@@ -1,0 +1,30 @@
+# Neil Gershenfeld 1/24/15
+# Matt Keeter 6/11/18
+
+import fab
+
+title('Circle (center)')
+
+input('x0',float,0)
+input('y0',float,0)
+input('r',float,1)
+input('_a',float,0)
+
+output('shape', fab.shapes.circle(x0, y0, r))
+
+def drag_r(this,x,y,z):
+    dx = x - this.x0
+    dy = y - this.y0
+    this.r = math.sqrt(dx**2 + dy**2)
+    this._a = math.atan2(dy, dx)
+
+# UI
+fab.ui.wireframe([
+    (math.cos(i/36. * 2*math.pi) * r + x0,
+     math.sin(i/36. * 2*math.pi) * r + y0, 0)
+    for i in range(36)], close=True)
+fab.ui.point(x0,y0)
+fab.ui.point(x0 + r*math.cos(_a),
+             y0 + r*math.sin(_a),
+             drag=drag_r, relative=False)
+

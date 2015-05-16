@@ -21,6 +21,7 @@ void fab::onShapeError(const fab::ShapeError& e)
 BOOST_PYTHON_MODULE(_fabtypes)
 {
     class_<Bounds>("Bounds", init<>())
+            .def(init<>())
             .def(init<float, float, float, float>())
             .def(init<float, float, float, float, float, float>())
             .def_readonly("xmin", &Bounds::xmin)
@@ -28,10 +29,14 @@ BOOST_PYTHON_MODULE(_fabtypes)
             .def_readonly("zmin", &Bounds::zmin)
             .def_readonly("xmax", &Bounds::xmax)
             .def_readonly("ymax", &Bounds::ymax)
-            .def_readonly("zmax", &Bounds::zmax);
+            .def_readonly("zmax", &Bounds::zmax)
+            .def("is_bounded_xy", &Bounds::is_bounded_xy,
+                 "Returns True if both x and y bounds are non-infinite.")
+            .def("is_bounded_xyz", &Bounds::is_bounded_xyz,
+                 "Returns True if both all bounds are non-infinite.");
 
-    class_<Shape>("Shape", init<std::string>())
-            .def(init<object>())
+    class_<Shape>("Shape", init<>())
+            .def(init<std::string>())
             .def(init<std::string, float, float, float, float>())
             .def(init<std::string, float, float, float, float, float, float>())
             .def(init<std::string, Bounds>())
@@ -58,6 +63,7 @@ BOOST_PYTHON_MODULE(_fabtypes)
             .def_readonly("z_reverse", &Transform::z_reverse);
 
     register_exception_translator<fab::ParseError>(fab::onParseError);
+    register_exception_translator<fab::ShapeError>(fab::onShapeError);
 }
 
 
