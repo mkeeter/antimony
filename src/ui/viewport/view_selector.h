@@ -44,6 +44,7 @@ public slots:
     void onRightPressed();
     void onBackPressed();
     void onBottomPressed();
+    void onPerspectivePressed();
 signals:
     void spinTo(float pitch, float yaw);
 };

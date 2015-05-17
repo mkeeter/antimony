@@ -6,3 +6,5 @@ fab/c/build*
 *.pro.user
 build-*/*
 build
+
+*.sublime-workspace
