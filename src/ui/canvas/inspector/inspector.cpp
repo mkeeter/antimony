@@ -384,12 +384,12 @@ QVariant NodeInspector::itemChange(GraphicsItemChange change, const QVariant& va
 
 void NodeInspector::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-    Q_UNUSED(event);
+    QGraphicsItem::hoverEnterEvent(event);
     emit(glowChanged(node, true));
 }
 
 void NodeInspector::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
-    Q_UNUSED(event);
+    QGraphicsItem::hoverLeaveEvent(event);
     emit(glowChanged(node, false));
 }
