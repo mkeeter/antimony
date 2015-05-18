@@ -65,7 +65,7 @@ ViewSelector::ViewSelector(Viewport* viewport)
             << new ViewSelectorButton("right", o + QPointF(2*s, s), this)
             << new ViewSelectorButton("back", o + QPointF(3*s, s), this)
             << new ViewSelectorButton("bottom", o + QPointF(s, 2*s), this)
-            << new ViewSelectorButton("perspective", o + QPointF(2*s,2*s), this);
+            << new ViewSelectorButton("ortho", o + QPointF(2*s, 0), this);
 
     for (auto b : buttons)
     {
