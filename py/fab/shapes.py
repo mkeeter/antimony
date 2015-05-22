@@ -52,7 +52,7 @@ def invert(a):
         return rectangle(a.bounds.xmin, a.bounds.xmax,
                          a.bounds.ymin, a.bounds.ymax) & (~a)
     else:
-        return Shape("f1.0", 0, 0, 0, 0)
+        return Shape()
 
 ################################################################################
 
@@ -81,7 +81,7 @@ def polygon_radius(x, y, r, N):
     # Find the center-to-edge distance
     r_ = -r * math.cos(math.pi / N)
     # Make an offset half-region shape
-    half = Shape('-f%gY' % r_, 0, 0, 0, 0)
+    half = Shape('-f%gY' % r_)
     # Take the union of a bunch of rotated half-region shapes
     p = functools.reduce(operator.and_,
             [rotate(half, 360./N * i) for i in range(N)])
@@ -126,7 +126,7 @@ def right_triangle(x0,y0,w,h):
    # max(max(x0-X,y0-Y),X-(x0*(Y-y0)+(x0+w)*(y0+h-Y))/h)
    return Shape(
       'aa-f%(x0)gX-f%(y0)gY-X/+*f%(x0)g-Yf%(y0)g*+f%(x0)gf%(w)g-+f%(y0)gf%(h)gYf%(h)g' % locals(),
-       x0,y0,x0+w,y0+h)
+       x0, y0, x0 + w, y0 + h)
 
 ################################################################################
 
@@ -383,7 +383,7 @@ def blend(a, b, amount):
 
     # sqrt(abs(a)) + sqrt(abs(b)) - amount
     fillet = Shape('-+rb%srb%sf%g' % (a.math, b.math, amount),
-                       joint.bounds)
+                   joint.bounds)
     return joint | fillet
 
 def morph(a, b, weight):
@@ -604,7 +604,7 @@ def function_prefix_xyz(fn, xmin, xmax, ymin, ymax, zmin, zmax):
 
 def text(text, x, y, height=1, align='LB'):
     if text == '':
-        return Shape("f1.0", 0, 0, 0, 0)
+        return Shape()
     dx, dy = 0, -1
     text_shape = None
 
