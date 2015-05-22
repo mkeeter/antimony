@@ -28,57 +28,85 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument* doc)
     QTextCharFormat kw_format;
     kw_format.setForeground(Colors::green);
     for (auto k : keywords)
-    {
-        rules << QPair<QRegularExpression, QTextCharFormat>(
-                QRegularExpression("\\b" + k + "\\b"),
-                kw_format);
-    }
+        rules << SyntaxRule("\\b" + k + "\\b", kw_format);
 
     QTextCharFormat quote_format;
     quote_format.setForeground(Colors::brown);
-    rules << QPair<QRegularExpression, QTextCharFormat>(
-            QRegularExpression("\\\"[^\\\"]*\\\""), quote_format);
-    rules << QPair<QRegularExpression, QTextCharFormat>(
-            QRegularExpression("\\'[^\\']*\\'"), quote_format);
+    // Triple-quoted (multiline) strings
+    // Single-line triple-quoted string
+    rules << SyntaxRule("'''.*?'''", quote_format);
+    rules << SyntaxRule("\"\"\".*?\"\"\"", quote_format);
+    // Beginning of multiline string
+    rules << SyntaxRule("'''.*$", quote_format, BASE, MULTILINE_SINGLE);
+    rules << SyntaxRule("\"\"\".*$", quote_format, BASE, MULTILINE_DOUBLE);
+    // End of multiline string
+    rules << SyntaxRule("^.*'''", quote_format, MULTILINE_SINGLE, BASE);
+    rules << SyntaxRule("^.*\"\"\"", quote_format, MULTILINE_DOUBLE, BASE);
+    // Inside of multiline string
+    rules << SyntaxRule("^.+$", quote_format, MULTILINE_SINGLE, MULTILINE_SINGLE);
+    rules << SyntaxRule("^.+$", quote_format, MULTILINE_DOUBLE, MULTILINE_DOUBLE);
+
+    // Regular strings
+    rules << SyntaxRule("\".*?\"", quote_format);
+    rules << SyntaxRule("'.*?'", quote_format);
 
     // String that can be prepended to a regex to make it detect negative
     // numbers (but not subtraction).  Note that a closing parenthesis is
     // needed and the desired number is the last match group.
     QString neg = "(^|\\*\\*|[(+\\-=*\\/,\\[])([+\\-\\s]*";
 
-    QTextCharFormat int_format;
-    int_format.setForeground(Colors::orange);
-    rules << QPair<QRegularExpression, QTextCharFormat>(
-            QRegularExpression(neg + "\\b\\d+\\b)"), int_format);
-
     QTextCharFormat float_format;
     float_format.setForeground(Colors::yellow);
-    rules << QPair<QRegularExpression, QTextCharFormat>(
-            QRegularExpression(neg + "\\b\\d+\\.\\d*)"), float_format);
-    rules << QPair<QRegularExpression, QTextCharFormat>(
-            QRegularExpression(neg + "\\b\\d+\\.\\d*e\\d+)"), float_format);
-    rules << QPair<QRegularExpression, QTextCharFormat>(
-            QRegularExpression(neg + "\\b\\d+e\\d+)"), float_format);
+    rules << SyntaxRule(neg + "\\b\\d+\\.\\d*)", float_format);
+    rules << SyntaxRule(neg + "\\b\\d+\\.\\d*e\\d+)", float_format);
+    rules << SyntaxRule(neg + "\\b\\d+e\\d+)", float_format);
+
+    QTextCharFormat int_format;
+    int_format.setForeground(Colors::orange);
+    rules << SyntaxRule(neg + "\\b\\d+\\b)", int_format);
 
     QTextCharFormat comment_format;
     comment_format.setForeground(Colors::base03);
 
-    rules << QPair<QRegularExpression, QTextCharFormat>(
-            QRegularExpression("#.*"), comment_format);
+    rules << SyntaxRule("#.*", comment_format);
 }
 
 void SyntaxHighlighter::highlightBlock(const QString& text)
 {
-    for (auto r : rules)
+    int offset = 0;
+    int state = previousBlockState();
+
+    while (offset <= text.length())
     {
-        auto iter = r.first.globalMatch(text);
-        while (iter.hasNext())
+        int match_start = -1;
+        int match_length;
+        SyntaxRule rule;
+
+        for (auto r : rules)
         {
-            auto match = iter.next();
+            if (r.state_in != state)
+                continue;
+
+            auto match = r.regex.match(text, offset);
+            if (!match.hasMatch())
+                continue;
             auto index = match.lastCapturedIndex();
-            setFormat(match.capturedStart(index),
-                      match.capturedLength(index),
-                      r.second);
+
+            if (match_start == -1 || match.capturedStart(index) < match_start)
+            {
+                match_start = match.capturedStart(index);
+                match_length = match.capturedLength(index);
+                rule = r;
+            }
         }
+
+        if (match_start == -1)
+            break;
+
+        setFormat(match_start, match_length, rule.format);
+        offset = match_start + match_length;
+        state = rule.state_out;
     }
+
+    setCurrentBlockState(state);
 }
