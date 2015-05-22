@@ -56,15 +56,15 @@ def invert(a):
 
 ################################################################################
 
-def circle(x0, y0, r):
+def circle(x, y, r):
     """ Defines a circle from a center point and radius.
     """
-    # sqrt((X-x0)**2 + (Y-y0)**2) - r
+    # sqrt((X-x)**2 + (Y-y)**2) - r
     r = abs(r)
     return Shape(
-            '-r+q%sq%sf%g' % (('-Xf%g' % x0) if x0 else 'X',
-                              ('-Yf%g' % y0) if y0 else 'Y', r),
-            x0 - r, y0 - r, x0 + r, y0 + r)
+            '-r+q%sq%sf%g' % (('-Xf%g' % x) if x else 'X',
+                              ('-Yf%g' % y) if y else 'Y', r),
+            x - r, y - r, x + r, y + r)
 
 def circle_edge(x0, y0, x1, y1):
     """ Defines a circle from two points on its radius.
@@ -122,33 +122,33 @@ def triangle(x0, y0, x1, y1, x2, y2):
             min(x0, x1, x2), min(y0, y1, y2),
             max(x0, x1, x2), max(y0, y1, y2))
 
-def right_triangle(x0,y0,w,h):
-   # max(max(x0-X,y0-Y),X-(x0*(Y-y0)+(x0+w)*(y0+h-Y))/h)
+def right_triangle(x, y, w, h):
+   # max(max(x-X,y-Y),X-(x*(Y-y)+(x+w)*(y+h-Y))/h)
    return Shape(
-      'aa-f%(x0)gX-f%(y0)gY-X/+*f%(x0)g-Yf%(y0)g*+f%(x0)gf%(w)g-+f%(y0)gf%(h)gYf%(h)g' % locals(),
-       x0, y0, x0 + w, y0 + h)
+      'aa-f%(x)gX-f%(y)gY-X/+*f%(x)g-Yf%(y)g*+f%(x)gf%(w)g-+f%(y)gf%(h)gYf%(h)g' % locals(),
+       x, y, x + w, y + h)
 
 ################################################################################
 
-def rectangle(x0, x1, y0, y1):
-    # max(max(x0 - X, X - x1), max(y0 - Y, Y - y1)
+def rectangle(xmin, xmax, ymin, ymax):
+    # max(max(xmin - X, X - xmax), max(ymin - Y, Y - ymax)
     return Shape(
-            'aa-f%(x0)gX-Xf%(x1)ga-f%(y0)gY-Yf%(y1)g' % locals(),
-            x0, y0, x1, y1)
+            'aa-f%(xmin)gX-Xf%(xmax)ga-f%(ymin)gY-Yf%(ymax)g' % locals(),
+            xmin, ymin, xmax, ymax)
 
-def rounded_rectangle(x0, x1, y0, y1, r):
+def rounded_rectangle(xmin, xmax, ymin, ymax, r):
     """ Returns a rectangle with rounded corners.
         r is a roundedness fraction between 0 (not rounded)
         and 1 (completely rounded)
     """
-    r *= min(x1 - x0, y1 - y0)/2
+    r *= min(xmax - xmin, ymax - ymin)/2
     return (
-        rectangle(x0, x1, y0+r, y1-r) |
-        rectangle(x0+r, x1-r, y0, y1) |
-        circle(x0+r, y0+r, r) |
-        circle(x0+r, y1-r, r) |
-        circle(x1-r, y0+r, r) |
-        circle(x1-r, y1-r, r)
+        rectangle(xmin, xmax, ymin+r, ymax-r) |
+        rectangle(xmin+r, xmax-r, ymin, ymax) |
+        circle(xmin+r, ymin+r, r) |
+        circle(xmin+r, ymax-r, r) |
+        circle(xmax-r, ymin+r, r) |
+        circle(xmax-r, ymax-r, r)
     )
 
 ################################################################################
@@ -295,46 +295,46 @@ def scale_xy(part, x0, y0, sxy):
 
 ################################################################################
 
-def extrude_z(part, z0, z1):
-    # max(part, max(z0-Z, Z-z1))
+def extrude_z(part, zmin, zmax):
+    # max(part, max(zmin-Z, Z-zmax))
     return Shape(
-            'am  f1%sa-f%gZ-Zf%g' % (part.math, z0, z1),
-            part.bounds.xmin, part.bounds.ymin, z0,
-            part.bounds.xmax, part.bounds.ymax, z1)
+            'am  f1%sa-f%gZ-Zf%g' % (part.math, zmin, zmax),
+            part.bounds.xmin, part.bounds.ymin, zmin,
+            part.bounds.xmax, part.bounds.ymax, zmax)
 
 ################################################################################
 
-def loft_xy_z(a, b, z0, z1):
+def loft_xy_z(a, b, zmin, zmax):
     """ Creates a blended loft between two shapes.
 
         Input shapes should be 2D (in the XY plane).
-        The resulting loft will be shape a at z0 and b at z1.
+        The resulting loft will be shape a at zmin and b at zmax.
     """
-    # ((z-z0)/(z1-z0))*b + ((z1-z)/(z1-z0))*a
-    # In the prefix string below, we add caps at z0 and z1 then
-    # factor out the division by (z1 - z0)
-    dz = z1 - z0
+    # ((z-zmin)/(zmax-zmin))*b + ((zmax-z)/(zmax-zmin))*a
+    # In the prefix string below, we add caps at zmin and zmax then
+    # factor out the division by (zmax - zmin)
+    dz = zmax - zmin
     a_, b_ = a.math, b.math
-    return Shape(('aa-Zf%(z1)g-f%(z0)g' +
-                  'Z/+*-Zf%(z0)g%(b_)s' +
-                     '*-f%(z1)gZ%(a_)sf%(dz)g') % locals(),
+    return Shape(('aa-Zf%(zmax)g-f%(zmin)g' +
+                  'Z/+*-Zf%(zmin)g%(b_)s' +
+                     '*-f%(zmax)gZ%(a_)sf%(dz)g') % locals(),
                 min(a.bounds.xmin, b.bounds.xmin),
-                min(a.bounds.ymin, b.bounds.ymin), z0,
+                min(a.bounds.ymin, b.bounds.ymin), zmin,
                 max(a.bounds.xmax, b.bounds.xmax),
-                max(a.bounds.ymax, b.bounds.ymax), z1)
+                max(a.bounds.ymax, b.bounds.ymax), zmax)
 
 ################################################################################
 
-def shear_x_y(part, y0, y1, dx0, dx1):
+def shear_x_y(part, ymin, ymax, dx0, dx1):
     dx = dx1 - dx0
-    dy = y1 - y0
+    dy = ymax - ymin
 
-    # X' = X-dx0-dx*(Y-y0)/dy
-    # X  = X'+dx0+(dx)*(Y-y0)/dy
+    # X' = X-dx0-dx*(Y-ymin)/dy
+    # X  = X'+dx0+(dx)*(Y-ymin)/dy
     return part.map(Transform(
-            '--Xf%(dx0)g/*f%(dx)g-Yf%(y0)gf%(dy)g' % locals(),
+            '--Xf%(dx0)g/*f%(dx)g-Yf%(ymin)gf%(dy)g' % locals(),
             'Y',
-            '++Xf%(dx0)g/*f%(dx)g-Yf%(y0)gf%(dy)g' % locals(),
+            '++Xf%(dx0)g/*f%(dx)g-Yf%(ymin)gf%(dy)g' % locals(),
             'Y'))
 
 ################################################################################
@@ -353,10 +353,10 @@ def taper_x_y(part, x0, y0, y1, s0, s1):
         '+f%(x0)g*-Xf%(x0)g/-+*Yf%(ds)gf%(s0y1)gf%(s1y0)gf%(dy)g' % locals(),
         'Y'))
 
+
 def iterate2d(part, i, j, dx, dy):
     """ Tiles a part in the X and Y directions.
     """
-
     if i < 1 or j < 1:
         raise ValueError("Invalid value for iteration")
 
@@ -364,6 +364,7 @@ def iterate2d(part, i, j, dx, dy):
             [move(functools.reduce(operator.or_,
                     [move(part, a*dx, 0, 0) for a in range(i)]), 0, b*dy, 0)
                 for b in range(j)])
+
 
 def iterate_polar(part, x, y, n):
     """ Tiles a part by rotating it n times about x,y
@@ -395,27 +396,27 @@ def morph(a, b, weight):
 
 ################################################################################
 
-def cylinder(x0, y0, z0, z1, r):
-    return extrude_z(circle(x0, y0, r), z0, z1)
+def cylinder(x, y, zmin, zmax, r):
+    return extrude_z(circle(x, y, r), zmin, zmax)
 
-def sphere(x0, y0, z0, r):
+def sphere(x, y, z, r):
     return Shape(
-            '-r++q%sq%sq%sf%g' % (('-Xf%g' % x0) if x0 else 'X',
-                                  ('-Yf%g' % y0) if y0 else 'Y',
-                                  ('-Zf%g' % z0) if z0 else 'Z',
+            '-r++q%sq%sq%sf%g' % (('-Xf%g' % x) if x else 'X',
+                                  ('-Yf%g' % y) if y else 'Y',
+                                  ('-Zf%g' % z) if z else 'Z',
                                   r),
-            x0 - r, y0 - r, z0 - r, x0 + r, y0 + r, z0 + r)
+            x - r, y - r, z - r, x + r, y + r, z + r)
 
-def cube(x0, x1, y0, y1, z0, z1):
-    return extrude_z(rectangle(x0, x1, y0, y1), z0, z1)
+def cube(xmin, xmax, ymin, ymax, zmin, zmax):
+    return extrude_z(rectangle(xmin, xmax, ymin, ymax), zmin, zmax)
 
-def cone(x0, y0, z0, z1, r):
-    cyl = cylinder(x0, y0, z0, z1, r)
-    return taper_xy_z(cyl, x0, y0, z0, z1, 1.0, 0.0)
+def cone(x, y, zmin, zmax, r):
+    cyl = cylinder(x, y, zmin, zmax, r)
+    return taper_xy_z(cyl, x, y, zmin, zmax, 1.0, 0.0)
 
-def pyramid(x0, x1, y0, y1, z0, z1):
-    c = cube(x0, x1, y0, y1, z0, z1)
-    return taper_xy_z(c, (x0+x1)/2., (y0+y1)/2., z0, z1, 1.0, 0.0)
+def pyramid(xmin, xmax, ymin, ymax, zmin, zmax):
+    c = cube(xmin, xmax, ymin, ymax, zmin, zmax)
+    return taper_xy_z(c, (xmin+xmax)/2., (ymin+ymax)/2., zmin, zmax, 1.0, 0.0)
 
 ################################################################################
 

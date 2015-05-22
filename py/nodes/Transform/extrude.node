@@ -4,14 +4,14 @@ title('Extrude')
 
 input('_x', float)
 input('_y', float)
-input('z0', float)
-input('z1', float, 1)
+input('zmin', float, 0)
+input('zmax', float, 1)
 
 input('input', fab.types.Shape)
-output('shape', fab.shapes.extrude_z(input, z0, z1))
+output('shape', fab.shapes.extrude_z(input, zmin, zmax))
 
 # UI
-fab.ui.wireframe([(_x, _y, z0), (_x, _y, z1)], color=fab.color.green)
-fab.ui.point(_x, _y, z0, color=fab.color.green)
-fab.ui.point(_x, _y, z1, color=fab.color.green)
+fab.ui.wireframe([(_x, _y, zmin), (_x, _y, zmax)], color=fab.color.green)
+fab.ui.point(_x, _y, zmin, color=fab.color.green)
+fab.ui.point(_x, _y, zmax, color=fab.color.green)
 
