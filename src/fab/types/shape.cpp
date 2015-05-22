@@ -18,11 +18,26 @@ Shape::Shape()
 Shape::Shape(boost::python::object obj)
     : tree(NULL), r(-1), g(-1), b(-1)
 {
-    if (obj.ptr() != Py_None)
-        throw fab::ShapeError();
-
-    math = "f1.0";
-    tree = std::shared_ptr<MathTree>(parse(math.c_str()), free_tree);
+    if (obj.ptr() == Py_None)
+    {
+        math = "f1.0";
+        tree = std::shared_ptr<MathTree>(parse(math.c_str()), free_tree);
+    }
+    else // Try to extract a string from the single argument
+    {
+        boost::python::extract<std::string> e(obj);
+        if (e.check())
+        {
+            math = e();
+            tree = std::shared_ptr<MathTree>(parse(math.c_str()), free_tree);
+            if (tree == NULL)
+                throw fab::ParseError();
+        }
+        else
+        {
+            throw fab::ShapeError();
+        }
+    }
 }
 
 Shape::Shape(std::string math)
