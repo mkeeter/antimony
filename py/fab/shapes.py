@@ -399,6 +399,20 @@ def morph(a, b, weight):
 def cylinder(x, y, zmin, zmax, r):
     return extrude_z(circle(x, y, r), zmin, zmax)
 
+def cylinder_x(xmin, xmax, y, z,r):
+   from fab.types import Shape, Transform
+   # max(sqrt((Y-y)^2+(Z-z)^2)-r,max(xmin-X,X-xmax))
+   return Shape(
+      'a-r+q-Yf%(y)gq-Zf%(z)gf%(r)ga-f%(xmin)gX-Xf%(xmax)g' % locals(),
+      xmin, y-r, z-r, xmax, y+r, z+r)
+
+def cylinder_y(x, ymin, ymax, z, r):
+   from fab.types import Shape, Transform
+   # max(sqrt((X-x)^2+(Z-z)^2)-r,max(ymin-Y,Y-ymax))
+   return Shape(
+      'a-r+q-Xf%(x)gq-Zf%(z)gf%(r)ga-f%(ymin)gY-Yf%(ymax)g' % locals(),
+      x-r, ymin, z-r, x+r, ymax,z+r)
+
 def sphere(x, y, z, r):
     return Shape(
             '-r++q%sq%sq%sf%g' % (('-Xf%g' % x) if x else 'X',
@@ -409,6 +423,38 @@ def sphere(x, y, z, r):
 
 def cube(xmin, xmax, ymin, ymax, zmin, zmax):
     return extrude_z(rectangle(xmin, xmax, ymin, ymax), zmin, zmax)
+
+def rounded_cube(xmin, xmax, ymin, ymax, zmin, zmax, r):
+    """ Returns a cube with rounded corners and edges
+        r is a roundedness fraction between 0 (not rounded)
+        and 1 (completely rounded)
+    """
+    r *= min([xmax - xmin, ymax - ymin, zmax - zmin])/2
+    s = (
+        extrude_z(rectangle(xmin + r, xmax - r, ymin + r, ymax - r),
+                  zmin, zmax) |
+        extrude_z(rectangle(xmin, xmax, ymin + r, ymax - r) |
+                  rectangle(xmin + r, xmax - r, ymin, ymax),
+                  zmin + r, zmax - r)
+    )
+    for i in range(8):
+        s |= sphere((xmin + r) if (i & 1) else (xmax - r),
+                    (ymin + r) if (i & 2) else (ymax - r),
+                    (zmin + r) if (i & 4) else (zmax - r), r)
+    for i in range(4):
+        s |= cylinder(
+                (xmin + r) if (i & 1) else (xmax - r),
+                (ymin + r) if (i & 2) else (ymax - r),
+                zmin + r, zmax - r, r)
+        s |= cylinder_x(
+                xmin + r, xmax - r,
+                (ymin + r) if (i & 1) else (ymax - r),
+                (zmin + r) if (i & 2) else (zmax - r), r)
+        s |= cylinder_y(
+                (xmin + r) if (i & 1) else (xmax - r),
+                ymin + r, ymax - r,
+                (zmin + r) if (i & 2) else (zmax - r), r)
+    return s
 
 def cone(x, y, zmin, zmax, r):
     cyl = cylinder(x, y, zmin, zmax, r)

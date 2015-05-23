@@ -1,98 +1,45 @@
 # Neil Gershenfeld 1/24/15
+# Matt Keeter 5/22/15
 
 import fab
 
-title('cube corner rounded')
+title('Rounded cube (corner)')
 
-def cube_corner_rounded(x0,y0,z0,x1,y1,z1,r):
-   from fab.types import Shape, Transform
-   def cube_center(x0,y0,z0,width,height,depth):
-      # max(max(max(x0-width/2-X,X-x0-width/2),max(y0-height/2-Y,Y-y0-height/2)),
-      #    max(z0-depth/2-Z,Z-z0-depth/2))
-      xmin = x0-width/2.0
-      ymin = y0-height/2.0
-      zmin = z0-depth/2.0
-      xmax = x0+width/2.0
-      ymax = y0+height/2.0
-      zmax = z0+depth/2.0
-      return Shape(
-         'aaa-f%(xmin)gX-Xf%(xmax)ga-f%(ymin)gY-Yf%(ymax)ga-f%(zmin)gZ-Zf%(zmax)g' % locals(),
-          xmin,ymin,zmin,xmax,ymax,zmax)
-   def sphere_center(x0,y0,z0,r):
-      from fab.types import Shape, Transform
-      # sqrt((X-x0)^2+(Y-y0)^2+(Z-z0)^2)-r
-      return Shape(
-         '-r++q-Xf%(x0)gq-Yf%(y0)gq-Zf%(z0)gf%(r)g' % locals(),
-          x0-r,y0-r,z0-r,x0+r,y0+r,z0+r)
-   def cylinder_x(x0,x1,y0,z0,r):
-      from fab.types import Shape, Transform
-      # max(sqrt((Y-y0)^2+(Z-z0)^2)-r,max(x0-X,X-x1))
-      return Shape(
-         'a-r+q-Yf%(y0)gq-Zf%(z0)gf%(r)ga-f%(x0)gX-Xf%(x1)g' % locals(),
-         x0,y0-r,z0-r,x1,y0+r,z0+r)
-   def cylinder_y(x0,y0,y1,z0,r):
-      from fab.types import Shape, Transform
-      # max(sqrt((X-x0)^2+(Z-z0)^2)-r,max(y0-Y,Y-y1))
-      return Shape(
-         'a-r+q-Xf%(x0)gq-Zf%(z0)gf%(r)ga-f%(y0)gY-Yf%(y1)g' % locals(),
-         x0-r,y0,z0-r,x0+r,y1,z0+r)
-   def cylinder_z(x0,y0,z0,z1,r):
-      from fab.types import Shape, Transform
-      # max(sqrt((X-x0)^2+(Y-y0)^2)-r,max(z0-Z,Z-z1))
-      return Shape(
-         'a-r+q-Xf%(x0)gq-Yf%(y0)gf%(r)ga-f%(z0)gZ-Zf%(z1)g' % locals(),
-         x0-r,y0-r,z0,x0+r,y0+r,z1)
-   width = x1 - x0
-   height = y1 - y0
-   depth = z1 - z0
-   x0 = (x0 + x1)/2
-   y0 = (y0 + y1)/2
-   z0 = (z0 + z1)/2
-   return (
-      cube_center(x0,y0,z0,width-2*r,height-2*r,depth) |
-      cube_center(x0,y0,z0,width-2*r,height,depth-2*r) |
-      cube_center(x0,y0,z0,width,height-2*r,depth-2*r) |
-      sphere_center(x0+r-width/2.0,y0+r-height/2.0,z0+r-depth/2.0,r) |
-      sphere_center(x0-r+width/2.0,y0+r-height/2.0,z0+r-depth/2.0,r) |
-      sphere_center(x0+r-width/2.0,y0-r+height/2.0,z0+r-depth/2.0,r) |
-      sphere_center(x0+r-width/2.0,y0+r-height/2.0,z0-r+depth/2.0,r) |
-      sphere_center(x0-r+width/2.0,y0-r+height/2.0,z0+r-depth/2.0,r) |
-      sphere_center(x0-r+width/2.0,y0+r-height/2.0,z0-r+depth/2.0,r) |
-      sphere_center(x0+r-width/2.0,y0-r+height/2.0,z0-r+depth/2.0,r) |
-      sphere_center(x0-r+width/2.0,y0-r+height/2.0,z0-r+depth/2.0,r) |
-      cylinder_x(x0+r-width/2.0,x0-r+width/2.0,y0+r-height/2.0,z0+r-depth/2.0,r) |
-      cylinder_x(x0+r-width/2.0,x0-r+width/2.0,y0-r+height/2.0,z0+r-depth/2.0,r) |
-      cylinder_x(x0+r-width/2.0,x0-r+width/2.0,y0+r-height/2.0,z0-r+depth/2.0,r) |
-      cylinder_x(x0+r-width/2.0,x0-r+width/2.0,y0-r+height/2.0,z0-r+depth/2.0,r) |
-      cylinder_y(x0+r-width/2.0,y0+r-height/2.0,y0-r+height/2.0,z0+r-depth/2.0,r) |
-      cylinder_y(x0-r+width/2.0,y0+r-height/2.0,y0-r+height/2.0,z0+r-depth/2.0,r) |
-      cylinder_y(x0+r-width/2.0,y0+r-height/2.0,y0-r+height/2.0,z0-r+depth/2.0,r) |
-      cylinder_y(x0-r+width/2.0,y0+r-height/2.0,y0-r+height/2.0,z0-r+depth/2.0,r) |
-      cylinder_z(x0+r-width/2.0,y0+r-height/2.0,z0+r-depth/2.0,z0-r+depth/2.0,r) |
-      cylinder_z(x0-r+width/2.0,y0+r-height/2.0,z0+r-depth/2.0,z0-r+depth/2.0,r) |
-      cylinder_z(x0+r-width/2.0,y0-r+height/2.0,z0+r-depth/2.0,z0-r+depth/2.0,r) |
-      cylinder_z(x0-r+width/2.0,y0-r+height/2.0,z0+r-depth/2.0,z0-r+depth/2.0,r)
-      )
+input('xmin', float, -2)
+input('ymin', float, -1)
+input('zmin', float, -0.5)
+input('xmax', float, 2)
+input('ymax', float, 1)
+input('zmax', float, 0.5)
+input('r', float, 0.25)
 
-input('x0',float,-2)
-input('y0',float,-1)
-input('z0',float,-.5)
-input('x1',float,2)
-input('y1',float,1)
-input('z1',float,.5)
-input('r',float,.25)
+output('shape', fab.shapes.rounded_cube(xmin, xmax, ymin, ymax, zmin, zmax, r))
 
-output('shape',cube_corner_rounded(x0,y0,z0,x1,y1,z1,r))
+# UI
+def drag_r(this, x, y, z):
+    if abs(this.xmax - this.xmin) < abs(this.ymax - this.ymin):
+        d = abs(this.xmax - this.xmin)
+        mid = this.ymax - d / 2
+    else:
+        d = abs(this.ymax - this.ymin)
+        mid = (this.ymin + this.ymax) / 2
+    r = 1 - (y - mid) / (d/2)
+    this.r = float(min(1, max(0, r)))
 
-def drag_r(this,x,y,z):
-    dx = this.x1-x
-    dy = this.y1-y
-    dz = this.z1-z
-    this.r = math.sqrt(dx*dx+dy*dy+dz*dz)/math.sqrt(3)
+# This is the circle's radius in actual units (not a 0-1 fraction)
+r_ = r * min([xmax - xmin, ymax - ymin, zmax - zmin]) / 2
 
-fab.ui.point(x0,y0,z0)
-fab.ui.point(x1,y1,z1)
-fab.ui.point(x1-r,y1-r,z1-r,drag=drag_r,relative=False)
+fab.ui.wireframe([(xmin, ymin, zmin), (xmax, ymin, zmin),
+                  (xmax, ymax, zmin), (xmin, ymax, zmin)], close=True)
+fab.ui.wireframe([(xmin, ymin, zmax), (xmax, ymin, zmax),
+                  (xmax, ymax, zmax), (xmin, ymax, zmax)], close=True)
+fab.ui.wireframe([(xmin, ymin, zmin), (xmin, ymax, zmin),
+                  (xmin, ymax, zmax), (xmin, ymin, zmax)], close=True)
+fab.ui.wireframe([(xmax, ymin, zmin), (xmax, ymax, zmin),
+                  (xmax, ymax, zmax), (xmax, ymin, zmax)], close=True)
+fab.ui.point(xmin, ymin, zmin)
+fab.ui.point(xmax, ymax, zmax)
+fab.ui.point(xmax, ymax - r, zmax, drag=drag_r, relative=False)
 
 
 
