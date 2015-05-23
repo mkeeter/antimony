@@ -1,21 +1,29 @@
-# Neil Gershenfeld 1/24/15 
-
 import fab
 
-title('cylinder x')
+title('Cylinder (X)')
 
-def cylinder_x(x0,x1,y0,z0,r):
-   from fab.types import Shape, Transform
-   # max(sqrt((Y-y0)^2+(Z-z0)^2)-r,max(x0-X,X-x1))
-   return Shape(
-      'a-r+q-Yf%(y0)gq-Zf%(z0)gf%(r)ga-f%(x0)gX-Xf%(x1)g' % locals(),
-      x0,y0-r,z0-r,x1,y0+r,z0+r)
+input('xmin', float)
+input('xmax', float, 1)
+input('y', float)
+input('z', float)
+input('r', float, 1)
 
-input('x0',float,-1)
-input('x1',float,1)
-input('y0',float,0)
-input('z0',float,0)
-input('r',float,.25)
+output('shape', fab.shapes.cylinder_x(xmin, xmax, y, z, r))
 
-output('shape',cylinder_x(x0,x1,y0,z0,r))
+# UI
+fab.ui.wireframe([(xmin, y, z), (xmax, y, z)])
+fab.ui.wireframe([(xmin, y, z), (xmin, y, z + r)])
 
+fab.ui.wireframe([
+    (xmin, math.cos(i/36. * 2*math.pi) * r + y,
+     math.sin(i/36. * 2*math.pi) * r + z)
+    for i in range(36)], close=True)
+
+fab.ui.wireframe([
+    (xmax, math.cos(i/36. * 2*math.pi) * r + y,
+     math.sin(i/36. * 2*math.pi) * r + z)
+    for i in range(36)], close=True)
+
+fab.ui.point(xmin, y, z)
+fab.ui.point(xmax, y, z)
+fab.ui.point(xmin, y, z + r, drag=(None, None, r))
