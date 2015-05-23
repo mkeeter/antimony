@@ -2,7 +2,7 @@ import fab
 
 title('Heightmap (.png)')
 
-input('input', fab.types.Shape)
-output('shape', input)
+input('shape', fab.types.Shape)
+output('out', shape)
 
-meta.export_heightmap(input)
+meta.export_heightmap(shape)
