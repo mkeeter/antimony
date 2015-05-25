@@ -182,7 +182,7 @@ Node* get_token(const char** const input, _Bool* const failed,
     }
 
     switch(c) {
-        case ' ':   return NULL;
+        case '_':   return NULL;
 
         case 'X':   out = X; break;
         case 'Y':   out = Y; break;
