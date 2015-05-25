@@ -415,7 +415,7 @@ def cylinder_y(x, ymin, ymax, z, r):
 
 def sphere(x, y, z, r):
     return Shape(
-            '-r++q%sq%sq%sf%g' % (('-Xf%g' % x) if x else 'X',
+            '- r + + q %s q %s q %s f%g' % (('-Xf%g' % x) if x else 'X',
                                   ('-Yf%g' % y) if y else 'Y',
                                   ('-Zf%g' % z) if z else 'Z',
                                   r),

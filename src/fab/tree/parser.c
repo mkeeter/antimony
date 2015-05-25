@@ -173,8 +173,9 @@ Node* get_token(const char** const input, _Bool* const failed,
 {
     Node *lhs = NULL, *rhs = NULL, *out = NULL;
     Node *X_ = NULL, *Y_ = NULL, *Z_ = NULL;
+    char c;
 
-    char c = *((*input)++);
+    NEXTTOKEN: c = *((*input)++);
 
     if (c == 0) {
         *failed = true;
@@ -182,6 +183,7 @@ Node* get_token(const char** const input, _Bool* const failed,
     }
 
     switch(c) {
+        case ' ':   goto NEXTTOKEN;
         case '_':   return NULL;
 
         case 'X':   out = X; break;
