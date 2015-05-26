@@ -117,10 +117,27 @@ void free_node_cache(NodeCache* const c);
 
 ////////////////////////////////////////////////////////////////////////////////
 
+char *strip(const char *string, const char *remove)
+{
+  char *output = malloc(strlen(string) + 1);
+  int count = 0;
+
+  for (; *string; string++) {
+    if (!strchr(remove, *string)) {
+      output[count] = *string;
+      count++;
+    }
+  }
+  output[count] = 0;
+  return output;
+}
 
 MathTree* parse(const char* input)
 {
     _Bool failed = false;
+
+    char* trimmed_input = strip(input, "()[]\n\t ");
+    char* input_buffer = trimmed_input;
 
     // Create a cache in which nodes will be stored
     NodeCache* cache = malloc(sizeof(NodeCache));
@@ -131,15 +148,18 @@ MathTree* parse(const char* input)
     Node* Y = get_cached_node(cache, Y_n());
     Node* Z = get_cached_node(cache, Z_n());
 
+    printf("PARSING: '%s'\n",input);
+
     // Parse the string, storing nodes in the cache and receiving the head
-    Node* head = get_token(&input, &failed, X, Y, Z, cache);
+    Node* head = get_token(&trimmed_input, &failed, X, Y, Z, cache);
 
     //  Abort if:
     //      The parser failed
     //      The parser didn't return a valid head
     //          (this might be a subset of the above)
     //      The input stream isn't empty
-    if (failed || !head || *input) {
+    if (failed || !head || *trimmed_input) {
+        free(input_buffer);
         free_node_cache(cache);
         return NULL;
     }
@@ -150,7 +170,7 @@ MathTree* parse(const char* input)
     T->head = head;
 
     free_node_cache(cache);
-
+    free(input_buffer);
     return T;
 }
 
@@ -173,9 +193,7 @@ Node* get_token(const char** const input, _Bool* const failed,
 {
     Node *lhs = NULL, *rhs = NULL, *out = NULL;
     Node *X_ = NULL, *Y_ = NULL, *Z_ = NULL;
-    char c;
-
-    NEXTTOKEN: c = *((*input)++);
+    char c = *((*input)++);
 
     if (c == 0) {
         *failed = true;
@@ -183,7 +201,6 @@ Node* get_token(const char** const input, _Bool* const failed,
     }
 
     switch(c) {
-        case ' ':   goto NEXTTOKEN;
         case '_':   return NULL;
 
         case 'X':   out = X; break;
