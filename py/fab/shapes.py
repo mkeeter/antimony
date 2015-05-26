@@ -298,7 +298,7 @@ def scale_xy(part, x0, y0, sxy):
 def extrude_z(part, zmin, zmax):
     # max(part, max(zmin-Z, Z-zmax))
     return Shape(
-            'am  f1%sa-f%gZ-Zf%g' % (part.math, zmin, zmax),
+            'am__f1%sa-f%gZ-Zf%g' % (part.math, zmin, zmax),
             part.bounds.xmin, part.bounds.ymin, zmin,
             part.bounds.xmax, part.bounds.ymax, zmax)
 
