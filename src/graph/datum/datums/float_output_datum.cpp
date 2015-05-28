@@ -14,7 +14,7 @@ PyTypeObject* FloatOutputDatum::getType() const
 QString FloatOutputDatum::getString() const
 {
     if (valid)
-        return QString::number(PyFloat_AsDouble(value)) + QString(" (output)");
+        return QString::number(PyFloat_AsDouble(value));
     else
         return "Invalid output";
 }
