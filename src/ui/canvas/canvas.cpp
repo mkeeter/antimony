@@ -280,7 +280,10 @@ void Canvas::onPaste()
 
             // Select all pasted nodes.
             for (auto n : nodes)
+            {
+                n->updateName();
                 scene->getInspector(n)->setSelected(true);
+            }
 
             // Load inspector positions and apply them to the scene.
             scene->setInspectorPositions(ds.inspectors);
