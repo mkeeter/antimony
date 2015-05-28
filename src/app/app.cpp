@@ -459,6 +459,7 @@ void App::makeUI(NodeRoot* r)
                 QString(), Qt::FindDirectChildrenOnly))
     {
         n->setParent(root);
+        n->updateName();
 
         // Save all Links separately
         // (as their UI must be created after all NodeInspectors)

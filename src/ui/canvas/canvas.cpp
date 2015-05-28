@@ -273,8 +273,6 @@ void Canvas::onPaste()
             // Add _0, _1, etc suffix to all nodes.
             auto nodes = temp_root.findChildren<Node*>(
                         QString(), Qt::FindDirectChildrenOnly);
-            for (auto n : nodes)
-                n->updateName();
 
             // Safely make the UI elements (inspectors, controls, connections)
             // for all of the pasted nodes.
