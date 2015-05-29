@@ -41,5 +41,13 @@ macx {
 linux {
     QMAKE_CXXFLAGS += $$system(/usr/bin/python3-config --includes)
     QMAKE_LFLAGS   += $$system(/usr/bin/python3-config --ldflags)
-    LIBS += -lboost_python-py34 -lpython3.4m
+
+    # Even though this is in QMAKE_LFLAGS, the linker is picky about
+    # library ordering (so it needs to be here too).
+    LIBS += -lpython3.4m
+
+    # Check for different boost::python naming schemes
+    LDCONFIG = $$system(ldconfig -p|grep python)
+    contains(LDCONFIG, libboost_python-py34.so): LIBS += -lboost_python-py34
+    contains(LDCONFIG, libboost_python3.so):     LIBS += -lboost_python3
 }
