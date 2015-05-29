@@ -8,9 +8,8 @@ by way of [fabserver](http://kokompe.cba.mit.edu).
 For more details and screenshots, look at [this writeup](http://mattkeeter.com/projects/antimony).
 
 ## Try it
-*Antimony* is still under active development and should be considered
-beta software.  It's at a beta level of stability: solid, but not
-recommended for mission-critical use.
+*Antimony* is under active development.  It's at a beta level of stability:
+solid, but not recommended for mission-critical use.
 
 To get started, refer to the [build instructions](https://github.com/mkeeter/antimony/blob/develop/BUILDING.md)
 or download a [release build](https://github.com/mkeeter/antimony/releases).
