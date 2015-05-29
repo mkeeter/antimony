@@ -28,7 +28,7 @@ open antimony.app
 Linux
 -----
 Tested on a clean Xubuntu 14.04 virtual machine:  
-Install [Qt 5.4](http://www.qt.io/download-open-source/), then run
+Install [Qt 5.4](http://www.qt.io/download-open-source/#section-3), then run
 ```
 sudo apt-get install build-essential
 sudo apt-get install libpng-dev
