@@ -298,7 +298,7 @@ def scale_xy(part, x0, y0, sxy):
 def extrude_z(part, zmin, zmax):
     # max(part, max(zmin-Z, Z-zmax))
     return Shape(
-            'am  f1%sa-f%gZ-Zf%g' % (part.math, zmin, zmax),
+            'am__f1%sa-f%gZ-Zf%g' % (part.math, zmin, zmax),
             part.bounds.xmin, part.bounds.ymin, zmin,
             part.bounds.xmax, part.bounds.ymax, zmax)
 
@@ -415,7 +415,7 @@ def cylinder_y(x, ymin, ymax, z, r):
 
 def sphere(x, y, z, r):
     return Shape(
-            '-r++q%sq%sq%sf%g' % (('-Xf%g' % x) if x else 'X',
+            '(- [r (+ (+ [q%s] [q%s]) [q%s])] [f%g])' % (('-Xf%g' % x) if x else 'X',
                                   ('-Yf%g' % y) if y else 'Y',
                                   ('-Zf%g' % z) if z else 'Z',
                                   r),

@@ -70,9 +70,9 @@ Shape::Shape(std::string math, Bounds bounds)
 
 Shape Shape::map(Transform t) const
 {
-    return Shape("m" + (t.x_forward.length() ? t.x_forward : " ")
-                     + (t.y_forward.length() ? t.y_forward : " ")
-                     + (t.z_forward.length() ? t.z_forward : " ") + math,
+    return Shape("m" + (t.x_forward.length() ? t.x_forward : "_")
+                     + (t.y_forward.length() ? t.y_forward : "_")
+                     + (t.z_forward.length() ? t.z_forward : "_") + math,
                  bounds.map(t));
 }
 
