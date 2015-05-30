@@ -63,6 +63,7 @@ int main(int argc, char *argv[])
     PyObject* fab = PyImport_ImportModule("fab");
     if (!fab)
     {
+        PyErr_Print();
         QMessageBox::critical(NULL, "Import error",
                 "Import Error:<br><br>"
                 "Could not find <tt>fab</tt> Python module.<br>"
