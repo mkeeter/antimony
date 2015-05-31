@@ -286,6 +286,8 @@ void Viewport::spinTo(float new_yaw, float new_pitch)
 
 void Viewport::mousePressEvent(QMouseEvent *event)
 {
+    _dragging = false;
+
     // On right-click, show a menu of items to raise.
     if (event->button() == Qt::RightButton)
     {
@@ -336,17 +338,7 @@ void Viewport::mousePressEvent(QMouseEvent *event)
         // If there was only one item in this location, remove all of the
         // menu options other than 'jump to' (which in this case are the
         // separator and the single 'raise' command).
-        if (overlapping == 0) {
-            QMenu* m = new QMenu(this);
-
-            Q_ASSERT(dynamic_cast<MainWindow*>(parent()));
-            auto window = static_cast<MainWindow*>(parent());
-            window->populateMenu(m, false);
-
-            m->exec(QCursor::pos());
-            m->deleteLater();
-        }
-        else if (overlapping == 1)
+        if (overlapping == 1)
             while (menu->actions().back() != jump_to)
                 menu->removeAction(menu->actions().back());
 
@@ -385,6 +377,8 @@ void Viewport::mousePressEvent(QMouseEvent *event)
 
 void Viewport::mouseMoveEvent(QMouseEvent *event)
 {
+    _dragging = true;
+
     QGraphicsView::mouseMoveEvent(event);
     if (scene->mouseGrabberItem() == NULL)
     {
@@ -409,6 +403,24 @@ void Viewport::mouseMoveEvent(QMouseEvent *event)
     // coordinates), force a redraw on mouse motion.
     if (getAxis().first)
         scene->invalidate(QRect(),QGraphicsScene::ForegroundLayer);
+}
+
+void Viewport::mouseReleaseEvent(QMouseEvent *event)
+{
+    QGraphicsView::mouseReleaseEvent(event);
+    if (event->button() == Qt::RightButton && !_dragging)
+    {
+        QMenu* m = new QMenu(this);
+
+        Q_ASSERT(dynamic_cast<MainWindow*>(parent()));
+        auto window = static_cast<MainWindow*>(parent());
+        window->populateMenu(m, false);
+
+        m->exec(QCursor::pos());
+        m->deleteLater();
+    }
+
+    _dragging = false;
 }
 
 void Viewport::setYaw(float y)

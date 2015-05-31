@@ -67,7 +67,7 @@ void Canvas::mousePressEvent(QMouseEvent* event)
             if (event->button() == Qt::LeftButton) {
                 click_pos = mapToScene(event->pos());
             }
-            else {
+            else if (event->button() == Qt::RightButton) {
                 QMenu* m = new QMenu(this);
 
                 Q_ASSERT(dynamic_cast<MainWindow*>(parent()));
