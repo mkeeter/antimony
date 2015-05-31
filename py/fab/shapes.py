@@ -241,9 +241,42 @@ def reflect_z(part, z0=0):
         '', '', '-*f2f%gZ' % z0,
         '', '', '-*f2f%gZ' % z0))
 
-def reflect_xy(part):
-    return part.map(Transform(
-        'Y', 'X', 'Y', 'X'))
+def reflect_xy(part, x0=0, y0=0):
+   # X' = x0 + (Y-y0)
+   # Y' = y0 + (X-x0)
+   # X = x0 + (Y'-y0)
+   # Y = y0 + (X'-x0)
+   return part.map(Transform(
+      '+f%(x0)g-Yf%(y0)g' % locals(),
+      '+f%(y0)g-Xf%(x0)g' % locals(),
+      '+f%(x0)g-Yf%(y0)g' % locals(),
+      '+f%(y0)g-Xf%(x0)g' % locals()))
+
+def reflect_yz(part, y0=0, z0=0):
+   # Y' = y0 + (Z-z0)
+   # Z' = z0 + (Y-y0)
+   # Y = y0 + (Z'-z0)
+   # Z = z0 + (Y'-y0)
+   return part.map(Transform(
+      'X',
+      '+f%(y0)g-Zf%(z0)g' % locals(),
+      '+f%(z0)g-Yf%(y0)g' % locals(),
+      'X',
+      '+f%(y0)g-Zf%(z0)g' % locals(),
+      '+f%(z0)g-Yf%(y0)g' % locals()))
+
+def reflect_xz(part, x0=0, z0=0):
+   # X' = x0 + (Z-z0)
+   # Z' = z0 + (X-x0)
+   # X = x0 + (Z'-z0)
+   # Z = z0 + (X'-x0)
+   return part.map(Transform(
+      '+f%(x0)g-Zf%(z0)g' % locals(),
+      'Y',
+      '+f%(z0)g-Xf%(x0)g' % locals(),
+      '+f%(x0)g-Zf%(z0)g' % locals(),
+      'Y',
+      '+f%(z0)g-Xf%(x0)g' % locals()))
 
 ################################################################################
 
@@ -505,19 +538,6 @@ def rotate_y(part, angle, x0=0, z0=0):
             x0, 0, z0)
 
 rotate_z = rotate
-
-################################################################################
-
-def reflect_z(part, z0=0):
-    return part.map(Transform(
-        'X', 'Y', '-*f2f%gZ' % z0 if z0 else 'nZ',
-        'X', 'Y', '-*f2f%gZ' % z0 if z0 else 'nZ'))
-
-def reflect_xz(part):
-    return part.map(Transform('Z', 'Y', 'X', 'Z', 'Y', 'X'))
-
-def reflect_yz(part):
-    p = part.map(Transform('X', 'Z', 'Y', 'X', 'Z', 'Y'))
 
 ################################################################################
 
