@@ -12,7 +12,7 @@ input('sx', float, 2)
 input('sy', float, 0.5)
 
 input('shape', fab.types.Shape)
-output('out', fab.shapes.scale_xy(shape, x0, y0, sx, sy))
+output('scaled', fab.shapes.scale_xy(shape, x0, y0, sx, sy))
 
 # UI
 fab.ui.wireframe([(x0 + sx, y0, _z), (x0, y0, _z), (x0, y0 + sy, _z)],

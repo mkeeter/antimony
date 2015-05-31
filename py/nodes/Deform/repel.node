@@ -6,9 +6,9 @@ input('x', float)
 input('y', float)
 input('z', float)
 input('r', float, 1)
-input('input', fab.types.Shape)
+input('shape', fab.types.Shape)
 
-output('shape', fab.shapes.repel(input, x, y, z, r))
+output('repelled', fab.shapes.repel(shape, x, y, z, r))
 
 # UI
 fab.ui.wireframe([

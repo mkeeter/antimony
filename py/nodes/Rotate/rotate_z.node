@@ -7,8 +7,8 @@ input('y', float)
 input('_z', float)
 input('a', float, 45)
 
-input('input', fab.types.Shape)
-output('shape', fab.shapes.rotate_z(input, a, x, y))
+input('shape', fab.types.Shape)
+output('rotated', fab.shapes.rotate_z(shape, a, x, y))
 
 # UI
 rad = math.radians(a)

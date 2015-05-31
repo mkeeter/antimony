@@ -9,8 +9,8 @@ input('dx', float, 1)
 input('dy', float, 1)
 input('dz', float, 1)
 
-input('input', fab.types.Shape)
-output('shape', fab.shapes.translate(input, dx, dy, dz))
+input('shape', fab.types.Shape)
+output('out', fab.shapes.translate(shape, dx, dy, dz))
 
 # UI
 fab.ui.wireframe([(_x, _y, _z),

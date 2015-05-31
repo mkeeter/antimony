@@ -6,8 +6,8 @@ input('x', float)
 input('y', float)
 input('z', float)
 
-input('input', fab.types.Shape)
-output('shape', fab.shapes.recenter(input, x, y, z))
+input('shape', fab.types.Shape)
+output('out', fab.shapes.recenter(shape, x, y, z))
 
 # UI
 fab.ui.wireframe([(x, y - 0.3, z),

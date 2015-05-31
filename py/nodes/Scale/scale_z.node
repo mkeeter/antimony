@@ -6,8 +6,8 @@ input('_x', float)
 input('_y', float)
 input('z0', float)
 input('s', float, 1)
-input('input', fab.types.Shape)
-output('shape', fab.shapes.scale_z(input, z0, s))
+input('shape', fab.types.Shape)
+output('scaled', fab.shapes.scale_z(shape, z0, s))
 
 # UI
 kwargs = {'color':fab.color.teal}

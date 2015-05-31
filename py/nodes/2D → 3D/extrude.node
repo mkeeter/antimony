@@ -7,8 +7,8 @@ input('_y', float)
 input('zmin', float, 0)
 input('zmax', float, 1)
 
-input('input', fab.types.Shape)
-output('shape', fab.shapes.extrude_z(input, zmin, zmax))
+input('shape', fab.types.Shape)
+output('out', fab.shapes.extrude_z(shape, zmin, zmax))
 
 # UI
 fab.ui.wireframe([(_x, _y, zmin), (_x, _y, zmax)], color=fab.color.green)

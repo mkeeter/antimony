@@ -10,7 +10,7 @@ input('y0',float,0)
 input('_z', float, 0)
 
 input('shape', fab.types.Shape)
-output('out', fab.shapes.reflect_xy(shape, x0, y0))
+output('reflected', fab.shapes.reflect_xy(shape, x0, y0))
 
 # UI
 fab.ui.wireframe([

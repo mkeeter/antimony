@@ -13,7 +13,7 @@ input('sy', float, 1)
 input('sz', float, 0.5)
 
 input('shape', fab.types.Shape)
-output('out', fab.shapes.scale_xyz(
+output('scaled', fab.shapes.scale_xyz(
     shape, x0, y0, z0, sx, sy, sz))
 
 # UI
