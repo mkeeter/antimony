@@ -591,6 +591,22 @@ def pyramid(xmin, xmax, ymin, ymax, z0, z1):
     out = taper_xy_z(c, (xmin+xmax)/2, (ymin+ymax)/2, z0, z1, 1, 0)
     return reflect_z(out, z0) if flipped else out
 
+def torus_x(x, y, z, R, r):
+   # sqrt((R - sqrt((Y-y)^2+(Z-z)^2))^2 + (X-x)^2)-r
+   return move(Shape(
+      '-r+q-f%(R)gr+qYqZqXf%(r)g' % locals(),
+       -r, -(R + r), -(R + r), r, R + r, R + r), x, y, z)
+
+def torus_y(x, y, z, R, r):
+   # sqrt((R - sqrt((X-x)^2+(Z-z)^2))^2 + (Y-y)^2)-r
+   return move(Shape(
+      '-r+q-f%(R)gr+qXqZqYf%(r)g' % locals(),
+       -(R+r), -r, -(R+r), R + r, r, R + r), x, y, z)
+
+def torus_z(x, y, z, R, r):
+   return move(Shape(
+      '-r+q-f%(R)gr+qXqYqZf%(r)g' % locals(),
+       -(R+r), -(R+r), -r, R + r, R + r, r), x, y, z)
 ################################################################################
 
 # 3D shapes and operations
