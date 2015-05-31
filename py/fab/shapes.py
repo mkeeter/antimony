@@ -4,6 +4,15 @@ import operator
 
 from fab.types import Shape, Transform
 
+def preserve_color(f):
+    """ Function decorator that preserves the color of the first input
+        (which is expected to be a fab.types.Shape)
+    """
+    def p(s, *args, **kwargs):
+        color = s._r, s._g, s._b
+        return set_color(f(s, *args, **kwargs), s._r, s._g, s._b)
+    return p
+
 def union(a, b):
     return a | b
 
@@ -28,9 +37,11 @@ def offset(a, o):
 def clearance(a, b, o):
     return b | (a & ~offset(b, o))
 
+@preserve_color
 def shell(a, o):
     return a & ~offset(a, -o)
 
+@preserve_color
 def buffer(a):
     return a
 
@@ -41,6 +52,7 @@ def set_color(a, r, g, b):
     q._r, q._g, q._b = r, g, b
     return q
 
+@preserve_color
 def invert(a):
     """ Inverts a shape within its existing bounds.
     """
@@ -175,6 +187,7 @@ def slot(x, y, width, height, angle=0, chamfer=0.2):
 
 ################################################################################
 
+@preserve_color
 def move(part, dx, dy, dz=0):
     return part.map(Transform(
         '-Xf%g' % dx, '-Yf%g' % dy, '-Zf%g' % dz,
@@ -182,14 +195,17 @@ def move(part, dx, dy, dz=0):
 
 translate = move
 
+@preserve_color
 def origin_xy(a, x0, y0, x1, y1):
     return move(a, x1 - x0, y1 - y0)
 
+@preserve_color
 def origin_xyz(a, x0, y0, z0, x1, y1, z1):
     return move(a, x1 - x0, y1 - y0, z1 - z0)
 
 ################################################################################
 
+@preserve_color
 def recenter(part, x, y, z):
     if not math.isinf(part.bounds.xmax) and not math.isinf(part.bounds.xmin):
         dx = x - (part.bounds.xmax + part.bounds.xmin) / 2
@@ -207,6 +223,7 @@ def recenter(part, x, y, z):
 
 ################################################################################
 
+@preserve_color
 def rotate(part, angle, x0=0, y0=0):
     p = move(part, -x0, -y0, 0)
     angle *= math.pi/180
@@ -222,6 +239,7 @@ def rotate(part, angle, x0=0, y0=0):
 
 ################################################################################
 
+@preserve_color
 def reflect_x(part, x0=0):
     # X' = 2*x0-X
     # X  = 2*x0-X'
@@ -229,18 +247,21 @@ def reflect_x(part, x0=0):
         '-*f2f%gX' % x0, '',
         '-*f2f%gX' % x0, ''))
 
+@preserve_color
 def reflect_y(part, y0=0):
     # Y' = 2*y0-Y
     return part.map(Transform(
         '', '-*f2f%gY' % y0,
         '', '-*f2f%gY' % y0))
 
+@preserve_color
 def reflect_z(part, z0=0):
     # Z' = 2*z0-Z
     return part.map(Transform(
         '', '', '-*f2f%gZ' % z0,
         '', '', '-*f2f%gZ' % z0))
 
+@preserve_color
 def reflect_xy(part, x0=0, y0=0):
    # X' = x0 + (Y-y0)
    # Y' = y0 + (X-x0)
@@ -252,6 +273,7 @@ def reflect_xy(part, x0=0, y0=0):
       '+f%(x0)g-Yf%(y0)g' % locals(),
       '+f%(y0)g-Xf%(x0)g' % locals()))
 
+@preserve_color
 def reflect_yz(part, y0=0, z0=0):
    # Y' = y0 + (Z-z0)
    # Z' = z0 + (Y-y0)
@@ -265,6 +287,7 @@ def reflect_yz(part, y0=0, z0=0):
       '+f%(y0)g-Zf%(z0)g' % locals(),
       '+f%(z0)g-Yf%(y0)g' % locals()))
 
+@preserve_color
 def reflect_xz(part, x0=0, z0=0):
    # X' = x0 + (Z-z0)
    # Z' = z0 + (X-x0)
@@ -280,6 +303,7 @@ def reflect_xz(part, x0=0, z0=0):
 
 ################################################################################
 
+@preserve_color
 def scale_x(part, x0, sx):
     # X' = x0 + (X-x0)/sx
     return part.map(Transform(
@@ -290,6 +314,7 @@ def scale_x(part, x0, sx):
                 if x0 else '*Xf%g' % sx,
         'Y'))
 
+@preserve_color
 def scale_y(part, y0, sy):
     # Y' = y0 + (Y-y0)/sy
     return part.map(Transform(
@@ -300,6 +325,7 @@ def scale_y(part, y0, sy):
         '+f%(y0)g*f%(sy)g-Yf%(y0)g' % locals()
                 if y0 else '*Yf%g' % sy))
 
+@preserve_color
 def scale_z(part, z0, sz):
     # Z' = z0 + (Y-y0)/sz
     # Z  = (Z'-z0)*sz + z0
@@ -311,6 +337,7 @@ def scale_z(part, z0, sz):
         '+f%(z0)g*f%(sz)g-Zf%(z0)g' % locals()
                 if z0 else '*Zf%g' % sz))
 
+@preserve_color
 def scale_xy(part, x0, y0, sxy):
     # X' = x0 + (X-x0)/sx
     # Y' = y0 + (Y-y0)/sy
@@ -328,6 +355,7 @@ def scale_xy(part, x0, y0, sxy):
 
 ################################################################################
 
+@preserve_color
 def extrude_z(part, zmin, zmax):
     # max(part, max(zmin-Z, Z-zmax))
     return Shape(
@@ -358,6 +386,7 @@ def loft_xy_z(a, b, zmin, zmax):
 
 ################################################################################
 
+@preserve_color
 def shear_x_y(part, ymin, ymax, dx0, dx1):
     dx = dx1 - dx0
     dy = ymax - ymin
@@ -372,6 +401,7 @@ def shear_x_y(part, ymin, ymax, dx0, dx1):
 
 ################################################################################
 
+@preserve_color
 def taper_x_y(part, x0, y0, y1, s0, s1):
     dy = y1 - y0
     ds = s1 - s0
@@ -387,6 +417,7 @@ def taper_x_y(part, x0, y0, y1, s0, s1):
         'Y'))
 
 
+@preserve_color
 def iterate2d(part, i, j, dx, dy):
     """ Tiles a part in the X and Y directions.
     """
@@ -399,6 +430,7 @@ def iterate2d(part, i, j, dx, dy):
                 for b in range(j)])
 
 
+@preserve_color
 def iterate_polar(part, x, y, n):
     """ Tiles a part by rotating it n times about x,y
     """
@@ -509,6 +541,7 @@ def pyramid(xmin, xmax, ymin, ymax, z0, z1):
 
 # 3D shapes and operations
 
+@preserve_color
 def rotate_x(part, angle, y0=0, z0=0):
     p = move(part, 0, -y0, -z0)
     angle *= math.pi/180
@@ -523,6 +556,7 @@ def rotate_x(part, angle, y0=0, z0=0):
              '+*f%(sa)gY*f%(nca)gZ' % locals())),
         0, y0, z0)
 
+@preserve_color
 def rotate_y(part, angle, x0=0, z0=0):
 
     p = move(part, -x0, 0, -z0)
@@ -541,6 +575,7 @@ rotate_z = rotate
 
 ################################################################################
 
+@preserve_color
 def shear_x_z(part, z0, z1, dx0, dx1):
     #   X' = X-dx0-(dx1-dx0)*(Z-z0)/(z1-z0)
     #   X = X'+dx0+(dx1-dx0)*(Z-z0)/(z1-z0)
@@ -550,6 +585,7 @@ def shear_x_z(part, z0, z1, dx0, dx1):
 
 ################################################################################
 
+@preserve_color
 def taper_xy_z(part, x0, y0, z0, z1, s0, s1):
 
     dz = z1 - z0
@@ -572,6 +608,7 @@ def taper_xy_z(part, x0, y0, z0, z1, s0, s1):
 
 ################################################################################
 
+@preserve_color
 def revolve_y(a):
     ''' Revolve a part in the XY plane about the Y axis. '''
     #   X' = +/- sqrt(X**2 + Z**2)
@@ -582,6 +619,7 @@ def revolve_y(a):
                                     m, a.bounds.ymax,  m)
 
 
+@preserve_color
 def revolve_x(a):
     ''' Revolve a part in the XY plane about the X axis. '''
     #   Y' = +/- sqrt(Y**2 + Z**2)
@@ -591,12 +629,14 @@ def revolve_x(a):
     return Shape((pos | neg).math, a.bounds.xmin, -m, -m,
                                    a.bounds.xmax,  m,  m)
 
+@preserve_color
 def revolve_xy_x(a, y):
     """ Revolves the given shape about the x-axis
         (offset by the given y value)
     """
     return move(revolve_x(move(a, 0, -y)), 0, y)
 
+@preserve_color
 def revolve_xy_y(a, x):
     """ Revolves the given shape about the y-axis
         (offset by the given x value)
@@ -605,6 +645,7 @@ def revolve_xy_y(a, x):
 
 ################################################################################
 
+@preserve_color
 def attract(part, x, y, z, r):
 
     # Shift the part so that it is centered
@@ -623,6 +664,7 @@ def attract(part, x, y, z, r):
         part.bounds.xmax + b, part.bounds.ymax + b, part.bounds.zmax + b),
         x, y, z)
 
+@preserve_color
 def repel(part, x, y, z, r):
     # Shift the part so that it is centered
     part = move(part, -x, -y, -z)
@@ -641,6 +683,7 @@ def repel(part, x, y, z, r):
 
 ################################################################################
 
+@preserve_color
 def twist_xy_z(part, x, y, z0, z1, t0, t1):
     # First, we'll move and scale so that the relevant part of the model
     # is at x=y=0 and scaled so that z is between 0 and 1.
