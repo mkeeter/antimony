@@ -286,8 +286,62 @@ void Viewport::spinTo(float new_yaw, float new_pitch)
 
 void Viewport::mousePressEvent(QMouseEvent *event)
 {
+    _dragging = false;
+
+    QGraphicsView::mousePressEvent(event);
+
+    // If the event hasn't been accepted, record click position for
+    // panning / rotation on mouse drag.
+    if (!event->isAccepted())
+    {
+        if (event->button() == Qt::LeftButton)
+        {
+            _click_pos = mapToScene(event->pos());
+            _click_pos_world = sceneToWorld(_click_pos);
+        }
+        else
+        {
+            _click_pos = event->pos();
+        }
+    }
+}
+
+void Viewport::mouseMoveEvent(QMouseEvent *event)
+{
+    _dragging = true;
+
+    QGraphicsView::mouseMoveEvent(event);
+    if (scene->mouseGrabberItem() == NULL)
+    {
+        if (event->buttons() == Qt::LeftButton)
+        {
+            pan(_click_pos_world - sceneToWorld(mapToScene(event->pos())));
+        }
+        else if (event->buttons() == Qt::RightButton && !angle_locked)
+        {
+            QPointF d = _click_pos - event->pos();
+            pitch = fmin(0, fmax(-M_PI, pitch - 0.01 * d.y()));
+            yaw = fmod(yaw + M_PI - 0.01 * d.x(), M_PI*2) - M_PI;
+
+            _click_pos = event->pos();
+            update();
+            scene->invalidate(QRect(),QGraphicsScene::ForegroundLayer);
+            emit(viewChanged());
+        }
+    }
+
+    // If we're on an axis (which means the viewport is showing mouse
+    // coordinates), force a redraw on mouse motion.
+    if (getAxis().first)
+        scene->invalidate(QRect(),QGraphicsScene::ForegroundLayer);
+}
+
+void Viewport::mouseReleaseEvent(QMouseEvent *event)
+{
+    QGraphicsView::mouseReleaseEvent(event);
+
     // On right-click, show a menu of items to raise.
-    if (event->button() == Qt::RightButton)
+    if (event->button() == Qt::RightButton && !_dragging)
     {
         // Find the top-level MainWindow and attach the menu to it
         QObject* w = this;
@@ -351,54 +405,23 @@ void Viewport::mousePressEvent(QMouseEvent *event)
                     chosen->data().value<QGraphicsItem*>());
             raised->setZValue(0.1);
         }
+        else if (overlapping == 0)
+        {
+            QMenu* m = new QMenu(this);
+
+            Q_ASSERT(dynamic_cast<MainWindow*>(parent()));
+            auto window = static_cast<MainWindow*>(parent());
+            window->populateMenu(m, false);
+
+            m->exec(QCursor::pos());
+            m->deleteLater();
+        }
+
 
         menu->deleteLater();
     }
 
-    QGraphicsView::mousePressEvent(event);
-
-    // If the event hasn't been accepted, record click position for
-    // panning / rotation on mouse drag.
-    if (!event->isAccepted())
-    {
-        if (event->button() == Qt::LeftButton)
-        {
-            _click_pos = mapToScene(event->pos());
-            _click_pos_world = sceneToWorld(_click_pos);
-        }
-        else
-        {
-            _click_pos = event->pos();
-        }
-    }
-}
-
-void Viewport::mouseMoveEvent(QMouseEvent *event)
-{
-    QGraphicsView::mouseMoveEvent(event);
-    if (scene->mouseGrabberItem() == NULL)
-    {
-        if (event->buttons() == Qt::LeftButton)
-        {
-            pan(_click_pos_world - sceneToWorld(mapToScene(event->pos())));
-        }
-        else if (event->buttons() == Qt::RightButton && !angle_locked)
-        {
-            QPointF d = _click_pos - event->pos();
-            pitch = fmin(0, fmax(-M_PI, pitch - 0.01 * d.y()));
-            yaw = fmod(yaw + M_PI - 0.01 * d.x(), M_PI*2) - M_PI;
-
-            _click_pos = event->pos();
-            update();
-            scene->invalidate(QRect(),QGraphicsScene::ForegroundLayer);
-            emit(viewChanged());
-        }
-    }
-
-    // If we're on an axis (which means the viewport is showing mouse
-    // coordinates), force a redraw on mouse motion.
-    if (getAxis().first)
-        scene->invalidate(QRect(),QGraphicsScene::ForegroundLayer);
+    _dragging = false;
 }
 
 void Viewport::setYaw(float y)
@@ -655,4 +678,3 @@ void Viewport::setScale(float s)
     scene->invalidate(QRect(), QGraphicsScene::ForegroundLayer);
     emit(viewChanged());
 }
-
