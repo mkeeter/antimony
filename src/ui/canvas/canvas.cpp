@@ -63,8 +63,21 @@ void Canvas::customizeUI(Ui::MainWindow* ui)
 void Canvas::mousePressEvent(QMouseEvent* event)
 {
     QGraphicsView::mousePressEvent(event);
-    if (!event->isAccepted() && event->button() == Qt::LeftButton)
-        click_pos = mapToScene(event->pos());
+    if (!event->isAccepted()) {
+            if (event->button() == Qt::LeftButton) {
+                click_pos = mapToScene(event->pos());
+            }
+            else {
+                QMenu* m = new QMenu(this);
+
+                Q_ASSERT(dynamic_cast<MainWindow*>(parent()));
+                auto window = static_cast<MainWindow*>(parent());
+                window->populateMenu(m, false);
+
+                m->exec(QCursor::pos());
+                m->deleteLater();
+            }
+    }
 }
 
 void Canvas::mouseReleaseEvent(QMouseEvent* event)
