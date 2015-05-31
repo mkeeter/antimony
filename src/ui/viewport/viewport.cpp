@@ -336,7 +336,17 @@ void Viewport::mousePressEvent(QMouseEvent *event)
         // If there was only one item in this location, remove all of the
         // menu options other than 'jump to' (which in this case are the
         // separator and the single 'raise' command).
-        if (overlapping == 1)
+        if (overlapping == 0) {
+            QMenu* m = new QMenu(this);
+
+            Q_ASSERT(dynamic_cast<MainWindow*>(parent()));
+            auto window = static_cast<MainWindow*>(parent());
+            window->populateMenu(m, false);
+
+            m->exec(QCursor::pos());
+            m->deleteLater();
+        }
+        else if (overlapping == 1)
             while (menu->actions().back() != jump_to)
                 menu->removeAction(menu->actions().back());
 
@@ -655,4 +665,3 @@ void Viewport::setScale(float s)
     scene->invalidate(QRect(), QGraphicsScene::ForegroundLayer);
     emit(viewChanged());
 }
-
