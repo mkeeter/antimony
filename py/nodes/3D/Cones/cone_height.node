@@ -11,11 +11,7 @@ input('z0', float)
 input('r', float,  1)
 input('height', float, 1)
 
-if height > 0:
-    output('shape', fab.shapes.cone(x, y, z0, z0 + height, r))
-else:
-    output('shape', fab.shapes.reflect_z(
-        fab.shapes.cone(x, y, z0, z0 - height, r), z0))
+output('shape', fab.shapes.cone(x, y, z0, z0 + height, r))
 
 # UI
 fab.ui.wireframe([

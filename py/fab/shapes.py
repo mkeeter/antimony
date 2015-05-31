@@ -456,9 +456,13 @@ def rounded_cube(xmin, xmax, ymin, ymax, zmin, zmax, r):
                 (zmin + r) if (i & 2) else (zmax - r), r)
     return s
 
-def cone(x, y, zmin, zmax, r):
-    cyl = cylinder(x, y, zmin, zmax, r)
-    return taper_xy_z(cyl, x, y, zmin, zmax, 1.0, 0.0)
+def cone(x, y, z0, z1, r):
+    flipped = z1 < z0
+    if flipped:
+        z1 = 2*z0 - z1
+    cyl = cylinder(x, y, z0, z1, r)
+    out = taper_xy_z(cyl, x, y, z0, z1, 1.0, 0.0)
+    return reflect_z(out, z0) if flipped else out
 
 def pyramid(xmin, xmax, ymin, ymax, zmin, zmax):
     c = cube(xmin, xmax, ymin, ymax, zmin, zmax)

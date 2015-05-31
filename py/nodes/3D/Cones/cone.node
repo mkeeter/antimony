@@ -8,11 +8,7 @@ input('z0', float)
 input('z1', float, 1)
 input('r', float, 1)
 
-if z1 > z0:
-    output('shape', fab.shapes.cone(x, y, z0, z1, r))
-else:
-    output('shape', fab.shapes.reflect_z(
-        fab.shapes.cone(x, y, z0, 2*z0 - z1, r), z0))
+output('shape', fab.shapes.cone(x, y, z0, z1, r))
 
 # UI
 fab.ui.wireframe([
