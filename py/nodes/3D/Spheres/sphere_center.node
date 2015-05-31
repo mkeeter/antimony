@@ -1,6 +1,6 @@
 import fab
 
-title('Sphere')
+title('Sphere (center)')
 
 input('x', float)
 input('y', float)
