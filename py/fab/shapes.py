@@ -464,9 +464,13 @@ def cone(x, y, z0, z1, r):
     out = taper_xy_z(cyl, x, y, z0, z1, 1.0, 0.0)
     return reflect_z(out, z0) if flipped else out
 
-def pyramid(xmin, xmax, ymin, ymax, zmin, zmax):
-    c = cube(xmin, xmax, ymin, ymax, zmin, zmax)
-    return taper_xy_z(c, (xmin+xmax)/2., (ymin+ymax)/2., zmin, zmax, 1.0, 0.0)
+def pyramid(xmin, xmax, ymin, ymax, z0, z1):
+    flipped = z1 < z0
+    if flipped:
+        z1 = 2*z0 - z1
+    c = cube(xmin, xmax, ymin, ymax, z0, z1)
+    out = taper_xy_z(c, (xmin+xmax)/2, (ymin+ymax)/2, z0, z1, 1, 0)
+    return reflect_z(out, z0) if flipped else out
 
 ################################################################################
 
