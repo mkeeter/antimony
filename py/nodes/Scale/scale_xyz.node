@@ -1,32 +1,34 @@
 # Neil Gershenfeld 1/24/15
+# Matt Keeter 5/13/15
 
 import fab
 
-title('scale xyz')
+title('Scale (XYZ)')
 
-def scale_xyz(part,x0,y0,z0,sx,sy,sz):
-   from fab.types import Shape, Transform
-   # X' = x0 + (X-x0)/sx
-   # Y' = y0 + (Y-y0)/sy
-   # Z' = z0 + (Z-z0)/sz
-   # X = x0 + (X'-x0)*sx
-   # Y = y0 + (Y'-y0)*sy
-   # Z = z0 + (Z'-z0)*sz
-   return part.map(Transform(
-      '+f%(x0)g/-Xf%(x0)gf%(sx)g' % locals(),
-      '+f%(y0)g/-Yf%(y0)gf%(sy)g' % locals(),
-      '+f%(z0)g/-Zf%(z0)gf%(sz)g' % locals(),
-      '+f%(x0)g*-Xf%(x0)gf%(sx)g' % locals(),
-      '+f%(y0)g*-Yf%(y0)gf%(sy)g' % locals(),
-      '+f%(z0)g*-Zf%(z0)gf%(sz)g' % locals()))
+input('x0', float, 0)
+input('y0', float, 0)
+input('z0', float, 0)
+input('sx', float, 2)
+input('sy', float, 1)
+input('sz', float, 0.5)
 
-input('x0',float,0)
-input('y0',float,0)
-input('z0',float,0)
-input('scalex',float,2)
-input('scaley',float,1)
-input('scalez',float,.5)
+input('shape', fab.types.Shape)
+output('out', fab.shapes.scale_xyz(
+    shape, x0, y0, z0, sx, sy, sz))
 
-input('shape',fab.types.Shape)
-output('transform',scale_xyz(shape,x0,y0,z0,scalex,scaley,scalez))
+# UI
+fab.ui.wireframe([(x0 + sx, y0, z0), (x0, y0, z0), (x0, y0 + sy, z0)],
+                 color=fab.color.teal)
+fab.ui.wireframe([(x0, y0, z0), (x0, y0, z0 + sz)],
+                 color=fab.color.teal)
+fab.ui.wireframe([(x0 + sx, y0 + sx/10, z0), (x0 + sx, y0 - sx/10, z0)],
+                 color=fab.color.teal)
+fab.ui.wireframe([(x0 + sy/10, y0 + sy, z0), (x0 - sy/10, y0 + sy, z0)],
+                 color=fab.color.teal)
+fab.ui.wireframe([(x0 + sz/10, y0, z0 + sz), (x0 - sz/10, y0, z0 + sz)],
+                 color=fab.color.teal)
 
+fab.ui.point(x0, y0, z0, color=fab.color.teal)
+fab.ui.point(x0 + sx, y0, z0, color=fab.color.teal, drag=(sx, None, None))
+fab.ui.point(x0, y0 + sy, z0, color=fab.color.teal, drag=(None, sy, None))
+fab.ui.point(x0, y0, z0 + sz, color=fab.color.teal, drag=(None, None, sz))

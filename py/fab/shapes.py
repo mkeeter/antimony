@@ -338,20 +338,74 @@ def scale_z(part, z0, sz):
                 if z0 else '*Zf%g' % sz))
 
 @preserve_color
-def scale_xy(part, x0, y0, sxy):
+def scale_xy(part, x0, y0, sx, sy=None):
     # X' = x0 + (X-x0)/sx
     # Y' = y0 + (Y-y0)/sy
     # X  = (X'-x0)*sx + x0
     # Y  = (Y'-y0)*sy + y0
+    if sy is None:
+        sy = sx
     return part.map(Transform(
-        '+f%(x0)g/-Xf%(x0)gf%(sxy)g' % locals()
-                if x0 else '/Xf%g' % sxy,
-        '+f%(y0)g/-Yf%(y0)gf%(sxy)g' % locals()
-                if y0 else '/Yf%g' % sxy,
-        '+f%(x0))g*f%(sxy)g-Xf%(x0)g' % locals()
-                if x0 else '*Xf%g' % sxy,
-        '+f%(y0)g*f%(sxy)g-Yf%(y0)g' % locals()
-                if y0 else '*Yf%g' % sxy))
+        '+f%(x0)g/-Xf%(x0)gf%(sx)g' % locals(),
+        '+f%(y0)g/-Yf%(y0)gf%(sy)g' % locals(),
+        '+f%(x0)g*f%(sx)g-Xf%(x0)g' % locals(),
+        '+f%(y0)g*f%(sy)g-Yf%(y0)g' % locals()))
+
+@preserve_color
+def scale_xyz(part, x0, y0, z0, sx, sy, sz):
+   # X' = x0 + (X-x0)/sx
+   # Y' = y0 + (Y-y0)/sy
+   # Z' = z0 + (Z-z0)/sz
+   # X = x0 + (X'-x0)*sx
+   # Y = y0 + (Y'-y0)*sy
+   # Z = z0 + (Z'-z0)*sz
+   return part.map(Transform(
+      '+f%(x0)g/-Xf%(x0)gf%(sx)g' % locals(),
+      '+f%(y0)g/-Yf%(y0)gf%(sy)g' % locals(),
+      '+f%(z0)g/-Zf%(z0)gf%(sz)g' % locals(),
+      '+f%(x0)g*-Xf%(x0)gf%(sx)g' % locals(),
+      '+f%(y0)g*-Yf%(y0)gf%(sy)g' % locals(),
+      '+f%(z0)g*-Zf%(z0)gf%(sz)g' % locals()))
+
+@preserve_color
+def scale_cos_xy_z(part, x0, y0, z0, z1, amp, off, t0, t1):
+   dz = z1-z0
+   t0 = math.radians(t0)
+   t1 = math.radians(t1)
+   # X' = x0 + (X-x0)/(off+amp*math.cos(theta0+(theta1-theta0)*(Z-z0)/dz))
+   # X = x0 + (X'-x0)*(off+amp*math.cos(theta0+(theta1-theta0)*(Z-z0)/dz))
+   # Y' = y0 + (Y-y0)/(off+amp*math.cos(theta0+(theta1-theta0)*(Z-z0)/dz))
+   # Y = y0 + (Y'-y0)*(off+amp*math.cos(theta0+(theta1-theta0)*(Z-z0)/dz))
+   return part.map(Transform(
+      '/+f%(x0)g-Xf%(x0)g+f%(off)g*f%(amp)gc+f%(t0)g/*-f%(t1)gf%(t0)g-Zf%(z0)gf%(dz)g' % locals(),
+      '/+f%(y0)g-Yf%(y0)g+f%(off)g*f%(amp)gc+f%(t0)g/*-f%(t1)gf%(t0)g-Zf%(z0)gf%(dz)g' % locals(),
+      'Z',
+      '*+f%(x0)g-Xf%(x0)g+f%(off)g*f%(amp)gc+f%(t0)g/*-f%(t1)gf%(t0)g-Zf%(z0)gf%(dz)g' % locals(),
+      '*+f%(y0)g-Yf%(y0)g+f%(off)g*f%(amp)gc+f%(t0)g/*-f%(t1)gf%(t0)g-Zf%(z0)gf%(dz)g' % locals(),
+      'Z'))
+
+@preserve_color
+def scale_cos_x_y(part, x0, y0, y1, amp, off, t0, t1):
+   dy = y1 - y0
+   t0 = math.radians(t0)
+   t1 = math.radians(t1)
+   # X' = x0 + (X-x0)/(off+amp*math.cos(theta0+(theta1-theta0)*(Y-y0)/dy))
+   # X = x0 + (X'-x0)*(off+amp*math.cos(theta0+(theta1-theta0)*(Y-y0)/dy))
+   return part.map(Transform(
+      '/+f%(x0)g-Xf%(x0)g+f%(off)g*f%(amp)gc+f%(t0)g/*-f%(t1)gf%(t0)g-Yf%(y0)gf%(dy)g' % locals(),
+      'Y',
+      '*+f%(x0)g-Xf%(x0)g+f%(off)g*f%(amp)gc+f%(t0)g/*-f%(t1)gf%(t0)g-Yf%(y0)gf%(dy)g' % locals(),
+      'Y'))
+
+def scale_z_r(part, x0, y0, z0, r0, s0, r1, s1):
+   dr = r1 - r0
+   # Z' = z0 + (Z-z0)*dr/((s1-s0)*sqrt((X-x0)^2+(Y-y0)^2)-s1*r0+s0*r1)
+   # Z = z0 + (Z'-z0)*((s1-s0)*sqrt((X-x0)^2+(Y-y0)^2)-s1*r0+s0*r1)/dr
+   return part.map(Transform(
+      'X', 'Y',
+      '+f%(z0)g/*-Zf%(z0)gf%(dr)g+-*-f%(s1)gf%(s0)gr+q-Xf%(x0)gq-Yf%(y0)g*f%(s1)gf%(r0)g*f%(s0)gf%(r1)g' % locals(),
+      'X', 'Y',
+      '+f%(z0)g/*-Zf%(z0)g+-*-f%(s1)gf%(s0)gr+q-Xf%(x0)gq-Yf%(y0)g*f%(s1)gf%(r0)g*f%(s0)gf%(r1)gf%(dr)g' % locals()))
 
 ################################################################################
 

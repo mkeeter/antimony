@@ -1,35 +1,23 @@
 # Neil Gershenfeld 2/8/15
+# Matt Keeter 5/31/15
 
 import fab
 
-title('scale cos xy z')
+title('Scale (cosine, XY, Z)')
 
-def scale_cos_xy_z(part,x0,y0,z0,z1,amp,off,t0,t1):
-   from fab.types import Shape, Transform
-   dz = z1-z0
-   t0 = t0*math.pi/180.0
-   t1 = t1*math.pi/180.0
-   # X' = x0 + (X-x0)/(off+amp*math.cos(theta0+(theta1-theta0)*(Z-z0)/dz))
-   # X = x0 + (X'-x0)*(off+amp*math.cos(theta0+(theta1-theta0)*(Z-z0)/dz))
-   # Y' = y0 + (Y-y0)/(off+amp*math.cos(theta0+(theta1-theta0)*(Z-z0)/dz))
-   # Y = y0 + (Y'-y0)*(off+amp*math.cos(theta0+(theta1-theta0)*(Z-z0)/dz))
-   return part.map(Transform(
-      '/+f%(x0)g-Xf%(x0)g+f%(off)g*f%(amp)gc+f%(t0)g/*-f%(t1)gf%(t0)g-Zf%(z0)gf%(dz)g' % locals(),
-      '/+f%(y0)g-Yf%(y0)g+f%(off)g*f%(amp)gc+f%(t0)g/*-f%(t1)gf%(t0)g-Zf%(z0)gf%(dz)g' % locals(),
-      'Z',
-      '*+f%(x0)g-Xf%(x0)g+f%(off)g*f%(amp)gc+f%(t0)g/*-f%(t1)gf%(t0)g-Zf%(z0)gf%(dz)g' % locals(),
-      '*+f%(y0)g-Yf%(y0)g+f%(off)g*f%(amp)gc+f%(t0)g/*-f%(t1)gf%(t0)g-Zf%(z0)gf%(dz)g' % locals(),
-      'Z'))
-
-input('x0',float,0)
-input('y0',float,0)
-input('z0',float,0)
-input('z1',float,1)
-input('amplitude',float,1)
-input('offset',float,0)
-input('theta0',float,-45)
-input('theta1',float,45)
+input('x0', float, 0)
+input('y0', float, 0)
+input('z0', float, 0)
+input('z1', float, 1)
+input('amplitude', float, 1)
+input('offset', float, 0)
+input('theta0', float, -45)
+input('theta1', float, 45)
 
 input('shape',fab.types.Shape)
-output('transform',scale_cos_xy_z(shape,x0,y0,z0,z1,amplitude,offset,theta0,theta1))
+output('transform', fab.shapes.scale_cos_xy_z(shape, x0, y0, z0, z1,
+                                   amplitude, offset, theta0, theta1))
+
+# UI
+# ...?
 

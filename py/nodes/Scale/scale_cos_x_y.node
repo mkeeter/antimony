@@ -1,30 +1,22 @@
 # Neil Gershenfeld 2/8/15
+# Matt Keeter 5/31/15
 
 import fab
 
-title('scale cos x y')
+title('Scale (cosine, XY)')
 
-def scale_cos_x_y(part,x0,y0,y1,amp,off,t0,t1):
-   from fab.types import Shape, Transform
-   dy = y1-y0
-   t0 = t0*math.pi/180.0
-   t1 = t1*math.pi/180.0
-   # X' = x0 + (X-x0)/(off+amp*math.cos(theta0+(theta1-theta0)*(Y-y0)/dy))
-   # X = x0 + (X'-x0)*(off+amp*math.cos(theta0+(theta1-theta0)*(Y-y0)/dy))
-   return part.map(Transform(
-      '/+f%(x0)g-Xf%(x0)g+f%(off)g*f%(amp)gc+f%(t0)g/*-f%(t1)gf%(t0)g-Yf%(y0)gf%(dy)g' % locals(),
-      'Y',
-      '*+f%(x0)g-Xf%(x0)g+f%(off)g*f%(amp)gc+f%(t0)g/*-f%(t1)gf%(t0)g-Yf%(y0)gf%(dy)g' % locals(),
-      'Y'))
+input('x0', float, 0)
+input('y0', float, 0)
+input('y1', float, 1)
+input('amplitude', float, 1)
+input('offset', float, 0)
+input('theta0', float, -45)
+input('theta1', float, 45)
 
-input('x0',float,0)
-input('y0',float,0)
-input('y1',float,1)
-input('amplitude',float,1)
-input('offset',float,0)
-input('theta0',float,-45)
-input('theta1',float,45)
+input('shape', fab.types.Shape)
+output('transform', fab.shapes.scale_cos_x_y(shape, x0, y0, y1,
+    amplitude, offset, theta0, theta1))
 
-input('shape',fab.types.Shape)
-output('transform',scale_cos_x_y(shape,x0,y0,y1,amplitude,offset,theta0,theta1))
+# UI
+# ...?
 
