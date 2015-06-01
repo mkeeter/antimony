@@ -1,6 +1,6 @@
 import fab
 
-title('Rotate Y')
+title('Rotate (Y)')
 
 input('x', float)
 input('_y', float)

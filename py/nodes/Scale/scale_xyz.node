@@ -3,7 +3,7 @@
 
 import fab
 
-title('Scale (XYZ)')
+title('Scale (3D)')
 
 input('x0', float, 0)
 input('y0', float, 0)
