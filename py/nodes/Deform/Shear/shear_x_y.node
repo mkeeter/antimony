@@ -1,25 +1,28 @@
 # Neil Gershenfeld 1/24/15
+# Matt Keeter 5/31/15
 
 import fab
 
-title('shear x y')
+title('Shear (2D)')
 
-def shear_x_y(part,y0,y1,dx0,dx1):
-   from fab.types import Shape, Transform
-   dy = y1-y0
-   # X' = X + (dx1*(Y-y0) + dx0*(y1-Y))/dy
-   # X = X' - (dx1*(Y-y0) + dx0*(y1-Y))/dy
-   return part.map(Transform(
-      '-X/+*f%(dx1)g-Yf%(y0)g*f%(dx0)g-f%(y1)gYf%(dy)g' % locals(),
-      'Y',
-      '+X/+*f%(dx1)g-Yf%(y0)g*f%(dx0)g-f%(y1)gYf%(dy)g' % locals(),
-      'Y'))
+input('y0', float, 0)
+input('y1', float, 1)
+input('dx0', float, -1)
+input('dx1', float, 1)
 
-input('y0',float,0)
-input('y1',float,1)
-input('dx0',float,-1)
-input('dx1',float,1)
+input('shape', fab.types.Shape)
+output('sheared', fab.shapes.shear_x_y(shape, y0, y1, dx0, dx1))
 
-input('shape',fab.types.Shape)
-output('transform',shear_x_y(shape,y0,y1,dx0,dx1))
+# UI
+dy = abs(y1 - y0)
+fab.ui.wireframe([(dx0, y0, 0), (dx1, y1, 0)], color=fab.color.teal)
+fab.ui.wireframe([(dx0 - dy/5, y0, 0), (dx0 + dy/5, y0, 0)],
+        color=fab.color.teal)
+fab.ui.wireframe([(dx1 - dy/5, y1, 0), (dx1 + dy/5, y1, 0)],
+        color=fab.color.teal)
+fab.ui.point(dx0, y0, 0, color=fab.color.teal)
+fab.ui.point(dx1, y1, 0, color=fab.color.teal)
+
+
+
 

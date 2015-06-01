@@ -453,6 +453,51 @@ def shear_x_y(part, ymin, ymax, dx0, dx1):
             '++Xf%(dx0)g/*f%(dx)g-Yf%(ymin)gf%(dy)g' % locals(),
             'Y'))
 
+@preserve_color
+def shear_xy_z(part, zmin, zmax, dx0, dy0, dx1, dy1):
+    dx = dx1 - dx0
+    dy = dy1 - dy0
+    dz = zmax - zmin
+
+    # X' = X-dx0-dx*(Z-zmin)/dz
+    # Y' = Y-dy0-dy*(Z-zmin)/dz
+    # X  = X'+dx0+(dx)*(Y-ymin)/dy
+    # Y  = Y'+dy0+(dy)*(Y-ymin)/dy
+    return part.map(Transform(
+            '--Xf%(dx0)g/*f%(dx)g-Zf%(zmin)gf%(dz)g' % locals(),
+            '--Yf%(dy0)g/*f%(dy)g-Zf%(zmin)gf%(dz)g' % locals(),
+            '++Xf%(dx0)g/*f%(dx)g-Zf%(zmin)gf%(dz)g' % locals(),
+            '++Yf%(dy0)g/*f%(dy)g-Zf%(zmin)gf%(dz)g' % locals()))
+
+@preserve_color
+def shear_cos_xy_z(part, z0, z1, ampx, offx, ampy, offy, t0, t1):
+   dz = z1-z0
+   t0 = math.radians(t0)
+   t1 = math.radians(t1)
+   # X' = X-(offx+ampx*math.cos(theta0+(theta1-theta0)*(Z-z0)/dz))
+   # X = X'+(offx+ampx*math.cos(theta0+(theta1-theta0)*(Z-z0)/dz))
+   # Y' = Y-(offy+ampy*math.cos(theta0+(theta1-theta0)*(Z-z0)/dz))
+   # Y = Y'+(offy+ampy*math.cos(theta0+(theta1-theta0)*(Z-z0)/dz))
+   return part.map(Transform(
+      '-X+f%(offx)g*f%(ampx)gc+f%(t0)g/*-f%(t1)gf%(t0)g-Zf%(z0)gf%(dz)g' % locals(),
+      '-Y+f%(offy)g*f%(ampy)gc+f%(t0)g/*-f%(t1)gf%(t0)g-Zf%(z0)gf%(dz)g' % locals(),
+      'Z',
+      '+X+f%(offx)g*f%(ampx)gc+f%(t0)g/*-f%(t1)gf%(t0)g-Zf%(z0)gf%(dz)g' % locals(),
+      '+Y+f%(offy)g*f%(ampy)gc+f%(t0)g/*-f%(t1)gf%(t0)g-Zf%(z0)gf%(dz)g' % locals(),
+      'Z'))
+
+@preserve_color
+def shear_cos_x_y(part,y0,y1,amp,off,t0,t1):
+   dy = y1-y0
+   t0 = math.radians(t0)
+   t1 = math.radians(t1)
+   # X' = X-(off+amp*math.cos(theta0+(theta1-theta0)*(Y-y0)/dy))
+   # X = X'+(off+amp*math.cos(theta0+(theta1-theta0)*(Y-y0)/dy))
+   return part.map(Transform(
+      '-X+f%(off)g*f%(amp)gc+f%(t0)g/*-f%(t1)gf%(t0)g-Yf%(y0)gf%(dy)g' % locals(),
+      'Y',
+      '+X+f%(off)g*f%(amp)gc+f%(t0)g/*-f%(t1)gf%(t0)g-Yf%(y0)gf%(dy)g' % locals(),
+      'Y'))
 ################################################################################
 
 @preserve_color
