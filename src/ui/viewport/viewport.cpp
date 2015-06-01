@@ -332,10 +332,7 @@ void Viewport::mouseMoveEvent(QMouseEvent *event)
         }
     }
 
-    // If we're on an axis (which means the viewport is showing mouse
-    // coordinates), force a redraw on mouse motion.
-    if (getAxis().first)
-        scene->invalidate(QRect(),QGraphicsScene::ForegroundLayer);
+    scene->invalidate(QRect(),QGraphicsScene::ForegroundLayer);
 }
 
 void Viewport::mouseReleaseEvent(QMouseEvent *event)
@@ -550,33 +547,47 @@ void Viewport::drawForeground(QPainter* painter, const QRectF& rect)
         painter->drawLine(o.toPointF(), p.first.toPointF());
     }
 
-    // Then add a text label in the lower-left corner
-    // giving mouse coordinates (if we're near an axis)
-    QPair<char, float> axis = getAxis();
-    QPointF mouse_pos = mapToScene(mapFromGlobal(QCursor::pos()));
-    if (!sceneRect().contains(mouse_pos))
-        axis.first = '\0';
+    // If we're on an axis (which means the viewport is showing mouse
+    // coordinates), force a redraw on mouse motion.
+    if (getAxis().first)
+    {
+        // Then add a text label in the lower-left corner
+        // giving mouse coordinates (if we're near an axis)
+        QPair<char, float> axis = getAxis();
+        QPointF mouse_pos = mapToScene(mapFromGlobal(QCursor::pos()));
+        if (!sceneRect().contains(mouse_pos))
+            axis.first = '\0';
 
-    auto p = sceneToWorld(mouse_pos);
+        auto p = sceneToWorld(mouse_pos);
 
-    QPointF a = sceneRect().bottomLeft() + QPointF(10, -25);
-    QPointF b = sceneRect().bottomLeft() + QPointF(10, -10);
-    painter->setPen(QColor(axis.second*200, axis.second*200, axis.second*200));
-    if (axis.first == 'z')
-    {
-        painter->drawText(a, QString("X: %1").arg(p.x()));
-        painter->drawText(b, QString("Y: %1").arg(p.y()));
+        QPointF a = sceneRect().bottomLeft() + QPointF(10, -25);
+        QPointF b = sceneRect().bottomLeft() + QPointF(10, -10);
+        painter->setPen(QColor(axis.second*200, axis.second*200, axis.second*200));
+        if (axis.first == 'z')
+        {
+            painter->drawText(a, QString("X: %1").arg(p.x()));
+            painter->drawText(b, QString("Y: %1").arg(p.y()));
+        }
+        else if (axis.first == 'y')
+        {
+            painter->drawText(a, QString("X: %1").arg(p.x()));
+            painter->drawText(b, QString("Z: %1").arg(p.z()));
+        }
+        else if (axis.first == 'x')
+        {
+            painter->drawText(a, QString("Y: %1").arg(p.y()));
+            painter->drawText(b, QString("Z: %1").arg(p.z()));
+        }
+
     }
-    else if (axis.first == 'y')
-    {
-        painter->drawText(a, QString("X: %1").arg(p.x()));
-        painter->drawText(b, QString("Z: %1").arg(p.z()));
-    }
-    else if (axis.first == 'x')
-    {
-        painter->drawText(a, QString("Y: %1").arg(p.y()));
-        painter->drawText(b, QString("Z: %1").arg(p.z()));
-    }
+
+    /* display scale, pitch, and yaw */
+    painter->setPen(QColor(255, 255, 255));
+    QPointF top_left_info = sceneRect().topLeft();
+
+    painter->drawText(top_left_info + QPointF(10, 15), QString("scale: %1").arg(scale/100));
+    painter->drawText(top_left_info + QPointF(10, 30), QString("pitch: %1").arg(getPitch()));
+    painter->drawText(top_left_info + QPointF(10, 45), QString("yaw: %1").arg(getYaw()));
 }
 
 void Viewport::onCopy()
