@@ -18,7 +18,16 @@
     <property name="spacing">
      <number>0</number>
     </property>
-    <property name="margin">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
      <number>0</number>
     </property>
    </layout>
@@ -85,12 +94,19 @@
     <addaction name="actionPaste"/>
     <addaction name="separator"/>
    </widget>
+   <widget class="QMenu" name="menuReference">
+    <property name="title">
+     <string>Reference</string>
+    </property>
+    <addaction name="actionShapes"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menuAdd"/>
    <addaction name="menuView"/>
    <addaction name="menuWindow"/>
    <addaction name="menuHelp"/>
+   <addaction name="menuReference"/>
   </widget>
   <action name="actionNew">
    <property name="text">
@@ -202,6 +218,11 @@
    </property>
    <property name="text">
     <string>Hide UI</string>
+   </property>
+  </action>
+  <action name="actionShapes">
+   <property name="text">
+    <string>Shapes library</string>
    </property>
   </action>
  </widget>

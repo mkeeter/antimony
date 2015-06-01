@@ -20,21 +20,7 @@
 ScriptEditor::ScriptEditor(ScriptDatum* datum, QWidget* parent)
     : QPlainTextEdit(parent), datum(datum)
 {
-    QFont font;
-    font.setFamily("Courier");
-    QFontMetrics fm(font);
-    setTabStopWidth(fm.width("    "));
-    document()->setDefaultFont(font);
-
-    new SyntaxHighlighter(document());
-    setStyleSheet(QString(
-        "QPlainTextEdit {"
-        "    background-color: %1;"
-        "    color: %2;"
-        "}").arg(Colors::base00.name())
-            .arg(Colors::base04.name()));
-
-    QAbstractScrollArea::setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    styleEditor(this);
 
     connect(document(), &QTextDocument::contentsChanged,
             this, &ScriptEditor::onTextChanged);
@@ -51,6 +37,26 @@ ScriptEditor::ScriptEditor(ScriptDatum* datum, QWidget* parent)
     onDatumChanged(); // update tooltip and text
 }
 
+void ScriptEditor::styleEditor(QPlainTextEdit* ed)
+{
+    QFont font;
+    font.setFamily("Courier");
+    QFontMetrics fm(font);
+    ed->setTabStopWidth(fm.width("    "));
+    ed->document()->setDefaultFont(font);
+
+    new SyntaxHighlighter(ed->document());
+    ed->setStyleSheet(QString(
+        "QPlainTextEdit {"
+        "    background-color: %1;"
+        "    color: %2;"
+        "}").arg(Colors::base00.name())
+            .arg(Colors::base04.name()));
+
+    ed->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+}
+
+
 void ScriptEditor::customizeUI(Ui::MainWindow* ui)
 {
     ui->menuView->deleteLater();
@@ -62,6 +68,8 @@ void ScriptEditor::customizeUI(Ui::MainWindow* ui)
             this, &QPlainTextEdit::cut);
     connect(ui->actionPaste, &QAction::triggered,
             this, &QPlainTextEdit::paste);
+    connect(ui->actionShapes, &QAction::triggered,
+            this, &ScriptEditor::openShapesLibrary);
 }
 
 void ScriptEditor::onTextChanged()
@@ -117,6 +125,39 @@ void ScriptEditor::onUndoCommandAdded()
                 cursor_before, cursor_after, this));
     connect(document(), &QTextDocument::contentsChanged,
             this, &ScriptEditor::onTextChanged);
+}
+
+void ScriptEditor::openShapesLibrary()
+{
+    PyObject* fab_mod = PyImport_ImportModule("fab");
+    PyObject* shapes_mod = PyObject_GetAttrString(fab_mod, "shapes");
+    PyObject* shapes_path = PyObject_GetAttrString(shapes_mod, "__file__");
+
+    Q_ASSERT(!PyErr_Occurred());
+
+    wchar_t* w = PyUnicode_AsWideCharString(shapes_path, NULL);
+    Q_ASSERT(w);
+    auto filepath = QString::fromWCharArray(w);
+    PyMem_Free(w);
+
+    QFile shapes(filepath);
+    if (shapes.open(QIODevice::ReadOnly))
+    {
+        QTextStream in(&shapes);
+        QString txt = in.readAll();
+
+        auto ed = new QPlainTextEdit();
+        styleEditor(ed);
+        ed->document()->setPlainText(txt);
+        ed->setReadOnly(true);
+        ed->moveCursor(QTextCursor::Start);
+        ed->resize(600, 600);
+        ed->show();
+    }
+
+    Py_DECREF(fab_mod);
+    Py_DECREF(shapes_mod);
+    Py_DECREF(shapes_path);
 }
 
 bool ScriptEditor::eventFilter(QObject* obj, QEvent* event)

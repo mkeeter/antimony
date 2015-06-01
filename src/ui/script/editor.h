@@ -26,8 +26,14 @@ public slots:
 
 protected slots:
     void onUndoCommandAdded();
+    void openShapesLibrary();
 
 protected:
+    /*
+     *  Applies fixed-width font and Python syntax highlighter.
+     */
+    static void styleEditor(QPlainTextEdit* ed);
+
     /*
      *  Filter out control+Z events.
      */

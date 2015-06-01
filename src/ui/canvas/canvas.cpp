@@ -51,6 +51,7 @@ Canvas::Canvas(GraphScene* s, QWidget* parent)
 void Canvas::customizeUI(Ui::MainWindow* ui)
 {
     ui->menuView->deleteLater();
+    ui->menuReference->deleteLater();
 
     connect(ui->actionCopy, &QAction::triggered,
             this, &Canvas::onCopy);

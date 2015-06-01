@@ -66,6 +66,8 @@ Viewport::~Viewport()
 
 void Viewport::customizeUI(Ui::MainWindow* ui)
 {
+    ui->menuReference->deleteLater();
+
     QActionGroup* view_actions = new QActionGroup(this);
     view_actions->addAction(ui->actionShaded);
     view_actions->addAction(ui->actionHeightmap);
