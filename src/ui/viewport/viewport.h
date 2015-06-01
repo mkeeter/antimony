@@ -223,6 +223,7 @@ protected:
     QVector3D _click_pos_world;
     ViewSelector* view_selector;
     bool _dragging;
+    QPoint _current_pos;
 
     QOpenGLShaderProgram height_shader;
     QOpenGLShaderProgram shaded_shader;

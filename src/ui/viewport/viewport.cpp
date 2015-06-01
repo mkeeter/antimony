@@ -311,6 +311,7 @@ void Viewport::mousePressEvent(QMouseEvent *event)
 void Viewport::mouseMoveEvent(QMouseEvent *event)
 {
     _dragging = true;
+    _current_pos = event->pos();
 
     QGraphicsView::mouseMoveEvent(event);
     if (scene->mouseGrabberItem() == NULL)
@@ -581,13 +582,49 @@ void Viewport::drawForeground(QPainter* painter, const QRectF& rect)
 
     }
 
-    /* display scale, pitch, and yaw */
+    /* top left view info 'panel' */
     painter->setPen(QColor(255, 255, 255));
     QPointF top_left_info = sceneRect().topLeft();
 
-    painter->drawText(top_left_info + QPointF(10, 15), QString("scale: %1").arg(scale/100));
-    painter->drawText(top_left_info + QPointF(10, 30), QString("pitch: %1").arg(getPitch()));
-    painter->drawText(top_left_info + QPointF(10, 45), QString("yaw: %1").arg(getYaw()));
+    /* display the currently hovered item or the number of overlaps */
+    int overlapping = 0;
+    QSet<Node*> used;
+    Node *active_node = NULL;
+
+    for (auto i : items(_current_pos))
+    {
+        // Find the top-level parent of this graphics item
+        while (i->parentItem())
+            i = i->parentItem();
+
+        auto c = dynamic_cast<ControlProxy*>(i);
+        if (c && !used.contains(c->getNode()))
+        {
+            if (active_node == NULL) {
+                active_node = c->getNode();
+            }
+            auto n = c->getNode();
+            used << n;
+            overlapping++;
+        }
+    }
+
+    if (overlapping == 1) {
+        QString desc = active_node->getName() + " (" + active_node->getTitle() + ")";
+        painter->drawText(top_left_info + QPointF(10, 1*15), QString("current: %1").arg(desc));
+    }
+    else if (overlapping > 1) {
+        QString desc = active_node->getName() + " (" + active_node->getTitle() + ")";
+        painter->drawText(top_left_info + QPointF(10, 1*15), QString("below: %1, current: %2").arg(overlapping-1).arg(desc));
+    }
+    else {
+        painter->drawText(top_left_info + QPointF(10, 1*15), QString("current: <none>"));
+    }
+
+    /* display scale, pitch, and yaw */
+    painter->drawText(top_left_info + QPointF(10, 2*15), QString("scale: %1").arg(scale/100));
+    painter->drawText(top_left_info + QPointF(10, 3*15), QString("pitch: %1").arg(getPitch()));
+    painter->drawText(top_left_info + QPointF(10, 4*15), QString("yaw: %1").arg(getYaw()));
 }
 
 void Viewport::onCopy()
