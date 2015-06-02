@@ -2,7 +2,7 @@ import fab
 
 title('Mesh (.stl)')
 
-input('input', fab.types.Shape)
-output('shape', input)
+input('shape', fab.types.Shape)
+output('out', shape)
 
-meta.export_stl(input)
+meta.export_stl(shape)

@@ -2,16 +2,20 @@
 #define VIEWPORT_SCENE_H
 
 #include <QPointer>
+#include <QSharedPointer>
 #include <QGraphicsScene>
 #include <QMap>
+#include <QSet>
 #include <QList>
 
+#include "util/hash.h"
+
 class Control;
+class ControlRoot;
 class ControlProxy;
 class Datum;
 class Node;
 class Viewport;
-class RenderWorker;
 
 class ViewportScene : public QObject
 {
@@ -76,20 +80,16 @@ protected:
      */
     void makeProxyFor(Control* c, Viewport* v);
 
-    /*
-     *  Creates one or more RenderWorkers to render Datums in the
-     *  given node that produces Shapes.
-     */
-    void makeRenderWorkersFor(Node* n, Viewport* v);
+    /* Stores viewports for which we've made a QGraphicsScene */
+    QSet<QPointer<Viewport>> viewports;
 
-    /*
-     *  Make a RenderWorker for the specified Datum in the given Viewport.
+    /* Score a set of top-level control roots
+     * (which manage highlighting and glowing)
      */
-    void makeRenderWorkerFor(Datum* d, Viewport* v);
+    QMap<QPointer<Node>, QSharedPointer<ControlRoot>> controls;
 
-    QMap<QPointer<Viewport>, QGraphicsScene*> scenes;
-    QMap<QPointer<Node>, QMap<long, QPointer<Control>>> controls;
-    QMap<QPointer<Datum>, QList<QPointer<RenderWorker>>> workers;
+    /* Stores Datums for which we have created RenderWorkers */
+    QSet<QPointer<Datum>> workers;
 };
 
 #endif // VIEWPORT_SCENE_H

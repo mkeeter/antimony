@@ -1,0 +1,32 @@
+import fab
+
+title('Rotate (Z)')
+
+input('x', float)
+input('y', float)
+input('_z', float)
+input('a', float, 45)
+
+input('shape', fab.types.Shape)
+output('rotated', fab.shapes.rotate_z(shape, a, x, y))
+
+# UI
+rad = math.radians(a)
+fab.ui.wireframe([(x + math.cos(rad), y + math.sin(rad), _z),
+                  (x, y, _z),
+                  (x + 1, y, _z)], color=fab.color.teal)
+
+# Draw a semi-circular arc showing the rotation
+if int(a) % 360 != 0:
+    fab.ui.wireframe([
+        (x + math.cos(math.radians(a_)) * 0.3,
+         y + math.sin(math.radians(a_)) * 0.3, _z)
+        for a_ in range(int(a) % 360)], color=fab.color.teal)
+
+fab.ui.point(x, y, _z, color=fab.color.teal)
+
+def drag_pt(this, x, y, z):
+    this.a = math.degrees(math.atan2(y - this.y, x - this.x))
+fab.ui.point(x + math.cos(rad), y + math.sin(rad), _z,
+             color=fab.color.teal, drag=drag_pt, relative=False)
+

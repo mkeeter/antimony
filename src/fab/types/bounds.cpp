@@ -77,3 +77,17 @@ Bounds Bounds::map(Transform t) const
                   x_out.upper, y_out.upper, z_out.upper);
 
 }
+
+
+bool Bounds::is_bounded_xy() const
+{
+    return !isinf(xmin) && !isinf(ymin) &&
+           !isinf(xmax) && !isinf(ymax);
+
+}
+
+bool Bounds::is_bounded_xyz() const
+{
+    return !isinf(xmin) && !isinf(ymin) && !isinf(zmin) &&
+           !isinf(xmax) && !isinf(ymax) && !isinf(zmax);
+}

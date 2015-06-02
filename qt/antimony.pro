@@ -21,6 +21,12 @@ QMAKE_CXXFLAGS += "-D'GITREV=\"$${GITREV}$${GITDIFF}\"'"
 QMAKE_CXXFLAGS += "-D'GITTAG=\"$${GITTAG}\"'"
 QMAKE_CXXFLAGS += "-D'GITBRANCH=\"$${GITBRANCH}\"'"
 
+OLD_GL_SET = $$(OLD_GL)
+equals(OLD_GL_SET, "true") {
+  message("Using QGLWidget instead of QOpenGLWidget")
+  QMAKE_CXXFLAGS += "-DOLD_GL"
+}
+
 include(fab.pri)
 include(shared.pri)
 include(controls.pri)
@@ -103,6 +109,7 @@ HEADERS += \
     ../src/export/export_mesh.h \
     ../src/export/export_worker.h \
     ../src/export/export_heightmap.h \
+    ../src/util/hash.h \
 
 FORMS += \
     ../src/ui/forms/main_window.ui \

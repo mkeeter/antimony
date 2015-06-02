@@ -1,0 +1,23 @@
+# Neil Gershenfeld 1/25/15
+# Matt Keeter 6/13/15
+
+import fab
+
+title('Set origin (XYZ)')
+
+input('a',fab.types.Shape)
+
+input('x0', float, 0)
+input('y0', float, 0)
+input('z0', float, 0)
+input('x1', float, 1)
+input('y1', float, 1)
+input('z1', float, 1)
+
+output('out', fab.shapes.origin_xyz(a, x0, y0, z0, x1, y1, z1))
+
+# UI
+fab.ui.wireframe([(x0, y0, z0), (x1, y1, z1)], color=fab.color.green)
+fab.ui.point(x0, y0, z0, color=fab.color.green)
+fab.ui.point(x1, y1, z1, color=fab.color.green)
+

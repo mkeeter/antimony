@@ -90,6 +90,11 @@ public:
     void hideViewSelector();
 
     /*
+     *  Checks of ui_hidden is set.
+     */
+    bool isUIhidden() const { return ui_hidden; }
+
+    /*
      *  Look up which ControlProxys is attached to the given node.
      */
     QList<ControlProxy*> getControlProxies(Node* n);
@@ -145,6 +150,11 @@ protected:
     /** Pan or spin the view.
      */
     void mouseMoveEvent(QMouseEvent *event) override;
+
+    /** Display the add node menu if right-clicking
+     *  and not dragging (or interacting with a node)
+     */
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
     /** On mouse wheel action, zoom about the mouse cursor.
      */
@@ -212,12 +222,14 @@ protected:
     QPointF _click_pos;
     QVector3D _click_pos_world;
     ViewSelector* view_selector;
+    bool _dragging;
 
     QOpenGLShaderProgram height_shader;
     QOpenGLShaderProgram shaded_shader;
     QOpenGLBuffer quad_vertices;
 
     bool gl_initialized;
+    bool ui_hidden;
 };
 
 #endif // VIEWPORT_H

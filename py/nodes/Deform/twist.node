@@ -1,0 +1,17 @@
+# Neil Gershenfeld 1/24/15
+# Matt Keeter 6/13/15
+
+import fab
+
+title('Twist (Z)')
+
+input('shape', fab.types.Shape)
+input('x', float, 0)
+input('y', float, 0)
+input('z0', float, -1)
+input('z1', float, 1)
+input('theta0', float, 0)
+input('theta1', float, 90)
+
+output('twisted', fab.shapes.twist_xy_z(shape, x, y, z0, z1, theta0, theta1))
+

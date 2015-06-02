@@ -23,6 +23,8 @@ public:
     QColor getColor() const { return color; }
     bool getClose() const { return close; }
 
+    QVector3D pos() const override;;
+
 protected:
     QPainterPath path(QMatrix4x4 m) const;
 

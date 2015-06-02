@@ -36,13 +36,12 @@ void render8(MathTree* tree, Region region,
              uint8_t** img, volatile int* halt,
              void (*callback)())
 {
-    if (callback)   (*callback)();
-
     // Special interrupt system, set asynchronously by on high
     if (*halt)  return;
 
     // Render pixel-by-pixel if we're below a certain size.
     if (region.voxels > 0 && region.voxels < MIN_VOLUME) {
+        if (callback)   (*callback)();
         region8(tree, region, img);
         return;
     }
@@ -153,7 +152,7 @@ void region8(MathTree* tree, Region region, uint8_t** img)
 ////////////////////////////////////////////////////////////////////////////////
 
 void get_normals8(MathTree* tree,
-                  float* X, float* Y, float* Z,
+                  float* restrict X, float* restrict Y, float* restrict Z,
                   unsigned count, float epsilon,
                   float (*normals)[3])
 {
@@ -185,7 +184,6 @@ void get_normals8(MathTree* tree,
     for (int i=0; i < count; ++i)   Z[i] += epsilon;
     result = eval_r(tree, dummy);
     memmove(dz, result, count*sizeof(float));
-    for (int i=0; i < count; ++i)   Z[i] -= epsilon;
 
     // Calculate normals and copy over.
     for (int i=0; i < count; ++i)

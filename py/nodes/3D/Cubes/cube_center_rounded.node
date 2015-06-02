@@ -1,0 +1,50 @@
+# Neil Gershenfeld 1/24/15
+
+import fab
+
+title('Rounded cube (center)')
+
+input('x', float, 0)
+input('y', float, 0)
+input('z', float, 0)
+input('width', float, 4)
+input('height', float, 2)
+input('depth', float, 1)
+input('r', float, 0.25)
+
+xmin, xmax = x - width/2, x + width/2
+ymin, ymax = y - height/2, y + height/2
+zmin, zmax = z - depth/2, z + depth/2
+
+# This is the circle's radius in actual units (not a 0-1 fraction)
+r_ = r * min([width, height, depth])/2
+
+output('shape', fab.shapes.rounded_cube(xmin, xmax, ymin, ymax, zmin, zmax, r))
+
+def drag_hwd(this, dx, dy, dz):
+   this.width += 2*dx
+   this.height += 2*dy
+   this.depth += 2*dz
+
+# UI
+def drag_r(this, x, y, z):
+    if abs(this.width) < abs(this.height):
+        d = abs(this.width)
+        mid = this.ymax + this.height/2 - d / 2
+    else:
+        d = abs(this.height)
+        mid = this.y
+    r = 1 - (y - mid) / (d/2)
+    this.r = float(min(1, max(0, r)))
+
+fab.ui.wireframe([(xmin, ymin, zmin), (xmax, ymin, zmin),
+                  (xmax, ymax, zmin), (xmin, ymax, zmin)], close=True)
+fab.ui.wireframe([(xmin, ymin, zmax), (xmax, ymin, zmax),
+                  (xmax, ymax, zmax), (xmin, ymax, zmax)], close=True)
+fab.ui.wireframe([(xmin, ymin, zmin), (xmin, ymax, zmin),
+                  (xmin, ymax, zmax), (xmin, ymin, zmax)], close=True)
+fab.ui.wireframe([(xmax, ymin, zmin), (xmax, ymax, zmin),
+                  (xmax, ymax, zmax), (xmax, ymin, zmax)], close=True)
+fab.ui.point(x, y, z)
+fab.ui.point(x + width/2, y + height/2, z + depth/2, drag=drag_hwd)
+fab.ui.point(xmax, ymax - r_, zmax, drag=drag_r, relative=False)

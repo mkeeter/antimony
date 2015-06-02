@@ -1,6 +1,7 @@
 #include <boost/python.hpp>
 
 #include <QStringList>
+#include <QRegularExpression>
 
 #include "graph/node/node.h"
 #include "graph/node/root.h"
@@ -44,10 +45,17 @@ void Node::updateName()
 {
     Q_ASSERT(dynamic_cast<NodeRoot*>(parent()));
     auto r = static_cast<NodeRoot*>(parent());
+    QRegularExpression regex("(.*)[0-9]+");
 
     for (auto d : findChildren<NameDatum*>(QString(),
                                            Qt::FindDirectChildrenOnly))
-        d->setExpr(r->getName(d->getExpr() + "_"));
+    {
+        auto match = regex.match(d->getExpr());
+        if (match.hasMatch())
+            d->setExpr(r->getName(match.captured(1)));
+        else
+            d->setExpr(r->getName(d->getExpr() + "_"));
+    }
 }
 
 PyObject* Node::proxy(Datum* caller, bool settable)

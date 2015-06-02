@@ -1,0 +1,22 @@
+# Neil Gershenfeld 2/8/15
+# Matt Keeter 5/31/15
+
+import fab
+
+title('Scale (cosine, XY)')
+
+input('x0', float, 0)
+input('y0', float, 0)
+input('y1', float, 1)
+input('amplitude', float, 1)
+input('offset', float, 0)
+input('theta0', float, -45)
+input('theta1', float, 45)
+
+input('shape', fab.types.Shape)
+output('transform', fab.shapes.scale_cos_x_y(shape, x0, y0, y1,
+    amplitude, offset, theta0, theta1))
+
+# UI
+# ...?
+

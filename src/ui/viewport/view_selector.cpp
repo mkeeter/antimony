@@ -64,7 +64,8 @@ ViewSelector::ViewSelector(Viewport* viewport)
             << new ViewSelectorButton("left", o + QPointF(0, s), this)
             << new ViewSelectorButton("right", o + QPointF(2*s, s), this)
             << new ViewSelectorButton("back", o + QPointF(3*s, s), this)
-            << new ViewSelectorButton("bottom", o + QPointF(s, 2*s), this);
+            << new ViewSelectorButton("bottom", o + QPointF(s, 2*s), this)
+            << new ViewSelectorButton("ortho", o + QPointF(2*s, 0), this);
 
     for (auto b : buttons)
     {
@@ -86,6 +87,8 @@ ViewSelector::ViewSelector(Viewport* viewport)
             this, &ViewSelector::onBackPressed);
     connect(buttons[5], &ViewSelectorButton::pressed,
             this, &ViewSelector::onBottomPressed);
+    connect(buttons[6], &ViewSelectorButton::pressed,
+            this, &ViewSelector::onPerspectivePressed);
 
     setDefaultTextColor(Colors::base04);
 
@@ -132,4 +135,9 @@ void ViewSelector::onBackPressed()
 void ViewSelector::onFrontPressed()
 {
     emit(spinTo(0, -M_PI/2));
+}
+
+void ViewSelector::onPerspectivePressed()
+{
+    emit(spinTo(-M_PI/4, -M_PI/4));
 }

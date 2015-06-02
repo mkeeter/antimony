@@ -1,0 +1,39 @@
+# Neil Gershenfeld 1/24/15
+# Matt Keeter 5/22/15
+
+import fab
+
+title('Cube (center)')
+
+input('x', float, 0)
+input('y', float, 0)
+input('z', float, 0)
+input('width', float, 4)
+input('height', float, 2)
+input('depth', float, 1)
+
+xmin, xmax = x - width/2, x + width/2
+ymin, ymax = y - height/2, y + height/2
+zmin, zmax = z - depth/2, z + depth/2
+
+output('shape', fab.shapes.cube(xmin, xmax, ymin, ymax, zmin, zmax))
+
+# UI
+fab.ui.wireframe([(xmin, ymin, zmin), (xmax, ymin, zmin),
+                  (xmax, ymax, zmin), (xmin, ymax, zmin)], close=True)
+fab.ui.wireframe([(xmin, ymin, zmax), (xmax, ymin, zmax),
+                  (xmax, ymax, zmax), (xmin, ymax, zmax)], close=True)
+fab.ui.wireframe([(xmin, ymin, zmin), (xmin, ymax, zmin),
+                  (xmin, ymax, zmax), (xmin, ymin, zmax)], close=True)
+fab.ui.wireframe([(xmax, ymin, zmin), (xmax, ymax, zmin),
+                  (xmax, ymax, zmax), (xmax, ymin, zmax)], close=True)
+
+def drag_hwd(this, dx,dy,dz):
+   this.width += 2*dx
+   this.height += 2*dy
+   this.depth += 2*dz
+
+fab.ui.point(x, y, z)
+fab.ui.point(x + width/2.0, y + height/2.0, z + depth/2.0,
+             drag=drag_hwd)
+

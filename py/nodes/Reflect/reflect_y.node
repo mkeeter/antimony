@@ -1,0 +1,20 @@
+import fab
+
+title('Reflect (Y)')
+
+input('_x', float)
+input('y0', float)
+input('_z', float)
+
+input('shape', fab.types.Shape)
+output('reflected', fab.shapes.reflect_y(shape, y0))
+
+# UI
+fab.ui.wireframe([
+    (_x - 1, y0, _z + 1),
+    (_x + 1, y0, _z + 1),
+    (_x + 1, y0, _z - 1),
+    (_x - 1, y0, _z - 1)], color=fab.color.teal, close=True)
+
+fab.ui.point(_x, y0, _z, color=fab.color.teal)
+

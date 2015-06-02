@@ -1,0 +1,27 @@
+# Neil Gershenfeld 1/24/15
+# Matt Keeter 6/11/15
+
+import fab
+
+title('Rectangle (center)')
+
+input('x0', float, 0)
+input('y0', float, 0)
+input('width', float, 2)
+input('height', float, 1)
+
+xmin, xmax = x0 - width/2, x0 + width/2
+ymin, ymax = y0 - height/2, y0 + height/2
+
+output('shape', fab.shapes.rectangle(xmin, xmax, ymin, ymax))
+
+def drag_hw(this, x, y, z):
+   this.width = abs(2 * (x - this.x0))
+   this.height = abs(2 * (y - this.y0))
+
+# UI
+fab.ui.wireframe(
+        [(xmin, ymin, 0), (xmax, ymin, 0), (xmax, ymax, 0), (xmin, ymax, 0)],
+        close=True)
+fab.ui.point(x0, y0)
+fab.ui.point(xmax, ymax, drag=drag_hw, relative=False)

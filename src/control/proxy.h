@@ -74,8 +74,15 @@ public:
      */
     Control* getControl() const;
 
+    /*
+     *  When selection state changes, propagate upstream.
+     */
+    QVariant itemChange(GraphicsItemChange change,
+                        const QVariant& value) override;
+
 public slots:
     void redraw();
+    void selectProxy(bool s);
 
 protected:
     /*
@@ -88,6 +95,8 @@ protected:
 
     bool hover;
     QPointF click_pos;
+
+    bool changing_selection;
 };
 
 #endif // CONTROL_PROXY_H

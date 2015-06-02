@@ -30,5 +30,5 @@ PyObject* OutputDatum::getCurrentValue()
 
 QString OutputDatum::getString() const
 {
-    return "Output";
+    return "Shape";
 }

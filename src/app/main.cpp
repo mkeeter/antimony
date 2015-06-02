@@ -5,6 +5,8 @@
 #include <QMessageBox>
 #include <QSurfaceFormat>
 
+#include <iostream>
+
 #include "app/app.h"
 #include "fab/fab.h"
 #include "graph/hooks/hooks.h"
@@ -26,6 +28,24 @@ int main(int argc, char *argv[])
     // Create the Application object
     App a(argc, argv);
 
+    for (auto arg : a.arguments().mid(1))
+        if (arg.startsWith("--"))
+        {
+            if (arg == "--help")
+            {
+                std::cout << "Usage: antimony [--help] [--heightmap] [filename]"
+                          << std::endl;
+                return 0;
+            }
+            if (arg == "--heightmap")
+            {}
+            else
+            {
+                std::cerr << "Invalid command-line argument "
+                          << arg.toStdString() << std::endl;
+            }
+        }
+
     // Modify Python's default search path to include the application's
     // directory (as this doesn't happen on Linux by default)
     QString d = QCoreApplication::applicationDirPath();
@@ -42,6 +62,7 @@ int main(int argc, char *argv[])
     PyObject* fab = PyImport_ImportModule("fab");
     if (!fab)
     {
+        PyErr_Print();
         QMessageBox::critical(NULL, "Import error",
                 "Import Error:<br><br>"
                 "Could not find <tt>fab</tt> Python module.<br>"
@@ -52,7 +73,9 @@ int main(int argc, char *argv[])
 
     //PyRun_InteractiveLoop(stdin, "<stdin>");
 
-    if (a.arguments().length() == 2)
-        a.loadFile(a.arguments()[1]);
+    if (a.arguments().length() >= 2 && !a.arguments().last().startsWith("--"))
+        a.loadFile(a.arguments().last());
+
+    a.makeDefaultWindows();
     return a.exec();
 }

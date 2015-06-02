@@ -1,34 +1,25 @@
 # Neil Gershenfeld 2/14/15
+# Matt Keeter 6/12/15
 
 import fab
 
-title('polygon')
+title('Polygon')
 
-def polygon_radius(x0,y0,N,r):
-   from fab.types import Shape, Transform
-   # max_n((X-x0)*xn+(Y-y0)*yn-r)
-   s = 'f-1'
-   xmin = 1e10
-   xmax = -1e10
-   ymin = 1e10
-   ymax = -1e10
-   N = int(N)
-   for n in range(N):
-      xn = math.sin((2*math.pi*n)/N)
-      yn = -math.cos((2*math.pi*n)/N)
-      s = 'a'+s+'-+*-Xf'+str(x0)+'f'+str(xn)+'*-Yf'+str(y0)+'f'+str(yn)+'f'+str(r)
-      xv = x0+r*math.sin((2*math.pi*(0.5+n))/N)/math.cos((2*math.pi*0.5)/N)
-      yv = y0-r*math.cos((2*math.pi*(0.5+n))/N)/math.cos((2*math.pi*0.5)/N)
-      if (xv < xmin): xmin = xv
-      if (xv > xmax): xmax = xv
-      if (yv < ymin): ymin = yv
-      if (yv > ymax): ymax = yv
-   return Shape(s,xmin,ymin,xmax,ymax)
+input('x', float, 0)
+input('y', float, 0)
+input('N', int, 5)
+input('r', float, 1)
 
-input('x0',float,0)
-input('y0',float,0)
-input('N',float,5)
-input('r',float,1)
+output('shape', fab.shapes.move(fab.shapes.polygon_radius(x, y, r, N), x, y))
 
-output('shape',polygon_radius(x0,y0,N,r))
-
+# UI
+# (we need to do a bit of work to make the UI work for both even and
+#  odd vertex counts; otherwise it will be off for one or the other)
+a_ = 0 if (N % 2) else (math.pi / N)
+fab.ui.wireframe([
+    (x + r * math.sin(a_ + a * math.pi * 2/N),
+     y + r * math.cos(a_ + a * math.pi * 2/N), 0)
+    for a in range(N)], close=True)
+fab.ui.point(x, y)
+fab.ui.point(x + r * math.sin(a_), y + r * math.cos(a_),
+             drag=(None, r, None))

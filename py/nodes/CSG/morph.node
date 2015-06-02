@@ -1,0 +1,13 @@
+# Neil Gershenfeld 2/1/15
+# Matt Keeter 6/13/15
+
+import fab
+
+title('Morph')
+
+input('a', fab.types.Shape)
+input('b', fab.types.Shape)
+input('weight', float, 0.5)
+
+output('out', fab.shapes.morph(a, b, weight))
+

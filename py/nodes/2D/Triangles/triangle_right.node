@@ -1,0 +1,21 @@
+# Neil Gershenfeld 1/24/15
+# Matt Keeter 6/11/15
+
+import fab
+
+title('Right triangle')
+
+input('x0', float, 0)
+input('y0', float, 0)
+input('width', float, 1)
+input('height', float, 2)
+
+output('shape', fab.shapes.right_triangle(x0, y0, width, height))
+
+# UI
+fab.ui.wireframe([(x0, y0, 0), (x0 + width, y0, 0), (x0, y0 + height, 0)],
+                 close=True)
+fab.ui.point(x0, y0)
+fab.ui.point(x0 + width, y0, drag=(width, None, None))
+fab.ui.point(x0, y0 + height, drag=(None, height, None))
+

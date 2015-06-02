@@ -221,17 +221,29 @@ void MainWindow::populateUserScripts(QMenu* menu, bool recenter, Viewport* v)
         node_titles.append(title);
     }
 
+    // Put all of the nodes into the Add menu, deferring Export nodes
+    // until the end (after a separator).
     node_titles.sort();
+    QStringList deferred;
     for (auto title : node_titles)
+        if (nodes[title].first.contains("Export"))
+            deferred << title;
+        else
+            addNodeToMenu(nodes[title].first, title, menu,
+                          recenter, nodes[title].second, v);
+
+    menu->addSeparator();
+    for (auto title : deferred)
         addNodeToMenu(nodes[title].first, title, menu,
                       recenter, nodes[title].second, v);
 }
 
 void MainWindow::populateMenu(QMenu* menu, bool recenter, Viewport* v)
 {
-    // Hard-code menu names to set their order.
-    for (auto c : {"2D", "3D", "CSG", "Transform", "Iterate", "Deform"})
+    // Hard-code important menu names to set their order.
+    for (auto c : {"2D", "3D", "2D → 3D", "CSG"})
         menu->addMenu(c);
+    menu->addSeparator();
 
     populateUserScripts(menu, recenter, v);
 

@@ -48,13 +48,27 @@ QPainterPath ControlWireframe::path(QMatrix4x4 m) const
 
 void ControlWireframe::paint(QMatrix4x4 m, bool highlight, QPainter* painter)
 {
-    if (glow)
+    painter->setPen(QPen((highlight || glow) ? Colors::highlight(color)
+                                             : color, t));
+    painter->drawPath(path(m));
+}
+
+QVector3D ControlWireframe::pos() const
+{
+    QVector3D center;
+    int count = 0;
+
+    for (auto p : pts)
     {
-        painter->setBrush(Qt::NoBrush);
-        painter->setPen(QPen(QColor(255, 255, 255, Colors::base02.red()), 20));
-        painter->drawPath(path(m));
+        center += p;
+        count++;
     }
 
-    painter->setPen(QPen(highlight ? Colors::highlight(color) : color, t));
-    painter->drawPath(path(m));
+    if (close && !pts.isEmpty())
+    {
+        center += pts.front();
+        count++;
+    }
+
+    return center / count;
 }

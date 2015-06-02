@@ -104,9 +104,10 @@ public:
      *  Used to constrain the 2D -> 3D projection problem
      *  for non-relative dragging.
      */
-    virtual QVector3D pos() const { return QVector3D(); }
+    virtual QVector3D pos() const=0;
 
     bool isDeleteScheduled() const { return delete_scheduled; }
+
 public slots:
     void clearTouchedFlag();
     void deleteIfNotTouched();
@@ -115,6 +116,16 @@ signals:
     void redraw();
     void glowChanged(Node* node, bool g);
 
+    /*
+     *  When emitted, changes selection status of children proxies.
+     */
+    void changeProxySelection(bool g);
+
+    /*
+     *  When emitted, informs the parent ControlRoot of a selection change.
+     */
+    void proxySelectionChanged(bool g);
+
 protected:
     QPointer<Node> node;
     QMap<EvalDatum*, QString> datums;
@@ -122,6 +133,8 @@ protected:
     PyObject* drag_func;
     bool is_dragging;
 
+    // Defines whether the top-level ControlRoot for this node
+    // has been selected.
     bool glow;
     bool touched;
 

@@ -24,6 +24,8 @@ public:
     explicit App(int& argc, char **argv);
     ~App();
 
+    void makeDefaultWindows();
+
     /*
      *  Helper function to get running instance.
      */

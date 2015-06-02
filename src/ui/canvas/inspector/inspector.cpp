@@ -337,27 +337,24 @@ void NodeInspector::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     }
 }
 
-void NodeInspector::mousePressEvent(QGraphicsSceneMouseEvent* event)
+void NodeInspector::contextMenuEvent(QGraphicsSceneContextMenuEvent* e)
 {
-    QGraphicsItem::mousePressEvent(event);
+    Q_UNUSED(e);
 
-    if (event->button() == Qt::RightButton)
-    {
-        QString desc = node->getName() + " (" + node->getTitle() + ")";
+    QString desc = node->getName() + " (" + node->getTitle() + ")";
 
-        auto menu = new QMenu();
-        auto jump_to = new QAction("Show " + desc + " in viewport", menu);
+    auto menu = new QMenu();
+    auto jump_to = new QAction("Show " + desc + " in viewport", menu);
 
-        menu->addAction(jump_to);
-        connect(jump_to, &QAction::triggered,
-                [=](){
-                    emit static_cast<GraphScene*>(
-                        scene())->jumpTo(node);
-                });
+    menu->addAction(jump_to);
+    connect(jump_to, &QAction::triggered,
+            [=](){
+                emit static_cast<GraphScene*>(
+                    scene())->jumpTo(node);
+            });
 
-        menu->exec(QCursor::pos());
-        delete menu;
-    }
+    menu->exec(QCursor::pos());
+    delete menu;
 }
 
 void NodeInspector::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
@@ -387,12 +384,12 @@ QVariant NodeInspector::itemChange(GraphicsItemChange change, const QVariant& va
 
 void NodeInspector::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-    Q_UNUSED(event);
+    QGraphicsItem::hoverEnterEvent(event);
     emit(glowChanged(node, true));
 }
 
 void NodeInspector::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
-    Q_UNUSED(event);
+    QGraphicsItem::hoverLeaveEvent(event);
     emit(glowChanged(node, false));
 }

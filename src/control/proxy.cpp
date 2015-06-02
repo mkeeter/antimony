@@ -8,7 +8,8 @@
 #include "ui/viewport/viewport.h"
 
 ControlProxy::ControlProxy(Control* control, Viewport* viewport)
-    : control(control), viewport(viewport), hover(false)
+    : control(control), viewport(viewport), hover(false),
+      changing_selection(false)
 {
     setFlags(QGraphicsItem::ItemIsSelectable |
              QGraphicsItem::ItemIsFocusable);
@@ -18,13 +19,31 @@ ControlProxy::ControlProxy(Control* control, Viewport* viewport)
             this, &ControlProxy::deleteLater);
     connect(viewport, &Viewport::destroyed,
             this, &ControlProxy::deleteLater);
+
     connect(control, &Control::redraw,
             this, &ControlProxy::redraw);
+    connect(viewport, &Viewport::viewChanged,
+            this, &ControlProxy::redraw);
+
+    connect(control, &Control::changeProxySelection,
+            this, &ControlProxy::selectProxy);
+
+    viewport->scene->addItem(this);
+
+    if (viewport->isUIhidden())
+        hide();
 }
 
 void ControlProxy::redraw()
 {
     prepareGeometryChange();
+}
+
+void ControlProxy::selectProxy(bool s)
+{
+    changing_selection = true;
+    setSelected(s);
+    changing_selection = false;
 }
 
 QRectF ControlProxy::boundingRect() const
@@ -125,4 +144,17 @@ Node* ControlProxy::getNode() const
 Control* ControlProxy::getControl() const
 {
     return control;
+}
+
+QVariant ControlProxy::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+    if (!changing_selection && change == QGraphicsItem::ItemSelectedChange)
+    {
+        changing_selection = true;
+        emit(control->proxySelectionChanged(value.toBool()));
+        changing_selection = false;
+    }
+
+
+    return QGraphicsItem::itemChange(change, value);
 }

@@ -1,0 +1,20 @@
+# Neil Gershenfeld 2/8/15
+# Matt Keeter 5/31/15
+
+import fab
+
+title('Shear (cosine, 2D)')
+
+input('y0', float, 0)
+input('y1', float, 1)
+input('amp', float, 1)
+input('off', float, 0)
+input('theta0', float, -45)
+input('theta1', float, 45)
+
+input('shape', fab.types.Shape)
+output('sheared', fab.shapes.shear_cos_x_y(
+    shape, y0, y1, amp, off, theta0, theta1))
+
+# UI
+# ...?

@@ -1,0 +1,29 @@
+import fab
+
+title('Cylinder (Z)')
+
+input('x', float)
+input('y', float)
+input('zmin', float)
+input('zmax', float, 1)
+input('r', float, 1)
+
+output('shape', fab.shapes.cylinder(x, y, zmin, zmax, r))
+
+# UI
+fab.ui.wireframe([(x, y, zmin), (x, y, zmax)])
+fab.ui.wireframe([(x, y, zmin), (x+r, y, zmin)])
+
+fab.ui.wireframe([
+    (math.cos(i/36. * 2*math.pi) * r + x,
+     math.sin(i/36. * 2*math.pi) * r + y, zmin)
+    for i in range(36)], close=True)
+
+fab.ui.wireframe([
+    (math.cos(i/36. * 2*math.pi) * r + x,
+     math.sin(i/36. * 2*math.pi) * r + y, zmax)
+    for i in range(36)], close=True)
+
+fab.ui.point(x, y, zmin)
+fab.ui.point(x, y, zmax)
+fab.ui.point(x + r, y, zmin, drag=(r, None, None))

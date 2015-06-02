@@ -7,6 +7,7 @@
 #include "graph/node/node.h"
 #include "graph/datum/datum.h"
 #include "control/control.h"
+#include "control/control_root.h"
 #include "control/proxy.h"
 
 ViewportScene::ViewportScene(QObject* parent)
@@ -22,27 +23,31 @@ void ViewportScene::registerControl(Node* n, long index, Control* c)
     connect(c, &Control::glowChanged,
             this, &ViewportScene::glowChanged);
 
-    controls[n][index] = c;
+    if (!controls.contains(n))
+        controls[n] = QSharedPointer<ControlRoot>(new ControlRoot(n));
+    controls[n]->registerControl(index, c);
 
-    for (auto itr = scenes.begin(); itr != scenes.end(); ++itr)
-        makeProxyFor(c, itr.key());
+    for (auto v : viewports)
+        new ControlProxy(c, v);
 }
 
 Control* ViewportScene::getControl(Node* n, long index) const
 {
     if (!controls.contains(n))
         return NULL;
-    if (!controls[n].contains(index))
-        return NULL;
-    if (controls[n][index].isNull())
-        return NULL;
-    return controls[n][index];
+    return controls[n]->get(index);
 }
 
 void ViewportScene::makeRenderWorkersFor(Node* n)
 {
-    for (auto itr = scenes.begin(); itr != scenes.end(); ++itr)
-        makeRenderWorkersFor(n, itr.key());
+    for (auto d : n->findChildren<Datum*>())
+        if (RenderWorker::accepts(d))
+        {
+            workers.insert(d);
+            for (auto v : viewports)
+                connect(new RenderWorker(d, v), &RenderWorker::destroyed,
+                        this, &ViewportScene::prune);
+        }
 
     // Behold, the wonders of C++11 and Qt5:
     connect(n, &Node::datumsChanged,
@@ -55,51 +60,19 @@ Viewport* ViewportScene::newViewport()
     auto v = new Viewport(s);
     connect(v, &QObject::destroyed, s, &QObject::deleteLater);
     connect(s, &QObject::destroyed, this, &ViewportScene::prune);
-    scenes[v] = s;
+    viewports << v;
 
     prune();
 
     for (auto itr = controls.begin(); itr != controls.end(); ++itr)
-    {
-        for (auto i = itr.value().begin(); i != itr.value().end(); ++i)
-            if (!i.value().isNull())
-                makeProxyFor(i.value(), v);
-        makeRenderWorkersFor(itr.key(), v);
-    }
+        itr.value()->makeProxiesFor(v);
+
+    // Make new render workers for the added viewport
+    for (auto w : workers)
+        connect(new RenderWorker(w, v), &RenderWorker::destroyed,
+                this, &ViewportScene::prune);
 
     return v;
-}
-
-void ViewportScene::makeProxyFor(Control* c, Viewport* v)
-{
-    if (!c)
-        return;
-
-    auto p = new ControlProxy(c, v);
-    scenes[v]->addItem(p);
-
-    connect(v, &Viewport::viewChanged,
-            p, &ControlProxy::redraw);
-    connect(c, &ControlProxy::destroyed,
-            this, &ViewportScene::prune);
-}
-
-void ViewportScene::makeRenderWorkerFor(Datum* d, Viewport* v)
-{
-    auto w = new RenderWorker(d, v);
-    workers[d] << w;
-    connect(w, &RenderWorker::destroyed,
-            this, &ViewportScene::prune);
-}
-
-void ViewportScene::makeRenderWorkersFor(Node* n, Viewport* v)
-{
-    // Add a dummy (NULL) control so that this node is stored and render
-    // workers are created for it when a new viewport is made.
-    controls[n][-1] = NULL;
-    for (auto d : n->findChildren<Datum*>())
-        if (RenderWorker::accepts(d))
-            makeRenderWorkerFor(d, v);
 }
 
 void ViewportScene::prune()
@@ -108,22 +81,23 @@ void ViewportScene::prune()
 
     for (auto itr = controls.begin(); itr != controls.end(); ++itr)
         if (itr.key())
+        {
             new_controls[itr.key()] = itr.value();
+            new_controls[itr.key()]->prune();
+        }
     controls = new_controls;
 
-    QMap<QPointer<Viewport>, QGraphicsScene*> new_scenes;
-    for (auto itr = scenes.begin(); itr != scenes.end(); ++itr)
-        if (itr.key())
-            new_scenes[itr.key()] = itr.value();
-    scenes = new_scenes;
+    decltype(viewports) new_viewports;
+    for (auto itr : viewports)
+        if (itr)
+            new_viewports << itr;
+    viewports = new_viewports;
 
     decltype(workers) new_workers;
-    for (auto itr = workers.begin(); itr != workers.end(); ++itr)
-        if (itr.key())
-            for (auto w : workers[itr.key()])
-                if (w)
-                    new_workers[itr.key()] << w;
-    new_workers = workers;
+    for (auto itr : workers)
+        if (itr)
+            new_workers << itr;
+    workers = new_workers;
 }
 
 void ViewportScene::onDatumsChanged(Node* n)
@@ -132,15 +106,17 @@ void ViewportScene::onDatumsChanged(Node* n)
 
     for (auto d : n->findChildren<Datum*>())
         if (RenderWorker::accepts(d) && !workers.contains(d))
-            for (auto v = scenes.begin(); v != scenes.end(); ++v)
-                makeRenderWorkerFor(d, v.key());
+        {
+            workers.insert(d);
+            for (auto v : viewports)
+                connect(new RenderWorker(d, v), &RenderWorker::destroyed,
+                        this, &ViewportScene::prune);
+        }
 }
 
 
 void ViewportScene::onGlowChange(Node* n, bool g)
 {
     if (controls.contains(n))
-        for (auto itr = controls[n].begin(); itr != controls[n].end(); ++itr)
-            if (!itr.value().isNull())
-                itr.value()->setGlow(g);
+        controls[n]->setGlow(g);
 }

@@ -1,0 +1,44 @@
+# Neil Gershenfeld 1/24/15
+# Matt Keeter 6/11/15
+
+import fab
+
+title('Rounded rectangle (center)')
+
+input('x', float)
+input('y', float)
+input('width', float, 2)
+input('height', float, 1)
+input('r', float, 0.25)
+
+xmin, xmax = x - width/2, x + width/2
+ymin, ymax = y - height/2, y + height/2
+
+# This is the circle's radius in actual units (not a 0-1 fraction)
+r_ = r * min(width, height)/2
+
+output('shape', fab.shapes.rounded_rectangle(xmin, xmax, ymin, ymax, r))
+
+def drag_r(this, x, y, z):
+    if abs(this.width) < abs(this.height):
+        d = abs(this.width)
+        mid = this.y + this.height/2 - d/2
+    else:
+        d = abs(this.width)
+        mid = this.y
+    r = 1 - (y - mid) / (d/2)
+    this.r = float(min(1, max(0, r)))
+
+def drag_hw(this, x, y, z):
+   this.height = abs(2 * (y - this.y))
+   this.width = abs(2 * (x - this.x))
+
+# UI
+fab.ui.wireframe(
+        [(xmin, ymin, 0), (xmax, ymin, 0), (xmax, ymax, 0), (xmin, ymax, 0)],
+        close=True)
+fab.ui.wireframe([(xmax - r_, ymax, 0), (xmax, ymax - r_, 0)])
+fab.ui.point(x, y)
+fab.ui.point(xmax, ymax, drag=drag_hw, relative=False)
+fab.ui.point(xmax, ymax - r_, drag=drag_r, relative=False)
+

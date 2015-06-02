@@ -1,0 +1,21 @@
+# Neil Gershenfeld 1/24/15
+# Matt Keeter 5/31/15
+
+import fab
+
+title('Scale (Z, radial)')
+
+input('x0', float, 0)
+input('y0', float, 0)
+input('z0', float, 0)
+input('r0', float, 0)
+input('r1', float, 1)
+input('scale0', float, 1)
+input('scale1', float, 0.5)
+
+input('shape', fab.types.Shape)
+output('transform', fab.shapes.scale_z_r(
+    shape, x0, y0, z0, r0, scale0, r1, scale1))
+
+# UI
+# ...?

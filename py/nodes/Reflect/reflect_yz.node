@@ -1,0 +1,21 @@
+# Neil Gershenfeld 1/24/15
+# Matt Keeter 5/31/15
+
+import fab
+
+title('Reflect (YZ)')
+
+input('_x', float, 0)
+input('y0', float, 0)
+input('z0', float, 0)
+
+input('shape', fab.types.Shape)
+output('reflected', fab.shapes.reflect_yz(shape, y0, z0))
+
+# UI
+fab.ui.wireframe([
+    (_x - 1, y0 - 0.7, z0 - 0.7),
+    (_x - 1, y0 + 0.7, z0 + 0.7),
+    (_x + 1, y0 + 0.7, z0 + 0.7),
+    (_x + 1, y0 - 0.7, z0 - 0.7)], color=fab.color.teal, close=True)
+fab.ui.point(_x, y0, z0, color=fab.color.teal)

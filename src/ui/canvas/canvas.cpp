@@ -51,6 +51,7 @@ Canvas::Canvas(GraphScene* s, QWidget* parent)
 void Canvas::customizeUI(Ui::MainWindow* ui)
 {
     ui->menuView->deleteLater();
+    ui->menuReference->deleteLater();
 
     connect(ui->actionCopy, &QAction::triggered,
             this, &Canvas::onCopy);
@@ -63,8 +64,21 @@ void Canvas::customizeUI(Ui::MainWindow* ui)
 void Canvas::mousePressEvent(QMouseEvent* event)
 {
     QGraphicsView::mousePressEvent(event);
-    if (!event->isAccepted() && event->button() == Qt::LeftButton)
-        click_pos = mapToScene(event->pos());
+    if (!event->isAccepted()) {
+            if (event->button() == Qt::LeftButton) {
+                click_pos = mapToScene(event->pos());
+            }
+            else if (event->button() == Qt::RightButton) {
+                QMenu* m = new QMenu(this);
+
+                Q_ASSERT(dynamic_cast<MainWindow*>(parent()));
+                auto window = static_cast<MainWindow*>(parent());
+                window->populateMenu(m, false);
+
+                m->exec(QCursor::pos());
+                m->deleteLater();
+            }
+    }
 }
 
 void Canvas::mouseReleaseEvent(QMouseEvent* event)
@@ -273,8 +287,6 @@ void Canvas::onPaste()
             // Add _0, _1, etc suffix to all nodes.
             auto nodes = temp_root.findChildren<Node*>(
                         QString(), Qt::FindDirectChildrenOnly);
-            for (auto n : nodes)
-                n->updateName();
 
             // Safely make the UI elements (inspectors, controls, connections)
             // for all of the pasted nodes.
@@ -282,7 +294,10 @@ void Canvas::onPaste()
 
             // Select all pasted nodes.
             for (auto n : nodes)
+            {
+                n->updateName();
                 scene->getInspector(n)->setSelected(true);
+            }
 
             // Load inspector positions and apply them to the scene.
             scene->setInspectorPositions(ds.inspectors);

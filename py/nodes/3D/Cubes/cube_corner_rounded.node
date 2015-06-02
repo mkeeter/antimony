@@ -1,0 +1,45 @@
+# Neil Gershenfeld 1/24/15
+# Matt Keeter 5/22/15
+
+import fab
+
+title('Rounded cube (corner)')
+
+input('xmin', float, -2)
+input('ymin', float, -1)
+input('zmin', float, -0.5)
+input('xmax', float, 2)
+input('ymax', float, 1)
+input('zmax', float, 0.5)
+input('r', float, 0.25)
+
+output('shape', fab.shapes.rounded_cube(xmin, xmax, ymin, ymax, zmin, zmax, r))
+
+# UI
+def drag_r(this, x, y, z):
+    if abs(this.xmax - this.xmin) < abs(this.ymax - this.ymin):
+        d = abs(this.xmax - this.xmin)
+        mid = this.ymax - d / 2
+    else:
+        d = abs(this.ymax - this.ymin)
+        mid = (this.ymin + this.ymax) / 2
+    r = 1 - (y - mid) / (d/2)
+    this.r = float(min(1, max(0, r)))
+
+# This is the circle's radius in actual units (not a 0-1 fraction)
+r_ = r * min([xmax - xmin, ymax - ymin, zmax - zmin]) / 2
+
+fab.ui.wireframe([(xmin, ymin, zmin), (xmax, ymin, zmin),
+                  (xmax, ymax, zmin), (xmin, ymax, zmin)], close=True)
+fab.ui.wireframe([(xmin, ymin, zmax), (xmax, ymin, zmax),
+                  (xmax, ymax, zmax), (xmin, ymax, zmax)], close=True)
+fab.ui.wireframe([(xmin, ymin, zmin), (xmin, ymax, zmin),
+                  (xmin, ymax, zmax), (xmin, ymin, zmax)], close=True)
+fab.ui.wireframe([(xmax, ymin, zmin), (xmax, ymax, zmin),
+                  (xmax, ymax, zmax), (xmax, ymin, zmax)], close=True)
+fab.ui.point(xmin, ymin, zmin)
+fab.ui.point(xmax, ymax, zmax)
+fab.ui.point(xmax, ymax - r, zmax, drag=drag_r, relative=False)
+
+
+
