@@ -175,6 +175,28 @@ QVector3D Viewport::sceneToWorld(QPointF p) const
     return M * QVector3D(p.x(), p.y(), 0);
 }
 
+QList<QGraphicsItem*> Viewport::getItemsAtPosition(QPoint pos)
+{
+    QList<QGraphicsItem*> _items;
+    QSet<Node*> _nodes;
+
+    for (auto i : items(pos))
+    {
+        // Find the top-level parent of this graphics item
+        while (i->parentItem())
+            i = i->parentItem();
+
+        auto c = dynamic_cast<ControlProxy*>(i);
+        if (c && !_nodes.contains(c->getNode()))
+        {
+            _items << i;
+            _nodes << c->getNode();
+        }
+    }
+
+    return _items;
+}
+
 void Viewport::makeNodeAtCursor(NodeConstructorFunction f)
 {
     auto n = f(App::instance()->getNodeRoot());
@@ -352,39 +374,29 @@ void Viewport::mouseReleaseEvent(QMouseEvent *event)
         // Make a new menu object
         auto menu = new QMenu(static_cast<MainWindow*>(w));
 
-        int overlapping = 0;
-        QSet<Node*> used;
+        QList<QGraphicsItem*> items = getItemsAtPosition(_current_pos);
+        int overlapping = items.size();
 
-        // Special menu item to trigger a jump to event in the graph
         QAction* jump_to = NULL;
-        for (auto i : items(event->pos()))
+        for (auto item : items)
         {
-            // Find the top-level parent of this graphics item
-            while (i->parentItem())
-                i = i->parentItem();
+            ControlProxy* cp = dynamic_cast<ControlProxy*>(item);
+            Node *node = cp->getNode();
+            QString desc = node->getName() + " (" + node->getTitle() + ")";
 
-            auto c = dynamic_cast<ControlProxy*>(i);
-            if (c && !used.contains(c->getNode()))
+            if (jump_to == NULL)
             {
-                auto n = c->getNode();
-                QString desc = n->getName() + " (" + n->getTitle() + ")";
-
-                if (jump_to == NULL)
-                {
-                    jump_to = new QAction("Show " + desc + " in graph", menu);
-                    jump_to->setData(QVariant::fromValue(i));
-                    menu->addAction(jump_to);
-                    menu->addSeparator();
-                    connect(jump_to, &QAction::triggered,
-                            [=](){ emit jumpTo(n); });
-                }
-
-                overlapping++;
-                auto a = new QAction(desc, menu);
-                a->setData(QVariant::fromValue(i));
-                menu->addAction(a);
-                used << n;
+                jump_to = new QAction("Show " + desc + " in graph", menu);
+                jump_to->setData(QVariant::fromValue(item));
+                menu->addAction(jump_to);
+                menu->addSeparator();
+                connect(jump_to, &QAction::trigger,
+                        [=](){ emit jumpTo(node); });
             }
+
+            auto a = new QAction(desc, menu);
+            a->setData(QVariant::fromValue(item));
+            menu->addAction(a);
         }
 
         // If there was only one item in this location, remove all of the
@@ -586,38 +598,25 @@ void Viewport::drawForeground(QPainter* painter, const QRectF& rect)
     painter->setPen(QColor(255, 255, 255));
     QPointF top_left_info = sceneRect().topLeft();
 
-    /* display the currently hovered item or the number of overlaps */
-    int overlapping = 0;
-    QSet<Node*> used;
-    Node *active_node = NULL;
+    QList<QGraphicsItem*> items = getItemsAtPosition(_current_pos);
+    int overlapping = items.size();
 
-    for (auto i : items(_current_pos))
+    if (overlapping > 0)
     {
-        // Find the top-level parent of this graphics item
-        while (i->parentItem())
-            i = i->parentItem();
+        Node* active_node = dynamic_cast<ControlProxy*>(items.first())->getNode();
+        QString desc = active_node->getName() + " (" + active_node->getTitle() + ")";
 
-        auto c = dynamic_cast<ControlProxy*>(i);
-        if (c && !used.contains(c->getNode()))
+        if (overlapping > 1)
         {
-            if (active_node == NULL) {
-                active_node = c->getNode();
-            }
-            auto n = c->getNode();
-            used << n;
-            overlapping++;
+            painter->drawText(top_left_info + QPointF(10, 1*15), QString("below: %1, current: %2").arg(overlapping-1).arg(desc));
+        }
+        else
+        {
+            painter->drawText(top_left_info + QPointF(10, 1*15), QString("current: %1").arg(desc));
         }
     }
-
-    if (overlapping == 1) {
-        QString desc = active_node->getName() + " (" + active_node->getTitle() + ")";
-        painter->drawText(top_left_info + QPointF(10, 1*15), QString("current: %1").arg(desc));
-    }
-    else if (overlapping > 1) {
-        QString desc = active_node->getName() + " (" + active_node->getTitle() + ")";
-        painter->drawText(top_left_info + QPointF(10, 1*15), QString("below: %1, current: %2").arg(overlapping-1).arg(desc));
-    }
-    else {
+    else
+    {
         painter->drawText(top_left_info + QPointF(10, 1*15), QString("current: <none>"));
     }
 
