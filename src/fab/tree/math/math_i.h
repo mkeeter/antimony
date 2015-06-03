@@ -1,6 +1,8 @@
 #ifndef MATH_I_H
 #define MATH_I_H
 
+#include "tree/math/math_defines.h"
+
 #include "util/interval.h"
 
 #ifdef __cplusplus

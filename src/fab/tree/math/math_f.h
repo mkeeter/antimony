@@ -1,6 +1,8 @@
 #ifndef MATH_F_H
 #define MATH_F_H
 
+#include "tree/math/math_defines.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
