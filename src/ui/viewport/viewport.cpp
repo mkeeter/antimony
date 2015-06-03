@@ -249,6 +249,27 @@ QList<ControlProxy*> Viewport::getControlProxies(Node* n)
     return out;
 }
 
+QList<ControlProxy*> Viewport::getProxiesAtPosition(QPoint pos) const
+{
+    QSet<Node*> used;
+    QList<ControlProxy*> out;
+
+    for (auto i : items(pos))
+    {
+        auto c = dynamic_cast<ControlProxy*>(i);
+        if (c)
+        {
+            auto n = c->getNode();
+            if (!used.contains(n))
+            {
+                used << n;
+                out << c;
+             }
+        }
+    }
+    return out;
+}
+
 QOpenGLBuffer* Viewport::getQuadVertices()
 {
     if (!gl_initialized)
@@ -354,60 +375,49 @@ void Viewport::mouseReleaseEvent(QMouseEvent *event)
         // Make a new menu object
         auto menu = new QMenu(static_cast<MainWindow*>(w));
 
-        int overlapping = 0;
-        QSet<Node*> used;
+        // Find all of the nodes and proxies at the mouse click position
+        auto proxies = getProxiesAtPosition(event->pos());
 
         // Special menu item to trigger a jump to event in the graph
         QAction* jump_to = NULL;
-        for (auto i : items(event->pos()))
+
+        for (auto p : proxies)
         {
-            // Find the top-level parent of this graphics item
-            while (i->parentItem())
-                i = i->parentItem();
+            auto n = p->getNode();
+            QString desc = n->getName() + " (" + n->getTitle() + ")";
 
-            auto c = dynamic_cast<ControlProxy*>(i);
-            if (c && !used.contains(c->getNode()))
+            if (jump_to == NULL)
             {
-                auto n = c->getNode();
-                QString desc = n->getName() + " (" + n->getTitle() + ")";
-
-                if (jump_to == NULL)
-                {
-                    jump_to = new QAction("Show " + desc + " in graph", menu);
-                    jump_to->setData(QVariant::fromValue(i));
-                    menu->addAction(jump_to);
-                    menu->addSeparator();
-                    connect(jump_to, &QAction::triggered,
-                            [=](){ emit jumpTo(n); });
-                }
-
-                overlapping++;
-                auto a = new QAction(desc, menu);
-                a->setData(QVariant::fromValue(i));
-                menu->addAction(a);
-                used << n;
+                jump_to = new QAction("Show " + desc + " in graph", menu);
+                menu->addAction(jump_to);
+                menu->addSeparator();
+                connect(jump_to, &QAction::triggered,
+                        [=](){ emit jumpTo(n); });
             }
+
+            auto a = new QAction(desc, menu);
+            a->setData(QVariant::fromValue(p));
+            menu->addAction(a);
         }
 
         // If there was only one item in this location, remove all of the
         // menu options other than 'jump to' (which in this case are the
         // separator and the single 'raise' command).
-        if (overlapping == 1)
+        if (proxies.length() == 1)
             while (menu->actions().back() != jump_to)
                 menu->removeAction(menu->actions().back());
 
         // If we have items in the menu, run it and get the resulting action.
-        QAction* chosen = (overlapping > 0) ? menu->exec(QCursor::pos())
-                                            : NULL;
+        QAction* chosen = (proxies.length() > 0) ? menu->exec(QCursor::pos())
+                                                 : NULL;
         if (chosen && chosen != jump_to)
         {
             if (raised)
                 raised->setZValue(0);
-            raised = static_cast<ControlProxy*>(
-                    chosen->data().value<QGraphicsItem*>());
+            raised = chosen->data().value<ControlProxy*>();
             raised->setZValue(0.1);
         }
-        else if (overlapping == 0)
+        else if (proxies.length() == 0)
         {
             QMenu* m = new QMenu(this);
 
