@@ -31,6 +31,16 @@ HEADERS += \
 
 INCLUDEPATH += ../src
 
+win32 {
+    QMAKE_CFLAGS += -std=c11
+
+    QMAKE_CXXFLAGS += $$system(python3-config --includes)
+    QMAKE_CFLAGS += $$system(python3-config --includes)
+    LIBS += $$system(python3-config --libs)
+    LIBS += -lboost_python3
+    LIBS += $$system(libpng-config --libs)
+}
+
 macx {
     QMAKE_CXXFLAGS += $$system(/usr/local/bin/python3-config --includes)
     QMAKE_LFLAGS   += $$system(/usr/local/bin/python3-config --ldflags)

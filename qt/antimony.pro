@@ -13,12 +13,6 @@ QMAKE_CXXFLAGS_RELEASE += -O3
 QMAKE_CXXFLAGS += -Werror=switch
 QMAKE_CFLAGS += -std=c11
 
-QMAKE_CXXFLAGS += $$system(python3-config --includes)
-QMAKE_CFLAGS += $$system(python3-config --includes)
-LIBS += $$system(python3-config --libs)
-LIBS += -lboost_python3
-LIBS += $$system(libpng-config --libs)
-
 GITREV = $$system(git log --pretty=format:'%h' -n 1)
 GITDIFF = $$system(git diff --quiet --exit-code || echo "+")
 GITTAG = $$system(git describe --exact-match --tags 2> /dev/null)
