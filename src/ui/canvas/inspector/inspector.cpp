@@ -249,6 +249,9 @@ QPointF NodeInspector::datumInputPosition(Datum* d) const
 void NodeInspector::focusNext(DatumTextItem* prev)
 {
     bool next = false;
+    bool firstRowAssigned = false;
+
+    Datum* firstRowDatum;
 
     prev->clearFocus();
 
@@ -256,6 +259,12 @@ void NodeInspector::focusNext(DatumTextItem* prev)
     {
         if (rows.contains(d))
         {
+            if (!firstRowAssigned)
+            {
+                firstRowAssigned = true;
+                firstRowDatum = d;
+                //qDebug() << "firstRow Assigned";
+            }
             auto row = rows[d];
             if (prev == row->editor)
             {
@@ -263,11 +272,16 @@ void NodeInspector::focusNext(DatumTextItem* prev)
             }
             else if (next && dynamic_cast<DatumTextItem*>(row->editor))
             {
+                qDebug() << "else if (next && dynamic_cast<DatumTextItem*>(row->editor))";
                 row->editor->setFocus();
                 return;
-            }
+            }            
         }
     }
+    //if the loop exits, in other words, if there is no next element - jump to the first one
+    auto row2 = rows[firstRowDatum];
+    row2->editor->setFocus();
+    return;
 }
 
 void NodeInspector::focusPrev(DatumTextItem* next)
