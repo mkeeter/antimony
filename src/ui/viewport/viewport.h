@@ -50,11 +50,6 @@ public:
     QVector3D sceneToWorld(QPointF p) const;
 
     /*
-     * Reurns a list of item(s) under the given position
-     */
-    QList<QGraphicsItem*> getItemsAtPosition(QPoint pos);
-
-    /*
      *  Creates a new node at the mouse cursor's position.
      *  The new node grabs the mouse and is dragged until click+release.
      */
