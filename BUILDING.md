@@ -75,14 +75,3 @@ sudo apt-get remove appmenu-qt5
 ```
 to make it appear.
 
---------------------------------------------------------------------------------
-
-On some systems (e.g. Fedora 21), the name for `boost::python` is different.
-
-Change [this line](https://github.com/mkeeter/antimony/blob/develop/qt/shared.pri#L44) to read
-```
-LIBS += -lboost_python3
-```
-(or whatever the library is named).
-
-
