@@ -263,7 +263,6 @@ void NodeInspector::focusNext(DatumTextItem* prev)
             {
                 firstRowAssigned = true;
                 firstRowDatum = d;
-                //qDebug() << "firstRow Assigned";
             }
             auto row = rows[d];
             if (prev == row->editor)
@@ -271,8 +270,7 @@ void NodeInspector::focusNext(DatumTextItem* prev)
                 next = true;
             }
             else if (next && dynamic_cast<DatumTextItem*>(row->editor))
-            {
-                qDebug() << "else if (next && dynamic_cast<DatumTextItem*>(row->editor))";
+            {                
                 row->editor->setFocus();
                 return;
             }            
