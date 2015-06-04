@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QSurfaceFormat>
+#include <QTextCodec>
 
 #include <iostream>
 
@@ -14,6 +15,9 @@
 
 int main(int argc, char *argv[])
 {
+    // Use UTF-8, ignoring any LANG settings in the environment
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
+
     // Set the default OpenGL version to be 2.1 with sample buffers
     QSurfaceFormat format;
     format.setVersion(2, 1);
