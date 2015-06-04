@@ -175,28 +175,6 @@ QVector3D Viewport::sceneToWorld(QPointF p) const
     return M * QVector3D(p.x(), p.y(), 0);
 }
 
-QList<QGraphicsItem*> Viewport::getItemsAtPosition(QPoint pos)
-{
-    QList<QGraphicsItem*> _items;
-    QSet<Node*> _nodes;
-
-    for (auto i : items(pos))
-    {
-        // Find the top-level parent of this graphics item
-        while (i->parentItem())
-            i = i->parentItem();
-
-        auto c = dynamic_cast<ControlProxy*>(i);
-        if (c && !_nodes.contains(c->getNode()))
-        {
-            _items << i;
-            _nodes << c->getNode();
-        }
-    }
-
-    return _items;
-}
-
 void Viewport::makeNodeAtCursor(NodeConstructorFunction f)
 {
     auto n = f(App::instance()->getNodeRoot());
@@ -271,6 +249,27 @@ QList<ControlProxy*> Viewport::getControlProxies(Node* n)
     return out;
 }
 
+QList<ControlProxy*> Viewport::getProxiesAtPosition(QPoint pos) const
+{
+    QSet<Node*> used;
+    QList<ControlProxy*> out;
+
+    for (auto i : items(pos))
+    {
+        auto c = dynamic_cast<ControlProxy*>(i);
+        if (c)
+        {
+            auto n = c->getNode();
+            if (!used.contains(n))
+            {
+                used << n;
+                out << c;
+             }
+        }
+    }
+    return out;
+}
+
 QOpenGLBuffer* Viewport::getQuadVertices()
 {
     if (!gl_initialized)
@@ -333,7 +332,6 @@ void Viewport::mousePressEvent(QMouseEvent *event)
 void Viewport::mouseMoveEvent(QMouseEvent *event)
 {
     _dragging = true;
-    _current_pos = event->pos();
 
     QGraphicsView::mouseMoveEvent(event);
     if (scene->mouseGrabberItem() == NULL)
@@ -355,7 +353,10 @@ void Viewport::mouseMoveEvent(QMouseEvent *event)
         }
     }
 
-    scene->invalidate(QRect(),QGraphicsScene::ForegroundLayer);
+    // If we're on an axis (which means the viewport is showing mouse
+    // coordinates), force a redraw on mouse motion.
+    if (getAxis().first)
+        scene->invalidate(QRect(),QGraphicsScene::ForegroundLayer);
 }
 
 void Viewport::mouseReleaseEvent(QMouseEvent *event)
@@ -374,50 +375,49 @@ void Viewport::mouseReleaseEvent(QMouseEvent *event)
         // Make a new menu object
         auto menu = new QMenu(static_cast<MainWindow*>(w));
 
-        QList<QGraphicsItem*> items = getItemsAtPosition(_current_pos);
-        int overlapping = items.size();
+        // Find all of the nodes and proxies at the mouse click position
+        auto proxies = getProxiesAtPosition(event->pos());
 
+        // Special menu item to trigger a jump to event in the graph
         QAction* jump_to = NULL;
-        for (auto item : items)
+
+        for (auto p : proxies)
         {
-            ControlProxy* cp = dynamic_cast<ControlProxy*>(item);
-            Node *node = cp->getNode();
-            QString desc = node->getName() + " (" + node->getTitle() + ")";
+            auto n = p->getNode();
+            QString desc = n->getName() + " (" + n->getTitle() + ")";
 
             if (jump_to == NULL)
             {
                 jump_to = new QAction("Show " + desc + " in graph", menu);
-                jump_to->setData(QVariant::fromValue(item));
                 menu->addAction(jump_to);
                 menu->addSeparator();
-                connect(jump_to, &QAction::trigger,
-                        [=](){ emit jumpTo(node); });
+                connect(jump_to, &QAction::triggered,
+                        [=](){ emit jumpTo(n); });
             }
 
             auto a = new QAction(desc, menu);
-            a->setData(QVariant::fromValue(item));
+            a->setData(QVariant::fromValue(p));
             menu->addAction(a);
         }
 
         // If there was only one item in this location, remove all of the
         // menu options other than 'jump to' (which in this case are the
         // separator and the single 'raise' command).
-        if (overlapping == 1)
+        if (proxies.length() == 1)
             while (menu->actions().back() != jump_to)
                 menu->removeAction(menu->actions().back());
 
         // If we have items in the menu, run it and get the resulting action.
-        QAction* chosen = (overlapping > 0) ? menu->exec(QCursor::pos())
-                                            : NULL;
+        QAction* chosen = (proxies.length() > 0) ? menu->exec(QCursor::pos())
+                                                 : NULL;
         if (chosen && chosen != jump_to)
         {
             if (raised)
                 raised->setZValue(0);
-            raised = static_cast<ControlProxy*>(
-                    chosen->data().value<QGraphicsItem*>());
+            raised = chosen->data().value<ControlProxy*>();
             raised->setZValue(0.1);
         }
-        else if (overlapping == 0)
+        else if (proxies.length() == 0)
         {
             QMenu* m = new QMenu(this);
 
@@ -560,70 +560,33 @@ void Viewport::drawForeground(QPainter* painter, const QRectF& rect)
         painter->drawLine(o.toPointF(), p.first.toPointF());
     }
 
-    // If we're on an axis (which means the viewport is showing mouse
-    // coordinates), force a redraw on mouse motion.
-    if (getAxis().first)
+    // Then add a text label in the lower-left corner
+    // giving mouse coordinates (if we're near an axis)
+    QPair<char, float> axis = getAxis();
+    QPointF mouse_pos = mapToScene(mapFromGlobal(QCursor::pos()));
+    if (!sceneRect().contains(mouse_pos))
+        axis.first = '\0';
+
+    auto p = sceneToWorld(mouse_pos);
+
+    QPointF a = sceneRect().bottomLeft() + QPointF(10, -25);
+    QPointF b = sceneRect().bottomLeft() + QPointF(10, -10);
+    painter->setPen(QColor(axis.second*200, axis.second*200, axis.second*200));
+    if (axis.first == 'z')
     {
-        // Then add a text label in the lower-left corner
-        // giving mouse coordinates (if we're near an axis)
-        QPair<char, float> axis = getAxis();
-        QPointF mouse_pos = mapToScene(mapFromGlobal(QCursor::pos()));
-        if (!sceneRect().contains(mouse_pos))
-            axis.first = '\0';
-
-        auto p = sceneToWorld(mouse_pos);
-
-        QPointF a = sceneRect().bottomLeft() + QPointF(10, -25);
-        QPointF b = sceneRect().bottomLeft() + QPointF(10, -10);
-        painter->setPen(QColor(axis.second*200, axis.second*200, axis.second*200));
-        if (axis.first == 'z')
-        {
-            painter->drawText(a, QString("X: %1").arg(p.x()));
-            painter->drawText(b, QString("Y: %1").arg(p.y()));
-        }
-        else if (axis.first == 'y')
-        {
-            painter->drawText(a, QString("X: %1").arg(p.x()));
-            painter->drawText(b, QString("Z: %1").arg(p.z()));
-        }
-        else if (axis.first == 'x')
-        {
-            painter->drawText(a, QString("Y: %1").arg(p.y()));
-            painter->drawText(b, QString("Z: %1").arg(p.z()));
-        }
-
+        painter->drawText(a, QString("X: %1").arg(p.x()));
+        painter->drawText(b, QString("Y: %1").arg(p.y()));
     }
-
-    /* top left view info 'panel' */
-    painter->setPen(QColor(255, 255, 255));
-    QPointF top_left_info = sceneRect().topLeft();
-
-    QList<QGraphicsItem*> items = getItemsAtPosition(_current_pos);
-    int overlapping = items.size();
-
-    if (overlapping > 0)
+    else if (axis.first == 'y')
     {
-        Node* active_node = dynamic_cast<ControlProxy*>(items.first())->getNode();
-        QString desc = active_node->getName() + " (" + active_node->getTitle() + ")";
-
-        if (overlapping > 1)
-        {
-            painter->drawText(top_left_info + QPointF(10, 1*15), QString("below: %1, current: %2").arg(overlapping-1).arg(desc));
-        }
-        else
-        {
-            painter->drawText(top_left_info + QPointF(10, 1*15), QString("current: %1").arg(desc));
-        }
+        painter->drawText(a, QString("X: %1").arg(p.x()));
+        painter->drawText(b, QString("Z: %1").arg(p.z()));
     }
-    else
+    else if (axis.first == 'x')
     {
-        painter->drawText(top_left_info + QPointF(10, 1*15), QString("current: <none>"));
+        painter->drawText(a, QString("Y: %1").arg(p.y()));
+        painter->drawText(b, QString("Z: %1").arg(p.z()));
     }
-
-    /* display scale, pitch, and yaw */
-    painter->drawText(top_left_info + QPointF(10, 2*15), QString("scale: %1").arg(scale/100));
-    painter->drawText(top_left_info + QPointF(10, 3*15), QString("pitch: %1").arg(getPitch()));
-    painter->drawText(top_left_info + QPointF(10, 4*15), QString("yaw: %1").arg(getYaw()));
 }
 
 void Viewport::onCopy()

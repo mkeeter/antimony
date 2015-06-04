@@ -105,6 +105,12 @@ public:
     QList<ControlProxy*> getControlProxies(Node* n);
 
     /*
+     *  Return a list of ControlProxies at the given position
+     *  (uniquified by Node).
+     */
+    QList<ControlProxy*> getProxiesAtPosition(QPoint pos) const;
+
+    /*
      *  Getter functions so that DepthImageItems can use these shared objects.
      */
     QOpenGLBuffer* getQuadVertices();
