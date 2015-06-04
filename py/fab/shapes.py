@@ -22,6 +22,7 @@ def intersection(a, b):
 def difference(a, b):
     return a & ~b
 
+@preserve_color
 def offset(a, o):
     """ Assumes a linear distance field for bounds calculations!
     """
