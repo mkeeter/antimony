@@ -152,6 +152,10 @@ void App::onSaveAs()
     QString f = QFileDialog::getSaveFileName(NULL, "Save as", "", "*.sb");
     if (!f.isEmpty())
     {
+#ifdef Q_OS_LINUX
+        if (!f.endsWith(".sb"))
+            f += ".sb";
+#endif
         if (!QFileInfo(QFileInfo(f).path()).isWritable())
         {
             QMessageBox::critical(NULL, "Save As error",
