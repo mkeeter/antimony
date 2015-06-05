@@ -31,7 +31,7 @@ HEADERS += \
 
 INCLUDEPATH += ../src
 
-win32 {
+cygwin {
     QMAKE_CFLAGS += -std=c11
 
     QMAKE_CXXFLAGS += $$system(python3-config --includes)
