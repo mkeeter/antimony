@@ -174,16 +174,25 @@ void MainWindow::addNodeToMenu(QStringList category, QString name, QMenu* menu,
 
 void MainWindow::populateNodeMenu(QMenu* menu, bool recenter, Viewport* v)
 {
-    QDirIterator itr(App::instance()->nodePath(),
+    QDirIterator bitr(App::instance()->bundledNodePath(),
+                     QDirIterator::Subdirectories);
+    QDirIterator uitr(App::instance()->userNodePath(),
                      QDirIterator::Subdirectories);
     QList<QRegExp> title_regexs= {QRegExp(".*title\\('+([^']+)'+\\).*"),
                                   QRegExp(".*title\\(\"+([^\"]+)\"+\\).*")};
 
     // Extract all of valid filenames into a QStringList.
     QStringList node_filenames;
-    while (itr.hasNext())
+    while (bitr.hasNext())
     {
-        auto n = itr.next();
+        auto n = bitr.next();
+        if (n.endsWith(".node"))
+            node_filenames.append(n);
+    }
+
+    while (uitr.hasNext())
+    {
+        auto n = uitr.next();
         if (n.endsWith(".node"))
             node_filenames.append(n);
     }

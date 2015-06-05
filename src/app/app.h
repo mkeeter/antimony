@@ -66,7 +66,8 @@ public:
      *  Returns the path to the nodes directory
      *  (which varies depending on OS).
      */
-    QString nodePath() const;
+    QString bundledNodePath() const;
+    QString userNodePath() const;
 
     QAction* undoAction();
     QAction* redoAction();
