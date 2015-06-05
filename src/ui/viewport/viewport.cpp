@@ -41,6 +41,7 @@
 
 #include "app/app.h"
 #include "app/undo/undo_add_node.h"
+#include "fab/tree/math/math_defines.h"
 
 Viewport::Viewport(QGraphicsScene* scene, QWidget* parent)
     : QGraphicsView(parent), scene(scene),

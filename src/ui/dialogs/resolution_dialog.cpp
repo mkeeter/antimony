@@ -4,6 +4,8 @@
 #include "ui_resolution_dialog.h"
 #include "ui/dialogs/resolution_dialog.h"
 
+using std::isinf;
+
 ResolutionDialog::ResolutionDialog(Bounds bounds, bool dimensions, bool has_units,
                                    long max_voxels, QWidget* parent)
     : QDialog(parent), bounds(bounds), ui(new Ui::ResolutionDialog),

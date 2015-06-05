@@ -17,6 +17,8 @@
 #include "fab/tree/render.h"
 #include "fab/formats/png.h"
 
+using std::isinf;
+
 ////////////////////////////////////////////////////////////////////////////////
 
 void ExportHeightmapWorker::run()

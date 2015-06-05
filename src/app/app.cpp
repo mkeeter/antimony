@@ -36,6 +36,7 @@
 #include "graph/node/deserializer.h"
 
 #include "fab/types/shape.h"
+#include "fab/tree/math/math_defines.h"
 
 #ifndef GITREV
 #warning "Git revision not defined!"

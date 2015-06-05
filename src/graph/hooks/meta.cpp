@@ -8,6 +8,7 @@
 #include <QString>
 
 using namespace boost::python;
+using std::isinf;
 
 Shape ScriptMetaHooks::get_shape(tuple args)
 {

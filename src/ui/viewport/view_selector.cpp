@@ -5,6 +5,7 @@
 #include "ui/viewport/viewport.h"
 #include "ui/viewport/view_selector.h"
 #include "ui/util/colors.h"
+#include "fab/tree/math/math_defines.h"
 
 ViewSelectorButton::ViewSelectorButton(QString label, QPointF pos,
                                        QGraphicsItem* parent)

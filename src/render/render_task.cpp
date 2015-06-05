@@ -12,6 +12,7 @@
 #include "fab/types/transform.h"
 
 using namespace boost::python;
+using std::isinf;
 
 RenderTask::RenderTask(PyObject *s, QMatrix4x4 matrix,
                        float scale, int refinement)
