@@ -261,7 +261,7 @@ void NodeInspector::focusNext(DatumTextItem* prev)
     {
         if (rows.contains(d))
         {
-            if (!firstRowAssigned)
+            if (!firstRowAssigned && !isDatumHidden(d))
             {
                 firstRowAssigned = true;
                 firstRowDatum = d;
@@ -269,12 +269,13 @@ void NodeInspector::focusNext(DatumTextItem* prev)
             auto row = rows[d];
             qDebug() << "d->hasInputValue() " << d->hasInputValue();
             qDebug() << "d->canEdit() " << d->canEdit();
+            qDebug() << "isDatumHidden(d)" << isDatumHidden(d);
             if (prev == row->editor)
             {
                 next = true;
             }
             //else if (next && dynamic_cast<DatumTextItem*>(row->editor) && d->hasInput() && !d->hasInputValue())
-            else if (next && dynamic_cast<DatumTextItem*>(row->editor) && d->canEdit())
+            else if (next && dynamic_cast<DatumTextItem*>(row->editor) && d->canEdit() && !isDatumHidden(d))
             {                
                 row->editor->setFocus();
                 return;
