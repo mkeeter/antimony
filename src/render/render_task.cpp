@@ -64,12 +64,10 @@ void RenderTask::render()
     Q_ASSERT(get_shape.check());
     Shape s = get_shape();
 
-    Q_ASSERT(!(isinf(s.bounds.zmin) ^ isinf(s.bounds.zmax)));
-
     if (!isinf(s.bounds.xmin) && !isinf(s.bounds.xmax) &&
         !isinf(s.bounds.xmin) && !isinf(s.bounds.xmax))
     {
-        if (isinf(s.bounds.zmin))
+        if (isinf(s.bounds.zmin) || isinf(s.bounds.zmax))
             render2d(s);
         else
             render3d(s);
