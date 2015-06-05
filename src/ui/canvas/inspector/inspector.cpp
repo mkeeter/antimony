@@ -269,7 +269,7 @@ void NodeInspector::focusNext(DatumTextItem* prev)
             {
                 next = true;
             }
-            else if (next && dynamic_cast<DatumTextItem*>(row->editor))
+            else if (next && dynamic_cast<DatumTextItem*>(row->editor) && d->hasInput())
             {                
                 row->editor->setFocus();
                 return;
