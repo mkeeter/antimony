@@ -255,6 +255,8 @@ void NodeInspector::focusNext(DatumTextItem* prev)
 
     prev->clearFocus();
 
+    qDebug() << endl << endl<< endl<< endl<< endl;
+
     for (Datum* d : node->findChildren<Datum*>())
     {
         if (rows.contains(d))
@@ -265,11 +267,12 @@ void NodeInspector::focusNext(DatumTextItem* prev)
                 firstRowDatum = d;
             }
             auto row = rows[d];
+            qDebug() << "d->hasInputValue() " << d->hasInputValue();
             if (prev == row->editor)
             {
                 next = true;
             }
-            else if (next && dynamic_cast<DatumTextItem*>(row->editor) && d->hasInput())
+            else if (next && dynamic_cast<DatumTextItem*>(row->editor) && d->hasInput() && !d->hasInputValue())
             {                
                 row->editor->setFocus();
                 return;
