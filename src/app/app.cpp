@@ -363,6 +363,8 @@ QString App::userNodePath() const
 
     path << "nodes";
 
+    QDir(path.join("/")).mkpath(".");
+
     return path.join("/");
 }
 
