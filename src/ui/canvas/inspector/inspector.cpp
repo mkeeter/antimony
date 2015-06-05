@@ -268,11 +268,13 @@ void NodeInspector::focusNext(DatumTextItem* prev)
             }
             auto row = rows[d];
             qDebug() << "d->hasInputValue() " << d->hasInputValue();
+            qDebug() << "d->canEdit() " << d->canEdit();
             if (prev == row->editor)
             {
                 next = true;
             }
-            else if (next && dynamic_cast<DatumTextItem*>(row->editor) && d->hasInput() && !d->hasInputValue())
+            //else if (next && dynamic_cast<DatumTextItem*>(row->editor) && d->hasInput() && !d->hasInputValue())
+            else if (next && dynamic_cast<DatumTextItem*>(row->editor) && d->canEdit())
             {                
                 row->editor->setFocus();
                 return;
