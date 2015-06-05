@@ -290,22 +290,52 @@ void NodeInspector::focusNext(DatumTextItem* prev)
 
 void NodeInspector::focusPrev(DatumTextItem* next)
 {
+
+    qDebug() << endl << endl<< endl<< endl<< endl;
     InspectorRow* prev = NULL;
 
     next->clearFocus();
+
+    Datum* lastRowDatum;
 
     for (Datum* d : node->findChildren<Datum*>())
     {
         if (rows.contains(d))
         {
+            if(!isDatumHidden(d) && d->canEdit())
+            {
+                lastRowDatum = d;
+            }
+        }
+    }
+
+    for (Datum* d : node->findChildren<Datum*>())
+    {
+        if (rows.contains(d))
+        {
+            qDebug() << "if (rows.contains(d))";
             auto row = rows[d];
             if (next == row->editor)
             {
+                qDebug() << "if (next == row->editor)";
                 if (prev)
+                {
+                    qDebug() << "if (prev)";
                     prev->editor->setFocus();
-                return;
+                    return;
+                }
+                else
+                {
+                    qDebug() << "if (prev) else";
+                    auto row2 = rows[lastRowDatum];
+                    row2->editor->setFocus();
+                    return;
+                }
             }
+            if(d->canEdit() && !isDatumHidden(d))
+            {
             prev = row;
+            }
         }
     }
 }
