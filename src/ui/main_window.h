@@ -3,7 +3,6 @@
 
 #include <Python.h>
 #include <QMainWindow>
-#include <QMessageBox>
 
 #include "graph/node/constructor.h"
 

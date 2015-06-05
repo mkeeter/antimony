@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QDirIterator>
 #include <QRegExp>
+#include <QMessageBox>
 
 #include "app/app.h"
 
@@ -258,10 +259,6 @@ void MainWindow::populateMenu(QMenu* menu, bool recenter, Viewport* v)
 
 void MainWindow::closeEvent (QCloseEvent *event)
 {
-    //qDebug() << "QApplication::topLevelWindows().size()" << QApplication::topLevelWindows().size();
-    qDebug() << "amountOfWindows " << amountOfWindows;
-
-    //if(QApplication::topLevelWindows().size() <= 1)
     if(amountOfWindows <= 1)
     {
     QMessageBox::StandardButton resBtn = QMessageBox::question( this, "APP_NAME",
@@ -269,13 +266,11 @@ void MainWindow::closeEvent (QCloseEvent *event)
                                                                 QMessageBox::No | QMessageBox::Yes,
                                                                 QMessageBox::Yes);
     if (resBtn != QMessageBox::Yes) {
+
         event->ignore();
         return;
     }
-//    else
-//    {
-//        event->accept();
-//    }
+
     }
 
     amountOfWindows = amountOfWindows - 1;
