@@ -3,6 +3,7 @@
 
 #include <Python.h>
 #include <QMainWindow>
+#include <QMessageBox>
 
 #include "graph/node/constructor.h"
 
@@ -24,6 +25,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    static int amountOfWindows;
+
     /*
      *  Updates menus once the central widget is set.
      */
@@ -36,6 +39,13 @@ public:
     /** Returns True if the Shaded option is checked.
      */
     bool isShaded() const;
+
+protected:
+    /**
+      Called when the window is closed
+      */
+    void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
+
 
 private:
     /*

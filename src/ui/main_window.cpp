@@ -35,12 +35,16 @@ MainWindow::MainWindow(QWidget *parent) :
     setShortcuts();
 
     populateMenu(ui->menuAdd);
+
+    amountOfWindows = amountOfWindows+1;
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+int MainWindow::amountOfWindows = 0;
 
 void MainWindow::setCentralWidget(QWidget* w)
 {
@@ -250,4 +254,29 @@ void MainWindow::populateMenu(QMenu* menu, bool recenter, Viewport* v)
     menu->addSeparator();
     addNodeToMenu(QStringList(), "Script", menu, recenter,
                   static_cast<NodeConstructor>(ScriptNode), v);
+}
+
+void MainWindow::closeEvent (QCloseEvent *event)
+{
+    //qDebug() << "QApplication::topLevelWindows().size()" << QApplication::topLevelWindows().size();
+    qDebug() << "amountOfWindows " << amountOfWindows;
+
+    //if(QApplication::topLevelWindows().size() <= 1)
+    if(amountOfWindows <= 1)
+    {
+    QMessageBox::StandardButton resBtn = QMessageBox::question( this, "APP_NAME",
+                                                                tr("Are you sure?\n"),
+                                                                QMessageBox::No | QMessageBox::Yes,
+                                                                QMessageBox::Yes);
+    if (resBtn != QMessageBox::Yes) {
+        event->ignore();
+        return;
+    }
+//    else
+//    {
+//        event->accept();
+//    }
+    }
+
+    amountOfWindows = amountOfWindows - 1;
 }
