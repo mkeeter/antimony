@@ -207,5 +207,5 @@ derivative* eval_g(MathTree* tree, const Region r)
         }
     }
 
-    return tree->head->results.r;
+    return (derivative*)(tree->head->results.r);
 }
