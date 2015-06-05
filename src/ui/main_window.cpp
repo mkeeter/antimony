@@ -172,7 +172,7 @@ void MainWindow::addNodeToMenu(QStringList category, QString name, QMenu* menu,
             [=]{ this->createNew(recenter, f, v); });
 }
 
-void MainWindow::populateUserScripts(QMenu* menu, bool recenter, Viewport* v)
+void MainWindow::populateNodeMenu(QMenu* menu, bool recenter, Viewport* v)
 {
     QDirIterator itr(App::instance()->nodePath(),
                      QDirIterator::Subdirectories);
@@ -245,7 +245,7 @@ void MainWindow::populateMenu(QMenu* menu, bool recenter, Viewport* v)
         menu->addMenu(c);
     menu->addSeparator();
 
-    populateUserScripts(menu, recenter, v);
+    populateNodeMenu(menu, recenter, v);
 
     menu->addSeparator();
     addNodeToMenu(QStringList(), "Script", menu, recenter,
