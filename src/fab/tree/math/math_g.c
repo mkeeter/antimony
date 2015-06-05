@@ -3,96 +3,99 @@
 
 #include "tree/math/math_g.h"
 
-float* add_g(const float (*A)[4], const float (*B)[4],
-             float (*R)[4], int c)
+// Cast the struct to an array so that we can iterate over it.
+#define INDEX(A) ((float*)(&A[q]))[i]
+
+derivative* add_g(const derivative* A, const derivative* B,
+             derivative* R, int c)
 {
     for (int q = 0; q < c; ++q)
         for (int i=0; i < 4; ++i)
-            R[q][i] = A[q][i] + B[q][i];
+            INDEX(R) = INDEX(A) + INDEX(B);
     return R;
 }
 
-float* sub_g(const float (*A)[4], const float (*B)[4],
-             float (*R)[4], int c)
+derivative* sub_g(const derivative* A, const derivative* B,
+             derivative* R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
         for (int i=0; i < 4; ++i)
-            R[q][i] = A[q][i] - B[q][i];
+            INDEX(R) = INDEX(A) - INDEX(B);
     }
     return R;
 }
 
-float* mul_g(const float (*A)[4], const float (*B)[4],
-             float (*R)[4], int c)
+derivative* mul_g(const derivative* A, const derivative* B,
+             derivative* R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
-        R[q][0] = A[q][0] * B[q][0];
+        R[q].v = A[q].v * B[q].v;
 
         // Product rule
-        R[q][1] = A[q][0] * B[q][1] + A[q][1] * B[q][0];
-        R[q][2] = A[q][0] * B[q][2] + A[q][2] * B[q][0];
-        R[q][3] = A[q][0] * B[q][3] + A[q][3] * B[q][0];
+        for (int i=1; i < 4; ++i)
+            INDEX(R) = A[q].v*INDEX(B) + INDEX(A)*B[q].v;
     }
     return R;
 }
 
-float* div_g(const float (*A)[4], const float (*B)[4],
-             float (*R)[4], int c)
+derivative* div_g(const derivative* A, const derivative* B,
+             derivative* R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
-        R[q][0] = A[q][0] / B[q][0];
+        R[q].v = A[q].v / B[q].v;
 
         // Quotient rule
-        R[q][1] = (A[q][1]*B[q][0] - A[q][0]*B[q][1]) / pow(B[q][0], 2);
-        R[q][2] = (A[q][2]*B[q][0] - A[q][0]*B[q][2]) / pow(B[q][0], 2);
-        R[q][3] = (A[q][3]*B[q][0] - A[q][0]*B[q][3]) / pow(B[q][0], 2);
+        for (int i=1; i < 4; ++i)
+            INDEX(R) = (INDEX(A)*B[q].v - A[q].v*INDEX(B)) / pow(B[q].v, 2);
     }
     return R;
 }
 
-float* min_g(const float (*A)[4], const float (*B)[4],
-             float (*R)[4], int c)
+derivative* min_g(const derivative* A, const derivative* B,
+             derivative* R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
-        if (A[q][0] < B[q][0])
+        R[q].v = fmin(A[q].v, B[q].v);
+        if (A[q].v < B[q].v)
             for (int i=1; i < 4; ++i)
-                R[q][i] = A[q][i];
+                INDEX(R) = INDEX(A);
         else
             for (int i=1; i < 4; ++i)
-                R[q][i] = B[q][i];
+                INDEX(R) = INDEX(B);
     }
     return R;
 }
 
-float* max_g(const float (*A)[4], const float (*B)[4],
-             float (*R)[4], int c)
+derivative* max_g(const derivative* A, const derivative* B,
+             derivative* R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
-        if (A[q][0] >= B[q][0])
+        R[q].v = fmax(A[q].v, B[q].v);
+        if (A[q].v >= B[q].v)
             for (int i=1; i < 4; ++i)
-                R[q][i] = A[q][i];
+                INDEX(R) = INDEX(A);
         else
             for (int i=1; i < 4; ++i)
-                R[q][i] = B[q][i];
+                INDEX(R) = INDEX(B);
     }
     return R;
 }
 
-float* pow_g(const float (*A)[4], const float (*B)[4],
-             float (*R)[4], int c)
+derivative* pow_g(const derivative* A, const derivative* B,
+             derivative* R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
-        R[q][0] = pow(A[q][0], B[q][0]);
+        R[q].v = pow(A[q].v, B[q].v);
 
         for (int i=1; i < 4; ++i)
-            R[q][i] = pow(A[q][0], B[q][0] - 1) *
-                      (A[q][i]*B[q][0] + A[q][0]*B[q][i]*log(A[q][0]))
+            INDEX(R) = pow(A[q].v, B[q].v - 1) *
+                      (INDEX(A)*B[q].v + A[q].v*INDEX(B)*log(A[q].v));
     }
 
     return R;
@@ -100,187 +103,187 @@ float* pow_g(const float (*A)[4], const float (*B)[4],
 
 ////////////////////////////////////////////////////////////////////////////////
 
-float* abs_g(const float (*A)[4], float (*R)[4], int c)
+derivative* abs_g(const derivative* A, derivative* R, int c)
 {
     for (int q=0; q < c; ++q)
     {
-        R[q][0] = fabs(A[q][0]);
-        if (A[q][0] < 0)
+        R[q].v = fabs(A[q].v);
+        if (A[q].v < 0)
             for (int i=1; i < 4; ++i)
-                R[q][i] = -A[q][i];
+                INDEX(R) = -INDEX(A);
         else
             for (int i=1; i < 4; ++i)
-                R[q][i] = A[q][i];
+                INDEX(R) = INDEX(A);
     }
 
     return R;
 }
 
-float* square_g(const float (*A)[4], float (*R)[4], int c)
+derivative* square_g(const derivative* A, derivative* R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
-        R[q][0] = A[q][0]*A[q][0];
+        R[q].v = A[q].v*A[q].v;
 
         // Prouduct rule
         for (int i=1; i < 4; ++i)
-            R[q][i] = 2 * A[q][0] * A[q][i];
+            INDEX(R) = 2 * A[q].v * INDEX(A);
     }
     return R;
 }
 
-float* sqrt_g(const float (*A)[4], float (*R)[4], int c)
+derivative* sqrt_g(const derivative* A, derivative* R, int c)
 {
     for (int q = 0; q < c; ++q)
-        if (A[q] < 0)
+        if (A[q].v < 0)
         {
             for (int i=0; i < 4; ++i)
-                R[q][i] = 0;
+                INDEX(R) = 0;
         }
         else
         {
-            R[q][0] = sqrt(A[q][0]);
+            R[q].v = sqrt(A[q].v);
             for (int i=1; i < 4; ++i)
-                R[q][i] = A[q][i] / (2 * sqrt(A[q][0]))
+                INDEX(R) = INDEX(A) / (2 * sqrt(A[q].v));
         }
     return R;
 }
 
-float* sin_g(const float (*A)[4], float (*R)[4], int c)
+derivative* sin_g(const derivative* A, derivative* R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
-        R[q][0] = sin(A[q][0]);
+        R[q].v = sin(A[q].v);
         for (int i=1; i < 4; ++i)
-            R[q][i] = A[q][i] * cos(A[q][0]);
+            INDEX(R) = INDEX(A) * cos(A[q].v);
     }
     return R;
 }
 
-float* cos_g(const float (*A)[4], float (*R)[4], int c)
+derivative* cos_g(const derivative* A, derivative* R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
-        R[q][0] = cos(A[q][0]);
+        R[q].v = cos(A[q].v);
         for (int i=1; i < 4; ++i)
-            R[q][i] = A[q][i] * (-sin(A[q][0]));
+            INDEX(R) = INDEX(A) * (-sin(A[q].v));
     }
     return R;
 }
 
-float* tan_g(const float (*A)[4], float (*R)[4], int c)
+derivative* tan_g(const derivative* A, derivative* R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
-        R[q][0] = tan(A[q][0]);
+        R[q].v = tan(A[q].v);
         for (int i=1; i < 4; ++i)
-            R[q][i] = A[q][i] / pow(cos(A[q][0]), 2);
+            INDEX(R) = INDEX(A) / pow(cos(A[q].v), 2);
     }
     return R;
 }
 
-float* asin_g(const float (*A)[4], float (*R)[4], int c)
+derivative* asin_g(const derivative* A, derivative* R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
-        if (A[q][0] < -1 || A[q][0] > 1)
+        if (A[q].v < -1 || A[q].v > 1)
         {
             for (int i=0; i < 4; ++i)
-                R[q][i] = 0;
+                INDEX(R) = 0;
         }
         else
         {
-            R[q][0] = asin(A[q][0]);
+            R[q].v = asin(A[q].v);
             for (int i=1; i < 4; ++i)
-                R[q][i] = A[q][i] / sqrt(1 - pow(A[q][0], 2));
+                INDEX(R) = INDEX(A) / sqrt(1 - pow(A[q].v, 2));
         }
     }
     return R;
 }
 
-float* acos_g(const float (*A)[4], float (*R)[4], int c)
+derivative* acos_g(const derivative* A, derivative* R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
-        if (A[q][0] < -1 || A[q][0] > 1)
+        if (A[q].v < -1 || A[q].v > 1)
         {
             for (int i=0; i < 4; ++i)
-                R[q][i] = 0;
+                INDEX(R) = 0;
         }
         else
         {
-            R[q][0] = acos(A[q][0]);
+            R[q].v = acos(A[q].v);
             for (int i=1; i < 4; ++i)
-                R[q][i] = -A[q][i] / sqrt(1 - pow(A[q][0], 2));
+                INDEX(R) = -INDEX(A) / sqrt(1 - pow(A[q].v, 2));
         }
     }
     return R;
 }
 
-float* atan_g(const float (*A)[4], float (*R)[4], int c)
+derivative* atan_g(const derivative* A, derivative* R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
-        R[q][0] = atan(A[q][0]);
+        R[q].v = atan(A[q].v);
         for (int i=1; i < 4; ++i)
-            R[q][i] = A[q][i] / (pow(A[q][0], 2) + 1);
+            INDEX(R) = INDEX(A) / (pow(A[q].v, 2) + 1);
     }
     return R;
 }
 
-float* neg_g(const float (*A)[4], float (*R)[4], int c)
+derivative* neg_g(const derivative* A, derivative* R, int c)
 {
     for (int q=0; q < c; ++q)
         for (int i=0; i < 4; ++i)
-            R[q][i] = -A[q][i];
+            INDEX(R) = -INDEX(A);
     return R;
 }
 
-float* exp_g(const float (*A)[4], float (*R)[4], int c)
+derivative* exp_g(const derivative* A, derivative* R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
-        R[q][0] = exp(A[q][0]);
-        for (int i=1; i < 3; ++i)
-            R[q][i] = exp(A[q][0]) * A[q][i];
+        R[q].v = exp(A[q].v);
+        for (int i=1; i < 4; ++i)
+            INDEX(R) = exp(A[q].v) * INDEX(A);
     }
     return R;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-float* X_g(const float (*X), float (*R)[4], int c)
+derivative* X_g(const float* X, derivative* R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
-        R[q][0] = X[q];
-        R[q][1] = 1;
-        R[q][2] = 0;
-        R[q][3] = 0;
+        R[q].v = X[q];
+        R[q].dx = 1;
+        R[q].dy = 0;
+        R[q].dz = 0;
     }
     return R;
 }
 
-float* Y_g(const float (*Y), float (*R)[4], int c)
+derivative* Y_g(const float* Y, derivative* R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
-        R[q][0] = Y[q];
-        R[q][1] = 0;
-        R[q][2] = 1;
-        R[q][3] = 0;
+        R[q].v = Y[q];
+        R[q].dx = 0;
+        R[q].dy = 1;
+        R[q].dz = 0;
     }
     return R;
 }
 
-float* Z_g(const float (*Z), float (*R)[4], int c)
+derivative* Z_g(const float* Z, derivative* R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
-        R[q][0] = Z[q];
-        R[q][1] = 0;
-        R[q][2] = 0;
-        R[q][3] = 1;
+        R[q].v = Z[q];
+        R[q].dx = 0;
+        R[q].dy = 0;
+        R[q].dz = 1;
     }
     return R;
 }

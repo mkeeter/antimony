@@ -9,6 +9,7 @@ SOURCES += \
     ../src/fab/tree/math/math_f.c \
     ../src/fab/tree/math/math_i.c \
     ../src/fab/tree/math/math_r.c \
+    ../src/fab/tree/math/math_g.c \
     ../src/fab/tree/node/node_c.c \
     ../src/fab/tree/node/opcodes.c \
     ../src/fab/tree/node/printers.c \
@@ -34,6 +35,7 @@ HEADERS += \
     ../src/fab/tree/math/math_f.h \
     ../src/fab/tree/math/math_i.h \
     ../src/fab/tree/math/math_r.h \
+    ../src/fab/tree/math/math_g.h \
     ../src/fab/tree/node/node.h \
     ../src/fab/tree/node/opcodes.h \
     ../src/fab/tree/node/printers.h \
