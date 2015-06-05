@@ -135,9 +135,9 @@ void ScriptEditor::openShapesLibrary()
 
     Q_ASSERT(!PyErr_Occurred());
 
-    wchar_t* w = PyUnicode_AsWideCharString(shapes_path, NULL);
+    char* w = PyUnicode_AsUTF8(shapes_path);
     Q_ASSERT(w);
-    auto filepath = QString::fromWCharArray(w);
+    auto filepath = QString::fromUtf8(w);
     PyMem_Free(w);
 
     QFile shapes(filepath);

@@ -195,9 +195,9 @@ PyObject* ScriptDatum::getCurrentValue()
 
     // Get the output from the StringIO object
     PyObject* s = PyObject_CallMethod(string_out, "getvalue", NULL);
-    wchar_t* w = PyUnicode_AsWideCharString(s, NULL);
+    char* w = PyUnicode_AsUTF8(s);
     Q_ASSERT(w);
-    output = QString::fromWCharArray(w);
+    output = QString::fromUtf8(w);
     PyMem_Free(w);
 
     // Swap stdout back into sys.stdout
