@@ -41,6 +41,12 @@ cygwin {
     LIBS += $$system(libpng-config --libs)
 }
 
+win32 {
+    INCLUDEPATH += C:\lpng1617
+    INCLUDEPATH += C:\boost_1_58_0
+    INCLUDEPATH += C:\Python34\include
+}
+
 macx {
     QMAKE_CXXFLAGS += $$system(/usr/local/bin/python3-config --includes)
     QMAKE_LFLAGS   += $$system(/usr/local/bin/python3-config --ldflags)
