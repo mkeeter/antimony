@@ -75,3 +75,27 @@ sudo apt-get remove appmenu-qt5
 ```
 to make it appear.
 
+Windows
+-------
+
+Building on Windows is a bit more challenging.  Here's the basic overview:
+- Download and install Qt 5.4.2 (32-bit, MinGW)
+- Download and install MinGW separately to get the MSYS tools
+- Use MSYS to install `zlib` and `make`
+- Download Boost 1.58 and unzip to `C:\boost_1_58_0`
+- Build boost::python.  In Powershell, this looks like
+```
+cd boost_folder
+$env:Path = $env:Path + ";C:\Qt\Qt5.4.2\Tools\mingw491_32\bin"
+.\bootstrap.bat mingw
+.\b2 --with-python toolset=gcc link=shared
+```
+- Download `libpng` and unzip to `C:\lpng1617`
+- Compile `libpng` using the `MSYS` makefile.  In Powershell, this looks like
+```
+cd C:\lpng1617
+cp scripts\makefile.msys makefile
+$env:Path = $env:Path + ";C:\MinGW\msys\1.0\bin"
+make
+```
+
