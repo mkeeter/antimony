@@ -253,9 +253,7 @@ void NodeInspector::focusNext(DatumTextItem* prev)
 
     Datum* firstRowDatum;
 
-    prev->clearFocus();
-
-    qDebug() << endl << endl<< endl<< endl<< endl;
+    prev->clearFocus();    
 
     for (Datum* d : node->findChildren<Datum*>())
     {
@@ -263,18 +261,15 @@ void NodeInspector::focusNext(DatumTextItem* prev)
         {
             if (!firstRowAssigned && !isDatumHidden(d))
             {
+                //store the first row
                 firstRowAssigned = true;
                 firstRowDatum = d;
             }
-            auto row = rows[d];
-            qDebug() << "d->hasInputValue() " << d->hasInputValue();
-            qDebug() << "d->canEdit() " << d->canEdit();
-            qDebug() << "isDatumHidden(d)" << isDatumHidden(d);
+            auto row = rows[d];            
             if (prev == row->editor)
             {
                 next = true;
             }
-            //else if (next && dynamic_cast<DatumTextItem*>(row->editor) && d->hasInput() && !d->hasInputValue())
             else if (next && dynamic_cast<DatumTextItem*>(row->editor) && d->canEdit() && !isDatumHidden(d))
             {                
                 row->editor->setFocus();
@@ -290,8 +285,6 @@ void NodeInspector::focusNext(DatumTextItem* prev)
 
 void NodeInspector::focusPrev(DatumTextItem* next)
 {
-
-    qDebug() << endl << endl<< endl<< endl<< endl;
     InspectorRow* prev = NULL;
 
     next->clearFocus();
@@ -304,6 +297,7 @@ void NodeInspector::focusPrev(DatumTextItem* next)
         {
             if(!isDatumHidden(d) && d->canEdit())
             {
+                //Maybe there is a better way to get the last row's Datum?
                 lastRowDatum = d;
             }
         }
@@ -313,20 +307,16 @@ void NodeInspector::focusPrev(DatumTextItem* next)
     {
         if (rows.contains(d))
         {
-            qDebug() << "if (rows.contains(d))";
             auto row = rows[d];
             if (next == row->editor)
             {
-                qDebug() << "if (next == row->editor)";
                 if (prev)
                 {
-                    qDebug() << "if (prev)";
                     prev->editor->setFocus();
                     return;
                 }
                 else
                 {
-                    qDebug() << "if (prev) else";
                     auto row2 = rows[lastRowDatum];
                     row2->editor->setFocus();
                     return;
