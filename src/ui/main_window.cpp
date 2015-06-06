@@ -172,20 +172,25 @@ void MainWindow::addNodeToMenu(QStringList category, QString name, QMenu* menu,
             [=]{ this->createNew(recenter, f, v); });
 }
 
-void MainWindow::populateUserScripts(QMenu* menu, bool recenter, Viewport* v)
+void MainWindow::populateNodeMenu(QMenu* menu, bool recenter, Viewport* v)
 {
-    QDirIterator itr(App::instance()->nodePath(),
+    QDirIterator bitr(App::instance()->bundledNodePath(),
+                     QDirIterator::Subdirectories);
+    QDirIterator uitr(App::instance()->userNodePath(),
                      QDirIterator::Subdirectories);
     QList<QRegExp> title_regexs= {QRegExp(".*title\\('+([^']+)'+\\).*"),
                                   QRegExp(".*title\\(\"+([^\"]+)\"+\\).*")};
 
     // Extract all of valid filenames into a QStringList.
     QStringList node_filenames;
-    while (itr.hasNext())
+    for (auto itr : {&bitr, &uitr})
     {
-        auto n = itr.next();
-        if (n.endsWith(".node"))
-            node_filenames.append(n);
+        while (itr->hasNext())
+        {
+            auto n = itr->next();
+            if (n.endsWith(".node"))
+                node_filenames.append(n);
+        }
     }
 
     // Sort the list, then populate menus.
@@ -245,7 +250,7 @@ void MainWindow::populateMenu(QMenu* menu, bool recenter, Viewport* v)
         menu->addMenu(c);
     menu->addSeparator();
 
-    populateUserScripts(menu, recenter, v);
+    populateNodeMenu(menu, recenter, v);
 
     menu->addSeparator();
     addNodeToMenu(QStringList(), "Script", menu, recenter,

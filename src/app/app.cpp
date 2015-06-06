@@ -10,6 +10,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QRegularExpression>
+#include <QStandardPaths>
 
 #include <cmath>
 
@@ -327,7 +328,7 @@ void App::setGlobalStyle()
                 .arg(Colors::base04.name()));
 }
 
-QString App::nodePath() const
+QString App::bundledNodePath() const
 {
     auto path = applicationDirPath().split("/");
 
@@ -354,6 +355,14 @@ QString App::nodePath() const
 #endif
 
     return path.join("/");
+}
+
+QString App::userNodePath() const
+{
+    auto path = QStandardPaths::writableLocation(
+            QStandardPaths::AppDataLocation) + "/nodes";
+    QDir(path).mkpath(".");
+    return path;
 }
 
 MainWindow* App::newCanvasWindow()
