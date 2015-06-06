@@ -48,8 +48,9 @@ derivative* div_g(const derivative* A, const derivative* B,
         R[q].v = A[q].v / B[q].v;
 
         // Quotient rule
+        const float p = pow(B[q].v, 2);
         for (int i=1; i < 4; ++i)
-            INDEX(R) = (INDEX(A)*B[q].v - A[q].v*INDEX(B)) / pow(B[q].v, 2);
+            INDEX(R) = (INDEX(A)*B[q].v - A[q].v*INDEX(B)) / p;
     }
     return R;
 }
@@ -93,9 +94,10 @@ derivative* pow_g(const derivative* A, const derivative* B,
     {
         R[q].v = pow(A[q].v, B[q].v);
 
+        const float p = pow(A[q].v, B[q].v - 1);
+        const float m = A[q].v * log(A[q].v);
         for (int i=1; i < 4; ++i)
-            INDEX(R) = pow(A[q].v, B[q].v - 1) *
-                      (INDEX(A)*B[q].v + A[q].v*INDEX(B)*log(A[q].v));
+            INDEX(R) = p * (INDEX(A)*B[q].v + m * INDEX(B));
     }
 
     return R;
@@ -126,8 +128,9 @@ derivative* square_g(const derivative* A, derivative* R, int c)
         R[q].v = A[q].v*A[q].v;
 
         // Prouduct rule
+        const float a = 2 * A[q].v;
         for (int i=1; i < 4; ++i)
-            INDEX(R) = 2 * A[q].v * INDEX(A);
+            INDEX(R) = a * INDEX(A);
     }
     return R;
 }
@@ -143,8 +146,9 @@ derivative* sqrt_g(const derivative* A, derivative* R, int c)
         else
         {
             R[q].v = sqrt(A[q].v);
+            const float r = R[q].v * 2;
             for (int i=1; i < 4; ++i)
-                INDEX(R) = INDEX(A) / (2 * sqrt(A[q].v));
+                INDEX(R) = INDEX(A) / r;
         }
     return R;
 }
@@ -154,8 +158,9 @@ derivative* sin_g(const derivative* A, derivative* R, int c)
     for (int q = 0; q < c; ++q)
     {
         R[q].v = sin(A[q].v);
+        const float c = cos(A[q].v);
         for (int i=1; i < 4; ++i)
-            INDEX(R) = INDEX(A) * cos(A[q].v);
+            INDEX(R) = INDEX(A) * c;
     }
     return R;
 }
@@ -165,8 +170,9 @@ derivative* cos_g(const derivative* A, derivative* R, int c)
     for (int q = 0; q < c; ++q)
     {
         R[q].v = cos(A[q].v);
+        const float s = -sin(A[q].v);
         for (int i=1; i < 4; ++i)
-            INDEX(R) = INDEX(A) * (-sin(A[q].v));
+            INDEX(R) = INDEX(A) * s;
     }
     return R;
 }
@@ -176,8 +182,9 @@ derivative* tan_g(const derivative* A, derivative* R, int c)
     for (int q = 0; q < c; ++q)
     {
         R[q].v = tan(A[q].v);
+        const float d = pow(cos(A[q].v), 2);
         for (int i=1; i < 4; ++i)
-            INDEX(R) = INDEX(A) / pow(cos(A[q].v), 2);
+            INDEX(R) = INDEX(A) / d;
     }
     return R;
 }
@@ -194,8 +201,9 @@ derivative* asin_g(const derivative* A, derivative* R, int c)
         else
         {
             R[q].v = asin(A[q].v);
+            const float d = sqrt(1 - pow(A[q].v, 2));
             for (int i=1; i < 4; ++i)
-                INDEX(R) = INDEX(A) / sqrt(1 - pow(A[q].v, 2));
+                INDEX(R) = INDEX(A) / d;
         }
     }
     return R;
@@ -213,8 +221,9 @@ derivative* acos_g(const derivative* A, derivative* R, int c)
         else
         {
             R[q].v = acos(A[q].v);
+            const float d = -sqrt(1 - pow(A[q].v, 2));
             for (int i=1; i < 4; ++i)
-                INDEX(R) = -INDEX(A) / sqrt(1 - pow(A[q].v, 2));
+                INDEX(R) = INDEX(A) / d;
         }
     }
     return R;
@@ -225,8 +234,9 @@ derivative* atan_g(const derivative* A, derivative* R, int c)
     for (int q = 0; q < c; ++q)
     {
         R[q].v = atan(A[q].v);
+        const float d = pow(A[q].v, 2) + 1;
         for (int i=1; i < 4; ++i)
-            INDEX(R) = INDEX(A) / (pow(A[q].v, 2) + 1);
+            INDEX(R) = INDEX(A) / d;
     }
     return R;
 }
@@ -244,8 +254,9 @@ derivative* exp_g(const derivative* A, derivative* R, int c)
     for (int q = 0; q < c; ++q)
     {
         R[q].v = exp(A[q].v);
+        const float e = exp(A[q].v);
         for (int i=1; i < 4; ++i)
-            INDEX(R) = exp(A[q].v) * INDEX(A);
+            INDEX(R) = e * INDEX(A);
     }
     return R;
 }
