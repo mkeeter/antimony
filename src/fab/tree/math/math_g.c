@@ -6,8 +6,9 @@
 // Cast the struct to an array so that we can iterate over it.
 #define INDEX(A) ((float*)(&A[q]))[i]
 
-derivative* add_g(const derivative* A, const derivative* B,
-             derivative* R, int c)
+derivative* add_g(const derivative* restrict A,
+                  const derivative* restrict B,
+                  derivative* restrict R, int c)
 {
     for (int q = 0; q < c; ++q)
         for (int i=0; i < 4; ++i)
@@ -15,8 +16,9 @@ derivative* add_g(const derivative* A, const derivative* B,
     return R;
 }
 
-derivative* sub_g(const derivative* A, const derivative* B,
-             derivative* R, int c)
+derivative* sub_g(const derivative* restrict A,
+                  const derivative* restrict B,
+                  derivative* restrict R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
@@ -26,8 +28,9 @@ derivative* sub_g(const derivative* A, const derivative* B,
     return R;
 }
 
-derivative* mul_g(const derivative* A, const derivative* B,
-             derivative* R, int c)
+derivative* mul_g(const derivative* restrict A,
+                  const derivative* restrict B,
+                  derivative* restrict R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
@@ -40,8 +43,9 @@ derivative* mul_g(const derivative* A, const derivative* B,
     return R;
 }
 
-derivative* div_g(const derivative* A, const derivative* B,
-             derivative* R, int c)
+derivative* div_g(const derivative* restrict A,
+                  const derivative* restrict B,
+                  derivative* restrict R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
@@ -55,8 +59,9 @@ derivative* div_g(const derivative* A, const derivative* B,
     return R;
 }
 
-derivative* min_g(const derivative* A, const derivative* B,
-             derivative* R, int c)
+derivative* min_g(const derivative* restrict A,
+                  const derivative* restrict B,
+                  derivative* restrict R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
@@ -71,8 +76,9 @@ derivative* min_g(const derivative* A, const derivative* B,
     return R;
 }
 
-derivative* max_g(const derivative* A, const derivative* B,
-             derivative* R, int c)
+derivative* max_g(const derivative* restrict A,
+                  const derivative* restrict B,
+                  derivative* restrict R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
@@ -87,8 +93,9 @@ derivative* max_g(const derivative* A, const derivative* B,
     return R;
 }
 
-derivative* pow_g(const derivative* A, const derivative* B,
-             derivative* R, int c)
+derivative* pow_g(const derivative* restrict A,
+                  const derivative* restrict B,
+                  derivative* restrict R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
@@ -105,7 +112,8 @@ derivative* pow_g(const derivative* A, const derivative* B,
 
 ////////////////////////////////////////////////////////////////////////////////
 
-derivative* abs_g(const derivative* A, derivative* R, int c)
+derivative* abs_g(const derivative* restrict A,
+                  derivative* restrict R, int c)
 {
     for (int q=0; q < c; ++q)
     {
@@ -121,7 +129,8 @@ derivative* abs_g(const derivative* A, derivative* R, int c)
     return R;
 }
 
-derivative* square_g(const derivative* A, derivative* R, int c)
+derivative* square_g(const derivative* restrict A,
+                     derivative* restrict R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
@@ -135,7 +144,8 @@ derivative* square_g(const derivative* A, derivative* R, int c)
     return R;
 }
 
-derivative* sqrt_g(const derivative* A, derivative* R, int c)
+derivative* sqrt_g(const derivative* restrict A,
+                   derivative* restrict R, int c)
 {
     for (int q = 0; q < c; ++q)
         if (A[q].v < 0)
@@ -153,7 +163,8 @@ derivative* sqrt_g(const derivative* A, derivative* R, int c)
     return R;
 }
 
-derivative* sin_g(const derivative* A, derivative* R, int c)
+derivative* sin_g(const derivative* restrict A,
+                  derivative* restrict R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
@@ -165,7 +176,8 @@ derivative* sin_g(const derivative* A, derivative* R, int c)
     return R;
 }
 
-derivative* cos_g(const derivative* A, derivative* R, int c)
+derivative* cos_g(const derivative* restrict A,
+                  derivative* restrict R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
@@ -177,7 +189,8 @@ derivative* cos_g(const derivative* A, derivative* R, int c)
     return R;
 }
 
-derivative* tan_g(const derivative* A, derivative* R, int c)
+derivative* tan_g(const derivative* restrict A,
+                  derivative* restrict R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
@@ -189,7 +202,8 @@ derivative* tan_g(const derivative* A, derivative* R, int c)
     return R;
 }
 
-derivative* asin_g(const derivative* A, derivative* R, int c)
+derivative* asin_g(const derivative* restrict A,
+                   derivative* restrict R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
@@ -209,7 +223,8 @@ derivative* asin_g(const derivative* A, derivative* R, int c)
     return R;
 }
 
-derivative* acos_g(const derivative* A, derivative* R, int c)
+derivative* acos_g(const derivative* restrict A,
+                   derivative* restrict R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
@@ -229,7 +244,8 @@ derivative* acos_g(const derivative* A, derivative* R, int c)
     return R;
 }
 
-derivative* atan_g(const derivative* A, derivative* R, int c)
+derivative* atan_g(const derivative* restrict A,
+                   derivative* restrict R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
@@ -241,7 +257,8 @@ derivative* atan_g(const derivative* A, derivative* R, int c)
     return R;
 }
 
-derivative* neg_g(const derivative* A, derivative* R, int c)
+derivative* neg_g(const derivative* restrict A,
+                   derivative* restrict R, int c)
 {
     for (int q=0; q < c; ++q)
         for (int i=0; i < 4; ++i)
@@ -249,7 +266,8 @@ derivative* neg_g(const derivative* A, derivative* R, int c)
     return R;
 }
 
-derivative* exp_g(const derivative* A, derivative* R, int c)
+derivative* exp_g(const derivative* restrict A,
+                   derivative* restrict R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
@@ -263,7 +281,8 @@ derivative* exp_g(const derivative* A, derivative* R, int c)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-derivative* X_g(const float* X, derivative* R, int c)
+derivative* X_g(const float* restrict X,
+                derivative* restrict R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
@@ -275,7 +294,8 @@ derivative* X_g(const float* X, derivative* R, int c)
     return R;
 }
 
-derivative* Y_g(const float* Y, derivative* R, int c)
+derivative* Y_g(const float* restrict Y,
+                derivative* restrict R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
@@ -287,7 +307,8 @@ derivative* Y_g(const float* Y, derivative* R, int c)
     return R;
 }
 
-derivative* Z_g(const float* Z, derivative* R, int c)
+derivative* Z_g(const float* restrict Z,
+                derivative* restrict R, int c)
 {
     for (int q = 0; q < c; ++q)
     {
