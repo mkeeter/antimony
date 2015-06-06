@@ -359,13 +359,10 @@ QString App::bundledNodePath() const
 
 QString App::userNodePath() const
 {
-    auto path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation).split("/");
-
-    path << "nodes";
-
-    QDir(path.join("/")).mkpath(".");
-
-    return path.join("/");
+    auto path = QStandardPaths::writableLocation(
+            QStandardPaths::AppDataLocation) + "/nodes";
+    QDir(path).mkpath(".");
+    return path;
 }
 
 MainWindow* App::newCanvasWindow()
