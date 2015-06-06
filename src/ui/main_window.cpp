@@ -183,18 +183,14 @@ void MainWindow::populateNodeMenu(QMenu* menu, bool recenter, Viewport* v)
 
     // Extract all of valid filenames into a QStringList.
     QStringList node_filenames;
-    while (bitr.hasNext())
+    for (auto itr : {&bitr, &uitr})
     {
-        auto n = bitr.next();
-        if (n.endsWith(".node"))
-            node_filenames.append(n);
-    }
-
-    while (uitr.hasNext())
-    {
-        auto n = uitr.next();
-        if (n.endsWith(".node"))
-            node_filenames.append(n);
+        while (itr->hasNext())
+        {
+            auto n = itr->next();
+            if (n.endsWith(".node"))
+                node_filenames.append(n);
+        }
     }
 
     // Sort the list, then populate menus.
