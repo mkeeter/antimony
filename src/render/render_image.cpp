@@ -52,8 +52,8 @@ void RenderImage::render(Shape *shape)
     Region r = (Region) {
             .imin=0, .jmin=0, .kmin=0,
             .ni=(uint32_t)depth.width(), .nj=(uint32_t)depth.height(),
-            .nk=uint32_t(fmax(1, (shape->bounds.zmax -
-                                  shape->bounds.zmin) * scale))
+            .nk=uint32_t(fmin(255, fmax(1, (shape->bounds.zmax -
+                                  shape->bounds.zmin) * scale)))
     };
 
     build_arrays(&r, shape->bounds.xmin, shape->bounds.ymin, shape->bounds.zmin,
