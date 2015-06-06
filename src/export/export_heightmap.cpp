@@ -109,7 +109,7 @@ void ExportHeightmapTask::render()
         d16_rows[i] = d16 + (r.ni * i);
 
     memset(d16, 0, 2 * r.ni * r.nj);
-    render16(shape.tree.get(), r, d16_rows, halt);
+    render16(shape.tree.get(), r, d16_rows, halt, NULL);
 
     // These bounds will be stored to give the .png real-world units.
     float bounds[6] = {

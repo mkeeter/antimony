@@ -250,15 +250,16 @@ void shaded8(struct MathTree_ *tree, Region region, uint8_t **depth,
 
 ////////////////////////////////////////////////////////////////////////////////
 void render16(MathTree* tree, Region region,
-              uint16_t** img, volatile int* halt)
+              uint16_t** img, volatile int* halt,
+              void (*callback)())
 {
-    if (tree == NULL)  return;
-
     // Special interrupt system, set asynchronously by on high
     if (*halt)  return;
 
     // Render pixel-by-pixel if we're below a certain size.
     if (region.voxels > 0 && region.voxels < MIN_VOLUME) {
+        if (callback)
+            (*callback)();
         region16(tree, region, img);
         return;
     }
@@ -305,8 +306,8 @@ void render16(MathTree* tree, Region region,
         Region A, B;
         bisect(region, &A, &B);
 
-        render16(tree, B, img, halt);
-        render16(tree, A, img, halt);
+        render16(tree, B, img, halt, callback);
+        render16(tree, A, img, halt, callback);
     }
 
 #if PRUNE
