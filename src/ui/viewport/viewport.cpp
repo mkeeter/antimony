@@ -531,10 +531,8 @@ void Viewport::drawBackground(QPainter* painter, const QRectF& rect)
     painter->endNativePainting();
 }
 
-void Viewport::drawForeground(QPainter* painter, const QRectF& rect)
+void Viewport::drawAxes(QPainter* painter) const
 {
-    Q_UNUSED(rect);
-
     // First, draw the axes.
     auto m = getMatrix();
     QVector3D o = m * QVector3D(0, 0, 0);
@@ -557,8 +555,10 @@ void Viewport::drawForeground(QPainter* painter, const QRectF& rect)
         painter->setPen(QPen(p.second, 2));
         painter->drawLine(o.toPointF(), p.first.toPointF());
     }
+}
 
-
+void Viewport::drawMousePosition(QPainter* painter) const
+{
     // Then add a text label in the lower-left corner
     // giving mouse coordinates (if we're near an axis)
     if (getAxis().first)
@@ -590,7 +590,10 @@ void Viewport::drawForeground(QPainter* painter, const QRectF& rect)
             painter->drawText(b, QString("Z: %1").arg(p.z()));
         }
     }
+}
 
+void Viewport::drawInfo(QPainter* painter) const
+{
     /* top left view info 'panel' */
     painter->setPen(Colors::base04);
     QPointF top_left_info = sceneRect().topLeft();
@@ -603,14 +606,10 @@ void Viewport::drawForeground(QPainter* painter, const QRectF& rect)
         QString desc = n->getName() + " (" + n->getTitle() + ")";
 
         if (proxies.size() > 1)
-        {
             painter->drawText(top_left_info + QPointF(10, 1*15),
-                    QString("Below: %1, Current: %2").arg(proxies.size()-1).arg(desc));
-        }
+                    QString("Current: %1, (%2 more below)").arg(desc).arg(proxies.size()-1));
         else
-        {
             painter->drawText(top_left_info + QPointF(10, 1*15), QString("Current: %1").arg(desc));
-        }
     }
     else
     {
@@ -621,6 +620,15 @@ void Viewport::drawForeground(QPainter* painter, const QRectF& rect)
     painter->drawText(top_left_info + QPointF(10, 2*15), QString("Scale: %1").arg(scale/100));
     painter->drawText(top_left_info + QPointF(10, 3*15), QString("Pitch: %1").arg(getPitch()));
     painter->drawText(top_left_info + QPointF(10, 4*15), QString("Yaw: %1").arg(getYaw()));
+}
+
+void Viewport::drawForeground(QPainter* painter, const QRectF& rect)
+{
+    Q_UNUSED(rect);
+
+    drawAxes(painter);
+    drawMousePosition(painter);
+    drawInfo(painter);
 }
 
 void Viewport::onCopy()
