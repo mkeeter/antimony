@@ -354,7 +354,7 @@ void Viewport::mouseMoveEvent(QMouseEvent *event)
         }
     }
 
-    scene->invalidate(QRect(),QGraphicsScene::ForegroundLayer);
+    scene->invalidate(QRect(), QGraphicsScene::ForegroundLayer);
 }
 
 void Viewport::mouseReleaseEvent(QMouseEvent *event)
@@ -572,7 +572,8 @@ void Viewport::drawForeground(QPainter* painter, const QRectF& rect)
 
         QPointF a = sceneRect().bottomLeft() + QPointF(10, -25);
         QPointF b = sceneRect().bottomLeft() + QPointF(10, -10);
-        painter->setPen(QColor(axis.second*200, axis.second*200, axis.second*200));
+        int value = axis.second * 200;
+        painter->setPen(QColor(value, value, value));
         if (axis.first == 'z')
         {
             painter->drawText(a, QString("X: %1").arg(p.x()));
@@ -591,35 +592,35 @@ void Viewport::drawForeground(QPainter* painter, const QRectF& rect)
     }
 
     /* top left view info 'panel' */
-    painter->setPen(QColor(255, 255, 255));
+    painter->setPen(Colors::base04);
     QPointF top_left_info = sceneRect().topLeft();
 
     auto proxies = getProxiesAtPosition(_current_pos);
 
     if (proxies.size() > 0)
     {
-        auto n = dynamic_cast<ControlProxy*>(proxies.first())->getNode();
+        auto n = proxies.first()->getNode();
         QString desc = n->getName() + " (" + n->getTitle() + ")";
 
         if (proxies.size() > 1)
         {
             painter->drawText(top_left_info + QPointF(10, 1*15),
-                    QString("below: %1, current: %2").arg(proxies.size()-1).arg(desc));
+                    QString("Below: %1, Current: %2").arg(proxies.size()-1).arg(desc));
         }
         else
         {
-            painter->drawText(top_left_info + QPointF(10, 1*15), QString("current: %1").arg(desc));
+            painter->drawText(top_left_info + QPointF(10, 1*15), QString("Current: %1").arg(desc));
         }
     }
     else
     {
-        painter->drawText(top_left_info + QPointF(10, 1*15), QString("current: <none>"));
+        painter->drawText(top_left_info + QPointF(10, 1*15), QString("Current: <none>"));
     }
 
     /* display scale, pitch, and yaw */
-    painter->drawText(top_left_info + QPointF(10, 2*15), QString("scale: %1").arg(scale/100));
-    painter->drawText(top_left_info + QPointF(10, 3*15), QString("pitch: %1").arg(getPitch()));
-    painter->drawText(top_left_info + QPointF(10, 4*15), QString("yaw: %1").arg(getYaw()));
+    painter->drawText(top_left_info + QPointF(10, 2*15), QString("Scale: %1").arg(scale/100));
+    painter->drawText(top_left_info + QPointF(10, 3*15), QString("Pitch: %1").arg(getPitch()));
+    painter->drawText(top_left_info + QPointF(10, 4*15), QString("Yaw: %1").arg(getYaw()));
 }
 
 void Viewport::onCopy()
