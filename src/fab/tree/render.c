@@ -8,6 +8,7 @@
 #include "tree/eval.h"
 #include "tree/tree.h"
 #include "tree/render.h"
+#include "tree/math/math_g.h"
 
 #include "util/switches.h"
 
@@ -162,45 +163,20 @@ void get_normals8(MathTree* tree,
     dummy.Z = Z;
     dummy.voxels = count;
 
-    float* base = malloc(count*sizeof(float));
-    float* dx = malloc(count*sizeof(float));
-    float* dy = malloc(count*sizeof(float));
-    float* dz = malloc(count*sizeof(float));
-
-    float* result;
-    result = eval_r(tree, dummy);
-    memmove(base, result, count*sizeof(float));
-
-    for (int i=0; i < count; ++i)   X[i] += epsilon;
-    result = eval_r(tree, dummy);
-    memmove(dx, result, count*sizeof(float));
-    for (int i=0; i < count; ++i)   X[i] -= epsilon;
-
-    for (int i=0; i < count; ++i)   Y[i] += epsilon;
-    result = eval_r(tree, dummy);
-    memmove(dy, result, count*sizeof(float));
-    for (int i=0; i < count; ++i)   Y[i] -= epsilon;
-
-    for (int i=0; i < count; ++i)   Z[i] += epsilon;
-    result = eval_r(tree, dummy);
-    memmove(dz, result, count*sizeof(float));
+    derivative* result = eval_g(tree, dummy);
 
     // Calculate normals and copy over.
     for (int i=0; i < count; ++i)
     {
-        float x = dx[i] - base[i];
-        float y = dy[i] - base[i];
-        float z = dz[i] - base[i];
+        const float x = result[i].dx;
+        const float y = result[i].dy;
+        const float z = result[i].dz;
 
-        float dist = sqrt(pow(x,2) + pow(y, 2) + pow(z,2));
+        const float dist = sqrt(pow(x,2) + pow(y, 2) + pow(z,2));
         normals[i][0] = dist ? x/dist : 0;
         normals[i][1] = dist ? y/dist : 0;
         normals[i][2] = dist ? z/dist : 0;
     }
-    free(base);
-    free(dx);
-    free(dy);
-    free(dz);
 }
 
 _STATIC_
@@ -216,7 +192,7 @@ void shade_pixels8(unsigned count, float (*normals)[3],
     }
 }
 
-void shaded8(struct MathTree_ *tree, Region region, uint8_t **depth,
+void shaded8(struct MathTree_ *tree, Region region, uint16_t **depth,
              uint8_t (**out)[3], volatile int *halt,
              void (*callback)())
 {
@@ -243,7 +219,7 @@ void shaded8(struct MathTree_ *tree, Region region, uint8_t **depth,
             {
                 X[count] = region.X[i];
                 Y[count] = region.Y[j];
-                Z[count] = region.Z[0] + depth[j][i] / 255.0f *
+                Z[count] = region.Z[0] + depth[j][i] / 65535.0f *
                             (region.Z[region.nk] - region.Z[0]);
 
                 is[count] = i;
@@ -251,7 +227,7 @@ void shaded8(struct MathTree_ *tree, Region region, uint8_t **depth,
                 count++;
             }
 
-            if (count == MIN_VOLUME ||
+            if (count == MIN_VOLUME/4 ||
                     (count && j == region.nj - 1 && i == region.ni - 1))
             {
                 get_normals8(tree, X, Y, Z, count, epsilon, normals);
@@ -274,15 +250,16 @@ void shaded8(struct MathTree_ *tree, Region region, uint8_t **depth,
 
 ////////////////////////////////////////////////////////////////////////////////
 void render16(MathTree* tree, Region region,
-              uint16_t** img, volatile int* halt)
+              uint16_t** img, volatile int* halt,
+              void (*callback)())
 {
-    if (tree == NULL)  return;
-
     // Special interrupt system, set asynchronously by on high
     if (*halt)  return;
 
     // Render pixel-by-pixel if we're below a certain size.
     if (region.voxels > 0 && region.voxels < MIN_VOLUME) {
+        if (callback)
+            (*callback)();
         region16(tree, region, img);
         return;
     }
@@ -329,8 +306,8 @@ void render16(MathTree* tree, Region region,
         Region A, B;
         bisect(region, &A, &B);
 
-        render16(tree, B, img, halt);
-        render16(tree, A, img, halt);
+        render16(tree, B, img, halt, callback);
+        render16(tree, A, img, halt, callback);
     }
 
 #if PRUNE

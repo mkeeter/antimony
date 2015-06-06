@@ -8,6 +8,7 @@
 #include "tree/math/math_f.h"
 #include "tree/math/math_i.h"
 #include "tree/math/math_r.h"
+#include "tree/math/math_g.h"
 
 float eval_f(MathTree* tree, const float x, const float y, const float z)
 {
@@ -155,4 +156,56 @@ float* eval_r(MathTree* tree, const Region r)
     }
 
     return tree->head->results.r;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+derivative* eval_g(MathTree* tree, const Region r)
+{
+    Node* node = NULL;
+    int c = r.voxels;
+
+    for (unsigned level=0; level < tree->num_levels; ++level) {
+        for (unsigned n=0; n < tree->active[level]; ++n) {
+
+            node = tree->nodes[level][n];
+
+            derivative *A = (derivative*)(node->lhs ? node->lhs->results.r
+                                                    : NULL),
+                       *B = (derivative*)(node->rhs ? node->rhs->results.r
+                                                   : NULL),
+                       *R = (derivative*)(node->results.r);
+
+            switch (node->opcode) {
+                case OP_ADD:    add_g(A, B, R, c); break;
+                case OP_SUB:    sub_g(A, B, R, c); break;
+                case OP_MUL:    mul_g(A, B, R, c); break;
+                case OP_DIV:    div_g(A, B, R, c); break;
+                case OP_MIN:    min_g(A, B, R, c); break;
+                case OP_MAX:    max_g(A, B, R, c); break;
+                case OP_POW:    pow_g(A, B, R, c); break;
+
+                case OP_ABS:    abs_g(A, R, c); break;
+                case OP_SQUARE: square_g(A, R, c); break;
+                case OP_SQRT:   sqrt_g(A, R, c); break;
+                case OP_SIN:    sin_g(A, R, c); break;
+                case OP_COS:    cos_g(A, R, c); break;
+                case OP_TAN:    tan_g(A, R, c); break;
+                case OP_ASIN:   asin_g(A, R, c); break;
+                case OP_ACOS:   acos_g(A, R, c); break;
+                case OP_ATAN:   atan_g(A, R, c); break;
+                case OP_NEG:    neg_g(A, R, c); break;
+                case OP_EXP:    exp_g(A, R, c); break;
+
+                case OP_CONST:  break;
+                case OP_X:      X_g(r.X, R, c); break;
+                case OP_Y:      Y_g(r.Y, R, c); break;
+                case OP_Z:      Z_g(r.Z, R, c); break;
+                default:
+                    printf("Unknown opcode!\n");
+            }
+        }
+    }
+
+    return (derivative*)(tree->head->results.r);
 }

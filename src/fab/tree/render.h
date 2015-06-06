@@ -21,7 +21,7 @@ void render8(struct MathTree_* tree, Region region,
              uint8_t** img, volatile int* halt,
              void (*callback)());
 
-void shaded8(struct MathTree_* tree, Region region, uint8_t** depth,
+void shaded8(struct MathTree_* tree, Region region, uint16_t** depth,
              uint8_t (**out)[3], volatile int* halt,
              void (*callback)());
 
@@ -32,7 +32,8 @@ void shaded8(struct MathTree_* tree, Region region, uint8_t** depth,
     @param halt Flag to abort (if *halt becomes true)
 */
 void render16(struct MathTree_* tree, Region region,
-             uint16_t** img, volatile int* halt);
+              uint16_t** img, volatile int* halt,
+              void (*callback)());
 
 
 #ifdef __cplusplus
