@@ -163,7 +163,7 @@ void get_normals8(MathTree* tree,
     dummy.Z = Z;
     dummy.voxels = count;
 
-    derivative* result = eval_r(tree, dummy);
+    derivative* result = eval_g(tree, dummy);
 
     // Calculate normals and copy over.
     for (int i=0; i < count; ++i)
@@ -171,7 +171,6 @@ void get_normals8(MathTree* tree,
         const float x = result[i].dx;
         const float y = result[i].dy;
         const float z = result[i].dz;
-        printf("%f %f %f    %f %f %f\n", X[i], Y[i], Z[i], x, y, z);
 
         const float dist = sqrt(pow(x,2) + pow(y, 2) + pow(z,2));
         normals[i][0] = dist ? x/dist : 0;
