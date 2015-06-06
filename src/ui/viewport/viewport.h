@@ -185,9 +185,26 @@ protected:
     void drawBackground(QPainter* painter, const QRectF& rect) override;
 
     /*
-     *  Draws the x, y, z axes.
+     *  Draws the axes and additional information.
      */
     void drawForeground(QPainter* painter, const QRectF& rect) override;
+
+    /*
+     *  Draws the x, y, z axes.
+     */
+    void drawAxes(QPainter* painter) const;
+
+    /*
+     *  If we're looking down an axis, write the cursor's position
+     *  in the lower-left corner.
+     */
+    void drawMousePosition(QPainter* painter) const;
+
+    /*
+     *  Draws an additional info panel in the top left corner
+     *  with nodes under the cursor, yaw, pitch, scale.
+     */
+    void drawInfo(QPainter* painter) const;
 
     /** Pans the scene rectangle.
      */
@@ -229,6 +246,7 @@ protected:
     QVector3D _click_pos_world;
     ViewSelector* view_selector;
     bool _dragging;
+    QPoint _current_pos;
 
     QOpenGLShaderProgram height_shader;
     QOpenGLShaderProgram shaded_shader;
