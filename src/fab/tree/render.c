@@ -8,6 +8,7 @@
 #include "tree/eval.h"
 #include "tree/tree.h"
 #include "tree/render.h"
+#include "tree/math/math_g.h"
 
 #include "util/switches.h"
 
@@ -162,45 +163,21 @@ void get_normals8(MathTree* tree,
     dummy.Z = Z;
     dummy.voxels = count;
 
-    float* base = malloc(count*sizeof(float));
-    float* dx = malloc(count*sizeof(float));
-    float* dy = malloc(count*sizeof(float));
-    float* dz = malloc(count*sizeof(float));
-
-    float* result;
-    result = eval_r(tree, dummy);
-    memmove(base, result, count*sizeof(float));
-
-    for (int i=0; i < count; ++i)   X[i] += epsilon;
-    result = eval_r(tree, dummy);
-    memmove(dx, result, count*sizeof(float));
-    for (int i=0; i < count; ++i)   X[i] -= epsilon;
-
-    for (int i=0; i < count; ++i)   Y[i] += epsilon;
-    result = eval_r(tree, dummy);
-    memmove(dy, result, count*sizeof(float));
-    for (int i=0; i < count; ++i)   Y[i] -= epsilon;
-
-    for (int i=0; i < count; ++i)   Z[i] += epsilon;
-    result = eval_r(tree, dummy);
-    memmove(dz, result, count*sizeof(float));
+    derivative* result = eval_r(tree, dummy);
 
     // Calculate normals and copy over.
     for (int i=0; i < count; ++i)
     {
-        float x = dx[i] - base[i];
-        float y = dy[i] - base[i];
-        float z = dz[i] - base[i];
+        const float x = result[i].dx;
+        const float y = result[i].dy;
+        const float z = result[i].dz;
+        printf("%f %f %f    %f %f %f\n", X[i], Y[i], Z[i], x, y, z);
 
-        float dist = sqrt(pow(x,2) + pow(y, 2) + pow(z,2));
+        const float dist = sqrt(pow(x,2) + pow(y, 2) + pow(z,2));
         normals[i][0] = dist ? x/dist : 0;
         normals[i][1] = dist ? y/dist : 0;
         normals[i][2] = dist ? z/dist : 0;
     }
-    free(base);
-    free(dx);
-    free(dy);
-    free(dz);
 }
 
 _STATIC_
@@ -251,7 +228,7 @@ void shaded8(struct MathTree_ *tree, Region region, uint8_t **depth,
                 count++;
             }
 
-            if (count == MIN_VOLUME ||
+            if (count == MIN_VOLUME/4 ||
                     (count && j == region.nj - 1 && i == region.ni - 1))
             {
                 get_normals8(tree, X, Y, Z, count, epsilon, normals);
