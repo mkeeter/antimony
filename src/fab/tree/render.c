@@ -192,7 +192,7 @@ void shade_pixels8(unsigned count, float (*normals)[3],
     }
 }
 
-void shaded8(struct MathTree_ *tree, Region region, uint8_t **depth,
+void shaded8(struct MathTree_ *tree, Region region, uint16_t **depth,
              uint8_t (**out)[3], volatile int *halt,
              void (*callback)())
 {
@@ -219,7 +219,7 @@ void shaded8(struct MathTree_ *tree, Region region, uint8_t **depth,
             {
                 X[count] = region.X[i];
                 Y[count] = region.Y[j];
-                Z[count] = region.Z[0] + depth[j][i] / 255.0f *
+                Z[count] = region.Z[0] + depth[j][i] / 65535.0f *
                             (region.Z[region.nk] - region.Z[0]);
 
                 is[count] = i;

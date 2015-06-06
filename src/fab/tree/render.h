@@ -21,7 +21,7 @@ void render8(struct MathTree_* tree, Region region,
              uint8_t** img, volatile int* halt,
              void (*callback)());
 
-void shaded8(struct MathTree_* tree, Region region, uint8_t** depth,
+void shaded8(struct MathTree_* tree, Region region, uint16_t** depth,
              uint8_t (**out)[3], volatile int* halt,
              void (*callback)());
 
