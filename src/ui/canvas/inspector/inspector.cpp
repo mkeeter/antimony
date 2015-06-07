@@ -249,6 +249,7 @@ QPointF NodeInspector::datumInputPosition(Datum* d) const
 void NodeInspector::focusNext(DatumTextItem* prev)
 {
     bool next = false;
+    InspectorRow* first = NULL;
 
     prev->clearFocus();
 
@@ -261,13 +262,22 @@ void NodeInspector::focusNext(DatumTextItem* prev)
             {
                 next = true;
             }
-            else if (next && dynamic_cast<DatumTextItem*>(row->editor))
+            else if (row->editor->isEnabled() && row->isVisible())
             {
-                row->editor->setFocus();
-                return;
+                if (next)
+                {
+                    row->editor->setFocus();
+                    return;
+                }
+                else if (!first)
+                {
+                    first = row;
+                }
             }
         }
     }
+    if (first)
+        first->editor->setFocus();
 }
 
 void NodeInspector::focusPrev(DatumTextItem* next)
@@ -281,15 +291,18 @@ void NodeInspector::focusPrev(DatumTextItem* next)
         if (rows.contains(d))
         {
             auto row = rows[d];
-            if (next == row->editor)
+            if (next == row->editor && prev)
             {
-                if (prev)
-                    prev->editor->setFocus();
+                prev->editor->setFocus();
                 return;
             }
-            prev = row;
+            if (row->editor->isEnabled() && row->isVisible())
+                prev = row;
         }
     }
+    // Handle wrapping around (first-to-last)
+    if (prev)
+        prev->editor->setFocus();
 }
 
 void NodeInspector::setGlow(bool g)
