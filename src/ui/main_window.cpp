@@ -259,37 +259,17 @@ void MainWindow::populateMenu(QMenu* menu, bool recenter, Viewport* v)
 
 void MainWindow::closeEvent (QCloseEvent *event)
 {
+    auto app = App::instance();
+
     if(amountOfWindows <= 1)
     {
-    QMessageBox::StandardButton resBtn = QMessageBox::question( this, "APP_NAME",
-                                                                tr("Would you like to save?\n"),
-                                                                QMessageBox::Cancel| QMessageBox::No | QMessageBox::Yes,
-                                                                QMessageBox::Cancel);
-
-    if (resBtn == QMessageBox::Cancel) {
-        event->ignore();
-        return;
-    }
-
-    if (resBtn == QMessageBox::Yes) {
-
-        auto app = App::instance();
-        app->onSaveAs();
-        event->ignore();
-        return;
-    }
-
-    if (resBtn == QMessageBox::No) {
-
-        event->accept();
-        return;
-    }
-
+    app->onQuit();
     event->ignore();//this one might not be needed
 
     }
 else
     {
     amountOfWindows = amountOfWindows - 1;
+    event->accept();
     }
 }

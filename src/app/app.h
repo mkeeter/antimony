@@ -24,6 +24,17 @@ public:
     explicit App(int& argc, char **argv);
     ~App();
 
+    /*
+     *Opens a file dialog
+     *
+     */
+    void openFileDialog();
+
+    /*
+     * Creates a new file
+     */
+    void NewFile();
+
     void makeDefaultWindows();
 
     /*
@@ -108,7 +119,7 @@ public slots:
 
     void onNew();
     void onSave();
-    void onSaveAs();
+    bool onSaveAs();
     void onOpen();
     void onQuit();
 

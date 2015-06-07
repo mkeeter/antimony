@@ -121,7 +121,7 @@ void App::onAbout()
     QMessageBox::about(NULL, "Antimony", txt);
 }
 
-void App::onNew()
+void App::NewFile()
 {
     root->deleteLater();
     root = new NodeRoot();
@@ -131,10 +131,47 @@ void App::onNew()
     emit(windowTitleChanged(getWindowTitle()));
 }
 
+void App::onNew()
+{
+    if (!stack->isClean())
+    {
+
+        QMessageBox::StandardButton resBtn = QMessageBox::question( NULL, "Save?",
+                                                                    tr("Would you like to save?\n"),
+                                                                    QMessageBox::Cancel|
+                                                                    QMessageBox::No |
+                                                                    QMessageBox::Yes,
+                                                                    QMessageBox::Cancel);
+
+        if (resBtn == QMessageBox::Cancel) {
+            return;
+        }
+        else if (resBtn == QMessageBox::Yes) {
+            if(onSaveAs())
+            {
+                NewFile();
+            }
+            return;
+        }
+        else if (resBtn == QMessageBox::No) {
+            NewFile();
+            return;
+        }
+    }
+    else
+    {
+        NewFile();
+    }
+
+}
+
 void App::onSave()
 {
     if (filename.isEmpty())
-        return onSaveAs();
+    {
+        onSaveAs();
+    return;
+    }
 
     QFile file(filename);
     file.open(QIODevice::WriteOnly);
@@ -147,7 +184,7 @@ void App::onSave()
     stack->setClean();
 }
 
-void App::onSaveAs()
+bool App::onSaveAs()
 {
     QString f = QFileDialog::getSaveFileName(NULL, "Save as", "", "*.sb");
     if (!f.isEmpty())
@@ -159,33 +196,94 @@ void App::onSaveAs()
         if (!QFileInfo(QFileInfo(f).path()).isWritable())
         {
             QMessageBox::critical(NULL, "Save As error",
-                    "<b>Save As error:</b><br>"
-                    "Target file is not writable.");
-            return;
+                                  "<b>Save As error:</b><br>"
+                                  "Target file is not writable.");
+            return false;
         }
         filename = f;
         emit(windowTitleChanged(getWindowTitle()));
-        return onSave();
+        onSave();
+        return true;
     }
+    else
+    {
+        return false;
+    }
+}
+
+void App::openFileDialog()
+{
+    QString f = QFileDialog::getOpenFileName(NULL, "Open", "", "*.sb");
+    if (!f.isEmpty())
+        loadFile(f);
 }
 
 void App::onOpen()
 {
-    if (stack->isClean() || QMessageBox::question(NULL, "Discard unsaved changes?",
-                "Discard unsaved changes?") == QMessageBox::Yes)
+    if (!stack->isClean())
     {
-        QString f = QFileDialog::getOpenFileName(NULL, "Open", "", "*.sb");
-        if (!f.isEmpty())
-            loadFile(f);
+
+        QMessageBox::StandardButton resBtn = QMessageBox::question( NULL, "Save?",
+                                                                    tr("Would you like to save?\n"),
+                                                                    QMessageBox::Cancel|
+                                                                    QMessageBox::No |
+                                                                    QMessageBox::Yes,
+                                                                    QMessageBox::Cancel);
+
+        if (resBtn == QMessageBox::Cancel) {
+            return;
+        }
+        else if (resBtn == QMessageBox::Yes) {
+            if(onSaveAs())
+            {
+                openFileDialog();
+            }
+            return;
+        }
+        else if (resBtn == QMessageBox::No) {
+            openFileDialog();
+            return;
+        }
     }
+    else
+    {
+        openFileDialog();
+    }
+
 }
+
 
 void App::onQuit()
 {
-    if (stack->isClean() || QMessageBox::question(NULL, "Discard unsaved changes?",
-                "Discard unsaved changes?") == QMessageBox::Yes)
+    if (!stack->isClean())
+    {
+        QMessageBox::StandardButton resBtn = QMessageBox::question( NULL, "Save?",
+                                                                    tr("Would you like to save?\n"),
+                                                                    QMessageBox::Cancel|
+                                                                    QMessageBox::No |
+                                                                    QMessageBox::Yes,
+                                                                    QMessageBox::Cancel);
+
+        if (resBtn == QMessageBox::Cancel) {
+            return;
+        }
+        else if (resBtn == QMessageBox::Yes) {
+            if(onSaveAs())
+            {quit();}
+            return;
+        }
+        else if (resBtn == QMessageBox::No) {
+            quit();
+            return;
+        }
+    }
+    else
+    {
         quit();
+    }
+
 }
+
 
 void App::loadFile(QString f)
 {
