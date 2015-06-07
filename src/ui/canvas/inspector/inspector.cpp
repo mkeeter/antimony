@@ -249,25 +249,38 @@ QPointF NodeInspector::datumInputPosition(Datum* d) const
 void NodeInspector::focusNext(DatumTextItem* prev)
 {
     bool next = false;
+    bool firstRowAssigned = false;
 
-    prev->clearFocus();
+    Datum* firstRowDatum;
+
+    prev->clearFocus();    
 
     for (Datum* d : node->findChildren<Datum*>())
     {
         if (rows.contains(d))
         {
-            auto row = rows[d];
+            if (!firstRowAssigned && !isDatumHidden(d))
+            {
+                //store the first row
+                firstRowAssigned = true;
+                firstRowDatum = d;
+            }
+            auto row = rows[d];            
             if (prev == row->editor)
             {
                 next = true;
             }
-            else if (next && dynamic_cast<DatumTextItem*>(row->editor))
-            {
+            else if (next && dynamic_cast<DatumTextItem*>(row->editor) && d->canEdit() && !isDatumHidden(d))
+            {                
                 row->editor->setFocus();
                 return;
-            }
+            }            
         }
     }
+    //if the loop exits, in other words, if there is no next element - jump to the first one
+    auto row2 = rows[firstRowDatum];
+    row2->editor->setFocus();
+    return;
 }
 
 void NodeInspector::focusPrev(DatumTextItem* next)
@@ -275,6 +288,20 @@ void NodeInspector::focusPrev(DatumTextItem* next)
     InspectorRow* prev = NULL;
 
     next->clearFocus();
+
+    Datum* lastRowDatum;
+
+    for (Datum* d : node->findChildren<Datum*>())
+    {
+        if (rows.contains(d))
+        {
+            if(!isDatumHidden(d) && d->canEdit())
+            {
+                //Maybe there is a better way to get the last row's Datum?
+                lastRowDatum = d;
+            }
+        }
+    }
 
     for (Datum* d : node->findChildren<Datum*>())
     {
@@ -284,10 +311,21 @@ void NodeInspector::focusPrev(DatumTextItem* next)
             if (next == row->editor)
             {
                 if (prev)
+                {
                     prev->editor->setFocus();
-                return;
+                    return;
+                }
+                else
+                {
+                    auto row2 = rows[lastRowDatum];
+                    row2->editor->setFocus();
+                    return;
+                }
             }
+            if(d->canEdit() && !isDatumHidden(d))
+            {
             prev = row;
+            }
         }
     }
 }
