@@ -262,16 +262,34 @@ void MainWindow::closeEvent (QCloseEvent *event)
     if(amountOfWindows <= 1)
     {
     QMessageBox::StandardButton resBtn = QMessageBox::question( this, "APP_NAME",
-                                                                tr("Are you sure?\n"),
-                                                                QMessageBox::No | QMessageBox::Yes,
-                                                                QMessageBox::Yes);
-    if (resBtn != QMessageBox::Yes) {
+                                                                tr("Would you like to save?\n"),
+                                                                QMessageBox::Cancel| QMessageBox::No | QMessageBox::Yes,
+                                                                QMessageBox::Cancel);
 
+    if (resBtn == QMessageBox::Cancel) {
         event->ignore();
         return;
     }
 
+    if (resBtn == QMessageBox::Yes) {
+
+        auto app = App::instance();
+        app->onSaveAs();
+        event->ignore();
+        return;
     }
 
+    if (resBtn == QMessageBox::No) {
+
+        event->accept();
+        return;
+    }
+
+    event->ignore();//this one might not be needed
+
+    }
+else
+    {
     amountOfWindows = amountOfWindows - 1;
+    }
 }
