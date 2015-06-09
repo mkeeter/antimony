@@ -6,7 +6,6 @@
 #include <QObject>
 #include <QSet>
 
-class Control;
 class Datum;
 class Link;
 class Canvas;
@@ -104,8 +103,6 @@ signals:
     void deleteUntouchedControls();
 
 protected:
-
-    Control* control;
     QString title;
 };
 

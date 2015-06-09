@@ -13,7 +13,7 @@
 #include "graph/datum/datums/script_datum.h"
 
 Node::Node(NodeRoot* parent)
-    : QObject(parent), control(NULL)
+    : QObject(parent)
 {
     // Nothing to do here
 }
