@@ -9,6 +9,8 @@ DEFINES += ANTIMONY
 # Bump optimization up to -O3 in release builds
 QMAKE_CXXFLAGS_RELEASE -= -O2
 QMAKE_CXXFLAGS_RELEASE += -O3
+QMAKE_CFLAGS_RELEASE -= -O2
+QMAKE_CFLAGS_RELEASE += -O3
 
 QMAKE_CXXFLAGS += -Werror=switch
 QMAKE_CFLAGS += -std=c11
@@ -29,8 +31,8 @@ equals(OLD_GL_SET, "true") {
 }
 
 include(fab.pri)
-include(shared.pri)
-include(controls.pri)
+include(graph.pri)
+include(platforms.pri)
 
 SOURCES += \
     ../src/app/main.cpp \
@@ -71,6 +73,11 @@ SOURCES += \
     ../src/render/render_image.cpp \
     ../src/export/export_mesh.cpp \
     ../src/export/export_heightmap.cpp \
+    ../src/control/control.cpp \
+    ../src/control/control_root.cpp \
+    ../src/control/proxy.cpp \
+    ../src/control/point.cpp \
+    ../src/control/wireframe.cpp \
 
 HEADERS += \
     ../src/ui/main_window.h \
@@ -111,6 +118,11 @@ HEADERS += \
     ../src/export/export_worker.h \
     ../src/export/export_heightmap.h \
     ../src/util/hash.h \
+    ../src/control/control.h \
+    ../src/control/control_root.h \
+    ../src/control/proxy.h \
+    ../src/control/point.h \
+    ../src/control/wireframe.h \
 
 FORMS += \
     ../src/ui/forms/main_window.ui \
@@ -119,18 +131,3 @@ FORMS += \
 
 RESOURCES += \
     ../gl/gl.qrc \
-
-macx {
-    QMAKE_INFO_PLIST = ../deploy/mac/Info.plist
-    ICON = ../deploy/mac/sb.icns
-}
-
-linux {
-    executable.path = /usr/local/bin
-    executable.files = antimony
-    nodes_folder.path = /usr/local/bin/sb/nodes
-    nodes_folder.files = ../py/nodes/*
-    fab_folder.path = /usr/local/bin/sb/fab
-    fab_folder.files = ../py/fab/*
-    INSTALLS += executable nodes_folder fab_folder
-}

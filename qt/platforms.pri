@@ -1,39 +1,4 @@
-include(datums.pri)
-include(nodes.pri)
-
-SOURCES += \
-    ../src/graph/node/root.cpp \
-    ../src/graph/node/proxy.cpp \
-    ../src/graph/datum/input.cpp \
-    ../src/graph/datum/link.cpp \
-    ../src/graph/node/serializer.cpp \
-    ../src/graph/node/deserializer.cpp \
-    ../src/graph/hooks/hooks.cpp \
-    ../src/graph/hooks/input.cpp \
-    ../src/graph/hooks/meta.cpp \
-    ../src/graph/hooks/output.cpp \
-    ../src/graph/hooks/title.cpp \
-    ../src/graph/hooks/ui.cpp \
-
-HEADERS += \
-    ../src/graph/node/root.h \
-    ../src/graph/node/proxy.h \
-    ../src/graph/datum/input.h \
-    ../src/graph/datum/link.h \
-    ../src/graph/node/serializer.h \
-    ../src/graph/node/deserializer.h \
-    ../src/graph/hooks/hooks.h \
-    ../src/graph/hooks/input.h \
-    ../src/graph/hooks/meta.h \
-    ../src/graph/hooks/output.h \
-    ../src/graph/hooks/title.h \
-    ../src/graph/hooks/ui.h \
-
-INCLUDEPATH += ../src
-
 cygwin {
-    QMAKE_CFLAGS += -std=c11
-
     QMAKE_CXXFLAGS += $$system(python3-config --includes)
     QMAKE_CFLAGS += $$system(python3-config --includes)
     LIBS += $$system(python3-config --libs)
@@ -42,6 +7,14 @@ cygwin {
 }
 
 macx {
+    QMAKE_INFO_PLIST = ../deploy/mac/Info.plist
+    ICON = ../deploy/mac/sb.icns
+
+    # Link against libpng for image export
+    LIBS += -L/usr/local/lib -lpng
+    INCLUDEPATH += /usr/local/include/libpng15/
+    INCLUDEPATH += /usr/local/include/libpng16/
+
     QMAKE_CXXFLAGS += $$system(/usr/local/bin/python3-config --includes)
     QMAKE_LFLAGS   += $$system(/usr/local/bin/python3-config --ldflags)
     LIBS += -L/usr/local/lib -lboost_python3
@@ -49,8 +22,19 @@ macx {
 }
 
 linux {
+    executable.path = /usr/local/bin
+    executable.files = antimony
+    nodes_folder.path = /usr/local/bin/sb/nodes
+    nodes_folder.files = ../py/nodes/*
+    fab_folder.path = /usr/local/bin/sb/fab
+    fab_folder.files = ../py/fab/*
+    INSTALLS += executable nodes_folder fab_folder
+
     QMAKE_CXXFLAGS += $$system(/usr/bin/python3-config --includes)
     QMAKE_LFLAGS   += $$system(/usr/bin/python3-config --ldflags)
+
+    # Link against libpng for image export
+    LIBS += -lpng
 
     # Even though this is in QMAKE_LFLAGS, the linker is picky about
     # library ordering (so it needs to be here too).
