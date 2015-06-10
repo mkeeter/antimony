@@ -104,11 +104,6 @@ void Datum::addLink(Link* input)
     connect(input, &Link::destroyed, this, &Datum::connectionChanged);
 }
 
-void Datum::deleteLink(Datum* upstream)
-{
-    input_handler->deleteInput(upstream);
-}
-
 bool Datum::hasConnectedLink() const
 {
     for (auto link : findChildren<Link*>())

@@ -80,11 +80,6 @@ public:
      */
     void addLink(Link* input);
 
-    /** Deletes an input link to the given datum.
-     *  (or fails an assert if the datum is not linked to the input handler)
-     */
-    void deleteLink(Datum* upstream);
-
     /** Connects the argument as an upstream Datum.
      *  Returns false if there's a recursive loop.
      */
