@@ -138,9 +138,6 @@ protected:
     PyObject* value;
     bool valid;
 
-    bool editable;
-    QString repr;
-
     InputHandler* input_handler;
 
     QList<QPointer<Datum>> _upstream;

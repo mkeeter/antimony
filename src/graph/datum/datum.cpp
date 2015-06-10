@@ -127,6 +127,11 @@ void Datum::update()
                       || !dynamic_cast<NodeRoot*>(parent()->parent()))
         return;
 
+    // Store the editable flag and the string representation so that we can
+    // emit a signal later on if either of them have changed.
+    const bool was_editable = canEdit();
+    const QString old_repr = getString();
+
     // The very first time that update() is called, refresh all other nodes
     // that may refer to this node by name (then never do so again).
     if (!post_init_called)
@@ -166,21 +171,11 @@ void Datum::update()
     }
     Py_XDECREF(new_value);
 
-    // If our editable state has changed, mark that we need to emit the
-    // changed signal (so that node viewers can modify their lineedits)
-    if (canEdit() != editable)
-    {
-        editable = canEdit();
-        has_changed = true;
-    }
-
-    // If the string representation has changed, then emit changed
-    // so that node viewers can modify their text values.
-    if (getString() != repr)
-    {
-        repr = getString();
-        has_changed = true;
-    }
+    // If our editable state or string representation has changed, mark
+    // that we need to emit the changed signal (e.g. so that node viewers
+    // can modify their lineedits)
+    has_changed |= (canEdit() != was_editable);
+    has_changed |= (getString() != old_repr);
 
     if (has_changed)
         emit changed();
