@@ -10,6 +10,19 @@ SOURCES += \
     ../src/graph/datum/datums/string_datum.cpp \
     ../src/graph/datum/datums/shape_output_datum.cpp \
     ../src/graph/datum/datums/shape_datum.cpp \
+    ../src/graph/node/node.cpp \
+    ../src/graph/node/root.cpp \
+    ../src/graph/node/proxy.cpp \
+    ../src/graph/datum/input.cpp \
+    ../src/graph/datum/link.cpp \
+    ../src/graph/node/serializer.cpp \
+    ../src/graph/node/deserializer.cpp \
+    ../src/graph/hooks/hooks.cpp \
+    ../src/graph/hooks/input.cpp \
+    ../src/graph/hooks/meta.cpp \
+    ../src/graph/hooks/output.cpp \
+    ../src/graph/hooks/title.cpp \
+    ../src/graph/hooks/ui.cpp \
 
 HEADERS += \
     ../src/graph/datum/datum.h \
@@ -23,4 +36,17 @@ HEADERS += \
     ../src/graph/datum/datums/string_datum.h \
     ../src/graph/datum/datums/shape_output_datum.h \
     ../src/graph/datum/datums/shape_datum.h \
+    ../src/graph/node/node.h \
+    ../src/graph/node/root.h \
+    ../src/graph/node/proxy.h \
+    ../src/graph/datum/input.h \
+    ../src/graph/datum/link.h \
+    ../src/graph/node/serializer.h \
+    ../src/graph/node/deserializer.h \
+    ../src/graph/hooks/hooks.h \
+    ../src/graph/hooks/input.h \
+    ../src/graph/hooks/meta.h \
+    ../src/graph/hooks/output.h \
+    ../src/graph/hooks/title.h \
+    ../src/graph/hooks/ui.h \
 

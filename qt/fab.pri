@@ -51,21 +51,9 @@ HEADERS += \
     ../src/fab/types/transform.h
 
 INCLUDEPATH += ../src/fab
+INCLUDEPATH += ../src
 INCLUDEPATH += ../vendor
 DEFINES += '_STATIC_= '
-
-linux {
-    QMAKE_CFLAGS += -std=gnu99
-    QMAKE_CXXFLAGS += $$system(/usr/bin/python3-config --includes)
-    LIBS += -lpng
-}
-
-macx {
-    LIBS += -L/usr/local/lib -lpng
-    INCLUDEPATH += /usr/local/include/libpng15/
-    INCLUDEPATH += /usr/local/include/libpng16/
-}
-
 
 # Copy the py/fab and py/nodes directory when building the application
 make_sb.commands = $(MKDIR) $$OUT_PWD/sb
