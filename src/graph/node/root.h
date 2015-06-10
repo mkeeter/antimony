@@ -37,14 +37,6 @@ public:
      */
     NameDatum* findMatchingName(PyObject* proposed) const;
 
-    /** Returns the union of all unconnected shapes in the scene.
-     */
-    Shape getCombinedShape();
-
-    /** Returns a map of name -> shape for all unconnected shapes.
-     */
-    QMap<QString, Shape> getShapes();
-
 public slots:
     /** Triggers an update on all EvalDatums that use the new name.
      */
