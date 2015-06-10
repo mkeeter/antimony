@@ -32,10 +32,6 @@ public:
      */
     virtual bool hasInput() const=0;
 
-    /** Delete the link to a particular upstream datum.
-     */
-    virtual void deleteInput(Datum* d)=0;
-
     /** Return a string suitable for diplay in a node viewer.
      */
     virtual QString getString() const=0;
@@ -61,7 +57,6 @@ public:
     bool accepts(Link* input) const override;
     void addInput(Link* input) override;
     bool hasInput() const override;
-    void deleteInput(Datum* d) override;
     QString getString() const override;
     QList<Link*> getLinks() const override;
 protected:
@@ -79,7 +74,6 @@ public:
     bool accepts(Link* input) const override;
     void addInput(Link* input) override;
     bool hasInput() const override;
-    void deleteInput(Datum* d) override;
     QString getString() const override;
     QList<Link*> getLinks() const override;
 public slots:

@@ -89,14 +89,6 @@ bool SingleInputHandler::hasInput() const
     return d != NULL;
 }
 
-void SingleInputHandler::deleteInput(Datum *d)
-{
-    Q_ASSERT(!in.isNull() && in->parent() == d);
-    Q_UNUSED(d);
-    delete in;
-    in.clear();
-}
-
 QString SingleInputHandler::getString() const
 {
     Q_ASSERT(!in.isNull());
@@ -212,21 +204,6 @@ int ShapeInputHandler::inputCount() const
         if (!i.isNull())
             count++;
     return count;
-}
-
-void ShapeInputHandler::deleteInput(Datum *d)
-{
-    bool found = false;
-    for (auto i : in)
-    {
-        if (!i.isNull() && i->parent() == d)
-        {
-            delete i;
-            found = true;
-        }
-    }
-    Q_ASSERT(found);
-    prune();
 }
 
 QString ShapeInputHandler::getString() const
