@@ -138,8 +138,9 @@ void RenderTask::render2d(Shape s)
         image->setColor(QColor(s.r, s.g, s.b));
 
     image->setNormals(
-        sqrt(pow(matrix(0,2),2) + pow(matrix(1,2),2)),
-        matrix(2,2));
+            sqrt(pow(matrix(0,2),2) + pow(matrix(1,2),2)),
+            fabs(matrix(2,2)));
+    image->setFlat(true);
 }
 
 Transform RenderTask::getTransform(QMatrix4x4 m)

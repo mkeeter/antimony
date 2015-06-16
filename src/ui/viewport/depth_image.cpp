@@ -20,9 +20,9 @@
 
 DepthImageItem::DepthImageItem(QVector3D pos, QVector3D size,
                                QImage depth, QImage shaded, QColor color,
-                               Viewport* viewport)
+                               bool flat, Viewport* viewport)
     : QObject(viewport), pos(pos), size(size), depth(depth), shaded(shaded),
-      color(color), viewport(viewport)
+      color(color), flat(flat), viewport(viewport)
 {
     initializeGL();
 
