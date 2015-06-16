@@ -22,7 +22,7 @@ vec4 shade(vec4 norm)
 
     if (flat == 1)
     {
-        a = a*0.7 + 0.3;
+        a = a*0.5 + 0.5;
         return vec4((a*light + (1-a)*dark), 1);
     }
     else
