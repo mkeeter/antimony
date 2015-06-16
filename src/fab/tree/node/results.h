@@ -29,6 +29,11 @@ typedef struct Results_
 */
 void fill_results(struct Node_* n, float value);
 
+/*
+ *  Fills the results array with appropriate values for partial derivatives.
+ */
+void fill_results_g(struct Node_* n, float value);
+
 #ifdef __cplusplus
 }
 #endif

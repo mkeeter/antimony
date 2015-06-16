@@ -9,6 +9,7 @@
 #include "tree/tree.h"
 #include "tree/render.h"
 #include "tree/math/math_g.h"
+#include "node/node.h"
 
 #include "util/switches.h"
 
@@ -196,6 +197,10 @@ void shaded8(struct MathTree_ *tree, Region region, uint16_t **depth,
              uint8_t (**out)[3], volatile int *halt,
              void (*callback)())
 {
+    // Load the correct partial derivatives for constants
+    for (int i=0; i < tree->num_constants; ++i)
+        fill_results_g(tree->constants[i], tree->constants[i]->results.f);
+
     float *X = malloc(MIN_VOLUME*sizeof(float)),
           *Y = malloc(MIN_VOLUME*sizeof(float)),
           *Z = malloc(MIN_VOLUME*sizeof(float));
@@ -245,6 +250,10 @@ void shaded8(struct MathTree_ *tree, Region region, uint16_t **depth,
     free(js);
 
     free(normals);
+
+    // Switch back to normal values for constants array
+    for (int i=0; i < tree->num_constants; ++i)
+        fill_results(tree->constants[i], tree->constants[i]->results.f);
 }
 
 
