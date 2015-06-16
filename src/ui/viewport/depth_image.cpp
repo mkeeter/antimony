@@ -151,6 +151,7 @@ void DepthImageItem::loadSharedShaderVariables(QOpenGLShaderProgram* shader)
     glUniform1f(shader->uniformLocation("zmin_local"), zmin);
     glUniform1f(shader->uniformLocation("dz_global"), dz_global);
     glUniform1f(shader->uniformLocation("zmin_global"), zmin_global);
+    glUniform1i(shader->uniformLocation("flat"), flat);
 
     glUniform3f(shader->uniformLocation("color"),
                 color.redF(), color.greenF(), color.blueF());
