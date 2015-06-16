@@ -188,7 +188,7 @@ void shade_pixels8(unsigned count, float (*normals)[3],
     {
         for (int b=0; b < 3; ++b)
         {
-            out[js[a]][is[a]][b] = fabs(normals[a][b]) * 255;
+            out[js[a]][is[a]][b] = normals[a][b]*127 + 128;
         }
     }
 }
