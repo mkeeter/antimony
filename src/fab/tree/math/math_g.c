@@ -103,8 +103,12 @@ derivative* pow_g(const derivative* restrict A,
 
         const float p = pow(A[q].v, B[q].v - 1);
         const float m = A[q].v * log(A[q].v);
+        // If A[q].v is negative, then m will be NaN (because of log's domain).
+        // We work around this by checking if d/d{xyz}(B) == 0 and using a
+        // simplified expression if that's true.
         for (int i=1; i < 4; ++i)
-            INDEX(R) = p * (INDEX(A)*B[q].v + m * INDEX(B));
+            INDEX(R) = INDEX(B) ? p * (INDEX(A)*B[q].v + m * INDEX(B))
+                                : p * (INDEX(A)*B[q].v);
     }
 
     return R;
