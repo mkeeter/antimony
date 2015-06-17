@@ -5,6 +5,7 @@ TEMPLATE = lib
 INCLUDEPATH += inc vendor
 
 include(../../qt/common.pri)
+include(../../qt/python.pri)
 
 cygwin {
     LIBS += $$system(libpng-config --libs)

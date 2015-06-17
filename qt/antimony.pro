@@ -1,19 +1,12 @@
 QT += core gui widgets opengl network
 
-TARGET = antimony
+TARGET = Antimony
 TEMPLATE = app
 
-GITREV = $$system(git log --pretty=format:'%h' -n 1)
-GITDIFF = $$system(git diff --quiet --exit-code || echo "+")
-GITTAG = $$system(git describe --exact-match --tags 2> /dev/null)
-GITBRANCH = $$system(git rev-parse --abbrev-ref HEAD)
-
-QMAKE_CXXFLAGS += "-D'GITREV=\"$${GITREV}$${GITDIFF}\"'"
-QMAKE_CXXFLAGS += "-D'GITTAG=\"$${GITTAG}\"'"
-QMAKE_CXXFLAGS += "-D'GITBRANCH=\"$${GITBRANCH}\"'"
-
 include(graph.pri)
+include(git.pri)
 include(common.pri)
+include(python.pri)
 
 # Copy the py/fab and py/nodes directory when building the application
 make_sb.commands = $(MKDIR) $$OUT_PWD/sb
@@ -25,6 +18,8 @@ export(make_sb.commands)
 export(copy_nodes.commands)
 export(copy_fab.commands)
 QMAKE_EXTRA_TARGETS += first make_sb copy_nodes copy_fab
+
+INCLUDEPATH += ../src
 
 # Details for Mac applications
 macx {
