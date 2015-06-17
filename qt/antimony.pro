@@ -24,12 +24,6 @@ QMAKE_CXXFLAGS += "-D'GITREV=\"$${GITREV}$${GITDIFF}\"'"
 QMAKE_CXXFLAGS += "-D'GITTAG=\"$${GITTAG}\"'"
 QMAKE_CXXFLAGS += "-D'GITBRANCH=\"$${GITBRANCH}\"'"
 
-OLD_GL_SET = $$(OLD_GL)
-equals(OLD_GL_SET, "true") {
-  message("Using QGLWidget instead of QOpenGLWidget")
-  QMAKE_CXXFLAGS += "-DOLD_GL"
-}
-
 include(fab.pri)
 include(graph.pri)
 include(platforms.pri)

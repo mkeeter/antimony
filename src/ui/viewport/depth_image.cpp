@@ -4,14 +4,7 @@
 #include <QDebug>
 #include <QStyleOptionGraphicsItem>
 
-#ifndef OLD_GL
 #include <QOpenGLWidget>
-#define GL_WIDGET QOpenGLWidget
-#else
-#include <QGLWidget>
-#define GL_WIDGET QGLWidget
-#endif
-
 
 #include "app/app.h"
 #include "ui/main_window.h"
@@ -39,13 +32,13 @@ void DepthImageItem::clearTextures()
 {
     if (viewport)
     {
-        auto v =  dynamic_cast<GL_WIDGET*>(viewport->viewport());
+        auto v =  dynamic_cast<QOpenGLWidget*>(viewport->viewport());
         if (v && v->isValid())
         {
-            static_cast<GL_WIDGET*>(viewport->viewport())->makeCurrent();
+            static_cast<QOpenGLWidget*>(viewport->viewport())->makeCurrent();
             glDeleteTextures(1, &depth_tex);
             glDeleteTextures(1, &shaded_tex);
-            static_cast<GL_WIDGET*>(viewport->viewport())->doneCurrent();
+            static_cast<QOpenGLWidget*>(viewport->viewport())->doneCurrent();
         }
         viewport->scene->invalidate(QRect(), QGraphicsScene::BackgroundLayer);
     }
@@ -54,7 +47,7 @@ void DepthImageItem::clearTextures()
 
 void DepthImageItem::initializeGL()
 {
-    static_cast<GL_WIDGET*>(viewport->viewport())->makeCurrent();
+    static_cast<QOpenGLWidget*>(viewport->viewport())->makeCurrent();
 
     initializeOpenGLFunctions();
 
@@ -88,7 +81,7 @@ void DepthImageItem::initializeGL()
             shaded.bits()        /* Input data */
     );
 
-    static_cast<GL_WIDGET*>(viewport->viewport())->doneCurrent();
+    static_cast<QOpenGLWidget*>(viewport->viewport())->doneCurrent();
 }
 
 void DepthImageItem::paint()
