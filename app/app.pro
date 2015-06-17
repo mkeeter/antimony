@@ -3,10 +3,11 @@ QT += core gui widgets opengl network
 TARGET = Antimony
 TEMPLATE = app
 
-include(src/graph/graph.pri)
-include(../qt/git.pri)
 include(../qt/common.pri)
 include(../qt/python.pri)
+include(../qt/libpng.pri)
+include(src/graph/graph.pri)
+include(git.pri)
 
 # Copy the py/fab and py/nodes directory when building the application
 make_sb.commands = $(MKDIR) $$OUT_PWD/sb
@@ -23,13 +24,6 @@ LIBS += -L../lib/fab -lSbFab
 macx {
     QMAKE_INFO_PLIST = ../deploy/mac/Info.plist
     ICON = ../deploy/mac/sb.icns
-
-    # Copy the SbFab library into our Frameworks directory
-    frameworks = $$OUT_PWD/$${TARGET}.app/Contents/Frameworks
-    libs.commands = $(MKDIR) $$frameworks; \
-                    cp ../lib/fab/libSbFab.0.dylib $$frameworks
-    first.depends += libs
-    QMAKE_EXTRA_TARGETS += libs
 }
 
 # Installation details for Linux systems

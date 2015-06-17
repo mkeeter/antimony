@@ -11,14 +11,12 @@ RELEASE=`git describe --exact-match --tags || echo "($(git rev-parse --abbrev-re
 cd ../../build-$1
 make clean
 make qmake
-rm -rf antimony.app
-rm -rf antimony
-rm -rf antimony.dmg
+rm -rf app lib
 
 make -j8
-macdeployqt antimony.app
+macdeployqt app/Antimony.app
 
-cd antimony.app/Contents/PlugIns
+cd app/Antimony.app/Contents/PlugIns
 rm -rf accessible audio imageformats mediaservice playlistformats position printsupport qml1tooling sensorgestures sensors
 
 cd ../Frameworks
@@ -35,18 +33,19 @@ rm empty.lproj
 cd ../MacOS
 install_name_tool -change /usr/local/Frameworks/Python.framework/Versions/3.4/Python \
                          @executable_path/../Frameworks/Python.framework/Versions/3.4/Python \
-                         antimony
+                         Antimony
 
 cd ../../..
-cp -r sb/fab antimony.app/Contents/Frameworks/Python.framework/Versions/3.4/lib/python3.4/fab
-cp -r sb/nodes antimony.app/Contents/Resources
+cp -r sb/fab Antimony.app/Contents/Frameworks/Python.framework/Versions/3.4/lib/python3.4/fab
+cp -r sb/nodes Antimony.app/Contents/Resources
 
-sed -i "" "s:0\.0\.0:$RELEASE:g" antimony.app/Contents/Info.plist
+sed -i "" "s:0\.0\.0:$RELEASE:g" Antimony.app/Contents/Info.plist
 
-mkdir antimony
-cp ../README.md ./antimony/README.txt
-cp ../doc/USAGE.md ./antimony/USAGE.txt
-cp ../doc/SCRIPTING.md ./antimony/SCRIPTING.txt
-mv antimony.app ./antimony
-hdiutil create antimony.dmg -volname "Antimony $RELEASE" -srcfolder antimony
-rm -rf antimony
+mkdir Antimony
+cp ../../README.md ./Antimony/README.txt
+cp ../../doc/USAGE.md ./Antimony/USAGE.txt
+cp ../../doc/SCRIPTING.md ./Antimony/SCRIPTING.txt
+mv Antimony.app ./Antimony
+hdiutil create Antimony.dmg -volname "Antimony $RELEASE" -srcfolder Antimony
+rm -rf Antimony
+mv Antimony.dmg ..

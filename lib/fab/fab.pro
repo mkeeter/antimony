@@ -1,29 +1,14 @@
-CONFIG -= core
 TARGET = SbFab
 TEMPLATE = lib
 VERSION = 0.8
+CONFIG -= core
+CONFIG += staticlib
 
 INCLUDEPATH += inc vendor
 
 include(../../qt/common.pri)
 include(../../qt/python.pri)
-
-cygwin {
-    LIBS += $$system(libpng-config --libs)
-}
-
-macx {
-    # Link against libpng for image export
-    LIBS += -L/usr/local/lib -lpng
-    INCLUDEPATH += /usr/local/include/libpng15/
-    INCLUDEPATH += /usr/local/include/libpng16/
-    QMAKE_LFLAGS_SONAME = -Wl,-install_name,@executable_path/../Frameworks/
-}
-
-linux {
-    # Link against libpng for image export
-    LIBS += -lpng
-}
+include(../../qt/libpng.pri)
 
 SOURCES += \
     src/fab.cpp \
