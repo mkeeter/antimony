@@ -22,6 +22,9 @@ LIBS += -L../lib/fab -lSbFab
 
 # Details for Mac applications
 macx {
+    # Normally you would deploy an icon and a .plist file by setting
+    # QMAKE_INFO_PLIST and ICON, but qmake doesn't work properly when
+    # the build directory and .pro file are at different levels (QTBUG-46133).
     QMAKE_POST_LINK += $(COPY) $$PWD/../deploy/mac/Info.plist $$OUT_PWD/$${TARGET}.app/Contents;
     QMAKE_POST_LINK += $(COPY) $$PWD/../deploy/mac/sb.icns $$OUT_PWD/$${TARGET}.app/Contents/Resources;
 }
