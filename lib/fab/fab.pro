@@ -1,5 +1,5 @@
 CONFIG -= core
-TARGET = SbGraph
+TARGET = SbFab
 TEMPLATE = lib
 
 INCLUDEPATH += inc vendor

@@ -111,7 +111,7 @@ MathTree* clone_tree(MathTree* orig)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_STATIC_
+static
 void disable_node(MathTree* tree, int level, int n)
 {
     Node* node = tree->nodes[level][n];

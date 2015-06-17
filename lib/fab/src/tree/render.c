@@ -9,7 +9,7 @@
 #include "fab/tree/tree.h"
 #include "fab/tree/render.h"
 #include "fab/tree/math/math_g.h"
-#include "fab/node/node.h"
+#include "fab/tree/node/node.h"
 
 #include "fab/util/switches.h"
 
@@ -20,7 +20,7 @@
  *  a single pass through the tree.
  *
  */
-_STATIC_
+static
 void region8(MathTree* tree, Region region, uint8_t** img);
 
 /*  region16
@@ -30,7 +30,7 @@ void region8(MathTree* tree, Region region, uint8_t** img);
  *  a single pass through the tree.
  *
  */
-_STATIC_
+static
 void region16(MathTree* tree, Region region, uint16_t** img);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -104,7 +104,7 @@ void render8(MathTree* tree, Region region,
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_STATIC_
+static
 void region8(MathTree* tree, Region region, uint8_t** img)
 {
     float *X = malloc(region.voxels*sizeof(float)),
@@ -180,7 +180,7 @@ void get_normals8(MathTree* tree,
     }
 }
 
-_STATIC_
+static
 void shade_pixels8(unsigned count, float (*normals)[3],
                    unsigned* is, unsigned* js, uint8_t (**out)[3])
 {
@@ -327,7 +327,7 @@ void render16(MathTree* tree, Region region,
 
 ////////////////////////////////////////////////////////////////////////////////
 
-_STATIC_
+static
 void region16(MathTree* tree, Region region, uint16_t** img)
 {
     float *X = malloc(region.voxels*sizeof(float)),

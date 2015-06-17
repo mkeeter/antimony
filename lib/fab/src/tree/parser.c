@@ -68,7 +68,7 @@ void flag_in_tree(Node* n);
     @param Z Node to use for 'Z' token
     @param cache Node cache
 */
-_STATIC_
+static
 Node* get_token(const char** input, _Bool* const failed,
                 Node* X, Node* Y, Node* Z, NodeCache* const cache);
 
@@ -77,7 +77,7 @@ Node* get_token(const char** input, _Bool* const failed,
     @param failed Flag (set to True if something goes wrong)
     @returns An OP_CONST node wrapping the float
 */
-_STATIC_
+static
 Node* get_float(const char** input, _Bool* const failed);
 
 
@@ -90,29 +90,29 @@ Node* get_float(const char** input, _Bool* const failed);
  *  have the same opcode and same child pointers, or if they are OP_CONST
  *  and have the same values.
  */
-_STATIC_
+static
 Node* get_cached_node(NodeCache* const cache, Node* const n);
 
 /*  Counts the number of nodes in this list with NODE_IN_TREE in their flags
  */
-_STATIC_
+static
 unsigned count_list_nodes(NodeList* list);
 
 /* Destructively converts a list into an array of nodes, only copying nodes
  * with NODE_IN_TREE set in their flags.
  */
-_STATIC_
+static
 unsigned flatten_list(NodeList* list, Node** array);
 
 /*  Destructively loads the cache into a tree,
     freeing linked lists as we go.  Returns number of nodes copied.
 */
-_STATIC_
+static
 struct MathTree_* cache_to_tree(NodeCache* c);
 
 
 /** @brief Frees a NodeCache */
-_STATIC_
+static
 void free_node_cache(NodeCache* const c);
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -154,7 +154,7 @@ MathTree* parse(const char* input)
     return T;
 }
 
-_STATIC_
+static
 void flag_in_tree(Node* n)
 {
     if (n == NULL)  return;
@@ -166,7 +166,7 @@ void flag_in_tree(Node* n)
 }
 
 
-_STATIC_
+static
 Node* get_token(const char** const input, _Bool* const failed,
                 Node* X, Node* Y, Node* Z,
                 NodeCache* const cache)
@@ -267,7 +267,7 @@ Node* get_token(const char** const input, _Bool* const failed,
 }
 
 
-_STATIC_
+static
 Node* get_float(const char** const input, _Bool* const failed)
 {
     // Accumulated value
@@ -324,7 +324,7 @@ Node* get_float(const char** const input, _Bool* const failed)
 }
 
 
-_STATIC_
+static
 Node* get_cached_node(NodeCache* const cache, Node* const n)
 {
     if (n == NULL)  return NULL;
@@ -381,7 +381,7 @@ Node* get_cached_node(NodeCache* const cache, Node* const n)
     return n;
 }
 
-_STATIC_
+static
 unsigned count_list_nodes(NodeList* list)
 {
     unsigned count = 0;
@@ -394,7 +394,7 @@ unsigned count_list_nodes(NodeList* list)
     return count;
 }
 
-_STATIC_
+static
 unsigned flatten_list(NodeList* list, Node** array)
 {
     unsigned count = 0;
@@ -412,7 +412,7 @@ unsigned flatten_list(NodeList* list, Node** array)
     return count;
 }
 
-_STATIC_
+static
 void free_list(NodeList* list)
 {
     while (list)
@@ -424,7 +424,7 @@ void free_list(NodeList* list)
     }
 }
 
-_STATIC_
+static
 MathTree* cache_to_tree(NodeCache* c)
 {
     // Count the number of constants in the tree
@@ -464,7 +464,7 @@ MathTree* cache_to_tree(NodeCache* c)
 }
 
 
-_STATIC_
+static
 void free_node_cache(NodeCache* const c)
 {
     // Free the linked list of constants
