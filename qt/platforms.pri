@@ -6,9 +6,6 @@ cygwin {
 }
 
 macx {
-    QMAKE_INFO_PLIST = ../deploy/mac/Info.plist
-    ICON = ../deploy/mac/sb.icns
-
     QMAKE_CXXFLAGS += $$system(/usr/local/bin/python3-config --includes)
     QMAKE_LFLAGS   += $$system(/usr/local/bin/python3-config --ldflags)
     LIBS += -L/usr/local/lib -lboost_python3
