@@ -2,7 +2,7 @@ CONFIG -= core
 TARGET = SbGraph
 TEMPLATE = lib
 
-INCLUDEPATH += inc
+INCLUDEPATH += inc vendor
 
 include(../../qt/common.pri)
 
