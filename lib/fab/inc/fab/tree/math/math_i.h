@@ -1,9 +1,9 @@
 #ifndef MATH_I_H
 #define MATH_I_H
 
-#include "tree/math/math_defines.h"
+#include "fab/tree/math/math_defines.h"
 
-#include "util/interval.h"
+#include "fab/util/interval.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -5,13 +5,13 @@
 #include <math.h>
 #include <string.h>
 
-#include "tree/eval.h"
-#include "tree/tree.h"
-#include "tree/render.h"
-#include "tree/math/math_g.h"
-#include "node/node.h"
+#include "fab/tree/eval.h"
+#include "fab/tree/tree.h"
+#include "fab/tree/render.h"
+#include "fab/tree/math/math_g.h"
+#include "fab/node/node.h"
 
-#include "util/switches.h"
+#include "fab/util/switches.h"
 
 /*  region8
  *

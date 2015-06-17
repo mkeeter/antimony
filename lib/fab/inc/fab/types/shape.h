@@ -9,7 +9,7 @@
 #include "fab/types/bounds.h"
 #include "fab/types/transform.h"
 
-#include "tree/tree.h"
+#include "fab/tree/tree.h"
 
 /** Represents a math expression and a set of bounds. */
 struct Shape

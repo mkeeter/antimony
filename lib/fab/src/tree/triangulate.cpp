@@ -6,10 +6,10 @@
 #include <string.h>
 #include <math.h>
 
-#include "triangulate.h"
-#include "triangulate/mesher.h"
+#include "fab/tree/triangulate.h"
+#include "fab/tree/triangulate/mesher.h"
 
-#include "tree/tree.h"
+#include "fab/tree/tree.h"
 
 // Finds an array of vertices (as x,y,z float triplets).
 // Sets *count to the number of vertices returned.

@@ -1,7 +1,7 @@
 #include <string.h>
 #include <math.h>
 
-#include "tree/math/math_r.h"
+#include "fab/tree/math/math_r.h"
 
 float* add_r(const float* restrict A, const float* restrict B,
              float* restrict R, int c)

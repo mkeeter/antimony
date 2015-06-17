@@ -3,10 +3,10 @@
 
 #include <stdbool.h>
 
-#include "tree/node/results.h"
-#include "tree/node/opcodes.h"
-#include "util/interval.h"
-#include "util/region.h"
+#include "fab/tree/node/results.h"
+#include "fab/tree/node/opcodes.h"
+#include "fab/util/interval.h"
+#include "fab/util/region.h"
 
 #define NODE_CONSTANT   1
 #define NODE_IGNORED    2

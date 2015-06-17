@@ -1,11 +1,11 @@
 #include <iostream>
 #include <set>
 
-#include "tree/triangulate/mesher.h"
+#include "fab/tree/triangulate/mesher.h"
 
-#include "tree/tree.h"
-#include "tree/eval.h"
-#include "util/switches.h"
+#include "fab/tree/tree.h"
+#include "fab/tree/eval.h"
+#include "fab/util/switches.h"
 
 #if MIN_VOLUME < 60
 #error "MIN_VOLUME is below minimum for meshing implementation."

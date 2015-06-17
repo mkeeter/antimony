@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "formats/stl.h"
+#include "fab/formats/stl.h"
 
 void save_stl(float* verts, unsigned count, const char* filename)
 {

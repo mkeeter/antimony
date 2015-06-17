@@ -3,9 +3,9 @@
 #include <cstdlib>
 #include <cmath>
 
-#include "fab.h"
-#include "tree/tree.h"
-#include "tree/parser.h"
+#include "fab/fab.h"
+#include "fab/tree/tree.h"
+#include "fab/tree/parser.h"
 
 #include "fab/types/shape.h"
 

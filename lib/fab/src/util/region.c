@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "tree/tree.h"
-#include "tree/node/node.h"
-#include "tree/node/opcodes.h"
+#include "fab/tree/tree.h"
+#include "fab/tree/node/node.h"
+#include "fab/tree/node/opcodes.h"
 
-#include "util/region.h"
+#include "fab/util/region.h"
 
 void build_arrays(Region* const R,
                   const float xmin, const float ymin, const float zmin,

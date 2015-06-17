@@ -2,11 +2,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "tree/node/node.h"
-#include "tree/node/printers.h"
-#include "tree/math/math_f.h"
+#include "fab/tree/node/node.h"
+#include "fab/tree/node/printers.h"
+#include "fab/tree/math/math_f.h"
 
-#include "util/switches.h"
+#include "fab/util/switches.h"
 
 // Non-recursively clone a node.
 Node* clone_node(Node* n)

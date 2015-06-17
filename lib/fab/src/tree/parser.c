@@ -31,11 +31,11 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "tree/tree.h"
-#include "tree/parser.h"
+#include "fab/tree/tree.h"
+#include "fab/tree/parser.h"
 
-#include "tree/node/node.h"
-#include "tree/node/opcodes.h"
+#include "fab/tree/node/node.h"
+#include "fab/tree/node/opcodes.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -57,7 +57,7 @@ typedef struct NodeCache_
 
 
 /** @brief Recursively sets the flag of nodes to contain NODE_IN_TREE */
-_STATIC_
+static
 void flag_in_tree(Node* n);
 
 /** @brief Returns the next token (recursively) in the input stream,

@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "tree/math/math_i.h"
+#include "fab/tree/math/math_i.h"
 
 Interval add_i(Interval A, Interval B)
 {

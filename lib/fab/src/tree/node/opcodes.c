@@ -1,4 +1,4 @@
-#include "tree/node/opcodes.h"
+#include "fab/tree/node/opcodes.h"
 
 const char* OPCODE_NAMES[] = {
     "OP_ADD",

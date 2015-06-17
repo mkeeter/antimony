@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-#include "tree/node/opcodes.h"
-#include "util/ustack.h"
+#include "fab/tree/node/opcodes.h"
+#include "fab/util/ustack.h"
 
 #ifdef __cplusplus
 extern "C" {

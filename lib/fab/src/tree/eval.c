@@ -1,14 +1,14 @@
 #include <stdio.h>
 
-#include "tree/tree.h"
-#include "tree/eval.h"
+#include "fab/tree/tree.h"
+#include "fab/tree/eval.h"
 
-#include "tree/node/node.h"
+#include "fab/tree/node/node.h"
 
-#include "tree/math/math_f.h"
-#include "tree/math/math_i.h"
-#include "tree/math/math_r.h"
-#include "tree/math/math_g.h"
+#include "fab/tree/math/math_f.h"
+#include "fab/tree/math/math_i.h"
+#include "fab/tree/math/math_r.h"
+#include "fab/tree/math/math_g.h"
 
 float eval_f(MathTree* tree, const float x, const float y, const float z)
 {

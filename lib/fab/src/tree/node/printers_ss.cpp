@@ -1,7 +1,7 @@
 #include <sstream>
 
-#include "tree/node/printers_ss.h"
-#include "tree/node/node.h"
+#include "fab/tree/node/printers_ss.h"
+#include "fab/tree/node/node.h"
 
 static std::string add_pss(Node* n)
 {

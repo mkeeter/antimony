@@ -1,7 +1,7 @@
 #include <string.h>
 #include <math.h>
 
-#include "tree/math/math_g.h"
+#include "fab/tree/math/math_g.h"
 
 // Cast the struct to an array so that we can iterate over it.
 #define INDEX(A) ((float*)(&A[q]))[i]

@@ -6,9 +6,9 @@
 #include <array>
 #include <vector>
 
-#include "tree/triangulate/triangle.h"
+#include "fab/tree/triangulate/triangle.h"
 
-#include "util/region.h"
+#include "fab/util/region.h"
 
 // Forward declaration of MathTree
 struct MathTree_;

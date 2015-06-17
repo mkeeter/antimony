@@ -1,8 +1,8 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "tree/node/node.h"
-#include "tree/math/math_g.h"
+#include "fab/tree/node/node.h"
+#include "fab/tree/math/math_g.h"
 
 void fill_results(Node* n, float value)
 {

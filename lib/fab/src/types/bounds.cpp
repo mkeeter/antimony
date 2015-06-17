@@ -4,10 +4,10 @@
 #include "fab/types/bounds.h"
 #include "fab/fab.h"
 
-#include "tree/tree.h"
-#include "tree/parser.h"
-#include "tree/eval.h"
-#include "util/interval.h"
+#include "fab/tree/tree.h"
+#include "fab/tree/parser.h"
+#include "fab/tree/eval.h"
+#include "fab/util/interval.h"
 
 Bounds::Bounds()
     : Bounds(-INFINITY, -INFINITY, -INFINITY,

@@ -1,10 +1,10 @@
 #include <stdlib.h>
 
-#include "tree/tree.h"
+#include "fab/tree/tree.h"
 
-#include "tree/node/node.h"
-#include "tree/node/printers.h"
-#include "util/switches.h"
+#include "fab/tree/node/node.h"
+#include "fab/tree/node/printers.h"
+#include "fab/util/switches.h"
 
 MathTree* new_tree(unsigned num_levels, unsigned num_constants)
 {
