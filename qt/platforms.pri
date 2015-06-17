@@ -3,17 +3,11 @@ cygwin {
     QMAKE_CFLAGS += $$system(python3-config --includes)
     LIBS += $$system(python3-config --libs)
     LIBS += -lboost_python3
-    LIBS += $$system(libpng-config --libs)
 }
 
 macx {
     QMAKE_INFO_PLIST = ../deploy/mac/Info.plist
     ICON = ../deploy/mac/sb.icns
-
-    # Link against libpng for image export
-    LIBS += -L/usr/local/lib -lpng
-    INCLUDEPATH += /usr/local/include/libpng15/
-    INCLUDEPATH += /usr/local/include/libpng16/
 
     QMAKE_CXXFLAGS += $$system(/usr/local/bin/python3-config --includes)
     QMAKE_LFLAGS   += $$system(/usr/local/bin/python3-config --ldflags)
@@ -32,9 +26,6 @@ linux {
 
     QMAKE_CXXFLAGS += $$system(/usr/bin/python3-config --includes)
     QMAKE_LFLAGS   += $$system(/usr/bin/python3-config --ldflags)
-
-    # Link against libpng for image export
-    LIBS += -lpng
 
     # Even though this is in QMAKE_LFLAGS, the linker is picky about
     # library ordering (so it needs to be here too).
