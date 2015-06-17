@@ -20,9 +20,9 @@
 
 DepthImageItem::DepthImageItem(QVector3D pos, QVector3D size,
                                QImage depth, QImage shaded, QColor color,
-                               Viewport* viewport)
+                               bool flat, Viewport* viewport)
     : QObject(viewport), pos(pos), size(size), depth(depth), shaded(shaded),
-      color(color), viewport(viewport)
+      color(color), flat(flat), viewport(viewport)
 {
     initializeGL();
 
@@ -151,6 +151,7 @@ void DepthImageItem::loadSharedShaderVariables(QOpenGLShaderProgram* shader)
     glUniform1f(shader->uniformLocation("zmin_local"), zmin);
     glUniform1f(shader->uniformLocation("dz_global"), dz_global);
     glUniform1f(shader->uniformLocation("zmin_global"), zmin_global);
+    glUniform1i(shader->uniformLocation("flat"), flat);
 
     glUniform3f(shader->uniformLocation("color"),
                 color.redF(), color.greenF(), color.blueF());

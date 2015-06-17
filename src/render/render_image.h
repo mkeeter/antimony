@@ -32,6 +32,8 @@ public:
 
     void setColor(QColor color_) { color = color_; }
 
+    void setFlat(bool f) { flat = f; }
+
 public slots:
     void halt();
 
@@ -55,6 +57,7 @@ protected:
     int halt_flag;
 
     QColor color;
+    bool flat;
 
     friend class RenderTask;
 };

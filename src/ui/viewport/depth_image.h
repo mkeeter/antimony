@@ -17,7 +17,7 @@ class DepthImageItem : public QObject, protected QOpenGLFunctions
 public:
     DepthImageItem(QVector3D pos, QVector3D size,
                    QImage depth, QImage shaded, QColor color,
-                   Viewport* viewport);
+                   bool flat, Viewport* viewport);
     ~DepthImageItem();
 
     /*
@@ -46,6 +46,7 @@ protected:
     QImage depth;
     QImage shaded;
     QColor color;
+    bool flat;
 
     QPointer<Viewport> viewport;
 
