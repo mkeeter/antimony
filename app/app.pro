@@ -13,19 +13,22 @@ make_sb.commands = $(MKDIR) $$OUT_PWD/sb
 copy_nodes.commands = $(COPY_DIR) $$PWD/../py/nodes $$OUT_PWD/sb
 copy_fab.commands = $(COPY_DIR) $$PWD/../py/fab $$OUT_PWD/sb
 first.depends = $(first) make_sb copy_nodes copy_fab
-export(first.depends)
-export(make_sb.commands)
-export(copy_nodes.commands)
-export(copy_fab.commands)
 QMAKE_EXTRA_TARGETS += first make_sb copy_nodes copy_fab
 
 INCLUDEPATH += src
 INCLUDEPATH += ../lib/fab/inc
+LIBS += -L../lib/fab -lSbFab
 
 # Details for Mac applications
 macx {
     QMAKE_INFO_PLIST = ../deploy/mac/Info.plist
     ICON = ../deploy/mac/sb.icns
+
+    frameworks = $$OUT_PWD/$${TARGET}.app/Contents/Frameworks
+    libs.commands = $(MKDIR) $$frameworks; \
+                    cp ../lib/fab/libSbFab.0.dylib $$frameworks
+    first.depends += libs
+    QMAKE_EXTRA_TARGETS += libs
 }
 
 # Installation details for Linux systems

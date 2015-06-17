@@ -1,6 +1,7 @@
 CONFIG -= core
 TARGET = SbFab
 TEMPLATE = lib
+VERSION = 0.8
 
 INCLUDEPATH += inc vendor
 
@@ -16,6 +17,7 @@ macx {
     LIBS += -L/usr/local/lib -lpng
     INCLUDEPATH += /usr/local/include/libpng15/
     INCLUDEPATH += /usr/local/include/libpng16/
+    QMAKE_LFLAGS_SONAME = -Wl,-install_name,@executable_path/../Frameworks/
 }
 
 linux {
