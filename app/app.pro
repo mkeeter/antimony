@@ -22,8 +22,8 @@ LIBS += -L../lib/fab -lSbFab
 
 # Details for Mac applications
 macx {
-    QMAKE_INFO_PLIST = ../deploy/mac/Info.plist
-    ICON = ../deploy/mac/sb.icns
+    QMAKE_POST_LINK += $(COPY) $$PWD/../deploy/mac/Info.plist $$OUT_PWD/$${TARGET}.app/Contents;
+    QMAKE_POST_LINK += $(COPY) $$PWD/../deploy/mac/sb.icns $$OUT_PWD/$${TARGET}.app/Contents/Resources;
 }
 
 # Installation details for Linux systems
