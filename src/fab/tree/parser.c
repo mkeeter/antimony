@@ -39,22 +39,6 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-/* Linked list of Nodes */
-typedef struct NodeList_
-{
-    Node* node;
-    struct NodeList_* next;
-} NodeList;
-
-
-/* Cache storing multiple lists of NodeLists */
-typedef struct NodeCache_
-{
-    int levels;
-    NodeList* (*nodes)[LAST_OP]; // indexed by [level][opcode]
-    NodeList* constants;
-} NodeCache;
-
 
 /** @brief Recursively sets the flag of nodes to contain NODE_IN_TREE */
 _STATIC_
@@ -120,11 +104,10 @@ void free_node_cache(NodeCache* const c);
 
 MathTree* parse(const char* input)
 {
-    _Bool failed = false;
-
     // Create a cache in which nodes will be stored
     NodeCache* cache = malloc(sizeof(NodeCache));
     *cache = (NodeCache){ .levels=0, .constants=NULL };
+    Node *head = NULL;
 
     // Throw X, Y, and Z nodes into the cache
     Node* X = get_cached_node(cache, X_n());
@@ -132,14 +115,9 @@ MathTree* parse(const char* input)
     Node* Z = get_cached_node(cache, Z_n());
 
     // Parse the string, storing nodes in the cache and receiving the head
-    Node* head = get_token(&input, &failed, X, Y, Z, cache);
+    bool success = v2parse(&head, input, X, Y, Z, cache);
 
-    //  Abort if:
-    //      The parser failed
-    //      The parser didn't return a valid head
-    //          (this might be a subset of the above)
-    //      The input stream isn't empty
-    if (failed || !head || *input) {
+    if (!success) {
         free_node_cache(cache);
         return NULL;
     }
@@ -150,7 +128,6 @@ MathTree* parse(const char* input)
     T->head = head;
 
     free_node_cache(cache);
-
     return T;
 }
 

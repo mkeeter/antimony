@@ -1,4 +1,5 @@
 SOURCES += \
+    ../src/fab/tree/v2parser.cpp \
     ../src/fab/tree/eval.c \
     ../src/fab/tree/render.c \
     ../src/fab/tree/tree.c \
@@ -49,6 +50,11 @@ HEADERS += \
     ../src/fab/fab.h \
     ../src/fab/types/bounds.h \
     ../src/fab/types/transform.h
+
+include(flex.pri)
+include(lemon.pri)
+FLEXSOURCES = ../src/fab/tree/v2syntax.l
+LEMONSOURCES = ../src/fab/tree/v2syntax.y
 
 INCLUDEPATH += ../src/fab
 INCLUDEPATH += ../src

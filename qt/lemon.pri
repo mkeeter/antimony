@@ -1,0 +1,9 @@
+lemon.name = lemon ${QMAKE_FILE_IN}
+lemon.input = LEMONSOURCES
+lemon.output = ${QMAKE_FILE_PATH}/${QMAKE_FILE_BASE}.lemon.cpp
+lemon.commands = lemon -q -c -s ${QMAKE_FILE_IN} && mv ${QMAKE_FILE_PATH}/${QMAKE_FILE_BASE}.c ${QMAKE_FILE_PATH}/${QMAKE_FILE_BASE}.lemon.cpp && mv ${QMAKE_FILE_PATH}/${QMAKE_FILE_BASE}.h ${QMAKE_FILE_PATH}/${QMAKE_FILE_BASE}.lemon.hpp
+lemon.CONFIG += target_predeps
+lemon.variable_out = GENERATED_SOURCES
+silent:lemon.commands = @echo lemon -q -c -s ${QMAKE_FILE_IN} && mv ${QMAKE_FILE_PATH}/${QMAKE_FILE_BASE}.c ${QMAKE_FILE_PATH}/${QMAKE_FILE_BASE}.lemon.cpp && mv ${QMAKE_FILE_PATH}/${QMAKE_FILE_BASE}.h ${QMAKE_FILE_PATH}/${QMAKE_FILE_BASE}.lemon.hpp
+QMAKE_EXTRA_COMPILERS += lemon
+QMAKE_CLEAN += ${QMAKE_FILE_PATH}/${QMAKE_FILE_BASE}.lemon.hpp
