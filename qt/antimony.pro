@@ -15,11 +15,6 @@ QMAKE_CXXFLAGS += "-D'GITBRANCH=\"$${GITBRANCH}\"'"
 include(graph.pri)
 include(common.pri)
 
-macx {
-    QMAKE_INFO_PLIST = ../deploy/mac/Info.plist
-    ICON = ../deploy/mac/sb.icns
-}
-
 # Copy the py/fab and py/nodes directory when building the application
 make_sb.commands = $(MKDIR) $$OUT_PWD/sb
 copy_nodes.commands = $(COPY_DIR) $$PWD/../py/nodes $$OUT_PWD/sb
@@ -30,6 +25,23 @@ export(make_sb.commands)
 export(copy_nodes.commands)
 export(copy_fab.commands)
 QMAKE_EXTRA_TARGETS += first make_sb copy_nodes copy_fab
+
+# Details for Mac applications
+macx {
+    QMAKE_INFO_PLIST = ../deploy/mac/Info.plist
+    ICON = ../deploy/mac/sb.icns
+}
+
+# Installation details for Linux systems
+linux {
+    executable.path = /usr/local/bin
+    executable.files = antimony
+    nodes_folder.path = /usr/local/bin/sb/nodes
+    nodes_folder.files = ../py/nodes/*
+    fab_folder.path = /usr/local/bin/sb/fab
+    fab_folder.files = ../py/fab/*
+    INSTALLS += executable nodes_folder fab_folder
+}
 
 SOURCES += \
     ../src/app/main.cpp \

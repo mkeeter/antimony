@@ -1,3 +1,4 @@
+# Platform-specific configuration common to Antimony and supporting libraries
 cygwin {
     QMAKE_CXXFLAGS += $$system(python3-config --includes)
     QMAKE_CFLAGS += $$system(python3-config --includes)
@@ -13,14 +14,6 @@ macx {
 }
 
 linux {
-    executable.path = /usr/local/bin
-    executable.files = antimony
-    nodes_folder.path = /usr/local/bin/sb/nodes
-    nodes_folder.files = ../py/nodes/*
-    fab_folder.path = /usr/local/bin/sb/fab
-    fab_folder.files = ../py/fab/*
-    INSTALLS += executable nodes_folder fab_folder
-
     QMAKE_CXXFLAGS += $$system(/usr/bin/python3-config --includes)
     QMAKE_LFLAGS   += $$system(/usr/bin/python3-config --ldflags)
 
