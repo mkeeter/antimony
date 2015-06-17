@@ -1,4 +1,4 @@
 TEMPLATE = subdirs
 CONFIG += ordered
-SUBDIRS = lib/graph qt
-Antimony.depends = graph
+SUBDIRS = lib/fab qt/antimony.pro
+Antimony.depends = fab

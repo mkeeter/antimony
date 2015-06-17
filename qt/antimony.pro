@@ -21,6 +21,10 @@ QMAKE_EXTRA_TARGETS += first make_sb copy_nodes copy_fab
 
 INCLUDEPATH += ../src
 
+# Link against the stand-along fab library
+INCLUDEPATH += ../lib/fab/inc
+LIBS += -L../lib/fab -lSbFab
+
 # Details for Mac applications
 macx {
     QMAKE_INFO_PLIST = ../deploy/mac/Info.plist

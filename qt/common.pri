@@ -9,5 +9,3 @@ QMAKE_CFLAGS_RELEASE += -O3
 
 QMAKE_CXXFLAGS += -Werror=switch
 QMAKE_CFLAGS += -std=c11
-
-include(platforms.pri)
