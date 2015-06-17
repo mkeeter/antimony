@@ -1,4 +1,4 @@
 TEMPLATE = subdirs
 CONFIG += ordered
-SUBDIRS = lib/fab qt/antimony.pro
+SUBDIRS = lib/fab app
 Antimony.depends = fab
