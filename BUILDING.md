@@ -19,10 +19,10 @@ cd antimony
 mkdir build
 cd build
 
-/usr/local/Cellar/qt5/5.4.*/bin/qmake ../qt/antimony.pro
+/usr/local/Cellar/qt5/5.4.*/bin/qmake ../sb.pro
 make -j8
 
-open antimony.app
+open app/antimony.app
 ```
 
 Linux
@@ -41,15 +41,15 @@ cd antimony
 mkdir build
 cd build
 
-~/Qt5.4.0/5.4/gcc_64/bin/qmake ../qt/antimony.pro
+~/Qt5.4.0/5.4/gcc_64/bin/qmake ../sb.pro
 make -j8
 
-./antimony
+./app/Antimony
 ```
 
 You can use `make install`, or set up a symlink to run `antimony` from outside the build directory:
 ```
-ln -s ~/antimony/build/antimony /usr/local/bin/antimony 
+ln -s ~/antimony/build/app/Antimony /usr/local/bin/antimony
 ```
 
 ### Caveats

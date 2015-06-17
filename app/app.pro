@@ -24,6 +24,7 @@ macx {
     QMAKE_INFO_PLIST = ../deploy/mac/Info.plist
     ICON = ../deploy/mac/sb.icns
 
+    # Copy the SbFab library into our Frameworks directory
     frameworks = $$OUT_PWD/$${TARGET}.app/Contents/Frameworks
     libs.commands = $(MKDIR) $$frameworks; \
                     cp ../lib/fab/libSbFab.0.dylib $$frameworks
