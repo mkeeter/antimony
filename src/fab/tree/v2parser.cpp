@@ -34,8 +34,10 @@ void v2ParseTrace(FILE*, char*);
 
 bool v2parse(Node **result, const char* input, Node* X, Node* Y, Node *Z, NodeCache* cache)
 {
-	printf(ANSI_COLOR_BLUE "Parsing input:" ANSI_COLOR_RESET " \t'%s'\n");
-	//v2ParseTrace(stdout, "\t" ANSI_COLOR_YELLOW "\tParse trace:\t" ANSI_COLOR_RESET); //DEBUG
+	#ifdef PARSEDEBUG
+		printf(ANSI_COLOR_BLUE "Parsing input:" ANSI_COLOR_RESET " \t'%s'\n");
+		v2ParseTrace(stdout, "\t" ANSI_COLOR_YELLOW "\tParse trace:\t" ANSI_COLOR_RESET);
+	#endif
 
 	Env* locals = (Env*) malloc(sizeof(Env));
 	locals->valid = true;
@@ -58,7 +60,6 @@ bool v2parse(Node **result, const char* input, Node* X, Node* Y, Node *Z, NodeCa
 	do {
 		lexCode = yylex(scanner);
 		text = yyget_text(scanner);
-		//printf("\tlex trace:\tcode: %i\t text: '%s'\n", lexCode, text); //DEBUG
 		v2Parse(parser, lexCode, text, locals);
 	} while (lexCode > 0 &&  locals->valid);
 
@@ -70,9 +71,11 @@ bool v2parse(Node **result, const char* input, Node* X, Node* Y, Node *Z, NodeCa
 
 	*result = locals->head;
 
-	printf(ANSI_COLOR_GREEN "Parse success:\t" ANSI_COLOR_RESET);
-	print_node(*result);
-	printf("\n");
+	#ifdef PARSEDEBUG
+		printf(ANSI_COLOR_GREEN "Parse success:\t" ANSI_COLOR_RESET);
+		print_node(*result);
+		printf("\n");
+	#endif
 
 	yy_delete_buffer(bufferState, scanner);
 	yylex_destroy(scanner);
