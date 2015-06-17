@@ -137,8 +137,10 @@ def triangle(x0, y0, x1, y1, x2, y2):
 
 def right_triangle(x, y, w, h):
    # max(max(x-X,y-Y),X-(x*(Y-y)+(x+w)*(y+h-Y))/h)
+   ws = math.copysign(1,w)
+   hs = math.copysign(1,h)
    return Shape(
-      'aa-f%(x)gX-f%(y)gY-X/+*f%(x)g-Yf%(y)g*+f%(x)gf%(w)g-+f%(y)gf%(h)gYf%(h)g' % locals(),
+      'aa*f%(ws)g-f%(x)gX*f%(hs)g-f%(y)gY*f%(ws)g-X/+*f%(x)g-Yf%(y)g*+f%(x)gf%(w)g-+f%(y)gf%(h)gYf%(h)g' % locals(),
        x, y, x + w, y + h)
 
 ################################################################################
