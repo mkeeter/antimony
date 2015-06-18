@@ -39,22 +39,6 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-/* Linked list of Nodes */
-typedef struct NodeList_
-{
-    Node* node;
-    struct NodeList_* next;
-} NodeList;
-
-
-/* Cache storing multiple lists of NodeLists */
-typedef struct NodeCache_
-{
-    int levels;
-    NodeList* (*nodes)[LAST_OP]; // indexed by [level][opcode]
-    NodeList* constants;
-} NodeCache;
-
 
 /** @brief Recursively sets the flag of nodes to contain NODE_IN_TREE */
 static
@@ -79,19 +63,6 @@ Node* get_token(const char** input, _Bool* const failed,
 */
 static
 Node* get_float(const char** input, _Bool* const failed);
-
-
-/*  Looks up a node in the cache.  If not found, it is appended to the
- *  appropriate cache slot; if found, the original node is freed and
- *  the cached node pointer is returned.
- *
- *  The input node's children should be deduplicated and cached; we check
- *  by comparing their pointer values.  Nodes are considered equal if they
- *  have the same opcode and same child pointers, or if they are OP_CONST
- *  and have the same values.
- */
-static
-Node* get_cached_node(NodeCache* const cache, Node* const n);
 
 /*  Counts the number of nodes in this list with NODE_IN_TREE in their flags
  */
@@ -120,11 +91,10 @@ void free_node_cache(NodeCache* const c);
 
 MathTree* parse(const char* input)
 {
-    _Bool failed = false;
-
     // Create a cache in which nodes will be stored
     NodeCache* cache = malloc(sizeof(NodeCache));
     *cache = (NodeCache){ .levels=0, .constants=NULL };
+    Node *head = NULL;
 
     // Throw X, Y, and Z nodes into the cache
     Node* X = get_cached_node(cache, X_n());
@@ -132,14 +102,9 @@ MathTree* parse(const char* input)
     Node* Z = get_cached_node(cache, Z_n());
 
     // Parse the string, storing nodes in the cache and receiving the head
-    Node* head = get_token(&input, &failed, X, Y, Z, cache);
+    bool success = v2parse(&head, input, X, Y, Z, cache);
 
-    //  Abort if:
-    //      The parser failed
-    //      The parser didn't return a valid head
-    //          (this might be a subset of the above)
-    //      The input stream isn't empty
-    if (failed || !head || *input) {
+    if (!success) {
         free_node_cache(cache);
         return NULL;
     }
@@ -150,7 +115,6 @@ MathTree* parse(const char* input)
     T->head = head;
 
     free_node_cache(cache);
-
     return T;
 }
 
@@ -323,8 +287,6 @@ Node* get_float(const char** const input, _Bool* const failed)
     return constant_n(v);
 }
 
-
-static
 Node* get_cached_node(NodeCache* const cache, Node* const n)
 {
     if (n == NULL)  return NULL;

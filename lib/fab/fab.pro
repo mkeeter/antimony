@@ -10,7 +10,13 @@ include(../../qt/common.pri)
 include(../../qt/python.pri)
 include(../../qt/libpng.pri)
 
+include(flex.pri)
+include(lemon.pri)
+FLEXSOURCE = src/tree/v2syntax.l
+LEMONSOURCE = src/tree/v2syntax.y
+
 SOURCES += \
+    src/tree/v2parser.cpp \
     src/fab.cpp \
     src/formats/png.c \
     src/formats/stl.c \

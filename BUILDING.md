@@ -4,6 +4,8 @@ Requirements
 - [Python 3](https://www.python.org/)
 - [Boost.Python](http://www.boost.org/doc/libs/1_57_0/libs/python/doc/index.html) (linked against Python 3)
 - [`libpng`](http://www.libpng.org/pub/png/libpng.html)
+- [Lemon](http://www.hwaci.com/sw/lemon/)
+- [Flex](http://flex.sourceforge.net)
 
 Mac OS X
 --------
@@ -13,6 +15,8 @@ brew install libpng
 brew install python3
 brew install --with-python3 boost-python
 brew install qt5
+brew install lemon
+brew install flex
 
 git clone https://github.com/mkeeter/antimony
 cd antimony
@@ -27,7 +31,7 @@ open app/antimony.app
 
 Linux
 -----
-Tested on a clean Xubuntu 14.04 virtual machine:  
+Tested on a clean Xubuntu 14.04 virtual machine:
 Install [Qt 5.4](http://www.qt.io/download-open-source/#section-3), then run
 ```
 sudo apt-get install build-essential
@@ -35,6 +39,8 @@ sudo apt-get install libpng-dev
 sudo apt-get install python3-dev
 sudo apt-get install libboost-all-dev
 sudo apt-get install libgl1-mesa-dev
+sudo apt-get install lemon
+sudo apt-get install flex
 
 git clone https://github.com/mkeeter/antimony
 cd antimony

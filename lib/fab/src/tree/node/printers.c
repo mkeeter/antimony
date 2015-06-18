@@ -3,11 +3,17 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
+static void base_p(Node* n, FILE* f)
+{
+    fprintf(f, ANSI_COLOR_GRAY "[rank=%i; flags=%u]" ANSI_COLOR_RESET, n->rank, n->flags);
+}
+
 static void add_p(Node* n, FILE* f)
 {
     fprintf(f, "(");
     fprint_node(n->lhs, f);
     fprintf(f, "+");
+    base_p(n, f);
     fprint_node(n->rhs, f);
     fprintf(f, ")");
 }
@@ -17,6 +23,7 @@ static void sub_p(Node* n, FILE* f)
     fprintf(f, "(");
     fprint_node(n->lhs, f);
     fprintf(f, "-");
+    base_p(n, f);
     fprint_node(n->rhs, f);
     fprintf(f, ")");
 }
@@ -26,6 +33,7 @@ static void mul_p(Node* n, FILE* f)
     fprintf(f, "(");
     fprint_node(n->lhs, f);
     fprintf(f, "*");
+    base_p(n, f);
     fprint_node(n->rhs, f);
     fprintf(f, ")");
 }
@@ -35,13 +43,16 @@ static void div_p(Node* n, FILE* f)
     fprintf(f, "(");
     fprint_node(n->lhs, f);
     fprintf(f, "/");
+    base_p(n, f);
     fprint_node(n->rhs, f);
     fprintf(f, ")");
 }
 
 static void min_p(Node* n, FILE* f)
 {
-    fprintf(f, "min(");
+    fprintf(f, "min");
+    base_p(n, f);
+    fprintf(f, "(");
     fprint_node(n->lhs, f);
     fprintf(f, ", ");
     fprint_node(n->rhs, f);
@@ -50,7 +61,9 @@ static void min_p(Node* n, FILE* f)
 
 static void max_p(Node* n, FILE* f)
 {
-    fprintf(f, "max(");
+    fprintf(f, "max");
+    base_p(n, f);
+    fprintf(f, "(");
     fprint_node(n->lhs, f);
     fprintf(f, ", ");
     fprint_node(n->rhs, f);
@@ -59,7 +72,9 @@ static void max_p(Node* n, FILE* f)
 
 static void pow_p(Node* n, FILE* f)
 {
-    fprintf(f, "pow(");
+    fprintf(f, "pow");
+    base_p(n, f);
+    fprintf(f, "(");
     fprint_node(n->lhs, f);
     fprintf(f, ", ");
     fprint_node(n->rhs, f);
@@ -70,56 +85,72 @@ static void pow_p(Node* n, FILE* f)
 
 static void square_p(Node* n, FILE* f)
 {
-    fprintf(f, "pow(");
+    fprintf(f, "sqr");
+    base_p(n, f);
+    fprintf(f, "(");
     fprint_node(n->lhs, f);
-    fprintf(f, ", 2)");
+    fprintf(f, ")");
 }
 
 static void sqrt_p(Node* n, FILE* f)
 {
-    fprintf(f, "sqrt(");
+    fprintf(f, "sqrt");
+    base_p(n, f);
+    fprintf(f, "(");
     fprint_node(n->lhs, f);
     fprintf(f, ")");
 }
 
 static void sin_p(Node* n, FILE* f)
 {
-    fprintf(f, "sin(");
+    fprintf(f, "sin");
+    base_p(n, f);
+    fprintf(f, "(");
     fprint_node(n->lhs, f);
     fprintf(f, ")");
 }
 
 static void cos_p(Node* n, FILE* f)
 {
-    fprintf(f, "cos(");
+    fprintf(f, "cos");
+    base_p(n, f);
+    fprintf(f, "(");
     fprint_node(n->lhs, f);
     fprintf(f, ")");
 }
 
 static void tan_p(Node* n, FILE* f)
 {
-    fprintf(f, "tan(");
+    fprintf(f, "tan");
+    base_p(n, f);
+    fprintf(f, "(");
     fprint_node(n->lhs, f);
     fprintf(f, ")");
 }
 
 static void asin_p(Node* n, FILE* f)
 {
-    fprintf(f, "asin(");
+    fprintf(f, "asin");
+    base_p(n, f);
+    fprintf(f, "(");
     fprint_node(n->lhs, f);
     fprintf(f, ")");
 }
 
 static void acos_p(Node* n, FILE* f)
 {
-    fprintf(f, "acos(");
+    fprintf(f, "acos");
+    base_p(n, f);
+    fprintf(f, "(");
     fprint_node(n->lhs, f);
     fprintf(f, ")");
 }
 
 static void atan_p(Node* n, FILE* f)
 {
-    fprintf(f, "atan(");
+    fprintf(f, "atan");
+    base_p(n, f);
+    fprintf(f, "(");
     fprint_node(n->lhs, f);
     fprintf(f, ")");
 }
@@ -127,12 +158,15 @@ static void atan_p(Node* n, FILE* f)
 static void neg_p(Node* n, FILE* f)
 {
     fprintf(f, "-");
+    base_p(n, f);
     fprint_node(n->lhs, f);
 }
 
 static void exp_p(Node* n, FILE* f)
 {
-    fprintf(f, "exp(");
+    fprintf(f, "exp");
+    base_p(n, f);
+    fprintf(f, "(");
     fprint_node(n->lhs, f);
     fprintf(f, ")");
 }
@@ -200,6 +234,6 @@ void fprint_node(Node* n, FILE* f)
         case OP_Y:      Y_p(n, f); break;
         case OP_Z:      Z_p(n, f); break;
         default:
-            fprintf(f, "Unknown opcode!\n");
+            fprintf(f, "Unknown opcode!: %i\n", n->opcode);
     }
 }

@@ -416,7 +416,7 @@ def scale_z_r(part, x0, y0, z0, r0, s0, r1, s1):
 def extrude_z(part, zmin, zmax):
     # max(part, max(zmin-Z, Z-zmax))
     return Shape(
-            'am  f1%sa-f%gZ-Zf%g' % (part.math, zmin, zmax),
+            'am__f1%sa-f%gZ-Zf%g' % (part.math, zmin, zmax),
             part.bounds.xmin, part.bounds.ymin, zmin,
             part.bounds.xmax, part.bounds.ymax, zmax)
 
@@ -581,8 +581,7 @@ def cylinder_y(x, ymin, ymax, z, r):
       x-r, ymin, z-r, x+r, ymax,z+r)
 
 def sphere(x, y, z, r):
-    return Shape(
-            '-r++q%sq%sq%sf%g' % (('-Xf%g' % x) if x else 'X',
+    return Shape('-r++q%sq%sq%sf%g' % (('-Xf%g' % x) if x else 'X',
                                   ('-Yf%g' % y) if y else 'Y',
                                   ('-Zf%g' % z) if z else 'Z',
                                   r),
@@ -1480,4 +1479,3 @@ _widths['?'] = 0.55
 _glyphs['?'] = shape
 
 del shape
-
