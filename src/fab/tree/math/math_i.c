@@ -92,6 +92,14 @@ Interval pow_i(Interval A, Interval B)
     return i;
 }
 
+Interval atan2_i(Interval A, Interval B)
+{   //FIXME: CHECK FOR RIGHTER INTERVAL
+    Interval i;
+    i.lower = -M_PI;
+    i.upper = M_PI;
+    return i;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 Interval abs_i(Interval A)

@@ -26,6 +26,8 @@ Interval max_i(Interval A, Interval B);
 
 Interval pow_i(Interval A, Interval B);
 
+Interval atan2_i(Interval A, Interval B);
+
 // Unary functions
 Interval abs_i(Interval A);
 Interval square_i(Interval A);

@@ -59,6 +59,13 @@ float* pow_r(const float* restrict A, const float* restrict B,
     return R;
 }
 
+float* atan2_r(const float* A, const float* B, float* R, int c)
+{
+    for (int q =0; q < c; ++q)
+        R[q] = atan2(A[q], B[q]);
+    return R;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 float* abs_r(const float* restrict A, float* R, int c)

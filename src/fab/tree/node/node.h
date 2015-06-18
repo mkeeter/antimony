@@ -77,6 +77,8 @@ Node* min_n(Node* left, Node* right);
 Node* max_n(Node* left, Node* right);
 Node* pow_n(Node* left, Node* right);
 
+Node* atan2_n(Node* a, Node* b);
+
 // Unary arithmetic operators
 Node* abs_n(Node* n);
 Node* square_n(Node* n);

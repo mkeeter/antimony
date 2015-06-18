@@ -123,6 +123,7 @@ expr(E)		::= expr(L) DOUBLESTAR expr(R).			{	E = CACHED(pow_n(L, R)); 	}
 expr(E)		::= MIN LPAREN expr(L) COMMA expr(R) RPAREN.		{	E = CACHED(min_n(L, R)); 	}
 expr(E)		::= MAX LPAREN expr(L) COMMA expr(R) RPAREN.	{	E = CACHED(max_n(L, R)); 	}
 expr(E)		::= POW LPAREN expr(L) COMMA expr(R) RPAREN.	{	E = CACHED(pow_n(L, R)); 	}
+expr(E)		::= ATAN2 LPAREN expr(A) COMMA expr(B) RPAREN.	{	E = CACHED(atan2_n(A, B)); 	}
 
 expr(E)		::= SIN LPAREN expr(O) RPAREN.			{	E = CACHED(sin_n(O)); 	}
 expr(E)		::= COS LPAREN expr(O) RPAREN.			{	E = CACHED(cos_n(O)); 	}
