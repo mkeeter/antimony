@@ -24,6 +24,8 @@ float* max_r(const float* A, const float* B, float* R, int c);
 
 float* pow_r(const float* A, const float* B, float* R, int c);
 
+float* atan2_r(const float* A, const float* B, float* R, int c);
+
 // Unary functions
 float* abs_r(const float* A, float* R, int c);
 float* square_r(const float* A, float* R, int c);

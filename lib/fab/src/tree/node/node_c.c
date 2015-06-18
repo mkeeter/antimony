@@ -61,6 +61,7 @@ Node* min_n(Node* lhs, Node* rhs) { return binary_n(lhs, rhs, min_f, OP_MIN); }
 Node* max_n(Node* lhs, Node* rhs) { return binary_n(lhs, rhs, max_f, OP_MAX); }
 Node* pow_n(Node* lhs, Node* rhs) { return binary_n(lhs, rhs, pow_f, OP_POW); }
 
+Node* atan2_n(Node* a, Node* b) {return binary_n(a, b, atan2_f, OP_ATAN2); }
 
 ////////////////////////////////////////////////////////////////////////////////
 

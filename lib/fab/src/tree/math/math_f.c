@@ -89,6 +89,11 @@ float atan_f(float A)
     return atan(A);
 }
 
+float atan2_f(float A, float B)
+{
+    return atan2(A, B);
+}
+
 float neg_f(float A)
 {
     return -A;

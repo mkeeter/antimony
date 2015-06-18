@@ -34,6 +34,7 @@ float tan_f(float A);
 float asin_f(float A);
 float acos_f(float A);
 float atan_f(float A);
+float atan2_f(float A, float B);
 float neg_f(float A);
 float exp_f(float A);
 

@@ -155,6 +155,15 @@ static void atan_p(Node* n, FILE* f)
     fprintf(f, ")");
 }
 
+static void atan2_p(Node* n, FILE* f)
+{
+    fprintf(f, "atan2");
+    base_p(n, f);
+    fprintf(f, "(");
+    fprint_node(n->lhs, f);
+    fprintf(f, ")");
+}
+
 static void neg_p(Node* n, FILE* f)
 {
     fprintf(f, "-");
@@ -226,6 +235,7 @@ void fprint_node(Node* n, FILE* f)
         case OP_ASIN:   asin_p(n, f); break;
         case OP_ACOS:   acos_p(n, f); break;
         case OP_ATAN:   atan_p(n, f); break;
+        case OP_ATAN2:  atan2_p(n, f); break;
         case OP_NEG:    neg_p(n, f); break;
         case OP_EXP:    exp_p(n, f); break;
 
