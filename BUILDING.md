@@ -50,7 +50,7 @@ cd build
 ~/Qt5.4.0/5.4/gcc_64/bin/qmake ../sb.pro
 make -j8
 
-./app/Antimony
+./app/antimony
 ```
 
 You can use `make install`, or set up a symlink to run `antimony` from outside the build directory:
