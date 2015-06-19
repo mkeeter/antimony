@@ -157,6 +157,21 @@ bool DatumTextItem::eventFilter(QObject* obj, QEvent* event)
             App::instance()->undo();
         else if (keyEvent->matches(QKeySequence::Redo))
             App::instance()->redo();
+        else if (keyEvent->key() == Qt::Key_Up || keyEvent->key() == Qt::Key_Down) {
+            const int dx = keyEvent->key() == Qt::Key_Up ? 1 : -1;
+            const auto f = dynamic_cast<FloatDatum*>(d);
+            const auto i = dynamic_cast<IntDatum*>(d);
+            if (f && f->getValid())
+            {
+                const double scale = fmax(
+                        0.01, abs(PyFloat_AsDouble(f->getValue()) * 0.01));
+                f->dragValue(scale * dx);
+            }
+            else if (i && i->getValid())
+            {
+                i->dragValue(dx);
+            }
+        }
         else
             return false;
         return true;
