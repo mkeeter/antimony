@@ -1,0 +1,10 @@
+import fab
+
+title("Map (xyz)")
+
+input('shape', fab.types.Shape)
+input('Xfn', str, "*Xf2")
+input('Yfn', str, "*Yf2")
+input('Zfn', str, "_")
+
+output("transformed'", shape.map(fab.types.Transform(Xfn, Yfn, Zfn, '', '', '')))
