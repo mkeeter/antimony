@@ -3,6 +3,11 @@ QT += core gui widgets opengl network
 TARGET = Antimony
 TEMPLATE = app
 
+INCLUDEPATH += src
+
+LIBS += -L../lib/fab -lSbFab
+INCLUDEPATH += ../lib/fab/inc
+
 include(../qt/common.pri)
 include(../qt/python.pri)
 include(../qt/libpng.pri)
@@ -16,10 +21,6 @@ copy_fab.commands = $(COPY_DIR) $$PWD/../py/fab $$OUT_PWD/sb
 first.depends = $(first) make_sb copy_nodes copy_fab
 QMAKE_EXTRA_TARGETS += first make_sb copy_nodes copy_fab
 
-INCLUDEPATH += src
-INCLUDEPATH += ../lib/fab/inc
-LIBS += -L../lib/fab -lSbFab
-
 # Details for Mac applications
 macx {
     # Normally you would deploy an icon and a .plist file by setting
@@ -31,6 +32,9 @@ macx {
 
 # Installation details for Linux systems
 linux {
+    # Rename file from "Antimony" to "antimony"
+    QMAKE_POST_LINK += $(MOVE) $$OUT_PWD/$${TARGET} $$OUT_PWD/$$lower($${TARGET})
+
     executable.path = /usr/local/bin
     executable.files = antimony
     nodes_folder.path = /usr/local/bin/sb/nodes

@@ -55,7 +55,7 @@ def find_antimony(usepath=False):
     """
     Track down the antimony binary
     """
-    proanti = os.path.join(project(), 'build', 'antimony')
+    proanti = os.path.join(project(), 'build', 'app', 'antimony')
     if usepath:
         for path in os.environ['PATH'].split(':'):
             pathanti = os.path.join(path, 'antimony')
