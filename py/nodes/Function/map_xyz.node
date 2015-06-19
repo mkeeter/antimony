@@ -1,0 +1,13 @@
+import fab
+
+title("Map (xyz)")
+
+input('shape', fab.types.Shape)
+input('Xfn', str, "=X * 2;")
+input('Yfn', str, "=Y * 2;")
+input('Zfn', str, "_")
+input('Xfn_inv', str, "=X / 2;")
+input('Yfn_inv', str, "=Y / 2;")
+input('Zfn_inv', str, "")
+
+output("transformed'", shape.map(fab.types.Transform(Xfn, Yfn, Zfn, Xfn_inv, Yfn_inv, Zfn_inv)))
