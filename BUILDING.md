@@ -26,7 +26,7 @@ cd build
 /usr/local/Cellar/qt5/5.4.*/bin/qmake ../sb.pro
 make -j8
 
-open app/antimony.app
+open app/Antimony.app
 ```
 
 Linux
@@ -55,14 +55,14 @@ make -j8
 
 You can use `make install`, or set up a symlink to run `antimony` from outside the build directory:
 ```
-ln -s ~/antimony/build/app/Antimony /usr/local/bin/antimony
+ln -s ~/antimony/build/app/antimony /usr/local/bin/antimony
 ```
 
 ### Caveats
 
 The path to `qmake` may vary depending on how Qt 5.4 was installed; if the above path doesn't work, try
 ```
-~/Qt/5.4/gcc_64/bin/qmake ../qt/antimony.pro
+~/Qt/5.4/gcc_64/bin/qmake ../sb.pro
 ```
 
 --------------------------------------------------------------------------------
