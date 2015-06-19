@@ -30,6 +30,7 @@ float eval_f(MathTree* tree, const float x, const float y, const float z)
                 case OP_MIN:    node->results.f = min_f(A, B); break;
                 case OP_MAX:    node->results.f = max_f(A, B); break;
                 case OP_POW:    node->results.f = pow_f(A, B); break;
+                case OP_ATAN2:   node->results.f = atan2_f(A,B); break;
 
                 case OP_ABS:    node->results.f = abs_f(A); break;
                 case OP_SQUARE: node->results.f = square_f(A); break;
@@ -49,7 +50,7 @@ float eval_f(MathTree* tree, const float x, const float y, const float z)
 
                 case OP_CONST:  break;
                 default:
-                    printf("Unknown opcode!\n");
+                    printf("Unknown opcode! %i\n", node->opcode);
             }
         }
     }
@@ -82,6 +83,7 @@ Interval eval_i(MathTree* tree, const Interval X,
                 case OP_MIN:    node->results.i = min_i(A, B); break;
                 case OP_MAX:    node->results.i = max_i(A, B); break;
                 case OP_POW:    node->results.i = pow_i(A, B); break;
+                case OP_ATAN2:   node->results.i = atan2_i(A,B); break;
 
                 case OP_ABS:    node->results.i = abs_i(A); break;
                 case OP_SQUARE: node->results.i = square_i(A); break;
@@ -100,7 +102,7 @@ Interval eval_i(MathTree* tree, const Interval X,
                 case OP_Y:      node->results.i = Y_i(Y); break;
                 case OP_Z:      node->results.i = Z_i(Z); break;
                 default:
-                    printf("Unknown opcode!\n");
+                    printf("Unknown opcode! %i\n", node->opcode);
             }
         }
     }
@@ -132,6 +134,7 @@ float* eval_r(MathTree* tree, const Region r)
                 case OP_MIN:    min_r(A, B, R, c); break;
                 case OP_MAX:    max_r(A, B, R, c); break;
                 case OP_POW:    pow_r(A, B, R, c); break;
+                case OP_ATAN2:  atan2_r(A, B, R, c); break;
 
                 case OP_ABS:    abs_r(A, R, c); break;
                 case OP_SQUARE: square_r(A, R, c); break;
@@ -150,7 +153,7 @@ float* eval_r(MathTree* tree, const Region r)
                 case OP_Y:      Y_r(r.Y, R, c); break;
                 case OP_Z:      Z_r(r.Z, R, c); break;
                 default:
-                    printf("Unknown opcode!\n");
+                    printf("Unknown opcode! %i\n", node->opcode);
             }
         }
     }
@@ -184,6 +187,7 @@ derivative* eval_g(MathTree* tree, const Region r)
                 case OP_MIN:    min_g(A, B, R, c); break;
                 case OP_MAX:    max_g(A, B, R, c); break;
                 case OP_POW:    pow_g(A, B, R, c); break;
+                case OP_ATAN2:  atan2_g(A, B, R, c); break;
 
                 case OP_ABS:    abs_g(A, R, c); break;
                 case OP_SQUARE: square_g(A, R, c); break;
@@ -202,7 +206,7 @@ derivative* eval_g(MathTree* tree, const Region r)
                 case OP_Y:      Y_g(r.Y, R, c); break;
                 case OP_Z:      Z_g(r.Z, R, c); break;
                 default:
-                    printf("Unknown opcode!\n");
+                    printf("Unknown opcode! %i\n", node->opcode);
             }
         }
     }
