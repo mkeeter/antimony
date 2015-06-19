@@ -122,6 +122,8 @@ derivative* atan2_g(const derivative* A, const derivative* B, derivative* R, int
         for (int i=1; i<4; ++i)
             INDEX(R) = (-INDEX(A)*B[q].v + INDEX(B)*A[q].v) / d;
     }
+
+    return R;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
