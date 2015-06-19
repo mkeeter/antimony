@@ -1,0 +1,36 @@
+import fab
+
+title('Cylinder Wrap (Y-axis)')
+input('shape', fab.types.Shape)
+input('radius', float)
+
+#Xfn = "= %(radius)f * 2 * atan(X/%(radius)f / (sqrt((Z/%(radius)f)**2 + (X/%(radius)f)**2) + Z/%(radius)f));" % params
+#Xfn = "=%(radius)f * atan2( Z/%(radius)f, X/%(radius)f);" % params
+#Yfn = "_" % params
+#Zfn = "=%(radius)f * (sqrt( (X/%(radius)f)**2 + (Z/%(radius)f)**2) - 1);" % params
+#Xfn_inv = "=(%(radius)f+Z) * sin(X / %(radius)f);" % params
+#Yfn_inv = "" % params
+#Zfn_inv = "=(%(radius)f+Z) * cos(X / %(radius)f);" % params
+
+tx = "(X / %(radius)f)" % locals()
+tz = "(Z / %(radius)f)" % locals()
+dist = "(sqrt( (%(tx)s)**2 + (%(tz)s)**2 ))" % locals()
+# angle = "atan2( %(tz)s, %(tx)s )" % locals()
+# angle = "2 * atan( (sqrt( (%(tx)s) + (%(tz)s) ) - (%(tz)s)) / (%(tx)s) )" % locals()
+angle = "( 2 * atan(  %(tx)s / (  sqrt(%(tz)s + %(tx)s) + %(tz)s  )) )" % locals()
+
+Xfn = "=%(angle)s * %(radius)f;" % locals()
+Yfn = "_"
+Zfn = "=(%(dist)s-1) * %(radius)f;" % locals()
+
+angle = "(X / %(radius)f)" % locals()
+r = "(%(radius)f + Z)" % locals()
+sina = "(sin(%(angle)s))" % locals()
+cosa = "(cos(%(angle)s))" % locals()
+
+Xfn_inv = "=%(r)s * %(sina)s;" % locals()
+Yfn_inv = ""
+Zfn_inv = "=%(r)s * %(cosa)s;" % locals()
+
+output("transformed", shape.map(
+    fab.types.Transform(Xfn, Yfn, Zfn, Xfn_inv, Yfn_inv, Zfn_inv)))
