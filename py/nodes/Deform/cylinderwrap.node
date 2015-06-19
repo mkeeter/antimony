@@ -15,13 +15,13 @@ input('radius', float)
 tx = "(X / %(radius)f)" % locals()
 tz = "(Z / %(radius)f)" % locals()
 dist = "(sqrt( (%(tx)s)**2 + (%(tz)s)**2 ))" % locals()
-# angle = "atan2( %(tz)s, %(tx)s )" % locals()
+angle = "(atan2( %(tx)s, %(tz)s ))" % locals()
 # angle = "2 * atan( (sqrt( (%(tx)s) + (%(tz)s) ) - (%(tz)s)) / (%(tx)s) )" % locals()
-angle = "( 2 * atan(  %(tx)s / (  sqrt(%(tz)s + %(tx)s) + %(tz)s  )) )" % locals()
+# angle = "( 2 * atan(  %(tx)s / (  sqrt(%(tz)s + %(tx)s) + %(tz)s  )) )" % locals()
 
 Xfn = "=%(angle)s * %(radius)f;" % locals()
 Yfn = "_"
-Zfn = "=(%(dist)s-1) * %(radius)f;" % locals()
+Zfn = "=(%(dist)s - 1) * %(radius)f;" % locals()
 
 angle = "(X / %(radius)f)" % locals()
 r = "(%(radius)f + Z)" % locals()
@@ -33,4 +33,5 @@ Yfn_inv = ""
 Zfn_inv = "=%(r)s * %(cosa)s;" % locals()
 
 output("transformed", shape.map(
-    fab.types.Transform(Xfn, Yfn, Zfn, Xfn_inv, Yfn_inv, Zfn_inv)))
+    fab.types.Transform(Xfn, Yfn, Zfn,
+                        Xfn_inv, Yfn_inv, Zfn_inv)))
