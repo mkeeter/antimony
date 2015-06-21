@@ -77,6 +77,7 @@ real				{integer}*("."{digit}+)?{exponent}?
 	"asin"			return TOKEN_ASIN;
 	"acos"			return TOKEN_ACOS;
 	"atan"			return TOKEN_ATAN;
+	"atan2"			return TOKEN_ATAN2;
 	"abs"			return TOKEN_ABS;
 	"sqrt"			return TOKEN_SQRT;
 	"exp"			return TOKEN_EXP;

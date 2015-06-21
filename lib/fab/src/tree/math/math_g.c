@@ -114,6 +114,18 @@ derivative* pow_g(const derivative* restrict A,
     return R;
 }
 
+derivative* atan2_g(const derivative* A, const derivative* B, derivative* R, int c) {
+    for (int q = 0; q < c; ++q)
+    {
+        R[q].v = atan2(A[q].v, B[q].v);
+        const float d = pow(A[q].v, 2) + pow(B[q].v, 2);
+        for (int i=1; i<4; ++i)
+            INDEX(R) = (-INDEX(A)*B[q].v + INDEX(B)*A[q].v) / d;
+    }
+
+    return R;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 derivative* abs_g(const derivative* restrict A,

@@ -18,6 +18,7 @@ const char* OPCODE_NAMES[] = {
     "OP_ASIN",
     "OP_ACOS",
     "OP_ATAN",
+    "OP_ATAN2",
     "OP_NEG",
     "OP_EXP",
 
@@ -47,6 +48,7 @@ const char* dot_symbol(Opcode op) {
         case OP_ASIN:   return "asin";
         case OP_ACOS:   return "acos";
         case OP_ATAN:   return "atan";
+        case OP_ATAN2:  return "atan2";
         case OP_NEG:    return "−";
         case OP_EXP:    return "exp";
         case OP_X:      return "X";
@@ -73,6 +75,7 @@ const char* dot_color(Opcode op) {
         case OP_ASIN:
         case OP_ACOS:
         case OP_ATAN:
+        case OP_ATAN2:
         case OP_EXP:
             return "goldenrod";
         case OP_MIN:
@@ -114,6 +117,7 @@ int dot_fontsize(Opcode op) {
         case OP_ASIN:
         case OP_ACOS:
         case OP_ATAN:
+        case OP_ATAN2:
         case OP_EXP:
             return 14;
         default:

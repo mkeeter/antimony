@@ -801,6 +801,29 @@ def repel(part, x, y, z, r):
 ################################################################################
 
 @preserve_color
+def cylinder_y_wrap(part, radius):
+    tx = "(X / %(radius)f)" % locals()
+    tz = "(Z / %(radius)f)" % locals()
+    dist = "(sqrt( (%(tx)s)**2 + (%(tz)s)**2 ))" % locals()
+    angle = "(atan2( %(tx)s, %(tz)s ))" % locals()
+
+    Xfn = "=%(angle)s * %(radius)f;" % locals()
+    Yfn = "_"
+    Zfn = "=(%(dist)s - 1) * %(radius)f;" % locals()
+
+    angle = "(X / %(radius)f)" % locals()
+    r = "(%(radius)f + Z)" % locals()
+    sina = "(sin(%(angle)s))" % locals()
+    cosa = "(cos(%(angle)s))" % locals()
+
+    Xfn_inv = "=%(r)s * %(sina)s;" % locals()
+    Yfn_inv = ""
+    Zfn_inv = "=%(r)s * %(cosa)s;" % locals()
+
+    return part.map(Transform(  Xfn, Yfn, Zfn,
+                                Xfn_inv, Yfn_inv, Zfn_inv))
+
+@preserve_color
 def twist_xy_z(part, x, y, z0, z1, t0, t1):
     # First, we'll move and scale so that the relevant part of the model
     # is at x=y=0 and scaled so that z is between 0 and 1.
