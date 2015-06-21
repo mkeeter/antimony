@@ -1,116 +1,31 @@
-#include <math.h>
-
 #include "fab/tree/math/math_f.h"
 
-float add_f(float A, float B)
-{
-    return A+B;
-}
-
-float sub_f(float A, float B)
-{
-    return A-B;
-}
-
-float mul_f(float A, float B)
-{
-    return A*B;
-}
-
-float div_f(float A, float B)
-{
-    return A/B;
-}
-
-float min_f(float A, float B)
-{
-    return A < B ? A : B;
-}
-
-float max_f(float A, float B)
-{
-    return A > B ? A : B;
-}
-
-float pow_f(float A, float B)
-{
-    return pow(A, B);
-}
+extern inline float add_f(float A, float B);
+extern inline float sub_f(float A, float B);
+extern inline float mul_f(float A, float B);
+extern inline float div_f(float A, float B);
+extern inline float min_f(float A, float B);
+extern inline float max_f(float A, float B);
+extern inline float pow_f(float A, float B);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-float abs_f(float A)
-{
-    return fabs(A);
-}
+extern inline float abs_f(float A);
+extern inline float square_f(float A);
+extern inline float sqrt_f(float A);
+extern inline float sin_f(float A);
+extern inline float cos_f(float A);
+extern inline float tan_f(float A);
 
-float square_f(float A)
-{
-    return A*A;
-}
-
-float sqrt_f(float A)
-{
-    if (A < 0)  return 0;
-    else        return sqrt(A);
-}
-
-float sin_f(float A)
-{
-    return sin(A);
-}
-
-float cos_f(float A)
-{
-    return cos(A);
-}
-
-float tan_f(float A)
-{
-    return tan(A);
-}
-
-float asin_f(float A)
-{
-    if (A < -1)     return -M_PI_2;
-    else if (A > 1) return M_PI_2;
-    else            return asin(A);
-}
-
-float acos_f(float A)
-{
-    if (A < -1)     return M_PI;
-    else if (A > 1) return 0;
-    else            return acos(A);
-}
-
-float atan_f(float A)
-{
-    return atan(A);
-}
-
-float atan2_f(float A, float B)
-{
-    return atan2(A, B);
-}
-
-float neg_f(float A)
-{
-    return -A;
-}
-
-float exp_f(float A)
-{
-    return exp(A);
-}
+extern inline float asin_f(float A);
+extern inline float acos_f(float A);
+extern inline float atan_f(float A);
+extern inline float atan2_f(float A, float B);
+extern inline float neg_f(float A);
+extern inline float exp_f(float A);
 
 ////////////////////////////////////////////////////////////////////////////////
 
-float X_f(float X)
-{ return X; }
-
-float Y_f(float Y)
-{ return Y; }
-
-float Z_f(float Z)
-{ return Z; }
+extern inline float X_f(float X);
+extern inline float Y_f(float Y);
+extern inline float Z_f(float Z);
