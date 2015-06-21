@@ -8,7 +8,7 @@
 float* name(const float* restrict A, const float* restrict B,   \
          float* restrict R, int c)                              \
 {                                                               \
-    for (int q=0; q < c; ++c)                                   \
+    for (int q=0; q < c; ++q)                                   \
         R[q] = fn(A[q], B[q]);                                  \
     return R; \
 }
@@ -27,7 +27,7 @@ DUAL(atan2_r, atan2_f);
 #define SINGLE(name, fn) \
 float* name(const float* restrict A, float* restrict R, int c)  \
 {                                                               \
-    for (int q=0; q < c; ++c)                                   \
+    for (int q=0; q < c; ++q)                                   \
         R[q] = fn(A[q]);                                        \
     return R; \
 }
