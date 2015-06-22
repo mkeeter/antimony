@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QSurfaceFormat>
 #include <QTextCodec>
+#include <QStyleFactory>
 
 #include <iostream>
 
@@ -61,6 +62,11 @@ int main(int argc, char *argv[])
 #endif
     d += "/sb";
     fab::postInit(d.toStdString().c_str());
+
+    // Use 'gtk' as default visual style on Linux
+#if defined Q_OS_LINUX
+    a.setStyle(QStyleFactory::create("gtk"));
+#endif
 
     // Check to make sure that the fab module exists
     PyObject* fab = PyImport_ImportModule("fab");
