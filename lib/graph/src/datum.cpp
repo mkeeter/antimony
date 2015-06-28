@@ -75,6 +75,16 @@ void Datum::update()
     if (changed)
         parent->changed(name);
 }
+
+void Datum::setText(std::string s)
+{
+    if (s != expr)
+    {
+        expr = s;
+        trigger();
+    }
+}
+
 /*
 void Datum::update()
 {

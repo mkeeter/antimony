@@ -18,11 +18,8 @@ public:
 
     ~Datum();
 
+    void setText(std::string s);
 
-    /*
-    static Datum* OutputDatum(std::string name, PyObject* obj,
-                              Node* parent);
-                              */
 protected:
     /*
      *  When an upstream changes, call update.
