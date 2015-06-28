@@ -1,5 +1,6 @@
 import fab
 
+#https://en.wikipedia.org/wiki/Gyroid
 title('Gyroid')
 
 input('xmin', float, -1)
