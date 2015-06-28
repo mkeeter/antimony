@@ -8,13 +8,13 @@ using namespace boost::python;
 PyObject* Proxy::proxy_init = NULL;
 
 Proxy::Proxy(Root* r)
-    : root(r), caller(NULL), settable(false)
+    : root(r), locals(NULL), dict(NULL), caller(NULL), settable(false)
 {
     // Nothing to do here
 }
 
 Proxy::Proxy()
-    : root(NULL), caller(NULL), settable(false)
+    : root(NULL), locals(NULL), dict(NULL), caller(NULL), settable(false)
 {
     // Nothing to do here
     // (but we need to set the root before this proxy can be used)
