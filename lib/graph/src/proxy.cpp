@@ -20,6 +20,11 @@ Proxy::Proxy()
     // (but we need to set the root before this proxy can be used)
 }
 
+Proxy::~Proxy()
+{
+    Py_XDECREF(dict);
+}
+
 PyObject* Proxy::getAttr(std::string name)
 {
     if (dict)

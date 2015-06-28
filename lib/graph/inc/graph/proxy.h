@@ -15,6 +15,12 @@ public:
      */
     Proxy();
     Proxy(Root* r);
+
+    /*
+     *  On destruction, delete the Python dictionary
+     */
+    ~Proxy();
+
     PyObject* getAttr(std::string s);
     void setAttr(std::string name, boost::python::object obj);
 
