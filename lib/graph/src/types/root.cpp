@@ -10,10 +10,20 @@ void Root::removeDownstream(Downstream* d)
             ++itr;
 }
 
+void Root::saveLookup(std::string name, Downstream* caller)
+{
+    lookups.insert(std::make_pair(name, caller));
+    caller->roots.insert(this);
+}
+
 void Root::changed(std::string n)
 {
     auto range = lookups.equal_range(n);
+    std::list<Downstream*> targets;
     for (auto it = range.first; it != range.second; ++it)
-        it->second->trigger();
+        targets.push_back(it->second);
+
+    for (auto it : targets)
+        it->trigger();
 }
 

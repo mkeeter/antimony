@@ -16,6 +16,11 @@ public:
     virtual PyObject* pyGetAttr(std::string name, Downstream* caller) const=0;
 
     /*
+     *  Record that the given Downstream looked up a particular name
+     */
+    void saveLookup(std::string name, Downstream* caller);
+
+    /*
      *  Returns true if this root is a top-level object
      *  (changes whether Proxy populates dictionary and __builtins__)
      */
