@@ -17,8 +17,6 @@ Datum::Datum(std::string name, std::string s,
         if (PyErr_Occurred())
             PyErr_Clear();
     }
-
-    parent->changed(name);
 }
 
 Datum::~Datum()
