@@ -20,6 +20,7 @@ void Script::update()
     // Run the script
     PyObject* out = PyRun_String(
             script.c_str(), Py_file_input, globals, globals);
+    Py_XDECREF(out);
 
     if (PyErr_Occurred())
     {
