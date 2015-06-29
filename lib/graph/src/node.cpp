@@ -13,7 +13,7 @@ Node::Node(std::string n, Graph* root)
 
 void Node::install(Datum* d)
 {
-    datums.push_back(d);
+    datums.push_back(std::unique_ptr<Datum>(d));
 }
 
 PyObject* Node::proxyDict(Downstream* caller)
@@ -33,8 +33,8 @@ void Node::makeInput(std::string n, PyTypeObject* type, std::string value)
     // If the datum is of the wrong type, delete it.
     if (d != NULL && (d->type != type))
     {
-        delete d;
-        datums.remove(d);
+        datums.remove_if([&](const std::unique_ptr<Datum>& d_)
+                         { return d_.get() == d; });
         d = NULL;
     }
 
@@ -71,9 +71,10 @@ void Node::makeOutput(std::string n, PyObject* out)
 Datum* Node::getDatum(std::string name) const
 {
     auto match = std::find_if(datums.begin(), datums.end(),
-                              [&](Datum* d){ return d->name == name; });
+                              [&](const std::unique_ptr<Datum>& d)
+                              { return d->name == name; });
     if ((match != datums.end()) && (*match)->valid)
-        return *match;
+        return match->get();
     else
         return NULL;
 }

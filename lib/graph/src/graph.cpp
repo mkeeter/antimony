@@ -12,7 +12,7 @@ Graph::Graph(std::string n, Graph* parent)
 
 void Graph::install(Node* n)
 {
-    nodes.push_back(n);
+    nodes.push_back(std::unique_ptr<Node>(n));
 }
 
 PyObject* Graph::proxyDict(Node* locals, Downstream* caller)
@@ -23,9 +23,10 @@ PyObject* Graph::proxyDict(Node* locals, Downstream* caller)
 PyObject* Graph::pyGetAttr(std::string name, Downstream* caller) const
 {
     auto match = std::find_if(nodes.begin(), nodes.end(),
-                              [&](Node* n){ return n->name == name; });
+                              [&](const std::unique_ptr<Node>& n)
+                              { return n->name == name; });
     if (match != nodes.end())
-        return Proxy::makeProxyFor(*match, NULL, caller);
+        return Proxy::makeProxyFor(match->get(), NULL, caller);
     else
         return NULL;
 }

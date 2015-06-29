@@ -2,9 +2,11 @@
 
 #include <string>
 #include <list>
+#include <memory>
 
 #include "graph/types/root.h"
 #include "graph/script.h"
+#include "graph/datum.h"
 
 class Datum;
 class Graph;
@@ -16,6 +18,9 @@ public:
 
     /*
      *  Adds the given datum at the end of the list.
+     *
+     *  The node takes ownership of the datum and will delete it
+     *  when the node is destroyed.
      */
     void install(Datum* d);
 
@@ -45,7 +50,7 @@ protected:
     std::string name;
 
     Script script;
-    std::list<Datum*> datums;
+    std::list<std::unique_ptr<Datum>> datums;
     Graph* parent;
 
     friend class Graph;

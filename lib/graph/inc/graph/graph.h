@@ -3,6 +3,7 @@
 #include <Python.h>
 
 #include <list>
+#include <memory>
 
 #include "graph/types/root.h"
 
@@ -14,7 +15,10 @@ public:
     explicit Graph(std::string name="", Graph* parent=NULL);
 
     /*
-     *  Installs this datum at the end of the datum list.
+     *  Installs this node at the end of the node list.
+     *
+     *  The graph takes ownership of the node and will delete
+     *  it when the graph is destroyed.
      */
     void install(Node* n);
 
@@ -34,5 +38,5 @@ protected:
 
     std::string name;
     Graph* parent;
-    std::list<Node*> nodes;
+    std::list<std::unique_ptr<Node>> nodes;
 };
