@@ -43,6 +43,7 @@ protected:
 
     PyObject* value;
     bool valid;
+    std::string error;
     PyTypeObject* type;
 
     Node* parent;

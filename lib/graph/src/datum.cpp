@@ -38,7 +38,7 @@ PyObject* Datum::getValue()
 
     if (PyErr_Occurred())
     {
-        auto err = getPyError();
+        error = getPyError().first;
         PyErr_Clear();
     }
 
