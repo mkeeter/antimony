@@ -20,6 +20,13 @@ public:
 
     void setText(std::string s);
 
+    bool isValid() const { return valid; }
+
+    /*
+     *  Returns a borrowed reference to the current value.
+     */
+    PyObject* currentValue() const { return value; }
+
 protected:
     /*
      *  When an upstream changes, call update.
