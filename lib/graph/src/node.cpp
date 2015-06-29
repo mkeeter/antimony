@@ -80,15 +80,20 @@ Datum* Node::getDatum(std::string name) const
 
 PyObject* Node::pyGetAttr(std::string name, Downstream* caller) const
 {
+    (void)caller;
+
     auto d = getDatum(name);
-    if (d && d->valid)
+    if (d)
     {
-        Py_INCREF(d->value);
-        return d->value;
+        if (d->valid)
+        {
+            Py_INCREF(d->value);
+            return d->value;
+        }
+        throw Proxy::Exception("Datum '" + name + "' is invalid");
     }
     else
     {
-        throw Proxy::Exception("Datum '" + name + "' is invalid");
         return NULL;
     }
 }
