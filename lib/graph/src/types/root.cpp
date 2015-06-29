@@ -1,6 +1,8 @@
 #include "graph/types/root.h"
 #include "graph/datum.h"
 
+#include <list>
+
 void Root::removeDownstream(Downstream* d)
 {
     for (auto itr = lookups.begin(); itr != lookups.end();)
@@ -22,7 +24,6 @@ void Root::changed(std::string n)
     std::list<Downstream*> targets;
     for (auto it = range.first; it != range.second; ++it)
         targets.push_back(it->second);
-
     for (auto it : targets)
         it->trigger();
 }
