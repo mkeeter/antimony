@@ -16,6 +16,8 @@ Datum::Datum(std::string name, std::string s,
         value = PyObject_CallFunctionObjArgs((PyObject*)type, NULL);
         if (PyErr_Occurred())
             PyErr_Clear();
+        else
+            parent->changed(name);
     }
 }
 
