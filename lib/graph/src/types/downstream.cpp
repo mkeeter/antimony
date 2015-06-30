@@ -9,14 +9,8 @@ Downstream::~Downstream()
 
 void Downstream::trigger()
 {
-#if 0
     sources.clear();
-    sources.insert(this);
-#endif
-
     for (auto r : roots)
         r->removeDownstream(this);
-    upstream.clear();
-
     update();
 }

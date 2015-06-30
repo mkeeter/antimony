@@ -40,6 +40,15 @@ void Node::makeInput(std::string n, PyTypeObject* type, std::string value)
 
     if (d == NULL)
         d = new Datum(n, value, type, this);
+    else
+        // Move the existing datum to the end of the list
+        // (so that ordering matches ordering in the script)
+        for (auto itr = datums.begin(); itr != datums.end(); ++itr)
+            if (itr->get() == d)
+            {
+                datums.splice(datums.end(), datums, itr);
+                break;
+            }
 
     script.active.insert(d);
 }
@@ -86,6 +95,12 @@ PyObject* Node::pyGetAttr(std::string n, Downstream* caller) const
     auto d = getDatum(n);
     if (d)
     {
+        if (caller->sources.count(d))
+        {
+            throw Proxy::Exception("Recursive lookup of datum '" + n + "'");
+        }
+        caller->sources.insert(d->sources.begin(), d->sources.end());
+
         if (d->valid)
         {
             Py_INCREF(d->value);

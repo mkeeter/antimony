@@ -49,8 +49,8 @@ PyObject* Datum::getValue()
 
 void Datum::update()
 {
-    PyObject* new_value = NULL;
-    new_value = getValue();
+    sources.insert(this);
+    PyObject* new_value = getValue();
 
     // If our previous value was valid and our new value is invalid,
     // mark valid = false and emit a changed signal.

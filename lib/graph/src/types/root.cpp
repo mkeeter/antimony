@@ -2,6 +2,7 @@
 #include "graph/datum.h"
 
 #include <list>
+#include <algorithm>
 
 void Root::removeDownstream(Downstream* d)
 {
