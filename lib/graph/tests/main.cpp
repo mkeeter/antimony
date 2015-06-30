@@ -31,35 +31,40 @@ TEST_CASE("Datum evaluation")
     delete g;
 }
 
-TEST_CASE("Datum lookup")
+TEST_CASE("Valid datum lookups")
 {
     auto g = new Graph();
     auto n = new Node("n", g);
     auto x = new Datum("x", "1.0", &PyFloat_Type, n);
+    auto y = new Datum("y", "n.x", &PyFloat_Type, n);
+    REQUIRE(y->isValid() == true);
+    REQUIRE(y->currentValue() != NULL);
+    REQUIRE(PyFloat_AsDouble(y->currentValue()) == 1.0);
 
-    SECTION("Within node")
-    {
-        auto y = new Datum("y", "x", &PyFloat_Type, n);
-        REQUIRE(y->isValid() == true);
-        REQUIRE(y->currentValue() != NULL);
-        REQUIRE(PyFloat_AsDouble(y->currentValue()) == 1.0);
-    }
+    delete g;
+}
 
-    SECTION("Within graph")
-    {
-        auto z = new Datum("z", "n.x", &PyFloat_Type, n);
-        REQUIRE(z->isValid() == true);
-        REQUIRE(z->currentValue() != NULL);
-        REQUIRE(PyFloat_AsDouble(z->currentValue()) == 1.0);
-    }
+TEST_CASE("Invalid datum lookups")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    new Datum("x", "1.!", &PyFloat_Type, n);
 
     SECTION("Invalid lookup")
     {
-        auto v = new Datum("v", "1.aagh", &PyFloat_Type, n);
-        auto u = new Datum("u", "v", &PyFloat_Type, n);
-        REQUIRE(u->isValid() == false);
+        auto y = new Datum("y", "n.x", &PyFloat_Type, n);
+        CAPTURE(y->getError());
+        REQUIRE(y->isValid() == false);
+        REQUIRE(y->getError().find("Datum 'x' is invalid") != std::string::npos);
     }
 
+    SECTION("Missing lookup")
+    {
+        auto z = new Datum("z", "n.q", &PyFloat_Type, n);
+        CAPTURE(z->getError());
+        REQUIRE(z->isValid() == false);
+        REQUIRE(z->getError().find("Name 'q' is not defined") != std::string::npos);
+    }
     delete g;
 }
 

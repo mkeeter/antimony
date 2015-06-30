@@ -68,22 +68,22 @@ void Node::makeOutput(std::string n, PyObject* out)
 }
 */
 
-Datum* Node::getDatum(std::string name) const
+Datum* Node::getDatum(std::string n) const
 {
     auto match = std::find_if(datums.begin(), datums.end(),
                               [&](const std::unique_ptr<Datum>& d)
-                              { return d->name == name; });
-    if ((match != datums.end()) && (*match)->valid)
+                              { return d->name == n; });
+    if (match != datums.end())
         return match->get();
     else
         return NULL;
 }
 
-PyObject* Node::pyGetAttr(std::string name, Downstream* caller) const
+PyObject* Node::pyGetAttr(std::string n, Downstream* caller) const
 {
     (void)caller;
 
-    auto d = getDatum(name);
+    auto d = getDatum(n);
     if (d)
     {
         if (d->valid)
@@ -91,7 +91,7 @@ PyObject* Node::pyGetAttr(std::string name, Downstream* caller) const
             Py_INCREF(d->value);
             return d->value;
         }
-        throw Proxy::Exception("Datum '" + name + "' is invalid");
+        throw Proxy::Exception("Datum '" + n + "' is invalid");
     }
     else
     {

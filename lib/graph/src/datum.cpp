@@ -1,6 +1,7 @@
 #include "graph/datum.h"
 #include "graph/node.h"
 #include "graph/util.h"
+#include "graph/graph.h"
 
 Datum::Datum(std::string name, std::string s,
              PyTypeObject* type, Node* parent)
@@ -32,7 +33,7 @@ Datum::~Datum()
 
 PyObject* Datum::getValue()
 {
-    PyObject* globals = parent->proxyDict(this);
+    PyObject* globals = parent->parent->proxyDict(NULL, this);
     PyObject* out = PyRun_String(
             expr.c_str(), Py_eval_input, globals, globals);
 

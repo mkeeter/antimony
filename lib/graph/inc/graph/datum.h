@@ -21,6 +21,7 @@ public:
     void setText(std::string s);
 
     bool isValid() const { return valid; }
+    std::string getError() const { return error; }
 
     /*
      *  Returns a borrowed reference to the current value.
