@@ -34,18 +34,15 @@ PyObject* Proxy::getAttr(std::string name)
         PyErr_Clear();
     }
 
+    if (locals && caller)
+        locals->saveLookup(name, caller);
     if (auto v = locals ? locals->pyGetAttr(name, caller) : NULL)
-    {
-        if (caller)
-            locals->saveLookup(name, caller);
         return v;
-    }
-    else if (auto v = root->pyGetAttr(name, caller))
-    {
-        if (caller)
-            root->saveLookup(name, caller);
+
+    if (caller)
+        root->saveLookup(name, caller);
+    if (auto v = root->pyGetAttr(name, caller))
         return v;
-    }
 
     throw Exception("Name '" + name + "' is not defined");
     return NULL;

@@ -31,7 +31,7 @@ TEST_CASE("Datum evaluation")
     delete g;
 }
 
-TEST_CASE("Valid datum lookups")
+TEST_CASE("Valid datum lookup")
 {
     auto g = new Graph();
     auto n = new Node("n", g);
@@ -67,6 +67,52 @@ TEST_CASE("Invalid datum lookups")
     }
     delete g;
 }
+
+TEST_CASE("Tracking changes")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    auto x = new Datum("x", "1.0", &PyFloat_Type, n);
+    auto y = new Datum("y", "n.x", &PyFloat_Type, n);
+
+    x->setText("2.0");
+    REQUIRE(y->isValid() == true);
+    REQUIRE(y->currentValue() != NULL);
+    REQUIRE(PyFloat_AsDouble(y->currentValue()) == 2.0);
+
+    x->setText("3.0");
+    REQUIRE(y->isValid() == true);
+    REQUIRE(y->currentValue() != NULL);
+    REQUIRE(PyFloat_AsDouble(y->currentValue()) == 3.0);
+    delete g;
+}
+
+TEST_CASE("Name creation")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    auto y = new Datum("y", "n.x", &PyFloat_Type, n);
+    auto x = new Datum("x", "1.0", &PyFloat_Type, n);
+
+    REQUIRE(y->isValid() == true);
+    REQUIRE(y->currentValue() != NULL);
+    REQUIRE(PyFloat_AsDouble(y->currentValue()) == 1.0);
+    delete g;
+}
+
+TEST_CASE("Recursive lookup")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    auto x = new Datum("x", "1.0", &PyFloat_Type, n);
+    auto y = new Datum("y", "n.x", &PyFloat_Type, n);
+    x->setText("n.y");
+
+    REQUIRE(x->isValid() == false);
+    REQUIRE(y->isValid() == false);
+    delete g;
+}
+
 
 int main(int argc, char** argv)
 {
