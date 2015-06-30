@@ -53,16 +53,16 @@ TEST_CASE("Invalid datum lookups")
     SECTION("Invalid lookup")
     {
         auto y = new Datum("y", "n.x", &PyFloat_Type, n);
-        CAPTURE(y->getError());
         REQUIRE(y->isValid() == false);
+        CAPTURE(y->getError());
         REQUIRE(y->getError().find("Datum 'x' is invalid") != std::string::npos);
     }
 
     SECTION("Missing lookup")
     {
         auto z = new Datum("z", "n.q", &PyFloat_Type, n);
-        CAPTURE(z->getError());
         REQUIRE(z->isValid() == false);
+        CAPTURE(z->getError());
         REQUIRE(z->getError().find("Name 'q' is not defined") != std::string::npos);
     }
     delete g;
