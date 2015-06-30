@@ -21,12 +21,6 @@ private:
      */
     std::unordered_set<Root*> roots;
 
-    /*
-     *  This set represents any source whose modification could cause
-     *  this source to be activated.  It is used to detect recursive loops.
-     */
-    std::unordered_set<Datum*> sources;
-
     friend class Datum;
     friend class Root;
     friend class Node;

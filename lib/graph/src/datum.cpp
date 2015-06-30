@@ -49,7 +49,11 @@ PyObject* Datum::getValue()
 
 void Datum::update()
 {
+    // Cache the source list to detect if it has changed.
+    const auto old_sources = sources;
+    sources.clear();
     sources.insert(this);
+
     PyObject* new_value = getValue();
 
     // If our previous value was valid and our new value is invalid,
@@ -74,6 +78,9 @@ void Datum::update()
         changed = true;
     }
     Py_XDECREF(new_value);
+
+    if (sources != old_sources)
+        changed = true;
 
     if (changed)
         parent->changed(name);

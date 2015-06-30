@@ -104,12 +104,16 @@ TEST_CASE("Recursive lookup")
 {
     auto g = new Graph();
     auto n = new Node("n", g);
-    auto x = new Datum("x", "1.0", &PyFloat_Type, n);
+    auto x = new Datum("x", "n.y", &PyFloat_Type, n);
     auto y = new Datum("y", "n.x", &PyFloat_Type, n);
-    x->setText("n.y");
 
     REQUIRE(x->isValid() == false);
+    CAPTURE(x->getError());
+    REQUIRE(x->getError().find("Recursive lookup of datum 'y'") != std::string::npos);
     REQUIRE(y->isValid() == false);
+    CAPTURE(y->getError());
+    REQUIRE(y->getError().find("Recursive lookup of datum 'x'") != std::string::npos);
+
     delete g;
 }
 

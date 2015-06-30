@@ -90,16 +90,18 @@ Datum* Node::getDatum(std::string n) const
 
 PyObject* Node::pyGetAttr(std::string n, Downstream* caller) const
 {
-    (void)caller;
-
     auto d = getDatum(n);
     if (d)
     {
-        if (caller->sources.count(d))
+        // If the caller is a datum as well, check for recursive lookups.
+        if (auto datum = dynamic_cast<Datum*>(caller))
         {
-            throw Proxy::Exception("Recursive lookup of datum '" + n + "'");
+            datum->sources.insert(d->sources.begin(), d->sources.end());
+            if (d->sources.find(datum) != d->sources.end())
+            {
+                throw Proxy::Exception("Recursive lookup of datum '" + n + "'");
+            }
         }
-        caller->sources.insert(d->sources.begin(), d->sources.end());
 
         if (d->valid)
         {

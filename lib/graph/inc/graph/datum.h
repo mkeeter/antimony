@@ -49,6 +49,12 @@ protected:
 
     Node* parent;
 
+    /*
+     *  This set represents any source whose modification could cause
+     *  this datum to be activated.  It is used to detect recursive loops.
+     */
+    std::unordered_set<Datum*> sources;
+
     friend class Node;
     friend class Proxy;
     friend class Root;
