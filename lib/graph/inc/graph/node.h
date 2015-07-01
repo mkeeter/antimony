@@ -22,7 +22,7 @@ public:
      *  The node takes ownership of the datum and will delete it
      *  when the node is destroyed.
      */
-    void install(Datum* d);
+    uint32_t install(Datum* d);
 
     /*
      *  Returns a Proxy object that uses the parent Graph as its
@@ -48,6 +48,7 @@ protected:
     void pruneInactive(std::unordered_set<Datum*> active);
 
     std::string name;
+    const uint32_t uid;
 
     Script script;
     std::list<std::unique_ptr<Datum>> datums;

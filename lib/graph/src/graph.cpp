@@ -5,14 +5,24 @@
 #include "graph/proxy.h"
 
 Graph::Graph(std::string n, Graph* parent)
-    : name(n), parent(parent)
+    : name(n), uid(0), parent(parent)
 {
     // Nothing to do here
 }
 
-void Graph::install(Node* n)
+uint32_t Graph::install(Node* n)
 {
+    // Find the lowest unused unique ID number
+    std::unordered_set<uint32_t> indices;
+    std::for_each(nodes.begin(), nodes.end(),
+                  [&](const std::unique_ptr<Node>& n)
+                  { indices.insert(n->uid); });
+    uint32_t uid = 0;
+    while (indices.find(uid) != indices.end())
+        uid++;
+
     nodes.push_back(std::unique_ptr<Node>(n));
+    return uid;
 }
 
 PyObject* Graph::proxyDict(Node* locals, Downstream* caller)

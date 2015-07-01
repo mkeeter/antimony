@@ -40,6 +40,8 @@ protected:
     PyObject* getValue();
 
     std::string name;
+    const uint32_t uid;
+
     std::string expr;
 
     PyObject* value;

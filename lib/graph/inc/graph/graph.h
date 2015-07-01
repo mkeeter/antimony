@@ -19,8 +19,10 @@ public:
      *
      *  The graph takes ownership of the node and will delete
      *  it when the graph is destroyed.
+     *
+     *  Returns a unique ID number.
      */
-    void install(Node* n);
+    uint32_t install(Node* n);
 
     /*
      *  Returns a Proxy object that uses this graph as its root,
@@ -37,6 +39,8 @@ protected:
     //void pySetAttr(std::string name, PyObject* obj) override;
 
     std::string name;
+    const uint32_t uid;
+
     Graph* parent;
     std::list<std::unique_ptr<Node>> nodes;
 };

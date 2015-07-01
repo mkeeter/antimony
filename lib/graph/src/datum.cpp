@@ -5,10 +5,10 @@
 
 Datum::Datum(std::string name, std::string s,
              PyTypeObject* type, Node* parent)
-    : name(name), expr(s), value(NULL), valid(false),
-      type(type), parent(parent)
+    : name(name), uid(parent->install(this)), expr(s),
+      value(NULL), valid(false), type(type), parent(parent)
 {
-    parent->install(this);
+    // Attempt to update our value
     trigger();
 
     // Attempt to default-construct an object of the given type
