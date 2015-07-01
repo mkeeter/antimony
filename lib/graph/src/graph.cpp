@@ -12,17 +12,7 @@ Graph::Graph(std::string n, Graph* parent)
 
 uint32_t Graph::install(Node* n)
 {
-    // Find the lowest unused unique ID number
-    std::unordered_set<uint32_t> indices;
-    std::for_each(nodes.begin(), nodes.end(),
-                  [&](const std::unique_ptr<Node>& n)
-                  { indices.insert(n->uid); });
-    uint32_t uid = 0;
-    while (indices.find(uid) != indices.end())
-        uid++;
-
-    nodes.push_back(std::unique_ptr<Node>(n));
-    return uid;
+    return Root::install<Node>(n, &nodes);
 }
 
 PyObject* Graph::proxyDict(Node* locals, Downstream* caller)

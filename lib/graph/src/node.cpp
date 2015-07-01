@@ -13,17 +13,7 @@ Node::Node(std::string n, Graph* root)
 
 uint32_t Node::install(Datum* d)
 {
-    // Find the lowest unused unique ID number
-    std::unordered_set<uint32_t> indices;
-    std::for_each(datums.begin(), datums.end(),
-                  [&](const std::unique_ptr<Datum>& d)
-                  { indices.insert(d->uid); });
-    uint32_t uid = 0;
-    while (indices.find(uid) != indices.end())
-        uid++;
-
-    datums.push_back(std::unique_ptr<Datum>(d));
-    return uid;
+    return Root::install<Datum>(d, &datums);
 }
 
 PyObject* Node::proxyDict(Downstream* caller)

@@ -57,4 +57,5 @@ protected:
     friend class Graph;
     friend class Script;
     friend class Datum;
+    friend class Root;
 };
