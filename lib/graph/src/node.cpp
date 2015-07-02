@@ -29,7 +29,7 @@ void Node::makeInput(std::string n, PyTypeObject* type, std::string value)
         //throw IOHooks::Exception("Name is not valid.");
         */
 
-    auto d = getDatum(n);
+    auto d = getByName(n, datums);
     // If the datum is of the wrong type, delete it.
     if (d != NULL && (d->type != type))
     {
@@ -77,20 +77,9 @@ void Node::makeOutput(std::string n, PyObject* out)
 }
 */
 
-Datum* Node::getDatum(std::string n) const
-{
-    auto match = std::find_if(datums.begin(), datums.end(),
-                              [&](const std::unique_ptr<Datum>& d)
-                              { return d->name == n; });
-    if (match != datums.end())
-        return match->get();
-    else
-        return NULL;
-}
-
 PyObject* Node::pyGetAttr(std::string n, Downstream* caller) const
 {
-    auto d = getDatum(n);
+    auto d = getByName(n, datums);
     if (d)
     {
         // If the caller is a datum as well, check for recursive lookups.

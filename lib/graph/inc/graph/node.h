@@ -31,8 +31,6 @@ public:
      */
     PyObject* proxyDict(Downstream* caller);
 
-    Datum* getDatum(std::string name) const;
-
     /* Root functions */
     PyObject* pyGetAttr(std::string name, Downstream* caller) const override;
     bool topLevel() const override { return false; }

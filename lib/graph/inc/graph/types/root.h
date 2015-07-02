@@ -11,6 +11,8 @@ class Downstream;
 class Root
 {
 public:
+    virtual ~Root() {}
+
     /*
      *  Returns a new reference to the given object or NULL.
      *  May throw Proxy::Exception to indicate a special error.
@@ -40,6 +42,30 @@ public:
 
         ts->push_back(std::unique_ptr<T>(t));
         return uid;
+    }
+
+    /*
+     *  Helper function to look up a child by name.
+     */
+    template <class T>
+    T* getByName(std::string n, const std::list<std::unique_ptr<T>>& ts) const
+    {
+        auto match = std::find_if(ts.begin(), ts.end(),
+                                  [&](const std::unique_ptr<T>& t)
+                                  { return t->name == n; });
+        return (match == ts.end()) ? NULL : match->get();
+    }
+
+    /*
+     *  Helper function to look up a child by UID.
+     */
+    template <class T>
+    T* getByUID(uint32_t uid, const std::list<std::unique_ptr<T>>& ts) const
+    {
+        auto match = std::find_if(ts.begin(), ts.end(),
+                                  [&](const std::unique_ptr<T>& t)
+                                  { return t->uid == uid; });
+        return (match == ts.end()) ? NULL : match->get();
     }
 
     /*
