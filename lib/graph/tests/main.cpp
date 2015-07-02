@@ -124,6 +124,7 @@ TEST_CASE("UID lookup")
     auto x = new Datum("x", "1.0", &PyFloat_Type, n);
     auto y = new Datum("y", "$__0.__0", &PyFloat_Type, n);
 
+    CAPTURE(y->getError());
     REQUIRE(y->isValid() == true);
     REQUIRE(y->currentValue() != NULL);
     REQUIRE(PyFloat_AsDouble(y->currentValue()) == 1.0);

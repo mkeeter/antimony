@@ -4,6 +4,7 @@
 
 #include <string>
 #include <memory>
+#include <unordered_set>
 
 #include "graph/types/downstream.h"
 
@@ -28,6 +29,7 @@ public:
      */
     PyObject* currentValue() const { return value; }
 
+    static const char SIGIL_CONNECTION = '$';
 protected:
     /*
      *  When an upstream changes, call update.
@@ -56,6 +58,12 @@ protected:
      *  this datum to be activated.  It is used to detect recursive loops.
      */
     std::unordered_set<Datum*> sources;
+
+    /*
+     *  Sigils are single characters at the beginning of an expression
+     *  that mark it as special in some way (connection, output, etc).
+     */
+    static std::unordered_set<char> sigils;
 
     friend class Node;
     friend class Proxy;

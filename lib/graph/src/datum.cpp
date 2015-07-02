@@ -3,6 +3,10 @@
 #include "graph/util.h"
 #include "graph/graph.h"
 
+std::unordered_set<char> Datum::sigils = {
+    SIGIL_CONNECTION
+};
+
 Datum::Datum(std::string name, std::string s,
              PyTypeObject* type, Node* parent)
     : name(name), uid(parent->install(this)), expr(s),
@@ -34,8 +38,14 @@ Datum::~Datum()
 PyObject* Datum::getValue()
 {
     PyObject* globals = parent->parent->proxyDict(NULL, this);
-    PyObject* out = PyRun_String(
-            expr.c_str(), Py_eval_input, globals, globals);
+
+    // If the string begins with a sigil, slice it off
+    const std::string e =
+        (!expr.empty() && sigils.find(expr.front()) != sigils.end())
+            ? expr.substr(1)
+            : expr;
+
+    PyObject* out = PyRun_String(e.c_str(), Py_eval_input, globals, globals);
 
     if (PyErr_Occurred())
     {
