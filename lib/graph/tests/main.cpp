@@ -117,6 +117,18 @@ TEST_CASE("Recursive lookup")
     delete g;
 }
 
+TEST_CASE("UID lookup")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    auto x = new Datum("x", "1.0", &PyFloat_Type, n);
+    auto y = new Datum("y", "$__0.__0", &PyFloat_Type, n);
+
+    REQUIRE(y->isValid() == true);
+    REQUIRE(y->currentValue() != NULL);
+    REQUIRE(PyFloat_AsDouble(y->currentValue()) == 1.0);
+    delete g;
+}
 
 int main(int argc, char** argv)
 {
