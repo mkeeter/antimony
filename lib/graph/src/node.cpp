@@ -38,15 +38,9 @@ Datum* Node::getDatum(std::string name) const
     return get(name, datums);
 }
 
-void Node::makeInput(std::string n, PyTypeObject* type, std::string value)
+void Node::makeDatum(std::string n, PyTypeObject* type, std::string value)
 {
-    /*
-    if (!isNameValid(name))
-        throw "Name is not valid!";
-        //throw IOHooks::Exception("Name is not valid.");
-        */
-
-    // If the datum is of the wrong type, delete it.
+    // If there's an existing datum and it's of the wrong type, delete it.
     auto d = getDatum(n);
     if (d != NULL && (d->type != type))
     {

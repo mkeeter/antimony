@@ -67,6 +67,21 @@ TEST_CASE("Inter-script datum lookup")
                  "print(x)");
     CAPTURE(n->getError());
     REQUIRE(n->getErrorLine() == -1);
+    delete g;
+}
+
+TEST_CASE("Datum pinning")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+
+    n->setScript("input('x', float, 1.0)");
+    auto x = n->getDatum("x");
+
+    n->setScript("input('x', float, 2.0)");
+    REQUIRE(n->getErrorLine() == -1);
+    REQUIRE(n->getDatum("x") == x);
+    delete g;
 }
 
 TEST_CASE("Script re-evaluation on datum change")
@@ -80,4 +95,22 @@ TEST_CASE("Script re-evaluation on datum change")
     CAPTURE(n->getError());
     REQUIRE(n->getErrorLine() == 2);
     REQUIRE(n->getError().find("RuntimeError: 2.0") != std::string::npos);
+    delete g;
+}
+
+TEST_CASE("Script output")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    n->setScript("output('x', 1.0)\n");
+
+    CAPTURE(n->getError());
+    REQUIRE(n->getErrorLine() == -1);
+
+    auto x = n->getDatum("x");
+    REQUIRE(x != NULL);
+    REQUIRE(x->isValid() == true);
+    REQUIRE(x->currentValue() != NULL);
+    REQUIRE(PyFloat_AsDouble(x->currentValue()) == 1.0);
+    delete g;
 }

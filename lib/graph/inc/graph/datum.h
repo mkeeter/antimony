@@ -30,6 +30,7 @@ public:
     PyObject* currentValue() const { return value; }
 
     static const char SIGIL_CONNECTION = '$';
+    static const char SIGIL_OUTPUT = '#';
 protected:
     /*
      *  When an upstream changes, call update.

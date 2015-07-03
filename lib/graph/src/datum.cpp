@@ -4,7 +4,7 @@
 #include "graph/graph.h"
 
 std::unordered_set<char> Datum::sigils = {
-    SIGIL_CONNECTION
+    SIGIL_CONNECTION, SIGIL_OUTPUT
 };
 
 ////////////////////////////////////////////////////////////////////////////////

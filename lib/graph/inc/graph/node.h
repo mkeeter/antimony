@@ -64,7 +64,7 @@ public:
 
 protected:
 
-    void makeInput(std::string name, PyTypeObject* type,
+    void makeDatum(std::string name, PyTypeObject* type,
                    std::string value);
     /*
     void makeOutput(std::string name, PyObject* out);
@@ -83,5 +83,7 @@ protected:
     friend class Datum;
     friend class Root;
     friend struct Script;
+
     friend struct InputHook;
+    friend struct OutputHook;
 };

@@ -24,7 +24,7 @@ void InputHook::call_with_default(
         throw Hooks::Exception("Failed to get __repr__ of argument");
     }
 
-    node->makeInput(name, (PyTypeObject*)type.ptr(),
+    node->makeDatum(name, (PyTypeObject*)type.ptr(),
                     std::string(PyUnicode_AsUTF8(repr)));
     Py_DECREF(repr);
 }

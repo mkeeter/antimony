@@ -14,3 +14,4 @@ SOURCES += \
     src/types/root.cpp \
     src/hooks/hooks.cpp \
     src/hooks/input.cpp \
+    src/hooks/output.cpp \
