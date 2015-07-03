@@ -2,6 +2,7 @@
 
 #include "graph/hooks/hooks.h"
 #include "graph/hooks/input.h"
+#include "graph/hooks/output.h"
 
 using namespace boost::python;
 
@@ -16,8 +17,8 @@ BOOST_PYTHON_MODULE(_scriptIO)
         .def("__call__", &InputHook::call)
         .def("__call__", &InputHook::call_with_default);
 
-    //class_<OutputHook>("OutputHook", init<>())
-    //    .def("__call__", &OutputHook::call);
+    class_<OutputHook>("OutputHook", init<>())
+        .def("__call__", &OutputHook::call);
 
     register_exception_translator<Hooks::Exception>(
             Hooks::onException);
@@ -39,8 +40,12 @@ void Hooks::load(PyObject* g, Node* n)
 
     auto input_func = PyObject_CallMethod(
             scriptIO_module, "InputHook", NULL);
+    auto output_func = PyObject_CallMethod(
+            scriptIO_module, "OutputHook", NULL);
 
     extract<InputHook&>(input_func)().node = n;
+    extract<OutputHook&>(output_func)().node = n;
 
     PyDict_SetItemString(g, "input", input_func);
+    PyDict_SetItemString(g, "output", output_func);
 }
