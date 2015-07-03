@@ -17,6 +17,28 @@ public:
     explicit Node(std::string name, Graph* root);
 
     /*
+     *  Updates the script text and triggers an update.
+     */
+    void setScript(std::string t);
+
+    /*
+     *  Returns the error message from script evaluation.
+     */
+    std::string getError() const { return script.error; }
+
+    /*
+     *  Returns the error line from script evaluation.
+     *  (indexed from 1)
+     */
+    int getErrorLine() const { return script.error_lineno; }
+
+    /*
+     *  When the script is done running, update the node
+     *  (which may require removing datums from the list)
+     */
+    void update(const std::unordered_set<Datum*>& active);
+
+    /*
      *  Adds the given datum at the end of the list.
      *
      *  The node takes ownership of the datum and will delete it
@@ -53,7 +75,8 @@ protected:
     Graph* parent;
 
     friend class Graph;
-    friend class Script;
     friend class Datum;
     friend class Root;
+    friend struct Script;
+    friend struct InputHook;
 };

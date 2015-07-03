@@ -12,3 +12,5 @@ SOURCES += \
     src/util.cpp \
     src/types/downstream.cpp \
     src/types/root.cpp \
+    src/hooks/hooks.cpp \
+    src/hooks/input.cpp \

@@ -6,9 +6,21 @@
 #include "graph/proxy.h"
 
 Node::Node(std::string n, Graph* root)
-    : name(n), uid(root->install(this)), parent(root)
+    : name(n), uid(root->install(this)), script(this), parent(root)
 {
     // Nothing to do here
+}
+
+void Node::setScript(std::string t)
+{
+    script.script = t;
+    script.trigger();
+}
+
+void Node::update(const std::unordered_set<Datum*>& active)
+{
+    datums.remove_if([&](const std::unique_ptr<Datum>& d_)
+                     { return active.find(d_.get()) == active.end(); });
 }
 
 uint32_t Node::install(Datum* d)

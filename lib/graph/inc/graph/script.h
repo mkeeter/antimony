@@ -9,19 +9,20 @@
 class Datum;
 class Node;
 
-class Script : public Downstream
+struct Script : public Downstream
 {
 public:
+    Script(Node* parent);
+
     void update() override;
-protected:
+
     std::string script;
 
     std::string output;
-    PyObject* globals;
+    std::string error;
+    int error_lineno;
 
     std::unordered_set<Datum*> active;
 
     Node* parent;
-
-    friend class Node;
 };

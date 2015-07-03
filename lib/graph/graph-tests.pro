@@ -6,4 +6,4 @@ CONFIG -= core
 INCLUDEPATH += ../../vendor
 
 include(graph.pri)
-SOURCES += tests/main.cpp tests/datum.cpp
+SOURCES += tests/main.cpp tests/datum.cpp tests/script.cpp

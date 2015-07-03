@@ -2,6 +2,7 @@
 #include "graph/datum.h"
 #include "graph/node.h"
 #include "graph/types/root.h"
+#include "graph/hooks/hooks.h"
 
 using namespace boost::python;
 
@@ -30,6 +31,12 @@ PyObject* Proxy::getAttr(std::string name)
     if (dict)
     {
         if (auto v = PyDict_GetItemString(dict, name.c_str()))
+            return v;
+        PyErr_Clear();
+
+        // Look for this symbol in the builtins dictionary
+        auto b = PyDict_GetItemString(dict, "__builtins__");
+        if (auto v = PyDict_GetItemString(b, name.c_str()))
             return v;
         PyErr_Clear();
     }
@@ -108,6 +115,8 @@ PyObject* Proxy::makeProxyFor(Root* r, Node* locals, Downstream* caller)
         p_->dict = PyDict_New();
         PyDict_SetItemString(p_->dict, "__builtins__", PyEval_GetBuiltins());
         PyDict_SetItemString(p_->dict, "math", PyImport_ImportModule("math"));
+
+        Hooks::load(p_->dict, locals);
     }
     return p;
 }
