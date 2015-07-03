@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <list>
+#include <regex>
 
 class Downstream;
 
@@ -24,6 +25,38 @@ public:
      */
     void saveLookup(std::string name, Downstream* caller);
 
+    /*
+     *  Returns true if this root is a top-level object
+     *  (changes whether Proxy populates dictionary and __builtins__)
+     */
+    virtual bool topLevel() const=0;
+
+#if 0
+    /*
+     *  Checks that the given name is valid.
+     */
+    bool isNameValid(std::string name) const;
+
+    /*
+     *  Checks to see if the given name is unique.
+     *  The input name should be stripped.
+     */
+    bool isNameUnique(std::string name) const;
+#endif
+    /*
+     *  When a child is changed, call 'trigger' on all Downstream
+     *  objects that have tried looking up this name before.
+     */
+    void changed(std::string n);
+
+    /*
+     *  Removes a Downstream from the map of failed lookups.
+     */
+    void removeDownstream(Downstream* d);
+
+    /*****************************************************/
+    /*            TEMPLATED HELPER FUNCTIONS             */
+    /*****************************************************/
     /*
      *  Helper function to install a new object into a list,
      *  finding a new unique ID number and returning it.
@@ -69,33 +102,18 @@ public:
     }
 
     /*
-     *  Returns true if this root is a top-level object
-     *  (changes whether Proxy populates dictionary and __builtins__)
+     *  Look up a child by either UID (if the key begins with __) or name.
      */
-    virtual bool topLevel() const=0;
-
-#if 0
-    /*
-     *  Checks that the given name is valid.
-     */
-    bool isNameValid(std::string name) const;
-
-    /*
-     *  Checks to see if the given name is unique.
-     *  The input name should be stripped.
-     */
-    bool isNameUnique(std::string name) const;
-#endif
-    /*
-     *  When a child is changed, call 'trigger' on all Downstream
-     *  objects that have tried looking up this name before.
-     */
-    void changed(std::string n);
-
-    /*
-     *  Removes a Downstream from the map of failed lookups.
-     */
-    void removeDownstream(Downstream* d);
+    template <class T>
+    T* get(std::string n, const std::list<std::unique_ptr<T>>& ts) const
+    {
+        static std::regex r("__([0-9]+)");
+        std::smatch match;
+        if (std::regex_match(n, match, r))
+            return getByUID(std::stoi(match[1]), ts);
+        else
+            return getByName(n, ts);
+    }
 
 protected:
     std::unordered_multimap<std::string, Downstream*> lookups;

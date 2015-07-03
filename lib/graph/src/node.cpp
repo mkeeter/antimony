@@ -79,7 +79,7 @@ void Node::makeOutput(std::string n, PyObject* out)
 
 PyObject* Node::pyGetAttr(std::string n, Downstream* caller) const
 {
-    auto d = getByName(n, datums);
+    auto d = get(n, datums);
     if (d)
     {
         // If the caller is a datum as well, check for recursive lookups.

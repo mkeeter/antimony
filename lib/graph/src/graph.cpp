@@ -22,11 +22,6 @@ PyObject* Graph::proxyDict(Node* locals, Downstream* caller)
 
 PyObject* Graph::pyGetAttr(std::string name, Downstream* caller) const
 {
-    auto match = std::find_if(nodes.begin(), nodes.end(),
-                              [&](const std::unique_ptr<Node>& n)
-                              { return n->name == name; });
-    if (match != nodes.end())
-        return Proxy::makeProxyFor(match->get(), NULL, caller);
-    else
-        return NULL;
+    auto m = get(name, nodes);
+    return m ? Proxy::makeProxyFor(m, NULL, caller) : NULL;
 }

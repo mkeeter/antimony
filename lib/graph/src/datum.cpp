@@ -7,6 +7,8 @@ std::unordered_set<char> Datum::sigils = {
     SIGIL_CONNECTION
 };
 
+////////////////////////////////////////////////////////////////////////////////
+
 Datum::Datum(std::string name, std::string s,
              PyTypeObject* type, Node* parent)
     : name(name), uid(parent->install(this)), expr(s),
