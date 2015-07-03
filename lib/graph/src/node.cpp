@@ -33,6 +33,11 @@ PyObject* Node::proxyDict(Downstream* caller)
     return parent->proxyDict(this, caller);
 }
 
+Datum* Node::getDatum(std::string name) const
+{
+    return get(name, datums);
+}
+
 void Node::makeInput(std::string n, PyTypeObject* type, std::string value)
 {
     /*
@@ -41,8 +46,8 @@ void Node::makeInput(std::string n, PyTypeObject* type, std::string value)
         //throw IOHooks::Exception("Name is not valid.");
         */
 
-    auto d = getByName(n, datums);
     // If the datum is of the wrong type, delete it.
+    auto d = getDatum(n);
     if (d != NULL && (d->type != type))
     {
         datums.remove_if([&](const std::unique_ptr<Datum>& d_)
