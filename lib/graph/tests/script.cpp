@@ -58,3 +58,26 @@ TEST_CASE("Script input with default argument")
     REQUIRE(PyFloat_AsDouble(x->currentValue()) == 3.0);
     delete g;
 }
+
+TEST_CASE("Inter-script datum lookup")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    n->setScript("input('x', float, 3.0)\n"
+                 "print(x)");
+    CAPTURE(n->getError());
+    REQUIRE(n->getErrorLine() == -1);
+}
+
+TEST_CASE("Script re-evaluation on datum change")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    n->setScript("input('x', float)\n"
+                 "raise RuntimeError(str(x))");
+    n->getDatum("x")->setText("2.0");
+
+    CAPTURE(n->getError());
+    REQUIRE(n->getErrorLine() == 2);
+    REQUIRE(n->getError().find("RuntimeError: 2.0") != std::string::npos);
+}
