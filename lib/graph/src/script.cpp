@@ -53,7 +53,7 @@ void Script::update()
     // simpler to read (because input('x', float, 12.0f) looks odd when
     // x doesn't have a value of 12 anymore).
     std::regex input("(.*input\\([^(),]+,[^(),]+),[^(),]+(\\).*)");
-    std::regex_replace(script, input, "$0$1");
+    script = std::regex_replace(script, input, "$1$2");
 
     parent->update(active);
 }
