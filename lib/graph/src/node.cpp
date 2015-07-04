@@ -73,30 +73,6 @@ void Node::makeDatum(std::string n, PyTypeObject* type,
     script.active.insert(d);
 }
 
-/*
-void Node::makeOutput(std::string n, PyObject* out)
-{
-    if (!Name::check(n, this))
-        return;
-
-    // If the datum is missing, of the wrong type, or is an input datum
-    // (with input and expr), delete it and start over.
-    auto d = getDatum(n);
-    if (d != NULL && (d->value.type != out->ob_type ||
-                      d->expr || d->input))
-    {
-        delete d;
-        datums.remove(d);
-        d = NULL;
-    }
-
-    if (d == NULL)
-        d = Datum::OutputDatum(n, out, this);
-
-    script.active.insert(d);
-}
-*/
-
 PyObject* Node::pyGetAttr(std::string n, Downstream* caller) const
 {
     auto d = get(n, datums);
