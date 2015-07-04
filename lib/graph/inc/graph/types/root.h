@@ -43,6 +43,7 @@ public:
      */
     bool isNameUnique(std::string name) const;
 #endif
+
     /*
      *  When a child is changed, call 'trigger' on all Downstream
      *  objects that have tried looking up this name before.

@@ -134,3 +134,14 @@ TEST_CASE("Script output")
     REQUIRE(PyFloat_AsDouble(x->currentValue()) == 1.0);
     delete g;
 }
+
+TEST_CASE("Script input pruning")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    n->setScript("input('x', float, 1.0)");
+
+    CAPTURE(n->getScript());
+    REQUIRE(n->getScript() == "input('x', float)");
+    delete g;
+}

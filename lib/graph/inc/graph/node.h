@@ -22,6 +22,11 @@ public:
     void setScript(std::string t);
 
     /*
+     *  Looks up the current text of the script.
+     */
+    std::string getScript() const { return script.script; }
+
+    /*
      *  Returns the error message from script evaluation.
      */
     std::string getError() const { return script.error; }

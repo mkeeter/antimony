@@ -49,5 +49,11 @@ void Script::update()
     for (auto o : {sys_mod, io_mod, stdout_obj, stderr_obj, string_out, s})
         Py_DECREF(o);
 
+    // Filter out default arguments to input datums, to make the script
+    // simpler to read (because input('x', float, 12.0f) looks odd when
+    // x doesn't have a value of 12 anymore).
+    std::regex input("(.*input\\([^(),]+,[^(),]+),[^(),]+(\\).*)");
+    std::regex_replace(script, input, "$0$1");
+
     parent->update(active);
 }
