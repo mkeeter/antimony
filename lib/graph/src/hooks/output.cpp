@@ -14,6 +14,7 @@ void OutputHook::call(std::string name, boost::python::object obj)
     }
 
     node->makeDatum(name, obj.ptr()->ob_type,
-                    Datum::SIGIL_OUTPUT + std::string(PyUnicode_AsUTF8(repr)));
+                    Datum::SIGIL_OUTPUT + std::string(PyUnicode_AsUTF8(repr)),
+                    true);
     Py_DECREF(repr);
 }

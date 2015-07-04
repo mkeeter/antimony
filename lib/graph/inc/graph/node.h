@@ -64,8 +64,16 @@ public:
 
 protected:
 
+    /*
+     *  Construct a datum with the given name, type, and value.
+     *
+     *  If output is false, then only load the value on new datum
+     *  construction (as a default); if output is true, then load
+     *  the value regardless of whether the datum is new or existing.
+     */
     void makeDatum(std::string name, PyTypeObject* type,
-                   std::string value);
+                   std::string value, bool output);
+
     /*
     void makeOutput(std::string name, PyObject* out);
     */

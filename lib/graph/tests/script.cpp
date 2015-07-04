@@ -98,6 +98,26 @@ TEST_CASE("Script re-evaluation on datum change")
     delete g;
 }
 
+TEST_CASE("Script re-evaluation on linked datum change")
+{
+    auto g = new Graph();
+    auto a = new Node("a", g);
+    auto ax = new Datum("x", "3.0", &PyFloat_Type, a);
+
+    auto b = new Node("b", g);
+    b->setScript("input('x', float, 1.0)\n"
+                 "output('y', x)");
+    b->getDatum("x")->setText("a.x");
+    CAPTURE(b->getError());
+    REQUIRE(b->getErrorLine() == -1);
+
+    auto y = b->getDatum("y");
+    REQUIRE(y->isValid() == true);
+    REQUIRE(y->currentValue() != NULL);
+    REQUIRE(PyFloat_AsDouble(y->currentValue()) == 3.0);
+    delete g;
+}
+
 TEST_CASE("Script output")
 {
     auto g = new Graph();

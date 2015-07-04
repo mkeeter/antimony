@@ -25,6 +25,6 @@ void InputHook::call_with_default(
     }
 
     node->makeDatum(name, (PyTypeObject*)type.ptr(),
-                    std::string(PyUnicode_AsUTF8(repr)));
+                    std::string(PyUnicode_AsUTF8(repr)), false);
     Py_DECREF(repr);
 }

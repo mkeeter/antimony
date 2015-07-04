@@ -4,10 +4,8 @@
 #include "graph/node.h"
 #include "graph/util.h"
 
-#include <iostream>
-
 Script::Script(Node* parent)
-    : parent(parent), error_lineno(-1)
+    : error_lineno(-1), parent(parent)
 {
     // Nothing to do here
 }

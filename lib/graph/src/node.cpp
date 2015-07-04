@@ -38,7 +38,8 @@ Datum* Node::getDatum(std::string name) const
     return get(name, datums);
 }
 
-void Node::makeDatum(std::string n, PyTypeObject* type, std::string value)
+void Node::makeDatum(std::string n, PyTypeObject* type,
+                     std::string value, bool output)
 {
     // If there's an existing datum and it's of the wrong type, delete it.
     auto d = getDatum(n);
@@ -50,8 +51,11 @@ void Node::makeDatum(std::string n, PyTypeObject* type, std::string value)
     }
 
     if (d == NULL)
+    {
         d = new Datum(n, value, type, this);
+    }
     else
+    {
         // Move the existing datum to the end of the list
         // (so that ordering matches ordering in the script)
         for (auto itr = datums.begin(); itr != datums.end(); ++itr)
@@ -60,6 +64,11 @@ void Node::makeDatum(std::string n, PyTypeObject* type, std::string value)
                 datums.splice(datums.end(), datums, itr);
                 break;
             }
+
+        // And update its expression
+        if (output)
+            d->setText(value);
+    }
 
     script.active.insert(d);
 }
