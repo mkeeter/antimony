@@ -12,7 +12,7 @@ class Downstream;
 class Root
 {
 public:
-    virtual ~Root() {}
+    virtual ~Root();
 
     /*
      *  Returns a new reference to the given object or NULL.

@@ -11,5 +11,7 @@ void Downstream::trigger()
 {
     for (auto r : roots)
         r->removeDownstream(this);
+    roots.clear();
+
     update();
 }

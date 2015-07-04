@@ -4,6 +4,12 @@
 #include <list>
 #include <algorithm>
 
+Root::~Root()
+{
+    for (auto itr = lookups.begin(); itr != lookups.end(); ++itr)
+        itr->second->roots.erase(this);
+}
+
 void Root::removeDownstream(Downstream* d)
 {
     for (auto itr = lookups.begin(); itr != lookups.end();)
