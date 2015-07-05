@@ -31,11 +31,7 @@ Datum::Datum(std::string name, std::string s,
 
 Datum::~Datum()
 {
-    valid = false;
     Py_XDECREF(value);
-    value = NULL;
-
-    parent->changed(name, uid);
 }
 
 PyObject* Datum::getValue()

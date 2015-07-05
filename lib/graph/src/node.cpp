@@ -21,8 +21,17 @@ void Node::setScript(std::string t)
 
 void Node::update(const std::unordered_set<Datum*>& active)
 {
+    // Remove any datums that weren't marked as active and trigger
+    // changes to anything that was watching them.
+    std::list<std::pair<std::string, uint32_t>> ds;
+    for (const auto& d : datums)
+        if (active.find(d.get()) == active.end())
+            ds.push_back(std::make_pair(d->name, d->uid));
     datums.remove_if([&](const std::unique_ptr<Datum>& d_)
                      { return active.find(d_.get()) == active.end(); });
+    for (auto d : ds)
+        changed(d.first, d.second);
+
 
     if (watcher)
     {

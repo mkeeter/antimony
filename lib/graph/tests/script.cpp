@@ -81,6 +81,9 @@ TEST_CASE("Datum pinning")
     n->setScript("input('x', float, 2.0)");
     REQUIRE(n->getErrorLine() == -1);
     REQUIRE(n->getDatum("x") == x);
+    REQUIRE(x->isValid() == true);
+    REQUIRE(x->currentValue() != NULL);
+    REQUIRE(PyFloat_AsDouble(x->currentValue()) == 1.0);
     delete g;
 }
 
@@ -157,6 +160,26 @@ TEST_CASE("Removing datum from script")
     REQUIRE(n->getDatum("x") == NULL);
     delete g;
 }
+
+TEST_CASE("Datum removal triggering update")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    n->setScript("input('x', float, 1.0)\n"
+                 "input('y', float)");
+
+    auto y = n->getDatum("y");
+    y->setText("n.x");
+    REQUIRE(y->isValid() == true);
+
+    n->setScript("input('y', float)");
+    REQUIRE(y != NULL);
+    REQUIRE(y->isValid() == false);
+    CAPTURE(y->getError());
+    REQUIRE(y->getError() == "omg");
+    delete g;
+}
+
 
 TEST_CASE("Invalid datum names")
 {

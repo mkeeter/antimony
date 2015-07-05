@@ -54,7 +54,7 @@ protected:
      */
     PyObject* getValue();
 
-    std::string name;
+    const std::string name;
     const uint32_t uid;
 
     std::string expr;
