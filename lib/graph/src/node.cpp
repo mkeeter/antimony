@@ -4,9 +4,11 @@
 #include "graph/graph.h"
 #include "graph/datum.h"
 #include "graph/proxy.h"
+#include "graph/watchers.h"
 
 Node::Node(std::string n, Graph* root)
-    : name(n), uid(root->install(this)), script(this), parent(root)
+    : name(n), uid(root->install(this)), script(this),
+      parent(root), watcher(NULL)
 {
     // Nothing to do here
 }
@@ -21,6 +23,19 @@ void Node::update(const std::unordered_set<Datum*>& active)
 {
     datums.remove_if([&](const std::unique_ptr<Datum>& d_)
                      { return active.find(d_.get()) == active.end(); });
+
+    if (watcher)
+    {
+        std::list<Datum*> ds;
+        std::for_each(datums.begin(), datums.end(),
+                      [&](const std::unique_ptr<Datum>& d)
+                      { ds.push_back(d.get()); });
+
+        watcher->trigger(
+                (NodeState){
+                    script.script, script.error,
+                    script.error_lineno, ds});
+    }
 }
 
 uint32_t Node::install(Datum* d)

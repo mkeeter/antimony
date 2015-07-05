@@ -10,6 +10,7 @@
 
 class Source;
 class Node;
+class DatumWatcher;
 
 class Datum : public Downstream
 {
@@ -28,6 +29,11 @@ public:
      *  Returns a borrowed reference to the current value.
      */
     PyObject* currentValue() const { return value; }
+
+    /*
+     *  Sets the callback object.
+     */
+    void setWatcher(DatumWatcher* w) { watcher = w; }
 
     static const char SIGIL_CONNECTION = '$';
     static const char SIGIL_OUTPUT = '#';
@@ -53,6 +59,8 @@ protected:
     PyTypeObject* type;
 
     Node* parent;
+
+    DatumWatcher* watcher;
 
     /*
      *  This set represents any source whose modification could cause

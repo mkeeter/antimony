@@ -2,6 +2,7 @@
 #include "graph/node.h"
 #include "graph/util.h"
 #include "graph/graph.h"
+#include "graph/watchers.h"
 
 std::unordered_set<char> Datum::sigils = {
     SIGIL_CONNECTION, SIGIL_OUTPUT
@@ -12,7 +13,7 @@ std::unordered_set<char> Datum::sigils = {
 Datum::Datum(std::string name, std::string s,
              PyTypeObject* type, Node* parent)
     : name(name), uid(parent->install(this)), expr(s),
-      value(NULL), valid(false), type(type), parent(parent)
+      value(NULL), valid(false), type(type), parent(parent), watcher(NULL)
 {
     // Attempt to update our value
     trigger();
@@ -96,6 +97,17 @@ void Datum::update()
 
     if (changed)
         parent->changed(name);
+
+    if (watcher)
+    {
+        const bool has_sigil =
+            (!expr.empty() && sigils.find(expr.front()) != sigils.end());
+        watcher->trigger(
+                (DatumState){
+                    has_sigil ? expr.substr(1) : expr,
+                    !has_sigil, valid, error});
+    }
+
 }
 
 void Datum::setText(std::string s)

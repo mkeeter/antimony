@@ -10,6 +10,7 @@
 
 class Datum;
 class Graph;
+class NodeWatcher;
 
 class Node : public Root
 {
@@ -63,6 +64,11 @@ public:
      */
     Datum* getDatum(std::string name) const;
 
+    /*
+     *  Sets the callback object.
+     */
+    void setWatcher(NodeWatcher* w) { watcher = w; }
+
     /* Root functions */
     PyObject* pyGetAttr(std::string name, Downstream* caller) const override;
     bool topLevel() const override { return false; }
@@ -94,6 +100,8 @@ protected:
     Script script;
     std::list<std::unique_ptr<Datum>> datums;
     Graph* parent;
+
+    NodeWatcher* watcher;
 
     friend class Graph;
     friend class Datum;
