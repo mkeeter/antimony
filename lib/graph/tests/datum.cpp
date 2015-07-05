@@ -127,3 +127,18 @@ TEST_CASE("UID lookup")
     REQUIRE(PyFloat_AsDouble(y->currentValue()) == 1.0);
     delete g;
 }
+
+TEST_CASE("UID changes")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    auto x = new Datum("x", "1.0", &PyFloat_Type, n);
+    auto y = new Datum("y", "$__0.__0", &PyFloat_Type, n);
+    x->setText("2.0");
+
+    CAPTURE(y->getError());
+    REQUIRE(y->isValid() == true);
+    REQUIRE(y->currentValue() != NULL);
+    REQUIRE(PyFloat_AsDouble(y->currentValue()) == 2.0);
+    delete g;
+}
