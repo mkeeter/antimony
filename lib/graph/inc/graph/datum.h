@@ -5,6 +5,7 @@
 #include <string>
 #include <memory>
 #include <unordered_set>
+#include <list>
 
 #include "graph/types/downstream.h"
 
@@ -33,7 +34,7 @@ public:
     /*
      *  Sets the callback object.
      */
-    void setWatcher(DatumWatcher* w) { watcher = w; }
+    void installWatcher(DatumWatcher* w) { watchers.push_back(w); }
 
     static const char SIGIL_CONNECTION = '$';
     static const char SIGIL_OUTPUT = '#';
@@ -71,7 +72,7 @@ protected:
 
     Node* parent;
 
-    DatumWatcher* watcher;
+    std::list<DatumWatcher*> watchers;
 
     /*
      *  This set represents any source whose modification could cause

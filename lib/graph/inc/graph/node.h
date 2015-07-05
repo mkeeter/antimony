@@ -77,7 +77,7 @@ public:
     /*
      *  Sets the callback object.
      */
-    void setWatcher(NodeWatcher* w) { watcher = w; }
+    void installWatcher(NodeWatcher* w) { watchers.push_back(w); }
 
     /* Root functions */
     PyObject* pyGetAttr(std::string name, Downstream* caller) const override;
@@ -111,7 +111,7 @@ protected:
     std::list<std::unique_ptr<Datum>> datums;
     Graph* parent;
 
-    NodeWatcher* watcher;
+    std::list<NodeWatcher*> watchers;
 
     friend class Graph;
     friend class Datum;

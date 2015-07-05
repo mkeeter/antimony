@@ -13,7 +13,7 @@ std::unordered_set<char> Datum::sigils = {
 Datum::Datum(std::string name, std::string s,
              PyTypeObject* type, Node* parent)
     : name(name), uid(parent->install(this)), expr(s),
-      value(NULL), valid(false), type(type), parent(parent), watcher(NULL)
+      value(NULL), valid(false), type(type), parent(parent)
 {
     // Attempt to update our value
     trigger();
@@ -90,11 +90,12 @@ void Datum::update()
     if (changed)
         parent->changed(name, uid);
 
-    if (watcher)
+    if (!watchers.empty())
     {
         auto trimmed = trimSigil(expr);
-        watcher->trigger(
-                (DatumState){trimmed.first, !trimmed.second, valid, error});
+        for (auto w : watchers)
+            w->trigger(
+                    (DatumState){trimmed.first, !trimmed.second, valid, error});
     }
 
 }

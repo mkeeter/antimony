@@ -7,8 +7,7 @@
 #include "graph/watchers.h"
 
 Node::Node(std::string n, Graph* root)
-    : name(n), uid(root->install(this)), script(this),
-      parent(root), watcher(NULL)
+    : name(n), uid(root->install(this)), script(this), parent(root)
 {
     // Nothing to do here
 }
@@ -40,17 +39,18 @@ void Node::update(const std::unordered_set<Datum*>& active)
     for (auto d : inactive)
         uninstall(d);
 
-    if (watcher)
+    if (!watchers.empty())
     {
         std::list<Datum*> ds;
         std::for_each(datums.begin(), datums.end(),
                       [&](const std::unique_ptr<Datum>& d)
                       { ds.push_back(d.get()); });
 
-        watcher->trigger(
-                (NodeState){
-                    script.script, script.error,
-                    script.error_lineno, ds});
+        for (auto w : watchers)
+            w->trigger(
+                    (NodeState){
+                        script.script, script.error,
+                        script.error_lineno, ds});
     }
 }
 
