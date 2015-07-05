@@ -75,8 +75,11 @@ protected:
      *  If output is false, then only load the value on new datum
      *  construction (as a default); if output is true, then load
      *  the value regardless of whether the datum is new or existing.
+     *
+     *  Returns true on success, false if the datum was already created
+     *  in this pass through the script (checked using script.active).
      */
-    void makeDatum(std::string name, PyTypeObject* type,
+    bool makeDatum(std::string name, PyTypeObject* type,
                    std::string value, bool output);
 
     /*

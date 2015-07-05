@@ -64,3 +64,28 @@ std::pair<std::string, int> getPyError()
 
     return std::make_pair(error_traceback, error_lineno);
 }
+
+
+
+bool isPyKeyword(std::string k)
+{
+    // Lazy initialization of keyword.kwlist.__contains__
+    static PyObject* kwlist_contains = NULL;
+    if (!kwlist_contains)
+    {
+        PyObject* keyword_module = PyImport_ImportModule("keyword");
+        PyObject* kwlist = PyObject_GetAttrString(keyword_module, "kwlist");
+        Py_DECREF(keyword_module);
+        kwlist_contains = PyObject_GetAttrString(kwlist, "__contains__");
+        Py_DECREF(kwlist);
+    }
+
+    PyObject* args = Py_BuildValue("(s)", k.c_str());
+    PyObject* in_kwlist = PyObject_Call(kwlist_contains, args, NULL);
+    Py_DECREF(args);
+
+    const bool result = PyObject_IsTrue(in_kwlist);
+    Py_DECREF(in_kwlist);
+
+    return result;
+}

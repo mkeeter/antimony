@@ -145,3 +145,49 @@ TEST_CASE("Script input pruning")
     REQUIRE(n->getScript() == "input('x', float)");
     delete g;
 }
+
+TEST_CASE("Removing datum from script")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    n->setScript("input('x', float, 1.0)");
+    REQUIRE(n->getDatum("x") != NULL);
+
+    n->setScript("");
+    REQUIRE(n->getDatum("x") == NULL);
+    delete g;
+}
+
+TEST_CASE("Invalid datum names")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+
+    SECTION("Keyword")
+    {
+        n->setScript("input('for', float, 1.0)");
+        REQUIRE(n->getErrorLine() == 1);
+        CAPTURE(n->getError());
+        REQUIRE(n->getError().find("Datum name is a reserved Python keyword")
+                != std::string::npos);
+    }
+
+    SECTION("Double underscore")
+    {
+        n->setScript("input('__x', float, 1.0)");
+        REQUIRE(n->getErrorLine() == 1);
+        CAPTURE(n->getError());
+        REQUIRE(n->getError().find("Datum name cannot begin with '__'")
+                != std::string::npos);
+    }
+
+    SECTION("Repeated initialization")
+    {
+        n->setScript("input('x', float, 1.0)\n"
+                     "input('x', int, 2)\n");
+        REQUIRE(n->getErrorLine() == 2);
+        CAPTURE(n->getError());
+        REQUIRE(n->getError().find("Datum was already defined in this script.")
+                != std::string::npos);
+    }
+}

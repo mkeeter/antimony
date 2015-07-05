@@ -38,9 +38,13 @@ Datum* Node::getDatum(std::string name) const
     return get(name, datums);
 }
 
-void Node::makeDatum(std::string n, PyTypeObject* type,
+bool Node::makeDatum(std::string n, PyTypeObject* type,
                      std::string value, bool output)
 {
+    for (auto a : script.active)
+        if (a->name == n)
+            return false;
+
     // If there's an existing datum and it's of the wrong type, delete it.
     auto d = getDatum(n);
     if (d != NULL && (d->type != type))
@@ -71,6 +75,7 @@ void Node::makeDatum(std::string n, PyTypeObject* type,
     }
 
     script.active.insert(d);
+    return true;
 }
 
 PyObject* Node::pyGetAttr(std::string n, Downstream* caller) const
