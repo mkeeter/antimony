@@ -106,7 +106,9 @@ bool Node::makeDatum(std::string n, PyTypeObject* type,
 
 PyObject* Node::pyGetAttr(std::string n, Downstream* caller) const
 {
-    auto d = get(n, datums);
+    auto d = (caller && caller->allowLookupByUID())
+        ? get(n, datums) : getByName(n, datums);
+
     if (d)
     {
         // If the caller is a datum as well, check for recursive lookups.

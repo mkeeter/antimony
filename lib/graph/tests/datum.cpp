@@ -119,12 +119,25 @@ TEST_CASE("UID lookup")
     auto g = new Graph();
     auto n = new Node("n", g);
     auto x = new Datum("x", "1.0", &PyFloat_Type, n);
-    auto y = new Datum("y", "$__0.__0", &PyFloat_Type, n);
 
-    CAPTURE(y->getError());
-    REQUIRE(y->isValid() == true);
-    REQUIRE(y->currentValue() != NULL);
-    REQUIRE(PyFloat_AsDouble(y->currentValue()) == 1.0);
+    SECTION("Allowed")
+    {
+        auto y = new Datum("y", "$__0.__0", &PyFloat_Type, n);
+        CAPTURE(y->getError());
+        REQUIRE(y->isValid() == true);
+        REQUIRE(y->currentValue() != NULL);
+        REQUIRE(PyFloat_AsDouble(y->currentValue()) == 1.0);
+    }
+
+    SECTION("Not allowed")
+    {
+        auto y = new Datum("y", "__0.__0", &PyFloat_Type, n);
+        REQUIRE(y->isValid() == false);
+        CAPTURE(y->getError());
+        REQUIRE(y->getError().find("Name '__0' is not defined")
+                != std::string::npos);
+    }
+
     delete g;
 }
 

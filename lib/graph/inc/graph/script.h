@@ -24,5 +24,12 @@ public:
 
     std::unordered_set<Datum*> active;
 
+protected:
+    /*
+     *  Never allow proxies to use UID lookups when a script
+     *  is being evaluated.
+     */
+    bool allowLookupByUID() const override { return false; }
+
     Node* parent;
 };

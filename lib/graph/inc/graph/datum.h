@@ -54,6 +54,11 @@ protected:
      */
     PyObject* getValue();
 
+    /*
+     *  If this datum has a connection sigil, allow UID lookups.
+     */
+    bool allowLookupByUID() const override;
+
     const std::string name;
     const uint32_t uid;
 

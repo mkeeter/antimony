@@ -115,6 +115,11 @@ void Datum::setText(std::string s)
     }
 }
 
+bool Datum::allowLookupByUID() const
+{
+    return !expr.empty() && (expr.front() == SIGIL_CONNECTION);
+}
+
 /*
 void Datum::update()
 {
