@@ -54,20 +54,6 @@ void Node::update(const std::unordered_set<Datum*>& active)
     }
 }
 
-uint32_t Node::install(Datum* d)
-{
-    return Root::install<Datum>(d, &datums);
-}
-
-void Node::uninstall(Datum* d)
-{
-    const auto _name = d->name;
-    const auto _uid = d->uid;
-
-    Root::uninstall(d, &datums);
-    changed(_name, _uid);
-}
-
 PyObject* Node::proxyDict(Downstream* caller)
 {
     return parent->proxyDict(this, caller);

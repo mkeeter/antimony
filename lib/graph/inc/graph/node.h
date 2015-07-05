@@ -55,12 +55,12 @@ public:
      *  The node takes ownership of the datum and will delete it
      *  when the node is destroyed.
      */
-    uint32_t install(Datum* d);
+    uint32_t install(Datum* d) { return Root::install(d, &datums); }
 
     /*
      *  Uninstalls the given datum.
      */
-    void uninstall(Datum* d);
+    void uninstall(Datum* d) { Root::uninstall(d, &datums); }
 
     /*
      *  Returns a Proxy object that uses the parent Graph as its

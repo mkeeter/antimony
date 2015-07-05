@@ -14,6 +14,12 @@ TEST_CASE("Cross-node datum deletion")
     auto b = new Node("b", g);
     auto bx = new Datum("x", "a.x", &PyFloat_Type, b);
 
+    a->uninstall(ax);
+    REQUIRE(bx->isValid() == false);
+    CAPTURE(bx->getError());
+    REQUIRE(bx->getError().find("Name 'x' is not defined")
+            != std::string::npos);
+
     g->uninstall(a);
     REQUIRE(bx->isValid() == false);
     CAPTURE(bx->getError());

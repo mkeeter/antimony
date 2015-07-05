@@ -10,11 +10,6 @@ Graph::Graph(std::string n, Graph* parent)
     // Nothing to do here
 }
 
-uint32_t Graph::install(Node* n)
-{
-    return Root::install<Node>(n, &nodes);
-}
-
 PyObject* Graph::proxyDict(Node* locals, Downstream* caller)
 {
     return Proxy::makeProxyFor(this, locals, caller);

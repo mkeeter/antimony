@@ -22,7 +22,7 @@ public:
      *
      *  Returns a unique ID number.
      */
-    uint32_t install(Node* n);
+    uint32_t install(Node* n) { return Root::install(n, &nodes); }
 
     /*
      *  Uninstall the given node.

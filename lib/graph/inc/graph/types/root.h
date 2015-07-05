@@ -119,13 +119,17 @@ protected:
     }
 
     /*
-     *  Delete a particular value from a list.
+     *  Delete a particular value from a list, calling 'changed'
+     *  with its name and UID to inform others of its deletion.
      */
     template <class T>
     void uninstall(T* t, std::list<std::unique_ptr<T>>* ts)
     {
+        const auto name = t->name;
+        const auto uid = t->uid;
         ts->remove_if([&](const std::unique_ptr<T>& t_)
                       { return t_.get() == t; });
+        changed(name, uid);
     }
 
     std::unordered_multimap<std::string, Downstream*> lookups;
