@@ -25,7 +25,7 @@ Datum::Datum(std::string name, std::string s,
         if (PyErr_Occurred())
             PyErr_Clear();
         else
-            parent->changed(name);
+            parent->changed(name, uid);
     }
 }
 
@@ -35,7 +35,7 @@ Datum::~Datum()
     Py_XDECREF(value);
     value = NULL;
 
-    parent->changed(name);
+    parent->changed(name, uid);
 }
 
 PyObject* Datum::getValue()
@@ -92,7 +92,7 @@ void Datum::update()
         changed = true;
 
     if (changed)
-        parent->changed(name);
+        parent->changed(name, uid);
 
     if (watcher)
     {

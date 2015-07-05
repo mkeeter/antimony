@@ -48,7 +48,7 @@ public:
      *  When a child is changed, call 'trigger' on all Downstream
      *  objects that have tried looking up this name before.
      */
-    void changed(std::string n);
+    void changed(std::string n, uint32_t uid);
 
     /*
      *  Removes a Downstream from the map of failed lookups.
