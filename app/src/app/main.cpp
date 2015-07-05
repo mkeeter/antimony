@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QSurfaceFormat>
 #include <QTextCodec>
+#include <locale.h>
 
 #include <iostream>
 
@@ -31,6 +32,7 @@ int main(int argc, char *argv[])
 
     // Create the Application object
     App a(argc, argv);
+    setlocale(LC_NUMERIC, "C");
 
     for (auto arg : a.arguments().mid(1))
         if (arg.startsWith("--"))
