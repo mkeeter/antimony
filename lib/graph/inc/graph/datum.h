@@ -44,6 +44,12 @@ protected:
     void update() override;
 
     /*
+     *  Trims a leading sigil (if present) and returns the string
+     *  and a boolean indicating whether a sigil was trimmed.
+     */
+    static std::pair<std::string, bool> trimSigil(std::string e);
+
+    /*
      *  Evaluates our expression, giving a value.
      */
     PyObject* getValue();

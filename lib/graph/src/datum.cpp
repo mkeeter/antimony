@@ -43,11 +43,7 @@ PyObject* Datum::getValue()
     PyObject* globals = parent->parent->proxyDict(NULL, this);
 
     // If the string begins with a sigil, slice it off
-    const std::string e =
-        (!expr.empty() && sigils.find(expr.front()) != sigils.end())
-            ? expr.substr(1)
-            : expr;
-
+    const std::string e = trimSigil(expr).first;
     PyObject* out = PyRun_String(e.c_str(), Py_eval_input, globals, globals);
 
     if (PyErr_Occurred())
@@ -100,14 +96,18 @@ void Datum::update()
 
     if (watcher)
     {
-        const bool has_sigil =
-            (!expr.empty() && sigils.find(expr.front()) != sigils.end());
+        auto trimmed = trimSigil(expr);
         watcher->trigger(
-                (DatumState){
-                    has_sigil ? expr.substr(1) : expr,
-                    !has_sigil, valid, error});
+                (DatumState){trimmed.first, !trimmed.second, valid, error});
     }
 
+}
+
+std::pair<std::string, bool> Datum::trimSigil(std::string e)
+{
+    const bool has_sigil = !e.empty() &&
+                           (sigils.find(e.front()) != sigils.end());
+    return std::make_pair(has_sigil ? e.substr(1) : e, has_sigil);
 }
 
 void Datum::setText(std::string s)
