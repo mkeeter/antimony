@@ -13,6 +13,8 @@ namespace Hooks {
         std::string message;
     };
 
+    void checkName(std::string name);
+
     void onException(const Exception& e);
     void preInit();
 

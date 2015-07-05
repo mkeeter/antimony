@@ -3,14 +3,10 @@
 #include "graph/hooks/output.h"
 #include "graph/hooks/hooks.h"
 #include "graph/node.h"
-#include "graph/util.h"
 
 void OutputHook::call(std::string name, boost::python::object obj)
 {
-    if (isPyKeyword(name))
-        throw Hooks::Exception("Datum name is a reserved Python keyword");
-    else if (name.find("__") == 0)
-        throw Hooks::Exception("Datum name cannot begin with '__'");
+    Hooks::checkName(name);
 
     auto repr = PyObject_Repr(obj.ptr());
     if (PyErr_Occurred())

@@ -3,8 +3,17 @@
 #include "graph/hooks/hooks.h"
 #include "graph/hooks/input.h"
 #include "graph/hooks/output.h"
+#include "graph/util.h"
 
 using namespace boost::python;
+
+void Hooks::checkName(std::string name)
+{
+    if (isPyKeyword(name))
+        throw Hooks::Exception("Datum name is a reserved Python keyword");
+    else if (name.find("__") == 0)
+        throw Hooks::Exception("Datum name cannot begin with '__'");
+}
 
 void Hooks::onException(const Hooks::Exception& e)
 {
@@ -29,12 +38,10 @@ void Hooks::preInit()
     PyImport_AppendInittab("_scriptIO", PyInit__scriptIO);;
 }
 
-
-// Lazy initialization of the scriptIO module.
-static PyObject* scriptIO_module = NULL;
-
 void Hooks::load(PyObject* g, Node* n)
 {
+    // Lazy initialization of the scriptIO module.
+    static PyObject* scriptIO_module = NULL;
     if (scriptIO_module == NULL)
         scriptIO_module = PyImport_ImportModule("_scriptIO");
 
