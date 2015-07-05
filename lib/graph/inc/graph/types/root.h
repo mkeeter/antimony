@@ -62,21 +62,6 @@ public:
      *  Helper function to install a new object into a list,
      *  finding a new unique ID number and returning it.
      */
-    template <class T>
-    uint32_t install(T* t, std::list<std::unique_ptr<T>>* ts)
-    {
-        // Find the lowest unused unique ID number
-        std::unordered_set<uint32_t> indices;
-        std::for_each(ts->begin(), ts->end(),
-                      [&](const std::unique_ptr<T>& t_)
-                      { indices.insert(t_->uid); });
-        uint32_t uid = 0;
-        while (indices.find(uid) != indices.end())
-            uid++;
-
-        ts->push_back(std::unique_ptr<T>(t));
-        return uid;
-    }
 
     /*
      *  Helper function to look up a child by name.
@@ -117,5 +102,31 @@ public:
     }
 
 protected:
+    template <class T>
+    uint32_t install(T* t, std::list<std::unique_ptr<T>>* ts)
+    {
+        // Find the lowest unused unique ID number
+        std::unordered_set<uint32_t> indices;
+        std::for_each(ts->begin(), ts->end(),
+                      [&](const std::unique_ptr<T>& t_)
+                      { indices.insert(t_->uid); });
+        uint32_t uid = 0;
+        while (indices.find(uid) != indices.end())
+            uid++;
+
+        ts->push_back(std::unique_ptr<T>(t));
+        return uid;
+    }
+
+    /*
+     *  Delete a particular value from a list.
+     */
+    template <class T>
+    void uninstall(T* t, std::list<std::unique_ptr<T>>* ts)
+    {
+        ts->remove_if([&](const std::unique_ptr<T>& t_)
+                      { return t_.get() == t; });
+    }
+
     std::unordered_multimap<std::string, Downstream*> lookups;
 };

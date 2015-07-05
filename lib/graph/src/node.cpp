@@ -13,6 +13,16 @@ Node::Node(std::string n, Graph* root)
     // Nothing to do here
 }
 
+Node::~Node()
+{
+    std::list<std::pair<std::string, uint32_t>> ds;
+    for (const auto& d : datums)
+        ds.push_back(std::make_pair(d->name, d->uid));
+    datums.clear();
+    for (auto d : ds)
+        changed(d.first, d.second);
+}
+
 void Node::setScript(std::string t)
 {
     script.script = t;
@@ -23,15 +33,12 @@ void Node::update(const std::unordered_set<Datum*>& active)
 {
     // Remove any datums that weren't marked as active and trigger
     // changes to anything that was watching them.
-    std::list<std::pair<std::string, uint32_t>> ds;
+    std::list<Datum*> inactive;
     for (const auto& d : datums)
         if (active.find(d.get()) == active.end())
-            ds.push_back(std::make_pair(d->name, d->uid));
-    datums.remove_if([&](const std::unique_ptr<Datum>& d_)
-                     { return active.find(d_.get()) == active.end(); });
-    for (auto d : ds)
-        changed(d.first, d.second);
-
+            inactive.push_back(d.get());
+    for (auto d : inactive)
+        uninstall(d);
 
     if (watcher)
     {
@@ -50,6 +57,15 @@ void Node::update(const std::unordered_set<Datum*>& active)
 uint32_t Node::install(Datum* d)
 {
     return Root::install<Datum>(d, &datums);
+}
+
+void Node::uninstall(Datum* d)
+{
+    const auto _name = d->name;
+    const auto _uid = d->uid;
+
+    Root::uninstall(d, &datums);
+    changed(_name, _uid);
 }
 
 PyObject* Node::proxyDict(Downstream* caller)

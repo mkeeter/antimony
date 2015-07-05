@@ -176,10 +176,10 @@ TEST_CASE("Datum removal triggering update")
     REQUIRE(y != NULL);
     REQUIRE(y->isValid() == false);
     CAPTURE(y->getError());
-    REQUIRE(y->getError() == "omg");
+    REQUIRE(y->getError().find("Name 'x' is not defined")
+            != std::string::npos);
     delete g;
 }
-
 
 TEST_CASE("Invalid datum names")
 {

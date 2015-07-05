@@ -18,6 +18,11 @@ public:
     explicit Node(std::string name, Graph* root);
 
     /*
+     *  On destruction, indicate that all datums have changed.
+     */
+    virtual ~Node();
+
+    /*
      *  Updates the script text and triggers an update.
      */
     void setScript(std::string t);
@@ -51,6 +56,11 @@ public:
      *  when the node is destroyed.
      */
     uint32_t install(Datum* d);
+
+    /*
+     *  Uninstalls the given datum.
+     */
+    void uninstall(Datum* d);
 
     /*
      *  Returns a Proxy object that uses the parent Graph as its

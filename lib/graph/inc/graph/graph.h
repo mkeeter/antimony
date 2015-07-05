@@ -25,6 +25,11 @@ public:
     uint32_t install(Node* n);
 
     /*
+     *  Uninstall the given node.
+     */
+    void uninstall(Node* n) { Root::uninstall(n, &nodes); }
+
+    /*
      *  Returns a Proxy object that uses this graph as its root,
      *  the given Node as its locals dictionary, and the given
      *  Downstream as the caller.
