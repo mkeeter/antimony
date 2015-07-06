@@ -19,9 +19,9 @@
 
 #include "ui/util/colors.h"
 
-#include "graph/datum/datum.h"
-#include "graph/datum/datums/script_datum.h"
-#include "graph/node/node.h"
+#include "graph/datum.h"
+#include "graph/node.h"
+#include "graph/graph.h"
 
 #include "app/app.h"
 #include "app/undo/undo_move.h"
@@ -37,11 +37,8 @@ NodeInspector::NodeInspector(Node* node)
              QGraphicsItem::ItemSendsGeometryChanges);
     setAcceptHoverEvents(true);
 
-    // Redo layout when datums change (also only for script nodes)
-    connect(node, &Node::datumsChanged,
-            this, &NodeInspector::onDatumsChanged);
-    connect(node, &Node::datumOrderChanged,
-            this, &NodeInspector::onDatumOrderChanged);
+    // Redo layout when datums change
+    node->installWatcher(this);
 
     // Construct the title row here (rather than in the colon initialization)
     // so that it gets datumsChanged events after the inspector (this prevents
@@ -51,15 +48,11 @@ NodeInspector::NodeInspector(Node* node)
     // Bump the title row down a little bit.
     title_row->setPos(4, 2);
 
-
     // When the title row changes, redo layout as well.
     connect(title_row, &InspectorTitle::layoutChanged,
             this, &NodeInspector::onLayoutChanged);
 
-    // Delete oneself when the target node is deleted
-    connect(node, &Node::destroyed, this, &NodeInspector::deleteLater);
-
-    populateLists(node);
+    trigger(node->getState());
 }
 
 float NodeInspector::maxLabelWidth() const
@@ -72,16 +65,12 @@ float NodeInspector::maxLabelWidth() const
 
 QRectF NodeInspector::boundingRect() const
 {
-    // Special case if the node is being deleted
-    if (node.isNull())
-        return QRectF();
-
     float height = title_row->boundingRect().height() + 4;
     float width =  title_row->boundingRect().width() + 8;
 
     for (auto row=rows.begin(); row != rows.end(); ++row)
     {
-        if (show_hidden || !row.key()->objectName().startsWith("_"))
+        if (show_hidden || row.key()->getName().front() != '_')
         {
             height += row.value()->boundingRect().height() + 4;
             width = fmax(width, row.value()->boundingRect().width());
@@ -102,11 +91,11 @@ void NodeInspector::onLayoutChanged()
     if (node)
     {
         float y = 2 + title_row->boundingRect().height() + 4;
-        for (Datum* d : node->findChildren<Datum*>())
+        for (Datum* d : node->childDatums())
         {
             if (rows.contains(d))
             {
-                if (show_hidden || !d->objectName().startsWith("_"))
+                if (show_hidden || d->getName().front() != '_')
                 {
                     rows[d]->show();
                     rows[d]->setWidth(min_width);
@@ -124,25 +113,14 @@ void NodeInspector::onLayoutChanged()
     }
 }
 
-void NodeInspector::onDatumsChanged()
-{
-    populateLists(node);
-    onLayoutChanged();
-}
-
-void NodeInspector::onDatumOrderChanged()
-{
-    onLayoutChanged();
-}
-
-void NodeInspector::populateLists(Node *node)
+void NodeInspector::trigger(const NodeState& state)
 {
     QList<Datum*> not_present = rows.keys();
 
-    for (Datum* d : node->findChildren<Datum*>(
-                QString(), Qt::FindDirectChildrenOnly))
+    for (Datum* d : state.datums)
     {
-        if (!d->objectName().startsWith("__") && !rows.contains(d))
+        qDebug() << "Processing datum with name" << QString::fromStdString(d->getName());
+        if (d->getName().find("__") != 0 && !rows.contains(d))
         {
             rows[d] = new InspectorRow(d, this);
             connect(rows[d], &InspectorRow::layoutChanged,
@@ -253,7 +231,7 @@ void NodeInspector::focusNext(DatumTextItem* prev)
 
     prev->clearFocus();
 
-    for (Datum* d : node->findChildren<Datum*>())
+    for (Datum* d : node->childDatums())
     {
         if (rows.contains(d))
         {
@@ -286,7 +264,7 @@ void NodeInspector::focusPrev(DatumTextItem* next)
 
     next->clearFocus();
 
-    for (Datum* d : node->findChildren<Datum*>())
+    for (Datum* d : node->childDatums())
     {
         if (rows.contains(d))
         {
@@ -354,7 +332,7 @@ void NodeInspector::contextMenuEvent(QGraphicsSceneContextMenuEvent* e)
 {
     Q_UNUSED(e);
 
-    QString desc = node->getName() + " (" + node->getTitle() + ")";
+    QString desc = QString::fromStdString(node->getName()); // + " (" + node->getTitle() + ")";
 
     auto menu = new QMenu();
     auto jump_to = new QAction("Show " + desc + " in viewport", menu);

@@ -2,8 +2,7 @@
 
 #include "app/undo/stack.h"
 
-#include "graph/datum/datum.h"
-#include "graph/datum/link.h"
+#include "graph/datum.h"
 
 #include "app/app.h"
 

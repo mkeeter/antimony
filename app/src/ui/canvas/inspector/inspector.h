@@ -1,17 +1,19 @@
 #ifndef INSPECTOR_H
 #define INSPECTOR_H
 
-#include "graph/node/node.h"
-#include "ui/canvas/inspector/inspector_title.h"
+#include <Python.h>
 
 #include <QWidget>
 #include <QLineEdit>
 #include <QPointer>
 #include <QGraphicsObject>
 
+#include "ui/canvas/inspector/inspector_title.h"
+
+#include "graph/node.h"
+#include "graph/watchers.h"
+
 class Datum;
-class ScriptDatum;
-class Node;
 class Canvas;
 
 class InputPort;
@@ -22,11 +24,16 @@ class DatumTextItem;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class NodeInspector : public QGraphicsObject
+class NodeInspector : public QGraphicsObject, NodeWatcher
 {
     Q_OBJECT
 public:
     explicit NodeInspector(Node* node);
+
+    /*
+     *  Watcher callbacks
+     */
+    void trigger(const NodeState& state) override;
 
     QRectF boundingRect() const override;
 
@@ -84,14 +91,6 @@ public slots:
      */
     void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 
-    /** When datums are changed, update rows and layout.
-     */
-    void onDatumsChanged();
-
-    /** When datum order changes, update layout.
-     */
-    void onDatumOrderChanged();
-
     /** Change focus to the next text item.
      */
     void focusNext(DatumTextItem* prev);
@@ -115,11 +114,7 @@ protected:
      */
     float maxLabelWidth() const;
 
-    /** Fills in the grid from the source node.
-     */
-    void populateLists(Node* node);
-
-    QPointer<Node> node;
+    Node* node;
     InspectorTitle* title_row;
     QMap<Datum*, InspectorRow*> rows;
 

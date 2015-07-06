@@ -23,12 +23,12 @@
 #include "ui/main_window.h"
 #include "ui/util/colors.h"
 
-#include "graph/datum/datum.h"
-#include "graph/node/node.h"
+#include "graph/datum.h"
+#include "graph/node.h"
+#include "graph/graph.h"
+
 #include "graph/node/serializer.h"
 #include "graph/node/deserializer.h"
-#include "graph/node/root.h"
-#include "graph/datum/link.h"
 
 #include "control/control.h"
 #include "control/proxy.h"
@@ -182,9 +182,9 @@ QVector3D Viewport::sceneToWorld(QPointF p) const
 
 void Viewport::makeNodeAtCursor(NodeConstructorFunction f)
 {
-    auto n = f(App::instance()->getNodeRoot());
+    auto n = f(App::instance()->getGraph());
     App::instance()->newNode(n);
-    App::instance()->pushStack(new UndoAddNodeCommand(n));
+    //App::instance()->pushStack(new UndoAddNodeCommand(n));
 }
 
 float Viewport::getZmax() const
@@ -387,7 +387,7 @@ void Viewport::mouseReleaseEvent(QMouseEvent *event)
         for (auto p : proxies)
         {
             auto n = p->getNode();
-            QString desc = n->getName() + " (" + n->getTitle() + ")";
+            QString desc = QString::fromStdString(n->getName());// + " (" + n->getTitle() + ")";
 
             if (jump_to == NULL)
             {
@@ -610,7 +610,7 @@ void Viewport::updateInfo()
         if (proxies.size() > 0)
         {
             auto n = proxies.first()->getNode();
-            QString desc = n->getName() + " (" + n->getTitle() + ")";
+            QString desc = QString::fromStdString(n->getName()); // + " (" + n->getTitle() + ")";
 
             if (proxies.size() > 1)
                 info = QString("Current: %1, (%2 more below)")
@@ -647,8 +647,8 @@ void Viewport::onCopy()
     for (auto i : scene->selectedItems())
         if (auto proxy = dynamic_cast<ControlProxy*>(i))
         {
+            /*
             auto n = proxy->getControl()->getNode();
-            Q_ASSERT(dynamic_cast<NodeRoot*>(n->parent()));
             auto p = static_cast<NodeRoot*>(n->parent());
 
             NodeRoot temp_root;
@@ -659,7 +659,7 @@ void Viewport::onCopy()
             n->setParent(p);
 
             QApplication::clipboard()->setMimeData(data);
-            return;
+            */
         }
 }
 
@@ -668,6 +668,7 @@ void Viewport::onCut()
     for (auto i : scene->selectedItems())
         if (auto proxy = dynamic_cast<ControlProxy*>(i))
         {
+            /*
             auto n = proxy->getControl()->getNode();
             Q_ASSERT(dynamic_cast<NodeRoot*>(n->parent()));
             auto p = static_cast<NodeRoot*>(n->parent());
@@ -681,7 +682,7 @@ void Viewport::onCut()
 
             QApplication::clipboard()->setMimeData(data);
             proxy->getControl()->deleteNode("'cut'");
-            return;
+            */
         }
 }
 
@@ -690,6 +691,7 @@ void Viewport::onPaste()
     auto data = QApplication::clipboard()->mimeData();
     if (data->hasFormat("sb::viewport"))
     {
+        /*
         NodeRoot temp_root;
         SceneDeserializer ds(&temp_root);
         ds.run(QJsonDocument::fromJson(data->data("sb::viewport")).object());
@@ -700,6 +702,7 @@ void Viewport::onPaste()
 
         App::instance()->newNode(n);
         App::instance()->pushStack(new UndoAddNodeCommand(n, "'paste'"));
+        */
     }
 }
 

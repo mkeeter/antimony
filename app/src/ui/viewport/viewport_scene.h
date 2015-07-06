@@ -86,10 +86,10 @@ protected:
     /* Score a set of top-level control roots
      * (which manage highlighting and glowing)
      */
-    QMap<QPointer<Node>, QSharedPointer<ControlRoot>> controls;
+    QMap<Node*, QSharedPointer<ControlRoot>> controls;
 
     /* Stores Datums for which we have created RenderWorkers */
-    QSet<QPointer<Datum>> workers;
+    QSet<Datum*> workers;
 };
 
 #endif // VIEWPORT_SCENE_H

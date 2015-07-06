@@ -4,18 +4,22 @@
 #include <QGraphicsObject>
 #include <QGraphicsTextItem>
 
-class Node;
+#include "graph/watchers.h"
+
 class NodeInspector;
 class DatumTextItem;
-class ScriptDatum;
 class GraphicsButton;
 
-class InspectorTitle : public QGraphicsObject
+class Node;
+
+class InspectorTitle : public QGraphicsObject, NodeWatcher
 {
     Q_OBJECT
 public:
     explicit InspectorTitle(Node* n, NodeInspector* parent);
-    QRectF boundingRect() const;
+    QRectF boundingRect() const override;
+
+    void trigger(const NodeState& state) override;
 
     template <typename T> T* getButton() const
     {

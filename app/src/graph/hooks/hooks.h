@@ -6,7 +6,7 @@
 
 class ScriptDatum;
 
-namespace hooks {
+namespace AppHooks {
 
     struct HookException
     {
@@ -20,11 +20,8 @@ namespace hooks {
     /*
      *  Loads input, output, and title hooks into the given globals
      *  dictionary (with callbacks pointing to the given datum).
-     *
-     *  Returns the object that used to be in fab.ui
-     *  (so that it can be restored, making nested calls work)
      */
-    PyObject* loadHooks(PyObject* g, ScriptDatum* d);
+    void loadHooks(PyObject* g, ScriptDatum* d);
 }
 
 

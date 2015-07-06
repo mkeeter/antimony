@@ -1,6 +1,6 @@
 #include "app/undo/undo_move.h"
 
-#include "graph/node/node.h"
+#include "graph/node.h"
 
 #include "ui/canvas/graph_scene.h"
 #include "ui/canvas/inspector/inspector.h"

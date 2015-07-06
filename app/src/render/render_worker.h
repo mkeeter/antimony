@@ -5,21 +5,26 @@
 #include <QPointer>
 #include <QThread>
 
+#include "graph/watchers.h"
+
 class Datum;
 class RenderTask;
 class DepthImageItem;
 class Viewport;
 
-class RenderWorker : public QObject
+class RenderWorker : public QObject, DatumWatcher, NodeWatcher
 {
     Q_OBJECT
 public:
     explicit RenderWorker(Datum* datum, Viewport* viewport);
     ~RenderWorker();
 
+    void trigger(const DatumState& state) override;
+    void trigger(const NodeState& state) override;
+
     static bool accepts(Datum* d);
 public slots:
-    void onDatumChanged();
+    void onViewChanged();
     void deleteIfNotRunning();
     void onTaskFinished();
     void onThreadFinished();
@@ -42,7 +47,7 @@ protected:
      */
     void clearImage();
 
-    QPointer<Datum> datum;
+    Datum* datum;
 
     QThread* thread;
     RenderTask* current;

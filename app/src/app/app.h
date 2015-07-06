@@ -8,12 +8,11 @@
 
 class GraphScene;
 class ViewportScene;
+
+class Graph;
 class Node;
-class Link;
-class Connection;
-class ScriptDatum;
+
 class MainWindow;
-class NodeRoot;
 class UndoStack;
 class UndoCommand;
 
@@ -37,19 +36,14 @@ public:
     void newNode(Node* n);
 
     /*
-     *  Makes UI elements for the given NodeRoot.
+     *  Makes UI elements for the given Graph.
      */
-    void makeUI(NodeRoot* r);
-
-    /*
-     *  Create UI elements for a new link, returning the associated Connection.
-     */
-    Connection* newLink(Link* link);
+    void makeUI(Graph* g);
 
     /*
      *  Returns the root of the node tree.
      */
-    NodeRoot* getNodeRoot() const { return root; }
+    Graph* getGraph() const { return root; }
 
     GraphScene* getGraphScene() const { return graph_scene; }
     ViewportScene* getViewScene() const { return view_scene; }
@@ -104,7 +98,7 @@ public slots:
     /*
      *  Opens a new editor window targetting the given datum.
      */
-    MainWindow* newEditorWindow(ScriptDatum* datum);
+    MainWindow* newEditorWindow(Node* n);
     void onAbout();
 
     void onNew();
@@ -122,10 +116,11 @@ private:
 
     void setGlobalStyle();
 
+    Graph* root;
+
     GraphScene* graph_scene;
     ViewportScene* view_scene;
     QString filename;
-    NodeRoot* root;
     UndoStack* stack;
 
     QNetworkAccessManager* network;

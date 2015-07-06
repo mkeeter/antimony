@@ -10,10 +10,7 @@
 #include "ui/canvas/inspector/inspector_text.h"
 #include "ui/util/colors.h"
 
-#include "graph/datum/datum.h"
-#include "graph/datum/datums/float_datum.h"
-#include "graph/datum/datums/int_datum.h"
-#include "graph/datum/types/eval_datum.h"
+#include "graph/datum.h"
 
 #include "app/app.h"
 #include "app/undo/undo_change_expr.h"
@@ -25,8 +22,8 @@ DatumTextItem::DatumTextItem(Datum* datum, QGraphicsItem* parent)
 {
     setTextInteractionFlags(Qt::TextEditorInteraction);
     setTextWidth(150);
-    connect(datum, &Datum::changed, this, &DatumTextItem::onDatumChanged);
-    onDatumChanged();
+
+    d->installWatcher(this);
 
     bbox = boundingRect();
     connect(txt, &QTextDocument::contentsChanged,
@@ -36,6 +33,14 @@ DatumTextItem::DatumTextItem(Datum* datum, QGraphicsItem* parent)
             this, &DatumTextItem::onUndoCommandAdded);
 
     installEventFilter(this);
+
+    // Force a redraw
+    trigger(d->getState());
+}
+
+void DatumTextItem::trigger(const NodeState& state)
+{
+    // Nothing to do here
 }
 
 void DatumTextItem::setAsTitle()
@@ -51,40 +56,31 @@ void DatumTextItem::setAsTitle()
     setTextWidth(-1);
 
     // Force a redraw
-    onDatumChanged();
+    trigger(d->getState());
 }
 
-void DatumTextItem::onDatumChanged()
+void DatumTextItem::trigger(const DatumState& state)
 {
-    if (d->canEdit())
-        setDefaultTextColor(foreground);
-    else
-        setDefaultTextColor(Colors::base03);
+    setDefaultTextColor(state.editable ? foreground : Colors::base03);
 
     QTextCursor cursor = textCursor();
     int p = textCursor().position();
-    if (!d->hasInput() && !d->canEdit())
-        txt->setPlainText(d->getString() + " (output)");
-    else
-        txt->setPlainText(d->getString());
+    txt->setPlainText(QString::fromStdString(state.text));
 
-    if (p < d->getString().length())
+    if (p < state.text.length())
     {
         cursor.setPosition(p);
         setTextCursor(cursor);
     }
 
-    setEnabled(d->canEdit());
+    setEnabled(state.editable);
 
-    if (d->getValid())
-        border = background;
-    else
-        border = Colors::red;
+    border = state.valid ? background : Colors::red;
 
     // Set tooltip if there was a Python evaluation error.
-    if (dynamic_cast<EvalDatum*>(d) && !d->getValid())
+    if (!state.valid)
     {
-        setToolTip(static_cast<EvalDatum*>(d)->getErrorTraceback());
+        setToolTip(QString::fromStdString(state.error));
     }
     else
     {
@@ -101,15 +97,13 @@ void DatumTextItem::onTextChanged()
         emit boundsChanged();
     }
 
-    EvalDatum* e = dynamic_cast<EvalDatum*>(d);
-    if (e && e->canEdit())
-    {
-        e->setExpr(txt->toPlainText());
-    }
+    // If we're allowed to edit,
+    d->setText(txt->toPlainText().toStdString());
 }
 
 void DatumTextItem::onUndoCommandAdded()
 {
+    /*
     EvalDatum* e = dynamic_cast<EvalDatum*>(d);
     if (e && e->canEdit())
     {
@@ -132,6 +126,7 @@ void DatumTextItem::onUndoCommandAdded()
         connect(document(), &QTextDocument::contentsChanged,
                 this, &DatumTextItem::onTextChanged);
     }
+    */
 }
 
 void DatumTextItem::paint(QPainter* painter,
@@ -158,6 +153,7 @@ bool DatumTextItem::eventFilter(QObject* obj, QEvent* event)
         else if (keyEvent->matches(QKeySequence::Redo))
             App::instance()->redo();
         else if (keyEvent->key() == Qt::Key_Up || keyEvent->key() == Qt::Key_Down) {
+            /*
             const int dx = keyEvent->key() == Qt::Key_Up ? 1 : -1;
             const auto f = dynamic_cast<FloatDatum*>(d);
             const auto i = dynamic_cast<IntDatum*>(d);
@@ -171,6 +167,7 @@ bool DatumTextItem::eventFilter(QObject* obj, QEvent* event)
             {
                 i->dragValue(dx);
             }
+            */
         }
         else
             return false;
@@ -181,17 +178,20 @@ bool DatumTextItem::eventFilter(QObject* obj, QEvent* event)
 
 void DatumTextItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
+    /*
     if (const auto e = dynamic_cast<EvalDatum*>(d))
     {
         drag_start = e->getExpr();
         drag_accumulated = 0;
     }
+    */
 
     QGraphicsTextItem::mousePressEvent(event);
 }
 
 void DatumTextItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
+    /*
     if (const auto e = dynamic_cast<EvalDatum*>(d))
     {
         QString drag_end = e->getExpr();
@@ -199,12 +199,14 @@ void DatumTextItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             App::instance()->pushStack(
                     new UndoChangeExprCommand(e, drag_start, drag_end));
     }
+    */
 
     QGraphicsTextItem::mouseReleaseEvent(event);
 }
 
 void DatumTextItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
+    /*
     const auto f = dynamic_cast<FloatDatum*>(d);
     const auto i = dynamic_cast<IntDatum*>(d);
     if (f && f->getValid() && (event->modifiers() & Qt::ShiftModifier))
@@ -223,6 +225,7 @@ void DatumTextItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
         i->dragValue(q);
     }
     else
+    */
     {
         QGraphicsTextItem::mouseMoveEvent(event);
     }

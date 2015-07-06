@@ -4,8 +4,9 @@
 #include "ui/viewport/viewport.h"
 #include "render/render_worker.h"
 
-#include "graph/node/node.h"
-#include "graph/datum/datum.h"
+#include "graph/node.h"
+#include "graph/datum.h"
+
 #include "control/control.h"
 #include "control/control_root.h"
 #include "control/proxy.h"
@@ -40,7 +41,7 @@ Control* ViewportScene::getControl(Node* n, long index) const
 
 void ViewportScene::makeRenderWorkersFor(Node* n)
 {
-    for (auto d : n->findChildren<Datum*>())
+    for (auto d : n->childDatums())
         if (RenderWorker::accepts(d))
         {
             workers.insert(d);
@@ -50,8 +51,10 @@ void ViewportScene::makeRenderWorkersFor(Node* n)
         }
 
     // Behold, the wonders of C++11 and Qt5:
+    /*
     connect(n, &Node::datumsChanged,
             [=]{ this->onDatumsChanged(n); });
+    */
 }
 
 Viewport* ViewportScene::newViewport()
@@ -104,7 +107,7 @@ void ViewportScene::onDatumsChanged(Node* n)
 {
     prune();
 
-    for (auto d : n->findChildren<Datum*>())
+    for (auto d : n->childDatums())
         if (RenderWorker::accepts(d) && !workers.contains(d))
         {
             workers.insert(d);

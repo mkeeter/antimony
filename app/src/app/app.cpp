@@ -29,12 +29,9 @@
 #include "ui/script/script_pane.h"
 #include "ui/util/colors.h"
 
-#include "graph/node/node.h"
-#include "graph/node/root.h"
-#include "graph/datum/datum.h"
-#include "graph/datum/link.h"
-#include "graph/node/serializer.h"
-#include "graph/node/deserializer.h"
+#include "graph/graph.h"
+#include "graph/node.h"
+#include "graph/datum.h"
 
 #include "fab/types/shape.h"
 
@@ -44,11 +41,10 @@
 #endif
 
 App::App(int& argc, char** argv) :
-    QApplication(argc, argv),
-    graph_scene(new GraphScene()),
+    QApplication(argc, argv), root(new Graph()),
+    graph_scene(new GraphScene(root)),
     view_scene(new ViewportScene()),
-    root(new NodeRoot()), stack(new UndoStack(this)),
-    network(new QNetworkAccessManager(this))
+    stack(NULL), network(new QNetworkAccessManager(this))
 {
     setGlobalStyle();
 
@@ -69,7 +65,7 @@ App::~App()
 {
     graph_scene->deleteLater();
     view_scene->deleteLater();
-    root->deleteLater();
+    delete root;
 
     // Prevent segfault-inducing callback during stack destruction
     disconnect(stack, 0, 0, 0);
@@ -124,8 +120,8 @@ void App::onAbout()
 
 void App::onNew()
 {
-    root->deleteLater();
-    root = new NodeRoot();
+    delete root;
+    root = new Graph();
 
     filename.clear();
     stack->clear();
@@ -140,10 +136,12 @@ void App::onSave()
     QFile file(filename);
     file.open(QIODevice::WriteOnly);
 
+    /*
     SceneSerializer ss(root,
                        graph_scene->inspectorPositions());
 
     file.write(QJsonDocument(ss.run()).toJson());
+    */
 
     stack->setClean();
 }
@@ -172,6 +170,7 @@ void App::onSaveAs()
 
 void App::onOpen()
 {
+    /*
     if (stack->isClean() || QMessageBox::question(NULL, "Discard unsaved changes?",
                 "Discard unsaved changes?") == QMessageBox::Yes)
     {
@@ -179,20 +178,26 @@ void App::onOpen()
         if (!f.isEmpty())
             loadFile(f);
     }
+    */
 }
 
 void App::onQuit()
 {
+    /*
     if (stack->isClean() || QMessageBox::question(NULL, "Discard unsaved changes?",
                 "Discard unsaved changes?") == QMessageBox::Yes)
         quit();
+        */
+    quit();
 }
 
 void App::loadFile(QString f)
 {
     filename = f;
-    root->deleteLater();
-    root = new NodeRoot();
+    /*
+    delete root;
+    root = new Graph();
+
     QFile file(f);
     if (!file.open(QIODevice::ReadOnly))
     {
@@ -224,6 +229,7 @@ void App::loadFile(QString f)
 
         emit(windowTitleChanged(getWindowTitle()));
     }
+    */
 }
 
 void App::startUpdateCheck()
@@ -311,8 +317,10 @@ QString App::getWindowTitle() const
     else
         t += "Untitled]";
 
+    /*
     if (!stack->isClean())
         t += "*";
+    */
     return t;
 }
 
@@ -447,10 +455,10 @@ MainWindow* App::newQuadWindow()
     return m;
 }
 
-MainWindow* App::newEditorWindow(ScriptDatum* datum)
+MainWindow* App::newEditorWindow(Node* n)
 {
     auto m = new MainWindow();
-    m->setCentralWidget(new ScriptPane(datum, m));
+    m->setCentralWidget(new ScriptPane(n, m));
     m->resize(600, 800);
     m->show();
     return m;
@@ -458,12 +466,12 @@ MainWindow* App::newEditorWindow(ScriptDatum* datum)
 
 void App::newNode(Node* n)
 {
-    graph_scene->makeUIfor(n);
     view_scene->makeRenderWorkersFor(n);
 }
 
-void App::makeUI(NodeRoot* r)
+void App::makeUI(Graph* r)
 {
+    /*
     QList<Node*> nodes;
     QList<Datum*> datums;
     QMap<Datum*, QList<Link*>> links;
@@ -511,41 +519,54 @@ void App::makeUI(NodeRoot* r)
     // at once (and eat up all of the threads).
     for (auto n : nodes)
         view_scene->makeRenderWorkersFor(n);
+    */
 }
 
+/*
 Connection* App::newLink(Link* link)
 {
     return graph_scene->makeUIfor(link);
 }
+*/
 
 QAction* App::undoAction()
 {
+    /*
     auto a = stack->createUndoAction(this);
     a->setShortcuts(QKeySequence::Undo);
     return a;
+    */
 }
 
 QAction* App::redoAction()
 {
+    /*
     auto a = stack->createRedoAction(this);
     a->setShortcuts(QKeySequence::Redo);
     return a;
+    */
 }
 
 void App::pushStack(UndoCommand* c)
 {
+    /*
     c->setApp(this);
     stack->push(c);
+    */
 }
 
 void App::undo()
 {
+    /*
     stack->undo();
+    */
 }
 
 void App::redo()
 {
+    /*
     stack->redo();
+    */
 }
 
 void App::beginUndoMacro(QString text)

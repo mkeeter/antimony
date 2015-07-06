@@ -2,11 +2,9 @@
 #include <boost/python/raw_function.hpp>
 
 #include "graph/hooks/hooks.h"
-#include "graph/hooks/input.h"
-#include "graph/hooks/output.h"
 #include "graph/hooks/title.h"
 #include "graph/hooks/ui.h"
-#include "graph/hooks/meta.h"
+#include "graph/hooks/export.h"
 
 #include "graph/datum/datums/script_datum.h"
 #include "graph/node/node.h"
@@ -21,20 +19,13 @@
 
 using namespace boost::python;
 
-void hooks::onHookException(const hooks::HookException& e)
+void AppHooks::onHookException(const AppHooks::HookException& e)
 {
     PyErr_SetString(PyExc_RuntimeError, e.message.c_str());
 }
 
-BOOST_PYTHON_MODULE(_hooks)
+BOOST_PYTHON_MODULE(_AppHooks)
 {
-    class_<ScriptInputHook>("ScriptInputHook", init<>())
-        .def("__call__", &ScriptInputHook::call)
-        .def("__call__", &ScriptInputHook::call_with_default);
-
-    class_<ScriptOutputHook>("ScriptOutputHook", init<>())
-        .def("__call__", &ScriptOutputHook::call);
-
     class_<ScriptTitleHook>("ScriptTitleHook", init<>())
         .def("__call__", &ScriptTitleHook::call);
 
@@ -62,10 +53,10 @@ BOOST_PYTHON_MODULE(_hooks)
                 "    close makes the loop closed"
                 );
 
-    class_<ScriptMetaHooks>("ScriptMetaHooks", init<>())
-        .def("export_stl", raw_function(&ScriptMetaHooks::export_stl),
-                "export_stl(shape, bounds=None, pad=True, filename=None,\n"
-                "           resolution=None, detect_features=False)\n"
+    class_<ScriptExportHooks>("ScriptExportHooks", init<>())
+        .def("stl", raw_function(&ScriptExportHooks::stl),
+                "stl(shape, bounds=None, pad=True, filename=None,\n"
+                "    resolution=None, detect_features=False)\n"
                 "    Registers a .stl exporter for the given shape.\n"
                 "    Valid kwargs:\n"
                 "    bounds is either a fab.types.Bounds object or None.\n"
@@ -78,9 +69,9 @@ BOOST_PYTHON_MODULE(_hooks)
                 "      If None, a dialog will open to select the resolution.\n"
                 "    detect_features enables feature detection (experimental)"
                 )
-        .def("export_heightmap", raw_function(&ScriptMetaHooks::export_heightmap),
-                "export_heightmap(shape, bounds=None, pad=True, filename=None,\n"
-                "                 resolution=None, mm_per_unit=25.4)\n"
+        .def("heightmap", raw_function(&ScriptExportHooks::heightmap),
+                "heightmap(shape, bounds=None, pad=True, filename=None,\n"
+                "          resolution=None, mm_per_unit=25.4)\n"
                 "    Registers a .stl exporter for the given shape.\n"
                 "    Valid kwargs:\n"
                 "    bounds is either a fab.types.Bounds object or None.\n"
@@ -94,36 +85,39 @@ BOOST_PYTHON_MODULE(_hooks)
                 "    mm_per_unit maps Antimony to real-world units."
                 );
 
-    register_exception_translator<hooks::HookException>(
-            hooks::onHookException);
+    register_exception_translator<AppHooks::HookException>(
+            AppHooks::onHookException);
 }
 
-// Lazy initialization of the hooks module.
-static PyObject* _hooks_module = NULL;
-
-void hooks::preInit()
+void AppHooks::preInit()
 {
-    PyImport_AppendInittab("_hooks", PyInit__hooks);
+    PyImport_AppendInittab("_AppHooks", PyInit__AppHooks);
 }
 
-PyObject* hooks::loadHooks(PyObject* g, ScriptDatum* d)
+void AppHooks::loadHooks(PyObject* g, ScriptDatum* d)
 {
-    if (_hooks_module == NULL)
-        _hooks_module = PyImport_ImportModule("_hooks");
+    // Lazy initialization of hooks module
+    static PyObject* hooks_module = NULL;
+    if (hooks_module == NULL)
+        hooks_module = PyImport_ImportModule("_hooks");
 
-    auto input_func = PyObject_CallMethod(
-            _hooks_module, "ScriptInputHook", NULL);
-    auto output_func = PyObject_CallMethod(
-            _hooks_module, "ScriptOutputHook", NULL);
+    // Lazy initialization of named tuple constructor
+    static PyObject* sb_tuple = NULL;
+    if (sb_tuple == NULL)
+    {
+        PyObject* collections = PyImport_ImportModule("collections");
+        sb_tuple = PyObject_CallMethod(
+                collections, "namedtuple", "(ss)", "ui", "export");
+        Py_DECREF(collections);
+    }
+
     auto title_func = PyObject_CallMethod(
-            _hooks_module, "ScriptTitleHook", NULL);
+            hooks_module, "ScriptTitleHook", NULL);
     auto ui_obj = PyObject_CallMethod(
-            _hooks_module, "ScriptUIHooks", NULL);
-    auto meta_obj = PyObject_CallMethod(
-            _hooks_module, "ScriptMetaHooks", NULL);
+            hooks_module, "ScriptUIHooks", NULL);
+    auto export_obj = PyObject_CallMethod(
+            hooks_module, "ScriptExportHooks", NULL);
 
-    extract<ScriptInputHook&>(input_func)().datum = d;
-    extract<ScriptOutputHook&>(output_func)().datum = d;
     extract<ScriptTitleHook&>(title_func)().datum = d;
 
     auto node = static_cast<Node*>(d->parent());
@@ -136,22 +130,11 @@ PyObject* hooks::loadHooks(PyObject* g, ScriptDatum* d)
     {
         auto export_button = inspector->getButton<InspectorExportButton>();
         export_button->clearWorker();
-        extract<ScriptMetaHooks&>(meta_obj)().button = export_button;
+        extract<ScriptExportHooks&>(meta_obj)().button = export_button;
     }
 
-    PyDict_SetItemString(g, "input", input_func);
-    PyDict_SetItemString(g, "output", output_func);
     PyDict_SetItemString(g, "title", title_func);
-    PyDict_SetItemString(g, "meta", meta_obj);
-
-    auto fab = PyImport_ImportModule("fab");
-    PyObject* old_ui = NULL;
-    if (PyObject_HasAttrString(fab, "ui"))
-        old_ui = PyObject_GetAttrString(fab, "ui");
-
-    PyObject_SetAttrString(fab, "ui", ui_obj);
-    Py_DECREF(fab);
-    Py_DECREF(ui_obj);
-
-    return old_ui;
+    PyObject* sb = PyObject_CallFunctionObjArgs(
+            sb_tuple, ui_obj, export_obj, NULL);
+    PyDict_SetItemString(g, "sb", sb);
 }

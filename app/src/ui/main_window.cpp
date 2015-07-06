@@ -8,10 +8,9 @@
 
 #include "app/app.h"
 
-#include "graph/node/node.h"
-#include "graph/node/root.h"
-#include "graph/datum/types/eval_datum.h"
-#include "graph/datum/datums/script_datum.h"
+#include "graph/node.h"
+#include "graph/graph.h"
+#include "graph/datum.h"
 
 #include "ui_main_window.h"
 #include "ui/main_window.h"
@@ -30,8 +29,10 @@ MainWindow::MainWindow(QWidget *parent) :
     setAttribute(Qt::WA_DeleteOnClose);
 
     connectActions(App::instance());
+    /*
     ui->menuEdit->addAction(App::instance()->undoAction());
     ui->menuEdit->addAction(App::instance()->redoAction());
+    */
     setShortcuts();
 
     populateMenu(ui->menuAdd);
@@ -55,8 +56,7 @@ void MainWindow::setCentralWidget(QWidget* w)
     {
         e->customizeUI(ui);
         window_type = "Script";
-        connect(e->getDatum(), &ScriptDatum::destroyed,
-                this, &MainWindow::close);
+        e->getNode()->parentGraph()->installWatcher(this);
     }
     else
     {
@@ -122,6 +122,24 @@ bool MainWindow::isShaded() const
     return ui->actionShaded->isChecked();
 }
 
+void MainWindow::trigger(const GraphState& state)
+{
+    if (auto c = dynamic_cast<Canvas*>(centralWidget()))
+    {
+        // Nothing to do here
+        Q_UNUSED(c);
+    }
+    else if (auto e = dynamic_cast<ScriptPane*>(centralWidget()))
+    {
+        if (state.nodes.count(e->getNode()) == 0)
+            close();
+    }
+    else
+    {
+        // Nothing to do here?
+        // Handle viewport stuffs
+    }
+}
 ////////////////////////////////////////////////////////////////////////////////
 
 void MainWindow::createNew(bool recenter, NodeConstructorFunction f,
@@ -220,7 +238,7 @@ void MainWindow::populateNodeMenu(QMenu* menu, bool recenter, Viewport* v)
                 title = regex.capturedTexts()[1];
 
         NodeConstructorFunction constructor =
-            [=](NodeRoot *r){ return ScriptNode(txt, r); };
+            [=](Graph *r){ return new Node("name", txt.toStdString(), r); };
         nodes[title] = QPair<QStringList, NodeConstructorFunction>(
                 split, constructor);
         node_titles.append(title);
@@ -253,6 +271,8 @@ void MainWindow::populateMenu(QMenu* menu, bool recenter, Viewport* v)
     populateNodeMenu(menu, recenter, v);
 
     menu->addSeparator();
+    /*
     addNodeToMenu(QStringList(), "Script", menu, recenter,
-                  static_cast<NodeConstructor>(ScriptNode), v);
+                  static_cast<NodeConstructor>(Node), v);
+                  */
 }

@@ -3,13 +3,18 @@
 
 #include <QGraphicsTextItem>
 
+#include "graph/watchers.h"
+
 class Datum;
 
-class DatumTextItem : public QGraphicsTextItem
+class DatumTextItem : public QGraphicsTextItem, DatumWatcher, NodeWatcher
 {
     Q_OBJECT
 public:
     DatumTextItem(Datum* datum, QGraphicsItem* parent);
+
+    void trigger(const NodeState& state) override;
+    void trigger(const DatumState& state) override;
 
     /*
      *  Adjusts formatting so that the text box blends in
@@ -19,7 +24,6 @@ public:
 
 public slots:
     void onTextChanged();
-    void onDatumChanged();
 
 protected slots:
     void onUndoCommandAdded();

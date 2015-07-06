@@ -9,7 +9,7 @@
 
 using namespace boost::python;
 
-Shape ScriptMetaHooks::get_shape(tuple args)
+Shape ScriptExportHooks::get_shape(tuple args)
 {
     extract<Shape> shape_(args[1]);
     if (!shape_.check())
@@ -18,7 +18,7 @@ Shape ScriptMetaHooks::get_shape(tuple args)
     return shape_();
 }
 
-Bounds ScriptMetaHooks::get_bounds(dict kwargs)
+Bounds ScriptExportHooks::get_bounds(dict kwargs)
 {
     extract<Bounds> bounds_(kwargs["bounds"]);
     if (!bounds_.check())
@@ -27,7 +27,7 @@ Bounds ScriptMetaHooks::get_bounds(dict kwargs)
     return bounds_();
 }
 
-Bounds ScriptMetaHooks::pad_bounds(Bounds b)
+Bounds ScriptExportHooks::pad_bounds(Bounds b)
 {
     float dx = (b.xmax - b.xmin) / 20;
     float dy = (b.ymax - b.ymin) / 20;
@@ -36,7 +36,7 @@ Bounds ScriptMetaHooks::pad_bounds(Bounds b)
                   b.xmax + dx, b.ymax + dy, b.zmax + dz);
 }
 
-bool ScriptMetaHooks::get_pad(dict kwargs)
+bool ScriptExportHooks::get_pad(dict kwargs)
 {
     if (!kwargs.has_key("pad"))
         return true;
@@ -48,7 +48,7 @@ bool ScriptMetaHooks::get_pad(dict kwargs)
     return pad_();
 }
 
-float ScriptMetaHooks::get_resolution(dict kwargs)
+float ScriptExportHooks::get_resolution(dict kwargs)
 {
     if (!kwargs.has_key("resolution"))
         return -1;
@@ -60,7 +60,7 @@ float ScriptMetaHooks::get_resolution(dict kwargs)
     return resolution_();
 }
 
-QString ScriptMetaHooks::get_filename(dict kwargs)
+QString ScriptExportHooks::get_filename(dict kwargs)
 {
     if (!kwargs.has_key("filename"))
         return QString();
@@ -72,9 +72,9 @@ QString ScriptMetaHooks::get_filename(dict kwargs)
     return QString::fromStdString(filename_());
 }
 
-object ScriptMetaHooks::export_stl(tuple args, dict kwargs)
+object ScriptExportHooks::stl(tuple args, dict kwargs)
 {
-    ScriptMetaHooks& self = extract<ScriptMetaHooks&>(args[0])();
+    ScriptExportHooks& self = extract<ScriptMetaHooks&>(args[0])();
 
     // Fail immediately if no button is attached.
     if (!self.button)
@@ -86,7 +86,7 @@ object ScriptMetaHooks::export_stl(tuple args, dict kwargs)
 
     if (len(args) != 2)
         throw hooks::HookException(
-                "export_stl must be called with shape as first argument.");
+                "export.stl must be called with shape as first argument.");
 
     Shape shape = get_shape(args);
 
@@ -126,7 +126,7 @@ object ScriptMetaHooks::export_stl(tuple args, dict kwargs)
     return object();
 }
 
-object ScriptMetaHooks::export_heightmap(tuple args, dict kwargs)
+object ScriptMetaHooks::heightmap(tuple args, dict kwargs)
 {
     ScriptMetaHooks& self = extract<ScriptMetaHooks&>(args[0])();
 
@@ -140,7 +140,7 @@ object ScriptMetaHooks::export_heightmap(tuple args, dict kwargs)
 
     if (len(args) != 2)
         throw hooks::HookException(
-                "export_stl must be called with shape as first argument.");
+                "export.stl must be called with shape as first argument.");
 
     Shape shape = get_shape(args);
 

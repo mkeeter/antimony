@@ -21,7 +21,7 @@ public:
     Datum* getDatum() const;
 
 protected:
-    QPointer<Datum> datum;
+    Datum* datum;
     bool hover;
 };
 

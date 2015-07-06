@@ -5,10 +5,9 @@
 #include "ui/viewport/viewport.h"
 #include "ui/util/colors.h"
 
-#include "graph/node/node.h"
-#include "graph/datum/datum.h"
-#include "graph/datum/datums/float_datum.h"
-#include "graph/datum/datums/script_datum.h"
+#include "graph/node.h"
+#include "graph/datum.h"
+#include "graph/graph.h"
 
 #include "app/app.h"
 #include "app/undo/undo_change_expr.h"
@@ -18,12 +17,19 @@ Control::Control(Node* node, PyObject* drag_func)
     : QObject(), node(node), drag_func(drag_func), glow(false),
       relative(true), delete_scheduled(false)
 {
+    /*
     connect(node, &Node::clearControlTouchedFlag,
             this, &Control::clearTouchedFlag);
     connect(node, &Node::deleteUntouchedControls,
             this, &Control::deleteIfNotTouched);
+    */
+    node->parentGraph()->installWatcher(this);
+}
 
-    connect(node, &Node::destroyed, this, &Control::deleteLater);
+void Control::trigger(const GraphState& state)
+{
+    if (state.nodes.count(node) == 0)
+        deleteLater();
 }
 
 void Control::deleteLater()
@@ -49,31 +55,31 @@ QRectF Control::bounds(QMatrix4x4 m) const
     return shape(m).boundingRect();
 }
 
-Node* Control::getNode() const
-{
-    return node;
-}
-
 void Control::deleteNode(QString text)
 {
+    /*
     App::instance()->pushStack(new UndoDeleteMultiCommand({node}, {}, text));
+    */
 }
 
 void Control::beginDrag()
 {
     // Store all datum expressions so that we can make an undo action
     // that undoes the upcoming drag operation.
+    /*
     datums.clear();
     for (auto d : node->findChildren<EvalDatum*>(
                 QString(), Qt::FindDirectChildrenOnly))
         datums[d] = d->getExpr();
+        */
 
     is_dragging = true;
 }
 
 void Control::drag(QVector3D center, QVector3D diff)
 {
-    auto p = node->mutableProxy();
+    PyObject* p = NULL;
+    //auto p = node->mutableProxy();
     auto x = PyFloat_FromDouble(relative ? diff.x() : center.x());
     auto y = PyFloat_FromDouble(relative ? diff.y() : center.y());
     auto z = PyFloat_FromDouble(relative ? diff.z() : center.z());
@@ -96,6 +102,7 @@ void Control::drag(QVector3D center, QVector3D diff)
 
 void Control::endDrag()
 {
+    /*
     is_dragging = false;
 
     bool started = false;
@@ -114,6 +121,7 @@ void Control::endDrag()
 
     if (started)
         App::instance()->endUndoMacro();
+    */
 }
 
 void Control::setGlow(bool g)

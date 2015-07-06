@@ -4,17 +4,18 @@
 #include <boost/python.hpp>
 
 #include <QObject>
-#include <QPointer>
 #include <QVector3D>
 #include <QMatrix4x4>
 #include <QPainter>
+
+#include "graph/watchers.h"
 
 // Forward declarations
 class Datum;
 class EvalDatum;
 class Node;
 
-class Control : public QObject
+class Control : public QObject, GraphWatcher, NodeWatcher
 {
     Q_OBJECT
 public:
@@ -25,7 +26,11 @@ public:
      */
     explicit Control(Node* node, PyObject* drag_func=NULL);
 
+    void trigger(const GraphState& state) override;
+    void trigger(const NodeState& state) override {}
+
     void deleteLater();
+
     /*
      *  Destructor removes a reference to the drag function.
      */
@@ -34,7 +39,7 @@ public:
     /*
      * Returns this control's relevant node.
      */
-    Node* getNode() const;
+    Node* getNode() const { return node; }
 
     /*
      *  Swaps in a new drag_func, removing a reference from the old one.
@@ -127,7 +132,7 @@ signals:
     void proxySelectionChanged(bool g);
 
 protected:
-    QPointer<Node> node;
+    Node* node;
     QMap<EvalDatum*, QString> datums;
 
     PyObject* drag_func;

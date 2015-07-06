@@ -18,12 +18,9 @@
 #include "ui/main_window.h"
 #include "ui_main_window.h"
 
-#include "graph/node/node.h"
-#include "graph/node/root.h"
-#include "graph/datum/datum.h"
-#include "graph/node/serializer.h"
-#include "graph/node/deserializer.h"
-#include "graph/datum/link.h"
+#include "graph/node.h"
+#include "graph/graph.h"
+#include "graph/datum.h"
 
 #include "app/app.h"
 #include "app/undo/undo_add_node.h"
@@ -185,6 +182,7 @@ NodeInspector* Canvas::getNodeInspector(Node* n) const
 
 void Canvas::deleteSelected()
 {
+    /*
     QSet<Node*> nodes;
     QSet<Link*> links;
 
@@ -196,14 +194,17 @@ void Canvas::deleteSelected()
             nodes.insert(p->getNode());
 
     App::instance()->pushStack(new UndoDeleteMultiCommand(nodes, links));
+    */
 }
 
 void Canvas::makeNodeAtCursor(NodeConstructorFunction f)
 {
-    auto n = f(App::instance()->getNodeRoot());
+    auto n = f(App::instance()->getGraph());
 
     App::instance()->newNode(n);
+    /*
     App::instance()->pushStack(new UndoAddNodeCommand(n));
+    */
 
     auto inspector = getNodeInspector(n);
     Q_ASSERT(inspector);
@@ -230,6 +231,7 @@ void Canvas::onCopy()
 
         if (!selected.isEmpty())
         {
+            /*
             Q_ASSERT(dynamic_cast<NodeRoot*>(selected[0]->parent()));
             auto p = static_cast<NodeRoot*>(selected[0]->parent());
             NodeRoot temp_root;
@@ -247,6 +249,7 @@ void Canvas::onCopy()
 
             for (auto n : selected)
                 n->setParent(p);
+                */
         }
     }
 }
@@ -271,6 +274,7 @@ void Canvas::onPaste()
         auto data = QApplication::clipboard()->mimeData();
         if (data->hasFormat("sb::canvas"))
         {
+            /*
             NodeRoot temp_root;
             SceneDeserializer ds(&temp_root);
             ds.run(QJsonDocument::fromJson(
@@ -301,6 +305,7 @@ void Canvas::onPaste()
 
             // Load inspector positions and apply them to the scene.
             scene->setInspectorPositions(ds.inspectors);
+            */
         }
     }
 }

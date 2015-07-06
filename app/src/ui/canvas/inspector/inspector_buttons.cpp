@@ -8,13 +8,14 @@
 #include "ui/canvas/inspector/inspector.h"
 #include "ui/canvas/inspector/inspector_title.h"
 
-#include "graph/datum/datums/script_datum.h"
 #include "ui/util/colors.h"
 #include "export/export_worker.h"
 #include "app/app.h"
 
-InspectorScriptButton::InspectorScriptButton(ScriptDatum* s, QGraphicsItem* parent)
-    : GraphicsButton(parent), script(s)
+#include "graph/node.h"
+
+InspectorScriptButton::InspectorScriptButton(Node* n, QGraphicsItem* parent)
+    : GraphicsButton(parent), node(n)
 {
     setToolTip("Edit script");
     connect(this, &GraphicsButton::pressed,
@@ -42,8 +43,7 @@ void InspectorScriptButton::paint(QPainter* painter,
 
 void InspectorScriptButton::onPressed()
 {
-    Q_ASSERT(!script.isNull());
-    App::instance()->newEditorWindow(script);
+    App::instance()->newEditorWindow(node);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -56,9 +56,7 @@ InspectorShowHiddenButton::InspectorShowHiddenButton(
             this, &InspectorShowHiddenButton::onPressed);
     setToolTip("Show hidden datums");
 
-    connect(inspector->getNode(), &Node::datumsChanged,
-            this, &InspectorShowHiddenButton::onDatumsChanged);
-    onDatumsChanged();
+    inspector->getNode()->installWatcher(this);
 }
 
 QRectF InspectorShowHiddenButton::boundingRect() const
@@ -86,15 +84,12 @@ void InspectorShowHiddenButton::onPressed()
     inspector->setShowHidden(toggled);
 }
 
-void InspectorShowHiddenButton::onDatumsChanged()
+void InspectorShowHiddenButton::trigger(const NodeState& state)
 {
-    auto node = inspector->getNode();
-
-    for (auto d : node->findChildren<Datum*>(
-                QString(), Qt::FindDirectChildrenOnly))
+    for (auto d : state.datums)
     {
-        if (d->objectName().startsWith("_") &&
-            !d->objectName().startsWith("__"))
+        if (d->getName().find("_") == 0 &&
+            d->getName().find("__") != 0)
         {
             if (!isVisible())
             {

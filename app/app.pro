@@ -5,8 +5,9 @@ TEMPLATE = app
 
 INCLUDEPATH += src
 
-LIBS += -L../lib/fab -lSbFab
+LIBS += -L../lib/fab -lSbFab -L../lib/graph -lSbGraph
 INCLUDEPATH += ../lib/fab/inc
+INCLUDEPATH += ../lib/graph/inc
 
 include(../qt/common.pri)
 include(../qt/python.pri)
@@ -47,16 +48,6 @@ linux {
 SOURCES += \
     src/app/main.cpp \
     src/app/app.cpp \
-    src/app/undo/stack.cpp \
-    src/app/undo/undo_command.cpp \
-    src/app/undo/undo_move.cpp \
-    src/app/undo/undo_add_link.cpp \
-    src/app/undo/undo_delete_link.cpp \
-    src/app/undo/undo_change_expr.cpp \
-    src/app/undo/undo_delete_node.cpp \
-    src/app/undo/undo_delete_multi.cpp \
-    src/app/undo/undo_add_multi.cpp \
-    src/app/undo/undo_add_node.cpp \
     src/ui/main_window.cpp \
     src/ui/canvas/canvas.cpp \
     src/ui/canvas/graph_scene.cpp \
@@ -65,7 +56,6 @@ SOURCES += \
     src/ui/canvas/inspector/inspector_text.cpp \
     src/ui/canvas/inspector/inspector_row.cpp \
     src/ui/canvas/inspector/inspector_buttons.cpp \
-    src/ui/canvas/connection.cpp \
     src/ui/canvas/port.cpp \
     src/ui/viewport/viewport.cpp \
     src/ui/viewport/viewport_scene.cpp \
@@ -88,19 +78,21 @@ SOURCES += \
     src/control/proxy.cpp \
     src/control/point.cpp \
     src/control/wireframe.cpp \
+    #src/app/undo/stack.cpp \
+    #src/app/undo/undo_command.cpp \
+    #src/app/undo/undo_move.cpp \
+    #src/app/undo/undo_add_link.cpp \
+    #src/app/undo/undo_delete_link.cpp \
+    #src/app/undo/undo_change_expr.cpp \
+    #src/app/undo/undo_delete_node.cpp \
+    #src/app/undo/undo_delete_multi.cpp \
+    #src/app/undo/undo_add_multi.cpp \
+    #src/app/undo/undo_add_node.cpp \
+    #src/ui/canvas/connection.cpp \
 
 HEADERS += \
     src/ui/main_window.h \
     src/app/app.h \
-    src/app/undo/stack.h \
-    src/app/undo/undo_move.h \
-    src/app/undo/undo_add_link.h \
-    src/app/undo/undo_delete_link.h \
-    src/app/undo/undo_change_expr.h \
-    src/app/undo/undo_delete_node.h \
-    src/app/undo/undo_delete_multi.h \
-    src/app/undo/undo_add_multi.h \
-    src/app/undo/undo_add_node.h \
     src/ui/canvas/canvas.h \
     src/ui/canvas/graph_scene.h \
     src/ui/canvas/inspector/inspector.h \
@@ -109,7 +101,6 @@ HEADERS += \
     src/ui/canvas/inspector/inspector_row.h \
     src/ui/canvas/inspector/inspector_buttons.h \
     src/ui/canvas/port.h \
-    src/ui/canvas/connection.h \
     src/ui/viewport/viewport.h \
     src/ui/viewport/viewport_scene.h \
     src/ui/viewport/view_selector.h \
@@ -133,6 +124,16 @@ HEADERS += \
     src/control/proxy.h \
     src/control/point.h \
     src/control/wireframe.h \
+    #src/app/undo/stack.h \
+    #src/app/undo/undo_move.h \
+    #src/app/undo/undo_add_link.h \
+    #src/app/undo/undo_delete_link.h \
+    #src/app/undo/undo_change_expr.h \
+    #src/app/undo/undo_delete_node.h \
+    #src/app/undo/undo_delete_multi.h \
+    #src/app/undo/undo_add_multi.h \
+    #src/app/undo/undo_add_node.h \
+    #src/ui/canvas/connection.h \
 
 FORMS += \
     src/ui/forms/main_window.ui \

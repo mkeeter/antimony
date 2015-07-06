@@ -14,8 +14,8 @@ class EvalDatum;
 class UndoChangeExprCommand : public UndoCommand
 {
 public:
-    UndoChangeExprCommand(EvalDatum* d, QString before, QString after);
-    UndoChangeExprCommand(EvalDatum* d, QString before, QString after,
+    UndoChangeExprCommand(Datum* d, QString before, QString after);
+    UndoChangeExprCommand(Datum* d, QString before, QString after,
                           int cursor_before, int cursor_after,
                           QObject* obj);
 
@@ -34,7 +34,7 @@ protected:
     void saveCursor();
     void restoreCursor(int pos);
 
-    mutable EvalDatum* d;
+    mutable Datum* d;
     QString before;
     QString after;
 

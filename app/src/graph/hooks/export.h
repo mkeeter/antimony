@@ -11,14 +11,14 @@
 class Node;
 class InspectorExportButton;
 
-struct ScriptMetaHooks
+struct ScriptExportHooks
 {
     ScriptMetaHooks() : button(NULL) {}
 
-    static boost::python::object export_stl(
+    static boost::python::object stl(
             boost::python::tuple args,
             boost::python::dict kwargs);
-    static boost::python::object export_heightmap(
+    static boost::python::object heightmap(
             boost::python::tuple args,
             boost::python::dict kwargs);
 

@@ -4,7 +4,7 @@
 #include <QGraphicsObject>
 #include <QPointer>
 
-#include "graph/datum/link.h"
+#include "graph/watchers.h"
 
 class Datum;
 class Node;
@@ -12,20 +12,18 @@ class InputPort;
 class GraphScene;
 class NodeInspector;
 
-class Connection : public QGraphicsObject
+class Connection : public QGraphicsObject, NodeWatcher, DatumWatcher
 {
     Q_OBJECT
 public:
-    explicit Connection(Link* link);
-    QRectF boundingRect() const;
-    QPainterPath shape() const;
+    explicit Connection(Datum* datum);
+    QRectF boundingRect() const override;
+    QPainterPath shape() const override;
     void setDragPos(QPointF p) { drag_pos = p; }
 
     /* Makes connections between inspector port signals and redraw.
      */
     void makeSceneConnections();
-
-    Link* getLink() { return link; }
 
 public slots:
     void onInspectorMoved();
@@ -87,22 +85,23 @@ protected:
 
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,
-               QWidget *widget);
+               QWidget *widget) override;
 
     /** While the connection is open-ended, check for target ports.
      */
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
 
     /** On mouse release, connect to an available port if not already connected.
      */
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 
     /** Check for mouse hover.
      */
     void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
     void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 
-    QPointer<Link> link;
+    Datum* source;
+    Datum* target;
     QPointF drag_pos;
 
     enum { NONE, VALID, INVALID, CONNECTED } drag_state;
@@ -111,7 +110,7 @@ protected:
     bool has_snap_pos;
     bool snapping;
 
-    InputPort* target;
+    InputPort* target_port;
     bool hover;
 };
 

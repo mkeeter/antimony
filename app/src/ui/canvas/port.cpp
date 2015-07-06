@@ -13,7 +13,7 @@
 
 #include "ui/util/colors.h"
 
-#include "graph/datum/datum.h"
+#include "graph/datum.h"
 
 Port::Port(Datum* d, QGraphicsItem* parent)
     : QGraphicsObject(parent), datum(d), hover(false)
@@ -32,9 +32,6 @@ void Port::paint(QPainter *painter,
 {
     Q_UNUSED(option);
     Q_UNUSED(widget);
-
-    if (datum.isNull())
-        return;
 
     QColor color = Colors::getColor(datum);
     if (hover)
@@ -70,10 +67,12 @@ void OutputPort::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton)
     {
+        /*
         Connection* c = App::instance()->newLink(datum->linkFrom());
         c->setDragPos(mapToScene(event->pos()));
         c->grabMouse();
         c->setFocus();
+        */
 
         // Turn off the hover highlighting.
         hover = false;

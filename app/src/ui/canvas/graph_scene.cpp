@@ -9,12 +9,13 @@
 #include "app/app.h"
 #include "app/undo/undo_move.h"
 
-#include "graph/datum/datum.h"
-#include "graph/datum/link.h"
+#include "graph/datum.h"
+#include "graph/graph.h"
 
-GraphScene::GraphScene(QObject* parent)
+GraphScene::GraphScene(Graph* graph, QObject* parent)
     : QGraphicsScene(parent)
 {
+    graph->installWatcher(this);
     connect(this, &GraphScene::jumpTo,
             App::instance(), &App::jumpToInViewport);
 }
@@ -22,6 +23,26 @@ GraphScene::GraphScene(QObject* parent)
 Canvas* GraphScene::newCanvas()
 {
     return new Canvas(this);
+}
+
+void GraphScene::trigger(const GraphState& state)
+{
+    QSet<Node*> nodes;
+    for (auto n : state.nodes)
+        nodes.insert(n);
+
+    QSet<Node*> inspectors;
+    for (auto i : findChildren<NodeInspector*>())
+    {
+        if (!nodes.contains(i->getNode()))
+            i->deleteLater();
+        else
+            inspectors.insert(i->getNode());
+    }
+
+    for (auto n : nodes)
+        if (!inspectors.contains(n))
+            makeUIfor(n);
 }
 
 void GraphScene::onGlowChange(Node* n, bool g)
@@ -49,11 +70,14 @@ void GraphScene::makeUIfor(Node* n)
     connect(i, &NodeInspector::glowChanged,
             this, &GraphScene::glowChanged);
 
+    /*
     for (auto d : n->findChildren<Datum*>())
         for (auto link : d->findChildren<Link*>())
             makeUIfor(link);
+            */
 }
 
+/*
 Connection* GraphScene::makeUIfor(Link* link)
 {
     auto c = new Connection(link);
@@ -61,6 +85,7 @@ Connection* GraphScene::makeUIfor(Link* link)
     c->makeSceneConnections();
     return c;
 }
+*/
 
 NodeInspector* GraphScene::getInspector(Node* node)
 {
@@ -117,7 +142,7 @@ InputPort* GraphScene::getInputPortNear(QPointF pos, Link* link)
     for (auto i : items())
     {
         InputPort* p = dynamic_cast<InputPort*>(i);
-        if (p && (link == NULL || p->getDatum()->acceptsLink(link)))
+        if (p && (link == NULL)) //|| p->getDatum()->acceptsLink(link)))
         {
             QPointF delta = p->mapToScene(p->boundingRect().center()) - pos;
             float d = QPointF::dotProduct(delta, delta);
@@ -166,10 +191,12 @@ void GraphScene::setInspectorPositions(QMap<Node*, QPointF> p)
 
 void GraphScene::endDrag(QPointF delta)
 {
+    /*
     App::instance()->beginUndoMacro("'drag'");
     for (auto m : selectedItems())
         if (auto i = dynamic_cast<NodeInspector*>(m))
             App::instance()->pushStack(new UndoMoveCommand(
                         this, i->getNode(), i->pos() - delta, i->pos()));
     App::instance()->endUndoMacro();
+    */
 }

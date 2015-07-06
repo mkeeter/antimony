@@ -6,18 +6,17 @@
 
 #include "app/undo/undo_change_expr.h"
 
-#include "graph/datum/types/eval_datum.h"
-#include "graph/datum/datum.h"
+#include "graph/datum.h"
 
 UndoChangeExprCommand::UndoChangeExprCommand(
-        EvalDatum* d, QString before, QString after)
+        Datum* d, QString before, QString after)
     : UndoChangeExprCommand(d, before, after, -1, -1, NULL)
 {
     // Nothing to do here
 }
 
 UndoChangeExprCommand::UndoChangeExprCommand(
-        EvalDatum* d, QString before, QString after,
+        Datum* d, QString before, QString after,
         int cursor_before, int cursor_after,
         QObject* obj)
     : d(d), before(before), after(after),
@@ -60,7 +59,7 @@ void UndoChangeExprCommand::restoreCursor(int pos)
 
 void UndoChangeExprCommand::redo()
 {
-    d->setExpr(after);
+    d->setText(after.toStdString());
     restoreCursor(cursor_after);
 }
 
@@ -68,9 +67,9 @@ void UndoChangeExprCommand::undo()
 {
     // Save text value and cursor position
     saveCursor();
-    after = d->getExpr();
+    after = QString::fromStdString(d->getText());
 
-    d->setExpr(before);
+    d->setText(before.toStdString());
 
     // Restore cursor to previous position
     restoreCursor(cursor_before);
@@ -79,8 +78,5 @@ void UndoChangeExprCommand::undo()
 void UndoChangeExprCommand::swapDatum(Datum* a, Datum* b) const
 {
     if (d == a)
-    {
-        Q_ASSERT(dynamic_cast<EvalDatum*>(b));
-        d = static_cast<EvalDatum*>(b);
-    }
+        d = b;
 }

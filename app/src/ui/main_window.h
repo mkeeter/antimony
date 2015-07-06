@@ -5,6 +5,7 @@
 #include <QMainWindow>
 
 #include "graph/node/constructor.h"
+#include "graph/watchers.h"
 
 class Canvas;
 class Viewport;
@@ -17,7 +18,7 @@ namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow
+class MainWindow : public QMainWindow, GraphWatcher
 {
     Q_OBJECT
 public:
@@ -36,6 +37,11 @@ public:
     /** Returns True if the Shaded option is checked.
      */
     bool isShaded() const;
+
+    /*
+     *  If the target node is gone, delete the window.
+     */
+    void trigger(const GraphState& state) override;
 
 private:
     /*

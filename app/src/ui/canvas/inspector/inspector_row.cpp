@@ -7,18 +7,16 @@
 
 #include "ui/util/colors.h"
 
-#include "graph/datum/datum.h"
-#include "graph/datum/datums/script_datum.h"
+#include "graph/datum.h"
 
 InspectorRow::InspectorRow(Datum* d, NodeInspector* parent)
     : QGraphicsObject(static_cast<QGraphicsItem*>(parent)),
       input(d->hasInput()
                 ? new InputPort(d, static_cast<QGraphicsItem*>(this))
                 : NULL),
-      output(d->hasOutput()
-                ? new OutputPort(d, static_cast<QGraphicsItem*>(this))
-                : NULL),
-      label(new QGraphicsTextItem(d->objectName(), this)),
+      output(new OutputPort(d, static_cast<QGraphicsItem*>(this))),
+      label(new QGraphicsTextItem(
+                  QString::fromStdString(d->getName()), this)),
       editor(new DatumTextItem(d, this))
 {
     label->setDefaultTextColor(Colors::base04);

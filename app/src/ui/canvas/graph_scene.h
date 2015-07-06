@@ -4,6 +4,8 @@
 #include <QGraphicsScene>
 #include <QPointer>
 
+#include "graph/watchers.h"
+
 class Node;
 class Link;
 
@@ -12,16 +14,21 @@ class NodeInspector;
 class InputPort;
 class Connection;
 
-class GraphScene : public QGraphicsScene
+class GraphScene : public QGraphicsScene, GraphWatcher
 {
     Q_OBJECT
 public:
-    GraphScene(QObject* parent=0);
+    GraphScene(Graph* graph, QObject* parent=0);
 
     /*
      *  Returns a new Canvas with scene set.
      */
     Canvas* newCanvas();
+
+    /*
+     *  On graph state change, add or delete node inspectors.
+     */
+    void trigger(const GraphState& state) override;
 
     /*
      *  Creates a new NodeInspector for the given node
@@ -33,7 +40,7 @@ public:
      *  Creates a new Connection for the given Link
      *  and adds it to the QGraphicsScene.
      */
-    Connection* makeUIfor(Link* link);
+    //Connection* makeUIfor(Link* link);
 
     /*
      *  Helper function to get an item of a particular class

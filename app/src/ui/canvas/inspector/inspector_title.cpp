@@ -6,22 +6,22 @@
 #include "ui/canvas/inspector/inspector_buttons.h"
 #include "ui/util/button.h"
 
-#include "graph/node/node.h"
-#include "graph/datum/datums/script_datum.h"
+#include "graph/node.h"
+#include "graph/datum.h"
 
 #include "ui/util/colors.h"
 
 InspectorTitle::InspectorTitle(Node* n, NodeInspector* parent)
     : QGraphicsObject(parent),
-      title(new QGraphicsTextItem(n->getTitle(), this)),
+      title(new QGraphicsTextItem("Title!", this)),
       buttons({new InspectorExportButton(this),
                new InspectorShowHiddenButton(this, parent),
-               new InspectorScriptButton(
-                  n->getDatum<ScriptDatum>("__script"), this)}),
-
+               new InspectorScriptButton(n, this)}),
       padding(20)
 
 {
+    name = NULL;
+    /*
     if (auto d = n->getDatum("__name"))
     {
         name = new DatumTextItem(d, this);
@@ -32,6 +32,7 @@ InspectorTitle::InspectorTitle(Node* n, NodeInspector* parent)
                 if(this->updateLayout())
                     emit(layoutChanged()); });
     }
+    */
 
     title->setPos(0, 0);
     title->setDefaultTextColor(Colors::base06);
@@ -40,12 +41,7 @@ InspectorTitle::InspectorTitle(Node* n, NodeInspector* parent)
     title->setFont(f);
 
     // Make connections for dynamic title changing
-    connect(n, &Node::titleChanged,
-            title, &QGraphicsTextItem::setPlainText);
-    connect(n, &Node::titleChanged,
-            [=](QString){
-            if(this->updateLayout())
-                emit(layoutChanged()); });
+    n->installWatcher(this);
 
     for (auto b : buttons)
         connect(b, &QGraphicsObject::visibleChanged,
@@ -55,10 +51,17 @@ InspectorTitle::InspectorTitle(Node* n, NodeInspector* parent)
     // (which is dependent on the parent NodeInspector)
 }
 
+void InspectorTitle::trigger(const NodeState& state)
+{
+    // Set the name here!
+    if (this->updateLayout())
+        emit layoutChanged();
+}
+
 QRectF InspectorTitle::boundingRect() const
 {
-    const float height = name->boundingRect().height();
-    float width = name->boundingRect().width() +
+    const float height = 10;//name->boundingRect().height();
+    float width = 100 + //name->boundingRect().width() +
         padding +
         title->boundingRect().width() + 2;
 
@@ -71,7 +74,7 @@ QRectF InspectorTitle::boundingRect() const
 
 float InspectorTitle::minWidth() const
 {
-    float width = name->boundingRect().width() + 20 // padding
+    float width = 20 // name->boundingRect().width() + 20 // padding
         + title->boundingRect().width() // title
         + 2; // more padding
 
@@ -96,7 +99,7 @@ bool InspectorTitle::updateLayout()
     // Name stays put at 0,0
     //
 
-    float x = name->boundingRect().width() + padding;
+    float x = 20; // name->boundingRect().width() + padding;
     QPointF tpos(x, 0);
     if (tpos != title->pos())
     {
