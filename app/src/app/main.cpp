@@ -7,6 +7,7 @@
 #include <QTextCodec>
 
 #include <iostream>
+#include <clocale>
 
 #include "app/app.h"
 #include "fab/fab.h"
@@ -17,6 +18,9 @@ int main(int argc, char *argv[])
 {
     // Use UTF-8, ignoring any LANG settings in the environment
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
+
+    // Set locale to C to make atof correctly parse floats
+    setlocale(LC_NUMERIC, "C");
 
     // Set the default OpenGL version to be 2.1 with sample buffers
     QSurfaceFormat format;
