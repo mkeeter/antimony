@@ -32,6 +32,13 @@ public:
     static void onException(const Exception& e);
     static void preInit();
     static PyObject* makeProxyFor(Root* r, Node* locals, Downstream* caller);
+
+    /*
+     *  Returns a new reference to the dict object of the given proxy
+     *  (p must be a Proxy object).
+     */
+    static PyObject* getDict(PyObject* p);
+
 protected:
     Root* root;
     Node* locals;

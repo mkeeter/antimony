@@ -107,11 +107,10 @@ protected:
     {
         // Find the lowest unused unique ID number
         std::unordered_set<uint32_t> indices;
-        std::for_each(ts->begin(), ts->end(),
-                      [&](const std::unique_ptr<T>& t_)
-                      { indices.insert(t_->uid); });
+        for (const auto& ptr : *ts)
+            indices.insert(ptr->uid);
         uint32_t uid = 0;
-        while (indices.find(uid) != indices.end())
+        while (indices.count(uid))
             uid++;
 
         ts->push_back(std::unique_ptr<T>(t));

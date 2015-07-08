@@ -121,6 +121,14 @@ PyObject* Proxy::makeProxyFor(Root* r, Node* locals, Downstream* caller)
     return p;
 }
 
+PyObject* Proxy::getDict(PyObject* p)
+{
+    PyObject* d = boost::python::extract<Proxy&>(p)().dict;
+    assert(d);
+    Py_INCREF(d);
+    return d;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 void Proxy::onException(const Proxy::Exception& e)

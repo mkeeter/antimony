@@ -3,6 +3,7 @@
 #include "graph/util.h"
 #include "graph/graph.h"
 #include "graph/watchers.h"
+#include "graph/proxy.h"
 
 std::unordered_set<char> Datum::sigils = {
     SIGIL_CONNECTION, SIGIL_OUTPUT
@@ -34,13 +35,19 @@ Datum::~Datum()
     Py_XDECREF(value);
 }
 
+bool Datum::hasInput() const
+{
+    return !expr.empty() && (expr.front() != SIGIL_OUTPUT);
+}
+
 PyObject* Datum::getValue()
 {
-    PyObject* globals = parent->parent->proxyDict(NULL, this);
+    PyObject* locals = parent->parent->proxyDict(NULL, this);
+    PyObject* globals = Proxy::getDict(locals);
 
     // If the string begins with a sigil, slice it off
     const std::string e = trimSigil(expr).first;
-    PyObject* out = PyRun_String(e.c_str(), Py_eval_input, globals, globals);
+    PyObject* out = PyRun_String(e.c_str(), Py_eval_input, globals, locals);
 
     if (PyErr_Occurred())
     {
@@ -48,6 +55,7 @@ PyObject* Datum::getValue()
         PyErr_Clear();
     }
 
+    Py_DECREF(locals);
     Py_DECREF(globals);
     return out;
 }
@@ -92,12 +100,17 @@ void Datum::update()
 
     if (!watchers.empty())
     {
-        auto trimmed = trimSigil(expr);
+        const auto state = getState();
         for (auto w : watchers)
-            w->trigger(
-                    (DatumState){trimmed.first, !trimmed.second, valid, error});
+            w->trigger(state);
     }
 
+}
+
+DatumState Datum::getState() const
+{
+    auto trimmed = trimSigil(expr);
+    return (DatumState){trimmed.first, !trimmed.second, valid, error};
 }
 
 std::pair<std::string, bool> Datum::trimSigil(std::string e)

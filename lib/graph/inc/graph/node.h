@@ -7,6 +7,7 @@
 #include "graph/types/root.h"
 #include "graph/script.h"
 #include "graph/datum.h"
+#include "graph/watchers.h"
 
 class Datum;
 class Graph;
@@ -16,11 +17,27 @@ class Node : public Root
 {
 public:
     explicit Node(std::string name, Graph* root);
+    explicit Node(std::string name, std::string script, Graph* root);
 
     /*
      *  On destruction, indicate that all datums have changed.
      */
     virtual ~Node();
+
+    /*
+     *  Return the root pointer.
+     */
+    Graph* parentGraph() const { return parent; }
+
+    /*
+     *  Look up the node's name.
+     */
+    std::string getName() const { return name; }
+
+    /*
+     *  Returns the list of child datums.
+     */
+    std::list<Datum*> childDatums() const;
 
     /*
      *  Updates the script text and triggers an update.
@@ -51,6 +68,7 @@ public:
 
     /*
      *  Adds the given datum at the end of the list.
+     *  Does NOT trigger NodeWatcher objects.
      *
      *  The node takes ownership of the datum and will delete it
      *  when the node is destroyed.
@@ -59,6 +77,7 @@ public:
 
     /*
      *  Uninstalls the given datum.
+     *  Does NOT trigger NodeWatcher objects.
      */
     void uninstall(Datum* d) { Root::uninstall(d, &datums); }
 
@@ -78,6 +97,11 @@ public:
      *  Sets the callback object.
      */
     void installWatcher(NodeWatcher* w) { watchers.push_back(w); }
+
+    /*
+     *  Return the state (passed into callbacks)
+     */
+    NodeState getState() const;
 
     /* Root functions */
     PyObject* pyGetAttr(std::string name, Downstream* caller) const override;

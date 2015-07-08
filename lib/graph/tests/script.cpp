@@ -27,6 +27,30 @@ TEST_CASE("Invalid script")
     delete g;
 }
 
+TEST_CASE("Script with import")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    n->setScript("import os");
+    CAPTURE(n->getError());
+    REQUIRE(n->getErrorLine() == -1);
+    delete g;
+}
+
+TEST_CASE("Import namespace")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    n->setScript("import os\n"
+                 "def f():\n"
+                 "    print(os.name)\n"
+                 "f()");
+    CAPTURE(n->getError());
+    REQUIRE(n->getErrorLine() == -1);
+    delete g;
+}
+
+
 TEST_CASE("Script input")
 {
     auto g = new Graph();
@@ -79,6 +103,7 @@ TEST_CASE("Datum pinning")
     auto x = n->getDatum("x");
 
     n->setScript("input('x', float, 2.0)");
+    CAPTURE(n->getError());
     REQUIRE(n->getErrorLine() == -1);
     REQUIRE(n->getDatum("x") == x);
     REQUIRE(x->isValid() == true);

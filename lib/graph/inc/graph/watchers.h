@@ -2,8 +2,13 @@
 
 #include <string>
 #include <list>
+#include <unordered_set>
 
 class Datum;
+class Node;
+class Graph;
+
+////////////////////////////////////////////////////////////////////////////////
 
 struct DatumState
 {
@@ -26,6 +31,7 @@ struct NodeState
 {
     std::string script;
     std::string error;
+    std::string output;
     int error_lineno;
     std::list<Datum*> datums;
 };
@@ -37,3 +43,16 @@ public:
     virtual void trigger(const NodeState& state)=0;
 };
 
+////////////////////////////////////////////////////////////////////////////////
+
+struct GraphState
+{
+    std::unordered_set<Node*> nodes;
+};
+
+class GraphWatcher
+{
+public:
+    virtual ~GraphWatcher() {};
+    virtual void trigger(const GraphState& state)=0;
+};

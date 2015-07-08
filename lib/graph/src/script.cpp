@@ -3,6 +3,7 @@
 #include "graph/script.h"
 #include "graph/node.h"
 #include "graph/util.h"
+#include "graph/proxy.h"
 
 Script::Script(Node* parent)
     : error_lineno(-1), parent(parent)
@@ -12,8 +13,10 @@ Script::Script(Node* parent)
 
 void Script::update()
 {
-    PyObject* globals = parent->proxyDict(this);
     active.clear();
+
+    PyObject* locals = parent->proxyDict(this);
+    PyObject* globals = Proxy::getDict(locals);
 
     // Swap in a stringIO object for stdout, saving stdout in out
     PyObject* sys_mod = PyImport_ImportModule("sys");
@@ -26,7 +29,7 @@ void Script::update()
 
     // Run the script
     PyObject* out = PyRun_String(
-            script.c_str(), Py_file_input, globals, globals);
+            script.c_str(), Py_file_input, globals, locals);
     Py_XDECREF(out);
 
     if (PyErr_Occurred())
@@ -38,6 +41,7 @@ void Script::update()
     }
 
     Py_DECREF(globals);
+    Py_DECREF(locals);
 
     // Get the output from the StringIO object
     PyObject* s = PyObject_CallMethod(string_out, "getvalue", NULL);
