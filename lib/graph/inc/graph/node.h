@@ -35,6 +35,11 @@ public:
     std::string getName() const { return name; }
 
     /*
+     *  Sets the node's name (and updates its parent graph)
+     */
+    void setName(std::string new_name);
+
+    /*
      *  Returns the list of child datums.
      */
     std::list<Datum*> childDatums() const;

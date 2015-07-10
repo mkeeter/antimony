@@ -16,6 +16,8 @@ Node::Node(std::string n, std::string script, Graph* root)
     : name(n), uid(root->install(this)), script(this), parent(root)
 {
     setScript(script);
+    parent->changed(name, uid);
+    parent->triggerWatchers();
 }
 
 Node::~Node()
@@ -39,6 +41,14 @@ NodeState Node::getState() const
     return (NodeState){
             script.script, script.error, script.output,
             script.error_lineno, childDatums()};
+}
+
+void Node::setName(std::string new_name)
+{
+    const std::string old_name = name;
+    name = new_name;
+    parent->changed(old_name, uid);
+    parent->changed(new_name, uid);
 }
 
 std::list<Datum*> Node::childDatums() const

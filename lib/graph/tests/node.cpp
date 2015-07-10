@@ -26,3 +26,19 @@ TEST_CASE("Cross-node datum deletion")
     REQUIRE(bx->getError().find("Name 'a' is not defined")
             != std::string::npos);
 }
+
+
+TEST_CASE("Cross-node name creation")
+{
+    auto g = new Graph();
+    auto a = new Node("a", g);
+    auto ax = new Datum("x", "b.x", &PyFloat_Type, a);
+    CAPTURE(ax->getError());
+    REQUIRE(ax->isValid() == false);
+
+    auto b = new Node("b", g);
+    auto bx = new Datum("x", "1.0", &PyFloat_Type, b);
+
+    CAPTURE(ax->getError());
+    REQUIRE(ax->isValid() == true);
+}
