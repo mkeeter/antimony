@@ -1,5 +1,7 @@
 #include <Python.h>
 
+#include <QTextDocument>
+
 #include "ui/canvas/inspector/inspector_title.h"
 #include "ui/canvas/inspector/inspector_text.h"
 #include "ui/canvas/inspector/inspector.h"
@@ -12,56 +14,50 @@
 #include "ui/util/colors.h"
 
 InspectorTitle::InspectorTitle(Node* n, NodeInspector* parent)
-    : QGraphicsObject(parent),
-      title(new QGraphicsTextItem("Title!", this)),
+    : QGraphicsObject(parent), node(n),
+      name(new QGraphicsTextItem(QString::fromStdString(n->getName()), this)),
+      title(new QGraphicsTextItem("", this)),
       buttons({new InspectorExportButton(this),
                new InspectorShowHiddenButton(this, parent),
                new InspectorScriptButton(n, this)}),
       padding(20)
 
 {
-    name = NULL;
-    /*
-    if (auto d = n->getDatum("__name"))
-    {
-        name = new DatumTextItem(d, this);
-        name->setAsTitle();
-        name->setPos(0, 0);
-        connect(d, &Datum::changed,
-                [=]() {
-                if(this->updateLayout())
-                    emit(layoutChanged()); });
-    }
-    */
+    name->setTextInteractionFlags(Qt::TextEditorInteraction);
+    name->setTextWidth(150);
 
-    title->setPos(0, 0);
-    title->setDefaultTextColor(Colors::base06);
-    auto f = title->font();
+    auto f = name->font();
     f.setBold(true);
-    title->setFont(f);
 
-    // Make connections for dynamic title changing
-    n->installWatcher(this);
+    for (auto t : {name, title})
+    {
+        t->setPos(0, 0);
+        t->setDefaultTextColor(Colors::base06);
+        t->setFont(f);
+    }
 
     for (auto b : buttons)
         connect(b, &QGraphicsObject::visibleChanged,
                 this, &InspectorTitle::onButtonsChanged);
 
+    connect(name->document(), &QTextDocument::contentsChanged,
+            this, &InspectorTitle::onNameChanged);
+
     // The layout needs to be redone once padding is set
     // (which is dependent on the parent NodeInspector)
 }
 
-void InspectorTitle::trigger(const NodeState& state)
+void InspectorTitle::onNameChanged()
 {
-    // Set the name here!
-    if (this->updateLayout())
-        emit layoutChanged();
+    node->setName(name->toPlainText().toStdString());
+    if (updateLayout())
+        emit(layoutChanged());
 }
 
 QRectF InspectorTitle::boundingRect() const
 {
-    const float height = 10;//name->boundingRect().height();
-    float width = 100 + //name->boundingRect().width() +
+    const float height = name->boundingRect().height();
+    float width = name->boundingRect().width() +
         padding +
         title->boundingRect().width() + 2;
 
@@ -74,7 +70,7 @@ QRectF InspectorTitle::boundingRect() const
 
 float InspectorTitle::minWidth() const
 {
-    float width = 20 // name->boundingRect().width() + 20 // padding
+    float width = name->boundingRect().width() + 20 // padding
         + title->boundingRect().width() // title
         + 2; // more padding
 
@@ -99,7 +95,7 @@ bool InspectorTitle::updateLayout()
     // Name stays put at 0,0
     //
 
-    float x = 20; // name->boundingRect().width() + padding;
+    float x = name->boundingRect().width() + padding;
     QPointF tpos(x, 0);
     if (tpos != title->pos())
     {
@@ -131,7 +127,6 @@ void InspectorTitle::paint(QPainter *painter,
     Q_UNUSED(painter);
     Q_UNUSED(option);
     Q_UNUSED(widget);
-    // Nothing to do here
 }
 
 void InspectorTitle::onButtonsChanged()

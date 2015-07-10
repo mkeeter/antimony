@@ -47,10 +47,10 @@ public:
      *  at the given location.
      */
     template <class T>
-    T* getItemAt(QPointF pos);
+    T* getItemAt(QPointF pos) const;
 
-    NodeInspector* getInspector(Node* n);
-    NodeInspector* getInspectorAt(QPointF pos);
+    NodeInspector* getInspector(Node* n) const;
+    NodeInspector* getInspectorAt(QPointF pos) const;
     InputPort* getInputPortAt(QPointF pos);
     InputPort* getInputPortNear(QPointF pos, Link* link=NULL);
 
@@ -93,7 +93,7 @@ signals:
     void jumpTo(Node* node);
 
 protected:
-    QHash<Node*, QPointer<NodeInspector>> get_inspector_cache;
+    QHash<Node*, NodeInspector*> inspectors;
 };
 
 #endif

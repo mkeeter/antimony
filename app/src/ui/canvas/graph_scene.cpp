@@ -31,13 +31,18 @@ void GraphScene::trigger(const GraphState& state)
     for (auto n : state.nodes)
         nodes.insert(n);
 
-    QSet<Node*> inspectors;
-    for (auto i : findChildren<NodeInspector*>())
+    auto itr = inspectors.begin();
+    while (itr != inspectors.end())
     {
-        if (!nodes.contains(i->getNode()))
-            i->deleteLater();
+        if (!nodes.contains(itr.key()))
+        {
+            itr.value()->deleteLater();
+            inspectors.erase(itr);
+        }
         else
-            inspectors.insert(i->getNode());
+        {
+            itr++;
+        }
     }
 
     for (auto n : nodes)
@@ -53,7 +58,7 @@ void GraphScene::onGlowChange(Node* n, bool g)
 void GraphScene::makeUIfor(Node* n)
 {
     auto i = new NodeInspector(n);
-    get_inspector_cache[n] = i;
+    inspectors[n] = i;
     addItem(i);
 
     if (views().length() > 0)
@@ -87,32 +92,14 @@ Connection* GraphScene::makeUIfor(Link* link)
 }
 */
 
-NodeInspector* GraphScene::getInspector(Node* node)
+NodeInspector* GraphScene::getInspector(Node* node) const
 {
-    if (get_inspector_cache.contains(node))
-    {
-        auto c = get_inspector_cache[node];
-        if (!c.isNull() && c->getNode() == node)
-            return c;
-        else
-            get_inspector_cache.remove(node);
-    }
-
-    for (auto i : items())
-    {
-        NodeInspector* c = dynamic_cast<NodeInspector*>(i);
-
-        if (c && c->getNode() == node)
-        {
-            get_inspector_cache[node] = c;
-            return c;
-        }
-    }
-    return NULL;
+    Q_ASSERT(inspectors.contains(node));
+    return inspectors[node];
 }
 
 template <class T>
-T* GraphScene::getItemAt(QPointF pos)
+T* GraphScene::getItemAt(QPointF pos) const
 {
     for (auto i : items(pos))
         if (auto p = dynamic_cast<T*>(i))
@@ -120,7 +107,7 @@ T* GraphScene::getItemAt(QPointF pos)
     return NULL;
 }
 
-NodeInspector* GraphScene::getInspectorAt(QPointF pos)
+NodeInspector* GraphScene::getInspectorAt(QPointF pos) const
 {
     return getItemAt<NodeInspector>(pos);
 }

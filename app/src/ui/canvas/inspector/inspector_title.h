@@ -4,22 +4,17 @@
 #include <QGraphicsObject>
 #include <QGraphicsTextItem>
 
-#include "graph/watchers.h"
-
 class NodeInspector;
-class DatumTextItem;
 class GraphicsButton;
 
 class Node;
 
-class InspectorTitle : public QGraphicsObject, NodeWatcher
+class InspectorTitle : public QGraphicsObject
 {
     Q_OBJECT
 public:
     explicit InspectorTitle(Node* n, NodeInspector* parent);
     QRectF boundingRect() const override;
-
-    void trigger(const NodeState& state) override;
 
     template <typename T> T* getButton() const
     {
@@ -34,7 +29,13 @@ public:
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget) override;
+
 public slots:
+    /*
+     *  When the name field changes, call node->setName
+     */
+    void onNameChanged();
+
     /*
      *  Updates the title row's layout.
      *  Returns true if anything changed.
@@ -50,7 +51,9 @@ signals:
     void layoutChanged();
 
 protected:
-    DatumTextItem* name;
+    Node* node;
+
+    QGraphicsTextItem* name;
     QGraphicsTextItem* title;
     QList<GraphicsButton*> buttons;
 

@@ -16,12 +16,6 @@ public:
     void trigger(const NodeState& state) override;
     void trigger(const DatumState& state) override;
 
-    /*
-     *  Adjusts formatting so that the text box blends in
-     *  with an Inspector title bar
-     */
-    void setAsTitle();
-
 public slots:
     void onTextChanged();
 

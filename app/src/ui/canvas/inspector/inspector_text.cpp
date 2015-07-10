@@ -43,22 +43,6 @@ void DatumTextItem::trigger(const NodeState& state)
     // Nothing to do here
 }
 
-void DatumTextItem::setAsTitle()
-{
-    background = Colors::base03;
-    foreground = Colors::base06;
-
-    auto f = font();
-    f.setBold(true);
-    setFont(f);
-
-    // Allow this item to grow horizontally forever
-    setTextWidth(-1);
-
-    // Force a redraw
-    trigger(d->getState());
-}
-
 void DatumTextItem::trigger(const DatumState& state)
 {
     setDefaultTextColor(state.editable ? foreground : Colors::base03);
