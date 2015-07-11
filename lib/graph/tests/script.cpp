@@ -112,6 +112,23 @@ TEST_CASE("Datum pinning")
     delete g;
 }
 
+TEST_CASE("Datum preservation")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+
+    n->setScript("input('x', float, 1.0)");
+    auto x = n->getDatum("x");
+    REQUIRE(x != NULL);
+
+    n->setScript("input('x', float, 1.0)wargarble");
+    auto x_ = n->getDatum("x");
+    REQUIRE(x_ == x);
+
+    delete g;
+}
+
+
 TEST_CASE("Script re-evaluation on datum change")
 {
     auto g = new Graph();
