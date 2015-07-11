@@ -57,7 +57,30 @@ PyObject* Datum::getValue()
 
     Py_DECREF(locals);
     Py_DECREF(globals);
+
+    // Check output types
+    if (out && out->ob_type != type)
+        out = castToType(out);
+
     return out;
+}
+
+PyObject* Datum::castToType(PyObject* value)
+{
+    auto cast = PyObject_CallFunctionObjArgs((PyObject*)type, value, NULL);
+    if (PyErr_Occurred())
+    {
+        PyErr_Clear();
+        auto actual_type = PyObject_Str((PyObject*)value->ob_type);
+        auto desired_type = PyObject_Str((PyObject*)type);
+        error = "Could not convert from " +
+                std::string(PyUnicode_AsUTF8(actual_type)) +
+                " to " + std::string(PyUnicode_AsUTF8(desired_type));
+        Py_DECREF(actual_type);
+        Py_DECREF(desired_type);
+    }
+    Py_DECREF(value);
+    return cast;
 }
 
 void Datum::update()

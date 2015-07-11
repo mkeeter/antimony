@@ -155,3 +155,29 @@ TEST_CASE("UID changes")
     REQUIRE(PyFloat_AsDouble(y->currentValue()) == 2.0);
     delete g;
 }
+
+TEST_CASE("Failed datum type conversion")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    auto x = new Datum("x", "'hi there'", &PyFloat_Type, n);
+
+    CAPTURE(x->getError());
+    REQUIRE(x->getError().find("Could not convert from <class 'str'> to <class 'float'>")
+            != std::string::npos);
+    REQUIRE(x->isValid() == false);
+    delete g;
+}
+
+TEST_CASE("Successful datum type conversion")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    auto x = new Datum("x", "2", &PyFloat_Type, n);
+
+    CAPTURE(x->getError());
+    REQUIRE(x->isValid() == true);
+    REQUIRE(x->currentValue() != NULL);
+    REQUIRE(PyFloat_AsDouble(x->currentValue()) == 2.0);
+    delete g;
+}

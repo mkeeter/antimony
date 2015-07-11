@@ -77,6 +77,12 @@ protected:
     PyObject* getValue();
 
     /*
+     *  Attempts to cast the given value to this Datum's type.
+     *  Returns NULL and sets error on failure.
+     */
+    PyObject* castToType(PyObject* value);
+
+    /*
      *  If this datum has a connection sigil, allow UID lookups.
      */
     bool allowLookupByUID() const override;
