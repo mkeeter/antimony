@@ -14,6 +14,8 @@ Script::Script(Node* parent)
 void Script::update()
 {
     active.clear();
+    error_lineno = -1;
+    error.clear();
 
     PyObject* locals = parent->proxyDict(this);
     PyObject* globals = Proxy::getDict(locals);
@@ -59,5 +61,8 @@ void Script::update()
     std::regex input("(.*input\\([^(),]+,[^(),]+),[^(),]+(\\).*)");
     script = std::regex_replace(script, input, "$1$2");
 
-    parent->update(active);
+    // If the script was correctly evaluated, ask the parent to prune
+    // its Datum list based on which are still active.
+    if (error_lineno == -1)
+        parent->update(active);
 }
