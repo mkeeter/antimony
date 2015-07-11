@@ -29,9 +29,7 @@ void Graph::triggerWatchers() const
 
 uint32_t Graph::install(Node* n)
 {
-    const uint32_t uid = Root::install(n, &nodes);
-    triggerWatchers();
-    return uid;
+    return Root::install(n, &nodes);
 }
 
 GraphState Graph::getState() const

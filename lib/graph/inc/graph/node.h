@@ -16,6 +16,9 @@ class NodeWatcher;
 class Node : public Root
 {
 public:
+    /*
+     *  On construction, trigger parent Root's watchers.
+     */
     explicit Node(std::string name, Graph* root);
     explicit Node(std::string name, std::string script, Graph* root);
 

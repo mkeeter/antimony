@@ -7,7 +7,7 @@
 #include "graph/watchers.h"
 
 Node::Node(std::string n, Graph* root)
-    : name(n), uid(root->install(this)), script(this), parent(root)
+    : Node(n, "", root)
 {
     // Nothing to do here
 }
