@@ -69,7 +69,7 @@ public:
     /*
      *  Returns the set of incoming links.
      */
-    std::unordered_set<Datum*> getLinks() const { return links; }
+    std::unordered_set<const Datum*> getLinks() const { return links; }
 
     /*
      *  Checks to see if we can accept the given link.
@@ -138,13 +138,13 @@ protected:
      *  This set represents any source whose modification could cause
      *  this datum to be activated.  It is used to detect recursive loops.
      */
-    std::unordered_set<Datum*> sources;
+    std::unordered_set<const Datum*> sources;
 
     /*
      *  If the datum text string begins with SIGIL_CONNECTION, then
      *  track incoming links in this set.
      */
-    std::unordered_set<Datum*> links;
+    std::unordered_set<const Datum*> links;
 
     /*
      *  Sigils are single characters at the beginning of an expression

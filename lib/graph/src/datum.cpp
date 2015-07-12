@@ -249,7 +249,7 @@ bool Datum::acceptsLink(Datum* upstream) const
         return false;
 
     // If adding this link would create a recursive loop, reject it
-    if (upstream->sources.count(const_cast<Datum*>(this)) != 0)
+    if (upstream->sources.count(this) != 0)
         return false;
 
     // If we don't already have a link, then we can make one
