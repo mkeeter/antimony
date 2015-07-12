@@ -57,6 +57,11 @@ public:
      */
     bool hasInput() const;
 
+    /*
+     *  Returns the set of incoming links.
+     */
+    std::unordered_set<Datum*> getLinks() const { return links; }
+
     static const char SIGIL_CONNECTION = '$';
     static const char SIGIL_OUTPUT = '#';
 protected:
@@ -106,6 +111,12 @@ protected:
      *  this datum to be activated.  It is used to detect recursive loops.
      */
     std::unordered_set<Datum*> sources;
+
+    /*
+     *  If the datum text string begins with SIGIL_CONNECTION, then
+     *  track incoming links in this set.
+     */
+    std::unordered_set<Datum*> links;
 
     /*
      *  Sigils are single characters at the beginning of an expression
