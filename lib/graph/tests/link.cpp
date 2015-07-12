@@ -25,8 +25,6 @@ TEST_CASE("Link detection")
 
 TEST_CASE("Empty link pruning")
 {
-    REQUIRE(Datum::SIGIL_CONNECTION == '$');
-
     auto g = new Graph();
     auto n = new Node("n", g);
     auto x = new Datum("x", "1.0", &PyFloat_Type, n);
@@ -37,4 +35,18 @@ TEST_CASE("Empty link pruning")
     REQUIRE(x->getLinks().size() == 0);
     REQUIRE(x->currentValue() != NULL);
     REQUIRE(PyFloat_AsDouble(x->currentValue()) == 1.0);
+}
+
+TEST_CASE("Link pruning on deletion")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    auto x = new Datum("x", "1.0", &PyFloat_Type, n);
+    auto y = new Datum("y", "$[__0.__0]", &PyFloat_Type, n);
+
+    n->uninstall(x);
+    REQUIRE(y->isValid() == true);
+    REQUIRE(y->getLinks().size() == 0);
+    REQUIRE(y->currentValue() != NULL);
+    REQUIRE(PyFloat_AsDouble(y->currentValue()) == 1.0);
 }

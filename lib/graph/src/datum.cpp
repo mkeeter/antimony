@@ -130,6 +130,23 @@ std::pair<PyObject*, bool> Datum::checkLinkResult(PyObject* obj)
     }
     else if (error.find("is not defined") != std::string::npos)
     {
+        assert(obj == NULL);
+
+        // Do a bit of string splicing to cut out the offending UIDs
+        size_t index = 2;
+        for (size_t i=0; i < links.size(); ++i)
+        {
+            const size_t found = expr.find(", ", index);
+            assert(found != std::string::npos);
+            index = found + 2;
+        }
+
+        size_t end = expr.find(", ", index);
+        end = (end == std::string::npos) ? expr.find("]") : (end + 2);
+
+        // Recurse, then return a tuple indicating that we recursed.
+        setText(expr.substr(0, index) + expr.substr(end));
+        return std::pair<PyObject*, bool>(NULL, true);
     }
     else
     {
