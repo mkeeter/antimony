@@ -58,6 +58,14 @@ public:
     bool hasInput() const;
 
     /*
+     *  Registers d as an upstream datum, loading it into sources and links
+     *  (if a connection SIGIL is present).
+     *
+     *  Returns true on success, false on recursive lookup failure.
+     */
+    bool addUpstream(const Datum* d);
+
+    /*
      *  Returns the set of incoming links.
      */
     std::unordered_set<Datum*> getLinks() const { return links; }

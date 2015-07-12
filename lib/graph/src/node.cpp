@@ -136,14 +136,9 @@ PyObject* Node::pyGetAttr(std::string n, Downstream* caller) const
     if (d)
     {
         // If the caller is a datum as well, check for recursive lookups.
-        if (auto datum = dynamic_cast<Datum*>(caller))
-        {
-            datum->sources.insert(d->sources.begin(), d->sources.end());
-            if (d->sources.find(datum) != d->sources.end())
-            {
-                throw Proxy::Exception("Recursive lookup of datum '" + n + "'");
-            }
-        }
+        auto datum = dynamic_cast<Datum*>(caller);
+        if (datum && !datum->addUpstream(d))
+            throw Proxy::Exception("Recursive lookup of datum '" + n + "'");
 
         if (d->valid)
         {

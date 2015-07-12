@@ -65,6 +65,12 @@ PyObject* Datum::getValue()
     return out;
 }
 
+bool Datum::addUpstream(const Datum* d)
+{
+    sources.insert(d->sources.begin(), d->sources.end());
+    return d->sources.find(this) == d->sources.end();
+}
+
 PyObject* Datum::castToType(PyObject* value)
 {
     auto cast = PyObject_CallFunctionObjArgs((PyObject*)type, value, NULL);
@@ -89,6 +95,7 @@ void Datum::update()
     const auto old_sources = sources;
     sources.clear();
     sources.insert(this);
+    links.clear();
 
     PyObject* new_value = getValue();
 
