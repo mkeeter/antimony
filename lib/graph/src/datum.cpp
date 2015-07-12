@@ -5,9 +5,14 @@
 #include "graph/watchers.h"
 #include "graph/proxy.h"
 
+const char Datum::SIGIL_CONNECTION = '$';
+const char Datum::SIGIL_OUTPUT = '#';
+
 std::unordered_set<char> Datum::sigils = {
     SIGIL_CONNECTION, SIGIL_OUTPUT
 };
+
+std::unordered_map<PyTypeObject*, PyObject*> Datum::reducers;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -58,10 +63,6 @@ PyObject* Datum::getValue()
     Py_DECREF(locals);
     Py_DECREF(globals);
 
-    // Check output types
-    if (out && out->ob_type != type)
-        out = castToType(out);
-
     return out;
 }
 
@@ -91,15 +92,76 @@ PyObject* Datum::castToType(PyObject* value)
     return cast;
 }
 
+std::pair<PyObject*, bool> Datum::checkLinkResult(PyObject* obj)
+{
+    if (error.empty())
+    {
+        assert(obj != NULL);
+        assert(PyList_Check(obj));
+
+        // If the list has been pruned down to emptiness, construct a new
+        // expression, assign it, and indicate that we recursed.
+        if (PyList_Size(obj) == 0)
+        {
+            auto s = PyObject_Str(value);
+            assert(!PyErr_Occurred());
+            setText(std::string(PyUnicode_AsUTF8(s)));
+            Py_DECREF(s);
+            return std::pair<PyObject*, bool>(NULL, true);
+        }
+
+        // Get the first item from the list, then use the default reducer
+        // function to fold all of the other items into it (if possible)
+        auto start = PyList_GetItem(obj, 0);
+        Py_INCREF(start);
+
+        assert(PyList_Size(obj) == 1 || reducers.count(type) != 0);
+        for (int i=1; i < PyList_Size(obj); ++i)
+        {
+            auto next = PyObject_CallFunctionObjArgs(
+                    reducers[type], start, PyList_GetItem(obj, i));
+            Py_DECREF(start);
+            start = next;
+        }
+        Py_DECREF(obj);
+        return std::make_pair(start, false);
+    }
+    else if (error.find("is not defined") != std::string::npos)
+    {
+    }
+    else
+    {
+        return std::make_pair(obj, false);
+    }
+}
+
 void Datum::update()
 {
     // Cache the source list to detect if it has changed.
     const auto old_sources = sources;
+
+    // Reset all of the variables that will be populated during evaluation
     sources.clear();
     sources.insert(this);
     links.clear();
+    error.clear();
 
     PyObject* new_value = getValue();
+
+    // Handle link results in a special way, handling disconnection,
+    // list pruning, and reducers.
+    if (isLink())
+    {
+        auto r = checkLinkResult(new_value);
+        if (r.second)
+            return;
+        else
+            new_value = r.first;
+    }
+
+    // Check output types and cast if necessary
+    if (new_value && new_value->ob_type != type)
+        new_value = castToType(new_value);
 
     // If our previous value was valid and our new value is invalid,
     // mark valid = false and emit a changed signal.
@@ -161,6 +223,36 @@ void Datum::setText(std::string s)
     }
 }
 
+bool Datum::acceptsLink(Datum* upstream) const
+{
+    // If the types disagree, then we can't make a link
+    if (upstream->getType() != type)
+        return false;
+
+    // If we don't already have a link, then we can make one
+    if (!isLink())
+        return true;
+
+    // If we already have a link input and can't reduce, return false
+    if (reducers.count(type) == 0)
+        return false;
+
+    // Use a regex to find every uid.uid element in the list;
+    // if one matches, then return false.
+    static std::regex id_regex("__([0-9]+)\\.__([0-9]+)");
+    std::smatch match;
+    size_t index = 0;
+    while (std::regex_search(expr.substr(index), match, id_regex))
+    {
+        if (std::stoull(match[1]) == upstream->parent->uid &&
+            std::stoull(match[2]) == upstream->uid)
+            return false;
+        index += match[0].length();
+    }
+
+    return true;
+}
+
 bool Datum::allowLookupByUID() const
 {
     return isLink();
@@ -169,6 +261,11 @@ bool Datum::allowLookupByUID() const
 bool Datum::isLink() const
 {
     return !expr.empty() && (expr.front() == SIGIL_CONNECTION);
+}
+
+void Datum::installReducer(PyTypeObject* t, PyObject* f)
+{
+    reducers[t] = f;
 }
 
 /*

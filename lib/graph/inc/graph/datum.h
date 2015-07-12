@@ -5,6 +5,7 @@
 #include <string>
 #include <memory>
 #include <unordered_set>
+#include <unordered_map>
 #include <list>
 
 #include "graph/types/downstream.h"
@@ -70,8 +71,9 @@ public:
      */
     std::unordered_set<Datum*> getLinks() const { return links; }
 
-    static const char SIGIL_CONNECTION = '$';
-    static const char SIGIL_OUTPUT = '#';
+    static const char SIGIL_CONNECTION;
+    static const char SIGIL_OUTPUT;
+
 protected:
     /*
      *  When an upstream changes, call update.
@@ -105,6 +107,19 @@ protected:
      */
     bool isLink() const;
 
+    /*
+     *  Handles post-processing of a link value.
+     *
+     *  Returns a new value and a boolean indicating whether we recursed
+     *  again (so that we don't do post-processing in update).
+     */
+    std::pair<PyObject*, bool> checkLinkResult(PyObject* obj);
+
+    /*
+     *  Checks to see if we can accept the given link.
+     */
+    bool acceptsLink(Datum* upstream) const;
+
     const std::string name;
     const uint32_t uid;
 
@@ -136,6 +151,13 @@ protected:
      *  that mark it as special in some way (connection, output, etc).
      */
     static std::unordered_set<char> sigils;
+
+    /*
+     *  Functions used to reduce a list of linked inputs into a single value
+     *  (e.g. operator.or_ to combine a list of bitfields)
+     */
+    static std::unordered_map<PyTypeObject*, PyObject*> reducers;
+    static void installReducer(PyTypeObject* t, PyObject* f);
 
     friend class Node;
     friend class Proxy;
