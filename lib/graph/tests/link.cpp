@@ -29,7 +29,10 @@ TEST_CASE("Empty link pruning")
 
     auto g = new Graph();
     auto n = new Node("n", g);
-    auto x = new Datum("x", "$[]", &PyFloat_Type, n);
+    auto x = new Datum("x", "1.0", &PyFloat_Type, n);
+
+    // Set the expression to an empty list to force pruning
+    x->setText("$[]");
     REQUIRE(x->isValid() == true);
     REQUIRE(x->getLinks().size() == 0);
     REQUIRE(x->currentValue() != NULL);

@@ -103,8 +103,10 @@ std::pair<PyObject*, bool> Datum::checkLinkResult(PyObject* obj)
         // expression, assign it, and indicate that we recursed.
         if (PyList_Size(obj) == 0)
         {
+            assert(value);
             auto s = PyObject_Str(value);
             assert(!PyErr_Occurred());
+
             setText(std::string(PyUnicode_AsUTF8(s)));
             Py_DECREF(s);
             return std::pair<PyObject*, bool>(NULL, true);
