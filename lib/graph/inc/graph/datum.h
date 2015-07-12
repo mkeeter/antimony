@@ -71,6 +71,11 @@ public:
      */
     std::unordered_set<Datum*> getLinks() const { return links; }
 
+    /*
+     *  Checks to see if we can accept the given link.
+     */
+    bool acceptsLink(Datum* upstream) const;
+
     static const char SIGIL_CONNECTION;
     static const char SIGIL_OUTPUT;
 
@@ -114,11 +119,6 @@ protected:
      *  again (so that we don't do post-processing in update).
      */
     std::pair<PyObject*, bool> checkLinkResult(PyObject* obj);
-
-    /*
-     *  Checks to see if we can accept the given link.
-     */
-    bool acceptsLink(Datum* upstream) const;
 
     const std::string name;
     const uint32_t uid;

@@ -49,4 +49,45 @@ TEST_CASE("Link pruning on deletion")
     REQUIRE(y->getLinks().size() == 0);
     REQUIRE(y->currentValue() != NULL);
     REQUIRE(PyFloat_AsDouble(y->currentValue()) == 1.0);
+
+    delete g;
 }
+
+TEST_CASE("Type-based link acceptance")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    auto x = new Datum("x", "1.0", &PyFloat_Type, n);
+    auto y = new Datum("y", "'hi'", &PyUnicode_Type, n);
+    auto z = new Datum("z", "1.0", &PyFloat_Type, n);
+
+    REQUIRE(x->acceptsLink(z));
+    REQUIRE(!x->acceptsLink(y));
+
+    delete g;
+}
+
+TEST_CASE("Duplicate link rejection")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    auto x = new Datum("x", "1.0", &PyFloat_Type, n);
+    auto y = new Datum("y", "$[__0.__0]", &PyUnicode_Type, n);
+
+    REQUIRE(!y->acceptsLink(x));
+
+    delete g;
+}
+
+TEST_CASE("Recursive link rejection")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    auto x = new Datum("x", "1.0", &PyFloat_Type, n);
+    auto y = new Datum("y", "$[__0.__0]", &PyFloat_Type, n);
+
+    REQUIRE(!x->acceptsLink(x));
+    REQUIRE(!x->acceptsLink(y));
+    delete g;
+}
+
