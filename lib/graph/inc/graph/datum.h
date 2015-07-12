@@ -63,7 +63,7 @@ public:
      *
      *  Returns true on success, false on recursive lookup failure.
      */
-    bool addUpstream(const Datum* d);
+    bool addUpstream(Datum* d);
 
     /*
      *  Returns the set of incoming links.
@@ -99,6 +99,11 @@ protected:
      *  If this datum has a connection sigil, allow UID lookups.
      */
     bool allowLookupByUID() const override;
+
+    /*
+     *  Returns true if this expression is a connection.
+     */
+    bool isLink() const;
 
     const std::string name;
     const uint32_t uid;

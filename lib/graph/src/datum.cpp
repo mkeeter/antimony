@@ -65,8 +65,10 @@ PyObject* Datum::getValue()
     return out;
 }
 
-bool Datum::addUpstream(const Datum* d)
+bool Datum::addUpstream(Datum* d)
 {
+    if (isLink())
+        links.insert(d);
     sources.insert(d->sources.begin(), d->sources.end());
     return d->sources.find(this) == d->sources.end();
 }
@@ -160,6 +162,11 @@ void Datum::setText(std::string s)
 }
 
 bool Datum::allowLookupByUID() const
+{
+    return isLink();
+}
+
+bool Datum::isLink() const
 {
     return !expr.empty() && (expr.front() == SIGIL_CONNECTION);
 }

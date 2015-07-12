@@ -16,4 +16,8 @@ TEST_CASE("Link detection")
                        &PyFloat_Type, n);
     REQUIRE(y->isValid());
     REQUIRE(y->getLinks().count(x) == 1);
+
+    auto z = new Datum("z", "n.x", &PyFloat_Type, n);
+    REQUIRE(z->isValid());
+    REQUIRE(z->getLinks().count(x) == 0);
 }
