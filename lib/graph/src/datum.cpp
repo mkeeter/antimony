@@ -68,8 +68,6 @@ PyObject* Datum::getValue()
 
 bool Datum::addUpstream(Datum* d)
 {
-    if (isLink())
-        links.insert(d);
     sources.insert(d->sources.begin(), d->sources.end());
     return d->sources.find(this) == d->sources.end();
 }
@@ -92,25 +90,65 @@ PyObject* Datum::castToType(PyObject* value)
     return cast;
 }
 
-std::pair<PyObject*, bool> Datum::checkLinkResult(PyObject* obj)
+std::list<const Datum*> Datum::getLinks() const
+{
+    // Use a regex to find every uid.uid element in the list;
+    static std::regex id_regex("__([0-9]+)\\.__([0-9]+)");
+
+    std::smatch match;
+    size_t index = 0;
+    std::list<const Datum*> out;
+
+    while (std::regex_search(expr.substr(index), match, id_regex))
+    {
+        const uint64_t node_uid  = std::stoull(match[1]);
+        const uint64_t datum_uid = std::stoull(match[2]);
+
+        auto graph = parent->parent;
+        if (auto node = graph->getNode(node_uid))
+            if (auto datum = node->getDatum(datum_uid))
+                out.push_back(datum);
+
+        index += match[0].length();
+    }
+    return out;
+}
+
+void Datum::checkLinkExpression()
+{
+    // Update the expression by pruning deleted datums from the list
+    auto links = getLinks();
+
+    // If the list has been pruned down to emptiness, construct a new
+    // expression by calling 'str' on the existing value.
+    if (links.empty())
+    {
+        assert(value);
+        auto s = PyObject_Str(value);
+        assert(!PyErr_Occurred());
+
+        expr = std::string(PyUnicode_AsUTF8(s));
+    }
+    else
+    {
+        expr = SIGIL_CONNECTION + std::string("[");
+        for (auto d : links)
+        {
+            if (expr.back() != '[')
+                expr += ", ";
+            expr += "__" + std::to_string(d->parent->uid) +
+                   ".__" + std::to_string(d->uid);
+        }
+        expr += "]";
+    }
+}
+
+PyObject* Datum::checkLinkResult(PyObject* obj)
 {
     if (error.empty())
     {
         assert(obj != NULL);
         assert(PyList_Check(obj));
-
-        // If the list has been pruned down to emptiness, construct a new
-        // expression, assign it, and indicate that we recursed.
-        if (PyList_Size(obj) == 0)
-        {
-            assert(value);
-            auto s = PyObject_Str(value);
-            assert(!PyErr_Occurred());
-
-            setText(std::string(PyUnicode_AsUTF8(s)));
-            Py_DECREF(s);
-            return std::pair<PyObject*, bool>(NULL, true);
-        }
 
         // Get the first item from the list, then use the default reducer
         // function to fold all of the other items into it (if possible)
@@ -126,57 +164,35 @@ std::pair<PyObject*, bool> Datum::checkLinkResult(PyObject* obj)
             start = next;
         }
         Py_DECREF(obj);
-        return std::make_pair(start, false);
-    }
-    else if (error.find("is not defined") != std::string::npos)
-    {
-        assert(obj == NULL);
-
-        // Do a bit of string splicing to cut out the offending UIDs
-        size_t index = 2;
-        for (size_t i=0; i < links.size(); ++i)
-        {
-            const size_t found = expr.find(", ", index);
-            assert(found != std::string::npos);
-            index = found + 2;
-        }
-
-        size_t end = expr.find(", ", index);
-        end = (end == std::string::npos) ? expr.find("]") : (end + 2);
-
-        // Recurse, then return a tuple indicating that we recursed.
-        setText(expr.substr(0, index) + expr.substr(end));
-        return std::pair<PyObject*, bool>(NULL, true);
+        return start;
     }
     else
     {
-        return std::make_pair(obj, false);
+        assert(error.find("is invalid") != std::string::npos);
+        return obj;
     }
 }
 
 void Datum::update()
 {
+    // If this datum has links plugged in, prune the list of links to
+    // delist any that have been deleted.
+    if (isLink())
+        checkLinkExpression();
+
     // Cache the source list to detect if it has changed.
     const auto old_sources = sources;
 
     // Reset all of the variables that will be populated during evaluation
     sources.clear();
     sources.insert(this);
-    links.clear();
     error.clear();
 
     PyObject* new_value = getValue();
 
-    // Handle link results in a special way, handling disconnection,
-    // list pruning, and reducers.
+    // Handle link results in a special way (with indexing and reducing)
     if (isLink())
-    {
-        auto r = checkLinkResult(new_value);
-        if (r.second)
-            return;
-        else
-            new_value = r.first;
-    }
+        new_value = checkLinkResult(new_value);
 
     // Check output types and cast if necessary
     if (new_value && new_value->ob_type != type)

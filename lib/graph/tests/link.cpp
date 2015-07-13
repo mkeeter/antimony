@@ -15,12 +15,13 @@ TEST_CASE("Link detection")
     auto n = new Node("n", g);
     auto x = new Datum("x", "1.0", &PyFloat_Type, n);
     auto y = new Datum("y", "$[__0.__0]", &PyFloat_Type, n);
-    REQUIRE(y->isValid());
-    REQUIRE(y->getLinks().count(x) == 1);
-
     auto z = new Datum("z", "n.x", &PyFloat_Type, n);
+    REQUIRE(y->isValid());
     REQUIRE(z->isValid());
-    REQUIRE(z->getLinks().count(x) == 0);
+
+    auto links = y->getLinks();
+    REQUIRE(std::find(links.begin(), links.end(), x) != links.end());
+    REQUIRE(std::find(links.begin(), links.end(), z) == links.end());
 }
 
 TEST_CASE("Empty link pruning")

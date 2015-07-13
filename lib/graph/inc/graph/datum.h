@@ -59,17 +59,17 @@ public:
     bool hasInput() const;
 
     /*
-     *  Registers d as an upstream datum, loading it into sources and links
-     *  (if a connection SIGIL is present).
+     *  Registers d as an upstream datum, loading it into sources
      *
      *  Returns true on success, false on recursive lookup failure.
      */
     bool addUpstream(Datum* d);
 
     /*
-     *  Returns the set of incoming links.
+     *  Returns the set of incoming links
+     *  (found by parsing the expression)
      */
-    std::unordered_set<const Datum*> getLinks() const { return links; }
+    std::list<const Datum*> getLinks() const;
 
     /*
      *  Checks to see if we can accept the given link.
@@ -115,10 +115,17 @@ protected:
     /*
      *  Handles post-processing of a link value.
      *
-     *  Returns a new value and a boolean indicating whether we recursed
-     *  again (so that we don't do post-processing in update).
+     *  Returns a new value (from extraction or reduction)
      */
-    std::pair<PyObject*, bool> checkLinkResult(PyObject* obj);
+    PyObject* checkLinkResult(PyObject* obj);
+
+    /*
+     *  Updates the expression by pruning invalid links and
+     *  collapsing to a single value if the list ends up empty.
+     *
+     *  The expression must begin with SIGIL_CONNECTION.
+     */
+    void checkLinkExpression();
 
     const std::string name;
     const uint32_t uid;
@@ -139,12 +146,6 @@ protected:
      *  this datum to be activated.  It is used to detect recursive loops.
      */
     std::unordered_set<const Datum*> sources;
-
-    /*
-     *  If the datum text string begins with SIGIL_CONNECTION, then
-     *  track incoming links in this set.
-     */
-    std::unordered_set<const Datum*> links;
 
     /*
      *  Sigils are single characters at the beginning of an expression

@@ -96,7 +96,7 @@ public:
         static std::regex r("__([0-9]+)");
         std::smatch match;
         if (std::regex_match(n, match, r))
-            return getByUID(std::stoi(match[1]), ts);
+            return getByUID(std::stoull(match[1]), ts);
         else
             return getByName(n, ts);
     }
