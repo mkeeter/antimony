@@ -1,0 +1,20 @@
+# Neil Gershenfeld 7/12/15
+
+import fab
+from fab.types import Shape
+
+title('Slice yz')
+
+def slice_yz(shape,x):
+    slice_math = shape.math.replace('X','f('+str(x)+')')
+    slice_math = slice_math.replace('Y','X')
+    slice_math = slice_math.replace('Z','Y')
+    return Shape(slice_math,
+       shape.bounds.ymin,shape.bounds.zmin,
+       shape.bounds.ymax,shape.bounds.zmax)
+
+input('shape',fab.types.Shape)
+input('x',float,0)
+
+output('slice',slice_yz(shape,x))
+
