@@ -288,20 +288,9 @@ bool Datum::acceptsLink(const Datum* upstream) const
     if (reducers.count(type) == 0)
         return false;
 
-    // Use a regex to find every uid.uid element in the list;
-    // if one matches, then return false.
-    static std::regex id_regex("__([0-9]+)\\.__([0-9]+)");
-    std::smatch match;
-    size_t index = 0;
-    while (std::regex_search(expr.substr(index), match, id_regex))
-    {
-        if (std::stoull(match[1]) == upstream->parent->uid &&
-            std::stoull(match[2]) == upstream->uid)
-            return false;
-        index += match[0].length();
-    }
-
-    return true;
+    // Otherwise, return true if we don't already a link to this datum.
+    auto links = getLinks();
+    return std::find(links.begin(), links.end(), upstream) == links.end();
 }
 
 bool Datum::allowLookupByUID() const
