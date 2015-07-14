@@ -137,5 +137,6 @@ TEST_CASE("Link installation with reducer")
     REQUIRE(std::find(links.begin(), links.end(), x) != links.end());
     REQUIRE(std::find(links.begin(), links.end(), y) != links.end());
 
+    Datum::clearReducers();
     delete g;
 }
