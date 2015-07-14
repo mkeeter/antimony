@@ -5,6 +5,7 @@
 #include <string>
 #include <memory>
 #include <unordered_set>
+#include <unordered_map>
 #include <list>
 
 #include "graph/types/downstream.h"
@@ -57,8 +58,41 @@ public:
      */
     bool hasInput() const;
 
-    static const char SIGIL_CONNECTION = '$';
-    static const char SIGIL_OUTPUT = '#';
+    /*
+     *  Registers d as an upstream datum, loading it into sources
+     *
+     *  Returns true on success, false on recursive lookup failure.
+     */
+    bool addUpstream(Datum* d);
+
+    /*
+     *  Returns the set of incoming links
+     *  (found by parsing the expression)
+     */
+    std::list<const Datum*> getLinks() const;
+
+    /*
+     *  Checks to see if we can accept the given link.
+     */
+    bool acceptsLink(const Datum* upstream) const;
+
+    /*
+     *  Installs the given datum as an upstream link.
+     */
+    void installLink(const Datum* upstream);
+
+    /*
+     *  Sets up a global reducer function
+     *  (used to reduce multiple inputs into a single value)
+     *
+     *  This should only be called once, in application setup.
+     */
+    static void installReducer(PyTypeObject* t, PyObject* f);
+    static void clearReducers() { reducers.clear(); }
+
+    static const char SIGIL_CONNECTION;
+    static const char SIGIL_OUTPUT;
+
 protected:
     /*
      *  When an upstream changes, call update.
@@ -87,6 +121,26 @@ protected:
      */
     bool allowLookupByUID() const override;
 
+    /*
+     *  Returns true if this expression is a connection.
+     */
+    bool isLink() const;
+
+    /*
+     *  Handles post-processing of a link value.
+     *
+     *  Returns a new value (from extraction or reduction)
+     */
+    PyObject* checkLinkResult(PyObject* obj);
+
+    /*
+     *  Updates the expression by pruning invalid links and
+     *  collapsing to a single value if the list ends up empty.
+     *
+     *  The expression must begin with SIGIL_CONNECTION.
+     */
+    void checkLinkExpression();
+
     const std::string name;
     const uint32_t uid;
 
@@ -105,13 +159,19 @@ protected:
      *  This set represents any source whose modification could cause
      *  this datum to be activated.  It is used to detect recursive loops.
      */
-    std::unordered_set<Datum*> sources;
+    std::unordered_set<const Datum*> sources;
 
     /*
      *  Sigils are single characters at the beginning of an expression
      *  that mark it as special in some way (connection, output, etc).
      */
     static std::unordered_set<char> sigils;
+
+    /*
+     *  Functions used to reduce a list of linked inputs into a single value
+     *  (e.g. operator.or_ to combine a list of bitfields)
+     */
+    static std::unordered_map<PyTypeObject*, PyObject*> reducers;
 
     friend class Node;
     friend class Proxy;

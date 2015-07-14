@@ -28,6 +28,17 @@ TEST_CASE("Datum evaluation")
     delete g;
 }
 
+TEST_CASE("Datum validity changes")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    auto x = new Datum("x", "1.q", &PyFloat_Type, n);
+    REQUIRE(x->isValid() == false);
+    x->setText("1.0");
+    REQUIRE(x->isValid() == true);
+    REQUIRE(x->getError() == "");
+}
+
 TEST_CASE("Valid datum lookup")
 {
     auto g = new Graph();
@@ -116,13 +127,15 @@ TEST_CASE("Recursive lookup")
 
 TEST_CASE("UID lookup")
 {
+    REQUIRE(Datum::SIGIL_CONNECTION == '$');
+
     auto g = new Graph();
     auto n = new Node("n", g);
     auto x = new Datum("x", "1.0", &PyFloat_Type, n);
 
     SECTION("Allowed")
     {
-        auto y = new Datum("y", "$__0.__0", &PyFloat_Type, n);
+        auto y = new Datum("y", "$[__0.__0]", &PyFloat_Type, n);
         CAPTURE(y->getError());
         REQUIRE(y->isValid() == true);
         REQUIRE(y->currentValue() != NULL);
@@ -143,10 +156,12 @@ TEST_CASE("UID lookup")
 
 TEST_CASE("UID changes")
 {
+    REQUIRE(Datum::SIGIL_CONNECTION == '$');
+
     auto g = new Graph();
     auto n = new Node("n", g);
     auto x = new Datum("x", "1.0", &PyFloat_Type, n);
-    auto y = new Datum("y", "$__0.__0", &PyFloat_Type, n);
+    auto y = new Datum("y", "$[__0.__0]", &PyFloat_Type, n);
     x->setText("2.0");
 
     CAPTURE(y->getError());

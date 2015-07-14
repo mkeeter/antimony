@@ -33,6 +33,11 @@ public:
     Graph* parentGraph() const { return parent; }
 
     /*
+     *  Looks up a node by UID.
+     */
+    Datum* getDatum(uint32_t uid) const { return Root::getByUID(uid, datums); }
+
+    /*
      *  Look up the node's name.
      */
     std::string getName() const { return name; }

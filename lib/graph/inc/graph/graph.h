@@ -34,6 +34,11 @@ public:
     void uninstall(Node* n);
 
     /*
+     *  Looks up a node by UID.
+     */
+    Node* getNode(uint32_t uid) const { return Root::getByUID(uid, nodes); }
+
+    /*
      *  Returns a Proxy object that uses this graph as its root,
      *  the given Node as its locals dictionary, and the given
      *  Downstream as the caller.
