@@ -171,7 +171,7 @@ PyObject* Datum::checkLinkResult(PyObject* obj)
         for (int i=1; i < PyList_Size(obj); ++i)
         {
             auto next = PyObject_CallFunctionObjArgs(
-                    reducers[type], start, PyList_GetItem(obj, i));
+                    reducers[type], start, PyList_GetItem(obj, i), NULL);
             Py_DECREF(start);
             start = next;
         }
