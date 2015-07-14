@@ -74,7 +74,18 @@ public:
     /*
      *  Checks to see if we can accept the given link.
      */
-    bool acceptsLink(Datum* upstream) const;
+    bool acceptsLink(const Datum* upstream) const;
+
+    /*
+     *  Installs the given datum as an upstream link.
+     */
+    void installLink(const Datum* upstream);
+
+    /*
+     *  Sets up a global reducer function
+     *  (used to reduce multiple inputs into a single value)
+     */
+    static void installReducer(PyTypeObject* t, PyObject* f);
 
     static const char SIGIL_CONNECTION;
     static const char SIGIL_OUTPUT;
@@ -158,7 +169,6 @@ protected:
      *  (e.g. operator.or_ to combine a list of bitfields)
      */
     static std::unordered_map<PyTypeObject*, PyObject*> reducers;
-    static void installReducer(PyTypeObject* t, PyObject* f);
 
     friend class Node;
     friend class Proxy;

@@ -92,3 +92,46 @@ TEST_CASE("Recursive link rejection")
     delete g;
 }
 
+TEST_CASE("Link installation")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    auto x = new Datum("x", "2.0", &PyFloat_Type, n);
+    auto y = new Datum("y", "3.0", &PyFloat_Type, n);
+    auto z = new Datum("z", "0.0", &PyFloat_Type, n);
+
+    REQUIRE(z->acceptsLink(x));
+    z->installLink(x);
+
+    REQUIRE(z->getText() == "$[__0.__0]");
+    REQUIRE(z->isValid() == true);
+    REQUIRE(z->currentValue() != NULL);
+    REQUIRE(PyFloat_AsDouble(z->currentValue()) == 2.0);
+
+    REQUIRE(!z->acceptsLink(y));
+    delete g;
+}
+
+TEST_CASE("Link installation with reducer")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    auto x = new Datum("x", "2.0", &PyFloat_Type, n);
+    auto y = new Datum("y", "3.0", &PyFloat_Type, n);
+    auto z = new Datum("z", "0.0", &PyFloat_Type, n);
+
+    auto op = PyImport_ImportModule("operator");
+    Datum::installReducer(&PyFloat_Type, PyObject_GetAttrString(op, "mul"));
+    Py_DECREF(op);
+
+    z->installLink(x);
+
+    REQUIRE(z->acceptsLink(y));
+    z->installLink(y);
+
+    REQUIRE(z->isValid() == true);
+    REQUIRE(z->currentValue() != NULL);
+    REQUIRE(PyFloat_AsDouble(z->currentValue()) == 6.0);
+
+    delete g;
+}

@@ -143,6 +143,18 @@ void Datum::checkLinkExpression()
     }
 }
 
+void Datum::installLink(const Datum* upstream)
+{
+    assert(acceptsLink(upstream));
+
+    std::string id = "__" +  std::to_string(upstream->parent->uid) +
+                    ".__" + std::to_string(upstream->uid);
+    if (isLink())
+        setText(expr.substr(0, expr.size() - 1) + ", " + id + "]");
+    else
+        setText(SIGIL_CONNECTION + ("[" + id + "]"));
+}
+
 PyObject* Datum::checkLinkResult(PyObject* obj)
 {
     if (error.empty())
@@ -258,7 +270,7 @@ void Datum::setText(std::string s)
     }
 }
 
-bool Datum::acceptsLink(Datum* upstream) const
+bool Datum::acceptsLink(const Datum* upstream) const
 {
     // If the types disagree, then we can't make a link
     if (upstream->getType() != type)
