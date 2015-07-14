@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "graph/types/root.h"
+#include "graph/node.h"
 #include "graph/watchers.h"
 
 class Node;
