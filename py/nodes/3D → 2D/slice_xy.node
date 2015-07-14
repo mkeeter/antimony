@@ -6,8 +6,7 @@ from fab.types import Shape
 title('Slice xy')
 
 def slice_xy(shape,z):
-    slice_math = shape.math.replace('Z','f('+str(z)+')')
-    return Shape(slice_math,
+    return Shape(('mXYf%g' % z) + shape.math,
        shape.bounds.xmin,shape.bounds.ymin,
        shape.bounds.xmax,shape.bounds.ymax)
 
