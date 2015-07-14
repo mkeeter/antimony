@@ -133,5 +133,9 @@ TEST_CASE("Link installation with reducer")
     REQUIRE(z->currentValue() != NULL);
     REQUIRE(PyFloat_AsDouble(z->currentValue()) == 6.0);
 
+    auto links = z->getLinks();
+    REQUIRE(std::find(links.begin(), links.end(), x) != links.end());
+    REQUIRE(std::find(links.begin(), links.end(), y) != links.end());
+
     delete g;
 }
