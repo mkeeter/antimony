@@ -203,6 +203,17 @@ TEST_CASE("Removing datum from script")
     delete g;
 }
 
+TEST_CASE("Many datums")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    n->setScript("input('x', float)\n"
+                 "input('y', float)\n"
+                 "input('z', float)");
+    REQUIRE(n->getErrorLine() == -1);
+    delete g;
+}
+
 TEST_CASE("Datum removal triggering update")
 {
     auto g = new Graph();
