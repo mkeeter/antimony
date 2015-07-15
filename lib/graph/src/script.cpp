@@ -13,6 +13,7 @@ Script::Script(Node* parent)
 
 void Script::update()
 {
+    const auto old_active = active;
     active.clear();
     error_lineno = -1;
     error.clear();
@@ -61,8 +62,10 @@ void Script::update()
     std::regex input("(.*input\\([^(),]+,[^(),]+),[^(),]+(\\).*)");
     script = std::regex_replace(script, input, "$1$2");
 
-    // If the script was correctly evaluated, ask the parent to prune
-    // its Datum list based on which are still active.
-    if (error_lineno == -1)
-        parent->update(active);
+    // If the script evaluation failed, recover the old set of active datums.
+    // (so that we don't delete datums on script errors)
+    if (error_lineno != -1)
+        active.insert(old_active.begin(), old_active.end());
+
+    parent->update(active);
 }
