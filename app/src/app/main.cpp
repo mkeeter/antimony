@@ -28,6 +28,13 @@ int main(int argc, char *argv[])
     Graph::preInit();
     Py_Initialize();
 
+    // Install operator.or_ as a reducer for shapes
+    {
+        auto op = PyImport_ImportModule("operator");
+        Datum::installReducer(fab::ShapeType, PyObject_GetAttrString(op, "or_"));
+        Py_DECREF(op);
+    }
+
     // Create the Application object
     App a(argc, argv);
 

@@ -9,6 +9,9 @@ LIBS += -L../lib/fab -lSbFab -L../lib/graph -lSbGraph
 INCLUDEPATH += ../lib/fab/inc
 INCLUDEPATH += ../lib/graph/inc
 
+PRE_TARGETDEPS += ../lib/graph/libSbGraph.a
+PRE_TARGETDEPS += ../lib/fab/libSbFab.a
+
 include(../qt/common.pri)
 include(../qt/python.pri)
 include(../qt/libpng.pri)
