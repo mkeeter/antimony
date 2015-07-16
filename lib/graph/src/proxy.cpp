@@ -3,6 +3,7 @@
 #include "graph/node.h"
 #include "graph/types/root.h"
 #include "graph/hooks/hooks.h"
+#include "graph/hooks/external.h"
 
 using namespace boost::python;
 
@@ -94,7 +95,8 @@ void Proxy::setAttr(std::string name, object obj)
 }
 */
 
-PyObject* Proxy::makeProxyFor(Root* r, Node* locals, Downstream* caller)
+PyObject* Proxy::makeProxyFor(Root* r, Node* locals, Downstream* caller,
+                              ExternalHooks* external)
 {
     // Get Python object constructor (with lazy initialization)
     if (proxy_init == NULL)
@@ -123,6 +125,8 @@ PyObject* Proxy::makeProxyFor(Root* r, Node* locals, Downstream* caller)
         PyDict_SetItemString(p_->dict, "math", PyImport_ImportModule("math"));
 
         Hooks::load(p_->dict, locals);
+        if (external)
+            external->load(p_->dict, locals);
     }
     return p;
 }

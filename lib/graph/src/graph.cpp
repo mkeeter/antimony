@@ -14,7 +14,7 @@ Graph::Graph(std::string n, Graph* parent)
 
 PyObject* Graph::proxyDict(Node* locals, Downstream* caller)
 {
-    return Proxy::makeProxyFor(this, locals, caller);
+    return Proxy::makeProxyFor(this, locals, caller, external.get());
 }
 
 void Graph::triggerWatchers() const

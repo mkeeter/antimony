@@ -9,6 +9,8 @@
 #include "graph/node.h"
 #include "graph/watchers.h"
 
+#include "hooks/external.h"
+
 class Node;
 class GraphWatcher;
 
@@ -61,6 +63,11 @@ public:
      */
     GraphState getState() const;
 
+    /*
+     *  Installs an ExternalHooks object (used in dictionary generation)
+     */
+    void installExternalHooks(ExternalHooks* h) { external.reset(h); }
+
     /* Root functions */
     bool topLevel() const override { return parent == NULL; }
     PyObject* pyGetAttr(std::string name, Downstream* caller) const override;
@@ -80,4 +87,5 @@ protected:
     std::list<std::unique_ptr<Node>> nodes;
 
     std::list<GraphWatcher*> watchers;
+    std::unique_ptr<ExternalHooks> external;
 };

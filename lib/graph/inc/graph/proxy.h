@@ -5,6 +5,7 @@
 class Root;
 class Node;
 class Downstream;
+class ExternalHooks;
 
 class Proxy
 {
@@ -31,7 +32,22 @@ public:
     };
     static void onException(const Exception& e);
     static void preInit();
-    static PyObject* makeProxyFor(Root* r, Node* locals, Downstream* caller);
+
+    /*
+     *  Constructs a Proxy dictionary for the given root.
+     *
+     *  Lookups will check the root, then locals, and will be marked as being
+     *  made by the given Downstream object.
+     *
+     *  If the root is a top-level object, a dictionary will be constructed
+     *  (for script evaluation, which may involve storing variables)
+     *
+     *  If an ExternalHooks pointer is provided, its 'load' function will
+     *  be called (giving it the chance to inject variables into the
+     *  dictionary)
+     */
+    static PyObject* makeProxyFor(Root* r, Node* locals, Downstream* caller,
+                                  ExternalHooks* external=NULL);
 
     /*
      *  Returns a new reference to the dict object of the given proxy
