@@ -49,7 +49,7 @@ std::string Shape::repr() const
         "float('" +std::to_string(bounds.zmin) + "')," +
         "float('" +std::to_string(bounds.xmax) + "')," +
         "float('" +std::to_string(bounds.ymax) + "')," +
-        "float('" +std::to_string(bounds.zmax) + "')";
+        "float('" +std::to_string(bounds.zmax) + "'))";
 }
 
 Shape::Shape(std::string math)
