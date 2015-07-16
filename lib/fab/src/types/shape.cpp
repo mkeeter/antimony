@@ -40,6 +40,18 @@ Shape::Shape(boost::python::object obj)
     }
 }
 
+std::string Shape::repr() const
+{
+    return "fab.types.Shape('" +
+        math + "'," +
+        std::to_string(bounds.xmin) + "," +
+        std::to_string(bounds.ymin) + "," +
+        std::to_string(bounds.zmin) + "," +
+        std::to_string(bounds.xmax) + "," +
+        std::to_string(bounds.ymax) + "," +
+        std::to_string(bounds.zmax) + ")";
+}
+
 Shape::Shape(std::string math)
     : Shape(math, Bounds())
 {

@@ -124,7 +124,7 @@ void Datum::checkLinkExpression()
     if (links.empty())
     {
         assert(value);
-        auto s = PyObject_Str(value);
+        auto s = PyObject_Repr(value);
         assert(!PyErr_Occurred());
 
         expr = std::string(PyUnicode_AsUTF8(s));

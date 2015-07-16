@@ -47,6 +47,7 @@ BOOST_PYTHON_MODULE(_fabtypes)
             .def_readwrite("_g", &Shape::g)
             .def_readwrite("_b", &Shape::b)
             .def("map", &Shape::map)
+            .def("__repr__", &Shape::repr)
             .def(self & self)
             .def(self | self)
             .def(~self);

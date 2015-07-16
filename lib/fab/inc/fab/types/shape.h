@@ -23,6 +23,7 @@ struct Shape
     Shape(std::string math, float xmin, float ymin, float zmin,
               float xmax, float ymax, float zmax);
     Shape(std::string math, Bounds bounds);
+    std::string repr() const;
 
     /** Returns a new shape with re-mapped coordinates and bounds. */
     Shape map(Transform t) const;
