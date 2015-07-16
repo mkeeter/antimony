@@ -4,25 +4,27 @@
 #include <Python.h>
 #include <string>
 
-class ScriptDatum;
+#include "graph/hooks/external.h"
 
-namespace AppHooks {
+class Node;
 
-    struct HookException
+class AppHooks : public ExternalHooks
+{
+public:
+    struct Exception
     {
-        HookException(std::string m) : message(m) {}
+        Exception(std::string m) : message(m) {}
         std::string message;
     };
 
-    void onHookException(const HookException& e);
-    void preInit();
+    static void onException(const Exception& e);
+    static void preInit();
 
     /*
      *  Loads input, output, and title hooks into the given globals
-     *  dictionary (with callbacks pointing to the given datum).
+     *  dictionary (with callbacks pointing to the given Node).
      */
-    void loadHooks(PyObject* g, ScriptDatum* d);
-}
-
+    void load(PyObject* g, Node* n) override;
+};
 
 #endif

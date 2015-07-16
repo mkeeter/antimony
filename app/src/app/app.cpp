@@ -18,6 +18,8 @@
 #include "app/undo/stack.h"
 #include "app/undo/undo_command.h"
 
+#include "graph/hooks/hooks.h"
+
 #include "ui/dialogs/resolution_dialog.h"
 #include "ui/dialogs/exporting_dialog.h"
 
@@ -47,6 +49,8 @@ App::App(int& argc, char** argv) :
     stack(NULL), network(new QNetworkAccessManager(this))
 {
     setGlobalStyle();
+
+    root->installExternalHooks(new AppHooks());
 
     // When the clean flag on the undo stack changes, update window titles
     connect(stack, &QUndoStack::cleanChanged,

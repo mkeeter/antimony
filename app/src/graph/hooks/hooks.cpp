@@ -2,28 +2,32 @@
 #include <boost/python/raw_function.hpp>
 
 #include "graph/hooks/hooks.h"
+/*
 #include "graph/hooks/title.h"
 #include "graph/hooks/ui.h"
 #include "graph/hooks/export.h"
+*/
 
-#include "graph/datum/datums/script_datum.h"
-#include "graph/node/node.h"
+#include "graph/node.h"
 
 #include "app/app.h"
 
 // Unfortunate coupling of core UI code, but this is
 // necessary to properly set up the export button hooks.
+/*
 #include "ui/canvas/graph_scene.h"
 #include "ui/canvas/inspector/inspector_buttons.h"
 #include "ui/canvas/inspector/inspector.h"
+*/
 
 using namespace boost::python;
 
-void AppHooks::onHookException(const AppHooks::HookException& e)
+void AppHooks::onException(const AppHooks::Exception& e)
 {
     PyErr_SetString(PyExc_RuntimeError, e.message.c_str());
 }
 
+/*
 BOOST_PYTHON_MODULE(_AppHooks)
 {
     class_<ScriptTitleHook>("ScriptTitleHook", init<>())
@@ -93,9 +97,11 @@ void AppHooks::preInit()
 {
     PyImport_AppendInittab("_AppHooks", PyInit__AppHooks);
 }
+*/
 
-void AppHooks::loadHooks(PyObject* g, ScriptDatum* d)
+void AppHooks::load(PyObject* g, Node* n)
 {
+    /*
     // Lazy initialization of hooks module
     static PyObject* hooks_module = NULL;
     if (hooks_module == NULL)
@@ -137,4 +143,6 @@ void AppHooks::loadHooks(PyObject* g, ScriptDatum* d)
     PyObject* sb = PyObject_CallFunctionObjArgs(
             sb_tuple, ui_obj, export_obj, NULL);
     PyDict_SetItemString(g, "sb", sb);
+    */
+    PyRun_String("import fab", Py_file_input, g, g);
 }
