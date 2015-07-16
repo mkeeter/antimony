@@ -31,13 +31,19 @@ PyObject* Proxy::getAttr(std::string name)
     if (dict)
     {
         if (auto v = PyDict_GetItemString(dict, name.c_str()))
+        {
+            Py_INCREF(v);
             return v;
+        }
         PyErr_Clear();
 
         // Look for this symbol in the builtins dictionary
         auto b = PyDict_GetItemString(dict, "__builtins__");
         if (auto v = PyDict_GetItemString(b, name.c_str()))
+        {
+            Py_INCREF(v);
             return v;
+        }
         PyErr_Clear();
     }
 

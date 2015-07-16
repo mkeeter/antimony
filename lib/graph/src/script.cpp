@@ -43,7 +43,7 @@ void Script::update()
         PyErr_Clear();
     }
 
-    Py_DECREF(globals);
+    // We don't need to decref globals because it's borrowed from locals
     Py_DECREF(locals);
 
     // Get the output from the StringIO object
