@@ -1,10 +1,8 @@
 #include "graph/hooks/title.h"
-#include "graph/hooks/hooks.h"
-
-#include "graph/datum/datums/script_datum.h"
+#include "ui/canvas/inspector/inspector.h"
 
 void ScriptTitleHook::call(std::string name)
 {
-    if (datum)
-        datum->setTitle(QString::fromStdString(name));
+    if (inspector)
+        inspector->setTitle(QString::fromStdString(name));
 }

@@ -68,6 +68,13 @@ QRectF InspectorTitle::boundingRect() const
     return QRectF(0, 0, width, height);
 }
 
+void InspectorTitle::setTitle(QString t)
+{
+    title->setPlainText(t);
+    if (updateLayout())
+        emit(layoutChanged());
+}
+
 float InspectorTitle::minWidth() const
 {
     float width = name->boundingRect().width() + 20 // padding

@@ -50,7 +50,7 @@ App::App(int& argc, char** argv) :
 {
     setGlobalStyle();
 
-    root->installExternalHooks(new AppHooks());
+    root->installExternalHooks(new AppHooks(graph_scene));
 
     // When the clean flag on the undo stack changes, update window titles
     connect(stack, &QUndoStack::cleanChanged,

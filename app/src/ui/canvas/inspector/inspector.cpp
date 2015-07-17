@@ -315,6 +315,11 @@ bool NodeInspector::isDatumHidden(Datum* d) const
     return false;
 }
 
+void NodeInspector::setTitle(QString title)
+{
+    title_row->setTitle(title);
+}
+
 void NodeInspector::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     if (dragging)

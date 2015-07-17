@@ -56,6 +56,8 @@ public:
 
     bool isDatumHidden(Datum* d) const;
 
+    void setTitle(QString title);
+
 signals:
     void moved();
     void hiddenChanged();

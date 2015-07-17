@@ -15,6 +15,7 @@ class InspectorTitle : public QGraphicsObject
 public:
     explicit InspectorTitle(Node* n, NodeInspector* parent);
     QRectF boundingRect() const override;
+    void setTitle(QString t);
 
     template <typename T> T* getButton() const
     {

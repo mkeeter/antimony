@@ -2,8 +2,9 @@
 #include <boost/python/raw_function.hpp>
 
 #include "graph/hooks/hooks.h"
-/*
 #include "graph/hooks/title.h"
+#include "ui/canvas/graph_scene.h"
+/*
 #include "graph/hooks/ui.h"
 #include "graph/hooks/export.h"
 */
@@ -27,12 +28,11 @@ void AppHooks::onException(const AppHooks::Exception& e)
     PyErr_SetString(PyExc_RuntimeError, e.message.c_str());
 }
 
-/*
 BOOST_PYTHON_MODULE(_AppHooks)
 {
     class_<ScriptTitleHook>("ScriptTitleHook", init<>())
         .def("__call__", &ScriptTitleHook::call);
-
+/*
     class_<ScriptUIHooks>("ScriptUIHooks", init<>())
         .def("point", raw_function(&ScriptUIHooks::point),
                 "point(x, y, z, r=5, color=(150, 150, 255), drag=None)\n"
@@ -88,25 +88,29 @@ BOOST_PYTHON_MODULE(_AppHooks)
                 "      If None, a dialog will open to select the resolution.\n"
                 "    mm_per_unit maps Antimony to real-world units."
                 );
+                */
 
-    register_exception_translator<AppHooks::HookException>(
-            AppHooks::onHookException);
+    register_exception_translator<AppHooks::Exception>(
+            AppHooks::onException);
 }
 
 void AppHooks::preInit()
 {
     PyImport_AppendInittab("_AppHooks", PyInit__AppHooks);
 }
-*/
 
 void AppHooks::load(PyObject* g, Node* n)
 {
-    /*
     // Lazy initialization of hooks module
     static PyObject* hooks_module = NULL;
     if (hooks_module == NULL)
         hooks_module = PyImport_ImportModule("_hooks");
 
+    auto title_func = PyObject_CallMethod(
+            hooks_module, "ScriptTitleHook", NULL);
+    extract<ScriptTitleHook&>(title_func)().inspector = scene->getInspector(n);
+    PyDict_SetItemString(g, "title", title_func);
+    /*
     // Lazy initialization of named tuple constructor
     static PyObject* sb_tuple = NULL;
     if (sb_tuple == NULL)
@@ -117,14 +121,11 @@ void AppHooks::load(PyObject* g, Node* n)
         Py_DECREF(collections);
     }
 
-    auto title_func = PyObject_CallMethod(
-            hooks_module, "ScriptTitleHook", NULL);
     auto ui_obj = PyObject_CallMethod(
             hooks_module, "ScriptUIHooks", NULL);
     auto export_obj = PyObject_CallMethod(
             hooks_module, "ScriptExportHooks", NULL);
 
-    extract<ScriptTitleHook&>(title_func)().datum = d;
 
     auto node = static_cast<Node*>(d->parent());
     extract<ScriptUIHooks&>(ui_obj)().scene = App::instance()->getViewScene();
@@ -139,7 +140,6 @@ void AppHooks::load(PyObject* g, Node* n)
         extract<ScriptExportHooks&>(meta_obj)().button = export_button;
     }
 
-    PyDict_SetItemString(g, "title", title_func);
     PyObject* sb = PyObject_CallFunctionObjArgs(
             sb_tuple, ui_obj, export_obj, NULL);
     PyDict_SetItemString(g, "sb", sb);

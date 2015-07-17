@@ -4,7 +4,7 @@ SOURCES += \
     #src/graph/hooks/ui.cpp \
     src/graph/hooks/hooks.cpp \
     #src/graph/hooks/meta.cpp \
-    #src/graph/hooks/title.cpp \
+    src/graph/hooks/title.cpp \
 
 HEADERS += \
     #src/graph/node/serializer.h \
@@ -12,5 +12,5 @@ HEADERS += \
     #src/graph/hooks/ui.h \
     src/graph/hooks/hooks.h \
     #src/graph/hooks/meta.h \
-    #src/graph/hooks/title.h \
+    src/graph/hooks/title.h \
 

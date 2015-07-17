@@ -4,15 +4,14 @@
 #include <boost/python.hpp>
 
 class ScriptDatum;
+class NodeInspector;
 
 struct ScriptTitleHook
 {
-    ScriptTitleHook() : datum(NULL) {}
-    ScriptTitleHook(ScriptDatum* d) : datum(d) {}
-
+    ScriptTitleHook() : inspector(NULL) {}
     void call(std::string name);
 
-    ScriptDatum* datum;
+    NodeInspector* inspector;
 };
 
 #endif

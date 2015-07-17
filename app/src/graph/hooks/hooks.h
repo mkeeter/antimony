@@ -7,10 +7,13 @@
 #include "graph/hooks/external.h"
 
 class Node;
+class GraphScene;
 
 class AppHooks : public ExternalHooks
 {
 public:
+    AppHooks(GraphScene* g) : scene(g) {}
+
     struct Exception
     {
         Exception(std::string m) : message(m) {}
@@ -25,6 +28,9 @@ public:
      *  dictionary (with callbacks pointing to the given Node).
      */
     void load(PyObject* g, Node* n) override;
+
+protected:
+    GraphScene* scene;
 };
 
 #endif
