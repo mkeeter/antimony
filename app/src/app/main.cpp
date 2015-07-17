@@ -12,6 +12,7 @@
 #include "app/app.h"
 #include "fab/fab.h"
 #include "graph/graph.h"
+#include "graph/hooks/hooks.h"
 
 int main(int argc, char *argv[])
 {
@@ -26,6 +27,7 @@ int main(int argc, char *argv[])
     // Initialize the _fabtypes Python package and the Python interpreter
     fab::preInit();
     Graph::preInit();
+    AppHooks::preInit();
     Py_Initialize();
 
     // Install operator.or_ as a reducer for shapes

@@ -70,6 +70,14 @@ void GraphScene::makeUIfor(Node* n)
                           i->boundingRect().height()/2));
     }
 
+    // If we've cached a title (e.g. because a Node called title
+    // before its inspector was created), assign it here.
+    if (title_cache.contains(n))
+    {
+        i->setTitle(title_cache[n]);
+        title_cache.remove(n);
+    }
+
     connect(i, &NodeInspector::glowChanged,
             this, &GraphScene::onGlowChange);
     connect(i, &NodeInspector::glowChanged,
@@ -105,6 +113,14 @@ T* GraphScene::getItemAt(QPointF pos) const
         if (auto p = dynamic_cast<T*>(i))
             return p;
     return NULL;
+}
+
+void GraphScene::setTitle(Node* node, QString title)
+{
+    if (inspectors.contains(node))
+        inspectors[node]->setTitle(title);
+    else
+        title_cache[node] = title;
 }
 
 NodeInspector* GraphScene::getInspectorAt(QPointF pos) const

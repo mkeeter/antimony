@@ -49,6 +49,11 @@ public:
     template <class T>
     T* getItemAt(QPointF pos) const;
 
+    /*
+     *  Sets the title for a node (or caches it for future node construction)
+     */
+    void setTitle(Node* node, QString title);
+
     NodeInspector* getInspector(Node* n) const;
     NodeInspector* getInspectorAt(QPointF pos) const;
     InputPort* getInputPortAt(QPointF pos);
@@ -93,6 +98,7 @@ signals:
     void jumpTo(Node* node);
 
 protected:
+    QHash<Node*, QString> title_cache;
     QHash<Node*, NodeInspector*> inspectors;
 };
 

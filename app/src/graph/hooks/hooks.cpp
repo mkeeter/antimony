@@ -104,11 +104,16 @@ void AppHooks::load(PyObject* g, Node* n)
     // Lazy initialization of hooks module
     static PyObject* hooks_module = NULL;
     if (hooks_module == NULL)
-        hooks_module = PyImport_ImportModule("_hooks");
+        hooks_module = PyImport_ImportModule("_AppHooks");
 
     auto title_func = PyObject_CallMethod(
             hooks_module, "ScriptTitleHook", NULL);
-    extract<ScriptTitleHook&>(title_func)().inspector = scene->getInspector(n);
+    Q_ASSERT(!PyErr_Occurred());
+
+    auto title_ref = extract<ScriptTitleHook*>(title_func)();
+    title_ref->node = n;
+    title_ref->scene = scene;
+
     PyDict_SetItemString(g, "title", title_func);
     /*
     // Lazy initialization of named tuple constructor
