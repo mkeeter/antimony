@@ -10,18 +10,19 @@
 #include "ui/canvas/inspector/inspector.h"
 #include "ui/util/colors.h"
 
-#include "graph/datum/datum.h"
-#include "graph/datum/link.h"
-
-#include "graph/node/node.h"
 
 #include "app/app.h"
 #include "app/undo/undo_add_link.h"
 
-Connection::Connection(Link* link)
-    : QGraphicsObject(), link(link),
-      drag_state(link->hasTarget() ? CONNECTED : NONE),
-      snapping(false), target(NULL), hover(false)
+Connection::Connection(OutputPort* source)
+    : Connection(source, NULL)
+{
+    // Nothing to do here
+}
+
+Connection::Connection(OutputPort* source, InputPort* target)
+    : source(source), target(target), drag_state(target ? CONNECTED : NONE),
+      snapping(false), hover(false)
 {
     setFlags(QGraphicsItem::ItemIsSelectable|
              QGraphicsItem::ItemIsFocusable);
@@ -30,33 +31,26 @@ Connection::Connection(Link* link)
     setFocus();
     setAcceptHoverEvents(true);
 
-    connect(link, &Link::destroyed, this, &Connection::deleteLater);
-}
-
-void Connection::makeSceneConnections()
-{
-    connect(startInspector(), &NodeInspector::moved,
-            this, &Connection::onInspectorMoved);
-    connect(startInspector(), &NodeInspector::hiddenChanged,
+    connect(source, &Port::moved,
+            this, &Connection::onPortsMoved);
+    connect(source, &Port::hiddenChanged,
             this, &Connection::onHiddenChanged);
 
-    if (link->hasTarget())
-    {
-        connect(endInspector(), &NodeInspector::moved,
-                this, &Connection::onInspectorMoved);
-        connect(endInspector(), &NodeInspector::hiddenChanged,
-                this, &Connection::onHiddenChanged);
-    }
-
-    auto s = scene();
-    Q_ASSERT(s);
-    connect(this, &Connection::destroyed, [=]{s->update();});
+    if (target)
+        makeTargetConnections();
 }
 
-void Connection::onInspectorMoved()
+void Connection::makeTargetConnections()
 {
-    if (areInspectorsValid())
-        prepareGeometryChange();
+    connect(target, &Port::moved,
+            this, &Connection::onPortsMoved);
+    connect(target, &Port::hiddenChanged,
+            this, &Connection::onHiddenChanged);
+}
+
+void Connection::onPortsMoved()
+{
+    prepareGeometryChange();
 }
 
 void Connection::onHiddenChanged()
@@ -75,9 +69,6 @@ GraphScene* Connection::gscene() const
 
 QRectF Connection::boundingRect() const
 {
-    if (!areInspectorsValid())
-        return QRectF();
-
     QPainterPathStroker s;
     s.setWidth(20);
     return s.createStroke(path()).boundingRect();
@@ -90,95 +81,25 @@ QPainterPath Connection::shape() const
     return s.createStroke(path(true));
 }
 
-bool Connection::areDatumsValid() const
-{
-    return link && dynamic_cast<Datum*>(link->parent()) &&
-            (drag_state != CONNECTED || link->target);
-}
-
-bool Connection::areNodesValid() const
-{
-    return areDatumsValid() &&
-        dynamic_cast<Node*>(startDatum()->parent()) &&
-            (drag_state != CONNECTED ||
-             dynamic_cast<Node*>(endDatum()->parent()));
-}
-
-bool Connection::areInspectorsValid() const
-{
-    return areNodesValid() &&
-        gscene()->getInspector(startNode()) &&
-        (drag_state != CONNECTED ||
-         gscene()->getInspector(endNode()));
-}
-
-Datum* Connection::startDatum() const
-{
-    Q_ASSERT(dynamic_cast<Datum*>(link->parent()));
-    Datum* d = static_cast<Datum*>(link->parent());
-    return d;
-}
-
-Datum* Connection::endDatum() const
-{
-    Q_ASSERT(drag_state == CONNECTED);
-    Q_ASSERT(link->target);
-    return link->target;
-}
-
-Node* Connection::startNode() const
-{
-    Q_ASSERT(dynamic_cast<Node*>(startDatum()->parent()));
-    Node* n = static_cast<Node*>(startDatum()->parent());
-    return n;
-}
-
-Node* Connection::endNode() const
-{
-    Q_ASSERT(drag_state == CONNECTED);
-    Q_ASSERT(dynamic_cast<Node*>(endDatum()->parent()));
-    Node* n = static_cast<Node*>(endDatum()->parent());
-    return n;
-}
-
-NodeInspector* Connection::startInspector() const
-{
-    NodeInspector* i = gscene()->getInspector(startNode());
-    Q_ASSERT(i);
-    return i;
-}
-
-NodeInspector* Connection::endInspector() const
-{
-    Q_ASSERT(drag_state == CONNECTED);
-    NodeInspector* i = gscene()->getInspector(endNode());
-    Q_ASSERT(i);
-    return i;
-}
-
 QPointF Connection::startPos() const
 {
-    Q_ASSERT(startInspector());
-    return startInspector()->datumOutputPosition(startDatum());
+    Q_ASSERT(source != NULL);
+    return source->mapToScene(source->boundingRect().center());
 }
 
 QPointF Connection::endPos() const
 {
     if (drag_state == CONNECTED)
-    {
-        return endInspector()->datumInputPosition(endDatum());
-    }
+        return target->mapToScene(target->boundingRect().center());
     else
-    {
         return (snapping && has_snap_pos) ? snap_pos : drag_pos;
-    }
 }
 
 bool Connection::isHidden() const
 {
-    if (startInspector()->isDatumHidden(startDatum()))
+    if (!source->isVisible())
         return true;
-    if (drag_state == CONNECTED && endInspector()->isDatumHidden(endDatum()))
+    if (drag_state == CONNECTED && !target->isVisible())
         return true;
     return false;
 }
@@ -224,10 +145,7 @@ void Connection::paint(QPainter *painter,
         painter->drawPath(path(true));
     }
 
-    if (!areInspectorsValid())
-        return;
-
-    QColor color = Colors::getColor(startDatum());
+    QColor color = Colors::getColor(source->getDatum());
     if (drag_state == INVALID)
         color = Colors::red;
     if (isSelected() || drag_state == VALID)
@@ -256,7 +174,7 @@ void Connection::checkDragTarget()
 {
     target = gscene()->getInputPortAt(endPos());
 
-    if (target && target->getDatum()->acceptsLink(link))
+    if (target && target->getDatum()->acceptsLink(source->getDatum()))
         drag_state = VALID;
     else if (target)
         drag_state = INVALID;
@@ -274,23 +192,21 @@ void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     clearFocus();
     setFlag(QGraphicsItem::ItemIsFocusable, false);
 
-    InputPort* target = gscene()->getInputPortAt(endPos());
+    InputPort* t = gscene()->getInputPortAt(endPos());
     Datum* datum = target ? target->getDatum() : NULL;
-    if (target && datum->acceptsLink(link))
+    if (t && datum->acceptsLink(source->getDatum()))
     {
-        datum->addLink(link);
+        datum->installLink(source->getDatum());
         drag_state = CONNECTED;
 
-        connect(endInspector(), &NodeInspector::moved,
-                this, &Connection::onInspectorMoved);
-        connect(endInspector(), &NodeInspector::hiddenChanged,
-                this, &Connection::onHiddenChanged);
+        target = t;
+        makeTargetConnections();
 
-        App::instance()->pushStack(new UndoAddLinkCommand(link));
+        //App::instance()->pushStack(new UndoAddLinkCommand(link));
     }
     else
     {
-        link->deleteLater();
+        deleteLater();
     }
 
     prepareGeometryChange();
@@ -318,7 +234,7 @@ void Connection::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 void Connection::updateSnap()
 {
-    if (Port* p = gscene()->getInputPortNear(drag_pos, link))
+    if (Port* p = gscene()->getInputPortNear(drag_pos, source->getDatum()))
     {
         has_snap_pos = true;
         snap_pos = p->mapToScene(p->boundingRect().center());

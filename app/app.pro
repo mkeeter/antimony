@@ -91,7 +91,7 @@ SOURCES += \
     #src/app/undo/undo_delete_multi.cpp \
     #src/app/undo/undo_add_multi.cpp \
     #src/app/undo/undo_add_node.cpp \
-    #src/ui/canvas/connection.cpp \
+    src/ui/canvas/connection.cpp \
 
 HEADERS += \
     src/ui/main_window.h \
@@ -136,7 +136,7 @@ HEADERS += \
     #src/app/undo/undo_delete_multi.h \
     #src/app/undo/undo_add_multi.h \
     #src/app/undo/undo_add_node.h \
-    #src/ui/canvas/connection.h \
+    src/ui/canvas/connection.h \
 
 FORMS += \
     src/ui/forms/main_window.ui \

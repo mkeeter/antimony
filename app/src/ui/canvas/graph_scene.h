@@ -37,10 +37,10 @@ public:
     void makeUIfor(Node* n);
 
     /*
-     *  Creates a new Connection for the given Link
+     *  Creates a new Connection from the given Datum
      *  and adds it to the QGraphicsScene.
      */
-    //Connection* makeUIfor(Link* link);
+    Connection* makeLinkFrom(Datum* d);
 
     /*
      *  Helper function to get an item of a particular class
@@ -57,7 +57,7 @@ public:
     NodeInspector* getInspector(Node* n) const;
     NodeInspector* getInspectorAt(QPointF pos) const;
     InputPort* getInputPortAt(QPointF pos);
-    InputPort* getInputPortNear(QPointF pos, Link* link=NULL);
+    InputPort* getInputPortNear(QPointF pos, Datum* d);
 
     void raiseInspector(NodeInspector* i);
     void raiseInspectorAt(QPointF pos);

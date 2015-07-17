@@ -526,13 +526,6 @@ void App::makeUI(Graph* r)
     */
 }
 
-/*
-Connection* App::newLink(Link* link)
-{
-    return graph_scene->makeUIfor(link);
-}
-*/
-
 QAction* App::undoAction()
 {
     /*

@@ -16,7 +16,6 @@
 class Datum;
 class Canvas;
 
-class InputPort;
 class OutputPort;
 class InspectorRow;
 
@@ -43,24 +42,19 @@ public:
 
     Node* getNode();
 
+    /*
+     *  Looks up the output port for the given datum.
+     */
+    OutputPort* outputPort(Datum* d) const;
+
     template <typename T> T* getButton() const
     {
         return title_row->getButton<T>();
     }
 
-    OutputPort* datumOutputPort(Datum *d) const;
-    InputPort* datumInputPort(Datum* d) const;
-
-    QPointF datumOutputPosition(Datum* d) const;
-    QPointF datumInputPosition(Datum* d) const;
-
-    bool isDatumHidden(Datum* d) const;
-
     void setTitle(QString title);
 
 signals:
-    void moved();
-    void hiddenChanged();
     void glowChanged(Node* node, bool g);
 
 public slots:
@@ -107,11 +101,6 @@ public slots:
     void setShowHidden(bool h);
 
 protected:
-    /*
-     *  On object moved, emit moved signal.
-     */
-    QVariant itemChange(GraphicsItemChange change, const QVariant& value) override;
-
     /** Returns the width of the largest label.
      */
     float maxLabelWidth() const;

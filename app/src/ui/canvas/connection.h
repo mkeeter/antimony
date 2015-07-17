@@ -6,30 +6,29 @@
 
 #include "graph/watchers.h"
 
-class Datum;
-class Node;
 class InputPort;
-class GraphScene;
-class NodeInspector;
+class OutputPort;
 
-class Connection : public QGraphicsObject, NodeWatcher, DatumWatcher
+class GraphScene;
+
+class Connection : public QGraphicsObject
 {
     Q_OBJECT
 public:
-    explicit Connection(Datum* datum);
+    explicit Connection(OutputPort* source);
+    explicit Connection(OutputPort* source, InputPort* target);
+
     QRectF boundingRect() const override;
     QPainterPath shape() const override;
     void setDragPos(QPointF p) { drag_pos = p; }
 
-    /* Makes connections between inspector port signals and redraw.
-     */
-    void makeSceneConnections();
-
 public slots:
-    void onInspectorMoved();
+    void onPortsMoved();
     void onHiddenChanged();
 
 protected:
+    void makeTargetConnections();
+
     GraphScene* gscene() const;
 
     /** On shift key press, snap to the nearest node.
@@ -44,32 +43,12 @@ protected:
      */
     void updateSnap();
 
-    /** Checks that start and end (if not dragging) datums are valid
-     */
-    bool areDatumsValid() const;
-    bool areNodesValid() const;
-    bool areInspectorsValid() const;
     bool isHidden() const;
 
     /** Checks to see whether we're on a valid port
      *  (and adjust drag_state accordingly).
      */
     void checkDragTarget();
-
-    /** Look up start and end datums.
-     */
-    Datum* startDatum() const;
-    Datum* endDatum() const;
-
-    /** Look up start and end nodes.
-     */
-    Node* startNode() const;
-    Node* endNode() const;
-
-    /** Look up start and end controls.
-     */
-    NodeInspector* startInspector() const;
-    NodeInspector* endInspector() const;
 
     /** Returns starting position in scene coordinates.
      */
@@ -100,8 +79,9 @@ protected:
     void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
     void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 
-    Datum* source;
-    Datum* target;
+    OutputPort* source;
+    InputPort* target;
+
     QPointF drag_pos;
 
     enum { NONE, VALID, INVALID, CONNECTED } drag_state;

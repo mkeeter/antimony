@@ -20,6 +20,12 @@ public:
                QWidget *widget) override;
     Datum* getDatum() const;
 
+    QVariant itemChange(GraphicsItemChange change,
+                        const QVariant& value) override;
+signals:
+    void moved();
+    void hiddenChanged();
+
 protected:
     Datum* datum;
     bool hover;

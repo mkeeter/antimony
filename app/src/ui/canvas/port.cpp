@@ -10,6 +10,7 @@
 #include "ui/canvas/port.h"
 #include "ui/canvas/inspector/inspector.h"
 #include "ui/canvas/connection.h"
+#include "ui/canvas/graph_scene.h"
 
 #include "ui/util/colors.h"
 
@@ -19,6 +20,16 @@ Port::Port(Datum* d, QGraphicsItem* parent)
     : QGraphicsObject(parent), datum(d), hover(false)
 {
     setAcceptHoverEvents(true);
+    setFlags(QGraphicsItem::ItemSendsGeometryChanges);
+}
+
+QVariant Port::itemChange(GraphicsItemChange change, const QVariant& value)
+{
+    if (change == ItemPositionHasChanged)
+        emit(moved());
+    else if (change == ItemVisibleHasChanged)
+        emit(hiddenChanged());
+    return value;
 }
 
 QRectF Port::boundingRect() const
@@ -67,12 +78,11 @@ void OutputPort::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton)
     {
-        /*
-        Connection* c = App::instance()->newLink(datum->linkFrom());
+        auto g = static_cast<GraphScene*>(scene());
+        Connection* c = g->makeLinkFrom(datum);
         c->setDragPos(mapToScene(event->pos()));
         c->grabMouse();
         c->setFocus();
-        */
 
         // Turn off the hover highlighting.
         hover = false;

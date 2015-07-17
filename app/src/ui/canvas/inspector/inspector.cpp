@@ -33,8 +33,7 @@ NodeInspector::NodeInspector(Node* node)
       show_hidden(false)
 {
     setFlags(QGraphicsItem::ItemIsMovable |
-             QGraphicsItem::ItemIsSelectable |
-             QGraphicsItem::ItemSendsGeometryChanges);
+             QGraphicsItem::ItemIsSelectable);
     setAcceptHoverEvents(true);
 
     // Redo layout when datums change
@@ -172,55 +171,21 @@ void NodeInspector::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     painter->drawRoundedRect(r, 8, 8);
 }
 
-InputPort* NodeInspector::datumInputPort(Datum *d) const
-{
-    for (auto row : rows)
-    {
-        for (auto a : row->childItems())
-        {
-            InputPort* p = dynamic_cast<InputPort*>(a);
-            if (p && p->getDatum() == d)
-            {
-                return p;
-            }
-        }
-    }
-    return NULL;
-}
-
-OutputPort* NodeInspector::datumOutputPort(Datum *d) const
-{
-    for (auto row : rows)
-    {
-        for (auto a : row->childItems())
-        {
-            OutputPort* p = dynamic_cast<OutputPort*>(a);
-            if (p && p->getDatum() == d)
-            {
-                return p;
-            }
-        }
-    }
-    return NULL;
-}
-
 Node* NodeInspector::getNode()
 {
     return node;
 }
 
-QPointF NodeInspector::datumOutputPosition(Datum* d) const
+OutputPort* NodeInspector::outputPort(Datum* d) const
 {
-    OutputPort* p = datumOutputPort(d);
-    Q_ASSERT(p);
-    return p->mapToScene(p->boundingRect().center());
-}
-
-QPointF NodeInspector::datumInputPosition(Datum* d) const
-{
-    InputPort* p = datumInputPort(d);
-    Q_ASSERT(p);
-    return p->mapToScene(p->boundingRect().center());
+    for (auto row : rows)
+        for (auto a : row->childItems())
+        {
+            OutputPort* p = dynamic_cast<OutputPort*>(a);
+            if (p && p->getDatum() == d)
+                return p;
+        }
+    return NULL;
 }
 
 void NodeInspector::focusNext(DatumTextItem* prev)
@@ -298,20 +263,7 @@ void NodeInspector::setShowHidden(bool h)
         show_hidden = h;
         onLayoutChanged();
         prepareGeometryChange();
-        emit(hiddenChanged());
     }
-}
-
-bool NodeInspector::isDatumHidden(Datum* d) const
-{
-    OutputPort* o = datumOutputPort(d);
-    InputPort* i = datumInputPort(d);
-
-    if (o)
-        return !o->isVisible();
-    if (i)
-        return !i->isVisible();
-    return false;
 }
 
 void NodeInspector::setTitle(QString title)
@@ -368,13 +320,6 @@ void NodeInspector::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
         static_cast<GraphScene*>(scene())->endDrag(delta);
     }
     dragging = false;
-}
-
-QVariant NodeInspector::itemChange(GraphicsItemChange change, const QVariant& value)
-{
-    if (change == ItemPositionHasChanged)
-        emit(moved());
-    return value;
 }
 
 void NodeInspector::hoverEnterEvent(QGraphicsSceneHoverEvent *event)

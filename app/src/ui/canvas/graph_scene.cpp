@@ -90,15 +90,12 @@ void GraphScene::makeUIfor(Node* n)
             */
 }
 
-/*
-Connection* GraphScene::makeUIfor(Link* link)
+Connection* GraphScene::makeLinkFrom(Datum* d)
 {
-    auto c = new Connection(link);
+    auto c = new Connection(inspectors[d->parentNode()]->outputPort(d));
     addItem(c);
-    c->makeSceneConnections();
     return c;
 }
-*/
 
 NodeInspector* GraphScene::getInspector(Node* node) const
 {
@@ -137,7 +134,7 @@ InputPort* GraphScene::getInputPortAt(QPointF pos)
     return NULL;
 }
 
-InputPort* GraphScene::getInputPortNear(QPointF pos, Link* link)
+InputPort* GraphScene::getInputPortNear(QPointF pos, Datum* d)
 {
     float distance = INFINITY;
     InputPort* port = NULL;
@@ -145,7 +142,7 @@ InputPort* GraphScene::getInputPortNear(QPointF pos, Link* link)
     for (auto i : items())
     {
         InputPort* p = dynamic_cast<InputPort*>(i);
-        if (p && (link == NULL)) //|| p->getDatum()->acceptsLink(link)))
+        if (p && (d == NULL || p->getDatum()->acceptsLink(d)))
         {
             QPointF delta = p->mapToScene(p->boundingRect().center()) - pos;
             float d = QPointF::dotProduct(delta, delta);
