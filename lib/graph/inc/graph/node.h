@@ -110,6 +110,7 @@ public:
      *  Sets the callback object.
      */
     void installWatcher(NodeWatcher* w) { watchers.push_back(w); }
+    void uninstallWatcher(NodeWatcher* w);
 
     /*
      *  Return the state (passed into callbacks)

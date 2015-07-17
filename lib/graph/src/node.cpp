@@ -88,6 +88,11 @@ Datum* Node::getDatum(std::string name) const
     return get(name, datums);
 }
 
+void Node::uninstallWatcher(NodeWatcher* w)
+{
+    watchers.remove_if([&](NodeWatcher* w_) { return w_ == w; });
+}
+
 bool Node::makeDatum(std::string n, PyTypeObject* type,
                      std::string value, bool output)
 {
