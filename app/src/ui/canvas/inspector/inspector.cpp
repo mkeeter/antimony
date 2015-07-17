@@ -119,7 +119,6 @@ void NodeInspector::trigger(const NodeState& state)
 
     for (Datum* d : state.datums)
     {
-        qDebug() << "Processing datum with name" << QString::fromStdString(d->getName());
         if (d->getName().find("__") != 0 && !rows.contains(d))
         {
             rows[d] = new InspectorRow(d, this);
