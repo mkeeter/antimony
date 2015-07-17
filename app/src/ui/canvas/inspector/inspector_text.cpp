@@ -18,7 +18,7 @@
 DatumTextItem::DatumTextItem(Datum* datum, QGraphicsItem* parent)
     : QGraphicsTextItem(parent), d(datum), txt(document()),
       background(Colors::base02), foreground(Colors::base04),
-      border(background)
+      border(background), recursing(false)
 {
     setTextInteractionFlags(Qt::TextEditorInteraction);
     setTextWidth(150);
@@ -38,18 +38,15 @@ DatumTextItem::DatumTextItem(Datum* datum, QGraphicsItem* parent)
     trigger(d->getState());
 }
 
-void DatumTextItem::trigger(const NodeState& state)
-{
-    // Nothing to do here
-}
-
 void DatumTextItem::trigger(const DatumState& state)
 {
     setDefaultTextColor(state.editable ? foreground : Colors::base03);
 
     QTextCursor cursor = textCursor();
-    int p = textCursor().position();
+    size_t p = textCursor().position();
+    recursing = true;
     txt->setPlainText(QString::fromStdString(state.text));
+    recursing = false;
 
     if (p < state.text.length())
     {
@@ -81,8 +78,8 @@ void DatumTextItem::onTextChanged()
         emit boundsChanged();
     }
 
-    // If we're allowed to edit,
-    d->setText(txt->toPlainText().toStdString());
+    if (!recursing)
+        d->setText(txt->toPlainText().toStdString());
 }
 
 void DatumTextItem::onUndoCommandAdded()

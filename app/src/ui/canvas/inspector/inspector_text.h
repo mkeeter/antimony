@@ -7,13 +7,12 @@
 
 class Datum;
 
-class DatumTextItem : public QGraphicsTextItem, DatumWatcher, NodeWatcher
+class DatumTextItem : public QGraphicsTextItem, DatumWatcher
 {
     Q_OBJECT
 public:
     DatumTextItem(Datum* datum, QGraphicsItem* parent);
 
-    void trigger(const NodeState& state) override;
     void trigger(const DatumState& state) override;
 
 public slots:
@@ -29,11 +28,11 @@ signals:
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-               QWidget *widget);
+               QWidget *widget) override;
 
     /** Filter tab events to shift focus to next text panel on tab.
      */
-    bool eventFilter(QObject* obj, QEvent* event);
+    bool eventFilter(QObject* obj, QEvent* event) override;
 
     void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
@@ -48,6 +47,7 @@ protected:
 
     QString drag_start;
     float drag_accumulated;
+    bool recursing;
 };
 
 #endif // INSPECTOR_TEXT_H
