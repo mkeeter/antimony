@@ -44,8 +44,16 @@ ScriptPane::ScriptPane(Node* node, QWidget* parent)
     trigger(node->getState());
 }
 
+ScriptPane::~ScriptPane()
+{
+    if (node)
+        node->uninstallWatcher(this);
+}
+
 void ScriptPane::trigger(const NodeState& state)
 {
+    editor->trigger(state);
+
     QString o = QString::fromStdString(state.output);
     if (o.isEmpty())
     {

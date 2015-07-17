@@ -24,7 +24,6 @@ ScriptEditor::ScriptEditor(Node* node, QWidget* parent)
 
     connect(document(), &QTextDocument::contentsChanged,
             this, &ScriptEditor::onTextChanged);
-    node->installWatcher(this);
 
     connect(document(), &QTextDocument::undoCommandAdded,
             this, &ScriptEditor::onUndoCommandAdded);

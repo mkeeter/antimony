@@ -15,6 +15,12 @@ public:
     ScriptPane(Node* node, QWidget* parent);
 
     /*
+     *  The destructor calls uninstallWatcher for itself and the child
+     *  editor object (unless node is set to NULL)
+     */
+    ~ScriptPane();
+
+    /*
      *  Connect to appropriate UI actions and modify menus.
      */
     void customizeUI(Ui::MainWindow* ui);
@@ -28,6 +34,14 @@ public:
      *  Returns the target datum.
      */
     Node* getNode() const { return node; }
+
+    /*
+     *  Delete the assigned node
+     *
+     *  (used to flag that uninstallWatcher shouldn't be called
+     *  in ScriptPane's destructor.
+     */
+    void clearNode() { node = NULL; }
 
     /*
      *  Override paint event so that we can style the widget with CSS.

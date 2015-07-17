@@ -9,7 +9,7 @@
 class Node;
 namespace Ui { class MainWindow; }
 
-class ScriptEditor: public QPlainTextEdit, NodeWatcher
+class ScriptEditor: public QPlainTextEdit
 {
     Q_OBJECT
 public:
@@ -20,7 +20,7 @@ public:
      */
     void customizeUI(Ui::MainWindow* ui);
 
-    void trigger(const NodeState& state) override;
+    void trigger(const NodeState& state);
 
     void setNode(Node* n);
 

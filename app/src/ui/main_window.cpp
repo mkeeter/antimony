@@ -132,7 +132,10 @@ void MainWindow::trigger(const GraphState& state)
     else if (auto e = dynamic_cast<ScriptPane*>(centralWidget()))
     {
         if (state.nodes.count(e->getNode()) == 0)
+        {
+            e->clearNode();
             close();
+        }
     }
     else
     {
