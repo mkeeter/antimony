@@ -25,6 +25,7 @@ public:
 public slots:
     void onPortsMoved();
     void onHiddenChanged();
+    void onPortDeleted();
 
 protected:
     void makeTargetConnections();

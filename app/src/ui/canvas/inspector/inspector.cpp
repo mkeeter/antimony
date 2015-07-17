@@ -129,7 +129,7 @@ void NodeInspector::trigger(const NodeState& state)
 
     for (auto d : not_present)
     {
-        rows[d]->deleteLater();
+        delete rows[d];
         rows.remove(d);
     }
     onLayoutChanged();

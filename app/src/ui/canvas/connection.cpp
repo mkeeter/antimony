@@ -35,6 +35,8 @@ Connection::Connection(OutputPort* source, InputPort* target)
             this, &Connection::onPortsMoved);
     connect(source, &Port::hiddenChanged,
             this, &Connection::onHiddenChanged);
+    connect(source, &QObject::destroyed,
+            this, &Connection::onPortDeleted);
 
     if (target)
         makeTargetConnections();
@@ -46,6 +48,15 @@ void Connection::makeTargetConnections()
             this, &Connection::onPortsMoved);
     connect(target, &Port::hiddenChanged,
             this, &Connection::onHiddenChanged);
+    connect(target, &QObject::destroyed,
+            this, &Connection::onPortDeleted);
+}
+
+void Connection::onPortDeleted()
+{
+    source = NULL;
+    target = NULL;
+    deleteLater();
 }
 
 void Connection::onPortsMoved()
@@ -89,6 +100,7 @@ QPointF Connection::startPos() const
 
 QPointF Connection::endPos() const
 {
+    Q_ASSERT(target != NULL || drag_state != CONNECTED);
     if (drag_state == CONNECTED)
         return target->mapToScene(target->boundingRect().center());
     else
@@ -106,6 +118,9 @@ bool Connection::isHidden() const
 
 QPainterPath Connection::path(bool only_bezier) const
 {
+    if (source == NULL)
+        return QPainterPath();
+
     QPointF start = startPos();
     QPointF end = endPos();
 
