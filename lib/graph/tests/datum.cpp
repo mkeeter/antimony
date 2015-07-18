@@ -6,6 +6,7 @@
 #include "graph/node.h"
 #include "graph/datum.h"
 #include "graph/proxy.h"
+#include "graph/util.h"
 
 TEST_CASE("Datum evaluation")
 {
@@ -194,5 +195,63 @@ TEST_CASE("Successful datum type conversion")
     REQUIRE(x->isValid() == true);
     REQUIRE(x->currentValue() != NULL);
     REQUIRE(PyFloat_AsDouble(x->currentValue()) == 2.0);
+    delete g;
+}
+
+TEST_CASE("Mutable node proxies")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    auto x = new Datum("x", "1.0", &PyFloat_Type, n);
+
+    auto d = Py_BuildValue("{sNsO}", "this", n->mutableProxy(),
+                           "__builtins__", PyEval_GetBuiltins());
+
+    PyRun_String("this.x = 2.0", Py_file_input, d, d);
+    REQUIRE(!PyErr_Occurred());
+    REQUIRE(x->isValid() == true);
+    REQUIRE(x->currentValue() != NULL);
+    REQUIRE(PyFloat_AsDouble(x->currentValue()) == 2.0);
+
+    PyRun_String("this.x = 3", Py_file_input, d, d);
+    if (PyErr_Occurred())
+    {
+        CAPTURE(getPyError().first);
+        REQUIRE(false);
+    }
+    REQUIRE(x->isValid() == true);
+    REQUIRE(x->currentValue() != NULL);
+    REQUIRE(PyFloat_AsDouble(x->currentValue()) == 3.0);
+
+    PyRun_String("this.x = 's'", Py_file_input, d, d);
+    REQUIRE(PyErr_Occurred());
+    REQUIRE(getPyError().first.find("Assignment failed due to invalid type") !=
+            std::string::npos);
+
+    Py_DECREF(d);
+    delete g;
+}
+
+TEST_CASE("Un-assignable mutable node proxies")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    auto x = new Datum("x", "1.0", &PyFloat_Type, n);
+    auto y = new Datum("y", "n.x", &PyFloat_Type, n);
+
+    auto d = Py_BuildValue("{sNsO}", "this", n->mutableProxy(),
+                           "__builtins__", PyEval_GetBuiltins());
+
+    PyRun_String("this.y = 2.0", Py_file_input, d, d);
+    if (PyErr_Occurred())
+    {
+        CAPTURE(getPyError().first);
+        REQUIRE(false);
+    }
+    REQUIRE(y->isValid() == true);
+    REQUIRE(y->currentValue() != NULL);
+    REQUIRE(PyFloat_AsDouble(y->currentValue()) == 1.0);
+
+    Py_DECREF(d);
     delete g;
 }

@@ -102,6 +102,11 @@ public:
     PyObject* proxyDict(Downstream* caller);
 
     /*
+     *  Returns a mutable proxy for this node
+     */
+    PyObject* mutableProxy();
+
+    /*
      *  Looks up a datum by name (or UID string).
      */
     Datum* getDatum(std::string name) const;
@@ -119,6 +124,7 @@ public:
 
     /* Root functions */
     PyObject* pyGetAttr(std::string name, Downstream* caller) const override;
+    void pySetAttr(std::string name, PyObject* obj) override;
     bool topLevel() const override { return false; }
 
 protected:
@@ -135,10 +141,6 @@ protected:
      */
     bool makeDatum(std::string name, PyTypeObject* type,
                    std::string value, bool output);
-
-    /*
-    void makeOutput(std::string name, PyObject* out);
-    */
 
     void pruneInactive(std::unordered_set<Datum*> active);
 

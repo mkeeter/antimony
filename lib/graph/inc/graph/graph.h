@@ -71,6 +71,7 @@ public:
     /* Root functions */
     bool topLevel() const override { return parent == NULL; }
     PyObject* pyGetAttr(std::string name, Downstream* caller) const override;
+    void pySetAttr(std::string, PyObject*) override {}
 
     /*
      *  Preloads Python modules.

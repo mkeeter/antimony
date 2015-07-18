@@ -25,7 +25,6 @@ public:
     PyObject* getAttr(std::string s);
     void setAttr(std::string name, boost::python::object obj);
 
-
     struct Exception {
         Exception(std::string m) : message(m) {}
         std::string message;
@@ -47,7 +46,8 @@ public:
      *  dictionary)
      */
     static PyObject* makeProxyFor(Root* r, Node* locals, Downstream* caller,
-                                  ExternalHooks* external=NULL);
+                                  ExternalHooks* external=NULL,
+                                  bool settable=false);
 
     /*
      *  Returns a new reference to the dict object of the given proxy
