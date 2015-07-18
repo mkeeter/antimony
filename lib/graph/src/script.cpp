@@ -59,8 +59,12 @@ void Script::update()
     // Filter out default arguments to input datums, to make the script
     // simpler to read (because input('x', float, 12.0f) looks odd when
     // x doesn't have a value of 12 anymore).
-    std::regex input("(.*input\\([^(),]+,[^(),]+),[^(),]+(\\).*)");
-    script = std::regex_replace(script, input, "$1$2");
+    if (script != prev_script)
+    {
+        std::regex input("(.*input\\([^(),]+,[^(),]+),[^(),]+(\\).*)");
+        script = std::regex_replace(script, input, "$1$2");
+    }
+    prev_script = script;
 
     // If the script evaluation failed, recover the old set of active datums.
     // (so that we don't delete datums on script errors)
