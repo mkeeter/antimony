@@ -4,9 +4,7 @@
 #include "graph/hooks/hooks.h"
 #include "graph/hooks/title.h"
 #include "graph/hooks/export.h"
-/*
 #include "graph/hooks/ui.h"
-*/
 
 #include "graph/node.h"
 
@@ -27,7 +25,7 @@ BOOST_PYTHON_MODULE(_AppHooks)
 {
     class_<ScriptTitleHook>("ScriptTitleHook", init<>())
         .def("__call__", &ScriptTitleHook::call);
-/*
+
     class_<ScriptUIHooks>("ScriptUIHooks", init<>())
         .def("point", raw_function(&ScriptUIHooks::point),
                 "point(x, y, z, r=5, color=(150, 150, 255), drag=None)\n"
@@ -51,7 +49,6 @@ BOOST_PYTHON_MODULE(_AppHooks)
                 "    color sets the color as a 3-tuple (0-255)\n"
                 "    close makes the loop closed"
                 );
-                */
 
     class_<ScriptExportHooks>("ScriptExportHooks", init<>())
         .def("stl", raw_function(&ScriptExportHooks::stl),
@@ -107,7 +104,7 @@ void AppHooks::load(PyObject* g, Node* n)
     {
         PyObject* collections = PyImport_ImportModule("collections");
         sb_tuple = PyObject_CallMethod(
-                collections, "namedtuple", "(s[s])", "SbObject", "export"); //"ui");
+                collections, "namedtuple", "(s[ss])", "SbObject", "ui", "export");
         Py_DECREF(collections);
     }
 
@@ -121,8 +118,8 @@ void AppHooks::load(PyObject* g, Node* n)
     PyDict_SetItemString(g, "title", title_func);
 
 
-    //auto ui_obj = PyObject_CallMethod(
-    //        hooks_module, "ScriptUIHooks", NULL);
+    auto ui_obj = PyObject_CallMethod(
+            hooks_module, "ScriptUIHooks", NULL);
     auto export_obj = PyObject_CallMethod(
             hooks_module, "ScriptExportHooks", NULL);
 
@@ -131,11 +128,12 @@ void AppHooks::load(PyObject* g, Node* n)
     export_ref->scene = scene;
     scene->clearExportWorker(n);
 
-    //extract<ScriptUIHooks&>(ui_obj)().scene = App::instance()->getViewScene();
-    //extract<ScriptUIHooks&>(ui_obj)().node = n;
+    auto ui_ref = extract<ScriptUIHooks*>(ui_obj)();
+    ui_ref->scene = App::instance()->getViewScene();
+    ui_ref->node = n;
 
     PyObject* sb = PyObject_CallFunctionObjArgs(
-            sb_tuple, export_obj, NULL);
+            sb_tuple, ui_obj, export_obj, NULL);
     PyErr_Print();
     PyDict_SetItemString(g, "sb", sb);
     PyErr_Print();

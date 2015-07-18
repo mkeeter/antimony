@@ -119,7 +119,7 @@ QString ScriptUIHooks::getDatum(PyObject* obj)
         return QString();
 
     for (auto d : node->childDatums())
-        if (d->getValue() == obj)
+        if (d->currentValue() == obj)
             return QString::fromStdString(d->getName());
     return QString();
 }
