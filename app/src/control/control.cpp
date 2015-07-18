@@ -78,8 +78,7 @@ void Control::beginDrag()
 
 void Control::drag(QVector3D center, QVector3D diff)
 {
-    PyObject* p = NULL;
-    //auto p = node->mutableProxy();
+    auto p = node->mutableProxy();
     auto x = PyFloat_FromDouble(relative ? diff.x() : center.x());
     auto y = PyFloat_FromDouble(relative ? diff.y() : center.y());
     auto z = PyFloat_FromDouble(relative ? diff.z() : center.z());
