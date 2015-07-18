@@ -9,12 +9,11 @@
 
 TEST_CASE("Link detection")
 {
-    REQUIRE(Datum::SIGIL_CONNECTION == '$');
-
     auto g = new Graph();
     auto n = new Node("n", g);
     auto x = new Datum("x", "1.0", &PyFloat_Type, n);
-    auto y = new Datum("y", "$[__0.__0]", &PyFloat_Type, n);
+    auto y = new Datum("y", Datum::SIGIL_CONNECTION + std::string("[__0.__0]"),
+                       &PyFloat_Type, n);
     auto z = new Datum("z", "n.x", &PyFloat_Type, n);
     REQUIRE(y->isValid());
     REQUIRE(z->isValid());
@@ -31,7 +30,7 @@ TEST_CASE("Empty link pruning")
     auto x = new Datum("x", "1.0", &PyFloat_Type, n);
 
     // Set the expression to an empty list to force pruning
-    x->setText("$[]");
+    x->setText(Datum::SIGIL_CONNECTION + std::string("[]"));
     REQUIRE(x->isValid() == true);
     REQUIRE(x->getLinks().size() == 0);
     REQUIRE(x->currentValue() != NULL);
@@ -43,7 +42,8 @@ TEST_CASE("Link pruning on deletion")
     auto g = new Graph();
     auto n = new Node("n", g);
     auto x = new Datum("x", "1.0", &PyFloat_Type, n);
-    auto y = new Datum("y", "$[__0.__0]", &PyFloat_Type, n);
+    auto y = new Datum("y", Datum::SIGIL_CONNECTION + std::string("[__0.__0]"),
+                       &PyFloat_Type, n);
 
     n->uninstall(x);
     REQUIRE(y->isValid() == true);
@@ -73,7 +73,8 @@ TEST_CASE("Duplicate link rejection")
     auto g = new Graph();
     auto n = new Node("n", g);
     auto x = new Datum("x", "1.0", &PyFloat_Type, n);
-    auto y = new Datum("y", "$[__0.__0]", &PyUnicode_Type, n);
+    auto y = new Datum("y", Datum::SIGIL_CONNECTION + std::string("[__0.__0]"),
+                       &PyUnicode_Type, n);
 
     REQUIRE(!y->acceptsLink(x));
 
@@ -85,7 +86,8 @@ TEST_CASE("Recursive link rejection")
     auto g = new Graph();
     auto n = new Node("n", g);
     auto x = new Datum("x", "1.0", &PyFloat_Type, n);
-    auto y = new Datum("y", "$[__0.__0]", &PyFloat_Type, n);
+    auto y = new Datum("y", Datum::SIGIL_CONNECTION + std::string("[__0.__0]"),
+                       &PyFloat_Type, n);
 
     REQUIRE(!x->acceptsLink(x));
     REQUIRE(!x->acceptsLink(y));
@@ -103,7 +105,8 @@ TEST_CASE("Link installation")
     REQUIRE(z->acceptsLink(x));
     z->installLink(x);
 
-    REQUIRE(z->getText() == "$[__0.__0]");
+    REQUIRE(z->getText() == Datum::SIGIL_CONNECTION +
+                            std::string("[__0.__0]"));
     REQUIRE(z->isValid() == true);
     REQUIRE(z->currentValue() != NULL);
     REQUIRE(PyFloat_AsDouble(z->currentValue()) == 2.0);

@@ -5,8 +5,8 @@
 #include "graph/watchers.h"
 #include "graph/proxy.h"
 
-const char Datum::SIGIL_CONNECTION = '$';
-const char Datum::SIGIL_OUTPUT = '#';
+const char Datum::SIGIL_CONNECTION = 0x11;
+const char Datum::SIGIL_OUTPUT = 0x12;
 
 std::unordered_set<char> Datum::sigils = {
     SIGIL_CONNECTION, SIGIL_OUTPUT
@@ -301,6 +301,11 @@ bool Datum::allowLookupByUID() const
 bool Datum::isLink() const
 {
     return !expr.empty() && (expr.front() == SIGIL_CONNECTION);
+}
+
+bool Datum::isOutput() const
+{
+    return !expr.empty() && (expr.front() == SIGIL_OUTPUT);
 }
 
 void Datum::installReducer(PyTypeObject* t, PyObject* f)

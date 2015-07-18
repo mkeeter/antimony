@@ -128,15 +128,15 @@ TEST_CASE("Recursive lookup")
 
 TEST_CASE("UID lookup")
 {
-    REQUIRE(Datum::SIGIL_CONNECTION == '$');
-
     auto g = new Graph();
     auto n = new Node("n", g);
     auto x = new Datum("x", "1.0", &PyFloat_Type, n);
 
     SECTION("Allowed")
     {
-        auto y = new Datum("y", "$[__0.__0]", &PyFloat_Type, n);
+        auto y = new Datum("y", Datum::SIGIL_CONNECTION +
+                                std::string("[__0.__0]"),
+                            &PyFloat_Type, n);
         CAPTURE(y->getError());
         REQUIRE(y->isValid() == true);
         REQUIRE(y->currentValue() != NULL);
@@ -157,12 +157,11 @@ TEST_CASE("UID lookup")
 
 TEST_CASE("UID changes")
 {
-    REQUIRE(Datum::SIGIL_CONNECTION == '$');
-
     auto g = new Graph();
     auto n = new Node("n", g);
     auto x = new Datum("x", "1.0", &PyFloat_Type, n);
-    auto y = new Datum("y", "$[__0.__0]", &PyFloat_Type, n);
+    auto y = new Datum("y", Datum::SIGIL_CONNECTION + std::string("[__0.__0]"),
+                       &PyFloat_Type, n);
     x->setText("2.0");
 
     CAPTURE(y->getError());

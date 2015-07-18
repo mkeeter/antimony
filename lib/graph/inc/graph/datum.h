@@ -127,6 +127,11 @@ protected:
     bool isLink() const;
 
     /*
+     *  Returns true if this expression is an output.
+     */
+    bool isOutput() const;
+
+    /*
      *  Handles post-processing of a link value.
      *
      *  Returns a new value (from extraction or reduction)
