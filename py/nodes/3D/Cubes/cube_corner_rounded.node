@@ -29,17 +29,17 @@ def drag_r(this, x, y, z):
 # This is the circle's radius in actual units (not a 0-1 fraction)
 r_ = r * min([xmax - xmin, ymax - ymin, zmax - zmin]) / 2
 
-fab.ui.wireframe([(xmin, ymin, zmin), (xmax, ymin, zmin),
+sb.ui.wireframe([(xmin, ymin, zmin), (xmax, ymin, zmin),
                   (xmax, ymax, zmin), (xmin, ymax, zmin)], close=True)
-fab.ui.wireframe([(xmin, ymin, zmax), (xmax, ymin, zmax),
+sb.ui.wireframe([(xmin, ymin, zmax), (xmax, ymin, zmax),
                   (xmax, ymax, zmax), (xmin, ymax, zmax)], close=True)
-fab.ui.wireframe([(xmin, ymin, zmin), (xmin, ymax, zmin),
+sb.ui.wireframe([(xmin, ymin, zmin), (xmin, ymax, zmin),
                   (xmin, ymax, zmax), (xmin, ymin, zmax)], close=True)
-fab.ui.wireframe([(xmax, ymin, zmin), (xmax, ymax, zmin),
+sb.ui.wireframe([(xmax, ymin, zmin), (xmax, ymax, zmin),
                   (xmax, ymax, zmax), (xmax, ymin, zmax)], close=True)
-fab.ui.point(xmin, ymin, zmin)
-fab.ui.point(xmax, ymax, zmax)
-fab.ui.point(xmax, ymax - r, zmax, drag=drag_r, relative=False)
+sb.ui.point(xmin, ymin, zmin)
+sb.ui.point(xmax, ymax, zmax)
+sb.ui.point(xmax, ymax - r, zmax, drag=drag_r, relative=False)
 
 
 

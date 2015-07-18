@@ -12,13 +12,13 @@ input('zmax', float, 0.5)
 output('shape', fab.shapes.cube(xmin, xmax, ymin, ymax, zmin, zmax))
 
 # UI
-fab.ui.wireframe([(xmin, ymin, zmin), (xmax, ymin, zmin),
+sb.ui.wireframe([(xmin, ymin, zmin), (xmax, ymin, zmin),
                   (xmax, ymax, zmin), (xmin, ymax, zmin)], close=True)
-fab.ui.wireframe([(xmin, ymin, zmax), (xmax, ymin, zmax),
+sb.ui.wireframe([(xmin, ymin, zmax), (xmax, ymin, zmax),
                   (xmax, ymax, zmax), (xmin, ymax, zmax)], close=True)
-fab.ui.wireframe([(xmin, ymin, zmin), (xmin, ymax, zmin),
+sb.ui.wireframe([(xmin, ymin, zmin), (xmin, ymax, zmin),
                   (xmin, ymax, zmax), (xmin, ymin, zmax)], close=True)
-fab.ui.wireframe([(xmax, ymin, zmin), (xmax, ymax, zmin),
+sb.ui.wireframe([(xmax, ymin, zmin), (xmax, ymax, zmin),
                   (xmax, ymax, zmax), (xmax, ymin, zmax)], close=True)
-fab.ui.point(xmin, ymin, zmin)
-fab.ui.point(xmax, ymax, zmax)
+sb.ui.point(xmin, ymin, zmin)
+sb.ui.point(xmax, ymax, zmax)

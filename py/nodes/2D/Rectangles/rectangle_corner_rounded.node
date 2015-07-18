@@ -27,11 +27,11 @@ def drag_r(this, x, y, z):
     this.r = float(min(1, max(0, r)))
 
 # UI
-fab.ui.wireframe(
+sb.ui.wireframe(
         [(xmin, ymin, 0), (xmax, ymin, 0), (xmax, ymax, 0), (xmin, ymax, 0)],
         close=True)
-fab.ui.wireframe([(xmax - r_, ymax, 0), (xmax, ymax - r_, 0)])
-fab.ui.point(xmin, ymin)
-fab.ui.point(xmax, ymax)
-fab.ui.point(xmax, ymax - r_, drag=drag_r, relative=False)
+sb.ui.wireframe([(xmax - r_, ymax, 0), (xmax, ymax - r_, 0)])
+sb.ui.point(xmin, ymin)
+sb.ui.point(xmax, ymax)
+sb.ui.point(xmax, ymax - r_, drag=drag_r, relative=False)
 

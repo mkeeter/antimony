@@ -20,8 +20,8 @@ def drag_hw(this, x, y, z):
    this.height = abs(2 * (y - this.y0))
 
 # UI
-fab.ui.wireframe(
+sb.ui.wireframe(
         [(xmin, ymin, 0), (xmax, ymin, 0), (xmax, ymax, 0), (xmin, ymax, 0)],
         close=True)
-fab.ui.point(x0, y0)
-fab.ui.point(xmax, ymax, drag=drag_hw, relative=False)
+sb.ui.point(x0, y0)
+sb.ui.point(xmax, ymax, drag=drag_hw, relative=False)

@@ -7,5 +7,5 @@ input('y', float)
 input('z', float)
 
 # UI
-fab.ui.point(x, y, z)
+sb.ui.point(x, y, z)
 

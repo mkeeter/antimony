@@ -12,7 +12,7 @@ input('y2', float, 1)
 output('shape', fab.shapes.triangle(x0, y0, x1, y1, x2, y2))
 
 # UI
-fab.ui.wireframe([(x0, y0, 0), (x1, y1, 0), (x2, y2, 0)], close=True)
-fab.ui.point(x0, y0, 0)
-fab.ui.point(x1, y1, 0)
-fab.ui.point(x2, y2, 0)
+sb.ui.wireframe([(x0, y0, 0), (x1, y1, 0), (x2, y2, 0)], close=True)
+sb.ui.point(x0, y0, 0)
+sb.ui.point(x1, y1, 0)
+sb.ui.point(x2, y2, 0)
