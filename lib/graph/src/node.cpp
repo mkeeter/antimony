@@ -83,6 +83,11 @@ PyObject* Node::proxyDict(Downstream* caller)
     return parent->proxyDict(this, caller);
 }
 
+PyObject* Node::mutableProxy()
+{
+    return Proxy::makeProxyFor(this, NULL, NULL, NULL, true);
+}
+
 Datum* Node::getDatum(std::string name) const
 {
     return get(name, datums);
@@ -133,27 +138,59 @@ bool Node::makeDatum(std::string n, PyTypeObject* type,
     return true;
 }
 
+void Node::pySetAttr(std::string name, PyObject* obj)
+{
+    auto d = getByName(name, datums);
+    if (!d)
+        throw Proxy::Exception("No datum with name '" + name + "' found.");
+
+    if (d->type != obj->ob_type)
+    {
+        auto cast = PyObject_CallFunctionObjArgs(
+                (PyObject*)d->type, obj, NULL);
+
+        if (PyErr_Occurred())
+        {
+            PyErr_Clear();
+            throw Proxy::Exception("Assignment failed due to invalid type");
+        }
+        Py_DECREF(obj);
+        obj = cast;
+    }
+
+    // If the datum is can be directly converted into the given type,
+    // then make the assignment; otherwise, skip assignment.  This is
+    // so that drag functions behave as intended: dragging "12.0" will
+    // change its value, but dragging "n.x" will not.
+    auto o = PyObject_CallFunction((PyObject*)d->type, "s", d->expr.c_str());
+    if (!o)
+    {
+        PyErr_Clear();
+    }
+    else
+    {
+        auto obj_str = PyObject_Repr(obj);
+        d->setText(std::string(PyUnicode_AsUTF8(obj_str)));
+        Py_DECREF(obj_str);
+    }
+}
+
 PyObject* Node::pyGetAttr(std::string n, Downstream* caller) const
 {
     auto d = (caller && caller->allowLookupByUID())
         ? get(n, datums) : getByName(n, datums);
 
-    if (d)
-    {
-        // If the caller is a datum as well, check for recursive lookups.
-        auto datum = dynamic_cast<Datum*>(caller);
-        if (datum && !datum->addUpstream(d))
-            throw Proxy::Exception("Recursive lookup of datum '" + n + "'");
-
-        if (d->valid)
-        {
-            Py_INCREF(d->value);
-            return d->value;
-        }
-        throw Proxy::Exception("Datum '" + n + "' is invalid");
-    }
-    else
-    {
+    if (!d)
         return NULL;
-    }
+
+    // If the caller is a datum as well, check for recursive lookups.
+    auto datum = dynamic_cast<Datum*>(caller);
+    if (datum && !datum->addUpstream(d))
+        throw Proxy::Exception("Recursive lookup of datum '" + n + "'");
+
+    if (!d->valid)
+        throw Proxy::Exception("Datum '" + n + "' is invalid");
+
+    Py_INCREF(d->value);
+    return d->value;
 }

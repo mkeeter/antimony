@@ -62,41 +62,22 @@ PyObject* Proxy::getAttr(std::string name)
     return NULL;
 }
 
-void Proxy::setAttr(std::string name, boost::python::object obj)
-{
-    if (dict)
-        PyDict_SetItemString(dict, name.c_str(), obj.ptr());
-    else
-        throw Exception("Cannot call __setattr__ in sublevel Proxy\n");
-}
-
-/*
 void Proxy::setAttr(std::string name, object obj)
 {
-    if (!settable)
-        throw proxy::ProxyException("Cannot set datum value.");
-
-    Datum* datum = root->getDatum(name);
-
-    if (!datum)
-        throw proxy::ProxyException("Nonexistent datum lookup.");
-
-    if (obj.ptr()->ob_type != datum->value.type)
-        throw proxy::ProxyException("Invalid type.");
-
-    // Make sure that the existing expression can be directly coerced into
-    // a value of the desired type.  This is so that assigning x when
-    // x equals "12.0" works, but assigning x when x = "po.y" fails.
-    if (datum->canSetText())
+    if (dict)
     {
-        auto txt = extract<std::string>(str(obj))();
-        datum->setText(txt);
+        PyDict_SetItemString(dict, name.c_str(), obj.ptr());
+        return;
     }
+
+    if (!settable)
+        throw Proxy::Exception("Cannot set value with non-mutable Proxy");
+
+    root->pySetAttr(name, obj.ptr());
 }
-*/
 
 PyObject* Proxy::makeProxyFor(Root* r, Node* locals, Downstream* caller,
-                              ExternalHooks* external)
+                              ExternalHooks* external, bool settable)
 {
     // Get Python object constructor (with lazy initialization)
     if (proxy_init == NULL)
@@ -118,9 +99,11 @@ PyObject* Proxy::makeProxyFor(Root* r, Node* locals, Downstream* caller,
     p_->root = r;
     p_->locals = locals;
     p_->caller = caller;
+    p_->settable = settable;
     if (r->topLevel())
     {
         p_->dict = PyDict_New();
+
         PyDict_SetItemString(p_->dict, "__builtins__", PyEval_GetBuiltins());
         PyDict_SetItemString(p_->dict, "math", PyImport_ImportModule("math"));
 

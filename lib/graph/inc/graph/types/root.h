@@ -21,6 +21,12 @@ public:
     virtual PyObject* pyGetAttr(std::string name, Downstream* caller) const=0;
 
     /*
+     *  Attempts to set the given attribute.
+     *  Returns true on success.
+     */
+    virtual void pySetAttr(std::string name, PyObject* obj)=0;
+
+    /*
      *  Record that the given Downstream looked up a particular name
      */
     void saveLookup(std::string name, Downstream* caller);
