@@ -16,13 +16,6 @@ public:
 
     void update() override;
 
-    std::string script;
-
-    std::string output;
-    std::string error;
-    int error_lineno;
-
-    std::unordered_set<Datum*> active;
 
 protected:
     /*
@@ -31,5 +24,15 @@ protected:
      */
     bool allowLookupByUID() const override { return false; }
 
+    std::string script;
+    std::string prev_script;
+
+    std::string output;
+    std::string error;
+    int error_lineno;
+
+    std::unordered_set<Datum*> active;
     Node* parent;
+
+    friend class Node;
 };
