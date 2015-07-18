@@ -13,6 +13,7 @@ class Canvas;
 class NodeInspector;
 class InputPort;
 class Connection;
+class ExportWorker;
 
 class GraphScene : public QGraphicsScene, GraphWatcher
 {
@@ -50,9 +51,16 @@ public:
     T* getItemAt(QPointF pos) const;
 
     /*
-     *  Sets the title for a node (or caches it for future node construction)
+     *  Sets the title for a node
+     *  (or caches it for future inspector construction)
      */
     void setTitle(Node* node, QString title);
+
+    /*
+     *  Sets the export worker for a node
+     *  (or caches it for future inspector construction)
+     */
+    void setExportWorker(Node* node, ExportWorker* worker);
 
     NodeInspector* getInspector(Node* n) const;
     NodeInspector* getInspectorAt(QPointF pos) const;
@@ -99,6 +107,7 @@ signals:
 
 protected:
     QHash<Node*, QString> title_cache;
+    QHash<Node*, ExportWorker*> export_cache;
     QHash<Node*, NodeInspector*> inspectors;
 };
 

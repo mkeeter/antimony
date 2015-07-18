@@ -3,23 +3,18 @@
 
 #include "graph/hooks/hooks.h"
 #include "graph/hooks/title.h"
-#include "ui/canvas/graph_scene.h"
+#include "graph/hooks/export.h"
 /*
 #include "graph/hooks/ui.h"
-#include "graph/hooks/export.h"
 */
 
 #include "graph/node.h"
 
 #include "app/app.h"
 
-// Unfortunate coupling of core UI code, but this is
-// necessary to properly set up the export button hooks.
-/*
 #include "ui/canvas/graph_scene.h"
 #include "ui/canvas/inspector/inspector_buttons.h"
 #include "ui/canvas/inspector/inspector.h"
-*/
 
 using namespace boost::python;
 
@@ -56,6 +51,7 @@ BOOST_PYTHON_MODULE(_AppHooks)
                 "    color sets the color as a 3-tuple (0-255)\n"
                 "    close makes the loop closed"
                 );
+                */
 
     class_<ScriptExportHooks>("ScriptExportHooks", init<>())
         .def("stl", raw_function(&ScriptExportHooks::stl),
@@ -88,7 +84,6 @@ BOOST_PYTHON_MODULE(_AppHooks)
                 "      If None, a dialog will open to select the resolution.\n"
                 "    mm_per_unit maps Antimony to real-world units."
                 );
-                */
 
     register_exception_translator<AppHooks::Exception>(
             AppHooks::onException);
@@ -115,39 +110,35 @@ void AppHooks::load(PyObject* g, Node* n)
     title_ref->scene = scene;
 
     PyDict_SetItemString(g, "title", title_func);
-    /*
+
     // Lazy initialization of named tuple constructor
     static PyObject* sb_tuple = NULL;
     if (sb_tuple == NULL)
     {
         PyObject* collections = PyImport_ImportModule("collections");
         sb_tuple = PyObject_CallMethod(
-                collections, "namedtuple", "(ss)", "ui", "export");
+                collections, "namedtuple", "(s[s])", "SbObject", "export"); //"ui");
+        PyErr_Print();
         Py_DECREF(collections);
     }
 
-    auto ui_obj = PyObject_CallMethod(
-            hooks_module, "ScriptUIHooks", NULL);
+    //auto ui_obj = PyObject_CallMethod(
+    //        hooks_module, "ScriptUIHooks", NULL);
     auto export_obj = PyObject_CallMethod(
             hooks_module, "ScriptExportHooks", NULL);
 
+    auto export_ref = extract<ScriptExportHooks*>(export_obj)();
+    export_ref->node = n;
+    export_ref->scene = scene;
 
-    auto node = static_cast<Node*>(d->parent());
-    extract<ScriptUIHooks&>(ui_obj)().scene = App::instance()->getViewScene();
-    extract<ScriptUIHooks&>(ui_obj)().node = node;
-
-    // Hook the 'meta' object to the relevant NodeInspector's output button.
-    auto inspector = App::instance()->getGraphScene()->getInspector(node);
-    if (inspector)
-    {
-        auto export_button = inspector->getButton<InspectorExportButton>();
-        export_button->clearWorker();
-        extract<ScriptExportHooks&>(meta_obj)().button = export_button;
-    }
+    //extract<ScriptUIHooks&>(ui_obj)().scene = App::instance()->getViewScene();
+    //extract<ScriptUIHooks&>(ui_obj)().node = n;
 
     PyObject* sb = PyObject_CallFunctionObjArgs(
-            sb_tuple, ui_obj, export_obj, NULL);
+            sb_tuple, export_obj, NULL);
+    PyErr_Print();
     PyDict_SetItemString(g, "sb", sb);
-    */
+    PyErr_Print();
     PyRun_String("import fab", Py_file_input, g, g);
+    PyErr_Print();
 }

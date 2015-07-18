@@ -14,6 +14,7 @@
 #include "ui/canvas/inspector/inspector_title.h"
 #include "ui/canvas/inspector/inspector_text.h"
 #include "ui/canvas/inspector/inspector_row.h"
+#include "ui/canvas/inspector/inspector_buttons.h"
 #include "ui/canvas/port.h"
 #include "ui/canvas/graph_scene.h"
 
@@ -269,6 +270,13 @@ void NodeInspector::setShowHidden(bool h)
 void NodeInspector::setTitle(QString title)
 {
     title_row->setTitle(title);
+}
+
+void NodeInspector::setExportWorker(ExportWorker* worker)
+{
+    auto b = title_row->getButton<InspectorExportButton>();
+    b->clearWorker();
+    b->setWorker(worker);
 }
 
 void NodeInspector::mouseMoveEvent(QGraphicsSceneMouseEvent* event)

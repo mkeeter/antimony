@@ -10,10 +10,11 @@
 
 class Node;
 class InspectorExportButton;
+class GraphScene;
 
 struct ScriptExportHooks
 {
-    ScriptMetaHooks() : button(NULL) {}
+    ScriptExportHooks() : node(NULL), scene(NULL), called(false) {}
 
     static boost::python::object stl(
             boost::python::tuple args,
@@ -30,7 +31,9 @@ struct ScriptExportHooks
 
     static Bounds pad_bounds(Bounds b);
 
-    InspectorExportButton* button;
+    Node* node;
+    GraphScene* scene;
+    bool called;
 };
 
 #endif

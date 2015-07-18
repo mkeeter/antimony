@@ -20,6 +20,7 @@ class OutputPort;
 class InspectorRow;
 
 class DatumTextItem;
+class ExportWorker;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -53,6 +54,7 @@ public:
     }
 
     void setTitle(QString title);
+    void setExportWorker(ExportWorker* worker);
 
 signals:
     void glowChanged(Node* node, bool g);
@@ -90,7 +92,6 @@ public slots:
     /** Change focus to the next text item.
      */
     void focusNext(DatumTextItem* prev);
-
     /** Change focus to the previous text item.
      */
     void focusPrev(DatumTextItem* prev);

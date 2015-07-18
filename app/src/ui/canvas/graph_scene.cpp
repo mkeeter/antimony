@@ -77,6 +77,11 @@ void GraphScene::makeUIfor(Node* n)
         i->setTitle(title_cache[n]);
         title_cache.remove(n);
     }
+    if (export_cache.contains(n))
+    {
+        i->setExportWorker(export_cache[n]);
+        export_cache.remove(n);
+    }
 
     connect(i, &NodeInspector::glowChanged,
             this, &GraphScene::onGlowChange);
@@ -118,6 +123,14 @@ void GraphScene::setTitle(Node* node, QString title)
         inspectors[node]->setTitle(title);
     else
         title_cache[node] = title;
+}
+
+void GraphScene::setExportWorker(Node* node, ExportWorker* worker)
+{
+    if (inspectors.contains(node))
+        inspectors[node]->setExportWorker(worker);
+    else
+        export_cache[node] = worker;
 }
 
 NodeInspector* GraphScene::getInspectorAt(QPointF pos) const
