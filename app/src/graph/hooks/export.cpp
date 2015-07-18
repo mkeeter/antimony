@@ -74,12 +74,12 @@ QString ScriptExportHooks::get_filename(dict kwargs)
 
 object ScriptExportHooks::stl(tuple args, dict kwargs)
 {
-    ScriptExportHooks& self = extract<ScriptExportHooks&>(args[0])();
+    ScriptExportHooks* self = extract<ScriptExportHooks*>(args[0])();
 
-    if (self.called)
+    if (self->called)
         throw AppHooks::Exception(
                 "Cannot define multiple export tasks in a single script.");
-    self.called = true;
+    self->called = true;
 
     if (len(args) != 2)
         throw AppHooks::Exception(
@@ -118,19 +118,19 @@ object ScriptExportHooks::stl(tuple args, dict kwargs)
         detect_features = detect_features_();
     }
 
-    self.scene->setExportWorker(self.node, new ExportMeshWorker(
+    self->scene->setExportWorker(self->node, new ExportMeshWorker(
                 shape, bounds, filename, resolution, detect_features));
     return object();
 }
 
 object ScriptExportHooks::heightmap(tuple args, dict kwargs)
 {
-    ScriptExportHooks& self = extract<ScriptExportHooks&>(args[0])();
+    ScriptExportHooks* self = extract<ScriptExportHooks*>(args[0])();
 
-    if (self.called)
+    if (self->called)
         throw AppHooks::Exception(
                 "Cannot define multiple export tasks in a single script.");
-    self.called = true;
+    self->called = true;
 
     if (len(args) != 2)
         throw AppHooks::Exception(
@@ -168,7 +168,7 @@ object ScriptExportHooks::heightmap(tuple args, dict kwargs)
         mm_per_unit = mm_per_unit_();
     }
 
-    self.scene->setExportWorker(self.node, new ExportHeightmapWorker(
+    self->scene->setExportWorker(self->node, new ExportHeightmapWorker(
                 shape, bounds, filename, resolution, mm_per_unit));
     return object();
 }

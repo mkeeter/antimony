@@ -18,6 +18,7 @@ class Canvas;
 
 class OutputPort;
 class InspectorRow;
+class InspectorExportButton;
 
 class DatumTextItem;
 class ExportWorker;
@@ -55,6 +56,7 @@ public:
 
     void setTitle(QString title);
     void setExportWorker(ExportWorker* worker);
+    void clearExportWorker();
 
 signals:
     void glowChanged(Node* node, bool g);
@@ -109,6 +111,7 @@ protected:
     Node* node;
     InspectorTitle* title_row;
     QMap<Datum*, InspectorRow*> rows;
+    InspectorExportButton* export_button;
 
     // Ugly hack because simply grabbing the mouse doesn't set up all of the
     // magic that QGraphicsScene uses to drag items: upon first insertion,

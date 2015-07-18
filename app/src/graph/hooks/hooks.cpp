@@ -101,16 +101,6 @@ void AppHooks::load(PyObject* g, Node* n)
     if (hooks_module == NULL)
         hooks_module = PyImport_ImportModule("_AppHooks");
 
-    auto title_func = PyObject_CallMethod(
-            hooks_module, "ScriptTitleHook", NULL);
-    Q_ASSERT(!PyErr_Occurred());
-
-    auto title_ref = extract<ScriptTitleHook*>(title_func)();
-    title_ref->node = n;
-    title_ref->scene = scene;
-
-    PyDict_SetItemString(g, "title", title_func);
-
     // Lazy initialization of named tuple constructor
     static PyObject* sb_tuple = NULL;
     if (sb_tuple == NULL)
@@ -118,9 +108,18 @@ void AppHooks::load(PyObject* g, Node* n)
         PyObject* collections = PyImport_ImportModule("collections");
         sb_tuple = PyObject_CallMethod(
                 collections, "namedtuple", "(s[s])", "SbObject", "export"); //"ui");
-        PyErr_Print();
         Py_DECREF(collections);
     }
+
+    auto title_func = PyObject_CallMethod(
+            hooks_module, "ScriptTitleHook", NULL);
+    Q_ASSERT(!PyErr_Occurred());
+
+    auto title_ref = extract<ScriptTitleHook*>(title_func)();
+    title_ref->node = n;
+    title_ref->scene = scene;
+    PyDict_SetItemString(g, "title", title_func);
+
 
     //auto ui_obj = PyObject_CallMethod(
     //        hooks_module, "ScriptUIHooks", NULL);
@@ -130,6 +129,7 @@ void AppHooks::load(PyObject* g, Node* n)
     auto export_ref = extract<ScriptExportHooks*>(export_obj)();
     export_ref->node = n;
     export_ref->scene = scene;
+    scene->clearExportWorker(n);
 
     //extract<ScriptUIHooks&>(ui_obj)().scene = App::instance()->getViewScene();
     //extract<ScriptUIHooks&>(ui_obj)().node = n;

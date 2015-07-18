@@ -61,6 +61,7 @@ public:
      *  (or caches it for future inspector construction)
      */
     void setExportWorker(Node* node, ExportWorker* worker);
+    void clearExportWorker(Node* node);
 
     NodeInspector* getInspector(Node* n) const;
     NodeInspector* getInspectorAt(QPointF pos) const;

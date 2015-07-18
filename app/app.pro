@@ -59,6 +59,7 @@ SOURCES += \
     src/ui/canvas/inspector/inspector_text.cpp \
     src/ui/canvas/inspector/inspector_row.cpp \
     src/ui/canvas/inspector/inspector_buttons.cpp \
+    src/ui/canvas/inspector/inspector_export.cpp \
     src/ui/canvas/port.cpp \
     src/ui/viewport/viewport.cpp \
     src/ui/viewport/viewport_scene.cpp \
@@ -103,6 +104,7 @@ HEADERS += \
     src/ui/canvas/inspector/inspector_text.h \
     src/ui/canvas/inspector/inspector_row.h \
     src/ui/canvas/inspector/inspector_buttons.h \
+    src/ui/canvas/inspector/inspector_export.h \
     src/ui/canvas/port.h \
     src/ui/viewport/viewport.h \
     src/ui/viewport/viewport_scene.h \

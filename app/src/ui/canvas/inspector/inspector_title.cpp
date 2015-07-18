@@ -17,8 +17,7 @@ InspectorTitle::InspectorTitle(Node* n, NodeInspector* parent)
     : QGraphicsObject(parent), node(n),
       name(new QGraphicsTextItem(QString::fromStdString(n->getName()), this)),
       title(new QGraphicsTextItem("", this)),
-      buttons({new InspectorExportButton(this),
-               new InspectorShowHiddenButton(this, parent),
+      buttons({new InspectorShowHiddenButton(this, parent),
                new InspectorScriptButton(n, this)}),
       padding(20)
 

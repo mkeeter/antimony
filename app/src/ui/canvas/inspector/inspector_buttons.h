@@ -47,23 +47,4 @@ protected:
     NodeInspector* inspector;
 };
 
-////////////////////////////////////////////////////////////////////////////////
-
-class InspectorExportButton : public GraphicsButton
-{
-    Q_OBJECT
-public:
-    InspectorExportButton(QGraphicsItem* parent);
-    QRectF boundingRect() const override;
-    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
-               QWidget* widget=0) override;
-    void clearWorker();
-    void setWorker(ExportWorker* w);
-    bool hasWorker() const { return !worker.isNull(); }
-protected slots:
-    void onPressed();
-protected:
-    QPointer<ExportWorker> worker;
-};
-
 #endif

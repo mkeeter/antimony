@@ -15,6 +15,7 @@
 #include "ui/canvas/inspector/inspector_text.h"
 #include "ui/canvas/inspector/inspector_row.h"
 #include "ui/canvas/inspector/inspector_buttons.h"
+#include "ui/canvas/inspector/inspector_export.h"
 #include "ui/canvas/port.h"
 #include "ui/canvas/graph_scene.h"
 
@@ -30,8 +31,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 NodeInspector::NodeInspector(Node* node)
-    : node(node), title_row(NULL), dragging(false), border(10), glow(false),
-      show_hidden(false)
+    : node(node), title_row(NULL),
+      export_button(new InspectorExportButton(this)),
+      dragging(false), border(10), glow(false), show_hidden(false)
 {
     setFlags(QGraphicsItem::ItemIsMovable |
              QGraphicsItem::ItemIsSelectable);
@@ -76,6 +78,9 @@ QRectF NodeInspector::boundingRect() const
             width = fmax(width, row.value()->boundingRect().width());
         }
     }
+    if (export_button->isVisible())
+        height += export_button->boundingRect().height() + 6;
+
     return QRectF(-border, -border, width + 2*border, height + 2*border);
 }
 
@@ -109,6 +114,9 @@ void NodeInspector::onLayoutChanged()
                 }
             }
         }
+        auto w = boundingRect().width() / 2;
+        export_button->setPos(w/2, y);
+        export_button->setWidth(w);
         prepareGeometryChange();
     }
 }
@@ -274,9 +282,19 @@ void NodeInspector::setTitle(QString title)
 
 void NodeInspector::setExportWorker(ExportWorker* worker)
 {
-    auto b = title_row->getButton<InspectorExportButton>();
-    b->clearWorker();
-    b->setWorker(worker);
+    const bool had_worker = export_button->hasWorker();
+    export_button->setWorker(worker);
+    if (!had_worker)
+        onLayoutChanged();
+}
+
+void NodeInspector::clearExportWorker()
+{
+    if (export_button->hasWorker())
+    {
+        export_button->clearWorker();
+        onLayoutChanged();
+    }
 }
 
 void NodeInspector::mouseMoveEvent(QGraphicsSceneMouseEvent* event)

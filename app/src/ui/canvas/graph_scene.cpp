@@ -125,6 +125,14 @@ void GraphScene::setTitle(Node* node, QString title)
         title_cache[node] = title;
 }
 
+void GraphScene::clearExportWorker(Node* node)
+{
+    if (inspectors.contains(node))
+        inspectors[node]->clearExportWorker();
+    else if (export_cache.contains(node))
+        export_cache.remove(node);
+}
+
 void GraphScene::setExportWorker(Node* node, ExportWorker* worker)
 {
     if (inspectors.contains(node))
