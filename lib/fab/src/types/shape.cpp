@@ -10,7 +10,7 @@
 #include "fab/types/shape.h"
 
 Shape::Shape()
-    : math(""), bounds(Bounds()), tree(NULL), r(-1), g(-1), b(-1)
+    : math("f1"), bounds(Bounds()), tree(NULL), r(-1), g(-1), b(-1)
 {
     // Nothing to do here
 }
