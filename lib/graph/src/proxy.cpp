@@ -8,13 +8,13 @@ using namespace boost::python;
 PyObject* Proxy::proxy_init = NULL;
 
 Proxy::Proxy(Root* r)
-    : root(r), caller(NULL), settable(false)
+    : root(r), caller(NULL), globals(NULL), settable(false)
 {
     // Nothing to do here
 }
 
 Proxy::Proxy()
-    : root(NULL), caller(NULL), settable(false)
+    : root(NULL), caller(NULL), globals(NULL), settable(false)
 {
     // Nothing to do here
     // (but we need to set the root before this proxy can be used)
@@ -27,6 +27,27 @@ Proxy::~Proxy()
 
 PyObject* Proxy::getAttr(std::string name)
 {
+    // If we're given a globals dictionary, then use it for this lookup
+    // (checking in both the dictionary itself and the __builtins__ subdict)
+    if (globals)
+    {
+        if (auto v = PyDict_GetItemString(globals, name.c_str()))
+        {
+            Py_INCREF(v);
+            return v;
+        }
+        PyErr_Clear();
+
+        // Look for this symbol in the builtins dictionary
+        auto b = PyDict_GetItemString(globals, "__builtins__");
+        if (auto v = PyDict_GetItemString(b, name.c_str()))
+        {
+            Py_INCREF(v);
+            return v;
+        }
+        PyErr_Clear();
+    }
+
     if (caller)
         root->saveLookup(name, caller);
     if (auto v = root->pyGetAttr(name, caller))
@@ -68,6 +89,10 @@ PyObject* Proxy::makeProxyFor(Root* r, Downstream* caller, bool settable)
     return p;
 }
 
+void Proxy::setGlobals(PyObject* proxy, PyObject* globals)
+{
+    boost::python::extract<Proxy*>(proxy)()->globals = globals;
+}
 ////////////////////////////////////////////////////////////////////////////////
 
 void Proxy::onException(const Proxy::Exception& e)
