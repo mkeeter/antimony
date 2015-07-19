@@ -27,7 +27,8 @@ public:
      *  Loads input, output, and title hooks into the given globals
      *  dictionary (with callbacks pointing to the given Node).
      */
-    void load(PyObject* g, Node* n) override;
+    void loadScriptHooks(PyObject* g, Node* n) override;
+    void loadDatumHooks(PyObject* g) override;
 
 protected:
     GraphScene* scene;

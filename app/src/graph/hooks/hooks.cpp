@@ -91,7 +91,7 @@ void AppHooks::preInit()
     PyImport_AppendInittab("_AppHooks", PyInit__AppHooks);
 }
 
-void AppHooks::load(PyObject* g, Node* n)
+void AppHooks::loadScriptHooks(PyObject* g, Node* n)
 {
     // Lazy initialization of hooks module
     static PyObject* hooks_module = NULL;
@@ -134,9 +134,13 @@ void AppHooks::load(PyObject* g, Node* n)
 
     PyObject* sb = PyObject_CallFunctionObjArgs(
             sb_tuple, ui_obj, export_obj, NULL);
-    PyErr_Print();
     PyDict_SetItemString(g, "sb", sb);
-    PyErr_Print();
-    PyRun_String("import fab", Py_file_input, g, g);
-    PyErr_Print();
 }
+
+void AppHooks::loadDatumHooks(PyObject* g)
+{
+    PyDict_SetItemString(g, "fab", PyImport_ImportModule("fab"));
+    if (PyErr_Occurred())
+        PyErr_Print();
+}
+
