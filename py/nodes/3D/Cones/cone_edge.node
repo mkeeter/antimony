@@ -2,6 +2,7 @@
 # Matt Keeter 6/11/15
 
 import fab
+import math
 
 title('Cone (edge)')
 
