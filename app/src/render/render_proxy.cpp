@@ -3,11 +3,11 @@
 #include <QDebug>
 
 #include "render/render_task.h"
+#include "render/render_proxy.h"
 #include "render/render_worker.h"
 #include "render/render_image.h"
 
 #include "ui/viewport/depth_image.h"
-
 #include "ui/viewport/viewport.h"
 
 #include "graph/datum.h"
@@ -15,37 +15,32 @@
 
 #include "fab/fab.h"
 
-RenderWorker::RenderWorker(Datum* datum, Viewport* viewport)
-    : QObject(NULL), datum(datum), thread(NULL), current(NULL),
+RenderProxy::RenderProxy(RenderWorker* worker, Viewport* viewport)
+    : QObject(NULL), worker(worker), thread(NULL), current(NULL),
       next(NULL), depth_image(NULL), running(false), starting_refinement(4),
       viewport(viewport)
 {
-    datum->installWatcher(this);
-    datum->parentNode()->installWatcher(this);
-
-    // If the Datum or Viewport is destroyed, delete this worker if a task
-    // isn't running.  If a task is running, the deletion criterion will be
-    // checked on task completion and the worker will be deleted then.
-    connect(viewport, &Viewport::destroyed,
-            this, &RenderWorker::deleteIfNotRunning);
+    // If Viewport is destroyed, delete this worker if a task isn't running.
+    // If a task is running, the deletion criterion will be checked on task
+    // completion and the worker will be deleted then.
+    connect(viewport, &QObject::destroyed,
+            this, &RenderProxy::deleteIfNotRunning);
     connect(viewport, &Viewport::viewChanged,
-            this, &RenderWorker::onViewChanged);
+            this, &RenderProxy::startRender);
 
-    trigger(datum->getState());
+    connect(worker, &QObject::destroyed,
+            this, &RenderProxy::deleteIfNotRunning);
+    connect(worker, &RenderWorker::changed,
+            this, &RenderProxy::startRender);
 }
 
-RenderWorker::~RenderWorker()
+RenderProxy::~RenderProxy()
 {
     if (depth_image)
         depth_image->deleteLater();
 }
 
-bool RenderWorker::accepts(Datum *d)
-{
-    return d->getType() == fab::ShapeType;
-}
-
-void RenderWorker::deleteIfNotRunning()
+void RenderProxy::deleteIfNotRunning()
 {
     // If this worker isn't running, call deleteLater.
     // In the case that it is running, we check the deletion conditions
@@ -58,20 +53,17 @@ void RenderWorker::deleteIfNotRunning()
 
     if (!running)
         deleteLater();
+
+    // Clear the datum pointer to request self-deletion.
+    worker = NULL;
 }
 
-bool RenderWorker::hasNoOutput()
+bool RenderProxy::hasNoOutput()
 {
-    if (!datum)
+    if (!worker)
         return false;
 
     /*
-    if (!datum->hasOutput())
-    {
-        clearImage();
-        return false;
-    }
-
     if (datum->hasConnectedLink())
     {
         clearImage();
@@ -81,10 +73,10 @@ bool RenderWorker::hasNoOutput()
     return true;
 }
 
-void RenderWorker::onViewChanged()
+void RenderProxy::startRender()
 {
-    /*
-    if (datum && datum->getValid() && datum->getValue() && hasNoOutput())
+    auto datum = worker->datum;
+    if (datum->isValid() && datum->currentValue()) // && datum->isOutput())
     {
         if (next)
             next->deleteLater();
@@ -93,7 +85,7 @@ void RenderWorker::onViewChanged()
         emit(abort());
 
         next = new RenderTask(
-                datum->getValue(),
+                datum->currentValue(),
                 viewport->getTransformMatrix(),
                 viewport->getScale() / (1 << starting_refinement),
                 starting_refinement + 1);
@@ -101,42 +93,9 @@ void RenderWorker::onViewChanged()
         if (!running)
             startNextRender();
     }
-    */
-}
-void RenderWorker::trigger(const DatumState& state)
-{
-    /*
-    if (datum && datum->getValid() && datum->getValue() && hasNoOutput())
-    {
-        if (next)
-            next->deleteLater();
-
-        // Tell in-progress renders to abort.
-        emit(abort());
-
-        next = new RenderTask(
-                datum->getValue(),
-                viewport->getTransformMatrix(),
-                viewport->getScale() / (1 << starting_refinement),
-                starting_refinement + 1);
-
-        if (!running)
-            startNextRender();
-    }
-    */
 }
 
-void RenderWorker::trigger(const NodeState& state)
-{
-    if (std::find(state.datums.begin(),
-                  state.datums.end(), datum) == state.datums.end())
-    {
-        datum = NULL;
-        deleteIfNotRunning();
-    }
-}
-
-void RenderWorker::onTaskFinished()
+void RenderProxy::onTaskFinished()
 {
     if (!hasNoOutput())
         clearImage();
@@ -166,7 +125,7 @@ void RenderWorker::onTaskFinished()
     current->deleteLater();
 }
 
-void RenderWorker::clearImage()
+void RenderProxy::clearImage()
 {
     if (depth_image)
     {
@@ -175,14 +134,14 @@ void RenderWorker::clearImage()
     }
 }
 
-void RenderWorker::onThreadFinished()
+void RenderProxy::onThreadFinished()
 {
     running = false;
 
     // If the datum which we're rendering has been deleted or the
     // target viewport has been deleted, clean up and call deleteLater
     // on oneself.
-    if (datum == NULL || viewport.isNull())
+    if (worker->datum == NULL || viewport.isNull())
     {
         if (next)
             next->deleteLater();
@@ -196,7 +155,7 @@ void RenderWorker::onThreadFinished()
     }
 }
 
-void RenderWorker::startNextRender()
+void RenderProxy::startNextRender()
 {
     Q_ASSERT(!running);
 
@@ -209,17 +168,17 @@ void RenderWorker::startNextRender()
     running = true;
 
     // Halt rendering when the abort signal is emitted.
-    connect(this, &RenderWorker::abort, current, &RenderTask::halt);
+    connect(this, &RenderProxy::abort, current, &RenderTask::halt);
 
     connect(thread, &QThread::started, current, &RenderTask::render);
 
     connect(current, &RenderTask::finished,
-            this, &RenderWorker::onTaskFinished);
+            this, &RenderProxy::onTaskFinished);
 
-    connect(current, &RenderWorker::destroyed, thread, &QThread::quit);
+    connect(current, &RenderProxy::destroyed, thread, &QThread::quit);
 
     connect(thread, &QThread::finished,
-            this, &RenderWorker::onThreadFinished);
+            this, &RenderProxy::onThreadFinished);
     connect(thread, &QThread::finished, thread, &QThread::deleteLater);
 
     thread->start();

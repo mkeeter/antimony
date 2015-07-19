@@ -9,7 +9,6 @@
 #include "ui/canvas/inspector/inspector_title.h"
 
 #include "ui/util/colors.h"
-#include "export/export_worker.h"
 #include "app/app.h"
 
 #include "graph/node.h"

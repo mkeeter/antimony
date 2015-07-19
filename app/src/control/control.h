@@ -15,7 +15,7 @@ class Datum;
 class EvalDatum;
 class Node;
 
-class Control : public QObject, GraphWatcher, NodeWatcher
+class Control : public QObject
 {
     Q_OBJECT
 public:
@@ -25,9 +25,6 @@ public:
      *  node is the target Node
      */
     explicit Control(Node* node, PyObject* drag_func=NULL);
-
-    void trigger(const GraphState& state) override;
-    void trigger(const NodeState& state) override {}
 
     void deleteLater();
 
@@ -100,6 +97,12 @@ public:
      */
     void touch() { touched = true; }
 
+    /*
+     *  Checks that touched is set to true
+     *  (and clears it)
+     */
+    bool checkTouched();
+
     bool isDragging() const { return is_dragging; }
 
     bool getRelative() const { return relative; }
@@ -110,12 +113,6 @@ public:
      *  for non-relative dragging.
      */
     virtual QVector3D pos() const=0;
-
-    bool isDeleteScheduled() const { return delete_scheduled; }
-
-public slots:
-    void clearTouchedFlag();
-    void deleteIfNotTouched();
 
 signals:
     void redraw();
@@ -144,13 +141,6 @@ protected:
     bool touched;
 
     bool relative;
-
-    /*
-     *  Set when deleteLater is called
-     *  (because otherwise things can go wrong where getControl
-     *   return this Control but it's about to be deleted).
-     */
-    bool delete_scheduled;
 };
 
 

@@ -183,7 +183,6 @@ QVector3D Viewport::sceneToWorld(QPointF p) const
 void Viewport::makeNodeAtCursor(NodeConstructorFunction f)
 {
     auto n = f(App::instance()->getGraph());
-    App::instance()->newNode(n);
     //App::instance()->pushStack(new UndoAddNodeCommand(n));
 }
 
@@ -700,7 +699,6 @@ void Viewport::onPaste()
         n->setParent(App::instance()->getNodeRoot());
         n->updateName();
 
-        App::instance()->newNode(n);
         App::instance()->pushStack(new UndoAddNodeCommand(n, "'paste'"));
         */
     }

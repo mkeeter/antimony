@@ -9,6 +9,7 @@
 #include <QList>
 
 #include "util/hash.h"
+#include "graph/watchers.h"
 
 class Control;
 class ControlRoot;
@@ -17,7 +18,7 @@ class Datum;
 class Node;
 class Viewport;
 
-class ViewportScene : public QObject
+class ViewportScene : public QObject, GraphWatcher
 {
     Q_OBJECT
 public:
@@ -38,9 +39,9 @@ public:
     Viewport* newViewport();
 
     /*
-     *  Creates DepthImageItems for this node.
+     *  On graph change, delete controls that are now orphaned.
      */
-    void makeRenderWorkersFor(Node* n);
+    void trigger(const GraphState& state) override;
 
     /*
      *  Registers a Control object, making proxies.
@@ -61,17 +62,6 @@ signals:
      */
     void glowChanged(Node* n, bool g);
 
-protected slots:
-    /*
-     *  Removes dead Viewport and Node pointers from the list and map.
-     */
-    void prune();
-
-    /*
-     *  When a Node's datums change, update RenderWorkers.
-     */
-    void onDatumsChanged(Node* n);
-
 protected:
 
     /*
@@ -81,15 +71,14 @@ protected:
     void makeProxyFor(Control* c, Viewport* v);
 
     /* Stores viewports for which we've made a QGraphicsScene */
-    QSet<QPointer<Viewport>> viewports;
+    QSet<Viewport*> viewports;
 
-    /* Score a set of top-level control roots
-     * (which manage highlighting and glowing)
+    /* Store a set of top-level control roots
+     * (which manage UI hooks, render workers, highlighting, glowing)
      */
     QMap<Node*, QSharedPointer<ControlRoot>> controls;
 
-    /* Stores Datums for which we have created RenderWorkers */
-    QSet<Datum*> workers;
+    friend class ControlRoot;
 };
 
 #endif // VIEWPORT_SCENE_H

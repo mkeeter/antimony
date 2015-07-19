@@ -242,7 +242,7 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
 
     ControlPoint* p = dynamic_cast<ControlPoint*>(
             self.scene->getControl(self.node, lineno));
-    if (!p || p->isDeleteScheduled())
+    if (!p)
     {
         p = new ControlPoint(self.node);
         self.scene->registerControl(self.node, lineno, p);

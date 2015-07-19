@@ -201,7 +201,6 @@ void Canvas::makeNodeAtCursor(NodeConstructorFunction f)
 {
     auto n = f(App::instance()->getGraph());
 
-    App::instance()->newNode(n);
     /*
     App::instance()->pushStack(new UndoAddNodeCommand(n));
     */

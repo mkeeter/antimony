@@ -468,11 +468,6 @@ MainWindow* App::newEditorWindow(Node* n)
     return m;
 }
 
-void App::newNode(Node* n)
-{
-    view_scene->makeRenderWorkersFor(n);
-}
-
 void App::makeUI(Graph* r)
 {
     /*

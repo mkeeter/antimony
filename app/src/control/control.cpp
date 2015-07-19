@@ -15,27 +15,9 @@
 
 Control::Control(Node* node, PyObject* drag_func)
     : QObject(), node(node), drag_func(drag_func), glow(false),
-      relative(true), delete_scheduled(false)
+      touched(false), relative(true)
 {
-    /*
-    connect(node, &Node::clearControlTouchedFlag,
-            this, &Control::clearTouchedFlag);
-    connect(node, &Node::deleteUntouchedControls,
-            this, &Control::deleteIfNotTouched);
-    */
-    node->parentGraph()->installWatcher(this);
-}
-
-void Control::trigger(const GraphState& state)
-{
-    if (state.nodes.count(node) == 0)
-        deleteLater();
-}
-
-void Control::deleteLater()
-{
-    delete_scheduled = true;
-    QObject::deleteLater();
+    // Nothing to do here
 }
 
 Control::~Control()
@@ -132,13 +114,9 @@ void Control::setGlow(bool g)
     }
 }
 
-void Control::clearTouchedFlag()
+bool Control::checkTouched()
 {
+    bool was_touched = touched;
     touched = false;
-}
-
-void Control::deleteIfNotTouched()
-{
-    if (!touched)
-        deleteLater();
+    return was_touched;
 }

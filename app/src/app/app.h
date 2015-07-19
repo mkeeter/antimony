@@ -31,11 +31,6 @@ public:
     static App* instance();
 
     /*
-     *  Creates UI elements for a new Node and adds them to scenes.
-     */
-    void newNode(Node* n);
-
-    /*
      *  Makes UI elements for the given Graph.
      */
     void makeUI(Graph* g);
