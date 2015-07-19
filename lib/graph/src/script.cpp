@@ -4,6 +4,8 @@
 #include "graph/node.h"
 #include "graph/util.h"
 #include "graph/proxy.h"
+#include "graph/hooks/hooks.h"
+#include "graph/hooks/external.h"
 
 Script::Script(Node* parent)
     : error_lineno(-1), parent(parent)
@@ -18,8 +20,10 @@ void Script::update()
     error_lineno = -1;
     error.clear();
 
-    PyObject* locals = parent->proxyDict(this);
-    PyObject* globals = Proxy::getDict(locals);
+    globals = Py_BuildValue(
+            "{sO}", "__builtins__", PyEval_GetBuiltins());
+    Hooks::load(globals, parent);
+    parent->loadScriptHooks(globals);
 
     // Swap in a stringIO object for stdout, saving stdout in out
     PyObject* sys_mod = PyImport_ImportModule("sys");
@@ -32,7 +36,7 @@ void Script::update()
 
     // Run the script
     PyObject* out = PyRun_String(
-            script.c_str(), Py_file_input, globals, locals);
+            script.c_str(), Py_file_input, globals, globals);
     Py_XDECREF(out);
 
     if (PyErr_Occurred())
@@ -43,8 +47,8 @@ void Script::update()
         PyErr_Clear();
     }
 
-    // We don't need to decref globals because it's borrowed from locals
-    Py_DECREF(locals);
+    Py_DECREF(globals);
+    globals = NULL;
 
     // Get the output from the StringIO object
     PyObject* s = PyObject_CallMethod(string_out, "getvalue", NULL);
@@ -73,3 +77,10 @@ void Script::update()
 
     parent->update(active);
 }
+
+void Script::inject(std::string name, PyObject* value)
+{
+    assert(globals != NULL);
+    PyDict_SetItemString(globals, name.c_str(), value);
+}
+

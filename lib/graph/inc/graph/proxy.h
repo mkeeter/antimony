@@ -35,31 +35,14 @@ public:
     /*
      *  Constructs a Proxy dictionary for the given root.
      *
-     *  Lookups will check the root, then locals, and will be marked as being
-     *  made by the given Downstream object.
+     *  Lookups will check the root and will be marked as being made by the
+     *  given Downstream object (using root->saveLookup)
      *
-     *  If the root is a top-level object, a dictionary will be constructed
-     *  (for script evaluation, which may involve storing variables)
-     *
-     *  If an ExternalHooks pointer is provided, its 'load' function will
-     *  be called (giving it the chance to inject variables into the
-     *  dictionary)
      */
-    static PyObject* makeProxyFor(Root* r, Node* locals, Downstream* caller,
-                                  ExternalHooks* external=NULL,
-                                  bool settable=false);
-
-    /*
-     *  Returns a new reference to the dict object of the given proxy
-     *  (p must be a Proxy object).
-     */
-    static PyObject* getDict(PyObject* p);
+    static PyObject* makeProxyFor(Root* r, Downstream* caller, bool settable=false);
 
 protected:
     Root* root;
-    Node* locals;
-    PyObject* dict;
-
     Downstream* caller;
 
     bool settable;

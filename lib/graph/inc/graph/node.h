@@ -96,10 +96,9 @@ public:
 
     /*
      *  Returns a Proxy object that uses the parent Graph as its
-     *  root, this Node as its locals dictionary, and the given
-     *  Downstream as the caller.
+     *  root and the given datum as the caller (for datum evaluation)
      */
-    PyObject* proxyDict(Downstream* caller);
+    PyObject* proxyDict(Datum* caller);
 
     /*
      *  Returns a mutable proxy for this node
@@ -118,6 +117,12 @@ public:
     void uninstallWatcher(NodeWatcher* w);
 
     /*
+     *  Calls load on the parent graph's external hook object.
+     */
+    void loadScriptHooks(PyObject* g);
+    void loadDatumHooks(PyObject* g);
+
+    /*
      *  Return the state (passed into callbacks)
      */
     NodeState getState() const;
@@ -125,7 +130,6 @@ public:
     /* Root functions */
     PyObject* pyGetAttr(std::string name, Downstream* caller) const override;
     void pySetAttr(std::string name, PyObject* obj) override;
-    bool topLevel() const override { return false; }
 
 protected:
 

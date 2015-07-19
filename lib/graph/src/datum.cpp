@@ -47,8 +47,9 @@ bool Datum::hasInput() const
 
 PyObject* Datum::getValue()
 {
-    PyObject* locals = parent->parent->proxyDict(NULL, this);
-    PyObject* globals = Proxy::getDict(locals);
+    PyObject* locals = parent->parent->proxyDict(this);
+    PyObject* globals = Py_BuildValue("{}");
+    parent->parent->loadDatumHooks(globals);
 
     // If the string begins with a sigil, slice it off
     const std::string e = trimSigil(expr).first;

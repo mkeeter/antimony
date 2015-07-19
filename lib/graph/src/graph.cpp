@@ -12,9 +12,9 @@ Graph::Graph(std::string n, Graph* parent)
     // Nothing to do here
 }
 
-PyObject* Graph::proxyDict(Node* locals, Downstream* caller)
+PyObject* Graph::proxyDict(Datum* caller)
 {
-    return Proxy::makeProxyFor(this, locals, caller, external.get());
+    return Proxy::makeProxyFor(this, caller);
 }
 
 void Graph::triggerWatchers() const
@@ -46,10 +46,22 @@ void Graph::uninstall(Node* n)
     triggerWatchers();
 }
 
+void Graph::loadScriptHooks(PyObject* g, Node* n)
+{
+    if (external)
+        external->loadScriptHooks(g, n);
+}
+
+void Graph::loadDatumHooks(PyObject* g)
+{
+    if (external)
+        external->loadDatumHooks(g);
+}
+
 PyObject* Graph::pyGetAttr(std::string name, Downstream* caller) const
 {
     auto m = get(name, nodes);
-    return m ? Proxy::makeProxyFor(m, NULL, caller) : NULL;
+    return m ? Proxy::makeProxyFor(m, caller) : NULL;
 }
 
 void Graph::preInit()

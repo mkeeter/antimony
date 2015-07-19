@@ -31,12 +31,6 @@ public:
      */
     void saveLookup(std::string name, Downstream* caller);
 
-    /*
-     *  Returns true if this root is a top-level object
-     *  (changes whether Proxy populates dictionary and __builtins__)
-     */
-    virtual bool topLevel() const=0;
-
 #if 0
     /*
      *  Checks that the given name is valid.

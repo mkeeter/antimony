@@ -267,3 +267,15 @@ TEST_CASE("Invalid datum names")
                 != std::string::npos);
     }
 }
+
+TEST_CASE("Variable namespaces")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    n->setScript("input('x', float, 1.0)\n"
+                  "def f(g):\n"
+                  "    return g + x\n"
+                  "print(f(10))");
+    CAPTURE(n->getError());
+    REQUIRE(n->getErrorLine() == -1);
+}

@@ -78,14 +78,14 @@ void Node::update(const std::unordered_set<Datum*>& active)
     }
 }
 
-PyObject* Node::proxyDict(Downstream* caller)
+PyObject* Node::proxyDict(Datum* caller)
 {
-    return parent->proxyDict(this, caller);
+    return parent->proxyDict(caller);
 }
 
 PyObject* Node::mutableProxy()
 {
-    return Proxy::makeProxyFor(this, NULL, NULL, NULL, true);
+    return Proxy::makeProxyFor(this, NULL, true);
 }
 
 Datum* Node::getDatum(std::string name) const
@@ -96,6 +96,16 @@ Datum* Node::getDatum(std::string name) const
 void Node::uninstallWatcher(NodeWatcher* w)
 {
     watchers.remove_if([&](NodeWatcher* w_) { return w_ == w; });
+}
+
+void Node::loadScriptHooks(PyObject* g)
+{
+    parent->loadScriptHooks(g, this);
+}
+
+void Node::loadDatumHooks(PyObject* g)
+{
+    parent->loadDatumHooks(g);
 }
 
 bool Node::makeDatum(std::string n, PyTypeObject* type,
@@ -135,6 +145,11 @@ bool Node::makeDatum(std::string n, PyTypeObject* type,
     }
 
     script.active.insert(d);
+
+    // Inject this variable into the script's namespace
+    script.inject(n.c_str(), d->currentValue());
+    saveLookup(n, &script);
+
     return true;
 }
 

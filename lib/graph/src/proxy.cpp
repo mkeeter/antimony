@@ -2,21 +2,19 @@
 #include "graph/datum.h"
 #include "graph/node.h"
 #include "graph/types/root.h"
-#include "graph/hooks/hooks.h"
-#include "graph/hooks/external.h"
 
 using namespace boost::python;
 
 PyObject* Proxy::proxy_init = NULL;
 
 Proxy::Proxy(Root* r)
-    : root(r), locals(NULL), dict(NULL), caller(NULL), settable(false)
+    : root(r), caller(NULL), settable(false)
 {
     // Nothing to do here
 }
 
 Proxy::Proxy()
-    : root(NULL), locals(NULL), dict(NULL), caller(NULL), settable(false)
+    : root(NULL), caller(NULL), settable(false)
 {
     // Nothing to do here
     // (but we need to set the root before this proxy can be used)
@@ -24,35 +22,11 @@ Proxy::Proxy()
 
 Proxy::~Proxy()
 {
-    Py_XDECREF(dict);
+    // Nothing to do here
 }
 
 PyObject* Proxy::getAttr(std::string name)
 {
-    if (dict)
-    {
-        if (auto v = PyDict_GetItemString(dict, name.c_str()))
-        {
-            Py_INCREF(v);
-            return v;
-        }
-        PyErr_Clear();
-
-        // Look for this symbol in the builtins dictionary
-        auto b = PyDict_GetItemString(dict, "__builtins__");
-        if (auto v = PyDict_GetItemString(b, name.c_str()))
-        {
-            Py_INCREF(v);
-            return v;
-        }
-        PyErr_Clear();
-    }
-
-    if (locals && caller)
-        locals->saveLookup(name, caller);
-    if (auto v = locals ? locals->pyGetAttr(name, caller) : NULL)
-        return v;
-
     if (caller)
         root->saveLookup(name, caller);
     if (auto v = root->pyGetAttr(name, caller))
@@ -64,20 +38,12 @@ PyObject* Proxy::getAttr(std::string name)
 
 void Proxy::setAttr(std::string name, object obj)
 {
-    if (dict)
-    {
-        PyDict_SetItemString(dict, name.c_str(), obj.ptr());
-        return;
-    }
-
     if (!settable)
         throw Proxy::Exception("Cannot set value with non-mutable Proxy");
-
     root->pySetAttr(name, obj.ptr());
 }
 
-PyObject* Proxy::makeProxyFor(Root* r, Node* locals, Downstream* caller,
-                              ExternalHooks* external, bool settable)
+PyObject* Proxy::makeProxyFor(Root* r, Downstream* caller, bool settable)
 {
     // Get Python object constructor (with lazy initialization)
     if (proxy_init == NULL)
@@ -97,29 +63,9 @@ PyObject* Proxy::makeProxyFor(Root* r, Node* locals, Downstream* caller,
     auto p_ = ex();
 
     p_->root = r;
-    p_->locals = locals;
     p_->caller = caller;
     p_->settable = settable;
-    if (r->topLevel())
-    {
-        p_->dict = PyDict_New();
-
-        PyDict_SetItemString(p_->dict, "__builtins__", PyEval_GetBuiltins());
-        PyDict_SetItemString(p_->dict, "math", PyImport_ImportModule("math"));
-
-        Hooks::load(p_->dict, locals);
-        if (external)
-            external->load(p_->dict, locals);
-    }
     return p;
-}
-
-PyObject* Proxy::getDict(PyObject* p)
-{
-    PyObject* d = boost::python::extract<Proxy&>(p)().dict;
-    assert(d);
-    Py_INCREF(d);
-    return d;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

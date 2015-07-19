@@ -46,7 +46,7 @@ public:
      *  the given Node as its locals dictionary, and the given
      *  Downstream as the caller.
      */
-    PyObject* proxyDict(Node* locals, Downstream* caller);
+    PyObject* proxyDict(Datum* caller);
 
     /*
      *  Sets the callback object.
@@ -68,8 +68,13 @@ public:
      */
     void installExternalHooks(ExternalHooks* h) { external.reset(h); }
 
+    /*
+     *  Loads external hooks (if they are present)
+     */
+    void loadScriptHooks(PyObject* g, Node* n);
+    void loadDatumHooks(PyObject* g);
+
     /* Root functions */
-    bool topLevel() const override { return parent == NULL; }
     PyObject* pyGetAttr(std::string name, Downstream* caller) const override;
     void pySetAttr(std::string, PyObject*) override {}
 

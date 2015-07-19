@@ -13,11 +13,14 @@ struct Script : public Downstream
 {
 public:
     Script(Node* parent);
-
     void update() override;
 
-
 protected:
+    /*
+     *  Inject a variable into the globals dictionary.
+     */
+    void inject(std::string name, PyObject* value);
+
     /*
      *  Never allow proxies to use UID lookups when a script
      *  is being evaluated.
@@ -33,6 +36,7 @@ protected:
 
     std::unordered_set<Datum*> active;
     Node* parent;
+    PyObject* globals;
 
     friend class Node;
 };
