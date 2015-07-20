@@ -10,9 +10,7 @@
 #include "ui/canvas/inspector/inspector.h"
 #include "ui/util/colors.h"
 
-
 #include "app/app.h"
-#include "app/undo/undo_add_link.h"
 
 Connection::Connection(OutputPort* source)
     : Connection(source, NULL)
