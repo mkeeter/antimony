@@ -8,13 +8,11 @@
 #include "app/app.h"
 
 #include "graph/node/deserializer.h"
-#include "graph/node/node.h"
-#include "graph/node/root.h"
+#include "graph/node.h"
+#include "graph/graph.h"
 
-#include "graph/datum/types/eval_datum.h"
-
-SceneDeserializer::SceneDeserializer(NodeRoot* node_root)
-    : QObject(), failed(false), node_root(node_root)
+SceneDeserializer::SceneDeserializer(Graph* graph)
+    : QObject(), failed(false), graph(graph), globals(NULL)
 {
     // Nothing to do here
 }
@@ -41,13 +39,13 @@ bool SceneDeserializer::run(QJsonObject in)
     else
     {
         protocol_version = in["protocol"].toDouble();
-        if (protocol_version < 5)
+        if (protocol_version < 6)
         {
             failed = true;
             error_message = "File was saved with a older protocol and cannot yet be read.";
             return failed;
         }
-        else if (protocol_version > 5)
+        else if (protocol_version > 6)
         {
             failed = true;
             error_message = "File was saved with a newer protocol and cannot yet be read.";
@@ -63,22 +61,21 @@ bool SceneDeserializer::run(QJsonObject in)
         return failed;
     }
 
-    deserializeNodes(in["nodes"].toArray(), node_root);
-    if (in.find("connections") != in.end())
-        deserializeConnections(in["connections"].toArray());
+    deserializeNodes(in["nodes"].toArray(), graph);
 
     return false;
 }
 
-void SceneDeserializer::deserializeNodes(QJsonArray in, NodeRoot* p)
+void SceneDeserializer::deserializeNodes(QJsonArray in, Graph* p)
 {
     for (auto n : in)
         deserializeNode(n.toObject(), p);
 }
 
-void SceneDeserializer::deserializeNode(QJsonObject in, NodeRoot* p)
+void SceneDeserializer::deserializeNode(QJsonObject in, Graph* p)
 {
-    Node* node = new Node(p);
+    Node* node = new Node(in["name"].toString().toStdString(),
+                          in["uid"].toDouble(), p);
 
     // Deserialize inspector position
     auto a = in["inspector"].toArray();
@@ -87,45 +84,23 @@ void SceneDeserializer::deserializeNode(QJsonObject in, NodeRoot* p)
     for (auto d : in["datums"].toArray())
         deserializeDatum(d.toObject(), node);
 
-    nodes << node;
+    QStringList s;
+    for (auto line : in["script"].toArray())
+        s.append(line.toString());
+    node->setScript(s.join("\n").toStdString());
 }
 
 void SceneDeserializer::deserializeDatum(QJsonObject in, Node* node)
 {
-    QString type = in["type"].toString();
-    QString name = in["name"].toString();
+    if (!globals)
+        globals = Py_BuildValue("{sO}", "__builtins__", PyEval_GetBuiltins());
 
-    Datum* datum = Datum::fromTypeString(type, name, node);
-
-    if (auto e = dynamic_cast<EvalDatum*>(datum))
-    {
-        if (in["expr"].isArray())
-        {
-            QStringList a;
-            for (auto line : in["expr"].toArray())
-                a.append(line.toString());
-            e->setExpr(a.join("\n"));
-        }
-        else
-        {
-            e->setExpr(in["expr"].toString());
-        }
-    }
+    new Datum(in["name"].toString().toStdString(),
+              in["uid"].toDouble(),
+              in["expr"].toString().toStdString(),
+              (PyTypeObject*)PyRun_String(
+                  in["type"].toString().toStdString().c_str(),
+                  Py_eval_input, globals, globals),
+              node);
 }
 
-void SceneDeserializer::deserializeConnections(QJsonArray in)
-{
-    for (auto c_ : in)
-    {
-        auto c = c_.toArray();
-        auto start = c[0].toArray();
-        auto end = c[1].toArray();
-
-        auto start_datum = nodes[start[0].toDouble()]->findChild<Datum*>(
-                start[1].toString(), Qt::FindDirectChildrenOnly);
-        auto end_datum = nodes[end[0].toDouble()]->findChild<Datum*>(
-                end[1].toString(), Qt::FindDirectChildrenOnly);
-
-        end_datum->addLink(start_datum->linkFrom());
-    }
-}

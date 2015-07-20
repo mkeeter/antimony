@@ -1,6 +1,8 @@
 #ifndef DESERIALIZER_H
 #define DESERIALIZER_H
 
+#include <Python.h>
+
 #include <QObject>
 #include <QMap>
 #include <QPointF>
@@ -8,13 +10,13 @@
 #include <QJsonArray>
 
 class Node;
-class NodeRoot;
+class Graph;
 
 class SceneDeserializer : public QObject
 {
     Q_OBJECT
 public:
-    explicit SceneDeserializer(NodeRoot* node_root);
+    explicit SceneDeserializer(Graph* graph);
 
     bool run(QJsonObject in);
 
@@ -24,14 +26,13 @@ public:
     QString warning_message;
 
 protected:
-    void deserializeNodes(QJsonArray in, NodeRoot* p);
-    void deserializeNode(QJsonObject in, NodeRoot* p);
+    void deserializeNodes(QJsonArray in, Graph* p);
+    void deserializeNode(QJsonObject in, Graph* p);
     void deserializeDatum(QJsonObject in, Node* node);
-    void deserializeConnections(QJsonArray in);
 
     quint32 protocol_version;
-    NodeRoot* node_root;
-    QList<Node*> nodes;
+    Graph* graph;
+    PyObject* globals;
 };
 
 #endif // DESERIALIZER_H
