@@ -35,8 +35,6 @@ Connection::Connection(OutputPort* source, InputPort* target)
             this, &Connection::onPortsMoved);
     connect(source, &Port::hiddenChanged,
             this, &Connection::onHiddenChanged);
-    connect(source, &QObject::destroyed,
-            this, &Connection::onPortDeleted);
 
     if (target)
         target->install(this);

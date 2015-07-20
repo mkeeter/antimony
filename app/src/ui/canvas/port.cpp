@@ -87,8 +87,6 @@ void InputPort::install(Connection* c)
             c, &Connection::onPortsMoved);
     connect(this, &Port::hiddenChanged,
             c, &Connection::onHiddenChanged);
-    connect(this, &QObject::destroyed,
-            c, &Connection::onPortDeleted);
 
     Q_ASSERT(!connections.contains(c->source->getDatum()));
     connections[c->source->getDatum()].reset(c);
