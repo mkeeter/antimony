@@ -91,10 +91,8 @@ void InspectorShowHiddenButton::trigger(const NodeState& state)
             d->getName().find("__") != 0)
         {
             if (!isVisible())
-            {
                 show();
-                return;
-            }
+            return;
         }
     }
 
