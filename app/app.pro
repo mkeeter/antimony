@@ -85,7 +85,7 @@ SOURCES += \
     src/control/wireframe.cpp \
     src/app/undo/stack.cpp \
     src/app/undo/undo_command.cpp \
-    #src/app/undo/undo_move.cpp \
+    src/app/undo/undo_move.cpp \
     #src/app/undo/undo_change_expr.cpp \
     #src/app/undo/undo_delete_node.cpp \
     #src/app/undo/undo_delete_multi.cpp \
@@ -130,7 +130,7 @@ HEADERS += \
     src/control/point.h \
     src/control/wireframe.h \
     src/app/undo/stack.h \
-    #src/app/undo/undo_move.h \
+    src/app/undo/undo_move.h \
     #src/app/undo/undo_change_expr.h \
     #src/app/undo/undo_delete_node.h \
     #src/app/undo/undo_delete_multi.h \

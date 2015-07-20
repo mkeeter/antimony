@@ -218,12 +218,10 @@ void GraphScene::setInspectorPositions(QMap<Node*, QPointF> p)
 
 void GraphScene::endDrag(QPointF delta)
 {
-    /*
     App::instance()->beginUndoMacro("'drag'");
     for (auto m : selectedItems())
         if (auto i = dynamic_cast<NodeInspector*>(m))
             App::instance()->pushStack(new UndoMoveCommand(
                         this, i->getNode(), i->pos() - delta, i->pos()));
     App::instance()->endUndoMacro();
-    */
 }

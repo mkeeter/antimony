@@ -29,10 +29,8 @@ MainWindow::MainWindow(QWidget *parent) :
     setAttribute(Qt::WA_DeleteOnClose);
 
     connectActions(App::instance());
-    /*
     ui->menuEdit->addAction(App::instance()->undoAction());
     ui->menuEdit->addAction(App::instance()->redoAction());
-    */
     setShortcuts();
 
     populateMenu(ui->menuAdd);

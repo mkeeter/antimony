@@ -48,17 +48,15 @@ App::App(int& argc, char** argv) :
     QApplication(argc, argv), root(new Graph()),
     graph_scene(new GraphScene(root)),
     view_scene(new ViewportScene()),
-    stack(NULL), network(new QNetworkAccessManager(this))
+    stack(new UndoStack(this)), network(new QNetworkAccessManager(this))
 {
     setGlobalStyle();
 
     root->installExternalHooks(new AppHooks(graph_scene));
 
     // When the clean flag on the undo stack changes, update window titles
-    /*
     connect(stack, &QUndoStack::cleanChanged,
             [&](bool){ emit(windowTitleChanged(getWindowTitle())); });
-    */
 
     connect(view_scene, &ViewportScene::glowChanged,
             graph_scene, &GraphScene::onGlowChange);
@@ -130,7 +128,7 @@ void App::onNew()
 {
     root->clear();
     filename.clear();
-    //stack->clear();
+    stack->clear();
     emit(windowTitleChanged(getWindowTitle()));
 }
 
@@ -146,7 +144,7 @@ void App::onSave()
                        graph_scene->inspectorPositions());
     file.write(QJsonDocument(ss.run()).toJson());
 
-    //stack->setClean();
+    stack->setClean();
 }
 
 void App::onSaveAs()
@@ -173,10 +171,8 @@ void App::onSaveAs()
 
 void App::onOpen()
 {
-    /*
     if (stack->isClean() || QMessageBox::question(NULL, "Discard unsaved changes?",
                 "Discard unsaved changes?") == QMessageBox::Yes)
-    */
     {
         QString f = QFileDialog::getOpenFileName(NULL, "Open", "", "*.sb");
         if (!f.isEmpty())
@@ -186,12 +182,9 @@ void App::onOpen()
 
 void App::onQuit()
 {
-    /*
     if (stack->isClean() || QMessageBox::question(NULL, "Discard unsaved changes?",
                 "Discard unsaved changes?") == QMessageBox::Yes)
         quit();
-    */
-    quit();
 }
 
 void App::loadFile(QString f)
@@ -316,10 +309,8 @@ QString App::getWindowTitle() const
     else
         t += "Untitled]";
 
-    /*
     if (!stack->isClean())
         t += "*";
-    */
     return t;
 }
 
@@ -518,42 +509,31 @@ void App::makeUI(Graph* r)
 
 QAction* App::undoAction()
 {
-    /*
     auto a = stack->createUndoAction(this);
     a->setShortcuts(QKeySequence::Undo);
     return a;
-    */
 }
 
 QAction* App::redoAction()
 {
-    /*
     auto a = stack->createRedoAction(this);
     a->setShortcuts(QKeySequence::Redo);
     return a;
-    */
 }
 
 void App::pushStack(UndoCommand* c)
 {
-    /*
-    c->setApp(this);
     stack->push(c);
-    */
 }
 
 void App::undo()
 {
-    /*
     stack->undo();
-    */
 }
 
 void App::redo()
 {
-    /*
     stack->redo();
-    */
 }
 
 void App::beginUndoMacro(QString text)
