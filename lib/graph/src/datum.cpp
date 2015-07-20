@@ -107,14 +107,14 @@ PyObject* Datum::castToType(PyObject* value)
     return cast;
 }
 
-std::list<const Datum*> Datum::getLinks() const
+std::unordered_set<const Datum*> Datum::getLinks() const
 {
     // Use a regex to find every uid.uid element in the list;
     static std::regex id_regex("__([0-9]+)\\.__([0-9]+)");
 
     std::smatch match;
     size_t index = 0;
-    std::list<const Datum*> out;
+    std::unordered_set<const Datum*> out;
 
     while (std::regex_search(expr.substr(index), match, id_regex))
     {
@@ -124,7 +124,7 @@ std::list<const Datum*> Datum::getLinks() const
         auto graph = parent->parent;
         if (auto node = graph->getNode(node_uid))
             if (auto datum = node->getDatum(datum_uid))
-                out.push_back(datum);
+                out.insert(datum);
 
         index += match[0].length();
     }
@@ -268,7 +268,8 @@ void Datum::update()
 DatumState Datum::getState() const
 {
     auto trimmed = trimSigil(expr);
-    return (DatumState){trimmed.first, !trimmed.second, valid, error};
+    return (DatumState){
+        trimmed.first, !trimmed.second, valid, error, getLinks()};
 }
 
 std::pair<std::string, bool> Datum::trimSigil(std::string e)
@@ -307,7 +308,7 @@ bool Datum::acceptsLink(const Datum* upstream) const
 
     // Otherwise, return true if we don't already a link to this datum.
     auto links = getLinks();
-    return std::find(links.begin(), links.end(), upstream) == links.end();
+    return links.count(upstream) == 0;
 }
 
 bool Datum::allowLookupByUID() const

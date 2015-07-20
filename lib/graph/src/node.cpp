@@ -32,16 +32,6 @@ void Node::init()
     parent->triggerWatchers();
 }
 
-Node::~Node()
-{
-    std::list<std::pair<std::string, uint32_t>> ds;
-    for (const auto& d : datums)
-        ds.push_back(std::make_pair(d->name, d->uid));
-    datums.clear();
-    for (auto d : ds)
-        changed(d.first, d.second);
-}
-
 void Node::setScript(std::string t)
 {
     script.script = t;

@@ -16,6 +16,7 @@ struct DatumState
     bool editable;
     bool valid;
     std::string error;
+    std::unordered_set<const Datum*> links;
 };
 
 class DatumWatcher

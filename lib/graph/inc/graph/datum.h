@@ -80,7 +80,7 @@ public:
      *  Returns the set of incoming links
      *  (found by parsing the expression)
      */
-    std::list<const Datum*> getLinks() const;
+    std::unordered_set<const Datum*> getLinks() const;
 
     /*
      *  Checks to see if we can accept the given link.

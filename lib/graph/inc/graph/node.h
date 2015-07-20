@@ -24,11 +24,6 @@ public:
     explicit Node(std::string name, uint64_t uid, Graph* root);
 
     /*
-     *  On destruction, indicate that all datums have changed.
-     */
-    virtual ~Node();
-
-    /*
      *  Return the root pointer.
      */
     Graph* parentGraph() const { return parent; }
