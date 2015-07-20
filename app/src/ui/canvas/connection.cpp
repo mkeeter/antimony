@@ -39,17 +39,7 @@ Connection::Connection(OutputPort* source, InputPort* target)
             this, &Connection::onPortDeleted);
 
     if (target)
-        makeTargetConnections();
-}
-
-void Connection::makeTargetConnections()
-{
-    connect(target, &Port::moved,
-            this, &Connection::onPortsMoved);
-    connect(target, &Port::hiddenChanged,
-            this, &Connection::onHiddenChanged);
-    connect(target, &QObject::destroyed,
-            this, &Connection::onPortDeleted);
+        target->install(this);
 }
 
 void Connection::onPortDeleted()
@@ -211,12 +201,11 @@ void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     Datum* datum = target ? target->getDatum() : NULL;
     if (t && datum->acceptsLink(source->getDatum()))
     {
+        target = t;
+        t->install(this);
+
         datum->installLink(source->getDatum());
         drag_state = CONNECTED;
-
-        target = t;
-        makeTargetConnections();
-
         //App::instance()->pushStack(new UndoAddLinkCommand(link));
     }
     else

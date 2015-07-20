@@ -17,6 +17,7 @@ class Datum;
 class Canvas;
 
 class OutputPort;
+class InputPort;
 class InspectorRow;
 class InspectorExportButton;
 
@@ -45,9 +46,16 @@ public:
     Node* getNode();
 
     /*
-     *  Looks up the output port for the given datum.
+     *  Looks up the input and output port for the given datum.
      */
-    OutputPort* outputPort(Datum* d) const;
+    InputPort* inputPort(const Datum* d) const;
+    OutputPort* outputPort(const Datum* d) const;
+
+    /*
+     *  Make a Connection between the given source and target
+     *  (or caches the link to be created when the source port appears)
+     */
+    void makeLink(const Datum* source, InputPort* target);
 
     template <typename T> T* getButton() const
     {
@@ -110,7 +118,7 @@ protected:
 
     Node* node;
     InspectorTitle* title_row;
-    QMap<Datum*, InspectorRow*> rows;
+    QMap<const Datum*, InspectorRow*> rows;
     InspectorExportButton* export_button;
 
     // Ugly hack because simply grabbing the mouse doesn't set up all of the
@@ -126,6 +134,11 @@ protected:
 
     // Boolean to determine whether to show hidden datums.
     bool show_hidden;
+
+    /*
+     *  Cache that records missed link creation
+     */
+    QMap<const Datum*, InputPort*> link_cache;
 
     friend class InspectorRow;
     friend class InspectorTitle;

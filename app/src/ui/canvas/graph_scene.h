@@ -44,6 +44,12 @@ public:
     Connection* makeLinkFrom(Datum* d);
 
     /*
+     *  Attempts to create a new link
+     *  (may end up caching link in NodeInspector)
+     */
+    void makeLink(const Datum* source, InputPort* target);
+
+    /*
      *  Helper function to get an item of a particular class
      *  at the given location.
      */

@@ -63,7 +63,35 @@ Datum* Port::getDatum() const
 InputPort::InputPort(Datum *d, QGraphicsItem *parent)
     : Port(d, parent)
 {
-    // Nothing to do here
+    d->installWatcher(this);
+    trigger(d->getState());
+}
+
+void InputPort::trigger(const DatumState& state)
+{
+    auto itr=connections.begin();
+    while (itr != connections.end())
+        if (state.links.count(itr.key()) == 0)
+            itr = connections.erase(itr);
+        else
+            itr++;
+
+    for (auto d : state.links)
+        if (!connections.contains(d))
+            static_cast<GraphScene*>(scene())->makeLink(d, this);
+}
+
+void InputPort::install(Connection* c)
+{
+    connect(this, &Port::moved,
+            c, &Connection::onPortsMoved);
+    connect(this, &Port::hiddenChanged,
+            c, &Connection::onHiddenChanged);
+    connect(this, &QObject::destroyed,
+            c, &Connection::onPortDeleted);
+
+    Q_ASSERT(!connections.contains(c->source->getDatum()));
+    connections[c->source->getDatum()].reset(c);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

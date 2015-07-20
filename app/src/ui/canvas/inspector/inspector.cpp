@@ -17,6 +17,7 @@
 #include "ui/canvas/inspector/inspector_buttons.h"
 #include "ui/canvas/inspector/inspector_export.h"
 #include "ui/canvas/port.h"
+#include "ui/canvas/connection.h"
 #include "ui/canvas/graph_scene.h"
 
 #include "ui/util/colors.h"
@@ -123,7 +124,7 @@ void NodeInspector::onLayoutChanged()
 
 void NodeInspector::trigger(const NodeState& state)
 {
-    QList<Datum*> not_present = rows.keys();
+    QList<const Datum*> not_present = rows.keys();
 
     for (Datum* d : state.datums)
     {
@@ -132,6 +133,13 @@ void NodeInspector::trigger(const NodeState& state)
             rows[d] = new InspectorRow(d, this);
             connect(rows[d], &InspectorRow::layoutChanged,
                     this, &NodeInspector::onLayoutChanged);
+
+            // If we had pending links, construct them now
+            if (link_cache.contains(d))
+            {
+                scene()->addItem(new Connection(outputPort(d), link_cache[d]));
+                link_cache.remove(d);
+            }
         }
         not_present.removeAll(d);
     }
@@ -185,7 +193,7 @@ Node* NodeInspector::getNode()
     return node;
 }
 
-OutputPort* NodeInspector::outputPort(Datum* d) const
+OutputPort* NodeInspector::outputPort(const Datum* d) const
 {
     for (auto row : rows)
         for (auto a : row->childItems())
@@ -195,6 +203,26 @@ OutputPort* NodeInspector::outputPort(Datum* d) const
                 return p;
         }
     return NULL;
+}
+
+InputPort* NodeInspector::inputPort(const Datum* d) const
+{
+    for (auto row : rows)
+        for (auto a : row->childItems())
+        {
+            InputPort* p = dynamic_cast<InputPort*>(a);
+            if (p && p->getDatum() == d)
+                return p;
+        }
+    return NULL;
+}
+
+void NodeInspector::makeLink(const Datum* source, InputPort* target)
+{
+    if (rows.contains(source))
+        scene()->addItem(new Connection(outputPort(source), target));
+    else
+        link_cache[source] = target;
 }
 
 void NodeInspector::focusNext(DatumTextItem* prev)

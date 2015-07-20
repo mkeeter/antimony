@@ -28,8 +28,6 @@ public slots:
     void onPortDeleted();
 
 protected:
-    void makeTargetConnections();
-
     GraphScene* gscene() const;
 
     /** On shift key press, snap to the nearest node.
@@ -93,6 +91,8 @@ protected:
 
     InputPort* target_port;
     bool hover;
+
+    friend class InputPort;
 };
 
 #endif // CONNECTION_H

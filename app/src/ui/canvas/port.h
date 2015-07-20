@@ -3,10 +3,14 @@
 
 #include <QGraphicsObject>
 #include <QPointer>
+#include <QSet>
+
+#include "graph/watchers.h"
 
 class NodeInspector;
 class Datum;
 class Canvas;
+class Connection;
 
 class Port : public QGraphicsObject
 {
@@ -31,10 +35,14 @@ protected:
     bool hover;
 };
 
-class InputPort : public Port
+class InputPort : public Port, DatumWatcher
 {
 public:
     explicit InputPort(Datum* d, QGraphicsItem* parent=NULL);
+    void trigger(const DatumState& state) override;
+    void install(Connection* c);
+protected:
+    QMap<const Datum*, QSharedPointer<Connection>> connections;
 };
 
 class OutputPort : public Port

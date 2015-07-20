@@ -102,6 +102,12 @@ Connection* GraphScene::makeLinkFrom(Datum* d)
     return c;
 }
 
+void GraphScene::makeLink(const Datum* source, InputPort* target)
+{
+    Q_ASSERT(inspectors.contains(source->parentNode()));
+    inspectors[source->parentNode()]->makeLink(source, target);
+}
+
 NodeInspector* GraphScene::getInspector(Node* node) const
 {
     Q_ASSERT(inspectors.contains(node));
