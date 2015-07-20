@@ -44,8 +44,8 @@ Viewport* ViewportScene::newViewport()
     auto s = new QGraphicsScene;
     auto v = new Viewport(s);
     connect(v, &QObject::destroyed, s, &QObject::deleteLater);
-    connect(s, &QObject::destroyed, [&](){ viewports.remove(v); });
-    viewports << v;
+    connect(s, &QObject::destroyed, [=](){ this->viewports.remove(v); });
+    viewports.insert(v);
 
     for (auto itr = controls.begin(); itr != controls.end(); ++itr)
         itr.value()->makeProxiesFor(v);
