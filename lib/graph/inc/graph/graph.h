@@ -31,6 +31,11 @@ public:
     uint32_t install(Node* n);
 
     /*
+     *  Returns a list of child nodes.
+     */
+    std::list<Node*> childNodes() const;
+
+    /*
      *  Uninstall the given node.
      *  Triggers attached GraphWatcher objects.
      */

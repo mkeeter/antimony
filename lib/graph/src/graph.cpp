@@ -52,6 +52,14 @@ void Graph::loadScriptHooks(PyObject* g, Node* n)
         external->loadScriptHooks(g, n);
 }
 
+std::list<Node*> Graph::childNodes() const
+{
+    std::list<Node*> out;
+    for (const auto& ptr : nodes)
+        out.push_back(ptr.get());
+    return out;
+}
+
 void Graph::loadDatumHooks(PyObject* g)
 {
     if (external)

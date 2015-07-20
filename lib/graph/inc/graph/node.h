@@ -21,6 +21,7 @@ public:
      */
     explicit Node(std::string name, Graph* root);
     explicit Node(std::string name, std::string script, Graph* root);
+    explicit Node(std::string name, uint64_t uid, Graph* root);
 
     /*
      *  On destruction, indicate that all datums have changed.
@@ -41,6 +42,11 @@ public:
      *  Look up the node's name.
      */
     std::string getName() const { return name; }
+
+    /*
+     *  Look up the node's UID.
+     */
+    uint64_t getUID() const { return uid; }
 
     /*
      *  Sets the node's name (and updates its parent graph)
@@ -132,6 +138,11 @@ public:
     void pySetAttr(std::string name, PyObject* obj) override;
 
 protected:
+
+    /*
+     *  Calls parent->changed and parent->triggerWatchers
+     */
+    void init();
 
     /*
      *  Construct a datum with the given name, type, and value.

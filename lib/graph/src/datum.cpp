@@ -18,8 +18,22 @@ std::unordered_map<PyTypeObject*, PyObject*> Datum::reducers;
 
 Datum::Datum(std::string name, std::string s,
              PyTypeObject* type, Node* parent)
-    : name(name), uid(parent->install(this)), expr(s),
-      value(NULL), valid(false), type(type), parent(parent)
+    : name(name), uid(parent->install(this)), expr(s), value(NULL), valid(false),
+      type(type), parent(parent)
+{
+    init();
+}
+
+Datum::Datum(std::string name, uint64_t uid, std::string expr,
+             PyTypeObject* type, Node* parent)
+    : name(name), uid(uid), expr(expr), value(NULL), valid(false),
+      type(type), parent(parent)
+{
+    parent->install(this);
+    init();
+}
+
+void Datum::init()
 {
     // Attempt to update our value
     trigger();

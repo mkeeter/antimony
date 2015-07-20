@@ -20,6 +20,9 @@ class Datum : public Downstream
 public:
     explicit Datum(std::string name, std::string value,
                    PyTypeObject* type, Node* parent);
+    explicit Datum(std::string name, uint64_t uid,
+                   std::string expr, PyTypeObject* type,
+                   Node* parent);
 
     ~Datum();
 
@@ -36,7 +39,15 @@ public:
     bool isValid() const { return valid; }
     std::string getError() const { return error; }
 
+    /*
+     *  Look up the datum's name.
+     */
     std::string getName() const { return name; }
+
+    /*
+     *  Look up the datum's UID.
+     */
+    uint64_t getUID() const { return uid; }
 
     /*
      *  Return the state (passed into callbacks)
@@ -94,6 +105,11 @@ public:
     static const char SIGIL_OUTPUT;
 
 protected:
+    /*
+     *  Calls parent->changed and parent->triggerWatchers
+     */
+    void init();
+
     /*
      *  When an upstream changes, call update.
      */

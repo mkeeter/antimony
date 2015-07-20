@@ -12,13 +12,26 @@ Node::Node(std::string n, Graph* root)
     // Nothing to do here
 }
 
+Node::Node(std::string n, uint64_t uid, Graph* root)
+    : name(n), uid(uid), script(this), parent(root)
+{
+    root->install(this);
+    init();
+}
+
 Node::Node(std::string n, std::string script, Graph* root)
     : name(n), uid(root->install(this)), script(this), parent(root)
 {
     setScript(script);
+    init();
+}
+
+void Node::init()
+{
     parent->changed(name, uid);
     parent->triggerWatchers();
 }
+
 
 Node::~Node()
 {
