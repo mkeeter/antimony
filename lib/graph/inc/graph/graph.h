@@ -42,6 +42,11 @@ public:
     void uninstall(Node* n);
 
     /*
+     *  Uninstalls all attached nodes.
+     */
+    void clear();
+
+    /*
      *  Looks up a node by UID.
      */
     Node* getNode(uint32_t uid) const { return Root::getByUID(uid, nodes); }
@@ -89,8 +94,6 @@ public:
     static void preInit();
 
 protected:
-    //void pySetAttr(std::string name, PyObject* obj) override;
-
     std::string name;
     const uint32_t uid;
 

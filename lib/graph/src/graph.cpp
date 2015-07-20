@@ -46,6 +46,12 @@ void Graph::uninstall(Node* n)
     triggerWatchers();
 }
 
+void Graph::clear()
+{
+    nodes.clear();
+    triggerWatchers();
+}
+
 void Graph::loadScriptHooks(PyObject* g, Node* n)
 {
     if (external)

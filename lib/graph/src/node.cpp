@@ -32,7 +32,6 @@ void Node::init()
     parent->triggerWatchers();
 }
 
-
 Node::~Node()
 {
     std::list<std::pair<std::string, uint32_t>> ds;
