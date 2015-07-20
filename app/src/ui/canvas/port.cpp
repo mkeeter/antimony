@@ -20,12 +20,12 @@ Port::Port(Datum* d, QGraphicsItem* parent)
     : QGraphicsObject(parent), datum(d), hover(false)
 {
     setAcceptHoverEvents(true);
-    setFlags(QGraphicsItem::ItemSendsGeometryChanges);
+    setFlags(QGraphicsItem::ItemSendsScenePositionChanges);
 }
 
 QVariant Port::itemChange(GraphicsItemChange change, const QVariant& value)
 {
-    if (change == ItemPositionHasChanged)
+    if (change == ItemScenePositionHasChanged)
         emit(moved());
     else if (change == ItemVisibleHasChanged)
         emit(hiddenChanged());
