@@ -37,7 +37,7 @@ void GraphScene::trigger(const GraphState& state)
         if (!nodes.contains(itr.key()))
         {
             itr.value()->deleteLater();
-            inspectors.erase(itr);
+            itr = inspectors.erase(itr);
         }
         else
         {

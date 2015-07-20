@@ -19,6 +19,8 @@
 #include "app/undo/undo_command.h"
 
 #include "graph/hooks/hooks.h"
+#include "graph/node/serializer.h"
+#include "graph/node/deserializer.h"
 
 #include "ui/dialogs/resolution_dialog.h"
 #include "ui/dialogs/exporting_dialog.h"
@@ -53,8 +55,10 @@ App::App(int& argc, char** argv) :
     root->installExternalHooks(new AppHooks(graph_scene));
 
     // When the clean flag on the undo stack changes, update window titles
+    /*
     connect(stack, &QUndoStack::cleanChanged,
             [&](bool){ emit(windowTitleChanged(getWindowTitle())); });
+    */
 
     connect(view_scene, &ViewportScene::glowChanged,
             graph_scene, &GraphScene::onGlowChange);
@@ -124,11 +128,9 @@ void App::onAbout()
 
 void App::onNew()
 {
-    delete root;
-    root = new Graph();
-
+    root->clear();
     filename.clear();
-    stack->clear();
+    //stack->clear();
     emit(windowTitleChanged(getWindowTitle()));
 }
 
@@ -140,14 +142,11 @@ void App::onSave()
     QFile file(filename);
     file.open(QIODevice::WriteOnly);
 
-    /*
     SceneSerializer ss(root,
                        graph_scene->inspectorPositions());
-
     file.write(QJsonDocument(ss.run()).toJson());
-    */
 
-    stack->setClean();
+    //stack->setClean();
 }
 
 void App::onSaveAs()
@@ -177,12 +176,12 @@ void App::onOpen()
     /*
     if (stack->isClean() || QMessageBox::question(NULL, "Discard unsaved changes?",
                 "Discard unsaved changes?") == QMessageBox::Yes)
+    */
     {
         QString f = QFileDialog::getOpenFileName(NULL, "Open", "", "*.sb");
         if (!f.isEmpty())
             loadFile(f);
     }
-    */
 }
 
 void App::onQuit()
@@ -191,16 +190,14 @@ void App::onQuit()
     if (stack->isClean() || QMessageBox::question(NULL, "Discard unsaved changes?",
                 "Discard unsaved changes?") == QMessageBox::Yes)
         quit();
-        */
+    */
     quit();
 }
 
 void App::loadFile(QString f)
 {
     filename = f;
-    /*
-    delete root;
-    root = new Graph();
+    root->clear();
 
     QFile file(f);
     if (!file.open(QIODevice::ReadOnly))
@@ -228,12 +225,10 @@ void App::loadFile(QString f)
                     "<b>Loading information:</b><br>" +
                     ds.warning_message);
 
-        makeUI(root);
         graph_scene->setInspectorPositions(ds.inspectors);
 
         emit(windowTitleChanged(getWindowTitle()));
     }
-    */
 }
 
 void App::startUpdateCheck()

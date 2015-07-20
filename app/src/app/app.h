@@ -111,10 +111,10 @@ private:
 
     void setGlobalStyle();
 
-    Graph* root;
+    Graph* const root;
 
-    GraphScene* graph_scene;
-    ViewportScene* view_scene;
+    GraphScene* const graph_scene;
+    ViewportScene* const view_scene;
     QString filename;
     UndoStack* stack;
 
