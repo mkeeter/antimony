@@ -48,12 +48,9 @@ void Control::beginDrag()
 {
     // Store all datum expressions so that we can make an undo action
     // that undoes the upcoming drag operation.
-    /*
     datums.clear();
-    for (auto d : node->findChildren<EvalDatum*>(
-                QString(), Qt::FindDirectChildrenOnly))
-        datums[d] = d->getExpr();
-        */
+    for (auto d : node->childDatums())
+        datums[d] = QString::fromStdString(d->getText());
 
     is_dragging = true;
 }
@@ -83,12 +80,13 @@ void Control::drag(QVector3D center, QVector3D diff)
 
 void Control::endDrag()
 {
-    /*
     is_dragging = false;
 
     bool started = false;
     for (auto d=datums.begin(); d != datums.end(); ++d)
-        if (datums[d.key()] != d.key()->getExpr())
+    {
+        auto expr = QString::fromStdString(d.key()->getText());
+        if (datums[d.key()] != expr)
         {
             if (!started)
             {
@@ -97,12 +95,12 @@ void Control::endDrag()
             }
             App::instance()->pushStack(
                     new UndoChangeExprCommand(
-                        d.key(), datums[d.key()], d.key()->getExpr()));
+                        d.key(), datums[d.key()], expr));
         }
+    }
 
     if (started)
         App::instance()->endUndoMacro();
-    */
 }
 
 void Control::setGlow(bool g)

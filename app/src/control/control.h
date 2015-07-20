@@ -12,7 +12,6 @@
 
 // Forward declarations
 class Datum;
-class EvalDatum;
 class Node;
 
 class Control : public QObject
@@ -130,7 +129,7 @@ signals:
 
 protected:
     Node* node;
-    QMap<EvalDatum*, QString> datums;
+    QMap<Datum*, QString> datums;
 
     PyObject* drag_func;
     bool is_dragging;

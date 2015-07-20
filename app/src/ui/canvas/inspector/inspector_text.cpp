@@ -84,9 +84,7 @@ void DatumTextItem::onTextChanged()
 
 void DatumTextItem::onUndoCommandAdded()
 {
-    /*
-    EvalDatum* e = dynamic_cast<EvalDatum*>(d);
-    if (e && e->canEdit())
+    if (d->getState().editable)
     {
         disconnect(document(), &QTextDocument::contentsChanged,
                    this, &DatumTextItem::onTextChanged);
@@ -101,13 +99,12 @@ void DatumTextItem::onUndoCommandAdded()
 
         App::instance()->pushStack(
                 new UndoChangeExprCommand(
-                    e, before, after,
+                    d, before, after,
                     cursor_before, cursor_after, this));
 
         connect(document(), &QTextDocument::contentsChanged,
                 this, &DatumTextItem::onTextChanged);
     }
-    */
 }
 
 void DatumTextItem::paint(QPainter* painter,
