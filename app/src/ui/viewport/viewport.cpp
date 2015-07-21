@@ -467,8 +467,7 @@ void Viewport::keyPressEvent(QKeyEvent *event)
     if (event->isAccepted())
         return;
 
-    if (event->key() == Qt::Key_A &&
-                (event->modifiers() & Qt::ShiftModifier))
+    if (event->key() == Qt::Key_Space)
     {
         QObject* w = this;
         while (!dynamic_cast<MainWindow*>(w))
@@ -480,10 +479,53 @@ void Viewport::keyPressEvent(QKeyEvent *event)
         m->exec(QCursor::pos());
         delete m;
     }
-    else if (event->key() == Qt::Key_A) setYaw(fmod(yaw + M_PI / (8 * log(scale)), 2*M_PI));
-    else if (event->key() == Qt::Key_D) setYaw(fmod(yaw - M_PI / (8 * log(scale)), 2*M_PI));
-    else if (event->key() == Qt::Key_W) setPitch(fmin(0, fmax(-M_PI, pitch - M_PI/16)));
-    else if (event->key() == Qt::Key_S) setPitch(fmin(0, fmin(M_PI, pitch + M_PI/16)));
+
+    else if (event->key() == Qt::Key_A) {
+        if (event->modifiers() & Qt::ShiftModifier)
+        {
+            // pan right
+        }
+        else
+        {
+            setYaw(fmod(yaw + M_PI / (8 * log(scale)), 2*M_PI));
+        }
+    }
+
+    else if (event->key() == Qt::Key_D)
+    {
+        if (event->modifiers() & Qt::ShiftModifier)
+        {
+            // pan left
+        }
+        else
+        {
+            setYaw(fmod(yaw - M_PI / (8 * log(scale)), 2*M_PI));
+        }
+    }
+
+    else if (event->key() == Qt::Key_W)
+    {
+        if (event->modifiers() & Qt::ShiftModifier)
+        {
+            // pan up
+        }
+        else
+        {
+            setPitch(fmin(0, fmax(-M_PI, pitch - M_PI/16)));
+        }
+    }
+
+    else if (event->key() == Qt::Key_S)
+    {
+        if (event->modifiers() & Qt::ShiftModifier)
+        {
+            // pan down
+        }
+        else
+        {
+            setPitch(fmin(0, fmin(M_PI, pitch + M_PI/16)));
+        }
+    }
 
     else if (event->key() == Qt::Key_Z)
     {
