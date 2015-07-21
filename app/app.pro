@@ -87,10 +87,12 @@ SOURCES += \
     src/app/undo/undo_command.cpp \
     src/app/undo/undo_move.cpp \
     src/app/undo/undo_change_expr.cpp \
-    #src/app/undo/undo_delete_node.cpp \
-    #src/app/undo/undo_delete_multi.cpp \
-    #src/app/undo/undo_add_multi.cpp \
-    #src/app/undo/undo_add_node.cpp \
+    src/app/undo/undo_delete_node.cpp \
+    src/app/undo/undo_delete_link.cpp \
+    src/app/undo/undo_delete_multi.cpp \
+    src/app/undo/undo_add_multi.cpp \
+    src/app/undo/undo_add_node.cpp \
+    src/app/undo/undo_add_link.cpp \
     src/ui/canvas/connection.cpp \
 
 HEADERS += \
@@ -132,10 +134,12 @@ HEADERS += \
     src/app/undo/stack.h \
     src/app/undo/undo_move.h \
     src/app/undo/undo_change_expr.h \
-    #src/app/undo/undo_delete_node.h \
-    #src/app/undo/undo_delete_multi.h \
-    #src/app/undo/undo_add_multi.h \
-    #src/app/undo/undo_add_node.h \
+    src/app/undo/undo_delete_node.h \
+    src/app/undo/undo_delete_link.h \
+    src/app/undo/undo_delete_multi.h \
+    src/app/undo/undo_add_multi.h \
+    src/app/undo/undo_add_node.h \
+    src/app/undo/undo_add_link.h \
     src/ui/canvas/connection.h \
 
 FORMS += \

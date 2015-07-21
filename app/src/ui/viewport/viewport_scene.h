@@ -13,10 +13,11 @@
 
 class Control;
 class ControlRoot;
-class ControlProxy;
+class Viewport;
+
 class Datum;
 class Node;
-class Viewport;
+class Graph;
 
 class ViewportScene : public QObject, GraphWatcher
 {
@@ -30,7 +31,7 @@ public:
      *  2D abstration and each Viewport is a 2D projection of
      *  the same 3D scene.
      */
-    ViewportScene(QObject* parent=0);
+    ViewportScene(Graph* root, QObject* parent=0);
 
     /*
      *  Returns a new viewport

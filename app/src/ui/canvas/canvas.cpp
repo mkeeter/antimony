@@ -182,28 +182,23 @@ NodeInspector* Canvas::getNodeInspector(Node* n) const
 
 void Canvas::deleteSelected()
 {
-    /*
     QSet<Node*> nodes;
-    QSet<Link*> links;
+    //QSet<Link*> links;
 
     // Find all selected links
     for (auto i : scene->selectedItems())
-        if (auto c = dynamic_cast<Connection*>(i))
-            links.insert(c->getLink());
-        else if (auto p = dynamic_cast<NodeInspector*>(i))
+        //if (auto c = dynamic_cast<Connection*>(i))
+        //    links.insert(c->getLink());
+        if (auto p = dynamic_cast<NodeInspector*>(i))
             nodes.insert(p->getNode());
 
-    App::instance()->pushStack(new UndoDeleteMultiCommand(nodes, links));
-    */
+    App::instance()->pushStack(new UndoDeleteMultiCommand(nodes));
 }
 
 void Canvas::makeNodeAtCursor(NodeConstructorFunction f)
 {
     auto n = f(App::instance()->getGraph());
-
-    /*
     App::instance()->pushStack(new UndoAddNodeCommand(n));
-    */
 
     auto inspector = getNodeInspector(n);
     Q_ASSERT(inspector);

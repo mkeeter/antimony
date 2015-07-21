@@ -1,17 +1,16 @@
 #include <Python.h>
 
 #include "app/undo/undo_delete_node.h"
-#include "app/undo/undo_delete_link.h"
 #include "app/undo/stack.h"
 
 #include "app/app.h"
 
-#include "graph/node/node.h"
-#include "graph/node/root.h"
+#include "graph/node.h"
+#include "graph/graph.h"
+#include "graph/datum.h"
+
 #include "graph/node/serializer.h"
 #include "graph/node/deserializer.h"
-#include "graph/datum/datum.h"
-#include "graph/datum/link.h"
 
 #include "ui/canvas/graph_scene.h"
 
@@ -25,41 +24,32 @@ void UndoDeleteNodeCommand::redo()
 {
     // Find and save flat lists of all nodes and datums that will be deleted
     // (so that we can do a pointer swap when they're re-created)
-    nodes = getNodes();
     datums = getDatums();
 
     // Serialize n into data byte array
-    NodeRoot temp_root;
-    n->setParent(&temp_root);
-    data = app
-        ? SceneSerializer(
-                &temp_root, app->getGraphScene()->inspectorPositions()).run(
-                SceneSerializer::SERIALIZE_NODES)
-        : SceneSerializer(&temp_root).run(
-                SceneSerializer::SERIALIZE_NODES);
+    data = SceneSerializer::serializeNode(
+            n, App::instance()->getGraphScene()->inspectorPositions());
 
     // Tell the system to delete the node
-    n->deleteLater();
+    n->parentGraph()->uninstall(n);
 }
 
 void UndoDeleteNodeCommand::undo()
 {
     // Deserialize the saved node.
-    NodeRoot temp_root;
-    SceneDeserializer ds(&temp_root);
-    ds.run(data);
+    Graph* g = App::instance()->getGraph();
+    SceneDeserializer::Info ds;
+    SceneDeserializer::deserializeNode(data, g, &ds);
 
     // Extract the node from the temporary root
-    n = temp_root.findChild<Node*>();
+    auto old_node = n;
+    n = g->childNodes().back();
 
     // Find the new lists of node and datum pointers
-    auto new_nodes = getNodes();
     auto new_datums = getDatums();
 
-    // Swap all the pointers!
-    for (auto a = nodes.begin(), b = new_nodes.begin();
-              a != nodes.end() && b != new_nodes.end(); ++a, ++b)
-        stack->swapPointer(*a, *b);
+    // Swap the node pointers!
+    stack->swapPointer(old_node, n);
 
     for (auto a = datums.begin(); a != datums.end(); ++a)
     {
@@ -67,25 +57,14 @@ void UndoDeleteNodeCommand::undo()
         stack->swapPointer(a.value(), new_datums[a.key()]);
     }
 
-    if (app)
-    {
-        app->makeUI(&temp_root);
-        app->getGraphScene()->setInspectorPositions(ds.inspectors);
-    }
-}
-
-QList<Node*> UndoDeleteNodeCommand::getNodes() const
-{
-    QList<Node*> nodes = n->findChildren<Node*>();
-    nodes.prepend(n);
-    return nodes;
+    App::instance()->getGraphScene()->setInspectorPositions(ds.inspectors);
 }
 
 QMap<QString, Datum*> UndoDeleteNodeCommand::getDatums() const
 {
     QMap<QString, Datum*> out;
-    for (auto d : n->findChildren<Datum*>())
-        out[d->objectName()] = d;
+    for (auto d : n->childDatums())
+        out[QString::fromStdString(d->getName())] = d;
     return out;
 }
 

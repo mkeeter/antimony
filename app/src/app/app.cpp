@@ -47,7 +47,7 @@
 App::App(int& argc, char** argv) :
     QApplication(argc, argv), root(new Graph()),
     graph_scene(new GraphScene(root)),
-    view_scene(new ViewportScene()),
+    view_scene(new ViewportScene(root)),
     stack(new UndoStack(this)), network(new QNetworkAccessManager(this))
 {
     setGlobalStyle();
@@ -140,9 +140,9 @@ void App::onSave()
     QFile file(filename);
     file.open(QIODevice::WriteOnly);
 
-    SceneSerializer ss(root,
-                       graph_scene->inspectorPositions());
-    file.write(QJsonDocument(ss.run()).toJson());
+    file.write(QJsonDocument(
+            SceneSerializer::run(
+                root, graph_scene->inspectorPositions())).toJson());
 
     stack->setClean();
 }
@@ -202,10 +202,12 @@ void App::loadFile(QString f)
         return;
     }
 
-    SceneDeserializer ds(root);
-    ds.run(QJsonDocument::fromJson(file.readAll()).object());
+    SceneDeserializer::Info ds;
+    bool success = SceneDeserializer::run(
+            QJsonDocument::fromJson(file.readAll()).object(),
+            root, &ds);
 
-    if (ds.failed == true)
+    if (!success)
     {
         QMessageBox::critical(NULL, "Loading error",
                 "<b>Loading error:</b><br>" +
@@ -219,7 +221,6 @@ void App::loadFile(QString f)
                     ds.warning_message);
 
         graph_scene->setInspectorPositions(ds.inspectors);
-
         emit(windowTitleChanged(getWindowTitle()));
     }
 }

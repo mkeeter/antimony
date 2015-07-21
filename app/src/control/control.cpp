@@ -39,9 +39,7 @@ QRectF Control::bounds(QMatrix4x4 m) const
 
 void Control::deleteNode(QString text)
 {
-    /*
-    App::instance()->pushStack(new UndoDeleteMultiCommand({node}, {}, text));
-    */
+    App::instance()->pushStack(new UndoDeleteMultiCommand({node}, text));
 }
 
 void Control::beginDrag()

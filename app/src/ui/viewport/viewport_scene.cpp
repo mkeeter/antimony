@@ -6,15 +6,16 @@
 
 #include "graph/node.h"
 #include "graph/datum.h"
+#include "graph/graph.h"
 
 #include "control/control.h"
 #include "control/control_root.h"
 #include "control/proxy.h"
 
-ViewportScene::ViewportScene(QObject* parent)
+ViewportScene::ViewportScene(Graph* root, QObject* parent)
     : QObject(parent)
 {
-    // Nothing to do here
+    root->installWatcher(this);
 }
 
 void ViewportScene::registerControl(Node* n, long index, Control* c)

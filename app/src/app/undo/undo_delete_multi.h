@@ -8,7 +8,7 @@
 class UndoDeleteMultiCommand : public UndoCommand
 {
 public:
-    UndoDeleteMultiCommand(QSet<Node*> nodes, QSet<Link*> links,
+    UndoDeleteMultiCommand(QSet<Node*> nodes, //QSet<Link*> links,
                            QString text=QString());
 };
 

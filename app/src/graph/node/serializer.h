@@ -13,28 +13,17 @@ class Datum;
 class Node;
 class Graph;
 
-class SceneSerializer : public QObject
+namespace SceneSerializer
 {
-    Q_OBJECT
-public:
-    explicit SceneSerializer(
+    QJsonObject run(
             Graph* root,
             QMap<Node*, QPointF> inspectors=QMap<Node*, QPointF>());
 
-    QJsonObject run();
-
-protected:
-    QJsonArray serializeNodes(Graph* r);
-    QJsonObject serializeNode(Node* node);
+    QJsonArray serializeNodes(Graph* r, QMap<Node*, QPointF> inspectors);
+    QJsonObject serializeNode(Node* node, QMap<Node*, QPointF> inspectors);
     QJsonObject serializeDatum(Datum* datum);
 
-    Graph* graph;
-    QMap<Node*, QPointF> inspectors;
-
-    QList<Node*> nodes;
-    QList<QPair<Datum*, Datum*>> connections;
-
-    static int PROTOCOL_VERSION;
+    extern int PROTOCOL_VERSION;
 };
 
 #endif // SERIALIZER_H

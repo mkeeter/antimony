@@ -21,31 +21,25 @@
 //   Remove explicit connections array
 int SceneSerializer::PROTOCOL_VERSION = 6;
 
-SceneSerializer::SceneSerializer(Graph* root, QMap<Node*, QPointF> inspectors)
-    : QObject(), graph(root), inspectors(inspectors)
-{
-    // Nothing to do here.
-}
-
-QJsonObject SceneSerializer::run()
+QJsonObject SceneSerializer::run(Graph* root, QMap<Node*, QPointF> inspectors)
 {
     QJsonObject out;
     out["type"] = "sb";
     out["protocol"] = PROTOCOL_VERSION;
-    out["nodes"] = serializeNodes(graph);
+    out["nodes"] = serializeNodes(root, inspectors);
 
     return out;
 }
 
-QJsonArray SceneSerializer::serializeNodes(Graph* r)
+QJsonArray SceneSerializer::serializeNodes(Graph* r, QMap<Node*, QPointF> inspectors)
 {
     QJsonArray out;
     for (auto node : r->childNodes())
-        out.append(serializeNode(node));
+        out.append(serializeNode(node, inspectors));
     return out;
 }
 
-QJsonObject SceneSerializer::serializeNode(Node* node)
+QJsonObject SceneSerializer::serializeNode(Node* node, QMap<Node*, QPointF> inspectors)
 {
     QJsonObject out;
 

@@ -12,27 +12,26 @@
 class Node;
 class Graph;
 
-class SceneDeserializer : public QObject
+namespace SceneDeserializer
 {
-    Q_OBJECT
-public:
-    explicit SceneDeserializer(Graph* graph);
+    struct Info {
+        QMap<Node*, QPointF> inspectors;
+        QString error_message;
+        QString warning_message;
+    };
 
-    bool run(QJsonObject in);
+    /*
+     *  Attempst to deserialize the given object as a graph.
+     *
+     *  Returns true on success, false otherwise.
+     *  If info is provided, it is populated with relevant data.
+     */
+    bool run(QJsonObject in, Graph* graph, Info* info=NULL);
 
-    QMap<Node*, QPointF> inspectors;
-    bool failed;
-    QString error_message;
-    QString warning_message;
-
-protected:
-    void deserializeNodes(QJsonArray in, Graph* p);
-    void deserializeNode(QJsonObject in, Graph* p);
+    void deserializeNode(QJsonObject in, Graph* p, Info* info=NULL);
     void deserializeDatum(QJsonObject in, Node* node);
 
-    quint32 protocol_version;
-    Graph* graph;
-    PyObject* globals;
+    extern PyObject* globals;
 };
 
 #endif // DESERIALIZER_H
