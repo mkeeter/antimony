@@ -529,16 +529,32 @@ void Viewport::keyPressEvent(QKeyEvent *event)
 
     else if (event->key() == Qt::Key_Z)
     {
-        scale *= 1.1;
-        emit(viewChanged());
-        emit(scaleChanged(scale));
+        if (event->modifiers() & Qt::ShiftModifier)
+        {
+            // pan out
+            pan(QVector3D(0, 0, 1));
+        }
+        else
+        {
+            scale *= 1.1;
+            emit(viewChanged());
+            emit(scaleChanged(scale));
+        }
     }
 
     else if (event->key() == Qt::Key_X)
     {
-        scale *= 0.9;
-        emit(viewChanged());
-        emit(scaleChanged(scale));
+        if (event->modifiers() & Qt::ShiftModifier)
+        {
+            // pan in
+            pan(QVector3D(0, 0, -1));
+        }
+        else
+        {
+            scale *= 0.9;
+            emit(viewChanged());
+            emit(scaleChanged(scale));
+        }
     }
 }
 
