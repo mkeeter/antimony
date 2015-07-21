@@ -483,16 +483,12 @@ void Viewport::keyPressEvent(QKeyEvent *event)
 
     else if (event->key() == Qt::Key_Z)
     {
-        scale *= 1.1;
-        emit(viewChanged());
-        emit(scaleChanged(scale));
+        setScale(scale * 1.1);
     }
 
     else if (event->key() == Qt::Key_X)
     {
-        scale *= 0.9;
-        emit(viewChanged());
-        emit(scaleChanged(scale));
+        setScale(scale * 0.9);
     }
 }
 
