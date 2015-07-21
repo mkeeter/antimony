@@ -627,47 +627,15 @@ void Viewport::drawAxes(QPainter* painter) const
     }
 }
 
-void Viewport::drawMousePosition(QPainter* painter) const
-{
-    // Then add a text label in the lower-left corner
-    // giving mouse coordinates (if we're near an axis)
-    if (getAxis().first)
-    {
-        QPair<char, float> axis = getAxis();
-        QPointF mouse_pos = mapToScene(mapFromGlobal(QCursor::pos()));
-        if (!sceneRect().contains(mouse_pos))
-            axis.first = '\0';
-
-        auto p = sceneToWorld(mouse_pos);
-
-        QPointF a = sceneRect().bottomLeft() + QPointF(10, -25);
-        QPointF b = sceneRect().bottomLeft() + QPointF(10, -10);
-        int value = axis.second * 200;
-        painter->setPen(QColor(value, value, value));
-        if (axis.first == 'z')
-        {
-            painter->drawText(a, QString("X: %1").arg(p.x()));
-            painter->drawText(b, QString("Y: %1").arg(p.y()));
-        }
-        else if (axis.first == 'y')
-        {
-            painter->drawText(a, QString("X: %1").arg(p.x()));
-            painter->drawText(b, QString("Z: %1").arg(p.z()));
-        }
-        else if (axis.first == 'x')
-        {
-            painter->drawText(a, QString("Y: %1").arg(p.y()));
-            painter->drawText(b, QString("Z: %1").arg(p.z()));
-        }
-    }
-}
-
-void Viewport::drawInfo(QPainter* painter) const
+void Viewport::drawHoverInfo(QPainter* painter) const
 {
     /* top left view info 'panel' */
-    int _info_line_n = 0;
+    int _info_line_n = 1;
     painter->setPen(Colors::base04);
-    QPointF top_left_info = sceneRect().topLeft();
+    QPointF base = sceneRect().topLeft();
+
+    /* display center */
+    painter->drawText(base + QPointF(10, ++_info_line_n*15), QString("Center: (%1, %2, %3)").arg(center[0]).arg(center[1]).arg(center[2]));
 
     /* display focused object */
     auto proxies = getProxiesAtPosition(_current_pos);
@@ -677,28 +645,43 @@ void Viewport::drawInfo(QPainter* painter) const
         QString desc = n->getName() + " (" + n->getTitle() + ")";
 
         if (proxies.size() > 1)
-            painter->drawText(top_left_info + QPointF(10, ++_info_line_n*15),
-                    QString("Current: %1, (%2 more below)").arg(desc).arg(proxies.size()-1));
+            painter->drawText(base + QPointF(10, ++_info_line_n*15),
+                    QString("Object: %1, (%2 below)").arg(desc).arg(proxies.size()-1));
         else
-            painter->drawText(top_left_info + QPointF(10, ++_info_line_n*15), QString("Current: %1").arg(desc));
+            painter->drawText(base + QPointF(10, ++_info_line_n*15), QString("Object: %1").arg(desc));
     }
     else
     {
-        painter->drawText(top_left_info + QPointF(10, ++_info_line_n*15), QString("Current: <none>"));
+        painter->drawText(base + QPointF(10, ++_info_line_n*15), QString("Object: <none>"));
     }
 
-    /* display center and focus positions */
-    painter->drawText(top_left_info + QPointF(10, ++_info_line_n*15), QString("Center: (%1, %2, %3)").arg(center[0]).arg(center[1]).arg(center[2]));
-    QPoint focus_pos = mapFromGlobal(_current_pos);
-    painter->drawText(top_left_info + QPointF(10, ++_info_line_n*15), QString("Focus: (%1, %2, %3)").arg(focus_pos.x()).arg(focus_pos.y()).arg(0));
+    /* display model position */
+    if (getAxis().first)
+    {
+        QPair<char, float> axis = getAxis();
+        QPointF mouse_pos = mapToScene(mapFromGlobal(QCursor::pos()));
+        if (!sceneRect().contains(mouse_pos))
+            axis.first = '\0';
 
-    /* spacer */
-    ++_info_line_n;
+        auto p = sceneToWorld(mouse_pos);
+
+        int value = axis.second * 200;
+        painter->setPen(QColor(value, value, value));
+        painter->drawText(base + QPointF(10, ++_info_line_n*15), QString("Position: (%1, %2, %3)").arg(p.x()).arg(p.y()).arg(p.z()));
+    }
+}
+
+void Viewport::drawViewInfo(QPainter* painter) const
+{
+    /* draw beside the view selector */
+    int _info_line_n = 1;
+    painter->setPen(Colors::base04);
+    QPointF base = sceneRect().topRight();
 
     /* display scale, pitch, and yaw */
-    painter->drawText(top_left_info + QPointF(10, ++_info_line_n*15), QString("Scale: %1").arg(scale/100));
-    painter->drawText(top_left_info + QPointF(10, ++_info_line_n*15), QString("Pitch: %1").arg(getPitch()));
-    painter->drawText(top_left_info + QPointF(10, ++_info_line_n*15), QString("Yaw: %1").arg(getYaw()));
+    painter->drawText(base + QPointF(-250, ++_info_line_n*15), QString("Scale: %1").arg(scale/100));
+    painter->drawText(base + QPointF(-250, ++_info_line_n*15), QString("Pitch: %1").arg(getPitch()));
+    painter->drawText(base + QPointF(-250, ++_info_line_n*15), QString("Yaw: %1").arg(getYaw()));
 }
 
 void Viewport::drawForeground(QPainter* painter, const QRectF& rect)
@@ -706,8 +689,8 @@ void Viewport::drawForeground(QPainter* painter, const QRectF& rect)
     Q_UNUSED(rect);
 
     drawAxes(painter);
-    drawMousePosition(painter);
-    drawInfo(painter);
+    drawHoverInfo(painter);
+    drawViewInfo(painter);
 }
 
 void Viewport::onCopy()
