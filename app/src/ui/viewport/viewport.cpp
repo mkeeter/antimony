@@ -484,6 +484,20 @@ void Viewport::keyPressEvent(QKeyEvent *event)
     else if (event->key() == Qt::Key_D) setYaw(fmod(yaw - M_PI / (8 * log(scale)), 2*M_PI));
     else if (event->key() == Qt::Key_W) setPitch(fmin(0, fmax(-M_PI, pitch - M_PI/16)));
     else if (event->key() == Qt::Key_S) setPitch(fmin(0, fmin(M_PI, pitch + M_PI/16)));
+
+    else if (event->key() == Qt::Key_Z)
+    {
+        scale *= 1.1;
+        emit(viewChanged());
+        emit(scaleChanged(scale));
+    }
+
+    else if (event->key() == Qt::Key_X)
+    {
+        scale *= 0.9;
+        emit(viewChanged());
+        emit(scaleChanged(scale));
+    }
 }
 
 void Viewport::keyReleaseEvent(QKeyEvent *event)
