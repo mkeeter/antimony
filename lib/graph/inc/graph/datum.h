@@ -79,6 +79,8 @@ public:
     /*
      *  Returns the set of incoming links
      *  (found by parsing the expression)
+     *
+     *  The list skips any incoming link that is no longer valid.
      */
     std::unordered_set<const Datum*> getLinks() const;
 
@@ -91,6 +93,21 @@ public:
      *  Installs the given datum as an upstream link.
      */
     void installLink(const Datum* upstream);
+
+    /*
+     *  Removes the given datum as an upstream link.
+     */
+    void uninstallLink(const Datum* upstream);
+
+    /*
+     *  Returns true if this expression is a connection.
+     */
+    bool isLink() const;
+
+    /*
+     *  Returns true if this expression is an output.
+     */
+    bool isOutput() const;
 
     /*
      *  Sets up a global reducer function
@@ -161,6 +178,15 @@ protected:
      *  The expression must begin with SIGIL_CONNECTION.
      */
     void checkLinkExpression();
+
+    /*
+     *  Updates the expression with the given set of links
+     *  (turning it back into a value if the list is empty)
+     *
+     *  Sets the expression directly (rather than calling setText);
+     *  call trigger() afterwards if a re-evaluation is needed.
+     */
+    void writeLinkExpression(const std::unordered_set<const Datum*> links);
 
     const std::string name;
     const uint32_t uid;

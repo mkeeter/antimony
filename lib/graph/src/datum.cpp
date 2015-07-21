@@ -131,11 +131,8 @@ std::unordered_set<const Datum*> Datum::getLinks() const
     return out;
 }
 
-void Datum::checkLinkExpression()
+void Datum::writeLinkExpression(const std::unordered_set<const Datum*> links)
 {
-    // Update the expression by pruning deleted datums from the list
-    auto links = getLinks();
-
     // If the list has been pruned down to emptiness, construct a new
     // expression by calling 'str' on the existing value.
     if (links.empty())
@@ -160,6 +157,12 @@ void Datum::checkLinkExpression()
     }
 }
 
+void Datum::checkLinkExpression()
+{
+    // Update the expression by pruning deleted datums from the list
+    writeLinkExpression(getLinks());
+}
+
 void Datum::installLink(const Datum* upstream)
 {
     assert(acceptsLink(upstream));
@@ -170,6 +173,16 @@ void Datum::installLink(const Datum* upstream)
         setText(expr.substr(0, expr.size() - 1) + ", " + id + "]");
     else
         setText(SIGIL_CONNECTION + ("[" + id + "]"));
+}
+
+void Datum::uninstallLink(const Datum* upstream)
+{
+    auto links = getLinks();
+    assert(getLinks().count(upstream) == 1);
+
+    links.erase(upstream);
+    writeLinkExpression(links);
+    trigger();
 }
 
 PyObject* Datum::checkLinkResult(PyObject* obj)
