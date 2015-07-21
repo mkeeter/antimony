@@ -540,9 +540,7 @@ void Viewport::keyPressEvent(QKeyEvent *event)
         }
         else
         {
-            scale *= 1.1;
-            emit(viewChanged());
-            emit(scaleChanged(scale));
+            setScale(scale * 1.1);
         }
     }
 
@@ -555,9 +553,7 @@ void Viewport::keyPressEvent(QKeyEvent *event)
         }
         else
         {
-            scale *= 0.9;
-            emit(viewChanged());
-            emit(scaleChanged(scale));
+            setScale(scale * 0.9);
         }
     }
 }
