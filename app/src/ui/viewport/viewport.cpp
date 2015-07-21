@@ -480,6 +480,20 @@ void Viewport::keyPressEvent(QKeyEvent *event)
         m->exec(QCursor::pos());
         delete m;
     }
+
+    else if (event->key() == Qt::Key_Z)
+    {
+        scale *= 1.1;
+        emit(viewChanged());
+        emit(scaleChanged(scale));
+    }
+
+    else if (event->key() == Qt::Key_X)
+    {
+        scale *= 0.9;
+        emit(viewChanged());
+        emit(scaleChanged(scale));
+    }
 }
 
 void Viewport::keyReleaseEvent(QKeyEvent *event)
