@@ -157,12 +157,6 @@ void Datum::writeLinkExpression(const std::unordered_set<const Datum*> links)
     }
 }
 
-void Datum::checkLinkExpression()
-{
-    // Update the expression by pruning deleted datums from the list
-    writeLinkExpression(getLinks());
-}
-
 void Datum::installLink(const Datum* upstream)
 {
     assert(acceptsLink(upstream));
@@ -220,7 +214,7 @@ void Datum::update()
     // If this datum has links plugged in, prune the list of links to
     // delist any that have been deleted.
     if (isLink())
-        checkLinkExpression();
+        writeLinkExpression(getLinks());
 
     // Cache the source list to detect if it has changed.
     const auto old_sources = sources;

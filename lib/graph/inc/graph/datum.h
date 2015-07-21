@@ -151,18 +151,9 @@ protected:
 
     /*
      *  If this datum has a connection sigil, allow UID lookups.
+     *  (overrides Root pure virtual function)
      */
     bool allowLookupByUID() const override;
-
-    /*
-     *  Returns true if this expression is a connection.
-     */
-    bool isLink() const;
-
-    /*
-     *  Returns true if this expression is an output.
-     */
-    bool isOutput() const;
 
     /*
      *  Handles post-processing of a link value.
@@ -170,14 +161,6 @@ protected:
      *  Returns a new value (from extraction or reduction)
      */
     PyObject* checkLinkResult(PyObject* obj);
-
-    /*
-     *  Updates the expression by pruning invalid links and
-     *  collapsing to a single value if the list ends up empty.
-     *
-     *  The expression must begin with SIGIL_CONNECTION.
-     */
-    void checkLinkExpression();
 
     /*
      *  Updates the expression with the given set of links
