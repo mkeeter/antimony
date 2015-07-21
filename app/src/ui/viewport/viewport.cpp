@@ -536,7 +536,7 @@ void Viewport::keyPressEvent(QKeyEvent *event)
         if (event->modifiers() & Qt::ShiftModifier)
         {
             // pan out
-            pan(QVector3D(0, 0, -1 / (8 * log(scale))));
+            pan(QVector3D(0, 0, 1 / (8 * log(scale))));
         }
         else
         {
@@ -549,7 +549,7 @@ void Viewport::keyPressEvent(QKeyEvent *event)
         if (event->modifiers() & Qt::ShiftModifier)
         {
             // pan in
-            pan(QVector3D(0, 0, 1 / (8 * log(scale))));
+            pan(QVector3D(0, 0, -1 / (8 * log(scale))));
         }
         else
         {
