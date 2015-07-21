@@ -589,31 +589,40 @@ void Viewport::drawMousePosition(QPainter* painter) const
 void Viewport::drawInfo(QPainter* painter) const
 {
     /* top left view info 'panel' */
+    int _info_line_n = 0;
     painter->setPen(Colors::base04);
     QPointF top_left_info = sceneRect().topLeft();
 
+    /* display focused object */
     auto proxies = getProxiesAtPosition(_current_pos);
-
     if (proxies.size() > 0)
     {
         auto n = proxies.first()->getNode();
         QString desc = n->getName() + " (" + n->getTitle() + ")";
 
         if (proxies.size() > 1)
-            painter->drawText(top_left_info + QPointF(10, 1*15),
+            painter->drawText(top_left_info + QPointF(10, ++_info_line_n*15),
                     QString("Current: %1, (%2 more below)").arg(desc).arg(proxies.size()-1));
         else
-            painter->drawText(top_left_info + QPointF(10, 1*15), QString("Current: %1").arg(desc));
+            painter->drawText(top_left_info + QPointF(10, ++_info_line_n*15), QString("Current: %1").arg(desc));
     }
     else
     {
-        painter->drawText(top_left_info + QPointF(10, 1*15), QString("Current: <none>"));
+        painter->drawText(top_left_info + QPointF(10, ++_info_line_n*15), QString("Current: <none>"));
     }
 
+    /* display center and focus positions */
+    painter->drawText(top_left_info + QPointF(10, ++_info_line_n*15), QString("Center: (%1, %2, %3)").arg(center[0]).arg(center[1]).arg(center[2]));
+    QPoint focus_pos = mapFromGlobal(_current_pos);
+    painter->drawText(top_left_info + QPointF(10, ++_info_line_n*15), QString("Focus: (%1, %2, %3)").arg(focus_pos.x()).arg(focus_pos.y()).arg(0));
+
+    /* spacer */
+    ++_info_line_n;
+
     /* display scale, pitch, and yaw */
-    painter->drawText(top_left_info + QPointF(10, 2*15), QString("Scale: %1").arg(scale/100));
-    painter->drawText(top_left_info + QPointF(10, 3*15), QString("Pitch: %1").arg(getPitch()));
-    painter->drawText(top_left_info + QPointF(10, 4*15), QString("Yaw: %1").arg(getYaw()));
+    painter->drawText(top_left_info + QPointF(10, ++_info_line_n*15), QString("Scale: %1").arg(scale/100));
+    painter->drawText(top_left_info + QPointF(10, ++_info_line_n*15), QString("Pitch: %1").arg(getPitch()));
+    painter->drawText(top_left_info + QPointF(10, ++_info_line_n*15), QString("Yaw: %1").arg(getYaw()));
 }
 
 void Viewport::drawForeground(QPainter* painter, const QRectF& rect)
