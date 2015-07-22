@@ -85,6 +85,11 @@ public:
     std::unordered_set<const Datum*> getLinks() const;
 
     /*
+     *  Returns all links that are outgoingg from this datum.
+     */
+    std::unordered_set<Datum*> outgoingLinks() const;
+
+    /*
      *  Checks to see if we can accept the given link.
      */
     bool acceptsLink(const Datum* upstream) const;

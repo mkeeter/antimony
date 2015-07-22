@@ -254,3 +254,17 @@ TEST_CASE("Un-assignable mutable node proxies")
     Py_DECREF(d);
     delete g;
 }
+
+TEST_CASE("Datum output detection")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    auto x = new Datum("x", "1.0", &PyFloat_Type, n);
+    auto y = new Datum("y", Datum::SIGIL_CONNECTION +
+                            std::string("[__0.__0]"),
+                        &PyFloat_Type, n);
+    auto out = x->outgoingLinks();
+    REQUIRE(out.size() == 1);
+    REQUIRE(out.count(y) == 1);
+    delete g;
+}
