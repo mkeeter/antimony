@@ -13,6 +13,7 @@
 #include "ui/canvas/canvas.h"
 #include "ui/canvas/graph_scene.h"
 #include "ui/canvas/inspector/inspector.h"
+#include "ui/canvas/port.h"
 #include "ui/canvas/connection.h"
 #include "ui/util/colors.h"
 #include "ui/main_window.h"
@@ -183,16 +184,18 @@ NodeInspector* Canvas::getNodeInspector(Node* n) const
 void Canvas::deleteSelected()
 {
     QSet<Node*> nodes;
-    //QSet<Link*> links;
+    QSet<QPair<const Datum*, Datum*>> links;
 
-    // Find all selected links
+     // Find all selected links
     for (auto i : scene->selectedItems())
-        //if (auto c = dynamic_cast<Connection*>(i))
-        //    links.insert(c->getLink());
-        if (auto p = dynamic_cast<NodeInspector*>(i))
+        if (auto c = dynamic_cast<Connection*>(i))
+            links.insert(QPair<const Datum*, Datum*>(
+                        c->getSource()->getDatum(),
+                        c->getTarget()->getDatum()));
+        else if (auto p = dynamic_cast<NodeInspector*>(i))
             nodes.insert(p->getNode());
 
-    App::instance()->pushStack(new UndoDeleteMultiCommand(nodes));
+    App::instance()->pushStack(new UndoDeleteMultiCommand(nodes, links));
 }
 
 void Canvas::makeNodeAtCursor(NodeConstructorFunction f)

@@ -11,7 +11,7 @@ class Link;
 class UndoDeleteLinkCommand : public UndoCommand
 {
 public:
-    UndoDeleteLinkCommand(Datum* start, Datum* end,
+    UndoDeleteLinkCommand(const Datum* start, Datum* end,
                           QUndoCommand* parent=NULL);
 
     void redo() override;
@@ -20,7 +20,7 @@ public:
     void swapDatum(Datum* a, Datum* b) const override;
 
 protected:
-    mutable Datum* start;
+    mutable const Datum* start;
     mutable Datum* end;
 };
 #endif

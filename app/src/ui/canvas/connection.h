@@ -22,6 +22,9 @@ public:
     QPainterPath shape() const override;
     void setDragPos(QPointF p) { drag_pos = p; }
 
+    OutputPort* getSource() const { return source; }
+    InputPort* getTarget() const { return target; }
+
 public slots:
     void onPortsMoved();
     void onHiddenChanged();
@@ -89,7 +92,6 @@ protected:
     bool has_snap_pos;
     bool snapping;
 
-    InputPort* target_port;
     bool hover;
 
     friend class InputPort;

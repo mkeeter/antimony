@@ -5,7 +5,7 @@
 
 
 UndoDeleteLinkCommand::UndoDeleteLinkCommand(
-        Datum* start, Datum* end, QUndoCommand* parent)
+        const Datum* start, Datum* end, QUndoCommand* parent)
     : UndoCommand(parent), start(start), end(end)
 {
     setText("'delete link'");
