@@ -38,7 +38,7 @@ bool SceneDeserializer::run(QJsonObject in, Graph* graph, Info* info)
         if (protocol_version < 6)
         {
             if (info)
-                info->error_message = "File was saved with a older protocol and cannot yet be read.";
+                info->error_message = "File was saved with a older protocol and can no longer be read.";
             return false;
         }
         else if (protocol_version > 6)
