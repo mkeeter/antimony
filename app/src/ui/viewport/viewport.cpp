@@ -183,7 +183,7 @@ QVector3D Viewport::sceneToWorld(QPointF p) const
 void Viewport::makeNodeAtCursor(NodeConstructorFunction f)
 {
     auto n = f(App::instance()->getGraph());
-    //App::instance()->pushStack(new UndoAddNodeCommand(n));
+    App::instance()->pushStack(new UndoAddNodeCommand(n));
 }
 
 float Viewport::getZmax() const
