@@ -31,11 +31,6 @@ public:
     static App* instance();
 
     /*
-     *  Makes UI elements for the given Graph.
-     */
-    void makeUI(Graph* g);
-
-    /*
      *  Returns the root of the node tree.
      */
     Graph* getGraph() const { return root; }

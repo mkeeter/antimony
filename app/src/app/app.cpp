@@ -455,59 +455,6 @@ MainWindow* App::newEditorWindow(Node* n)
     return m;
 }
 
-void App::makeUI(Graph* r)
-{
-    /*
-    QList<Node*> nodes;
-    QList<Datum*> datums;
-    QMap<Datum*, QList<Link*>> links;
-
-    for (auto n : r->findChildren<Node*>(
-                QString(), Qt::FindDirectChildrenOnly))
-    {
-        n->setParent(root);
-
-        // Save all Links separately
-        // (as their UI must be created after all NodeInspectors)
-        for (auto d : n->findChildren<Datum*>(
-                    QString(), Qt::FindDirectChildrenOnly))
-        {
-            datums.append(d);
-            for (auto k : d->findChildren<Link*>())
-            {
-                links[d].append(k);
-                k->setParent(NULL);
-            }
-        }
-        graph_scene->makeUIfor(n);
-        nodes.append(n);
-    }
-
-    for (auto i = links.begin(); i != links.end(); ++i)
-    {
-        for (auto k : i.value())
-        {
-            k->setParent(i.key());
-            k->getTarget()->update();
-            newLink(k);
-        }
-    }
-
-    // Now that all links are created and all nodes are under the same
-    // root (in case of address-by-name), run update on every datum.
-    for (auto d : datums)
-        if (!d->getValid())
-            d->update();
-
-    // Finally, make render workers for all of the new nodes.
-    // This needs to happen after connections are made; otherwise
-    // we end up with a ton of RenderWorkers that all start rendering
-    // at once (and eat up all of the threads).
-    for (auto n : nodes)
-        view_scene->makeRenderWorkersFor(n);
-    */
-}
-
 QAction* App::undoAction()
 {
     auto a = stack->createUndoAction(this);
