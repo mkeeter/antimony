@@ -11,6 +11,7 @@
 #include "ui/util/colors.h"
 
 #include "app/app.h"
+#include "app/undo/undo_add_link.h"
 
 Connection::Connection(OutputPort* source)
     : Connection(source, NULL)
@@ -202,7 +203,8 @@ void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
         datum->installLink(source->getDatum());
         drag_state = CONNECTED;
-        //App::instance()->pushStack(new UndoAddLinkCommand(link));
+        App::instance()->pushStack(
+                new UndoAddLinkCommand(source->getDatum(), datum));
     }
     else
     {
