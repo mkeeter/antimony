@@ -131,6 +131,18 @@ std::unordered_set<const Datum*> Datum::getLinks() const
     return out;
 }
 
+std::unordered_set<Datum*> Datum::outgoingLinks() const
+{
+    std::unordered_set<Datum*> out;
+    auto range = parent->lookups.equal_range("__" + std::to_string(uid));
+    for (auto it = range.first; it != range.second; ++it)
+    {
+        assert(dynamic_cast<Datum*>(it->second));
+        out.insert(static_cast<Datum*>(it->second));
+    }
+    return out;
+}
+
 void Datum::writeLinkExpression(const std::unordered_set<const Datum*> links)
 {
     // If the list has been pruned down to emptiness, construct a new
