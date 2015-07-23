@@ -131,11 +131,20 @@ std::unordered_set<const Datum*> Datum::getLinks() const
     return out;
 }
 
-void Datum::checkLinkExpression()
+std::unordered_set<Datum*> Datum::outgoingLinks() const
 {
-    // Update the expression by pruning deleted datums from the list
-    auto links = getLinks();
+    std::unordered_set<Datum*> out;
+    auto range = parent->lookups.equal_range("__" + std::to_string(uid));
+    for (auto it = range.first; it != range.second; ++it)
+    {
+        assert(dynamic_cast<Datum*>(it->second));
+        out.insert(static_cast<Datum*>(it->second));
+    }
+    return out;
+}
 
+void Datum::writeLinkExpression(const std::unordered_set<const Datum*> links)
+{
     // If the list has been pruned down to emptiness, construct a new
     // expression by calling 'str' on the existing value.
     if (links.empty())
@@ -170,6 +179,16 @@ void Datum::installLink(const Datum* upstream)
         setText(expr.substr(0, expr.size() - 1) + ", " + id + "]");
     else
         setText(SIGIL_CONNECTION + ("[" + id + "]"));
+}
+
+void Datum::uninstallLink(const Datum* upstream)
+{
+    auto links = getLinks();
+    assert(getLinks().count(upstream) == 1);
+
+    links.erase(upstream);
+    writeLinkExpression(links);
+    trigger();
 }
 
 PyObject* Datum::checkLinkResult(PyObject* obj)
@@ -207,7 +226,7 @@ void Datum::update()
     // If this datum has links plugged in, prune the list of links to
     // delist any that have been deleted.
     if (isLink())
-        checkLinkExpression();
+        writeLinkExpression(getLinks());
 
     // Cache the source list to detect if it has changed.
     const auto old_sources = sources;

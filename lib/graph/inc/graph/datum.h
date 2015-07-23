@@ -79,8 +79,15 @@ public:
     /*
      *  Returns the set of incoming links
      *  (found by parsing the expression)
+     *
+     *  The list skips any incoming link that is no longer valid.
      */
     std::unordered_set<const Datum*> getLinks() const;
+
+    /*
+     *  Returns all links that are outgoingg from this datum.
+     */
+    std::unordered_set<Datum*> outgoingLinks() const;
 
     /*
      *  Checks to see if we can accept the given link.
@@ -91,6 +98,21 @@ public:
      *  Installs the given datum as an upstream link.
      */
     void installLink(const Datum* upstream);
+
+    /*
+     *  Removes the given datum as an upstream link.
+     */
+    void uninstallLink(const Datum* upstream);
+
+    /*
+     *  Returns true if this expression is a connection.
+     */
+    bool isLink() const;
+
+    /*
+     *  Returns true if this expression is an output.
+     */
+    bool isOutput() const;
 
     /*
      *  Sets up a global reducer function
@@ -134,18 +156,9 @@ protected:
 
     /*
      *  If this datum has a connection sigil, allow UID lookups.
+     *  (overrides Root pure virtual function)
      */
     bool allowLookupByUID() const override;
-
-    /*
-     *  Returns true if this expression is a connection.
-     */
-    bool isLink() const;
-
-    /*
-     *  Returns true if this expression is an output.
-     */
-    bool isOutput() const;
 
     /*
      *  Handles post-processing of a link value.
@@ -155,12 +168,13 @@ protected:
     PyObject* checkLinkResult(PyObject* obj);
 
     /*
-     *  Updates the expression by pruning invalid links and
-     *  collapsing to a single value if the list ends up empty.
+     *  Updates the expression with the given set of links
+     *  (turning it back into a value if the list is empty)
      *
-     *  The expression must begin with SIGIL_CONNECTION.
+     *  Sets the expression directly (rather than calling setText);
+     *  call trigger() afterwards if a re-evaluation is needed.
      */
-    void checkLinkExpression();
+    void writeLinkExpression(const std::unordered_set<const Datum*> links);
 
     const std::string name;
     const uint32_t uid;
