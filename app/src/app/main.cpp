@@ -30,13 +30,6 @@ int main(int argc, char *argv[])
     AppHooks::preInit();
     Py_Initialize();
 
-    // Install operator.or_ as a reducer for shapes
-    {
-        auto op = PyImport_ImportModule("operator");
-        Datum::installReducer(fab::ShapeType, PyObject_GetAttrString(op, "or_"));
-        Py_DECREF(op);
-    }
-
     // Create the Application object
     App a(argc, argv);
 
@@ -72,6 +65,13 @@ int main(int argc, char *argv[])
 #endif
     d += "/sb";
     fab::postInit(d.toStdString().c_str());
+
+    // Install operator.or_ as a reducer for shapes
+    {
+        auto op = PyImport_ImportModule("operator");
+        Datum::installReducer(fab::ShapeType, PyObject_GetAttrString(op, "or_"));
+        Py_DECREF(op);
+    }
 
     // Check to make sure that the fab module exists
     PyObject* fab = PyImport_ImportModule("fab");
