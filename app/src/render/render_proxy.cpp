@@ -63,20 +63,19 @@ bool RenderProxy::hasNoOutput()
     if (!worker)
         return false;
 
-    /*
-    if (datum->hasConnectedLink())
+    if (!worker->datum->outgoingLinks().empty())
     {
         clearImage();
         return false;
     }
-    */
+
     return true;
 }
 
 void RenderProxy::startRender()
 {
     auto datum = worker->datum;
-    if (datum->isValid() && datum->currentValue()) // && datum->isOutput())
+    if (datum->isValid() && datum->currentValue() && datum->isOutput())
     {
         if (next)
             next->deleteLater();
