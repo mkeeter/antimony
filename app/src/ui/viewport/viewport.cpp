@@ -637,6 +637,21 @@ void Viewport::drawHoverInfo(QPainter* painter) const
     /* display center */
     painter->drawText(base + QPointF(10, ++_info_line_n*15), QString("Center: (%1, %2, %3)").arg(center[0]).arg(center[1]).arg(center[2]));
 
+    /* display model position */
+    //if (getAxis().first)
+    //{
+        QPair<char, float> axis = getAxis();
+        QPointF mouse_pos = mapToScene(mapFromGlobal(QCursor::pos()));
+        if (!sceneRect().contains(mouse_pos))
+            axis.first = '\0';
+
+        auto p = sceneToWorld(mouse_pos);
+
+        //int value = axis.second * 200;
+        //painter->setPen(QColor(value, value, value));
+        painter->drawText(base + QPointF(10, ++_info_line_n*15), QString("Position: (%1, %2, %3)").arg(p.x()).arg(p.y()).arg(p.z()));
+    //}
+
     /* display focused object */
     auto proxies = getProxiesAtPosition(_current_pos);
     if (proxies.size() > 0)
@@ -653,21 +668,6 @@ void Viewport::drawHoverInfo(QPainter* painter) const
     else
     {
         painter->drawText(base + QPointF(10, ++_info_line_n*15), QString("Object: <none>"));
-    }
-
-    /* display model position */
-    if (getAxis().first)
-    {
-        QPair<char, float> axis = getAxis();
-        QPointF mouse_pos = mapToScene(mapFromGlobal(QCursor::pos()));
-        if (!sceneRect().contains(mouse_pos))
-            axis.first = '\0';
-
-        auto p = sceneToWorld(mouse_pos);
-
-        int value = axis.second * 200;
-        painter->setPen(QColor(value, value, value));
-        painter->drawText(base + QPointF(10, ++_info_line_n*15), QString("Position: (%1, %2, %3)").arg(p.x()).arg(p.y()).arg(p.z()));
     }
 }
 
