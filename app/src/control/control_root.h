@@ -39,7 +39,6 @@ protected:
 
     QMap<long, QSharedPointer<Control>> controls;
     QMap<Datum*, QSharedPointer<RenderWorker>> workers;
-    Node* node;
 
     bool selected;
 };

@@ -101,9 +101,7 @@ public slots:
     void onUpdateCheckFinished(QNetworkReply* reply);
 
 private:
-
     bool event(QEvent* event);
-
     void setGlobalStyle();
 
     Graph* const root;
@@ -111,9 +109,9 @@ private:
     GraphScene* const graph_scene;
     ViewportScene* const view_scene;
     QString filename;
-    UndoStack* stack;
+    UndoStack* const stack;
 
-    QNetworkAccessManager* network;
+    QNetworkAccessManager* const network;
 };
 
 #endif // APP_H

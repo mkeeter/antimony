@@ -112,7 +112,7 @@ void Control::setGlow(bool g)
 
 bool Control::checkTouched()
 {
-    bool was_touched = touched;
+    const bool was_touched = touched;
     touched = false;
     return was_touched;
 }

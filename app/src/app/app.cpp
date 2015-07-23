@@ -203,7 +203,7 @@ void App::loadFile(QString f)
     }
 
     SceneDeserializer::Info ds;
-    bool success = SceneDeserializer::run(
+    const bool success = SceneDeserializer::run(
             QJsonDocument::fromJson(file.readAll()).object(),
             root, &ds);
 

@@ -12,7 +12,7 @@
 #include "graph/node.h"
 
 ControlRoot::ControlRoot(Node* n, ViewportScene* vs)
-    : vscene(vs), node(n), selected(false)
+    : vscene(vs), selected(false)
 {
     n->installWatcher(this);
 }
