@@ -96,15 +96,21 @@ void SceneDeserializer::deserializeNode(QJsonObject in, Graph* p, Info* info)
 void SceneDeserializer::deserializeDatum(QJsonObject in, Node* node)
 {
     if (!globals)
+    {
         globals = Py_BuildValue("{sO}", "__builtins__", PyEval_GetBuiltins());
+        PyDict_SetItemString(globals, "fab", PyImport_ImportModule("fab"));
+    }
+
+    auto t = PyRun_String(
+                  in["type"].toString().toStdString().c_str(),
+                  Py_eval_input, globals, globals);
+    Q_ASSERT(t);
+    Q_ASSERT(PyType_Check(t));
 
     new Datum(in["name"].toString().toStdString(),
               in["uid"].toDouble(),
               in["expr"].toString().toStdString(),
-              (PyTypeObject*)PyRun_String(
-                  in["type"].toString().toStdString().c_str(),
-                  Py_eval_input, globals, globals),
-              node);
+              (PyTypeObject*)t, node);
 }
 
 #ifdef SUPPORT_PROTOCOL_5
@@ -231,7 +237,7 @@ void SceneDeserializer::updateDatum(QJsonObject* in)
     }
     else if (t == "shape" || t == "shape output")
     {
-        (*in)["type"] = "Shape";
+        (*in)["type"] = "fab.types.Shape";
         if (!in->contains("expr"))
             (*in)["expr"] = "None";
     }
