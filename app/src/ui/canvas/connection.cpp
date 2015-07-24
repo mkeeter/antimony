@@ -176,12 +176,6 @@ void Connection::checkDragTarget()
 {
     target = gscene()->getInputPortAt(endPos());
 
-    qDebug() << target << source->getDatum();
-    if (target)
-    {
-        qDebug() << target->getDatum();
-         qDebug() << target->getDatum()->acceptsLink(source->getDatum());
-    }
     if (target && target->getDatum()->acceptsLink(source->getDatum()))
         drag_state = VALID;
     else if (target)
