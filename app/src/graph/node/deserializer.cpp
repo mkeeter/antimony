@@ -120,7 +120,64 @@ void SceneDeserializer::updateGraph(QJsonObject* in)
         updateNode(&n);
         nodes.push_back(n);
     }
+
+    auto conn = (*in)["connections"].toArray();
+    for (auto c_ : conn)
+    {
+        auto c = c_.toArray();
+        auto source = c[0].toArray();
+        auto target = c[1].toArray();
+
+        // Pick out the target source, then look for a matching Datum name
+        // to get the source Datum's UID.
+        uint64_t source_uid;
+        bool found = false;
+        {
+            auto source_n = nodes[source[0].toInt()];
+            for (auto d_ : source_n.toObject()["datums"].toArray())
+            {
+                if (d_.toObject()["name"].toString() == source[1].toString())
+                {
+                    source_uid = d_.toObject()["uid"].toInt();
+                    found = true;
+                }
+            }
+            Q_ASSERT(found);
+        }
+
+        // Then, modify the target node so that it's expression
+        // defines a connection.
+        QJsonValueRef target_node_ref = nodes[target[0].toInt()];
+        auto target_node = target_node_ref.toObject();
+        QJsonValueRef target_datums_ref = target_node["datums"];
+        QJsonArray datums_out;
+        for (auto d_ : target_datums_ref.toArray())
+        {
+            auto d = d_.toObject();
+            if (d["name"].toString() == target[1].toString())
+            {
+                auto expr = d["expr"].toString();
+                if (expr.startsWith(Datum::SIGIL_CONNECTION))
+                {
+                    expr.chop(1);
+                    expr += ", __" + QString::number(source[0].toInt()) +
+                            ".__" + QString::number(source_uid) + "]";
+                }
+                else
+                {
+                    expr = Datum::SIGIL_CONNECTION + QString("[__") +
+                           QString::number(source[0].toInt()) + ".__" +
+                           QString::number(source_uid) + "]";
+                }
+                d["expr"] = expr;
+            }
+            datums_out.push_back(d);
+        }
+        target_datums_ref= datums_out;
+        target_node_ref = target_node;
+    }
     (*in)["nodes"] = nodes;
+    in->erase(in->find("connections"));
 }
 
 void SceneDeserializer::updateNode(QJsonObject* in)
