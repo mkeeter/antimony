@@ -28,6 +28,9 @@
 #include "app/undo/undo_add_multi.h"
 #include "app/undo/undo_delete_multi.h"
 
+#include "graph/node/serializer.h"
+#include "graph/node/deserializer.h"
+
 Canvas::Canvas(QWidget* parent)
     : QGraphicsView(parent), selecting(false)
 {
@@ -228,25 +231,14 @@ void Canvas::onCopy()
 
         if (!selected.isEmpty())
         {
-            /*
-            Q_ASSERT(dynamic_cast<NodeRoot*>(selected[0]->parent()));
-            auto p = static_cast<NodeRoot*>(selected[0]->parent());
-            NodeRoot temp_root;
-
-            // Move the nodes to a temporary root for serialization
+            QJsonArray out;
+            const auto i = scene->inspectorPositions();
             for (auto n : selected)
-                n->setParent(&temp_root);
+                out << SceneSerializer::serializeNode(n, i);
 
             auto data = new QMimeData();
-            data->setData("sb::canvas", QJsonDocument(
-                        SceneSerializer(
-                            &temp_root,
-                            scene->inspectorPositions()).run()).toJson());
+            data->setData("sb::canvas", QJsonDocument(out).toJson());
             QApplication::clipboard()->setMimeData(data);
-
-            for (auto n : selected)
-                n->setParent(p);
-                */
         }
     }
 }
@@ -269,40 +261,47 @@ void Canvas::onPaste()
     else
     {
         auto data = QApplication::clipboard()->mimeData();
-        if (data->hasFormat("sb::canvas"))
+        if (data->hasFormat("sb::canvas") && 0)
         {
-            /*
-            NodeRoot temp_root;
-            SceneDeserializer ds(&temp_root);
-            ds.run(QJsonDocument::fromJson(
-                        data->data("sb::canvas")).object());
+            SceneDeserializer::Info ds;
+            auto array = QJsonDocument::fromJson(
+                    data->data("sb::canvas")).array();
+
+            auto g = App::instance()->getGraph();
+            for (auto n : array)
+                SceneDeserializer::deserializeNode(n.toObject(), g, &ds);
 
             for (auto& i : ds.inspectors)
                 i += QPointF(10, 10);
 
-            scene->clearSelection();
-            App::instance()->pushStack(new UndoAddMultiCommand(
-                        temp_root.findChildren<Node*>().toSet(), {},
-                        "'paste'"));
-
-            // Add _0, _1, etc suffix to all nodes.
-            auto nodes = temp_root.findChildren<Node*>(
-                        QString(), Qt::FindDirectChildrenOnly);
-
-            // Safely make the UI elements (inspectors, controls, connections)
-            // for all of the pasted nodes.
-            App::instance()->makeUI(&temp_root);
-
-            // Select all pasted nodes.
-            for (auto n : nodes)
+            // Pull out the nodes that were just appended to the graph
+            QSet<Node*> nodes;
             {
-                n->updateName();
-                scene->getInspector(n)->setSelected(true);
+                auto all_nodes = g->childNodes();
+                auto itr = all_nodes.rbegin();
+                for (int i=0; i < array.size(); --i)
+                    nodes.insert(*(itr++));
             }
 
+            scene->clearSelection();
+            for (auto n : nodes)
+            {
+                /*
+                QRegularExpression regex("(.*)[0-9]+");
+                auto d = QString::fromStdString(n->getName());
+
+                auto match = regex.match(d->getExpr());
+                if (match.hasMatch())
+                    n->setExpr(r->getName(match.captured(1)));
+                else
+                    n->setExpr(r->getName(d->getExpr() + "_"));
+
+                // Add _0, _1, etc suffix to all nodes.
+                */
+                scene->getInspector(n)->setSelected(true);
+            }
             // Load inspector positions and apply them to the scene.
             scene->setInspectorPositions(ds.inspectors);
-            */
         }
     }
 }
