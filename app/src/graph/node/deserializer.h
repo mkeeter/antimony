@@ -12,6 +12,8 @@
 class Node;
 class Graph;
 
+#define SUPPORT_PROTOCOL_5
+
 namespace SceneDeserializer
 {
     struct Info {
@@ -30,6 +32,12 @@ namespace SceneDeserializer
 
     void deserializeNode(QJsonObject in, Graph* p, Info* info=NULL);
     void deserializeDatum(QJsonObject in, Node* node);
+
+#ifdef SUPPORT_PROTOCOL_5
+    void updateGraph(QJsonObject* in);
+    void updateNode(QJsonObject* in);
+    void updateDatum(QJsonObject* in);
+#endif
 
     extern PyObject* globals;
 };

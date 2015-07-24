@@ -1,6 +1,7 @@
 #include <Python.h>
 
 #include <QDataStream>
+#include <QJsonDocument>
 #include <QBuffer>
 #include <QFile>
 #include <QTextStream>
@@ -35,12 +36,23 @@ bool SceneDeserializer::run(QJsonObject in, Graph* graph, Info* info)
     else
     {
         auto protocol_version = in["protocol"].toDouble();
+#ifdef SUPPORT_PROTOCOL_5
+        if (protocol_version < 5)
+#else
         if (protocol_version < 6)
+#endif
         {
             if (info)
                 info->error_message = "File was saved with a older protocol and can no longer be read.";
             return false;
         }
+#ifdef SUPPORT_PROTOCOL_5
+        else if (protocol_version == 5)
+        {
+            updateGraph(&in);
+            qDebug() << QJsonDocument(in).toJson();
+        }
+#endif
         else if (protocol_version > 6)
         {
             if (info)
@@ -94,3 +106,86 @@ void SceneDeserializer::deserializeDatum(QJsonObject in, Node* node)
                   Py_eval_input, globals, globals),
               node);
 }
+
+#ifdef SUPPORT_PROTOCOL_5
+void SceneDeserializer::updateGraph(QJsonObject* in)
+{
+    (*in)["protocol"] = 6;
+    uint64_t uid = 0;
+    QJsonArray nodes;
+    for (auto n_ : (*in)["nodes"].toArray())
+    {
+        auto n = n_.toObject();
+        n["uid"] = int(uid++);
+        updateNode(&n);
+        nodes.push_back(n);
+    }
+    (*in)["nodes"] = nodes;
+}
+
+void SceneDeserializer::updateNode(QJsonObject* in)
+{
+    QJsonArray datums;
+    uint64_t uid = 0;
+    for (auto d_ : (*in)["datums"].toArray())
+    {
+        auto d = d_.toObject();
+        auto t = d["type"].toString();
+        if (t == "script")
+        {
+            // Extract the script from the datum's expression
+            QString s;
+            for (auto line : d["expr"].toArray())
+                s += line.toString() + "\n";
+
+            // Update the script with new namespaces
+            s.replace("fab.ui", "sb.ui");
+            s.replace("meta.export_", "sb.export.");
+
+            // Put the script back into the file
+            auto a = QJsonArray();
+            for (auto line : s.split("\n"))
+                a.append(line);
+            (*in)["script"] = a;
+        }
+        else if (t == "name")
+        {
+            (*in)["name"] = d["expr"];
+        }
+        else
+        {
+            updateDatum(&d);
+            d["uid"] = int(uid);
+            datums.push_back(d);
+        }
+        uid++;
+    }
+    (*in)["datums"] = datums;
+}
+
+void SceneDeserializer::updateDatum(QJsonObject* in)
+{
+    auto t = (*in)["type"].toString();
+    if (t == "float" || t == "float output")
+    {
+        (*in)["type"] = "float";
+        if (!in->contains("expr"))
+            (*in)["expr"] = "0.0";
+    }
+    else if (t == "shape" || t == "shape output")
+    {
+        (*in)["type"] = "Shape";
+        if (!in->contains("expr"))
+            (*in)["expr"] = "None";
+    }
+    else if (t == "string" || t == "string output")
+    {
+        (*in)["type"] = "str";
+        if (!in->contains("expr"))
+            (*in)["expr"] = "''";
+        else
+            (*in)["expr"] = "'" + (*in)["expr"].toString() + "'";
+    }
+}
+
+#endif
