@@ -15,6 +15,11 @@ public:
     Script(Node* parent);
     void update() override;
 
+    /*
+     *  Returns the number of datums in the script plus
+     *  all of their source counts.
+     */
+    unsigned numSources() const override;
 protected:
     /*
      *  Inject a variable into the globals dictionary.

@@ -78,6 +78,14 @@ void Script::update()
     parent->update(active);
 }
 
+unsigned Script::numSources() const
+{
+    unsigned count = parent->datums.size();
+    for (const auto& d : parent->datums)
+        count += d->numSources();
+    return count;
+}
+
 void Script::inject(std::string name, PyObject* value)
 {
     assert(globals != NULL);

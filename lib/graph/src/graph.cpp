@@ -104,3 +104,12 @@ void Graph::preInit()
     Proxy::preInit();
     Hooks::preInit();
 }
+
+bool Graph::DownstreamCompare::operator()(
+        const Downstream* a, const Downstream* b)
+{
+    if (a->numSources() != b->numSources())
+        return (a->numSources() < b->numSources());
+    else
+        return a < b;
+}
