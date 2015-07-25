@@ -223,11 +223,6 @@ PyObject* Datum::checkLinkResult(PyObject* obj)
 
 void Datum::update()
 {
-    // If this datum has links plugged in, prune the list of links to
-    // delist any that have been deleted.
-    if (isLink())
-        writeLinkExpression(getLinks());
-
     // Cache the source list to detect if it has changed.
     const auto old_sources = sources;
 

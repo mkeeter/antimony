@@ -23,20 +23,6 @@ TEST_CASE("Link detection")
     REQUIRE(std::find(links.begin(), links.end(), z) == links.end());
 }
 
-TEST_CASE("Empty link pruning")
-{
-    auto g = new Graph();
-    auto n = new Node("n", g);
-    auto x = new Datum("x", "1.0", &PyFloat_Type, n);
-
-    // Set the expression to an empty list to force pruning
-    x->setText(Datum::SIGIL_CONNECTION + std::string("[]"));
-    REQUIRE(x->isValid() == true);
-    REQUIRE(x->getLinks().size() == 0);
-    REQUIRE(x->currentValue() != NULL);
-    REQUIRE(PyFloat_AsDouble(x->currentValue()) == 1.0);
-}
-
 TEST_CASE("Link pruning on deletion")
 {
     auto g = new Graph();

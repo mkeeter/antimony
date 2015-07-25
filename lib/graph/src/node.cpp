@@ -80,6 +80,14 @@ void Node::update(const std::unordered_set<Datum*>& active)
     }
 }
 
+void Node::uninstall(Datum* d)
+{
+    auto out = d->outgoingLinks();
+    for (auto o : out)
+        o->uninstallLink(d);
+    Root::uninstall(d, &datums);
+}
+
 PyObject* Node::proxyDict(Datum* caller)
 {
     return parent->proxyDict(caller);

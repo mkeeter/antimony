@@ -93,7 +93,7 @@ public:
      *  Uninstalls the given datum.
      *  Does NOT trigger NodeWatcher objects.
      */
-    void uninstall(Datum* d) { Root::uninstall(d, &datums); }
+    void uninstall(Datum* d);
 
     /*
      *  Returns a Proxy object that uses the parent Graph as its
