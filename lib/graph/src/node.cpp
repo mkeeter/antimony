@@ -200,6 +200,16 @@ void Node::pySetAttr(std::string name, PyObject* obj)
     }
 }
 
+void Node::queue(Downstream* d)
+{
+    parent->queue(d);
+}
+
+void Node::flushQueue()
+{
+    parent->flushQueue();
+}
+
 PyObject* Node::pyGetAttr(std::string n, Downstream* caller) const
 {
     auto d = (caller && caller->allowLookupByUID())

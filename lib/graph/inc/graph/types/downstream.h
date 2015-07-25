@@ -11,6 +11,13 @@ class Downstream
 public:
     virtual ~Downstream();
     virtual void update()=0;
+
+    /*
+     *  Returns the number of sources (upstream objects) that this
+     *  downstream knows about (implemented in subclasses).
+     */
+    virtual unsigned numSources() const=0;
+
 protected:
     /*
      *  Returns true if a proxy lookup is allowed to use UIDs
@@ -31,4 +38,5 @@ private:
     friend class Root;
     friend class Node;
     friend class Proxy;
+    friend class Graph;
 };

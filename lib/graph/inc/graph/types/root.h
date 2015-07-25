@@ -6,6 +6,7 @@
 #include <unordered_set>
 #include <list>
 #include <regex>
+#include <set>
 
 class Downstream;
 
@@ -101,7 +102,14 @@ public:
             return getByName(n, ts);
     }
 
+    /*
+     *  Queue a Downstream object for re-evaluation.
+     */
+    virtual void queue(Downstream* d)=0;
+    virtual void flushQueue()=0;
+
 protected:
+
     template <class T>
     uint32_t install(T* t, std::list<std::unique_ptr<T>>* ts)
     {

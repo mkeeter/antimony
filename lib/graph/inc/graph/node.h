@@ -131,6 +131,8 @@ public:
     /* Root functions */
     PyObject* pyGetAttr(std::string name, Downstream* caller) const override;
     void pySetAttr(std::string name, PyObject* obj) override;
+    void queue(Downstream* d) override;
+    void flushQueue() override;
 
 protected:
 

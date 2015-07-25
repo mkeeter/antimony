@@ -7,7 +7,7 @@
 #include "graph/watchers.h"
 
 Graph::Graph(std::string n, Graph* parent)
-    : name(n), uid(0), parent(parent)
+    : name(n), uid(0), parent(parent), processing_queue(false)
 {
     // Nothing to do here
 }
@@ -78,8 +78,38 @@ PyObject* Graph::pyGetAttr(std::string name, Downstream* caller) const
     return m ? Proxy::makeProxyFor(m, caller) : NULL;
 }
 
+void Graph::queue(Downstream* d)
+{
+    downstream_queue.insert(d);
+}
+
+void Graph::flushQueue()
+{
+    if (!processing_queue)
+    {
+        processing_queue = true;
+        while (downstream_queue.size())
+        {
+            auto itr = downstream_queue.begin();
+            Downstream* d = (*itr);
+            downstream_queue.erase(itr);
+            d->trigger();
+        }
+        processing_queue = false;
+    }
+}
+
 void Graph::preInit()
 {
     Proxy::preInit();
     Hooks::preInit();
+}
+
+bool Graph::DownstreamCompare::operator()(
+        const Downstream* a, const Downstream* b)
+{
+    if (a->numSources() != b->numSources())
+        return (a->numSources() < b->numSources());
+    else
+        return a < b;
 }

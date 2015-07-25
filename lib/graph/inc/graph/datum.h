@@ -115,6 +115,12 @@ public:
     bool isOutput() const;
 
     /*
+     *  Returns the number sources this datum has
+     *  (not including itself)
+     */
+    unsigned numSources() const override;
+
+    /*
      *  Sets up a global reducer function
      *  (used to reduce multiple inputs into a single value)
      *
