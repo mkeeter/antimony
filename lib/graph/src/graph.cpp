@@ -7,7 +7,7 @@
 #include "graph/watchers.h"
 
 Graph::Graph(std::string n, Graph* parent)
-    : name(n), uid(0), parent(parent)
+    : name(n), uid(0), parent(parent), processing_queue(false)
 {
     // Nothing to do here
 }
@@ -95,6 +95,7 @@ void Graph::flushQueue()
             downstream_queue.erase(itr);
             d->trigger();
         }
+        processing_queue = false;
     }
 }
 
