@@ -87,6 +87,8 @@ public:
     /* Root functions */
     PyObject* pyGetAttr(std::string name, Downstream* caller) const override;
     void pySetAttr(std::string, PyObject*) override {}
+    void queue(Downstream* d) override;
+    void flushQueue() override;
 
     /*
      *  Preloads Python modules.
@@ -102,4 +104,7 @@ protected:
 
     std::list<GraphWatcher*> watchers;
     std::unique_ptr<ExternalHooks> external;
+
+    bool processing_queue;
+    std::set<Downstream*> downstream_queue;
 };

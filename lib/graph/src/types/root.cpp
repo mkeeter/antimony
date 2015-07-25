@@ -27,14 +27,13 @@ void Root::saveLookup(std::string name, Downstream* caller)
 
 void Root::changed(std::string n, uint32_t uid)
 {
-    std::unordered_set<Downstream*> targets;
+    std::list<Downstream*> targets;
     for (auto s : {n, "__" + std::to_string(uid)})
     {
         auto range = lookups.equal_range(s);
         for (auto it = range.first; it != range.second; ++it)
-            targets.insert(it->second);
+            queue(it->second);
     }
-    for (auto it : targets)
-        it->trigger();
+    flushQueue();
 }
 

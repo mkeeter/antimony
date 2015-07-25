@@ -31,4 +31,5 @@ private:
     friend class Root;
     friend class Node;
     friend class Proxy;
+    friend class Graph;
 };

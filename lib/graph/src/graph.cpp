@@ -78,6 +78,26 @@ PyObject* Graph::pyGetAttr(std::string name, Downstream* caller) const
     return m ? Proxy::makeProxyFor(m, caller) : NULL;
 }
 
+void Graph::queue(Downstream* d)
+{
+    downstream_queue.insert(d);
+}
+
+void Graph::flushQueue()
+{
+    if (!processing_queue)
+    {
+        processing_queue = true;
+        while (downstream_queue.size())
+        {
+            auto itr = downstream_queue.begin();
+            Downstream* d = (*itr);
+            downstream_queue.erase(itr);
+            d->trigger();
+        }
+    }
+}
+
 void Graph::preInit()
 {
     Proxy::preInit();
