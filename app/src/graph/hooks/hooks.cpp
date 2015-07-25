@@ -140,6 +140,7 @@ void AppHooks::loadScriptHooks(PyObject* g, Node* n)
 void AppHooks::loadDatumHooks(PyObject* g)
 {
     PyDict_SetItemString(g, "fab", PyImport_ImportModule("fab"));
+    PyDict_SetItemString(g, "math", PyImport_ImportModule("math"));
     if (PyErr_Occurred())
         PyErr_Print();
 }
