@@ -216,7 +216,6 @@ PyObject* Datum::checkLinkResult(PyObject* obj)
     }
     else
     {
-        assert(error.find("is invalid") != std::string::npos);
         return obj;
     }
 }
