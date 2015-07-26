@@ -38,6 +38,9 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 
+    void dragFloat(float a);
+    void dragInt(int a);
+
     Datum* d;
     QTextDocument* txt;
     QColor background;

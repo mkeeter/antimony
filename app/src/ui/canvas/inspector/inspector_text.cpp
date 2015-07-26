@@ -131,21 +131,21 @@ bool DatumTextItem::eventFilter(QObject* obj, QEvent* event)
         else if (keyEvent->matches(QKeySequence::Redo))
             App::instance()->redo();
         else if (keyEvent->key() == Qt::Key_Up || keyEvent->key() == Qt::Key_Down) {
-            /*
             const int dx = keyEvent->key() == Qt::Key_Up ? 1 : -1;
-            const auto f = dynamic_cast<FloatDatum*>(d);
-            const auto i = dynamic_cast<IntDatum*>(d);
-            if (f && f->getValid())
+            if (d->isValid())
             {
-                const double scale = fmax(
-                        0.01, abs(PyFloat_AsDouble(f->getValue()) * 0.01));
-                f->dragValue(scale * dx);
+                if (d->getType() == &PyFloat_Type)
+                {
+                    const double scale = fmax(
+                            0.01, fabs(PyFloat_AsDouble(d->currentValue()) * 0.01));
+                    dragFloat(scale * dx);
+                }
+                else if (d->getType() == &PyLong_Type)
+                {
+                    dragInt(dx);
+                }
+
             }
-            else if (i && i->getValid())
-            {
-                i->dragValue(dx);
-            }
-            */
         }
         else
             return false;
@@ -182,29 +182,50 @@ void DatumTextItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     QGraphicsTextItem::mouseReleaseEvent(event);
 }
 
+void DatumTextItem::dragFloat(float a)
+{
+    bool ok = false;
+
+    QString s = QString::fromStdString(d->getText());
+    double v = s.toFloat(&ok);
+    if (ok)
+    {
+        d->setText(QString::number(v + a).toStdString());
+        return;
+    }
+}
+
+void DatumTextItem::dragInt(int a)
+{
+    bool ok = false;
+
+    QString s = QString::fromStdString(d->getText());
+    double i = s.toInt(&ok);
+    if (ok)
+        d->setText(QString::number(i + a).toStdString());
+}
+
 void DatumTextItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
-    /*
-    const auto f = dynamic_cast<FloatDatum*>(d);
-    const auto i = dynamic_cast<IntDatum*>(d);
-    if (f && f->getValid() && (event->modifiers() & Qt::ShiftModifier))
+    if (d->isValid() && (event->modifiers() & Qt::ShiftModifier))
     {
-        const double scale = fmax(
-                0.01, abs(PyFloat_AsDouble(f->getValue()) * 0.01));
-        const double dx = (event->screenPos() - event->lastScreenPos()).x();
-        f->dragValue(scale * dx);
+        if (d->getType() == &PyFloat_Type)
+        {
+            const double scale = fmax(
+                    0.01, abs(PyFloat_AsDouble(d->currentValue()) * 0.01));
+            const double dx = (event->screenPos() - event->lastScreenPos()).x();
+            dragFloat(scale * dx);
+            return;
+        }
+        else if (d->getType() == &PyLong_Type)
+        {
+            drag_accumulated += (event->screenPos() -
+                                 event->lastScreenPos()).x() / 30.;
+            int q = drag_accumulated;
+            drag_accumulated -= q;
+            dragInt(q);
+            return;
+        }
     }
-    else if (i && i->getValid() && (event->modifiers() & Qt::ShiftModifier))
-    {
-        drag_accumulated += (event->screenPos() -
-                             event->lastScreenPos()).x() / 30.;
-        int q = drag_accumulated;
-        drag_accumulated -= q;
-        i->dragValue(q);
-    }
-    else
-    */
-    {
-        QGraphicsTextItem::mouseMoveEvent(event);
-    }
+    QGraphicsTextItem::mouseMoveEvent(event);
 }
