@@ -16,3 +16,18 @@ TEST_CASE("Name validity")
     REQUIRE(!Graph::isNameValid(""));
     REQUIRE(!Graph::isNameValid("for"));
 }
+
+TEST_CASE("Graph name generation")
+{
+    auto g = new Graph();
+    new Node("n", g);
+    REQUIRE(g->nextName("n") == "n0");
+
+    new Node("n0", g);
+    REQUIRE(g->nextName("n") == "n1");
+
+    new Node("n2", g);
+    REQUIRE(g->nextName("n") == "n1");
+
+    delete g;
+}
