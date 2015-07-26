@@ -98,7 +98,8 @@ void SceneDeserializer::deserializeDatum(QJsonObject in, Node* node)
     if (!globals)
     {
         globals = Py_BuildValue("{sO}", "__builtins__", PyEval_GetBuiltins());
-        PyDict_SetItemString(globals, "fab", PyImport_ImportModule("fab"));
+        PyDict_SetItemString(globals, "_fabtypes",
+                             PyImport_ImportModule("_fabtypes"));
     }
 
     auto t = PyRun_String(

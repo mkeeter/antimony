@@ -72,8 +72,13 @@ QJsonObject SceneSerializer::serializeDatum(Datum* datum)
     out["expr"] = QString::fromStdString(datum->getText());
 
     auto t = PyObject_GetAttrString((PyObject*)datum->getType(), "__name__");
-    out["type"] = QString::fromUtf8(PyUnicode_AsUTF8(t));
+    auto m = PyObject_GetAttrString((PyObject*)datum->getType(), "__module__");
+    auto type = QString::fromUtf8(PyUnicode_AsUTF8(t));
+    auto module = QString::fromUtf8(PyUnicode_AsUTF8(m));
     Py_DECREF(t);
+    Py_DECREF(m);
+
+    out["type"] = (module == "builtins") ? type : (module + "." + type);
 
     return out;
 }
