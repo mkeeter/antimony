@@ -228,8 +228,12 @@ void MainWindow::populateNodeMenu(QMenu* menu, bool recenter, Viewport* v)
             if (regex.exactMatch(txt))
                 title = regex.capturedTexts()[1];
 
+        QString name = "n*";
+        if (title.size() > 0 && title.at(0).isLetter())
+            name = title.at(0).toLower() + QString("*");
         NodeConstructorFunction constructor =
-            [=](Graph *r){ return new Node("name", txt.toStdString(), r); };
+            [=](Graph *r){ return new Node(name.toStdString(),
+                                           txt.toStdString(), r); };
         nodes[title] = QPair<QStringList, NodeConstructorFunction>(
                 split, constructor);
         node_titles.append(title);
