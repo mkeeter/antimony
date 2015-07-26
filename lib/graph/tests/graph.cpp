@@ -31,3 +31,20 @@ TEST_CASE("Graph name generation")
 
     delete g;
 }
+
+TEST_CASE("Wildcard node names")
+{
+    auto g = new Graph();
+    new Node("n", g);
+    new Node("n1", g);
+    REQUIRE(g->nextName("n") == "n0");
+
+    auto n0 = new Node("n*", g);
+    REQUIRE(n0->getName() == "n0");
+
+    auto n2 = new Node("n*", g);
+    REQUIRE(n2->getName() == "n2");
+
+    delete g;
+
+}
