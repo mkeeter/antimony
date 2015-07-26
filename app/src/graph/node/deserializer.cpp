@@ -238,7 +238,7 @@ void SceneDeserializer::updateDatum(QJsonObject* in)
     }
     else if (t == "shape" || t == "shape output")
     {
-        (*in)["type"] = "fab.types.Shape";
+        (*in)["type"] = "_fabtypes.Shape";
         if (!in->contains("expr"))
             (*in)["expr"] = "None";
     }
