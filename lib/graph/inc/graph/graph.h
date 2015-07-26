@@ -75,7 +75,7 @@ public:
 
     /*
      *  Checks that the given name is unique
-     *  (or looks up the given node)
+     *  (or that the provided Node is the first instance of this name)
      */
     bool isNameUnique(std::string name, const Node* n=NULL) const;
 
