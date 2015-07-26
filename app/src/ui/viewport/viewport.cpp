@@ -661,22 +661,23 @@ void Viewport::onCopy()
 
 void Viewport::onCut()
 {
-    /*
     for (auto i : scene->selectedItems())
         if (auto proxy = dynamic_cast<ControlProxy*>(i))
         {
-            auto n = proxy->getControl()->getNode();
-            auto data = new QMimeData();
-            const auto inspectors =
-                App::instance()->getGraphScene()->inspectorPositions();
-            data->setData("sb::viewport",
-                    QJsonDocument(SceneSerializer::serializeNode(
-                            n, inspectors)).toJson());
+            if (auto c = proxy->getControl())
+            {
+                auto n = c->getNode();
+                auto data = new QMimeData();
+                const auto inspectors =
+                    App::instance()->getGraphScene()->inspectorPositions();
+                data->setData("sb::viewport",
+                        QJsonDocument(SceneSerializer::serializeNode(
+                                n, inspectors)).toJson());
 
-            QApplication::clipboard()->setMimeData(data);
-            proxy->getControl()->deleteNode("'cut'");
+                QApplication::clipboard()->setMimeData(data);
+                proxy->getControl()->deleteNode("'cut'");
+            }
         }
-        */
 }
 
 void Viewport::onPaste()
