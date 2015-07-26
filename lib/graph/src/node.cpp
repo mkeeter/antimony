@@ -13,14 +13,16 @@ Node::Node(std::string n, Graph* root)
 }
 
 Node::Node(std::string n, uint64_t uid, Graph* root)
-    : name(n), uid(uid), script(this), parent(root)
+    : name(n.back() == '*' ? root->nextName(n.substr(0, n.size() - 1)) : n),
+      uid(uid), script(this), parent(root)
 {
     root->install(this);
     init();
 }
 
 Node::Node(std::string n, std::string script, Graph* root)
-    : name(n), uid(root->install(this)), script(this), parent(root)
+    : name(n.back() == '*' ? root->nextName(n.substr(0, n.size() - 1)) : n),
+      uid(root->install(this)), script(this), parent(root)
 {
     setScript(script);
     init();
