@@ -45,7 +45,29 @@ void DatumTextItem::trigger(const DatumState& state)
     QTextCursor cursor = textCursor();
     size_t p = textCursor().position();
     recursing = true;
-    txt->setPlainText(QString::fromStdString(state.text));
+
+    QString t;
+    if (state.editable)
+    {
+        t = QString::fromStdString(state.text);
+    }
+    else
+    {
+        t = QString::fromStdString(state.repr);
+
+        // Special-case to avoid printing long shapes
+        if (t.startsWith("fab.types.Shape"))
+            t = "Shape";
+
+        if (state.links.size() > 1)
+            t += " [links]";
+        else if (state.links.size() == 1)
+            t += " [link]";
+        else
+            t += " [output]";
+    }
+
+    txt->setPlainText(t);
     recursing = false;
 
     if (p < state.text.length())
