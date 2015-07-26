@@ -203,7 +203,6 @@ protected:
     static std::unordered_map<PyTypeObject*, PyObject*> reducers;
 
     friend class Node;
-    friend class Proxy;
     friend class Root;
     friend struct Script;
 };
