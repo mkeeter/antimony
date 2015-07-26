@@ -40,11 +40,11 @@ GraphState Graph::getState() const
     return (GraphState){ out };
 }
 
-bool Graph::isNameUnique(std::string name) const
+bool Graph::isNameUnique(std::string name, const Node* n) const
 {
-    for (const auto& n : nodes)
-        if (n->name == name)
-            return false;
+    for (const auto& a : nodes)
+        if (a->name == name)
+            return (n == a.get());
     return true;
 }
 
