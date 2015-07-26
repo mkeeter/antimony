@@ -35,6 +35,7 @@ struct NodeState
     std::string error;
     std::string output;
     int error_lineno;
+    bool name_valid;
     std::list<Datum*> datums;
 };
 

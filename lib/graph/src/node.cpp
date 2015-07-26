@@ -43,8 +43,9 @@ void Node::setScript(std::string t)
 NodeState Node::getState() const
 {
     return (NodeState){
-            script.script, script.error, script.output,
-            script.error_lineno, childDatums()};
+            script.script, script.error, script.output, script.error_lineno,
+            isNameValid(name) && parent->isNameUnique(name, this),
+            childDatums()};
 }
 
 void Node::setName(std::string new_name)
