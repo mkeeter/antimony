@@ -40,6 +40,25 @@ GraphState Graph::getState() const
     return (GraphState){ out };
 }
 
+bool Graph::isNameUnique(std::string name) const
+{
+    for (const auto& n : nodes)
+        if (n->name == name)
+            return false;
+    return true;
+}
+
+std::string Graph::nextName(std::string prefix) const
+{
+    unsigned i=0;
+    while(1)
+    {
+        auto n = prefix + std::to_string(i++);
+        if (isNameUnique(n))
+            return n;
+    }
+}
+
 void Graph::uninstall(Node* n)
 {
     Root::uninstall(n, &nodes);
