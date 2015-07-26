@@ -18,6 +18,9 @@ class Node : public Root
 public:
     /*
      *  On construction, trigger parent Root's watchers.
+     *
+     *  If the given name ends with '*', it is treated as a wildcard prefix
+     *  and Graph::nextName is called to get an appropriate name.
      */
     explicit Node(std::string name, Graph* root);
     explicit Node(std::string name, std::string script, Graph* root);
