@@ -281,8 +281,13 @@ void Datum::update()
 DatumState Datum::getState() const
 {
     auto trimmed = trimSigil(expr);
+
+    auto r = PyObject_Repr(value);
+    std::string repr(PyUnicode_AsUTF8(r));
+    Py_DECREF(r);
+
     return (DatumState){
-        trimmed.first, !trimmed.second, valid, error, getLinks()};
+        trimmed.first, repr, !trimmed.second, valid, error, getLinks()};
 }
 
 std::pair<std::string, bool> Datum::trimSigil(std::string e)

@@ -13,6 +13,7 @@ class Graph;
 struct DatumState
 {
     std::string text;
+    std::string repr;
     bool editable;
     bool valid;
     std::string error;
