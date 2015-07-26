@@ -46,5 +46,15 @@ TEST_CASE("Wildcard node names")
     REQUIRE(n2->getName() == "n2");
 
     delete g;
+}
 
+TEST_CASE("Duplicate name validity")
+{
+    auto g = new Graph();
+    auto a = new Node("n", g);
+    auto b = new Node("n", g);
+
+    REQUIRE(!g->isNameUnique("n"));
+    REQUIRE(g->isNameUnique("n", a));
+    REQUIRE(!g->isNameUnique("n", b));
 }
