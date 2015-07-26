@@ -50,10 +50,20 @@ NodeState Node::getState() const
 
 void Node::setName(std::string new_name)
 {
-    const std::string old_name = name;
-    name = new_name;
-    parent->changed(old_name, uid);
-    parent->changed(new_name, uid);
+    if (new_name != name)
+    {
+        const std::string old_name = name;
+        name = new_name;
+        parent->changed(old_name, uid);
+        parent->changed(new_name, uid);
+
+        if (!watchers.empty())
+        {
+            auto state =  getState();
+            for (auto w : watchers)
+                w->trigger(state);
+        }
+    }
 }
 
 std::list<Datum*> Node::childDatums() const
