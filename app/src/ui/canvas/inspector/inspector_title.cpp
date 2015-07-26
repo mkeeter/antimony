@@ -23,7 +23,6 @@ InspectorTitle::InspectorTitle(Node* n, NodeInspector* parent)
 
 {
     name->setTextInteractionFlags(Qt::TextEditorInteraction);
-    name->setTextWidth(150);
 
     auto f = name->font();
     f.setBold(true);
