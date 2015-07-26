@@ -59,6 +59,27 @@ std::string Graph::nextName(std::string prefix) const
     }
 }
 
+std::list<uint64_t> Graph::getUIDs(unsigned n) const
+{
+    std::list<uint64_t> out;
+    std::unordered_set<uint64_t> existing;
+
+    // Load all of the existing node's UIDs into a set
+    for (const auto& node : nodes)
+        existing.insert(node->getUID());
+
+    // Count up, filling up the output list with unused UIDs
+    uint64_t u = 0;
+    while (out.size() < n)
+    {
+        if (existing.count(u) == 0)
+            out.push_back(u);
+        u++;
+    }
+
+    return out;
+}
+
 void Graph::uninstall(Node* n)
 {
     Root::uninstall(n, &nodes);
