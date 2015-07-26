@@ -48,7 +48,6 @@ public:
      *  (not a Python keyword and a valid variable name)
      */
     static bool isNameValid(std::string name);
-    static PyObject* kwlist_contains;
 
     /*****************************************************/
     /*            TEMPLATED HELPER FUNCTIONS             */
