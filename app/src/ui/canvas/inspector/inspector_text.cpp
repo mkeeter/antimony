@@ -124,10 +124,13 @@ void DatumTextItem::onUndoCommandAdded()
         QString after = document()->toPlainText();
         int cursor_after = textCursor().position();
 
+        QTime t;
+        t.start();
         App::instance()->pushStack(
                 new UndoChangeExprCommand(
                     e, before, after,
                     cursor_before, cursor_after, this));
+        qDebug() << t.elapsed();
 
         connect(document(), &QTextDocument::contentsChanged,
                 this, &DatumTextItem::onTextChanged);

@@ -105,9 +105,6 @@ protected:
     std::list<GraphWatcher*> watchers;
     std::unique_ptr<ExternalHooks> external;
 
-    struct DownstreamCompare {
-        bool operator()(const Downstream* a, const Downstream* b);
-    };
     bool processing_queue;
-    std::set<Downstream*, DownstreamCompare> downstream_queue;
+    std::unordered_set<Downstream*> downstream_queue;
 };

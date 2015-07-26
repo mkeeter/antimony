@@ -90,11 +90,27 @@ void Graph::flushQueue()
         processing_queue = true;
         while (downstream_queue.size())
         {
-            auto itr = downstream_queue.begin();
-            Downstream* d = (*itr);
-            downstream_queue.erase(itr);
-            d->trigger();
+            Downstream* next = NULL;
+            for (auto d : downstream_queue)
+            {
+                auto sources = d->sources;
+                sources.erase(d);
+                if (!std::any_of(sources.begin(), sources.end(),
+                        [&](const Downstream* s){
+                            return downstream_queue.count(
+                                const_cast<Downstream*>(s));
+                        }))
+                {
+                    next = d;
+                    break;
+                }
+            }
+
+            assert(next);
+            downstream_queue.erase(next);
+            next->trigger();
         }
+
         processing_queue = false;
     }
 }
@@ -103,13 +119,4 @@ void Graph::preInit()
 {
     Proxy::preInit();
     Hooks::preInit();
-}
-
-bool Graph::DownstreamCompare::operator()(
-        const Downstream* a, const Downstream* b)
-{
-    if (a->numSources() != b->numSources())
-        return (a->numSources() < b->numSources());
-    else
-        return a < b;
 }

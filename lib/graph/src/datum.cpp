@@ -339,11 +339,6 @@ bool Datum::isOutput() const
     return !expr.empty() && (expr.front() == SIGIL_OUTPUT);
 }
 
-unsigned Datum::numSources() const
-{
-    return sources.size() - 1;
-}
-
 void Datum::installReducer(PyTypeObject* t, PyObject* f)
 {
     reducers[t] = f;
