@@ -122,23 +122,13 @@ bool MainWindow::isShaded() const
 
 void MainWindow::trigger(const GraphState& state)
 {
-    if (auto c = dynamic_cast<Canvas*>(centralWidget()))
-    {
-        // Nothing to do here
-        Q_UNUSED(c);
-    }
-    else if (auto e = dynamic_cast<ScriptPane*>(centralWidget()))
+    if (auto e = dynamic_cast<ScriptPane*>(centralWidget()))
     {
         if (state.nodes.count(e->getNode()) == 0)
         {
             e->clearNode();
             close();
         }
-    }
-    else
-    {
-        // Nothing to do here?
-        // Handle viewport stuffs
     }
 }
 ////////////////////////////////////////////////////////////////////////////////
