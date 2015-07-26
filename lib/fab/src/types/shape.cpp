@@ -10,7 +10,7 @@
 #include "fab/types/shape.h"
 
 Shape::Shape()
-    : math("f1"), bounds(Bounds()), tree(NULL), r(-1), g(-1), b(-1)
+    : math("=1;"), bounds(Bounds()), tree(NULL), r(-1), g(-1), b(-1)
 {
     // Nothing to do here
 }
@@ -20,7 +20,7 @@ Shape::Shape(boost::python::object obj)
 {
     if (obj.ptr() == Py_None)
     {
-        math = "f1.0";
+        math = "=1;";
         tree = std::shared_ptr<MathTree>(parse(math.c_str()), free_tree);
     }
     else // Try to extract a string from the single argument
