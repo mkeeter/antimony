@@ -58,3 +58,15 @@ TEST_CASE("Duplicate name validity")
     REQUIRE(g->isNameUnique("n", a));
     REQUIRE(!g->isNameUnique("n", b));
 }
+
+TEST_CASE("Getting multiple UIDs")
+{
+    auto g = new Graph();
+    auto a = new Node("a", g);
+    auto b = new Node("b", g);
+    auto c = new Node("c", g);
+
+    REQUIRE(g->getUIDs(3) == std::list<uint64_t>({3,4,5}));
+    g->uninstall(b);
+    REQUIRE(g->getUIDs(3) == std::list<uint64_t>({1,3,4}));
+}
