@@ -39,6 +39,11 @@ public slots:
     void onJumpTo(Node* node);
 
 protected:
+    /*
+     *  Paste in an array of nodes, properly updating UIDs and names
+     */
+    void pasteNodes(QJsonArray array);
+
     /** On mouse press, save click position (for panning).
      */
     void mousePressEvent(QMouseEvent* event) override;

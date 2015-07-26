@@ -261,49 +261,86 @@ void Canvas::onPaste()
     else
     {
         auto data = QApplication::clipboard()->mimeData();
-        if (data->hasFormat("sb::canvas") && 0)
+        if (data->hasFormat("sb::canvas"))
+            pasteNodes(QJsonDocument::fromJson(
+                        data->data("sb::canvas")).array());
+    }
+}
+
+void Canvas::pasteNodes(QJsonArray array)
+{
+    QList<QPair<uint64_t, uint64_t>> uid_map;
+    auto g = App::instance()->getGraph();
+
+    {   // Get the next n UIDs and update the nodes in the array.
+        std::list<uint64_t> uids = g->getUIDs(array.size());
+        auto itr = uids.begin();
+        for (int i=0; i < array.size(); ++i)
         {
-            SceneDeserializer::Info ds;
-            auto array = QJsonDocument::fromJson(
-                    data->data("sb::canvas")).array();
+            // Update this node's UID and store the change in uid_map
+            auto node = array[i].toObject();
+            uid_map << QPair<uint64_t, uint64_t>(node["uid"].toInt(), *itr);
+            node["uid"] = int((*itr)++);
+            array[i] = node;
+        }
 
-            auto g = App::instance()->getGraph();
-            for (auto n : array)
-                SceneDeserializer::deserializeNode(n.toObject(), g, &ds);
-
-            for (auto& i : ds.inspectors)
-                i += QPointF(10, 10);
-
-            // Pull out the nodes that were just appended to the graph
-            QSet<Node*> nodes;
+        // For every connection datum, remap UIDs in the expression
+        for (int i=0; i < array.size(); ++i)
+        {
+            auto node = array[i].toObject();
+            auto datums = node["datums"].toArray();
+            for (int j=0; j < datums.size(); ++j)
             {
-                auto all_nodes = g->childNodes();
-                auto itr = all_nodes.rbegin();
-                for (int i=0; i < array.size(); --i)
-                    nodes.insert(*(itr++));
+                auto d = datums[j].toObject();
+                auto expr = d["expr"].toString();
+                if (expr.startsWith(Datum::SIGIL_CONNECTION))
+                    for (auto u : uid_map)
+                        expr.replace(QString::number(u.first) + ".",
+                                     QString::number(u.second) + ".");
+                d["expr"] = expr;
+                datums[j] = d;
             }
-
-            scene->clearSelection();
-            for (auto n : nodes)
-            {
-                /*
-                QRegularExpression regex("(.*)[0-9]+");
-                auto d = QString::fromStdString(n->getName());
-
-                auto match = regex.match(d->getExpr());
-                if (match.hasMatch())
-                    n->setExpr(r->getName(match.captured(1)));
-                else
-                    n->setExpr(r->getName(d->getExpr() + "_"));
-
-                // Add _0, _1, etc suffix to all nodes.
-                */
-                scene->getInspector(n)->setSelected(true);
-            }
-            // Load inspector positions and apply them to the scene.
-            scene->setInspectorPositions(ds.inspectors);
+            node["datums"] = datums;
+            array[i] = node;
         }
     }
+
+    SceneDeserializer::Info ds;
+    for (auto n_ : array)
+    {
+        auto n = n_.toObject();
+
+        // Trim trailing numbers from the node's name
+        auto name = n["name"].toString();
+        while (name.at(name.size() - 1).isNumber())
+            name = name.left(name.size() - 1);
+        if (name.isEmpty())
+            name = "n";
+        n["name"] = QString::fromStdString(g->nextName(name.toStdString()));
+        SceneDeserializer::deserializeNode(n, g, &ds);
+    }
+
+    // Update the inspector positions by shifting a bit down and over
+    for (auto& i : ds.inspectors)
+        i += QPointF(10, 10);
+
+    // Pull out the nodes that were just appended to the graph
+    QSet<Node*> nodes;
+    {
+        auto all_nodes = g->childNodes();
+        auto itr = all_nodes.rbegin();
+        for (int i=0; i < array.size(); ++i)
+            nodes.insert(*(itr++));
+    }
+
+    // Select all of the nodes that were just pasted in
+    scene->clearSelection();
+    for (auto n : nodes)
+        scene->getInspector(n)->setSelected(true);
+
+    // Load inspector positions and apply them to the scene.
+    scene->setInspectorPositions(ds.inspectors);
+
 }
 
 void Canvas::onJumpTo(Node* node)
