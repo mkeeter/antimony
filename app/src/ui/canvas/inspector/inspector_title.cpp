@@ -67,6 +67,11 @@ QRectF InspectorTitle::boundingRect() const
     return QRectF(0, 0, width, height);
 }
 
+void InspectorTitle::setNameValid(bool v)
+{
+    name->setDefaultTextColor(v ? Colors::base06 : Colors::red);
+}
+
 void InspectorTitle::setTitle(QString t)
 {
     title->setPlainText(t);

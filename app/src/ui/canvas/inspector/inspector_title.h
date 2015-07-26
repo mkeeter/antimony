@@ -14,6 +14,8 @@ class InspectorTitle : public QGraphicsObject
     Q_OBJECT
 public:
     explicit InspectorTitle(Node* n, NodeInspector* parent);
+    void setNameValid(bool v);
+
     QRectF boundingRect() const override;
     void setTitle(QString t);
 

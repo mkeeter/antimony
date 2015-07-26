@@ -126,6 +126,8 @@ void NodeInspector::trigger(const NodeState& state)
 {
     QList<const Datum*> not_present = rows.keys();
 
+    title_row->setNameValid(state.name_valid);
+
     for (Datum* d : state.datums)
     {
         if (d->getName().find("__") != 0 && !rows.contains(d))
