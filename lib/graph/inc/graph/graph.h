@@ -74,9 +74,10 @@ public:
     GraphState getState() const;
 
     /*
-     *  Checks that the given name is unique.
+     *  Checks that the given name is unique
+     *  (or looks up the given node)
      */
-    bool isNameUnique(std::string name) const;
+    bool isNameUnique(std::string name, const Node* n=NULL) const;
 
     /*
      *  Returns the next unique name of the form prefix%i
