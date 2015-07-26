@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Python.h>
+
 #include <unordered_set>
 
 class Datum;
@@ -10,13 +11,14 @@ class Downstream
 {
 public:
     virtual ~Downstream();
-    virtual void update()=0;
 
     /*
-     *  Returns the number of sources (upstream objects) that this
-     *  downstream knows about (implemented in subclasses).
+     *  Virtual function that is called by trigger()
+     *  (after trigger sets up root tracking)
+     *
+     *  Derived classes are responsible for updating sources.
      */
-    virtual unsigned numSources() const=0;
+    virtual void update()=0;
 
 protected:
     /*
@@ -26,6 +28,14 @@ protected:
     virtual bool allowLookupByUID() const=0;
 
     void trigger();
+
+    /*
+     *  This set represents any Downstream object that when triggered could
+     *  cause this Downstream to be triggered.
+     *
+     *  It is used to detect recursive loops and schedule queued evaluation.
+     */
+    std::unordered_set<const Downstream*> sources;
 
 private:
     /*

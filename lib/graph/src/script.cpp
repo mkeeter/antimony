@@ -15,6 +15,10 @@ Script::Script(Node* parent)
 
 void Script::update()
 {
+    // Reset the source list (which we'll populate at the end of evaluation)
+    sources.clear();
+    sources.insert(this);
+
     const auto old_active = active;
     active.clear();
     error_lineno = -1;
@@ -75,15 +79,17 @@ void Script::update()
     if (error_lineno != -1)
         active.insert(old_active.begin(), old_active.end());
 
+    // Populate the script's source array with all its input datums
     parent->update(active);
-}
-
-unsigned Script::numSources() const
-{
-    unsigned count = parent->datums.size();
     for (const auto& d : parent->datums)
-        count += d->numSources();
-    return count;
+        if (!d->isOutput())
+            sources.insert(d->sources.begin(), d->sources.end());
+
+    // Then make all of the output datums depend on the script and all
+    // of its (newly-populated) sources.
+    for (const auto& d : parent->datums)
+        if (d->isOutput())
+            d->sources.insert(sources.begin(), sources.end());
 }
 
 void Script::inject(std::string name, PyObject* value)

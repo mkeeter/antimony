@@ -115,12 +115,6 @@ public:
     bool isOutput() const;
 
     /*
-     *  Returns the number sources this datum has
-     *  (not including itself)
-     */
-    unsigned numSources() const override;
-
-    /*
      *  Sets up a global reducer function
      *  (used to reduce multiple inputs into a single value)
      *
@@ -197,12 +191,6 @@ protected:
     std::list<DatumWatcher*> watchers;
 
     /*
-     *  This set represents any source whose modification could cause
-     *  this datum to be activated.  It is used to detect recursive loops.
-     */
-    std::unordered_set<const Datum*> sources;
-
-    /*
      *  Sigils are single characters at the beginning of an expression
      *  that mark it as special in some way (connection, output, etc).
      */
@@ -217,5 +205,6 @@ protected:
     friend class Node;
     friend class Proxy;
     friend class Root;
+    friend struct Script;
 };
 
