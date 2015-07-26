@@ -15,7 +15,7 @@
 #include "ui_main_window.h"
 
 #include "app/app.h"
-#include "app/undo/undo_change_expr.h"
+#include "app/undo/undo_change_script.h"
 
 ScriptEditor::ScriptEditor(Node* node, QWidget* parent)
     : QPlainTextEdit(parent), node(node)
@@ -101,7 +101,6 @@ void ScriptEditor::onTextChanged()
 
 void ScriptEditor::onUndoCommandAdded()
 {
-    /*
     disconnect(document(), &QTextDocument::contentsChanged,
                this, &ScriptEditor::onTextChanged);
 
@@ -114,12 +113,11 @@ void ScriptEditor::onUndoCommandAdded()
     int cursor_after = textCursor().position();
 
     App::instance()->pushStack(
-            new UndoChangeExprCommand(
-                datum, before, after,
+            new UndoChangeScriptCommand(
+                node, before, after,
                 cursor_before, cursor_after, this));
     connect(document(), &QTextDocument::contentsChanged,
             this, &ScriptEditor::onTextChanged);
-            */
 }
 
 void ScriptEditor::openShapesLibrary()

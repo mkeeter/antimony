@@ -17,7 +17,7 @@ public:
     UndoChangeExprCommand(Datum* d, QString before, QString after);
     UndoChangeExprCommand(Datum* d, QString before, QString after,
                           int cursor_before, int cursor_after,
-                          QObject* obj);
+                          QGraphicsTextItem* obj);
 
     void redo() override;
     void undo() override;
@@ -25,12 +25,6 @@ public:
     void swapDatum(Datum* a, Datum* b) const override;
 
 protected:
-    template<typename T> void _saveCursor();
-    template<typename T> void _restoreCursor(int pos);
-
-    // If obj is a QPlainTextEdit or a QGraphicsTextItem,
-    // these functions will save cursor position (to cursor_after)
-    // and restore cursor position (from the given argument)
     void saveCursor();
     void restoreCursor(int pos);
 
@@ -40,7 +34,7 @@ protected:
 
     int cursor_before;
     int cursor_after;
-    QPointer<QObject> obj;
+    QPointer<QGraphicsTextItem> txt;
 };
 
 

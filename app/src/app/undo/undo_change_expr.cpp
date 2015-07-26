@@ -18,43 +18,29 @@ UndoChangeExprCommand::UndoChangeExprCommand(
 UndoChangeExprCommand::UndoChangeExprCommand(
         Datum* d, QString before, QString after,
         int cursor_before, int cursor_after,
-        QObject* obj)
+        QGraphicsTextItem* txt)
     : d(d), before(before), after(after),
       cursor_before(cursor_before), cursor_after(cursor_after),
-      obj(obj)
+      txt(txt)
 {
     setText("'set value'");
 }
 
 
-template<typename T>
-void UndoChangeExprCommand::_saveCursor()
+void UndoChangeExprCommand::saveCursor()
 {
-    if (auto txt = dynamic_cast<T*>(obj.data()))
+    if (txt)
         cursor_after = txt->textCursor().position();
 }
 
-template<typename T>
-void UndoChangeExprCommand::_restoreCursor(int pos)
+void UndoChangeExprCommand::restoreCursor(int pos)
 {
-    if (auto txt = dynamic_cast<T*>(obj.data()))
+    if (txt)
     {
         QTextCursor c = txt->textCursor();
         c.setPosition(pos);
         txt->setTextCursor(c);
     }
-}
-
-void UndoChangeExprCommand::saveCursor()
-{
-    _saveCursor<QPlainTextEdit>();
-    _saveCursor<QGraphicsTextItem>();
-}
-
-void UndoChangeExprCommand::restoreCursor(int pos)
-{
-    _restoreCursor<QPlainTextEdit>(pos);
-    _restoreCursor<QGraphicsTextItem>(pos);
 }
 
 void UndoChangeExprCommand::redo()
