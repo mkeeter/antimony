@@ -85,6 +85,11 @@ public:
     std::string nextName(std::string prefix) const;
 
     /*
+     *  Returns a list of n valid UIDs.
+     */
+    std::list<uint64_t> getUIDs(unsigned n) const;
+
+    /*
      *  Installs an ExternalHooks object (used in dictionary generation)
      */
     void installExternalHooks(ExternalHooks* h) { external.reset(h); }
