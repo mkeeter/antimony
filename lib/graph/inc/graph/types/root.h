@@ -32,19 +32,6 @@ public:
      */
     void saveLookup(std::string name, Downstream* caller);
 
-#if 0
-    /*
-     *  Checks that the given name is valid.
-     */
-    bool isNameValid(std::string name) const;
-
-    /*
-     *  Checks to see if the given name is unique.
-     *  The input name should be stripped.
-     */
-    bool isNameUnique(std::string name) const;
-#endif
-
     /*
      *  When a child is changed, call 'trigger' on all Downstream
      *  objects that have tried looking up this name before.
@@ -55,6 +42,13 @@ public:
      *  Removes a Downstream from the map of failed lookups.
      */
     void removeDownstream(Downstream* d);
+
+    /*
+     *  Checks that the given name is valid
+     *  (not a Python keyword and a valid variable name)
+     */
+    static bool isNameValid(std::string name);
+    static PyObject* kwlist_contains;
 
     /*****************************************************/
     /*            TEMPLATED HELPER FUNCTIONS             */

@@ -74,6 +74,16 @@ public:
     GraphState getState() const;
 
     /*
+     *  Checks that the given name is unique.
+     */
+    bool isNameUnique(std::string name) const;
+
+    /*
+     *  Returns the next unique name of the form prefix%i
+     */
+    std::string nextName(std::string prefix) const;
+
+    /*
      *  Installs an ExternalHooks object (used in dictionary generation)
      */
     void installExternalHooks(ExternalHooks* h) { external.reset(h); }
