@@ -57,7 +57,7 @@ Datum::~Datum()
 
 bool Datum::hasInput() const
 {
-    return !expr.empty() && (expr.front() != SIGIL_OUTPUT);
+    return !isOutput();
 }
 
 PyObject* Datum::getValue()

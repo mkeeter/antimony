@@ -163,8 +163,11 @@ bool Node::makeDatum(std::string n, PyTypeObject* type,
                 break;
             }
 
-        // And update its expression
+        // If the datum is an output, update its expression
         if (output)
+            d->setText(value);
+        // Otherwise, erase the output sigil by setting the text
+        else if (d->isOutput())
             d->setText(value);
     }
 
