@@ -14,7 +14,8 @@
 #include "graph/node.h"
 
 InspectorScriptButton::InspectorScriptButton(Node* n, QGraphicsItem* parent)
-    : GraphicsButton(parent), node(n)
+    : GraphicsButton(parent), script_valid(n->getState().error_lineno == -1),
+      node(n)
 {
     setToolTip("Edit script");
     connect(this, &GraphicsButton::pressed,
@@ -34,10 +35,25 @@ void InspectorScriptButton::paint(QPainter* painter,
     Q_UNUSED(widget);
 
     painter->setPen(Qt::NoPen);
-    painter->setBrush(hover ? Colors::base05 : Colors::base04);
+    const QColor base = script_valid ? Colors::base04 : Colors::red;
+    painter->setBrush(hover ? Colors::highlight(base) : base);
+
     painter->drawRect(0, 0, 16, 3);
     painter->drawRect(0, 6, 16, 3);
     painter->drawRect(0, 12, 16, 3);
+
+    if (!script_valid)
+    {
+        painter->setBrush(Colors::highlight(Colors::red));
+        painter->drawRect(6, 0, 4, 10);
+        painter->drawRect(6, 12, 4, 4);
+    }
+}
+
+void InspectorScriptButton::setScriptValid(const bool v)
+{
+    script_valid = v;
+    prepareGeometryChange();
 }
 
 void InspectorScriptButton::onPressed()

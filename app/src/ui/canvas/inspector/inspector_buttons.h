@@ -22,9 +22,11 @@ public:
     QRectF boundingRect() const override;
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
                QWidget* widget=0) override;
+    void setScriptValid(const bool v);
 protected slots:
     void onPressed();
 protected:
+    bool script_valid;
     Node* node;
 };
 
