@@ -47,7 +47,7 @@ void DatumTextItem::trigger(const DatumState& state)
     recursing = true;
 
     QString t;
-    if (state.editable)
+    if (state.sigil == Datum::SIGIL_NONE)
     {
         t = QString::fromStdString(state.text);
     }
@@ -59,11 +59,9 @@ void DatumTextItem::trigger(const DatumState& state)
         if (t.startsWith("fab.types.Shape"))
             t = "Shape";
 
-        if (state.links.size() > 1)
-            t += " [links]";
-        else if (state.links.size() == 1)
-            t += " [link]";
-        else
+        if (state.sigil == Datum::SIGIL_CONNECTION)
+            t += state.links.size() > 1 ? " [links]" : " [link]";
+        else if (state.sigil == Datum::SIGIL_OUTPUT)
             t += " [output]";
     }
 

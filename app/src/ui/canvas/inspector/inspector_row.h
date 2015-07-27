@@ -3,17 +3,21 @@
 
 #include <QGraphicsObject>
 
+#include "graph/watchers.h"
+
 class Datum;
 class DatumTextItem;
 class InputPort;
 class OutputPort;
 class NodeInspector;
 
-class InspectorRow : public QGraphicsObject
+class InspectorRow : public QGraphicsObject, DatumWatcher
 {
     Q_OBJECT
 public:
     explicit InspectorRow(Datum* d, NodeInspector* parent);
+
+    void trigger(const DatumState& state) override;
 
     InputPort* input;
     OutputPort* output;

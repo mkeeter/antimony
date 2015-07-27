@@ -11,9 +11,7 @@
 
 InspectorRow::InspectorRow(Datum* d, NodeInspector* parent)
     : QGraphicsObject(static_cast<QGraphicsItem*>(parent)),
-      input(d->hasInput()
-                ? new InputPort(d, static_cast<QGraphicsItem*>(this))
-                : NULL),
+      input(new InputPort(d, static_cast<QGraphicsItem*>(this))),
       output(new OutputPort(d, static_cast<QGraphicsItem*>(this))),
       label(new QGraphicsTextItem(
                   QString::fromStdString(d->getName()), this)),
@@ -33,6 +31,15 @@ InspectorRow::InspectorRow(Datum* d, NodeInspector* parent)
     connect(static_cast<DatumTextItem*>(editor),
             &DatumTextItem::shiftTabPressed,
             parent, &NodeInspector::focusPrev);
+
+    d->installWatcher(this);
+    trigger(d->getState());
+}
+
+void InspectorRow::trigger(const DatumState& state)
+{
+    if (state.sigil == Datum::SIGIL_OUTPUT)
+        input->hide();
 }
 
 QRectF InspectorRow::boundingRect() const
