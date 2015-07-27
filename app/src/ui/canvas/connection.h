@@ -28,7 +28,6 @@ public:
 public slots:
     void onPortsMoved();
     void onHiddenChanged();
-    void onPortDeleted();
 
 protected:
     GraphScene* gscene() const;
@@ -83,10 +82,14 @@ protected:
 
     OutputPort* source;
     InputPort* target;
+    const QColor color;
 
     QPointF drag_pos;
 
     enum { NONE, VALID, INVALID, CONNECTED } drag_state;
+
+    QPointF start_pos;
+    QPointF end_pos;
 
     QPointF snap_pos;
     bool has_snap_pos;

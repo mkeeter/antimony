@@ -20,7 +20,8 @@ Connection::Connection(OutputPort* source)
 }
 
 Connection::Connection(OutputPort* source, InputPort* target)
-    : source(source), target(target), drag_state(target ? CONNECTED : NONE),
+    : source(source), target(target), color(Colors::getColor(source->getDatum())),
+      drag_state(target ? CONNECTED : NONE),
       snapping(false), hover(false)
 {
     setFlags(QGraphicsItem::ItemIsSelectable|
@@ -39,15 +40,11 @@ Connection::Connection(OutputPort* source, InputPort* target)
         target->install(this);
 }
 
-void Connection::onPortDeleted()
-{
-    source = NULL;
-    target = NULL;
-    deleteLater();
-}
-
 void Connection::onPortsMoved()
 {
+    start_pos = source->mapToScene(source->boundingRect().center());
+    if (drag_state == CONNECTED)
+        end_pos = target->mapToScene(target->boundingRect().center());
     prepareGeometryChange();
 }
 
@@ -81,15 +78,13 @@ QPainterPath Connection::shape() const
 
 QPointF Connection::startPos() const
 {
-    Q_ASSERT(source != NULL);
-    return source->mapToScene(source->boundingRect().center());
+    return start_pos;
 }
 
 QPointF Connection::endPos() const
 {
-    Q_ASSERT(target != NULL || drag_state != CONNECTED);
     if (drag_state == CONNECTED)
-        return target->mapToScene(target->boundingRect().center());
+        return end_pos;
     else
         return (snapping && has_snap_pos) ? snap_pos : drag_pos;
 }
@@ -147,13 +142,13 @@ void Connection::paint(QPainter *painter,
         painter->drawPath(path(true));
     }
 
-    QColor color = Colors::getColor(source->getDatum());
+    QColor draw_color = color;
     if (drag_state == INVALID)
-        color = Colors::red;
+        draw_color = Colors::red;
     if (isSelected() || drag_state == VALID)
-        color = Colors::highlight(color);
+        draw_color = Colors::highlight(color);
 
-    painter->setPen(QPen(color, 4));
+    painter->setPen(QPen(draw_color, 4));
     painter->drawPath(path());
 }
 
