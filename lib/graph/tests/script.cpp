@@ -279,3 +279,13 @@ TEST_CASE("Variable namespaces")
     CAPTURE(n->getError());
     REQUIRE(n->getErrorLine() == -1);
 }
+
+TEST_CASE("Preserving datums in invalid script")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    auto d = new Datum("d", 2, "1.0", &PyFloat_Type, n);
+    n->setScript("aargh");
+    n->setScript("input('d', float)");
+    REQUIRE(n->getDatum("d") == d);
+}
