@@ -40,6 +40,8 @@ void InspectorRow::trigger(const DatumState& state)
 {
     if (state.sigil == Datum::SIGIL_OUTPUT)
         input->hide();
+    else
+        input->show();
 }
 
 QRectF InspectorRow::boundingRect() const
