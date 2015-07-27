@@ -5,6 +5,7 @@
 #include "graph/watchers.h"
 #include "graph/proxy.h"
 
+const char Datum::SIGIL_NONE = 0;
 const char Datum::SIGIL_CONNECTION = 0x11;
 const char Datum::SIGIL_OUTPUT = 0x12;
 
@@ -287,7 +288,8 @@ DatumState Datum::getState() const
     Py_DECREF(r);
 
     return (DatumState){
-        trimmed.first, repr, !trimmed.second, valid, error, getLinks()};
+        trimmed.first, repr, trimmed.second ? expr.front() : SIGIL_NONE,
+        !trimmed.second, valid, error, getLinks()};
 }
 
 std::pair<std::string, bool> Datum::trimSigil(std::string e)

@@ -123,6 +123,7 @@ public:
     static void installReducer(PyTypeObject* t, PyObject* f);
     static void clearReducers() { reducers.clear(); }
 
+    static const char SIGIL_NONE;
     static const char SIGIL_CONNECTION;
     static const char SIGIL_OUTPUT;
 
