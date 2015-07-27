@@ -298,7 +298,9 @@ TEST_CASE("Output with invalid repr")
     auto n = new Node("n", g);
     n->setScript("output('x', float)");
     CAPTURE(n->getError());
-    REQUIRE(n->getErrorLine() != -1);
+    REQUIRE(n->getError().find("Could not evaluate __repr__ of output")
+            != std::string::npos);
+    REQUIRE(n->getErrorLine() == 1);
 
     delete g;
 }
