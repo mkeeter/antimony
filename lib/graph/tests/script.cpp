@@ -288,4 +288,19 @@ TEST_CASE("Preserving datums in invalid script")
     n->setScript("aargh");
     n->setScript("input('d', float)");
     REQUIRE(n->getDatum("d") == d);
+
+    delete g;
+}
+
+TEST_CASE("Output with invalid repr")
+{
+    auto g = new Graph();
+    auto n = new Node("n", g);
+    n->setScript("output('x', float)");
+    CAPTURE(n->getError());
+    REQUIRE(n->getError().find("Could not evaluate __repr__ of output")
+            != std::string::npos);
+    REQUIRE(n->getErrorLine() == 1);
+
+    delete g;
 }
