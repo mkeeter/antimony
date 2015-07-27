@@ -203,6 +203,7 @@ void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         drag_state = CONNECTED;
         App::instance()->pushStack(
                 new UndoAddLinkCommand(source->getDatum(), datum));
+        onPortsMoved();
     }
     else
     {
