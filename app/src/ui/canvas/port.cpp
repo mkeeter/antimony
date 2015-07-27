@@ -17,7 +17,8 @@
 #include "graph/datum.h"
 
 Port::Port(Datum* d, QGraphicsItem* parent)
-    : QGraphicsObject(parent), datum(d), hover(false)
+    : QGraphicsObject(parent), datum(d), hover(false),
+      color(Colors::getColor(d))
 {
     setAcceptHoverEvents(true);
     setFlags(QGraphicsItem::ItemSendsScenePositionChanges);
@@ -44,11 +45,7 @@ void Port::paint(QPainter *painter,
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    QColor color = Colors::getColor(datum);
-    if (hover)
-        color = Colors::highlight(color);
-    painter->setBrush(color);
-
+    painter->setBrush(hover ? Colors::highlight(color) : color);
     painter->setPen(Qt::NoPen);
     painter->drawRect(boundingRect());
 }

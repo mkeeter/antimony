@@ -97,6 +97,7 @@ void DatumTextItem::onTextChanged()
     if (bbox != boundingRect())
     {
         bbox = boundingRect();
+        prepareGeometryChange();
         emit boundsChanged();
     }
 

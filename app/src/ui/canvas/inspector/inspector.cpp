@@ -73,7 +73,7 @@ QRectF NodeInspector::boundingRect() const
 
     for (auto row=rows.begin(); row != rows.end(); ++row)
     {
-        if (show_hidden || row.key()->getName().front() != '_')
+        if (show_hidden || !row.value()->label->toPlainText().startsWith("_"))
         {
             height += row.value()->boundingRect().height() + 4;
             width = fmax(width, row.value()->boundingRect().width());
@@ -94,32 +94,30 @@ void NodeInspector::onLayoutChanged()
     title_row->updateLayout();
 
     // Add inspector rows in the order they appear.
-    if (node)
+    float y = 2 + title_row->boundingRect().height() + 4;
+    for (Datum* d : node->childDatums())
     {
-        float y = 2 + title_row->boundingRect().height() + 4;
-        for (Datum* d : node->childDatums())
+        if (rows.contains(d))
         {
-            if (rows.contains(d))
+            if (show_hidden ||
+                !rows[d]->label->toPlainText().startsWith("_"))
             {
-                if (show_hidden || d->getName().front() != '_')
-                {
-                    rows[d]->show();
-                    rows[d]->setWidth(min_width);
-                    rows[d]->updateLayout();
-                    rows[d]->setPos(0, y);
-                    y += 4 + rows[d]->boundingRect().height();
-                }
-                else
-                {
-                    rows[d]->hide();
-                }
+                rows[d]->show();
+                rows[d]->setWidth(min_width);
+                rows[d]->updateLayout();
+                rows[d]->setPos(0, y);
+                y += 4 + rows[d]->boundingRect().height();
+            }
+            else
+            {
+                rows[d]->hide();
             }
         }
-        auto w = boundingRect().width() / 2;
-        export_button->setPos(w/2, y);
-        export_button->setWidth(w);
-        prepareGeometryChange();
     }
+    auto w = boundingRect().width() / 2;
+    export_button->setPos(w/2, y);
+    export_button->setWidth(w);
+    prepareGeometryChange();
 }
 
 void NodeInspector::trigger(const NodeState& state)

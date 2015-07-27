@@ -33,6 +33,7 @@ signals:
 protected:
     Datum* datum;
     bool hover;
+    QColor color;
 };
 
 class InputPort : public Port, DatumWatcher

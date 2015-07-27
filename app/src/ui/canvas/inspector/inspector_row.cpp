@@ -21,7 +21,7 @@ InspectorRow::InspectorRow(Datum* d, NodeInspector* parent)
 {
     label->setDefaultTextColor(Colors::base04);
 
-    connect(static_cast<DatumTextItem*>(editor),
+    connect(editor,
             &DatumTextItem::boundsChanged,
             [=](){
             if(this->updateLayout())
@@ -110,6 +110,8 @@ bool InspectorRow::updateLayout()
         }
     }
 
+    if (changed)
+        prepareGeometryChange();
     return changed;
 }
 
