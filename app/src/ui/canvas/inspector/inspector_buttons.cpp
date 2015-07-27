@@ -72,6 +72,7 @@ InspectorShowHiddenButton::InspectorShowHiddenButton(
     setToolTip("Show hidden datums");
 
     inspector->getNode()->installWatcher(this);
+    trigger(inspector->getNode()->getState());
 }
 
 QRectF InspectorShowHiddenButton::boundingRect() const
