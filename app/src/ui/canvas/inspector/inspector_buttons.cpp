@@ -41,13 +41,6 @@ void InspectorScriptButton::paint(QPainter* painter,
     painter->drawRect(0, 0, 16, 3);
     painter->drawRect(0, 6, 16, 3);
     painter->drawRect(0, 12, 16, 3);
-
-    if (!script_valid)
-    {
-        painter->setBrush(Colors::highlight(Colors::red));
-        painter->drawRect(6, 0, 4, 10);
-        painter->drawRect(6, 12, 4, 4);
-    }
 }
 
 void InspectorScriptButton::setScriptValid(const bool v)
