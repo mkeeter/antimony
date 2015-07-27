@@ -150,6 +150,7 @@ bool Node::makeDatum(std::string n, PyTypeObject* type,
     if (d == NULL)
     {
         d = new Datum(n, value, type, this);
+        assert(d->isValid());
     }
     else
     {
