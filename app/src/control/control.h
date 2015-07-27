@@ -25,8 +25,6 @@ public:
      */
     explicit Control(Node* node, PyObject* drag_func=NULL);
 
-    void deleteLater();
-
     /*
      *  Destructor removes a reference to the drag function.
      */
