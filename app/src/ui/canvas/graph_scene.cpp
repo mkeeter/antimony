@@ -20,6 +20,12 @@ GraphScene::GraphScene(Graph* graph, QObject* parent)
             App::instance(), &App::jumpToInViewport);
 }
 
+GraphScene::~GraphScene()
+{
+    for (auto i : inspectors)
+        i->deleteLater();
+}
+
 Canvas* GraphScene::newCanvas()
 {
     return new Canvas(this);

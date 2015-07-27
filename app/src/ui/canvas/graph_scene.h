@@ -20,6 +20,7 @@ class GraphScene : public QGraphicsScene, GraphWatcher
     Q_OBJECT
 public:
     GraphScene(Graph* graph, QObject* parent=0);
+    ~GraphScene();
 
     /*
      *  Returns a new Canvas with scene set.
