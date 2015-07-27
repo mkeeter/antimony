@@ -38,6 +38,9 @@ Connection::Connection(OutputPort* source, InputPort* target)
 
     if (target)
         target->install(this);
+
+    // Initialize start (and possibly end) positions
+    onPortsMoved();
 }
 
 void Connection::onPortsMoved()
