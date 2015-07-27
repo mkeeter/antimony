@@ -140,7 +140,7 @@ void RenderProxy::onThreadFinished()
     // If the datum which we're rendering has been deleted or the
     // target viewport has been deleted, clean up and call deleteLater
     // on oneself.
-    if (worker->datum == NULL || viewport.isNull())
+    if (worker == NULL || worker->datum == NULL || viewport.isNull())
     {
         if (next)
             next->deleteLater();
