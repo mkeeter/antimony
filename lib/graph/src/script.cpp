@@ -19,7 +19,7 @@ void Script::update()
     sources.clear();
     sources.insert(this);
 
-    const auto old_active = active;
+    const auto old_active = parent->childDatums();
     active.clear();
     error_lineno = -1;
     error.clear();
