@@ -206,6 +206,15 @@ void SceneDeserializer::updateNode(QJsonObject* in)
             s.replace("fab.ui", "sb.ui");
             s.replace("meta.export_", "sb.export.");
 
+            // If we use math functions, add an 'import math' call
+            if (s.contains("math.") && !s.contains("import math"))
+            {
+                if (s.contains("\nimport"))
+                    s.replace("\nimport", "\nimport math\nimport");
+                else
+                    s = "import math\n" + s;
+            }
+
             // Put the script back into the file
             auto a = QJsonArray();
             for (auto line : s.split("\n"))
