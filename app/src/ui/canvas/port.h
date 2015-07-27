@@ -17,6 +17,7 @@ class Port : public QGraphicsObject
     Q_OBJECT
 public:
     explicit Port(Datum* d, QGraphicsItem* parent);
+    virtual ~Port() {}
 
     QRectF boundingRect() const override;
     void paint(QPainter *painter,
@@ -40,10 +41,11 @@ class InputPort : public Port, DatumWatcher
 {
 public:
     explicit InputPort(Datum* d, QGraphicsItem* parent=NULL);
+    virtual ~InputPort();
     void trigger(const DatumState& state) override;
     void install(Connection* c);
 protected:
-    QMap<const Datum*, QSharedPointer<Connection>> connections;
+    QMap<const Datum*, Connection*> connections;
 };
 
 class OutputPort : public Port

@@ -103,9 +103,6 @@ bool Connection::isHidden() const
 
 QPainterPath Connection::path(bool only_bezier) const
 {
-    if (source == NULL)
-        return QPainterPath();
-
     QPointF start = startPos();
     QPointF end = endPos();
 

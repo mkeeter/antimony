@@ -64,14 +64,25 @@ InputPort::InputPort(Datum *d, QGraphicsItem *parent)
     trigger(d->getState());
 }
 
+InputPort::~InputPort()
+{
+    for (auto c : connections)
+        c->deleteLater();
+}
+
 void InputPort::trigger(const DatumState& state)
 {
     auto itr=connections.begin();
     while (itr != connections.end())
         if (state.links.count(itr.key()) == 0)
+        {
+            itr.value()->deleteLater();
             itr = connections.erase(itr);
+        }
         else
+        {
             itr++;
+        }
 
     for (auto d : state.links)
         if (!connections.contains(d))
@@ -86,7 +97,7 @@ void InputPort::install(Connection* c)
             c, &Connection::onHiddenChanged);
 
     Q_ASSERT(!connections.contains(c->source->getDatum()));
-    connections[c->source->getDatum()].reset(c);
+    connections[c->source->getDatum()] = c;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
