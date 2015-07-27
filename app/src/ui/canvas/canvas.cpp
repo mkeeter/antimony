@@ -310,13 +310,17 @@ void Canvas::pasteNodes(QJsonArray array)
     {
         auto n = n_.toObject();
 
-        // Trim trailing numbers from the node's name
         auto name = n["name"].toString();
-        while (name.at(name.size() - 1).isNumber())
-            name = name.left(name.size() - 1);
-        if (name.isEmpty())
-            name = "n";
-        n["name"] = QString::fromStdString(g->nextName(name.toStdString()));
+        if (!g->isNameUnique(name.toStdString()))
+        {
+            // Trim trailing numbers from the node's name
+            while (name.at(name.size() - 1).isNumber())
+                name = name.left(name.size() - 1);
+            if (name.isEmpty())
+                name = "n";
+            // Then use the remaining string as a prefix
+            n["name"] = QString::fromStdString(g->nextName(name.toStdString()));
+        }
         SceneDeserializer::deserializeNode(n, g, &ds);
     }
 
