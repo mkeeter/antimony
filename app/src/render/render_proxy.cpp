@@ -32,6 +32,8 @@ RenderProxy::RenderProxy(RenderWorker* worker, Viewport* viewport)
             this, &RenderProxy::deleteIfNotRunning);
     connect(worker, &RenderWorker::changed,
             this, &RenderProxy::startRender);
+
+    startRender();
 }
 
 RenderProxy::~RenderProxy()
