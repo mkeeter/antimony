@@ -134,8 +134,7 @@ void Canvas::keyPressEvent(QKeyEvent *event)
     {
         deleteSelected();
     }
-    else if (event->key() == Qt::Key_A &&
-                (event->modifiers() & Qt::ShiftModifier))
+    else if (event->key() == Qt::Key_Space)
     {
         QMenu* m = new QMenu(this);
 

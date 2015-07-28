@@ -194,17 +194,16 @@ protected:
      */
     void drawAxes(QPainter* painter) const;
 
-    /*
-     *  If we're looking down an axis, write the cursor's position
-     *  in the lower-left corner.
-     */
-    void drawMousePosition(QPainter* painter) const;
+     /*
+      * Display the center, current object, screen coordinates.
+      */
+    void drawHoverInfo(QPainter* painter) const;
 
     /*
-     *  Draws an additional info panel in the top left corner
-     *  with nodes under the cursor, yaw, pitch, scale.
+     *  Draws an additional info panel in the top right corner
+     *  with scale, pitch, yaw.
      */
-    void drawInfo(QPainter* painter) const;
+    void drawViewInfo(QPainter* painter) const;
 
     /** Pans the scene rectangle.
      */
