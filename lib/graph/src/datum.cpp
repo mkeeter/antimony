@@ -110,25 +110,36 @@ PyObject* Datum::castToType(PyObject* value)
 
 std::unordered_set<const Datum*> Datum::getLinks() const
 {
-    // Use a regex to find every uid.uid element in the list;
-    static std::regex id_regex("__([0-9]+)\\.__([0-9]+)");
-
-    std::smatch match;
-    size_t index = 0;
     std::unordered_set<const Datum*> out;
+    if (!isLink())
+        return out;
 
-    while (std::regex_search(expr.substr(index), match, id_regex))
+    size_t index = 4; // skip initial SIGIL + "[__"
+    while (1)
     {
-        const uint64_t node_uid  = std::stoull(match[1]);
-        const uint64_t datum_uid = std::stoull(match[2]);
+        const size_t node_uid_start = index;
+        const size_t node_uid_end = expr.find('.', index);
+        assert(node_uid_end != std::string::npos);
+        const uint64_t node_uid = std::stoull(
+                expr.substr(index, node_uid_end - node_uid_start));
+
+        const size_t datum_uid_start = node_uid_end + 3; // for ".__"
+        const size_t datum_uid_end = expr.find(',', datum_uid_start);
+        const uint64_t datum_uid = std::stoull(expr.substr(
+                    datum_uid_start, (datum_uid_end == std::string::npos)
+                        ? expr.size() - datum_uid_start - 1
+                        : datum_uid_end - datum_uid_start));
 
         auto graph = parent->parent;
         if (auto node = graph->getNode(node_uid))
             if (auto datum = node->getDatum(datum_uid))
                 out.insert(datum);
 
-        index += match[0].length();
+        if (datum_uid_end == std::string::npos)
+            break;
+        index = datum_uid_end + 3; // for ",__"
     }
+
     return out;
 }
 
@@ -162,7 +173,7 @@ void Datum::writeLinkExpression(const std::unordered_set<const Datum*> links)
         for (auto d : links)
         {
             if (expr.back() != '[')
-                expr += ", ";
+                expr += ",";
             expr += "__" + std::to_string(d->parent->uid) +
                    ".__" + std::to_string(d->uid);
         }
@@ -177,7 +188,7 @@ void Datum::installLink(const Datum* upstream)
     std::string id = "__" +  std::to_string(upstream->parent->uid) +
                     ".__" + std::to_string(upstream->uid);
     if (isLink())
-        setText(expr.substr(0, expr.size() - 1) + ", " + id + "]");
+        setText(expr.substr(0, expr.size() - 1) + "," + id + "]");
     else
         setText(SIGIL_CONNECTION + ("[" + id + "]"));
 }
