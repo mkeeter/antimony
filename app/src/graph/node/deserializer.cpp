@@ -152,7 +152,7 @@ void SceneDeserializer::updateGraph(QJsonObject* in)
             Q_ASSERT(found);
         }
 
-        // Then, modify the target node so that it's expression
+        // Then, modify the target node so that its expression
         // defines a connection.
         QJsonValueRef target_node_ref = nodes[target[0].toInt()];
         auto target_node = target_node_ref.toObject();
@@ -167,7 +167,7 @@ void SceneDeserializer::updateGraph(QJsonObject* in)
                 if (expr.startsWith(Datum::SIGIL_CONNECTION))
                 {
                     expr.chop(1);
-                    expr += ", __" + QString::number(source[0].toInt()) +
+                    expr += ",__" + QString::number(source[0].toInt()) +
                             ".__" + QString::number(source_uid) + "]";
                 }
                 else
