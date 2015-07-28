@@ -73,3 +73,9 @@ void ViewportScene::onGlowChange(Node* n, bool g)
     if (controls.contains(n))
         controls[n]->setGlow(g);
 }
+
+void ViewportScene::checkRender(Node* n, Datum* d)
+{
+    if (controls.contains(n))
+        controls[n]->checkRender(d);
+}

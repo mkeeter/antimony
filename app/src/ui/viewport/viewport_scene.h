@@ -54,6 +54,13 @@ public:
      */
     Control* getControl(Node* node, long index) const;
 
+    /*
+     *  If a render worker exists for the given node and datum,
+     *  trigger a re-render check (used when connections are made
+     *  and broken).
+     */
+    void checkRender(Node* n, Datum* d);
+
 public slots:
     void onGlowChange(Node* n, bool g);
 

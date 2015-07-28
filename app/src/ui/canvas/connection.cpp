@@ -9,6 +9,7 @@
 #include "ui/canvas/port.h"
 #include "ui/canvas/inspector/inspector.h"
 #include "ui/util/colors.h"
+#include "ui/viewport/viewport_scene.h"
 
 #include "app/app.h"
 #include "app/undo/undo_add_link.h"
@@ -16,7 +17,14 @@
 Connection::Connection(OutputPort* source)
     : Connection(source, NULL)
 {
-    // Nothing to do here
+    // Unfortunate coupling of connection and viewport scene, but it's the
+    // easiest way to trigger re-rendering when connections change.
+    auto d = source->getDatum();
+    auto n = d->parentNode();
+    auto vs = App::instance()->getViewScene();
+    connect(this, &Connection::changed, [=](){ vs->checkRender(n, d); });
+
+    connect(this, &QObject::destroyed, this, &Connection::changed);
 }
 
 Connection::Connection(OutputPort* source, InputPort* target)
@@ -201,6 +209,8 @@ void Connection::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         App::instance()->pushStack(
                 new UndoAddLinkCommand(source->getDatum(), datum));
         onPortsMoved();
+
+        emit(changed());
     }
     else
     {

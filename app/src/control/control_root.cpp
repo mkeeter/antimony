@@ -28,6 +28,12 @@ void ControlRoot::registerControl(long index, Control* c)
             c, &Control::changeProxySelection);
 }
 
+void ControlRoot::checkRender(Datum* d)
+{
+    if (workers.contains(d))
+        emit(workers[d]->changed());
+}
+
 void ControlRoot::trigger(const NodeState& state)
 {
     for (auto d : state.datums)

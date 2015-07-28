@@ -29,6 +29,9 @@ public slots:
     void onPortsMoved();
     void onHiddenChanged();
 
+signals:
+    void changed();
+
 protected:
     GraphScene* gscene() const;
 

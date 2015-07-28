@@ -29,6 +29,11 @@ public:
      */
     void trigger(const NodeState& state) override;
 
+    /*
+     *  If there's a render worker for d, trigger a re-render.
+     */
+    void checkRender(Datum* d);
+
     void setGlow(bool g);
 
 signals:
