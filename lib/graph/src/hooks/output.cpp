@@ -18,7 +18,8 @@ void OutputHook::call(std::string name, boost::python::object obj)
     auto repr = std::string(PyUnicode_AsUTF8(repr_));
     Py_DECREF(repr_);
 
-    auto g = Py_BuildValue("{}");
+    PyObject* g = Py_BuildValue(
+            "{sO}", "__builtins__", PyEval_GetBuiltins());
     node->parent->loadDatumHooks(g);
     auto out = PyRun_String(repr.c_str(), Py_eval_input, g, g);
     Py_DECREF(g);
