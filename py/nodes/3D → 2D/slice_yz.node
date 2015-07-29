@@ -3,7 +3,7 @@
 import fab
 from fab.types import Shape
 
-title('Slice yz')
+title('Slice (YZ)')
 
 def slice_yz(shape,x):
     return Shape(('mf%gXY' % x) + shape.math,
