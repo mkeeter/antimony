@@ -40,6 +40,8 @@ Viewport::Viewport(QGraphicsScene* scene, QWidget* parent)
     : QGraphicsView(parent), scene(scene),
       scale(100), pitch(0), yaw(0), angle_locked(false),
       view_selector(new ViewSelector(this)),
+      mouse_info(new QGraphicsTextItem()),
+      scene_info(new QGraphicsTextItem()),
       gl_initialized(false), ui_hidden(false)
 {
     setScene(scene);
@@ -50,6 +52,13 @@ Viewport::Viewport(QGraphicsScene* scene, QWidget* parent)
 
     auto gl = new QOpenGLWidget(this);
     setViewport(gl);
+
+    for (auto i : {mouse_info, scene_info})
+    {
+        i->setDefaultTextColor(Colors::base04);
+        scene->addItem(i);
+    }
+    show();
 }
 
 Viewport::~Viewport()
@@ -120,6 +129,9 @@ void Viewport::resizeEvent(QResizeEvent* e)
 {
     Q_UNUSED(e);
     view_selector->setPos(width()/2 - 70, -height()/2 + 70);
+    mouse_info->setPos(-width()/2 + 10,
+                        height()/2 - mouse_info->boundingRect().height() - 10);
+    scene_info->setPos(-width()/2 + 10, -height()/2 + 10);
     setSceneRect(-width()/2, -height()/2, width(), height());
 }
 
@@ -348,7 +360,7 @@ void Viewport::mouseMoveEvent(QMouseEvent *event)
         }
     }
 
-    scene->invalidate(QRect(), QGraphicsScene::ForegroundLayer);
+    updateInfo();
 }
 
 void Viewport::mouseReleaseEvent(QMouseEvent *event)
@@ -432,6 +444,7 @@ void Viewport::setYaw(float y)
 {
     yaw = y;
     update();
+    updateInfo();
     scene->invalidate(QRect(),QGraphicsScene::ForegroundLayer);
     emit(viewChanged());
 }
@@ -440,6 +453,7 @@ void Viewport::setPitch(float p)
 {
     pitch = p;
     update();
+    updateInfo();
     scene->invalidate(QRect(),QGraphicsScene::ForegroundLayer);
     emit(viewChanged());
 }
@@ -457,7 +471,8 @@ void Viewport::wheelEvent(QWheelEvent *event)
 void Viewport::leaveEvent(QEvent* event)
 {
     Q_UNUSED(event);
-    scene->invalidate(QRect(),QGraphicsScene::ForegroundLayer);
+    mouse_info->setPlainText(" \n ");
+    scene_info->setPlainText("");
 }
 
 
@@ -514,7 +529,7 @@ void Viewport::pan(QVector3D d)
 
 void Viewport::drawBackground(QPainter* painter, const QRectF& rect)
 {
-    Q_UNUSED(rect);
+    QGraphicsView::drawBackground(painter, rect);
 
     painter->beginNativePainting();
     glClearColor(0.0, 0.0, 0.0, 0.0);
@@ -551,7 +566,7 @@ void Viewport::drawAxes(QPainter* painter) const
     }
 }
 
-void Viewport::drawMousePosition(QPainter* painter) const
+void Viewport::updateInfo()
 {
     // Then add a text label in the lower-left corner
     // giving mouse coordinates (if we're near an axis)
@@ -564,65 +579,57 @@ void Viewport::drawMousePosition(QPainter* painter) const
 
         auto p = sceneToWorld(mouse_pos);
 
-        QPointF a = sceneRect().bottomLeft() + QPointF(10, -25);
-        QPointF b = sceneRect().bottomLeft() + QPointF(10, -10);
         int value = axis.second * 200;
-        painter->setPen(QColor(value, value, value));
+        mouse_info->setDefaultTextColor(QColor(value, value, value));
+
         if (axis.first == 'z')
-        {
-            painter->drawText(a, QString("X: %1").arg(p.x()));
-            painter->drawText(b, QString("Y: %1").arg(p.y()));
-        }
+            mouse_info->setPlainText(QString("X: %1\nY: %2")
+                    .arg(p.x()).arg(p.y()));
         else if (axis.first == 'y')
-        {
-            painter->drawText(a, QString("X: %1").arg(p.x()));
-            painter->drawText(b, QString("Z: %1").arg(p.z()));
-        }
+            mouse_info->setPlainText(QString("X: %1\nZ: %2")
+                    .arg(p.x()).arg(p.z()));
         else if (axis.first == 'x')
-        {
-            painter->drawText(a, QString("Y: %1").arg(p.y()));
-            painter->drawText(b, QString("Z: %1").arg(p.z()));
-        }
-    }
-}
-
-void Viewport::drawInfo(QPainter* painter) const
-{
-    /* top left view info 'panel' */
-    painter->setPen(Colors::base04);
-    QPointF top_left_info = sceneRect().topLeft();
-
-    auto proxies = getProxiesAtPosition(_current_pos);
-
-    if (proxies.size() > 0)
-    {
-        auto n = proxies.first()->getNode();
-        QString desc = n->getName() + " (" + n->getTitle() + ")";
-
-        if (proxies.size() > 1)
-            painter->drawText(top_left_info + QPointF(10, 1*15),
-                    QString("Current: %1, (%2 more below)").arg(desc).arg(proxies.size()-1));
-        else
-            painter->drawText(top_left_info + QPointF(10, 1*15), QString("Current: %1").arg(desc));
+            mouse_info->setPlainText(QString("Y: %1\nZ: %2")
+                    .arg(p.y()).arg(p.z()));
     }
     else
     {
-        painter->drawText(top_left_info + QPointF(10, 1*15), QString("Current: <none>"));
+        mouse_info->setPlainText(" \n ");
     }
 
-    /* display scale, pitch, and yaw */
-    painter->drawText(top_left_info + QPointF(10, 2*15), QString("Scale: %1").arg(scale/100));
-    painter->drawText(top_left_info + QPointF(10, 3*15), QString("Pitch: %1").arg(getPitch()));
-    painter->drawText(top_left_info + QPointF(10, 4*15), QString("Yaw: %1").arg(getYaw()));
+    {
+        QString info;
+        auto proxies = getProxiesAtPosition(_current_pos);
+
+        if (proxies.size() > 0)
+        {
+            auto n = proxies.first()->getNode();
+            QString desc = n->getName() + " (" + n->getTitle() + ")";
+
+            if (proxies.size() > 1)
+                info = QString("Current: %1, (%2 more below)")
+                    .arg(desc).arg(proxies.size()-1);
+            else
+                info = QString("Current: %1").arg(desc);
+        }
+        else
+        {
+            info = QString("Current: <none>");
+        }
+
+        /* display scale, pitch, and yaw */
+        info += QString("\nScale: %1").arg(scale/100);
+        info += QString("\nPitch: %1").arg(getPitch());
+        info += QString("\nYaw: %1").arg(getYaw());
+
+        scene_info->setPlainText(info);
+    }
 }
 
 void Viewport::drawForeground(QPainter* painter, const QRectF& rect)
 {
-    Q_UNUSED(rect);
-
+    QGraphicsView::drawForeground(painter, rect);
     drawAxes(painter);
-    drawMousePosition(painter);
-    drawInfo(painter);
 }
 
 void Viewport::onCopy()
@@ -715,6 +722,7 @@ void Viewport::setCenter(QVector3D c)
 {
     center = c;
     update();
+    updateInfo();
     scene->invalidate(QRect(), QGraphicsScene::ForegroundLayer);
     emit(viewChanged());
 }
@@ -723,6 +731,7 @@ void Viewport::setScale(float s)
 {
     scale = s;
     update();
+    updateInfo();
     scene->invalidate(QRect(), QGraphicsScene::ForegroundLayer);
     emit(viewChanged());
 }
