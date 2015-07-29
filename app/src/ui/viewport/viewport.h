@@ -172,6 +172,12 @@ protected:
      */
     void leaveEvent(QEvent* event) override;
 
+    /*
+     *  When the mouse leaves the window, redraw
+     *  (to clear cursor position text)
+     */
+    void enterEvent(QEvent* event) override;
+
     /** On delete key press, delete nodes.
      */
     void keyPressEvent(QKeyEvent *event) override;
@@ -195,16 +201,9 @@ protected:
     void drawAxes(QPainter* painter) const;
 
     /*
-     *  If we're looking down an axis, write the cursor's position
-     *  in the lower-left corner.
+     *  Updates mouse_info and scene_info text fields
      */
-    void drawMousePosition(QPainter* painter) const;
-
-    /*
-     *  Draws an additional info panel in the top left corner
-     *  with nodes under the cursor, yaw, pitch, scale.
-     */
-    void drawInfo(QPainter* painter) const;
+    void updateInfo();
 
     /** Pans the scene rectangle.
      */
@@ -212,7 +211,7 @@ protected:
 
     /** On resize, reposition the view selector menu
      */
-    void resizeEvent(QResizeEvent* e);
+    void resizeEvent(QResizeEvent* e) override;
 
     /** Hides all Control UI elements.
      */
@@ -247,6 +246,10 @@ protected:
     ViewSelector* view_selector;
     bool _dragging;
     QPoint _current_pos;
+
+    QGraphicsTextItem* mouse_info;
+    QGraphicsTextItem* scene_info;
+    bool hover;
 
     QOpenGLShaderProgram height_shader;
     QOpenGLShaderProgram shaded_shader;
