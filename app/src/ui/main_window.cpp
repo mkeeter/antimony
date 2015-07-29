@@ -246,7 +246,7 @@ void MainWindow::populateNodeMenu(QMenu* menu, bool recenter, Viewport* v)
 void MainWindow::populateMenu(QMenu* menu, bool recenter, Viewport* v)
 {
     // Hard-code important menu names to set their order.
-    for (auto c : {"2D", "3D", "2D → 3D", "CSG"})
+    for (auto c : {"2D", "3D", "2D → 3D", "3D → 2D", "CSG"})
         menu->addMenu(c);
     menu->addSeparator();
 
