@@ -40,8 +40,8 @@ Viewport::Viewport(QGraphicsScene* scene, QWidget* parent)
     : QGraphicsView(parent), scene(scene),
       scale(100), pitch(0), yaw(0), angle_locked(false),
       view_selector(new ViewSelector(this)),
-      mouse_info(new QGraphicsTextItem()),
-      scene_info(new QGraphicsTextItem()),
+      mouse_info(new QGraphicsTextItem("\n")),
+      scene_info(new QGraphicsTextItem()), hover(false),
       gl_initialized(false), ui_hidden(false)
 {
     setScene(scene);
@@ -58,7 +58,6 @@ Viewport::Viewport(QGraphicsScene* scene, QWidget* parent)
         i->setDefaultTextColor(Colors::base04);
         scene->addItem(i);
     }
-    show();
 }
 
 Viewport::~Viewport()
@@ -471,10 +470,16 @@ void Viewport::wheelEvent(QWheelEvent *event)
 void Viewport::leaveEvent(QEvent* event)
 {
     Q_UNUSED(event);
-    mouse_info->setPlainText(" \n ");
-    scene_info->setPlainText("");
+    hover = false;
+    updateInfo();
 }
 
+void Viewport::enterEvent(QEvent* event)
+{
+    Q_UNUSED(event);
+    hover = true;
+    updateInfo();
+}
 
 void Viewport::keyPressEvent(QKeyEvent *event)
 {
@@ -570,7 +575,7 @@ void Viewport::updateInfo()
 {
     // Then add a text label in the lower-left corner
     // giving mouse coordinates (if we're near an axis)
-    if (getAxis().first)
+    if (getAxis().first && hover)
     {
         QPair<char, float> axis = getAxis();
         QPointF mouse_pos = mapToScene(mapFromGlobal(QCursor::pos()));
@@ -597,6 +602,7 @@ void Viewport::updateInfo()
         mouse_info->setPlainText(" \n ");
     }
 
+    if (hover)
     {
         QString info;
         auto proxies = getProxiesAtPosition(_current_pos);
@@ -623,6 +629,10 @@ void Viewport::updateInfo()
         info += QString("\nYaw: %1").arg(getYaw());
 
         scene_info->setPlainText(info);
+    }
+    else
+    {
+        scene_info->setPlainText("");
     }
 }
 

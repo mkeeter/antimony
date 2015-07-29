@@ -172,6 +172,12 @@ protected:
      */
     void leaveEvent(QEvent* event) override;
 
+    /*
+     *  When the mouse leaves the window, redraw
+     *  (to clear cursor position text)
+     */
+    void enterEvent(QEvent* event) override;
+
     /** On delete key press, delete nodes.
      */
     void keyPressEvent(QKeyEvent *event) override;
@@ -243,6 +249,7 @@ protected:
 
     QGraphicsTextItem* mouse_info;
     QGraphicsTextItem* scene_info;
+    bool hover;
 
     QOpenGLShaderProgram height_shader;
     QOpenGLShaderProgram shaded_shader;
