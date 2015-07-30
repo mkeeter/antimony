@@ -493,8 +493,8 @@ void Viewport::keyPressEvent(QKeyEvent *event)
                 else setScale(scale * 1.1);
             /* move camera y-down */
             else if (event->modifiers() & Qt::AltModifier) pan(QVector3D(0, -1 / (8 * log(scale)), 0));
-            /* rotate camera down */
-            else setPitch(fmin(0, fmax(-M_PI, pitch - M_PI/16)));
+            /* rotate camera up */
+            else setPitch(fmin(0, fmin(M_PI, pitch + M_PI/16)));
             break;
 
         case Qt::Key_Down:
@@ -505,8 +505,8 @@ void Viewport::keyPressEvent(QKeyEvent *event)
                 else setScale(scale * 0.9);
             /* move camera y-up */
             else if (event->modifiers() & Qt::AltModifier) pan(QVector3D(0, 1 / (8 * log(scale)), 0));
-            /* rotate camera up */
-            else setPitch(fmin(0, fmin(M_PI, pitch + M_PI/16)));
+            /* rotate camera down */
+            else setPitch(fmin(0, fmax(-M_PI, pitch - M_PI/16)));
             break;
 
         case Qt::Key_Right:
