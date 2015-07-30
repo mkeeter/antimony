@@ -33,7 +33,8 @@ RenderProxy::RenderProxy(RenderWorker* worker, Viewport* viewport)
     connect(worker, &RenderWorker::changed,
             this, &RenderProxy::startRender);
 
-    startRender();
+    if (hasNoOutput())
+        startRender();
 }
 
 RenderProxy::~RenderProxy()
@@ -77,7 +78,8 @@ bool RenderProxy::hasNoOutput()
 void RenderProxy::startRender()
 {
     auto datum = worker->datum;
-    if (datum->isValid() && datum->currentValue() && datum->isOutput())
+    if (hasNoOutput() && datum->isValid() &&
+        datum->currentValue() && datum->isOutput())
     {
         if (next)
             next->deleteLater();
