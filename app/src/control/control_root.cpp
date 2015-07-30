@@ -15,6 +15,7 @@ ControlRoot::ControlRoot(Node* n, ViewportScene* vs)
     : vscene(vs), selected(false)
 {
     n->installWatcher(this);
+    trigger(n->getState());
 }
 
 void ControlRoot::registerControl(long index, Control* c)
