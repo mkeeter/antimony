@@ -40,7 +40,7 @@ void Root::changed(std::string n, uint32_t uid)
 
 bool Root::isNameValid(std::string name)
 {
-    static std::regex var("[_a-zA-Z][_a-zA-Z0-9]*");
+    static std::regex var("[_[:alpha:]][_[:alnum:]]*");
     if (!std::regex_match(name, var))
         return false;
 

@@ -87,7 +87,7 @@ public:
     template <class T>
     T* get(std::string n, const std::list<std::unique_ptr<T>>& ts) const
     {
-        static std::regex r("__([0-9]+)");
+        static std::regex r("__([[:digit:]]+)");
         std::smatch match;
         if (std::regex_match(n, match, r))
             return getByUID(std::stoull(match[1]), ts);
