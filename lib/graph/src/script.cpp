@@ -70,7 +70,7 @@ void Script::update()
     if (script != prev_script)
     {
         std::regex input("(.*input\\([^(),]+,[^(),]+),[^(),]+(\\).*)");
-        script = std::regex_replace(script, input, "$1$2");
+        script = std::regex_replace(script, input, std::string("$1$2"));
     }
     prev_script = script;
 
