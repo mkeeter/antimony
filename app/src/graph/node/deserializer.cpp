@@ -50,7 +50,6 @@ bool SceneDeserializer::run(QJsonObject in, Graph* graph, Info* info)
         else if (protocol_version == 5)
         {
             updateGraph(&in);
-            qDebug() << QJsonDocument(in).toJson();
         }
 #endif
         else if (protocol_version > 6)
