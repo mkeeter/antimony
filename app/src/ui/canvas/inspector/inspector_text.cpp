@@ -50,6 +50,12 @@ void DatumTextItem::trigger(const DatumState& state)
     if (state.sigil == Datum::SIGIL_NONE)
     {
         t = QString::fromStdString(state.text);
+
+        // Use QString to truncate floats to a sane number of decimal places
+        bool okay = false;
+        float f = t.toFloat(&okay);
+        if (okay)
+            t = QString::number(f);
     }
     else
     {
