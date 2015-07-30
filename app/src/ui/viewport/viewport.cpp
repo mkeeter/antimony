@@ -483,22 +483,69 @@ void Viewport::enterEvent(QEvent* event)
 
 void Viewport::keyPressEvent(QKeyEvent *event)
 {
-    QGraphicsView::keyPressEvent(event);
-    if (event->isAccepted())
-        return;
-
-    if (event->key() == Qt::Key_A &&
-                (event->modifiers() & Qt::ShiftModifier))
+    switch (event->key())
     {
-        QObject* w = this;
-        while (!dynamic_cast<MainWindow*>(w))
-            w = w->parent();
-        Q_ASSERT(w);
-        QMenu* m = new QMenu(static_cast<MainWindow*>(w));
-        static_cast<MainWindow*>(w)->populateMenu(m, false, this);
+        case Qt::Key_Up:
+            if (event->modifiers() & Qt::ShiftModifier)
+                /* move camera z-down */
+                if (event->modifiers() & Qt::AltModifier) pan(QVector3D(0, 0, -1 / (8 * log(scale))));
+                /* camera zoom in */
+                else setScale(scale * 1.1);
+            /* move camera y-down */
+            else if (event->modifiers() & Qt::AltModifier) pan(QVector3D(0, -1 / (8 * log(scale)), 0));
+            /* rotate camera up */
+            else setPitch(fmin(0, fmin(M_PI, pitch + M_PI/16)));
+            break;
 
-        m->exec(QCursor::pos());
-        delete m;
+        case Qt::Key_Down:
+            if (event->modifiers() & Qt::ShiftModifier)
+                /* move camera z-up */
+                if (event->modifiers() & Qt::AltModifier) pan(QVector3D(0, 0, 1 / (8 * log(scale))));
+                /* camera zoom out */
+                else setScale(scale * 0.9);
+            /* move camera y-up */
+            else if (event->modifiers() & Qt::AltModifier) pan(QVector3D(0, 1 / (8 * log(scale)), 0));
+            /* rotate camera down */
+            else setPitch(fmin(0, fmax(-M_PI, pitch - M_PI/16)));
+            break;
+
+        case Qt::Key_Right:
+            /* move camera left */
+            if (event->modifiers() & Qt::AltModifier) pan(QVector3D(-1 / (8 * log(scale)), 0, 0));
+            /* move camera counter-clockwise */
+            else setYaw(fmod(yaw - M_PI / (8 * log(scale)), 2*M_PI));
+            break;
+
+        case Qt::Key_Left:
+            /* move camera right */
+            if (event->modifiers() & Qt::AltModifier) pan(QVector3D(1 / (8 * log(scale)), 0, 0));
+            /* move camera clockwise */
+            else setYaw(fmod(yaw + M_PI / (8 * log(scale)), 2*M_PI));
+            break;
+
+        /* hierarchical add menu */
+        case Qt::Key_A:
+            if (event->modifiers() & Qt::ShiftModifier)
+            {
+                QObject* w = this;
+                while (!dynamic_cast<MainWindow*>(w))
+                    w = w->parent();
+                Q_ASSERT(w);
+                QMenu* m = new QMenu(static_cast<MainWindow*>(w));
+                static_cast<MainWindow*>(w)->populateMenu(m, false, this);
+
+                m->exec(QCursor::pos());
+                delete m;
+            }
+            break;
+
+        /* spacebar menu */
+        case Qt::Key_Space:
+            break;
+
+        default:
+            QGraphicsView::keyPressEvent(event);
+            break;
     }
 }
 
