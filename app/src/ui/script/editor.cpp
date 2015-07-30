@@ -7,7 +7,7 @@
 #include <QTextCursor>
 #include <QHelpEvent>
 
-#include "graph/datum/datums/script_datum.h"
+#include "graph/node.h"
 
 #include "ui/script/editor.h"
 #include "ui/script/syntax.h"
@@ -15,26 +15,48 @@
 #include "ui_main_window.h"
 
 #include "app/app.h"
-#include "app/undo/undo_change_expr.h"
+#include "app/undo/undo_change_script.h"
 
-ScriptEditor::ScriptEditor(ScriptDatum* datum, QWidget* parent)
-    : QPlainTextEdit(parent), datum(datum)
+ScriptEditor::ScriptEditor(Node* node, QWidget* parent)
+    : QPlainTextEdit(parent), node(node)
 {
     styleEditor(this);
 
     connect(document(), &QTextDocument::contentsChanged,
             this, &ScriptEditor::onTextChanged);
-    connect(datum, &Datum::changed,
-            this, &ScriptEditor::onDatumChanged);
-    connect(datum, &Datum::destroyed,
-            parent, &QWidget::deleteLater);
 
     connect(document(), &QTextDocument::undoCommandAdded,
             this, &ScriptEditor::onUndoCommandAdded);
 
     installEventFilter(this);
 
-    onDatumChanged(); // update tooltip and text
+    trigger(node->getState());
+}
+
+void ScriptEditor::trigger(const NodeState& state)
+{
+    // Update the document text
+    QString script = QString::fromStdString(state.script);
+    if (script != document()->toPlainText())
+    {
+        // Keep the cursor at the same position in the document
+        // (not 100% reliable)
+        QTextCursor cursor = textCursor();
+        int p = textCursor().position();
+        document()->setPlainText(script);
+
+        if (p < script.length())
+        {
+            cursor.setPosition(p);
+            setTextCursor(cursor);
+        }
+    }
+
+    // If the script is invalid, update the error line highlighting
+    if (state.error_lineno != -1)
+        highlightError(state.error_lineno);
+    else
+        setExtraSelections({});
 }
 
 void ScriptEditor::styleEditor(QPlainTextEdit* ed)
@@ -74,36 +96,7 @@ void ScriptEditor::customizeUI(Ui::MainWindow* ui)
 
 void ScriptEditor::onTextChanged()
 {
-    if (datum)
-        datum->setExpr(document()->toPlainText());
-}
-
-void ScriptEditor::onDatumChanged()
-{
-    if (datum)
-    {
-        // Update the document text
-        if (datum->getExpr() != document()->toPlainText())
-        {
-            // Keep the cursor at the same position in the document
-            // (not 100% reliable)
-            QTextCursor cursor = textCursor();
-            int p = textCursor().position();
-            document()->setPlainText(datum->getExpr());
-
-            if (p < datum->getExpr().length())
-            {
-                cursor.setPosition(p);
-                setTextCursor(cursor);
-            }
-        }
-
-        // If the datum is invalid, update the error line highlighting
-        if (!datum->getValid())
-            highlightError(datum->getErrorLine());
-        else
-            setExtraSelections({});
-    }
+    node->setScript(document()->toPlainText().toStdString());
 }
 
 void ScriptEditor::onUndoCommandAdded()
@@ -120,8 +113,8 @@ void ScriptEditor::onUndoCommandAdded()
     int cursor_after = textCursor().position();
 
     App::instance()->pushStack(
-            new UndoChangeExprCommand(
-                datum, before, after,
+            new UndoChangeScriptCommand(
+                node, before, after,
                 cursor_before, cursor_after, this));
     connect(document(), &QTextDocument::contentsChanged,
             this, &ScriptEditor::onTextChanged);
@@ -135,10 +128,7 @@ void ScriptEditor::openShapesLibrary()
 
     Q_ASSERT(!PyErr_Occurred());
 
-    wchar_t* w = PyUnicode_AsWideCharString(shapes_path, NULL);
-    Q_ASSERT(w);
-    auto filepath = QString::fromWCharArray(w);
-    PyMem_Free(w);
+    auto filepath = QString::fromUtf8(PyUnicode_AsUTF8(shapes_path));
 
     QFile shapes(filepath);
     if (shapes.open(QIODevice::ReadOnly))

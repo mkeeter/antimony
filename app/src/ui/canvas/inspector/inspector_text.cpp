@@ -10,10 +10,7 @@
 #include "ui/canvas/inspector/inspector_text.h"
 #include "ui/util/colors.h"
 
-#include "graph/datum/datum.h"
-#include "graph/datum/datums/float_datum.h"
-#include "graph/datum/datums/int_datum.h"
-#include "graph/datum/types/eval_datum.h"
+#include "graph/datum.h"
 
 #include "app/app.h"
 #include "app/undo/undo_change_expr.h"
@@ -21,12 +18,12 @@
 DatumTextItem::DatumTextItem(Datum* datum, QGraphicsItem* parent)
     : QGraphicsTextItem(parent), d(datum), txt(document()),
       background(Colors::base02), foreground(Colors::base04),
-      border(background)
+      border(background), recursing(false)
 {
     setTextInteractionFlags(Qt::TextEditorInteraction);
     setTextWidth(150);
-    connect(datum, &Datum::changed, this, &DatumTextItem::onDatumChanged);
-    onDatumChanged();
+
+    d->installWatcher(this);
 
     bbox = boundingRect();
     connect(txt, &QTextDocument::contentsChanged,
@@ -36,55 +33,61 @@ DatumTextItem::DatumTextItem(Datum* datum, QGraphicsItem* parent)
             this, &DatumTextItem::onUndoCommandAdded);
 
     installEventFilter(this);
-}
-
-void DatumTextItem::setAsTitle()
-{
-    background = Colors::base03;
-    foreground = Colors::base06;
-
-    auto f = font();
-    f.setBold(true);
-    setFont(f);
-
-    // Allow this item to grow horizontally forever
-    setTextWidth(-1);
 
     // Force a redraw
-    onDatumChanged();
+    trigger(d->getState());
 }
 
-void DatumTextItem::onDatumChanged()
+void DatumTextItem::trigger(const DatumState& state)
 {
-    if (d->canEdit())
-        setDefaultTextColor(foreground);
-    else
-        setDefaultTextColor(Colors::base03);
+    setDefaultTextColor(state.editable ? foreground : Colors::base03);
 
     QTextCursor cursor = textCursor();
-    int p = textCursor().position();
-    if (!d->hasInput() && !d->canEdit())
-        txt->setPlainText(d->getString() + " (output)");
-    else
-        txt->setPlainText(d->getString());
+    size_t p = textCursor().position();
+    recursing = true;
 
-    if (p < d->getString().length())
+    QString t;
+    if (state.sigil == Datum::SIGIL_NONE)
+    {
+        t = QString::fromStdString(state.text);
+
+        // Use QString to truncate floats to a sane number of decimal places
+        bool okay = false;
+        float f = t.toFloat(&okay);
+        if (okay)
+            t = QString::number(f);
+    }
+    else
+    {
+        t = QString::fromStdString(state.repr);
+
+        // Special-case to avoid printing long shapes
+        if (t.startsWith("fab.types.Shape"))
+            t = "Shape";
+
+        if (state.sigil == Datum::SIGIL_CONNECTION)
+            t += state.links.size() > 1 ? " [links]" : " [link]";
+        else if (state.sigil == Datum::SIGIL_OUTPUT)
+            t += " [output]";
+    }
+
+    txt->setPlainText(t);
+    recursing = false;
+
+    if (p < state.text.length())
     {
         cursor.setPosition(p);
         setTextCursor(cursor);
     }
 
-    setEnabled(d->canEdit());
+    setEnabled(state.editable);
 
-    if (d->getValid())
-        border = background;
-    else
-        border = Colors::red;
+    border = state.valid ? background : Colors::red;
 
     // Set tooltip if there was a Python evaluation error.
-    if (dynamic_cast<EvalDatum*>(d) && !d->getValid())
+    if (!state.valid)
     {
-        setToolTip(static_cast<EvalDatum*>(d)->getErrorTraceback());
+        setToolTip(QString::fromStdString(state.error));
     }
     else
     {
@@ -98,20 +101,17 @@ void DatumTextItem::onTextChanged()
     if (bbox != boundingRect())
     {
         bbox = boundingRect();
+        prepareGeometryChange();
         emit boundsChanged();
     }
 
-    EvalDatum* e = dynamic_cast<EvalDatum*>(d);
-    if (e && e->canEdit())
-    {
-        e->setExpr(txt->toPlainText());
-    }
+    if (!recursing)
+        d->setText(txt->toPlainText().toStdString());
 }
 
 void DatumTextItem::onUndoCommandAdded()
 {
-    EvalDatum* e = dynamic_cast<EvalDatum*>(d);
-    if (e && e->canEdit())
+    if (d->getState().editable)
     {
         disconnect(document(), &QTextDocument::contentsChanged,
                    this, &DatumTextItem::onTextChanged);
@@ -126,7 +126,7 @@ void DatumTextItem::onUndoCommandAdded()
 
         App::instance()->pushStack(
                 new UndoChangeExprCommand(
-                    e, before, after,
+                    d, before, after,
                     cursor_before, cursor_after, this));
 
         connect(document(), &QTextDocument::contentsChanged,
@@ -159,17 +159,19 @@ bool DatumTextItem::eventFilter(QObject* obj, QEvent* event)
             App::instance()->redo();
         else if (keyEvent->key() == Qt::Key_Up || keyEvent->key() == Qt::Key_Down) {
             const int dx = keyEvent->key() == Qt::Key_Up ? 1 : -1;
-            const auto f = dynamic_cast<FloatDatum*>(d);
-            const auto i = dynamic_cast<IntDatum*>(d);
-            if (f && f->getValid())
+            if (d->isValid())
             {
-                const double scale = fmax(
-                        0.01, abs(PyFloat_AsDouble(f->getValue()) * 0.01));
-                f->dragValue(scale * dx);
-            }
-            else if (i && i->getValid())
-            {
-                i->dragValue(dx);
+                if (d->getType() == &PyFloat_Type)
+                {
+                    const double scale = fmax(
+                            0.01, fabs(PyFloat_AsDouble(d->currentValue()) * 0.01));
+                    dragFloat(scale * dx);
+                }
+                else if (d->getType() == &PyLong_Type)
+                {
+                    dragInt(dx);
+                }
+
             }
         }
         else
@@ -181,17 +183,20 @@ bool DatumTextItem::eventFilter(QObject* obj, QEvent* event)
 
 void DatumTextItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
+    /*
     if (const auto e = dynamic_cast<EvalDatum*>(d))
     {
         drag_start = e->getExpr();
         drag_accumulated = 0;
     }
+    */
 
     QGraphicsTextItem::mousePressEvent(event);
 }
 
 void DatumTextItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
+    /*
     if (const auto e = dynamic_cast<EvalDatum*>(d))
     {
         QString drag_end = e->getExpr();
@@ -199,31 +204,55 @@ void DatumTextItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
             App::instance()->pushStack(
                     new UndoChangeExprCommand(e, drag_start, drag_end));
     }
+    */
 
     QGraphicsTextItem::mouseReleaseEvent(event);
 }
 
+void DatumTextItem::dragFloat(float a)
+{
+    bool ok = false;
+
+    QString s = QString::fromStdString(d->getText());
+    double v = s.toFloat(&ok);
+    if (ok)
+    {
+        d->setText(QString::number(v + a).toStdString());
+        return;
+    }
+}
+
+void DatumTextItem::dragInt(int a)
+{
+    bool ok = false;
+
+    QString s = QString::fromStdString(d->getText());
+    double i = s.toInt(&ok);
+    if (ok)
+        d->setText(QString::number(i + a).toStdString());
+}
+
 void DatumTextItem::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
-    const auto f = dynamic_cast<FloatDatum*>(d);
-    const auto i = dynamic_cast<IntDatum*>(d);
-    if (f && f->getValid() && (event->modifiers() & Qt::ShiftModifier))
+    if (d->isValid() && (event->modifiers() & Qt::ShiftModifier))
     {
-        const double scale = fmax(
-                0.01, abs(PyFloat_AsDouble(f->getValue()) * 0.01));
-        const double dx = (event->screenPos() - event->lastScreenPos()).x();
-        f->dragValue(scale * dx);
+        if (d->getType() == &PyFloat_Type)
+        {
+            const double scale = fmax(
+                    0.01, abs(PyFloat_AsDouble(d->currentValue()) * 0.01));
+            const double dx = (event->screenPos() - event->lastScreenPos()).x();
+            dragFloat(scale * dx);
+            return;
+        }
+        else if (d->getType() == &PyLong_Type)
+        {
+            drag_accumulated += (event->screenPos() -
+                                 event->lastScreenPos()).x() / 30.;
+            int q = drag_accumulated;
+            drag_accumulated -= q;
+            dragInt(q);
+            return;
+        }
     }
-    else if (i && i->getValid() && (event->modifiers() & Qt::ShiftModifier))
-    {
-        drag_accumulated += (event->screenPos() -
-                             event->lastScreenPos()).x() / 30.;
-        int q = drag_accumulated;
-        drag_accumulated -= q;
-        i->dragValue(q);
-    }
-    else
-    {
-        QGraphicsTextItem::mouseMoveEvent(event);
-    }
+    QGraphicsTextItem::mouseMoveEvent(event);
 }

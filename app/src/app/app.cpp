@@ -18,6 +18,10 @@
 #include "app/undo/stack.h"
 #include "app/undo/undo_command.h"
 
+#include "graph/hooks/hooks.h"
+#include "graph/node/serializer.h"
+#include "graph/node/deserializer.h"
+
 #include "ui/dialogs/resolution_dialog.h"
 #include "ui/dialogs/exporting_dialog.h"
 
@@ -29,12 +33,9 @@
 #include "ui/script/script_pane.h"
 #include "ui/util/colors.h"
 
-#include "graph/node/node.h"
-#include "graph/node/root.h"
-#include "graph/datum/datum.h"
-#include "graph/datum/link.h"
-#include "graph/node/serializer.h"
-#include "graph/node/deserializer.h"
+#include "graph/graph.h"
+#include "graph/node.h"
+#include "graph/datum.h"
 
 #include "fab/types/shape.h"
 
@@ -44,13 +45,14 @@
 #endif
 
 App::App(int& argc, char** argv) :
-    QApplication(argc, argv),
-    graph_scene(new GraphScene()),
-    view_scene(new ViewportScene()),
-    root(new NodeRoot()), stack(new UndoStack(this)),
-    network(new QNetworkAccessManager(this))
+    QApplication(argc, argv), root(new Graph()),
+    graph_scene(new GraphScene(root)),
+    view_scene(new ViewportScene(root)),
+    stack(new UndoStack(this)), network(new QNetworkAccessManager(this))
 {
     setGlobalStyle();
+
+    root->installExternalHooks(new AppHooks(graph_scene));
 
     // When the clean flag on the undo stack changes, update window titles
     connect(stack, &QUndoStack::cleanChanged,
@@ -69,7 +71,7 @@ App::~App()
 {
     graph_scene->deleteLater();
     view_scene->deleteLater();
-    root->deleteLater();
+    delete root;
 
     // Prevent segfault-inducing callback during stack destruction
     disconnect(stack, 0, 0, 0);
@@ -124,9 +126,7 @@ void App::onAbout()
 
 void App::onNew()
 {
-    root->deleteLater();
-    root = new NodeRoot();
-
+    root->clear();
     filename.clear();
     stack->clear();
     emit(windowTitleChanged(getWindowTitle()));
@@ -140,10 +140,9 @@ void App::onSave()
     QFile file(filename);
     file.open(QIODevice::WriteOnly);
 
-    SceneSerializer ss(root,
-                       graph_scene->inspectorPositions());
-
-    file.write(QJsonDocument(ss.run()).toJson());
+    file.write(QJsonDocument(
+            SceneSerializer::run(
+                root, graph_scene->inspectorPositions())).toJson());
 
     stack->setClean();
 }
@@ -191,8 +190,9 @@ void App::onQuit()
 void App::loadFile(QString f)
 {
     filename = f;
-    root->deleteLater();
-    root = new NodeRoot();
+    root->clear();
+    root->uninstallWatcher(view_scene);
+
     QFile file(f);
     if (!file.open(QIODevice::ReadOnly))
     {
@@ -203,10 +203,12 @@ void App::loadFile(QString f)
         return;
     }
 
-    SceneDeserializer ds(root);
-    ds.run(QJsonDocument::fromJson(file.readAll()).object());
+    SceneDeserializer::Info ds;
+    const bool success = SceneDeserializer::run(
+            QJsonDocument::fromJson(file.readAll()).object(),
+            root, &ds);
 
-    if (ds.failed == true)
+    if (!success)
     {
         QMessageBox::critical(NULL, "Loading error",
                 "<b>Loading error:</b><br>" +
@@ -219,11 +221,12 @@ void App::loadFile(QString f)
                     "<b>Loading information:</b><br>" +
                     ds.warning_message);
 
-        makeUI(root);
         graph_scene->setInspectorPositions(ds.inspectors);
-
         emit(windowTitleChanged(getWindowTitle()));
     }
+
+    root->installWatcher(view_scene);
+    view_scene->trigger(root->getState());
 }
 
 void App::startUpdateCheck()
@@ -447,75 +450,13 @@ MainWindow* App::newQuadWindow()
     return m;
 }
 
-MainWindow* App::newEditorWindow(ScriptDatum* datum)
+MainWindow* App::newEditorWindow(Node* n)
 {
     auto m = new MainWindow();
-    m->setCentralWidget(new ScriptPane(datum, m));
+    m->setCentralWidget(new ScriptPane(n, m));
     m->resize(600, 800);
     m->show();
     return m;
-}
-
-void App::newNode(Node* n)
-{
-    graph_scene->makeUIfor(n);
-    view_scene->makeRenderWorkersFor(n);
-}
-
-void App::makeUI(NodeRoot* r)
-{
-    QList<Node*> nodes;
-    QList<Datum*> datums;
-    QMap<Datum*, QList<Link*>> links;
-
-    for (auto n : r->findChildren<Node*>(
-                QString(), Qt::FindDirectChildrenOnly))
-    {
-        n->setParent(root);
-
-        // Save all Links separately
-        // (as their UI must be created after all NodeInspectors)
-        for (auto d : n->findChildren<Datum*>(
-                    QString(), Qt::FindDirectChildrenOnly))
-        {
-            datums.append(d);
-            for (auto k : d->findChildren<Link*>())
-            {
-                links[d].append(k);
-                k->setParent(NULL);
-            }
-        }
-        graph_scene->makeUIfor(n);
-        nodes.append(n);
-    }
-
-    for (auto i = links.begin(); i != links.end(); ++i)
-    {
-        for (auto k : i.value())
-        {
-            k->setParent(i.key());
-            k->getTarget()->update();
-            newLink(k);
-        }
-    }
-
-    // Now that all links are created and all nodes are under the same
-    // root (in case of address-by-name), run update on every datum.
-    for (auto d : datums)
-        if (!d->getValid())
-            d->update();
-
-    // Finally, make render workers for all of the new nodes.
-    // This needs to happen after connections are made; otherwise
-    // we end up with a ton of RenderWorkers that all start rendering
-    // at once (and eat up all of the threads).
-    for (auto n : nodes)
-        view_scene->makeRenderWorkersFor(n);
-}
-
-Connection* App::newLink(Link* link)
-{
-    return graph_scene->makeUIfor(link);
 }
 
 QAction* App::undoAction()
@@ -534,7 +475,6 @@ QAction* App::redoAction()
 
 void App::pushStack(UndoCommand* c)
 {
-    c->setApp(this);
     stack->push(c);
 }
 

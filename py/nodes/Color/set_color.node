@@ -1,4 +1,5 @@
 import fab
+import math
 
 title('Set color (RGB)')
 

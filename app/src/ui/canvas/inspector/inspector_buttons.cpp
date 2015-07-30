@@ -8,13 +8,14 @@
 #include "ui/canvas/inspector/inspector.h"
 #include "ui/canvas/inspector/inspector_title.h"
 
-#include "graph/datum/datums/script_datum.h"
 #include "ui/util/colors.h"
-#include "export/export_worker.h"
 #include "app/app.h"
 
-InspectorScriptButton::InspectorScriptButton(ScriptDatum* s, QGraphicsItem* parent)
-    : GraphicsButton(parent), script(s)
+#include "graph/node.h"
+
+InspectorScriptButton::InspectorScriptButton(Node* n, QGraphicsItem* parent)
+    : GraphicsButton(parent), script_valid(n->getState().error_lineno == -1),
+      node(n)
 {
     setToolTip("Edit script");
     connect(this, &GraphicsButton::pressed,
@@ -34,16 +35,23 @@ void InspectorScriptButton::paint(QPainter* painter,
     Q_UNUSED(widget);
 
     painter->setPen(Qt::NoPen);
-    painter->setBrush(hover ? Colors::base05 : Colors::base04);
+    const QColor base = script_valid ? Colors::base04 : Colors::red;
+    painter->setBrush(hover ? Colors::highlight(base) : base);
+
     painter->drawRect(0, 0, 16, 3);
     painter->drawRect(0, 6, 16, 3);
     painter->drawRect(0, 12, 16, 3);
 }
 
+void InspectorScriptButton::setScriptValid(const bool v)
+{
+    script_valid = v;
+    prepareGeometryChange();
+}
+
 void InspectorScriptButton::onPressed()
 {
-    Q_ASSERT(!script.isNull());
-    App::instance()->newEditorWindow(script);
+    App::instance()->newEditorWindow(node);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -56,9 +64,8 @@ InspectorShowHiddenButton::InspectorShowHiddenButton(
             this, &InspectorShowHiddenButton::onPressed);
     setToolTip("Show hidden datums");
 
-    connect(inspector->getNode(), &Node::datumsChanged,
-            this, &InspectorShowHiddenButton::onDatumsChanged);
-    onDatumsChanged();
+    inspector->getNode()->installWatcher(this);
+    trigger(inspector->getNode()->getState());
 }
 
 QRectF InspectorShowHiddenButton::boundingRect() const
@@ -86,21 +93,16 @@ void InspectorShowHiddenButton::onPressed()
     inspector->setShowHidden(toggled);
 }
 
-void InspectorShowHiddenButton::onDatumsChanged()
+void InspectorShowHiddenButton::trigger(const NodeState& state)
 {
-    auto node = inspector->getNode();
-
-    for (auto d : node->findChildren<Datum*>(
-                QString(), Qt::FindDirectChildrenOnly))
+    for (auto d : state.datums)
     {
-        if (d->objectName().startsWith("_") &&
-            !d->objectName().startsWith("__"))
+        if (d->getName().find("_") == 0 &&
+            d->getName().find("__") != 0)
         {
             if (!isVisible())
-            {
                 show();
-                return;
-            }
+            return;
         }
     }
 
@@ -108,56 +110,3 @@ void InspectorShowHiddenButton::onDatumsChanged()
         hide();
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-InspectorExportButton::InspectorExportButton(QGraphicsItem* parent)
-    : GraphicsButton(parent)
-{
-    connect(this, &GraphicsButton::pressed,
-            this, &InspectorExportButton::onPressed);
-    setToolTip("Export");
-    hide();
-}
-
-QRectF InspectorExportButton::boundingRect() const
-{
-    return QRectF(0, 0, 10, 10);
-}
-
-void InspectorExportButton::paint(QPainter* painter,
-                                const QStyleOptionGraphicsItem* option,
-                                QWidget* widget)
-{
-    Q_UNUSED(option);
-    Q_UNUSED(widget);
-
-    painter->setPen(QPen(hover ? Colors::base05 : Colors::base04, 2));
-    painter->setBrush(Qt::NoBrush);
-    painter->drawLine(0, 6, 10, 6);
-    painter->drawLine(10, 6, 6, 10);
-    painter->drawLine(10, 6, 6, 2);
-}
-
-void InspectorExportButton::clearWorker()
-{
-    if (worker)
-        worker->deleteLater();
-    worker.clear();
-
-    if (isVisible())
-        hide();
-}
-
-void InspectorExportButton::setWorker(ExportWorker* w)
-{
-    clearWorker();
-    worker = w;
-    if (!isVisible())
-        show();
-}
-
-void InspectorExportButton::onPressed()
-{
-    if (worker)
-        worker->run();
-}

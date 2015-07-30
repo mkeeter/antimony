@@ -8,10 +8,9 @@
 
 #include "app/app.h"
 
-#include "graph/node/node.h"
-#include "graph/node/root.h"
-#include "graph/datum/types/eval_datum.h"
-#include "graph/datum/datums/script_datum.h"
+#include "graph/node.h"
+#include "graph/graph.h"
+#include "graph/datum.h"
 
 #include "ui_main_window.h"
 #include "ui/main_window.h"
@@ -55,8 +54,7 @@ void MainWindow::setCentralWidget(QWidget* w)
     {
         e->customizeUI(ui);
         window_type = "Script";
-        connect(e->getDatum(), &ScriptDatum::destroyed,
-                this, &MainWindow::close);
+        e->getNode()->parentGraph()->installWatcher(this);
     }
     else
     {
@@ -122,6 +120,17 @@ bool MainWindow::isShaded() const
     return ui->actionShaded->isChecked();
 }
 
+void MainWindow::trigger(const GraphState& state)
+{
+    if (auto e = dynamic_cast<ScriptPane*>(centralWidget()))
+    {
+        if (state.nodes.count(e->getNode()) == 0)
+        {
+            e->clearNode();
+            close();
+        }
+    }
+}
 ////////////////////////////////////////////////////////////////////////////////
 
 void MainWindow::createNew(bool recenter, NodeConstructorFunction f,
@@ -219,8 +228,12 @@ void MainWindow::populateNodeMenu(QMenu* menu, bool recenter, Viewport* v)
             if (regex.exactMatch(txt))
                 title = regex.capturedTexts()[1];
 
+        QString name = "n*";
+        if (title.size() > 0 && title.at(0).isLetter())
+            name = title.at(0).toLower() + QString("*");
         NodeConstructorFunction constructor =
-            [=](NodeRoot *r){ return ScriptNode(txt, r); };
+            [=](Graph *r){ return new Node(name.toStdString(),
+                                           txt.toStdString(), r); };
         nodes[title] = QPair<QStringList, NodeConstructorFunction>(
                 split, constructor);
         node_titles.append(title);
@@ -246,13 +259,15 @@ void MainWindow::populateNodeMenu(QMenu* menu, bool recenter, Viewport* v)
 void MainWindow::populateMenu(QMenu* menu, bool recenter, Viewport* v)
 {
     // Hard-code important menu names to set their order.
-    for (auto c : {"2D", "3D", "2D → 3D", "CSG"})
+    for (auto c : {"2D", "3D", "2D → 3D", "3D → 2D", "CSG"})
         menu->addMenu(c);
     menu->addSeparator();
 
     populateNodeMenu(menu, recenter, v);
 
     menu->addSeparator();
+    /*
     addNodeToMenu(QStringList(), "Script", menu, recenter,
-                  static_cast<NodeConstructor>(ScriptNode), v);
+                  static_cast<NodeConstructor>(Node), v);
+                  */
 }

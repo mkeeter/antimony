@@ -3,16 +3,21 @@
 
 #include <QGraphicsObject>
 #include <QPointer>
+#include <QSet>
+
+#include "graph/watchers.h"
 
 class NodeInspector;
 class Datum;
 class Canvas;
+class Connection;
 
 class Port : public QGraphicsObject
 {
     Q_OBJECT
 public:
     explicit Port(Datum* d, QGraphicsItem* parent);
+    virtual ~Port() {}
 
     QRectF boundingRect() const override;
     void paint(QPainter *painter,
@@ -20,15 +25,27 @@ public:
                QWidget *widget) override;
     Datum* getDatum() const;
 
+    QVariant itemChange(GraphicsItemChange change,
+                        const QVariant& value) override;
+signals:
+    void moved();
+    void hiddenChanged();
+
 protected:
-    QPointer<Datum> datum;
+    Datum* datum;
     bool hover;
+    const QColor color;
 };
 
-class InputPort : public Port
+class InputPort : public Port, DatumWatcher
 {
 public:
     explicit InputPort(Datum* d, QGraphicsItem* parent=NULL);
+    virtual ~InputPort();
+    void trigger(const DatumState& state) override;
+    void install(Connection* c);
+protected:
+    QMap<const Datum*, Connection*> connections;
 };
 
 class OutputPort : public Port

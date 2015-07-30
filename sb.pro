@@ -1,4 +1,3 @@
 TEMPLATE = subdirs
 CONFIG += ordered
-SUBDIRS = lib/fab app
-Antimony.depends = fab
+SUBDIRS = lib/fab lib/graph app

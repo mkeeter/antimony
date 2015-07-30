@@ -8,7 +8,7 @@
 class UndoAddLinkCommand : public UndoDeleteLinkCommand
 {
 public:
-    UndoAddLinkCommand(Link* link);
+    UndoAddLinkCommand(Datum* start, Datum* end);
 
     void redo() override;
     void undo() override;

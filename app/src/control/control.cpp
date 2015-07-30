@@ -5,10 +5,9 @@
 #include "ui/viewport/viewport.h"
 #include "ui/util/colors.h"
 
-#include "graph/node/node.h"
-#include "graph/datum/datum.h"
-#include "graph/datum/datums/float_datum.h"
-#include "graph/datum/datums/script_datum.h"
+#include "graph/node.h"
+#include "graph/datum.h"
+#include "graph/graph.h"
 
 #include "app/app.h"
 #include "app/undo/undo_change_expr.h"
@@ -16,20 +15,9 @@
 
 Control::Control(Node* node, PyObject* drag_func)
     : QObject(), node(node), drag_func(drag_func), glow(false),
-      relative(true), delete_scheduled(false)
+      touched(false), relative(true)
 {
-    connect(node, &Node::clearControlTouchedFlag,
-            this, &Control::clearTouchedFlag);
-    connect(node, &Node::deleteUntouchedControls,
-            this, &Control::deleteIfNotTouched);
-
-    connect(node, &Node::destroyed, this, &Control::deleteLater);
-}
-
-void Control::deleteLater()
-{
-    delete_scheduled = true;
-    QObject::deleteLater();
+    // Nothing to do here
 }
 
 Control::~Control()
@@ -49,11 +37,6 @@ QRectF Control::bounds(QMatrix4x4 m) const
     return shape(m).boundingRect();
 }
 
-Node* Control::getNode() const
-{
-    return node;
-}
-
 void Control::deleteNode(QString text)
 {
     App::instance()->pushStack(new UndoDeleteMultiCommand({node}, {}, text));
@@ -64,9 +47,8 @@ void Control::beginDrag()
     // Store all datum expressions so that we can make an undo action
     // that undoes the upcoming drag operation.
     datums.clear();
-    for (auto d : node->findChildren<EvalDatum*>(
-                QString(), Qt::FindDirectChildrenOnly))
-        datums[d] = d->getExpr();
+    for (auto d : node->childDatums())
+        datums[d] = QString::fromStdString(d->getText());
 
     is_dragging = true;
 }
@@ -100,7 +82,9 @@ void Control::endDrag()
 
     bool started = false;
     for (auto d=datums.begin(); d != datums.end(); ++d)
-        if (datums[d.key()] != d.key()->getExpr())
+    {
+        auto expr = QString::fromStdString(d.key()->getText());
+        if (datums[d.key()] != expr)
         {
             if (!started)
             {
@@ -109,8 +93,9 @@ void Control::endDrag()
             }
             App::instance()->pushStack(
                     new UndoChangeExprCommand(
-                        d.key(), datums[d.key()], d.key()->getExpr()));
+                        d.key(), datums[d.key()], expr));
         }
+    }
 
     if (started)
         App::instance()->endUndoMacro();
@@ -125,13 +110,9 @@ void Control::setGlow(bool g)
     }
 }
 
-void Control::clearTouchedFlag()
+bool Control::checkTouched()
 {
+    const bool was_touched = touched;
     touched = false;
-}
-
-void Control::deleteIfNotTouched()
-{
-    if (!touched)
-        deleteLater();
+    return was_touched;
 }

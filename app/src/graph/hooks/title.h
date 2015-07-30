@@ -1,18 +1,18 @@
 #ifndef HOOK_TITLE_H
 #define HOOK_TITLE_H
 
-#include <boost/python.hpp>
+#include <string>
 
-class ScriptDatum;
+class Node;
+class GraphScene;
 
 struct ScriptTitleHook
 {
-    ScriptTitleHook() : datum(NULL) {}
-    ScriptTitleHook(ScriptDatum* d) : datum(d) {}
-
+    ScriptTitleHook() : node(NULL), scene(NULL) {}
     void call(std::string name);
 
-    ScriptDatum* datum;
+    Node* node;
+    GraphScene* scene;
 };
 
 #endif

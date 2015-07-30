@@ -4,28 +4,34 @@
 #include <Python.h>
 #include <string>
 
-class ScriptDatum;
+#include "graph/hooks/external.h"
 
-namespace hooks {
+class Node;
+class GraphScene;
 
-    struct HookException
+class AppHooks : public ExternalHooks
+{
+public:
+    AppHooks(GraphScene* g) : scene(g) {}
+
+    struct Exception
     {
-        HookException(std::string m) : message(m) {}
+        Exception(std::string m) : message(m) {}
         std::string message;
     };
 
-    void onHookException(const HookException& e);
-    void preInit();
+    static void onException(const Exception& e);
+    static void preInit();
 
     /*
      *  Loads input, output, and title hooks into the given globals
-     *  dictionary (with callbacks pointing to the given datum).
-     *
-     *  Returns the object that used to be in fab.ui
-     *  (so that it can be restored, making nested calls work)
+     *  dictionary (with callbacks pointing to the given Node).
      */
-    PyObject* loadHooks(PyObject* g, ScriptDatum* d);
-}
+    void loadScriptHooks(PyObject* g, Node* n) override;
+    void loadDatumHooks(PyObject* g) override;
 
+protected:
+    GraphScene* scene;
+};
 
 #endif

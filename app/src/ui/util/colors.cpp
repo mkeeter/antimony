@@ -4,7 +4,9 @@
 #include <QPair>
 
 #include "ui/util/colors.h"
-#include "graph/datum/datum.h"
+
+#include "graph/datum.h"
+#include "fab/fab.h"
 
 namespace Colors
 {
@@ -44,23 +46,19 @@ QColor dim(QColor c)
     return adjust(c, 1/1.4);
 }
 
-
 QColor getColor(Datum *d)
 {
-    switch (d->getDatumType())
-    {
-        case DatumType::STRING: return brown;
-        case DatumType::FLOAT:
-        case DatumType::FLOAT_OUTPUT:
-                                return yellow;
-        case DatumType::INT:    return orange;
-        case DatumType::SHAPE_INPUT:
-        case DatumType::SHAPE_FUNCTION:
-        case DatumType::SHAPE_OUTPUT:
-        case DatumType::SHAPE:
-                                return green;
-        default:                return red;
-    }
+    auto t = d->getType();
+    if (t == &PyUnicode_Type)
+        return brown;
+    else if (t == &PyFloat_Type)
+        return yellow;
+    else if (t == &PyLong_Type)
+        return orange;
+    else if (t == fab::ShapeType)
+        return green;
+    else
+        return red;
 }
 
 void loadColors()

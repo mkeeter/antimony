@@ -15,13 +15,12 @@ public:
      */
     UndoDeleteNodeCommand(Node* n, QUndoCommand* parent=NULL);
 
-    void redo();
-    void undo();
+    void redo() override;
+    void undo() override;
 
     void swapNode(Node* a, Node* b) const override;
 
 protected:
-    QList<Node*> getNodes() const;
     QMap<QString, Datum*> getDatums() const;
 
     mutable Node* n;

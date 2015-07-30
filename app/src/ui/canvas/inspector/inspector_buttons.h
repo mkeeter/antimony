@@ -5,9 +5,12 @@
 
 #include "ui/util/button.h"
 
-class ScriptDatum;
+#include "graph/watchers.h"
+
 class NodeInspector;
 class ExportWorker;
+
+class Node;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -15,19 +18,21 @@ class InspectorScriptButton : public GraphicsButton
 {
     Q_OBJECT
 public:
-    InspectorScriptButton(ScriptDatum* s, QGraphicsItem* parent);
+    InspectorScriptButton(Node* n, QGraphicsItem* parent);
     QRectF boundingRect() const override;
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
                QWidget* widget=0) override;
+    void setScriptValid(const bool v);
 protected slots:
     void onPressed();
 protected:
-    QPointer<ScriptDatum> script;
+    bool script_valid;
+    Node* node;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class InspectorShowHiddenButton : public GraphicsButton
+class InspectorShowHiddenButton : public GraphicsButton, NodeWatcher
 {
     Q_OBJECT
 public:
@@ -36,31 +41,12 @@ public:
     QRectF boundingRect() const override;
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
                QWidget* widget=0) override;
+    void trigger(const NodeState& state) override;
 protected slots:
     void onPressed();
-    void onDatumsChanged();
 protected:
     bool toggled;
     NodeInspector* inspector;
-};
-
-////////////////////////////////////////////////////////////////////////////////
-
-class InspectorExportButton : public GraphicsButton
-{
-    Q_OBJECT
-public:
-    InspectorExportButton(QGraphicsItem* parent);
-    QRectF boundingRect() const override;
-    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
-               QWidget* widget=0) override;
-    void clearWorker();
-    void setWorker(ExportWorker* w);
-    bool hasWorker() const { return !worker.isNull(); }
-protected slots:
-    void onPressed();
-protected:
-    QPointer<ExportWorker> worker;
 };
 
 #endif

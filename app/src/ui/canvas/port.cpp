@@ -10,15 +10,27 @@
 #include "ui/canvas/port.h"
 #include "ui/canvas/inspector/inspector.h"
 #include "ui/canvas/connection.h"
+#include "ui/canvas/graph_scene.h"
 
 #include "ui/util/colors.h"
 
-#include "graph/datum/datum.h"
+#include "graph/datum.h"
 
 Port::Port(Datum* d, QGraphicsItem* parent)
-    : QGraphicsObject(parent), datum(d), hover(false)
+    : QGraphicsObject(parent), datum(d), hover(false),
+      color(Colors::getColor(d))
 {
     setAcceptHoverEvents(true);
+    setFlags(QGraphicsItem::ItemSendsScenePositionChanges);
+}
+
+QVariant Port::itemChange(GraphicsItemChange change, const QVariant& value)
+{
+    if (change == ItemScenePositionHasChanged)
+        emit(moved());
+    else if (change == ItemVisibleHasChanged)
+        emit(hiddenChanged());
+    return value;
 }
 
 QRectF Port::boundingRect() const
@@ -33,14 +45,7 @@ void Port::paint(QPainter *painter,
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    if (datum.isNull())
-        return;
-
-    QColor color = Colors::getColor(datum);
-    if (hover)
-        color = Colors::highlight(color);
-    painter->setBrush(color);
-
+    painter->setBrush(hover ? Colors::highlight(color) : color);
     painter->setPen(Qt::NoPen);
     painter->drawRect(boundingRect());
 }
@@ -55,7 +60,44 @@ Datum* Port::getDatum() const
 InputPort::InputPort(Datum *d, QGraphicsItem *parent)
     : Port(d, parent)
 {
-    // Nothing to do here
+    d->installWatcher(this);
+    trigger(d->getState());
+}
+
+InputPort::~InputPort()
+{
+    for (auto c : connections)
+        c->deleteLater();
+}
+
+void InputPort::trigger(const DatumState& state)
+{
+    auto itr=connections.begin();
+    while (itr != connections.end())
+        if (state.links.count(itr.key()) == 0)
+        {
+            itr.value()->deleteLater();
+            itr = connections.erase(itr);
+        }
+        else
+        {
+            itr++;
+        }
+
+    for (auto d : state.links)
+        if (!connections.contains(d))
+            static_cast<GraphScene*>(scene())->makeLink(d, this);
+}
+
+void InputPort::install(Connection* c)
+{
+    connect(this, &Port::moved,
+            c, &Connection::onPortsMoved);
+    connect(this, &Port::hiddenChanged,
+            c, &Connection::onHiddenChanged);
+
+    Q_ASSERT(!connections.contains(c->source->getDatum()));
+    connections[c->source->getDatum()] = c;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -70,7 +112,8 @@ void OutputPort::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton)
     {
-        Connection* c = App::instance()->newLink(datum->linkFrom());
+        auto g = static_cast<GraphScene*>(scene());
+        Connection* c = g->makeLinkFrom(datum);
         c->setDragPos(mapToScene(event->pos()));
         c->grabMouse();
         c->setFocus();

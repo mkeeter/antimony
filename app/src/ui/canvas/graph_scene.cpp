@@ -9,19 +9,51 @@
 #include "app/app.h"
 #include "app/undo/undo_move.h"
 
-#include "graph/datum/datum.h"
-#include "graph/datum/link.h"
+#include "graph/datum.h"
+#include "graph/graph.h"
 
-GraphScene::GraphScene(QObject* parent)
+GraphScene::GraphScene(Graph* graph, QObject* parent)
     : QGraphicsScene(parent)
 {
+    graph->installWatcher(this);
     connect(this, &GraphScene::jumpTo,
             App::instance(), &App::jumpToInViewport);
+}
+
+GraphScene::~GraphScene()
+{
+    for (auto i : inspectors)
+        i->deleteLater();
 }
 
 Canvas* GraphScene::newCanvas()
 {
     return new Canvas(this);
+}
+
+void GraphScene::trigger(const GraphState& state)
+{
+    QSet<Node*> nodes;
+    for (auto n : state.nodes)
+        nodes.insert(n);
+
+    auto itr = inspectors.begin();
+    while (itr != inspectors.end())
+    {
+        if (!nodes.contains(itr.key()))
+        {
+            itr.value()->deleteLater();
+            itr = inspectors.erase(itr);
+        }
+        else
+        {
+            itr++;
+        }
+    }
+
+    for (auto n : nodes)
+        if (!inspectors.contains(n))
+            makeUIfor(n);
 }
 
 void GraphScene::onGlowChange(Node* n, bool g)
@@ -32,7 +64,7 @@ void GraphScene::onGlowChange(Node* n, bool g)
 void GraphScene::makeUIfor(Node* n)
 {
     auto i = new NodeInspector(n);
-    get_inspector_cache[n] = i;
+    inspectors[n] = i;
     addItem(i);
 
     if (views().length() > 0)
@@ -44,50 +76,52 @@ void GraphScene::makeUIfor(Node* n)
                           i->boundingRect().height()/2));
     }
 
+    // If we've cached a title (e.g. because a Node called title
+    // before its inspector was created), assign it here.
+    if (title_cache.contains(n))
+    {
+        i->setTitle(title_cache[n]);
+        title_cache.remove(n);
+    }
+    if (export_cache.contains(n))
+    {
+        i->setExportWorker(export_cache[n]);
+        export_cache.remove(n);
+    }
+
     connect(i, &NodeInspector::glowChanged,
             this, &GraphScene::onGlowChange);
     connect(i, &NodeInspector::glowChanged,
             this, &GraphScene::glowChanged);
 
+    /*
     for (auto d : n->findChildren<Datum*>())
         for (auto link : d->findChildren<Link*>())
             makeUIfor(link);
+            */
 }
 
-Connection* GraphScene::makeUIfor(Link* link)
+Connection* GraphScene::makeLinkFrom(Datum* d)
 {
-    auto c = new Connection(link);
+    auto c = new Connection(inspectors[d->parentNode()]->outputPort(d));
     addItem(c);
-    c->makeSceneConnections();
     return c;
 }
 
-NodeInspector* GraphScene::getInspector(Node* node)
+void GraphScene::makeLink(const Datum* source, InputPort* target)
 {
-    if (get_inspector_cache.contains(node))
-    {
-        auto c = get_inspector_cache[node];
-        if (!c.isNull() && c->getNode() == node)
-            return c;
-        else
-            get_inspector_cache.remove(node);
-    }
+    Q_ASSERT(inspectors.contains(source->parentNode()));
+    inspectors[source->parentNode()]->makeLink(source, target);
+}
 
-    for (auto i : items())
-    {
-        NodeInspector* c = dynamic_cast<NodeInspector*>(i);
-
-        if (c && c->getNode() == node)
-        {
-            get_inspector_cache[node] = c;
-            return c;
-        }
-    }
-    return NULL;
+NodeInspector* GraphScene::getInspector(Node* node) const
+{
+    Q_ASSERT(inspectors.contains(node));
+    return inspectors[node];
 }
 
 template <class T>
-T* GraphScene::getItemAt(QPointF pos)
+T* GraphScene::getItemAt(QPointF pos) const
 {
     for (auto i : items(pos))
         if (auto p = dynamic_cast<T*>(i))
@@ -95,7 +129,31 @@ T* GraphScene::getItemAt(QPointF pos)
     return NULL;
 }
 
-NodeInspector* GraphScene::getInspectorAt(QPointF pos)
+void GraphScene::setTitle(Node* node, QString title)
+{
+    if (inspectors.contains(node))
+        inspectors[node]->setTitle(title);
+    else
+        title_cache[node] = title;
+}
+
+void GraphScene::clearExportWorker(Node* node)
+{
+    if (inspectors.contains(node))
+        inspectors[node]->clearExportWorker();
+    else if (export_cache.contains(node))
+        export_cache.remove(node);
+}
+
+void GraphScene::setExportWorker(Node* node, ExportWorker* worker)
+{
+    if (inspectors.contains(node))
+        inspectors[node]->setExportWorker(worker);
+    else
+        export_cache[node] = worker;
+}
+
+NodeInspector* GraphScene::getInspectorAt(QPointF pos) const
 {
     return getItemAt<NodeInspector>(pos);
 }
@@ -109,7 +167,7 @@ InputPort* GraphScene::getInputPortAt(QPointF pos)
     return NULL;
 }
 
-InputPort* GraphScene::getInputPortNear(QPointF pos, Link* link)
+InputPort* GraphScene::getInputPortNear(QPointF pos, Datum* d)
 {
     float distance = INFINITY;
     InputPort* port = NULL;
@@ -117,7 +175,8 @@ InputPort* GraphScene::getInputPortNear(QPointF pos, Link* link)
     for (auto i : items())
     {
         InputPort* p = dynamic_cast<InputPort*>(i);
-        if (p && (link == NULL || p->getDatum()->acceptsLink(link)))
+        if (p && p->isVisible() && (d == NULL ||
+                                    p->getDatum()->acceptsLink(d)))
         {
             QPointF delta = p->mapToScene(p->boundingRect().center()) - pos;
             float d = QPointF::dotProduct(delta, delta);

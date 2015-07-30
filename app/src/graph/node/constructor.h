@@ -4,9 +4,9 @@
 #include <functional>
 
 class Node;
-class NodeRoot;
+class Graph;
 
-typedef Node* (*NodeConstructor)(NodeRoot*);
-typedef std::function<Node* (NodeRoot*)> NodeConstructorFunction;
+typedef Node* (*NodeConstructor)(Graph*);
+typedef std::function<Node* (Graph*)> NodeConstructorFunction;
 
 #endif

@@ -3,12 +3,10 @@
 #include <QStringList>
 
 #include "graph/node/serializer.h"
-#include "graph/node/node.h"
-#include "graph/node/root.h"
 
-#include "graph/datum/datum.h"
-#include "graph/datum/types/eval_datum.h"
-#include "graph/datum/datums/script_datum.h"
+#include "graph/node.h"
+#include "graph/graph.h"
+#include "graph/datum.h"
 
 // Protocol version change-log:
 // 2 -> 3:
@@ -18,63 +16,48 @@
 //   _name -> __name; _script -> __script
 // 4 -> 5:
 //   Switch to plain-text.
-int SceneSerializer::PROTOCOL_VERSION = 5;
+// 5 -> 6: (refactored graph engine)
+//   Store scripts and names at node level
+//   Remove explicit connections array
+int SceneSerializer::PROTOCOL_VERSION = 6;
 
-SceneSerializer::SceneSerializer(NodeRoot* node_root,
-                                 QMap<Node*, QPointF> inspectors)
-    : QObject(), node_root(node_root), inspectors(inspectors)
-{
-    // Nothing to do here.
-}
-
-QJsonObject SceneSerializer::run(SerializerMode mode)
+QJsonObject SceneSerializer::run(Graph* root, QMap<Node*, QPointF> inspectors)
 {
     QJsonObject out;
     out["type"] = "sb";
     out["protocol"] = PROTOCOL_VERSION;
+    out["nodes"] = serializeNodes(root, inspectors);
 
-    out["nodes"] = serializeNodes(node_root);
-
-    if (mode == SERIALIZE_ALL)
-        out["connections"] = serializeConnections();
     return out;
 }
 
-QJsonArray SceneSerializer::serializeNodes(NodeRoot* r)
+QJsonArray SceneSerializer::serializeNodes(Graph* r, QMap<Node*, QPointF> inspectors)
 {
     QJsonArray out;
-    nodes = r->findChildren<Node*>(
-            QString(), Qt::FindDirectChildrenOnly);
-
-    for (auto node : nodes)
-        out.append(serializeNode(node));
-
+    for (auto node : r->childNodes())
+        out.append(serializeNode(node, inspectors));
     return out;
 }
 
-QJsonObject SceneSerializer::serializeNode(Node* node)
+QJsonObject SceneSerializer::serializeNode(Node* node, QMap<Node*, QPointF> inspectors)
 {
     QJsonObject out;
 
     out["inspector"] = QJsonArray({
             inspectors[node].x(),
             inspectors[node].y()});
+    out["name"] = QString::fromStdString(node->getName());
+    out["uid"] = int(node->getUID());
+
+    auto expr = QString::fromStdString(node->getScript());
+    auto a = QJsonArray();
+    for (auto line : expr.split("\n"))
+        a.append(line);
+    out["script"] = a;
 
     QJsonArray datum_array;
-
-    Datum* deferred = NULL;
-    auto datums = node->findChildren<Datum*>(
-            QString(), Qt::FindDirectChildrenOnly);
-
-    for (auto d : datums)
-        if (dynamic_cast<ScriptDatum*>(d))
-            deferred = d;
-        else
-            datum_array.append(serializeDatum(d));
-
-    if (deferred)
-        datum_array.append(serializeDatum(deferred));
-
+    for (auto d : node->childDatums())
+        datum_array.append(serializeDatum(d));
     out["datums"] = datum_array;
 
     return out;
@@ -83,58 +66,19 @@ QJsonObject SceneSerializer::serializeNode(Node* node)
 QJsonObject SceneSerializer::serializeDatum(Datum* datum)
 {
     QJsonObject out;
-    out["type"] = datum->getDatumTypeString();
-    out["name"] = datum->objectName();
 
-    if (auto e = dynamic_cast<EvalDatum*>(datum))
-    {
-        auto expr = e->getExpr();
-        if (expr.contains("\n"))
-        {
-            auto a = QJsonArray();
-            for (auto line : expr.split("\n"))
-                a.append(line);
-            out["expr"] = a;
-        }
-        else
-        {
-            out["expr"] = expr;
-        }
-    }
+    out["name"] = QString::fromStdString(datum->getName());
+    out["uid"] = int(datum->getUID());
+    out["expr"] = QString::fromStdString(datum->getText());
 
-    // Save datum and any connections for later
-    // (as connections are serialized separately,
-    // once all of the datums have been written).
-    for (auto d : datum->getInputDatums())
-        connections << QPair<Datum*, Datum*>(d, datum);
+    auto t = PyObject_GetAttrString((PyObject*)datum->getType(), "__name__");
+    auto m = PyObject_GetAttrString((PyObject*)datum->getType(), "__module__");
+    auto type = QString::fromUtf8(PyUnicode_AsUTF8(t));
+    auto module = QString::fromUtf8(PyUnicode_AsUTF8(m));
+    Py_DECREF(t);
+    Py_DECREF(m);
 
-    return out;
-}
-
-QJsonArray SceneSerializer::serializeConnections()
-{
-    QJsonArray out;
-    for (auto p : connections)
-    {
-        QJsonArray start;
-        QJsonArray end;
-
-        // Only serialize connections for which we have serialized
-        // both datums (prevents edge cases in copy-paste)
-        auto start_node = static_cast<Node*>(p.first->parent());
-        auto end_node = static_cast<Node*>(p.second->parent());
-
-        if (nodes.contains(start_node) && nodes.contains(end_node))
-        {
-            start.append(nodes.indexOf(start_node));
-            start.append(p.first->objectName());
-
-            end.append(nodes.indexOf(end_node));
-            end.append(p.second->objectName());
-
-            out.append(QJsonArray({start, end}));
-        }
-    }
+    out["type"] = (module == "builtins") ? type : (module + "." + type);
 
     return out;
 }

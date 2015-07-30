@@ -1,58 +1,55 @@
 #include <Python.h>
 
+#include <QTextDocument>
+
 #include "ui/canvas/inspector/inspector_title.h"
 #include "ui/canvas/inspector/inspector_text.h"
 #include "ui/canvas/inspector/inspector.h"
 #include "ui/canvas/inspector/inspector_buttons.h"
 #include "ui/util/button.h"
 
-#include "graph/node/node.h"
-#include "graph/datum/datums/script_datum.h"
+#include "graph/node.h"
+#include "graph/datum.h"
 
 #include "ui/util/colors.h"
 
 InspectorTitle::InspectorTitle(Node* n, NodeInspector* parent)
-    : QGraphicsObject(parent),
-      title(new QGraphicsTextItem(n->getTitle(), this)),
-      buttons({new InspectorExportButton(this),
-               new InspectorShowHiddenButton(this, parent),
-               new InspectorScriptButton(
-                  n->getDatum<ScriptDatum>("__script"), this)}),
-
+    : QGraphicsObject(parent), node(n),
+      name(new QGraphicsTextItem(QString::fromStdString(n->getName()), this)),
+      title(new QGraphicsTextItem("", this)),
+      buttons({new InspectorShowHiddenButton(this, parent),
+               new InspectorScriptButton(n, this)}),
       padding(20)
 
 {
-    if (auto d = n->getDatum("__name"))
-    {
-        name = new DatumTextItem(d, this);
-        name->setAsTitle();
-        name->setPos(0, 0);
-        connect(d, &Datum::changed,
-                [=]() {
-                if(this->updateLayout())
-                    emit(layoutChanged()); });
-    }
+    name->setTextInteractionFlags(Qt::TextEditorInteraction);
 
-    title->setPos(0, 0);
-    title->setDefaultTextColor(Colors::base06);
-    auto f = title->font();
+    auto f = name->font();
     f.setBold(true);
-    title->setFont(f);
 
-    // Make connections for dynamic title changing
-    connect(n, &Node::titleChanged,
-            title, &QGraphicsTextItem::setPlainText);
-    connect(n, &Node::titleChanged,
-            [=](QString){
-            if(this->updateLayout())
-                emit(layoutChanged()); });
+    for (auto t : {name, title})
+    {
+        t->setPos(0, 0);
+        t->setDefaultTextColor(Colors::base06);
+        t->setFont(f);
+    }
 
     for (auto b : buttons)
         connect(b, &QGraphicsObject::visibleChanged,
                 this, &InspectorTitle::onButtonsChanged);
 
+    connect(name->document(), &QTextDocument::contentsChanged,
+            this, &InspectorTitle::onNameChanged);
+
     // The layout needs to be redone once padding is set
     // (which is dependent on the parent NodeInspector)
+}
+
+void InspectorTitle::onNameChanged()
+{
+    node->setName(name->toPlainText().toStdString());
+    if (updateLayout())
+        emit(layoutChanged());
 }
 
 QRectF InspectorTitle::boundingRect() const
@@ -67,6 +64,18 @@ QRectF InspectorTitle::boundingRect() const
             width += b->boundingRect().width() + 4;
     width -= 4;
     return QRectF(0, 0, width, height);
+}
+
+void InspectorTitle::setNameValid(bool v)
+{
+    name->setDefaultTextColor(v ? Colors::base06 : Colors::red);
+}
+
+void InspectorTitle::setTitle(QString t)
+{
+    title->setPlainText(t);
+    if (updateLayout())
+        emit(layoutChanged());
 }
 
 float InspectorTitle::minWidth() const
@@ -128,7 +137,6 @@ void InspectorTitle::paint(QPainter *painter,
     Q_UNUSED(painter);
     Q_UNUSED(option);
     Q_UNUSED(widget);
-    // Nothing to do here
 }
 
 void InspectorTitle::onButtonsChanged()

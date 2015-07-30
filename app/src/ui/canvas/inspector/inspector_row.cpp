@@ -7,23 +7,19 @@
 
 #include "ui/util/colors.h"
 
-#include "graph/datum/datum.h"
-#include "graph/datum/datums/script_datum.h"
+#include "graph/datum.h"
 
 InspectorRow::InspectorRow(Datum* d, NodeInspector* parent)
     : QGraphicsObject(static_cast<QGraphicsItem*>(parent)),
-      input(d->hasInput()
-                ? new InputPort(d, static_cast<QGraphicsItem*>(this))
-                : NULL),
-      output(d->hasOutput()
-                ? new OutputPort(d, static_cast<QGraphicsItem*>(this))
-                : NULL),
-      label(new QGraphicsTextItem(d->objectName(), this)),
+      input(new InputPort(d, static_cast<QGraphicsItem*>(this))),
+      output(new OutputPort(d, static_cast<QGraphicsItem*>(this))),
+      label(new QGraphicsTextItem(
+                  QString::fromStdString(d->getName()), this)),
       editor(new DatumTextItem(d, this))
 {
     label->setDefaultTextColor(Colors::base04);
 
-    connect(static_cast<DatumTextItem*>(editor),
+    connect(editor,
             &DatumTextItem::boundsChanged,
             [=](){
             if(this->updateLayout())
@@ -35,6 +31,17 @@ InspectorRow::InspectorRow(Datum* d, NodeInspector* parent)
     connect(static_cast<DatumTextItem*>(editor),
             &DatumTextItem::shiftTabPressed,
             parent, &NodeInspector::focusPrev);
+
+    d->installWatcher(this);
+    trigger(d->getState());
+}
+
+void InspectorRow::trigger(const DatumState& state)
+{
+    if (state.sigil == Datum::SIGIL_OUTPUT)
+        input->hide();
+    else
+        input->show();
 }
 
 QRectF InspectorRow::boundingRect() const
@@ -112,6 +119,8 @@ bool InspectorRow::updateLayout()
         }
     }
 
+    if (changed)
+        prepareGeometryChange();
     return changed;
 }
 

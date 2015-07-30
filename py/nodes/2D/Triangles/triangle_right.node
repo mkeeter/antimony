@@ -13,9 +13,9 @@ input('height', float, 2)
 output('shape', fab.shapes.right_triangle(x0, y0, width, height))
 
 # UI
-fab.ui.wireframe([(x0, y0, 0), (x0 + width, y0, 0), (x0, y0 + height, 0)],
+sb.ui.wireframe([(x0, y0, 0), (x0 + width, y0, 0), (x0, y0 + height, 0)],
                  close=True)
-fab.ui.point(x0, y0)
-fab.ui.point(x0 + width, y0, drag=(width, None, None))
-fab.ui.point(x0, y0 + height, drag=(None, height, None))
+sb.ui.point(x0, y0)
+sb.ui.point(x0 + width, y0, drag=(width, None, None))
+sb.ui.point(x0, y0 + height, drag=(None, height, None))
 

@@ -2,6 +2,7 @@
 # Matt Keeter 6/11/18
 
 import fab
+import math
 
 title('Circle (center)')
 
@@ -19,12 +20,12 @@ def drag_r(this,x,y,z):
     this._a = math.atan2(dy, dx)
 
 # UI
-fab.ui.wireframe([
+sb.ui.wireframe([
     (math.cos(i/36. * 2*math.pi) * r + x0,
      math.sin(i/36. * 2*math.pi) * r + y0, 0)
     for i in range(36)], close=True)
-fab.ui.point(x0,y0)
-fab.ui.point(x0 + r*math.cos(_a),
+sb.ui.point(x0,y0)
+sb.ui.point(x0 + r*math.cos(_a),
              y0 + r*math.sin(_a),
              drag=drag_r, relative=False)
 

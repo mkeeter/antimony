@@ -1,58 +1,25 @@
-#ifndef RENDER_TASK_H
-#define RENDER_TASK_H
+#pragma once
 
 #include <QObject>
-#include <QPointer>
-#include <QThread>
 
-class Datum;
-class RenderTask;
-class DepthImageItem;
+#include "graph/watchers.h"
+
+class RenderProxy;
 class Viewport;
 
-class RenderWorker : public QObject
+class RenderWorker : public QObject, DatumWatcher
 {
     Q_OBJECT
 public:
-    explicit RenderWorker(Datum* datum, Viewport* viewport);
-    ~RenderWorker();
+    explicit RenderWorker(Datum* datum);
+    void trigger(const DatumState& state) override;
 
     static bool accepts(Datum* d);
-public slots:
-    void onDatumChanged();
-    void deleteIfNotRunning();
-    void onTaskFinished();
-    void onThreadFinished();
-
 signals:
-    void abort();
+    void changed();
 
 protected:
-    /** Checks to see if the datum has output.
-     *  If so, returns false and deletes image.
-     */
-    bool hasNoOutput();
+    Datum* datum;
 
-    /** Starts rendering the task in next.
-     *  Moves next to current when starting.
-     */
-    void startNextRender();
-
-    /** Calls deleteLater on image and sets it to NULL.
-     */
-    void clearImage();
-
-    QPointer<Datum> datum;
-
-    QThread* thread;
-    RenderTask* current;
-    RenderTask* next;
-    QPointer<DepthImageItem> depth_image;
-
-    bool running;
-    int starting_refinement;
-
-    QPointer<Viewport> viewport;
+    friend class RenderProxy;
 };
-
-#endif // RENDER_TASK_H

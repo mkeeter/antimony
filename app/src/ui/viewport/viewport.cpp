@@ -21,14 +21,15 @@
 
 #include "ui_main_window.h"
 #include "ui/main_window.h"
+#include "ui/canvas/graph_scene.h"
 #include "ui/util/colors.h"
 
-#include "graph/datum/datum.h"
-#include "graph/node/node.h"
+#include "graph/datum.h"
+#include "graph/node.h"
+#include "graph/graph.h"
+
 #include "graph/node/serializer.h"
 #include "graph/node/deserializer.h"
-#include "graph/node/root.h"
-#include "graph/datum/link.h"
 
 #include "control/control.h"
 #include "control/proxy.h"
@@ -182,8 +183,7 @@ QVector3D Viewport::sceneToWorld(QPointF p) const
 
 void Viewport::makeNodeAtCursor(NodeConstructorFunction f)
 {
-    auto n = f(App::instance()->getNodeRoot());
-    App::instance()->newNode(n);
+    auto n = f(App::instance()->getGraph());
     App::instance()->pushStack(new UndoAddNodeCommand(n));
 }
 
@@ -387,7 +387,7 @@ void Viewport::mouseReleaseEvent(QMouseEvent *event)
         for (auto p : proxies)
         {
             auto n = p->getNode();
-            QString desc = n->getName() + " (" + n->getTitle() + ")";
+            QString desc = QString::fromStdString(n->getName());// + " (" + n->getTitle() + ")";
 
             if (jump_to == NULL)
             {
@@ -610,7 +610,7 @@ void Viewport::updateInfo()
         if (proxies.size() > 0)
         {
             auto n = proxies.first()->getNode();
-            QString desc = n->getName() + " (" + n->getTitle() + ")";
+            QString desc = QString::fromStdString(n->getName()); // + " (" + n->getTitle() + ")";
 
             if (proxies.size() > 1)
                 info = QString("Current: %1, (%2 more below)")
@@ -648,18 +648,14 @@ void Viewport::onCopy()
         if (auto proxy = dynamic_cast<ControlProxy*>(i))
         {
             auto n = proxy->getControl()->getNode();
-            Q_ASSERT(dynamic_cast<NodeRoot*>(n->parent()));
-            auto p = static_cast<NodeRoot*>(n->parent());
-
-            NodeRoot temp_root;
-            n->setParent(&temp_root);
             auto data = new QMimeData();
+            const auto inspectors =
+                App::instance()->getGraphScene()->inspectorPositions();
             data->setData("sb::viewport",
-                    QJsonDocument(SceneSerializer(&temp_root).run()).toJson());
-            n->setParent(p);
+                    QJsonDocument(SceneSerializer::serializeNode(
+                            n, inspectors)).toJson());
 
             QApplication::clipboard()->setMimeData(data);
-            return;
         }
 }
 
@@ -668,20 +664,19 @@ void Viewport::onCut()
     for (auto i : scene->selectedItems())
         if (auto proxy = dynamic_cast<ControlProxy*>(i))
         {
-            auto n = proxy->getControl()->getNode();
-            Q_ASSERT(dynamic_cast<NodeRoot*>(n->parent()));
-            auto p = static_cast<NodeRoot*>(n->parent());
+            if (auto c = proxy->getControl())
+            {
+                auto n = c->getNode();
+                auto data = new QMimeData();
+                const auto inspectors =
+                    App::instance()->getGraphScene()->inspectorPositions();
+                data->setData("sb::viewport",
+                        QJsonDocument(SceneSerializer::serializeNode(
+                                n, inspectors)).toJson());
 
-            NodeRoot temp_root;
-            n->setParent(&temp_root);
-            auto data = new QMimeData();
-            data->setData("sb::viewport",
-                    QJsonDocument(SceneSerializer(&temp_root).run()).toJson());
-            n->setParent(p);
-
-            QApplication::clipboard()->setMimeData(data);
-            proxy->getControl()->deleteNode("'cut'");
-            return;
+                QApplication::clipboard()->setMimeData(data);
+                proxy->getControl()->deleteNode("'cut'");
+            }
         }
 }
 
@@ -690,16 +685,38 @@ void Viewport::onPaste()
     auto data = QApplication::clipboard()->mimeData();
     if (data->hasFormat("sb::viewport"))
     {
-        NodeRoot temp_root;
-        SceneDeserializer ds(&temp_root);
-        ds.run(QJsonDocument::fromJson(data->data("sb::viewport")).object());
+        auto g = App::instance()->getGraph();
+        const uint64_t new_uid = g->getUIDs(1).front();
 
-        auto n = temp_root.findChild<Node*>();
-        n->setParent(App::instance()->getNodeRoot());
-        n->updateName();
+        // Update this node's UID and store the change in uid_map
+        auto n = QJsonDocument::fromJson(
+                data->data("sb::viewport")).object();
 
-        App::instance()->newNode(n);
-        App::instance()->pushStack(new UndoAddNodeCommand(n, "'paste'"));
+        n["uid"] = int(new_uid);
+
+        auto name = n["name"].toString();
+        if (!g->isNameUnique(name.toStdString()))
+        {
+            // Trim trailing numbers from the node's name
+            while (name.at(name.size() - 1).isNumber())
+                name = name.left(name.size() - 1);
+            if (name.isEmpty())
+                name = "n";
+            // Then use the remaining string as a prefix
+            n["name"] = QString::fromStdString(g->nextName(name.toStdString()));
+        }
+
+        // Deserialize this node
+        SceneDeserializer::Info ds;
+        SceneDeserializer::deserializeNode(n, g, &ds);
+
+        // Update the inspector positions by shifting a bit down and over
+        for (auto& i : ds.inspectors)
+            i += QPointF(10, 10);
+        App::instance()->getGraphScene()->setInspectorPositions(ds.inspectors);
+
+        App::instance()->pushStack(
+                new UndoAddNodeCommand(g->childNodes().back(), "'paste'"));
     }
 }
 

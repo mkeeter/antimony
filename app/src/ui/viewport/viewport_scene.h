@@ -9,15 +9,17 @@
 #include <QList>
 
 #include "util/hash.h"
+#include "graph/watchers.h"
 
 class Control;
 class ControlRoot;
-class ControlProxy;
-class Datum;
-class Node;
 class Viewport;
 
-class ViewportScene : public QObject
+class Datum;
+class Node;
+class Graph;
+
+class ViewportScene : public QObject, public GraphWatcher
 {
     Q_OBJECT
 public:
@@ -29,7 +31,7 @@ public:
      *  2D abstration and each Viewport is a 2D projection of
      *  the same 3D scene.
      */
-    ViewportScene(QObject* parent=0);
+    ViewportScene(Graph* root, QObject* parent=0);
 
     /*
      *  Returns a new viewport
@@ -38,9 +40,9 @@ public:
     Viewport* newViewport();
 
     /*
-     *  Creates DepthImageItems for this node.
+     *  On graph change, delete controls that are now orphaned.
      */
-    void makeRenderWorkersFor(Node* n);
+    void trigger(const GraphState& state) override;
 
     /*
      *  Registers a Control object, making proxies.
@@ -52,6 +54,13 @@ public:
      */
     Control* getControl(Node* node, long index) const;
 
+    /*
+     *  If a render worker exists for the given node and datum,
+     *  trigger a re-render check (used when connections are made
+     *  and broken).
+     */
+    void checkRender(Node* n, Datum* d);
+
 public slots:
     void onGlowChange(Node* n, bool g);
 
@@ -60,17 +69,6 @@ signals:
      *  Used to cross-link glow between viewport and canvas.
      */
     void glowChanged(Node* n, bool g);
-
-protected slots:
-    /*
-     *  Removes dead Viewport and Node pointers from the list and map.
-     */
-    void prune();
-
-    /*
-     *  When a Node's datums change, update RenderWorkers.
-     */
-    void onDatumsChanged(Node* n);
 
 protected:
 
@@ -81,15 +79,14 @@ protected:
     void makeProxyFor(Control* c, Viewport* v);
 
     /* Stores viewports for which we've made a QGraphicsScene */
-    QSet<QPointer<Viewport>> viewports;
+    QSet<Viewport*> viewports;
 
-    /* Score a set of top-level control roots
-     * (which manage highlighting and glowing)
+    /* Store a set of top-level control roots
+     * (which manage UI hooks, render workers, highlighting, glowing)
      */
-    QMap<QPointer<Node>, QSharedPointer<ControlRoot>> controls;
+    QMap<Node*, QSharedPointer<ControlRoot>> controls;
 
-    /* Stores Datums for which we have created RenderWorkers */
-    QSet<QPointer<Datum>> workers;
+    friend class ControlRoot;
 };
 
 #endif // VIEWPORT_SCENE_H

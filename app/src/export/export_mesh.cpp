@@ -101,15 +101,11 @@ void ExportMeshTask::render()
             &r, bounds.xmin, bounds.ymin, bounds.zmin,
                 bounds.xmax, bounds.ymax, bounds.zmax);
 
-    QTime time;
-    time.start();
     triangulate(shape.tree.get(), r, detect_features, halt, &verts, &count);
-    qDebug() << time.elapsed();
 
     save_stl(verts, count, filename.toStdString().c_str());
     free_arrays(&r);
     free(verts);
 
-    qDebug() << "Done.";
     emit(finished());
 }

@@ -4,18 +4,20 @@
 #include <QGraphicsObject>
 #include <QGraphicsTextItem>
 
-class Node;
 class NodeInspector;
-class DatumTextItem;
-class ScriptDatum;
 class GraphicsButton;
+
+class Node;
 
 class InspectorTitle : public QGraphicsObject
 {
     Q_OBJECT
 public:
     explicit InspectorTitle(Node* n, NodeInspector* parent);
-    QRectF boundingRect() const;
+    void setNameValid(bool v);
+
+    QRectF boundingRect() const override;
+    void setTitle(QString t);
 
     template <typename T> T* getButton() const
     {
@@ -30,7 +32,13 @@ public:
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget) override;
+
 public slots:
+    /*
+     *  When the name field changes, call node->setName
+     */
+    void onNameChanged();
+
     /*
      *  Updates the title row's layout.
      *  Returns true if anything changed.
@@ -46,7 +54,9 @@ signals:
     void layoutChanged();
 
 protected:
-    DatumTextItem* name;
+    Node* node;
+
+    QGraphicsTextItem* name;
     QGraphicsTextItem* title;
     QList<GraphicsButton*> buttons;
 

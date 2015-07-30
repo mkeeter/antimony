@@ -4,14 +4,14 @@
 #include <boost/python.hpp>
 
 #include <QObject>
-#include <QPointer>
 #include <QVector3D>
 #include <QMatrix4x4>
 #include <QPainter>
 
+#include "graph/watchers.h"
+
 // Forward declarations
 class Datum;
-class EvalDatum;
 class Node;
 
 class Control : public QObject
@@ -25,7 +25,6 @@ public:
      */
     explicit Control(Node* node, PyObject* drag_func=NULL);
 
-    void deleteLater();
     /*
      *  Destructor removes a reference to the drag function.
      */
@@ -34,7 +33,7 @@ public:
     /*
      * Returns this control's relevant node.
      */
-    Node* getNode() const;
+    Node* getNode() const { return node; }
 
     /*
      *  Swaps in a new drag_func, removing a reference from the old one.
@@ -95,6 +94,12 @@ public:
      */
     void touch() { touched = true; }
 
+    /*
+     *  Checks that touched is set to true
+     *  (and clears it)
+     */
+    bool checkTouched();
+
     bool isDragging() const { return is_dragging; }
 
     bool getRelative() const { return relative; }
@@ -105,12 +110,6 @@ public:
      *  for non-relative dragging.
      */
     virtual QVector3D pos() const=0;
-
-    bool isDeleteScheduled() const { return delete_scheduled; }
-
-public slots:
-    void clearTouchedFlag();
-    void deleteIfNotTouched();
 
 signals:
     void redraw();
@@ -127,8 +126,8 @@ signals:
     void proxySelectionChanged(bool g);
 
 protected:
-    QPointer<Node> node;
-    QMap<EvalDatum*, QString> datums;
+    Node* node;
+    QMap<Datum*, QString> datums;
 
     PyObject* drag_func;
     bool is_dragging;
@@ -139,13 +138,6 @@ protected:
     bool touched;
 
     bool relative;
-
-    /*
-     *  Set when deleteLater is called
-     *  (because otherwise things can go wrong where getControl
-     *   return this Control but it's about to be deleted).
-     */
-    bool delete_scheduled;
 };
 
 

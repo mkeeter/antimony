@@ -8,12 +8,11 @@
 
 class GraphScene;
 class ViewportScene;
+
+class Graph;
 class Node;
-class Link;
-class Connection;
-class ScriptDatum;
+
 class MainWindow;
-class NodeRoot;
 class UndoStack;
 class UndoCommand;
 
@@ -32,24 +31,9 @@ public:
     static App* instance();
 
     /*
-     *  Creates UI elements for a new Node and adds them to scenes.
-     */
-    void newNode(Node* n);
-
-    /*
-     *  Makes UI elements for the given NodeRoot.
-     */
-    void makeUI(NodeRoot* r);
-
-    /*
-     *  Create UI elements for a new link, returning the associated Connection.
-     */
-    Connection* newLink(Link* link);
-
-    /*
      *  Returns the root of the node tree.
      */
-    NodeRoot* getNodeRoot() const { return root; }
+    Graph* getGraph() const { return root; }
 
     GraphScene* getGraphScene() const { return graph_scene; }
     ViewportScene* getViewScene() const { return view_scene; }
@@ -104,7 +88,7 @@ public slots:
     /*
      *  Opens a new editor window targetting the given datum.
      */
-    MainWindow* newEditorWindow(ScriptDatum* datum);
+    MainWindow* newEditorWindow(Node* n);
     void onAbout();
 
     void onNew();
@@ -117,18 +101,17 @@ public slots:
     void onUpdateCheckFinished(QNetworkReply* reply);
 
 private:
-
     bool event(QEvent* event);
-
     void setGlobalStyle();
 
-    GraphScene* graph_scene;
-    ViewportScene* view_scene;
-    QString filename;
-    NodeRoot* root;
-    UndoStack* stack;
+    Graph* const root;
 
-    QNetworkAccessManager* network;
+    GraphScene* const graph_scene;
+    ViewportScene* const view_scene;
+    QString filename;
+    UndoStack* const stack;
+
+    QNetworkAccessManager* const network;
 };
 
 #endif // APP_H

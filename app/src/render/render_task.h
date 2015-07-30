@@ -56,7 +56,7 @@ protected:
     int time_taken;
     bool is_empty;
 
-    friend class RenderWorker;
+    friend class RenderProxy;
 };
 
 #endif // RENDER_WORKER_H

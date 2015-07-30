@@ -4,32 +4,33 @@
 #include <QGraphicsObject>
 #include <QPointer>
 
-#include "graph/datum/link.h"
+#include "graph/watchers.h"
 
-class Datum;
-class Node;
 class InputPort;
+class OutputPort;
+
 class GraphScene;
-class NodeInspector;
 
 class Connection : public QGraphicsObject
 {
     Q_OBJECT
 public:
-    explicit Connection(Link* link);
-    QRectF boundingRect() const;
-    QPainterPath shape() const;
+    explicit Connection(OutputPort* source);
+    explicit Connection(OutputPort* source, InputPort* target);
+
+    QRectF boundingRect() const override;
+    QPainterPath shape() const override;
     void setDragPos(QPointF p) { drag_pos = p; }
 
-    /* Makes connections between inspector port signals and redraw.
-     */
-    void makeSceneConnections();
-
-    Link* getLink() { return link; }
+    OutputPort* getSource() const { return source; }
+    InputPort* getTarget() const { return target; }
 
 public slots:
-    void onInspectorMoved();
+    void onPortsMoved();
     void onHiddenChanged();
+
+signals:
+    void changed();
 
 protected:
     GraphScene* gscene() const;
@@ -46,32 +47,12 @@ protected:
      */
     void updateSnap();
 
-    /** Checks that start and end (if not dragging) datums are valid
-     */
-    bool areDatumsValid() const;
-    bool areNodesValid() const;
-    bool areInspectorsValid() const;
     bool isHidden() const;
 
     /** Checks to see whether we're on a valid port
      *  (and adjust drag_state accordingly).
      */
     void checkDragTarget();
-
-    /** Look up start and end datums.
-     */
-    Datum* startDatum() const;
-    Datum* endDatum() const;
-
-    /** Look up start and end nodes.
-     */
-    Node* startNode() const;
-    Node* endNode() const;
-
-    /** Look up start and end controls.
-     */
-    NodeInspector* startInspector() const;
-    NodeInspector* endInspector() const;
 
     /** Returns starting position in scene coordinates.
      */
@@ -87,32 +68,39 @@ protected:
 
     void paint(QPainter *painter,
                const QStyleOptionGraphicsItem *option,
-               QWidget *widget);
+               QWidget *widget) override;
 
     /** While the connection is open-ended, check for target ports.
      */
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
 
     /** On mouse release, connect to an available port if not already connected.
      */
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 
     /** Check for mouse hover.
      */
     void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
     void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 
-    QPointer<Link> link;
+    OutputPort* source;
+    InputPort* target;
+    const QColor color;
+
     QPointF drag_pos;
 
     enum { NONE, VALID, INVALID, CONNECTED } drag_state;
+
+    QPointF start_pos;
+    QPointF end_pos;
 
     QPointF snap_pos;
     bool has_snap_pos;
     bool snapping;
 
-    InputPort* target;
     bool hover;
+
+    friend class InputPort;
 };
 
 #endif // CONNECTION_H

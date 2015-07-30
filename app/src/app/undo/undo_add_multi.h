@@ -7,7 +7,6 @@ class UndoAddMultiCommand : public UndoDeleteMultiCommand
 {
 public:
     UndoAddMultiCommand(QSet<Node*> nodes,
-                        QSet<Link*> links,
                         QString text=QString());
 
     void redo() override;

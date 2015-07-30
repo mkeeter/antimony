@@ -1,7 +1,7 @@
 #include "app/undo/undo_add_link.h"
 
-UndoAddLinkCommand::UndoAddLinkCommand(Link* link)
-    : UndoDeleteLinkCommand(link), first(true)
+UndoAddLinkCommand::UndoAddLinkCommand(Datum* start, Datum* end)
+    : UndoDeleteLinkCommand(start, end), first(true)
 {
     setText("'add link'");
 }

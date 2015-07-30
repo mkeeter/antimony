@@ -1,7 +1,8 @@
 #include "graph/hooks/ui.h"
 #include "graph/hooks/hooks.h"
-#include "graph/node/node.h"
-#include "graph/datum/datum.h"
+
+#include "graph/node.h"
+#include "graph/datum.h"
 
 #include "ui/viewport/viewport_scene.h"
 
@@ -18,7 +19,7 @@ QVector<T> ScriptUIHooks::_extractList(O obj)
     {
         extract<T> e(obj[i]);
         if (!e.check())
-            throw hooks::HookException(
+            throw AppHooks::Exception(
                     "Failed to extract data from object.");
         out << e();
     }
@@ -36,7 +37,7 @@ QVector<T> ScriptUIHooks::extractList(object obj)
     if (list_.check())
         return _extractList<T>(list_());
 
-    throw hooks::HookException("Input must be a list or a tuple");
+    throw AppHooks::Exception("Input must be a list or a tuple");
 }
 
 QVector<QVector3D> ScriptUIHooks::extractVectors(object obj)
@@ -48,7 +49,7 @@ QVector<QVector3D> ScriptUIHooks::extractVectors(object obj)
     bool got_tuple = true;
     try {
         tuples = extractList<tuple>(obj);
-    } catch (hooks::HookException e) {
+    } catch (AppHooks::Exception e) {
         got_tuple = false;
     }
 
@@ -58,7 +59,7 @@ QVector<QVector3D> ScriptUIHooks::extractVectors(object obj)
         {
             auto v = extractList<float>(extract<object>(t)());
             if (v.length() != 3)
-                throw hooks::HookException("Position data must have three terms.");
+                throw AppHooks::Exception("Position data must have three terms.");
             out << QVector3D(v[0], v[1], v[2]);
         }
         return out;
@@ -69,7 +70,7 @@ QVector<QVector3D> ScriptUIHooks::extractVectors(object obj)
     bool got_list = true;
     try {
         lists = extractList<list>(obj);
-    } catch (hooks::HookException e) {
+    } catch (AppHooks::Exception e) {
         got_list = false;
     }
 
@@ -79,13 +80,13 @@ QVector<QVector3D> ScriptUIHooks::extractVectors(object obj)
         {
             auto v = extractList<float>(extract<object>(l)());
             if (v.length() != 3)
-                throw hooks::HookException("Position data must have three terms.");
+                throw AppHooks::Exception("Position data must have three terms.");
             out << QVector3D(v[0], v[1], v[2]);
         }
         return out;
     }
 
-    throw hooks::HookException(
+    throw AppHooks::Exception(
             "Position data must be a list of 3-element lists");
 }
 
@@ -104,7 +105,7 @@ long ScriptUIHooks::getInstruction()
         Py_DECREF(o);
 
     if (instructions.contains(lineno))
-        throw hooks::HookException(
+        throw AppHooks::Exception(
                 "Cannot declare multiple UI elements on same line.");
     instructions.insert(lineno);
 
@@ -117,17 +118,16 @@ QString ScriptUIHooks::getDatum(PyObject* obj)
     if (obj == Py_None)
         return QString();
 
-    for (auto d : node->findChildren<Datum*>(
-                QString(), Qt::FindDirectChildrenOnly))
-        if (d->getValue() == obj)
-            return d->objectName();
+    for (auto d : node->childDatums())
+        if (d->currentValue() == obj)
+            return QString::fromStdString(d->getName());
     return QString();
 }
 
 PyObject* ScriptUIHooks::tupleDragFunction(tuple t)
 {
     if (len(t) != 3 && len(t) != 2)
-        throw hooks::HookException("Must provide 2 or 3 arguments to drag tuple.");
+        throw AppHooks::Exception("Must provide 2 or 3 arguments to drag tuple.");
 
     auto x = extract<object>(t[0])();
     auto xs = getDatum(x.ptr());
@@ -146,7 +146,7 @@ PyObject* ScriptUIHooks::tupleDragFunction(tuple t)
     }
 
     if (invalid_argument)
-        throw hooks::HookException(
+        throw AppHooks::Exception(
                 "Arguments to drag tuple must be None or datum values.");
 
     return defaultDragFunction(xs, ys, zs);
@@ -193,7 +193,7 @@ PyObject* ScriptUIHooks::getDragFunction(dict kwargs)
         if (t.check())
         {
             if (kwargs.has_key("relative"))
-                throw hooks::HookException(
+                throw AppHooks::Exception(
                         "Can't provide 'relative' argument "
                         "with tuple-style drag function");
             return tupleDragFunction(t());
@@ -218,17 +218,17 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
     long lineno = self.getInstruction();
 
     if (len(args) != 4 && len(args) != 3)
-        throw hooks::HookException("Expected x, y, z as arguments");
+        throw AppHooks::Exception("Expected x, y, z as arguments");
 
     // Extract x, y, z as floats from first three arguments.
     extract<float> x_(args[1]);
     if (!x_.check())
-        throw hooks::HookException("x value must be a number");
+        throw AppHooks::Exception("x value must be a number");
     float x = x_();
 
     extract<float> y_(args[2]);
     if (!y_.check())
-        throw hooks::HookException("y value must be a number");
+        throw AppHooks::Exception("y value must be a number");
     float y = y_();
 
     float z = 0;
@@ -236,13 +236,13 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
     {
         extract<float> z_(args[3]);
         if (!z_.check())
-            throw hooks::HookException("z value must be a number");
+            throw AppHooks::Exception("z value must be a number");
         z = z_();
     }
 
     ControlPoint* p = dynamic_cast<ControlPoint*>(
             self.scene->getControl(self.node, lineno));
-    if (!p || p->isDeleteScheduled())
+    if (!p)
     {
         p = new ControlPoint(self.node);
         self.scene->registerControl(self.node, lineno, p);
@@ -258,7 +258,7 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
     if (!drag_func)
     {
         if (kwargs.has_key("relative"))
-            throw hooks::HookException(
+            throw AppHooks::Exception(
                     "Can't provide 'relative' argument "
                     "without drag function");
 
@@ -293,11 +293,11 @@ object ScriptUIHooks::wireframe(tuple args, dict kwargs)
     long lineno = self.getInstruction();
 
     if (len(args) != 2)
-        throw hooks::HookException("Expected list of 3-tuples as argument");
+        throw AppHooks::Exception("Expected list of 3-tuples as argument");
 
     auto v = extractVectors(extract<object>(args[1])());
     if (v.isEmpty())
-        throw hooks::HookException("Wireframe must have at least one point");
+        throw AppHooks::Exception("Wireframe must have at least one point");
 
     ControlWireframe* w = dynamic_cast<ControlWireframe*>(
             self.scene->getControl(self.node, lineno));
@@ -310,7 +310,7 @@ object ScriptUIHooks::wireframe(tuple args, dict kwargs)
 
     PyObject* drag_func = self.getDragFunction(kwargs);
     if (!drag_func && kwargs.has_key("relative"))
-        throw hooks::HookException(
+        throw AppHooks::Exception(
                 "Can't provide 'relative' argument "
                 "without drag function");
 
@@ -330,7 +330,7 @@ float ScriptUIHooks::getFloat(float v, dict kwargs, std::string key)
     {
         extract<float> v_(kwargs[key]);
         if (!v_.check())
-            throw hooks::HookException(key + " value must be a number");
+            throw AppHooks::Exception(key + " value must be a number");
         v = v_();
     }
     return v;
@@ -342,7 +342,7 @@ bool ScriptUIHooks::getBool(bool b, dict kwargs, std::string key)
     {
         extract<bool> b_(kwargs[key]);
         if (!b_.check())
-            throw hooks::HookException(key + " value must be a boolean");
+            throw AppHooks::Exception(key + " value must be a boolean");
         b = b_();
     }
     return b;
@@ -354,7 +354,7 @@ QColor ScriptUIHooks::getColor(QColor color, dict kwargs)
     {
         auto rgb = extractList<int>(kwargs["color"]);
         if (rgb.length() != 3)
-            throw hooks::HookException("color tuple must have three values");
+            throw AppHooks::Exception("color tuple must have three values");
         color = QColor(rgb[0], rgb[1], rgb[2]);
     }
     return color;

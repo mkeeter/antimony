@@ -4,17 +4,23 @@
 #include "control/control.h"
 #include "control/proxy.h"
 
+#include "render/render_worker.h"
+#include "render/render_proxy.h"
 #include "ui/viewport/viewport.h"
+#include "ui/viewport/viewport_scene.h"
 
-ControlRoot::ControlRoot(Node* n)
-    : node(n), selected(false)
+#include "graph/node.h"
+
+ControlRoot::ControlRoot(Node* n, ViewportScene* vs)
+    : vscene(vs), selected(false)
 {
-    // Nothing to do here
+    n->installWatcher(this);
+    trigger(n->getState());
 }
 
 void ControlRoot::registerControl(long index, Control* c)
 {
-    controls[index] = c;
+    controls[index].reset(c);
     connect(c, &Control::proxySelectionChanged,
             this, &ControlRoot::changeProxySelection);
     connect(c, &Control::proxySelectionChanged,
@@ -23,11 +29,35 @@ void ControlRoot::registerControl(long index, Control* c)
             c, &Control::changeProxySelection);
 }
 
+void ControlRoot::checkRender(Datum* d)
+{
+    if (workers.contains(d))
+        emit(workers[d]->changed());
+}
+
+void ControlRoot::trigger(const NodeState& state)
+{
+    for (auto d : state.datums)
+        if (RenderWorker::accepts(d) && !workers.contains(d))
+        {
+            workers[d].reset(new RenderWorker(d));
+            for (auto v : vscene->viewports)
+                new RenderProxy(workers[d].data(), v);
+        }
+
+    auto itr = controls.begin();
+    while (itr != controls.end())
+        if (itr.value()->checkTouched())
+            itr++;
+        else
+            itr = controls.erase(itr);
+}
+
 Control* ControlRoot::get(long index) const
 {
     if (!controls.contains(index) || controls[index].isNull())
         return NULL;
-    return controls[index];
+    return controls[index].data();
 }
 
 void ControlRoot::setGlow(bool g)
@@ -39,21 +69,13 @@ void ControlRoot::setGlow(bool g)
 
 void ControlRoot::makeProxiesFor(Viewport* v)
 {
-    prune();
-
     for (auto itr = controls.begin(); itr != controls.end(); ++itr)
     {
-        auto p = new ControlProxy(itr.value(), v);
+        auto p = new ControlProxy(itr.value().data(), v);
         if (selected)
             p->selectProxy(selected);
     }
-}
 
-void ControlRoot::prune()
-{
-    decltype(controls) new_controls;
-    for (auto itr = controls.begin(); itr != controls.end(); ++itr)
-        if (!itr.value().isNull())
-            new_controls[itr.key()] = itr.value();
-    controls = new_controls;
+    for (auto itr=workers.begin(); itr != workers.end(); ++itr)
+        new RenderProxy(itr.value().data(), v);
 }

@@ -17,9 +17,9 @@ output('shape', fab.shapes.pyramid(xmin, xmax, ymin, ymax, z0, z1))
 # UI
 x = (xmin + xmax) / 2
 y = (ymin + ymax) / 2
-fab.ui.wireframe([(xmin, ymin, z0), (x, y, z1), (xmax, ymax, z0)])
+sb.ui.wireframe([(xmin, ymin, z0), (x, y, z1), (xmax, ymax, z0)])
 
-fab.ui.point(x, y, z1, drag=(None, None, z1))
-fab.ui.point(xmin, ymin, z0)
-fab.ui.point(xmax, ymax, z0)
+sb.ui.point(x, y, z1, drag=(None, None, z1))
+sb.ui.point(xmin, ymin, z0)
+sb.ui.point(xmax, ymax, z0)
 
