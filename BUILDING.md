@@ -41,7 +41,18 @@ sudo apt-get install libboost-all-dev
 sudo apt-get install libgl1-mesa-dev
 sudo apt-get install lemon
 sudo apt-get install flex
+```
 
+Because 14.04 ships with gcc 4.8, you'll need to update the compiler manually:
+```
+sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+sudo apt-get update
+sudo apt-get install gcc-4.9 g++-4.9
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9
+```
+
+Then, you can clone and build Antimony:
+```
 git clone https://github.com/mkeeter/antimony
 cd antimony
 mkdir build
