@@ -19,7 +19,7 @@ class Datum;
 class Node;
 class Graph;
 
-class ViewportScene : public QObject, GraphWatcher
+class ViewportScene : public QObject, public GraphWatcher
 {
     Q_OBJECT
 public:

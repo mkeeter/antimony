@@ -3,7 +3,6 @@
 
 #include "graph/datum.h"
 
-
 UndoDeleteLinkCommand::UndoDeleteLinkCommand(
         const Datum* start, Datum* end, QUndoCommand* parent)
     : UndoCommand(parent), start(start), end(end)

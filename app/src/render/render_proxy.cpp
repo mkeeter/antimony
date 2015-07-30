@@ -33,8 +33,7 @@ RenderProxy::RenderProxy(RenderWorker* worker, Viewport* viewport)
     connect(worker, &RenderWorker::changed,
             this, &RenderProxy::startRender);
 
-    if (hasNoOutput())
-        startRender();
+    startRender();
 }
 
 RenderProxy::~RenderProxy()

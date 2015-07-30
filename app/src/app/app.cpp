@@ -191,6 +191,7 @@ void App::loadFile(QString f)
 {
     filename = f;
     root->clear();
+    root->uninstallWatcher(view_scene);
 
     QFile file(f);
     if (!file.open(QIODevice::ReadOnly))
@@ -223,6 +224,9 @@ void App::loadFile(QString f)
         graph_scene->setInspectorPositions(ds.inspectors);
         emit(windowTitleChanged(getWindowTitle()));
     }
+
+    root->installWatcher(view_scene);
+    view_scene->trigger(root->getState());
 }
 
 void App::startUpdateCheck()
