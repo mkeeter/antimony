@@ -175,7 +175,8 @@ InputPort* GraphScene::getInputPortNear(QPointF pos, Datum* d)
     for (auto i : items())
     {
         InputPort* p = dynamic_cast<InputPort*>(i);
-        if (p && (d == NULL || p->getDatum()->acceptsLink(d)))
+        if (p && p->isVisible() && (d == NULL ||
+                                    p->getDatum()->acceptsLink(d)))
         {
             QPointF delta = p->mapToScene(p->boundingRect().center()) - pos;
             float d = QPointF::dotProduct(delta, delta);
