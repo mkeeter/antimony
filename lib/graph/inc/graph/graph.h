@@ -59,9 +59,10 @@ public:
     PyObject* proxyDict(Datum* caller);
 
     /*
-     *  Sets the callback object.
+     *  Sets and clears callback objects.
      */
     void installWatcher(GraphWatcher* w) { watchers.push_back(w); }
+    void uninstallWatcher(GraphWatcher* w) { watchers.remove(w); }
 
     /*
      *  Triggers all of the connected GraphWatchers
