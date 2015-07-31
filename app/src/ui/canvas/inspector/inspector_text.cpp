@@ -53,13 +53,13 @@ void DatumTextItem::trigger(const DatumState& state)
         t = QString::fromStdString(state.text);
 
         // Use QString to truncate floats to a sane number of decimal places
-        QRegularExpression num("[0-9]+\\.[0-9]+");
+        QRegularExpression num("([0-9]+)\\.([0-9]+)");
         QRegularExpressionMatch match = num.match(t);
         if (match.isValid() && match.captured(2).size() > 6)
         {
             auto decimals = match.captured(2);
             decimals.truncate(6);
-            t = match.captured(0) + "." + decimals;
+            t = match.captured(1) + "." + decimals;
         }
     }
     else
