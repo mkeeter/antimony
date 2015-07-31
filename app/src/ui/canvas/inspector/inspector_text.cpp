@@ -6,6 +6,7 @@
 #include <QPainter>
 #include <QToolTip>
 #include <QKeyEvent>
+#include <QRegularExpression>
 
 #include "ui/canvas/inspector/inspector_text.h"
 #include "ui/util/colors.h"
@@ -52,10 +53,14 @@ void DatumTextItem::trigger(const DatumState& state)
         t = QString::fromStdString(state.text);
 
         // Use QString to truncate floats to a sane number of decimal places
-        bool okay = false;
-        float f = t.toFloat(&okay);
-        if (okay)
-            t = QString::number(f);
+        QRegularExpression num("[0-9]+\\.[0-9]+");
+        QRegularExpressionMatch match = num.match(t);
+        if (match.isValid() && match.captured(2).size() > 6)
+        {
+            auto decimals = match.captured(2);
+            decimals.truncate(6);
+            t = match.captured(0) + "." + decimals;
+        }
     }
     else
     {
