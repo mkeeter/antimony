@@ -106,7 +106,7 @@ void AppHooks::loadScriptHooks(PyObject* g, Node* n)
         PyObject* collections = PyImport_ImportModule("collections");
         sb_tuple = PyObject_CallMethod(
                 collections, "namedtuple", "(s[sss])", "SbObject",
-                "ui", "export", "colors");
+                "ui", "export", "color");
         Py_DECREF(collections);
     }
 
