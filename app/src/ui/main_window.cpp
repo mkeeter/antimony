@@ -254,8 +254,12 @@ void MainWindow::populateMenu(QMenu* menu, bool recenter, Viewport* v)
     populateNodeMenu(menu, recenter, v);
 
     menu->addSeparator();
-    /*
+
     addNodeToMenu(QStringList(), "Script", menu, recenter,
-                  static_cast<NodeConstructor>(Node), v);
-                  */
+                [](Graph *r){ return new Node("s*",
+                    "import fab\n\n"
+                    "title('script')\n"
+                    "input('r', float, 1)\n"
+                    "output('c', fab.shapes.circle(0, 0, r))",
+                    r); }, v);
 }
