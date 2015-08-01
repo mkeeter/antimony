@@ -13,6 +13,7 @@
 #include "ui/canvas/graph_scene.h"
 #include "ui/canvas/inspector/inspector_buttons.h"
 #include "ui/canvas/inspector/inspector.h"
+#include "ui/util/colors.h"
 
 using namespace boost::python;
 
@@ -104,7 +105,8 @@ void AppHooks::loadScriptHooks(PyObject* g, Node* n)
     {
         PyObject* collections = PyImport_ImportModule("collections");
         sb_tuple = PyObject_CallMethod(
-                collections, "namedtuple", "(s[ss])", "SbObject", "ui", "export");
+                collections, "namedtuple", "(s[sss])", "SbObject",
+                "ui", "export", "color");
         Py_DECREF(collections);
     }
 
@@ -133,7 +135,7 @@ void AppHooks::loadScriptHooks(PyObject* g, Node* n)
     ui_ref->node = n;
 
     PyObject* sb = PyObject_CallFunctionObjArgs(
-            sb_tuple, ui_obj, export_obj, NULL);
+            sb_tuple, ui_obj, export_obj, Colors::PyColors(), NULL);
     PyDict_SetItemString(g, "sb", sb);
 }
 

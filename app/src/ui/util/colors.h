@@ -1,6 +1,7 @@
 #ifndef COLORS_H
 #define COLORS_H
 
+#include <Python.h>
 #include <QColor>
 
 class Datum;
@@ -31,9 +32,9 @@ QColor dim(QColor c);
 QColor getColor(Datum* d);
 
 /*
- * Injects a 'colors' module into the fab namespace.
+ * Returns a Python object that has all of our colors as tuples
  */
-void loadColors();
+PyObject* PyColors();
 }
 
 #endif // COLORS_H

@@ -17,6 +17,6 @@ sb.ui.wireframe([
     (x0 - 0.7, _y - 1, z0 - 0.7),
     (x0 + 0.7, _y - 1, z0 + 0.7),
     (x0 + 0.7, _y + 1, z0 + 0.7),
-    (x0 - 0.7, _y + 1, z0 - 0.7)], color=fab.color.teal, close=True)
-sb.ui.point(x0, _y, z0, color=fab.color.teal)
+    (x0 - 0.7, _y + 1, z0 - 0.7)], color=sb.color.teal, close=True)
+sb.ui.point(x0, _y, z0, color=sb.color.teal)
 
