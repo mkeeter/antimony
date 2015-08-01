@@ -1,3 +1,4 @@
+#include <Python.h>
 #include <cmath>
 
 #include <QGraphicsSceneMouseEvent>
