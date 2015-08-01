@@ -203,6 +203,7 @@ void SceneDeserializer::updateNode(QJsonObject* in)
 
             // Update the script with new namespaces
             s.replace("fab.ui", "sb.ui");
+            s.replace("fab.colors", "sb.colors");
             s.replace("meta.export_", "sb.export.");
 
             // If we use math functions, add an 'import math' call
