@@ -54,7 +54,6 @@ void MainWindow::setCentralWidget(QWidget* w)
     {
         e->customizeUI(ui);
         window_type = "Script";
-        e->getNode()->parentGraph()->installWatcher(this);
     }
     else
     {
@@ -120,17 +119,6 @@ bool MainWindow::isShaded() const
     return ui->actionShaded->isChecked();
 }
 
-void MainWindow::trigger(const GraphState& state)
-{
-    if (auto e = dynamic_cast<ScriptPane*>(centralWidget()))
-    {
-        if (state.nodes.count(e->getNode()) == 0)
-        {
-            e->clearNode();
-            close();
-        }
-    }
-}
 ////////////////////////////////////////////////////////////////////////////////
 
 void MainWindow::createNew(bool recenter, NodeConstructorFunction f,

@@ -8,7 +8,7 @@
 
 namespace Ui { class MainWindow; }
 
-class ScriptPane : public QWidget, NodeWatcher
+class ScriptPane : public QWidget, NodeWatcher, GraphWatcher
 {
     Q_OBJECT
 public:
@@ -31,17 +31,14 @@ public:
     void trigger(const NodeState& state) override;
 
     /*
+     *  On graph change, delete self if the node is gone.
+     */
+    void trigger(const GraphState& state) override;
+
+    /*
      *  Returns the target datum.
      */
     Node* getNode() const { return node; }
-
-    /*
-     *  Delete the assigned node
-     *
-     *  (used to flag that uninstallWatcher shouldn't be called
-     *  in ScriptPane's destructor.
-     */
-    void clearNode() { node = NULL; }
 
     /*
      *  Override paint event so that we can style the widget with CSS.
@@ -57,6 +54,7 @@ protected:
     void resizePanes();
 
     Node* node;
+    Graph* graph;
 
     ScriptEditor* editor;
     QPlainTextEdit* output;
