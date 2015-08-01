@@ -21,7 +21,7 @@ def drag_base(this, dx, dy, dz):
     this.y1 += dy
 
 sb.ui.wireframe([(x0 + s0, y0, 0), (x0, y0, 0),
-                  (x0, y1, 0), (x0 + s1, y1, 0)], color=fab.color.teal)
-sb.ui.point(x0, y0, color=fab.color.teal, drag=drag_base)
-sb.ui.point(x0 + s0, y0, color=fab.color.teal, drag=(s0, None, None))
-sb.ui.point(x0 + s1, y1, color=fab.color.teal, drag=(s1, y1, None))
+                  (x0, y1, 0), (x0 + s1, y1, 0)], color=sb.color.teal)
+sb.ui.point(x0, y0, color=sb.color.teal, drag=drag_base)
+sb.ui.point(x0 + s0, y0, color=sb.color.teal, drag=(s0, None, None))
+sb.ui.point(x0 + s1, y1, color=sb.color.teal, drag=(s1, y1, None))
