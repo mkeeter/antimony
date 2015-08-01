@@ -4,7 +4,7 @@ title('Text')
 
 input('x', float)
 input('y', float)
-input('text', str)
+input('text', str, 'hello')
 input('scale', float, 1)
 
 output('shape', fab.shapes.text(text, x, y, scale))
