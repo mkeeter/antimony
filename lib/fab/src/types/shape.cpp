@@ -115,24 +115,28 @@ object Shape::init(tuple args, dict kwargs)
 
 std::string Shape::repr() const
 {
+    std::string out = "fab.types.Shape('" + math + "'";
+
     // Special case for infinite (default) bounds
-    if (bounds.xmin == -INFINITY && bounds.xmax == INFINITY &&
-        bounds.ymin == -INFINITY && bounds.ymax == INFINITY &&
-        bounds.zmin == -INFINITY && bounds.zmax == INFINITY)
+    if (bounds.xmin != -INFINITY || bounds.xmax != INFINITY ||
+        bounds.ymin != -INFINITY || bounds.ymax != INFINITY ||
+        bounds.zmin != -INFINITY || bounds.zmax != INFINITY)
     {
-        return "fab.types.Shape('" + math + "')";
-    }
-    else
-    {
-        return "fab.types.Shape('" +
-            math + "'," +
-            "float('" + std::to_string(bounds.xmin) + "')," +
+        out +=
+           ",float('" + std::to_string(bounds.xmin) + "')," +
             "float('" +std::to_string(bounds.ymin) + "')," +
             "float('" +std::to_string(bounds.zmin) + "')," +
             "float('" +std::to_string(bounds.xmax) + "')," +
             "float('" +std::to_string(bounds.ymax) + "')," +
-            "float('" +std::to_string(bounds.zmax) + "'))";
+            "float('" +std::to_string(bounds.zmax) + "')";
     }
+
+    if (r != -1 || g != -1 || b != -1)
+        out += ",color=(" + std::to_string(r) + "," +
+                            std::to_string(g) + "," +
+                            std::to_string(b) + ")";
+
+    return out + ")";
 }
 
 Shape Shape::map(Transform t) const
