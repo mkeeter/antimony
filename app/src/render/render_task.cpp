@@ -110,8 +110,8 @@ void RenderTask::render2d(Shape s)
     matrix_flat(2, 1) = 0;
     matrix_flat(2, 2) = 1;
 
-    Shape s_flat(s.math, s.bounds.xmin, s.bounds.ymin, 0,
-                         s.bounds.xmax, s.bounds.ymax, 0);
+    Shape s_flat(s.math, Bounds(s.bounds.xmin, s.bounds.ymin, 0,
+                                s.bounds.xmax, s.bounds.ymax, 0));
 
     Transform T_flat = getTransform(matrix_flat);
     Shape transformed = s_flat.map(T_flat);

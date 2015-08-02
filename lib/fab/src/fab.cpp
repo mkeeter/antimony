@@ -1,4 +1,5 @@
 #include <boost/python.hpp>
+#include <boost/python/raw_function.hpp>
 
 #include "fab/fab.h"
 #include "fab/types/shape.h"
@@ -35,12 +36,9 @@ BOOST_PYTHON_MODULE(_fabtypes)
             .def("is_bounded_xyz", &Bounds::is_bounded_xyz,
                  "Returns True if both all bounds are non-infinite.");
 
-    class_<Shape>("Shape", init<>())
-            .def(init<std::string>())
-            .def(init<std::string, float, float, float, float>())
-            .def(init<std::string, float, float, float, float, float, float>())
-            .def(init<std::string, Bounds>())
-            .def(init<object>())
+    class_<Shape>("Shape", no_init)
+            .def("__init__", raw_function(&Shape::init), "raw constructor")
+            .def(init<std::string, Bounds, int, int, int>())
             .def_readonly("math", &Shape::math)
             .def_readonly("bounds", &Shape::bounds)
             .def_readwrite("_r", &Shape::r)
