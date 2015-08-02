@@ -15,12 +15,12 @@ input('shape', fab.types.Shape)
 output('scaled', fab.shapes.scale_xy(shape, x0, y0, sx, sy))
 
 # UI
-fab.ui.wireframe([(x0 + sx, y0, _z), (x0, y0, _z), (x0, y0 + sy, _z)],
-                 color=fab.color.teal)
-fab.ui.wireframe([(x0 + sx, y0 + sx/10, _z), (x0 + sx, y0 - sx/10, _z)],
-                 color=fab.color.teal)
-fab.ui.wireframe([(x0 + sy/10, y0 + sy, _z), (x0 - sy/10, y0 + sy, _z)],
-                 color=fab.color.teal)
-fab.ui.point(x0, y0, _z, color=fab.color.teal)
-fab.ui.point(x0 + sx, y0, _z, color=fab.color.teal, drag=(sx, None, None))
-fab.ui.point(x0, y0 + sy, _z, color=fab.color.teal, drag=(None, sy, None))
+sb.ui.wireframe([(x0 + sx, y0, _z), (x0, y0, _z), (x0, y0 + sy, _z)],
+                 color=sb.color.teal)
+sb.ui.wireframe([(x0 + sx, y0 + sx/10, _z), (x0 + sx, y0 - sx/10, _z)],
+                 color=sb.color.teal)
+sb.ui.wireframe([(x0 + sy/10, y0 + sy, _z), (x0 - sy/10, y0 + sy, _z)],
+                 color=sb.color.teal)
+sb.ui.point(x0, y0, _z, color=sb.color.teal)
+sb.ui.point(x0 + sx, y0, _z, color=sb.color.teal, drag=(sx, None, None))
+sb.ui.point(x0, y0 + sy, _z, color=sb.color.teal, drag=(None, sy, None))

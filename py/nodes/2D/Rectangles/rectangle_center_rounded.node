@@ -34,11 +34,11 @@ def drag_hw(this, x, y, z):
    this.width = abs(2 * (x - this.x))
 
 # UI
-fab.ui.wireframe(
+sb.ui.wireframe(
         [(xmin, ymin, 0), (xmax, ymin, 0), (xmax, ymax, 0), (xmin, ymax, 0)],
         close=True)
-fab.ui.wireframe([(xmax - r_, ymax, 0), (xmax, ymax - r_, 0)])
-fab.ui.point(x, y)
-fab.ui.point(xmax, ymax, drag=drag_hw, relative=False)
-fab.ui.point(xmax, ymax - r_, drag=drag_r, relative=False)
+sb.ui.wireframe([(xmax - r_, ymax, 0), (xmax, ymax - r_, 0)])
+sb.ui.point(x, y)
+sb.ui.point(xmax, ymax, drag=drag_hw, relative=False)
+sb.ui.point(xmax, ymax - r_, drag=drag_r, relative=False)
 

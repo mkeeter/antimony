@@ -1,4 +1,5 @@
 import fab
+import math
 
 title('Rotate (Y)')
 
@@ -12,21 +13,21 @@ output('rotated', fab.shapes.rotate_y(shape, a, x, z))
 
 # UI
 rad = math.radians(a)
-fab.ui.wireframe([(x + math.cos(rad), _y, z + math.sin(rad)),
+sb.ui.wireframe([(x + math.cos(rad), _y, z + math.sin(rad)),
                   (x, _y, z),
-                  (x + 1, _y, z)], color=fab.color.teal)
+                  (x + 1, _y, z)], color=sb.color.teal)
 
 # Draw a semi-circular arc showing the rotation
 if int(a) % 360 != 0:
-    fab.ui.wireframe([
+    sb.ui.wireframe([
         (x + math.cos(math.radians(a_)) * 0.3, _y,
          z + math.sin(math.radians(a_)) * 0.3)
-        for a_ in range(int(a) % 360)], color=fab.color.teal)
+        for a_ in range(int(a) % 360)], color=sb.color.teal)
 
-fab.ui.point(x, _y, z, color=fab.color.teal)
+sb.ui.point(x, _y, z, color=sb.color.teal)
 
 def drag_pt(this, x, y, z):
     this.a = math.degrees(math.atan2(z - this.z, x - this.x))
-fab.ui.point(x + math.cos(rad), _y, z + math.sin(rad),
-             color=fab.color.teal, drag=drag_pt, relative=False)
+sb.ui.point(x + math.cos(rad), _y, z + math.sin(rad),
+             color=sb.color.teal, drag=drag_pt, relative=False)
 

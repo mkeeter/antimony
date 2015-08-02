@@ -10,11 +10,11 @@ input('shape', fab.types.Shape)
 output('out', fab.shapes.recenter(shape, x, y, z))
 
 # UI
-fab.ui.wireframe([(x, y - 0.3, z),
-                  (x, y + 0.3, z)], color=fab.color.teal)
-fab.ui.wireframe([(x - 0.3, y, z),
-                  (x + 0.3, y, z)], color=fab.color.teal)
-fab.ui.wireframe([(x, y, z - 0.3),
-                  (x, y, z + 0.3)], color=fab.color.teal)
+sb.ui.wireframe([(x, y - 0.3, z),
+                  (x, y + 0.3, z)], color=sb.color.teal)
+sb.ui.wireframe([(x - 0.3, y, z),
+                  (x + 0.3, y, z)], color=sb.color.teal)
+sb.ui.wireframe([(x, y, z - 0.3),
+                  (x, y, z + 0.3)], color=sb.color.teal)
 
-fab.ui.point(x, y, z, color=fab.color.teal)
+sb.ui.point(x, y, z, color=sb.color.teal)

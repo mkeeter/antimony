@@ -4,12 +4,12 @@ title('Text')
 
 input('x', float)
 input('y', float)
-input('text', str)
+input('text', str, 'hello')
 input('scale', float, 1)
 
 output('shape', fab.shapes.text(text, x, y, scale))
 
 # UI
-fab.ui.wireframe([(x, y, 0), (x, y+scale, 0)])
-fab.ui.point(x, y, 0)
-fab.ui.point(x, y + scale, 0, drag=(None, scale, None))
+sb.ui.wireframe([(x, y, 0), (x, y+scale, 0)])
+sb.ui.point(x, y, 0)
+sb.ui.point(x, y + scale, 0, drag=(None, scale, None))

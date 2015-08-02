@@ -5,4 +5,4 @@ title('Point (2D)')
 input('x', float)
 input('y', float)
 
-fab.ui.point(x, y, 0)
+sb.ui.point(x, y, 0)

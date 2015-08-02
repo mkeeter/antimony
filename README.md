@@ -14,6 +14,12 @@ solid, but not recommended for mission-critical use.
 To get started, refer to the [build instructions](https://github.com/mkeeter/antimony/blob/develop/BUILDING.md)
 or download a [release build](https://github.com/mkeeter/antimony/releases).
 
+## Support
+
+If you have a general question, [send it along to the Google Group](https://groups.google.com/forum/#!forum/antimony-dev).
+
+If you have a specific issue, [check the issues](https://github.com/mkeeter/antimony/issues) to see if someone else has had the same problem.
+
 ## License
 Antimony is released under the MIT License:
 

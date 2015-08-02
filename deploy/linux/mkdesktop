@@ -1,0 +1,80 @@
+#!/usr/bin/env python3
+"""
+Writes out a desktop file for this project.
+
+Suggested location: $XDG_DATA_HOME/applications/antimony.desktop
+"""
+
+import argparse
+import os
+import subprocess
+
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('filename', nargs='?',
+                    help='where to write the desktop file')
+
+TEMPLATE = """[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Antimony
+Comment=Tree-based Modeler
+GenericName=CAD Application
+Exec={exec} %f
+Icon={icon}
+Terminal=false
+Categories=Graphics;Science;Engineering;
+MimeType=application/x-extension-sb;application/x-antimony;
+StartupWMClass=antimony
+"""
+
+
+def get_default_file():
+    """
+    Divine the default filename to write to.
+    """
+    if 'XDG_DATA_HOME' in os.environ:
+        return os.path.join(os.environ['XDG_DATA_HOME'], 'applications/antimony.desktop')
+    else:
+        return os.path.expanduser('~/.local/share/applications/antimony.desktop')
+
+
+def project():
+    """
+    Get the directory name of the project
+    """
+    return os.path.dirname(  # .../antimony
+        os.path.dirname(  # .../deploy
+            os.path.dirname(  # .../linux
+                os.path.abspath(__file__)  # .../mkdesktop
+                )
+            )
+        )
+
+
+def find_antimony(usepath=False):
+    """
+    Track down the antimony binary
+    """
+    proanti = os.path.join(project(), 'build', 'app', 'antimony')
+    if usepath:
+        for path in os.environ['PATH'].split(':'):
+            pathanti = os.path.join(path, 'antimony')
+            if os.path.exists(pathanti):
+                return 'antimony'
+    else:
+        return proanti
+
+
+def find_icon():
+    """
+    Locate the antimony icon
+    """
+    return os.path.join(project(), 'deploy', 'icon.svg')
+
+if __name__ == '__main__':
+    args = parser.parse_args()
+    fn = args.filename or get_default_file()
+    print("Project:", project())
+    with open(fn, 'w') as desktop:
+        desktop.write(TEMPLATE.format(exec=find_antimony(), icon=find_icon()))
+    subprocess.check_call(['xdg-desktop-menu', 'forceupdate'])

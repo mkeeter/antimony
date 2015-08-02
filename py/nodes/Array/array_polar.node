@@ -1,4 +1,5 @@
 import fab
+import math
 
 title('Array (polar)')
 
@@ -10,9 +11,9 @@ input('n', int, 4)
 output('array', fab.shapes.iterate_polar(shape, x, y, n))
 
 # UI
-fab.ui.wireframe([
+sb.ui.wireframe([
     (math.cos(i/36. * 2*math.pi) * 0.3 + x,
      math.sin(i/36. * 2*math.pi) * 0.3 + y, 0)
-    for i in range(36)], close=True, color=fab.color.teal)
+    for i in range(36)], close=True, color=sb.color.teal)
 
-fab.ui.point(x, y, 0, color=fab.color.teal)
+sb.ui.point(x, y, 0, color=sb.color.teal)

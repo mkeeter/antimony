@@ -10,11 +10,11 @@ input('shape', fab.types.Shape)
 output('scaled', fab.shapes.scale_y(shape, y0, s))
 
 # UI
-kwargs = {'color':fab.color.teal}
-fab.ui.wireframe([(_x + 0.2*s, y0, _z), (_x - 0.2*s, y0, _z)], **kwargs)
-fab.ui.wireframe([(_x, y0, _z), (_x, y0 + s, _z)], **kwargs)
-fab.ui.wireframe([(_x - 0.1*s, y0 + 0.9*s, _z), (_x, y0 + s, _z),
+kwargs = {'color':sb.color.teal}
+sb.ui.wireframe([(_x + 0.2*s, y0, _z), (_x - 0.2*s, y0, _z)], **kwargs)
+sb.ui.wireframe([(_x, y0, _z), (_x, y0 + s, _z)], **kwargs)
+sb.ui.wireframe([(_x - 0.1*s, y0 + 0.9*s, _z), (_x, y0 + s, _z),
                   (_x + 0.1*s, y0 + 0.9*s, _z)], **kwargs)
 
-fab.ui.point(_x, y0, _z, color=fab.color.teal)
-fab.ui.point(_x, y0 + s, _z, color=fab.color.teal, drag=(None,s,None))
+sb.ui.point(_x, y0, _z, color=sb.color.teal)
+sb.ui.point(_x, y0 + s, _z, color=sb.color.teal, drag=(None,s,None))

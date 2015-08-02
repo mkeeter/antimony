@@ -2,6 +2,7 @@
 # Matt Keeter 5/31/15
 
 import fab
+import math
 
 title('Torus (Y)')
 
@@ -14,18 +15,18 @@ input('r', float, 0.25)
 output('shape', fab.shapes.torus_y(x, y, z, R, r))
 
 # UI
-fab.ui.wireframe([
+sb.ui.wireframe([
      (x,
       math.sin(i/36. * 2*math.pi) * r + y,
       math.cos(i/36. * 2*math.pi) * r + z + R)
     for i in range(36)], close=True)
-fab.ui.wireframe([
+sb.ui.wireframe([
      (math.sin(i/36. * 2*math.pi) * R + x,
       y,
       math.cos(i/36. * 2*math.pi) * R + z)
     for i in range(36)], close=True)
-fab.ui.wireframe([(x, y, z), (x, y, z + R + r)])
-fab.ui.point(x, y, z)
-fab.ui.point(x, y, z + R, drag=(None, None, R))
-fab.ui.point(x, y, z + R + r, drag=(None, None, r))
+sb.ui.wireframe([(x, y, z), (x, y, z + R + r)])
+sb.ui.point(x, y, z)
+sb.ui.point(x, y, z + R, drag=(None, None, R))
+sb.ui.point(x, y, z + R + r, drag=(None, None, r))
 

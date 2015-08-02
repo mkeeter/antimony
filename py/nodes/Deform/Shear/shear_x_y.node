@@ -15,13 +15,13 @@ output('sheared', fab.shapes.shear_x_y(shape, y0, y1, dx0, dx1))
 
 # UI
 dy = abs(y1 - y0)
-fab.ui.wireframe([(dx0, y0, 0), (dx1, y1, 0)], color=fab.color.teal)
-fab.ui.wireframe([(dx0 - dy/5, y0, 0), (dx0 + dy/5, y0, 0)],
-        color=fab.color.teal)
-fab.ui.wireframe([(dx1 - dy/5, y1, 0), (dx1 + dy/5, y1, 0)],
-        color=fab.color.teal)
-fab.ui.point(dx0, y0, 0, color=fab.color.teal)
-fab.ui.point(dx1, y1, 0, color=fab.color.teal)
+sb.ui.wireframe([(dx0, y0, 0), (dx1, y1, 0)], color=sb.color.teal)
+sb.ui.wireframe([(dx0 - dy/5, y0, 0), (dx0 + dy/5, y0, 0)],
+        color=sb.color.teal)
+sb.ui.wireframe([(dx1 - dy/5, y1, 0), (dx1 + dy/5, y1, 0)],
+        color=sb.color.teal)
+sb.ui.point(dx0, y0, 0, color=sb.color.teal)
+sb.ui.point(dx1, y1, 0, color=sb.color.teal)
 
 
 

@@ -1,4 +1,5 @@
 import fab
+import math
 
 title('Cylinder (Y)')
 
@@ -11,19 +12,19 @@ input('r', float, 1)
 output('shape', fab.shapes.cylinder_y(x, ymin, ymax, z, r))
 
 # UI
-fab.ui.wireframe([(x, ymin, z), (x, ymax, z)])
-fab.ui.wireframe([(x, ymin, z), (x+r, ymin, z)])
+sb.ui.wireframe([(x, ymin, z), (x, ymax, z)])
+sb.ui.wireframe([(x, ymin, z), (x+r, ymin, z)])
 
-fab.ui.wireframe([
+sb.ui.wireframe([
     (math.cos(i/36. * 2*math.pi) * r + x, ymin,
      math.sin(i/36. * 2*math.pi) * r + z)
     for i in range(36)], close=True)
 
-fab.ui.wireframe([
+sb.ui.wireframe([
     (math.cos(i/36. * 2*math.pi) * r + x, ymax,
      math.sin(i/36. * 2*math.pi) * r + z)
     for i in range(36)], close=True)
 
-fab.ui.point(x, ymin, z)
-fab.ui.point(x, ymax, z)
-fab.ui.point(x+r, ymin, z, drag=(r, None, None))
+sb.ui.point(x, ymin, z)
+sb.ui.point(x, ymax, z)
+sb.ui.point(x+r, ymin, z, drag=(r, None, None))

@@ -1,0 +1,27 @@
+import fab
+import math
+
+#http://en.wikipedia.org/wiki/Schwarz_minimal_surface
+title('Schwarz Diamond')
+
+input('xmin', float, -1)
+input('xmax', float, 1)
+input('ymin', float, -1)
+input('ymax', float, 1)
+input('zmin', float, -1)
+input('zmax', float, 1)
+
+input('x_period', float, 60)
+input('y_period', float, 60)
+input('z_period', float, 60)
+input('thickness', float, .2)
+
+x_factor = 2 * math.pi / x_period
+y_factor = 2 * math.pi / y_period
+z_factor = 2 * math.pi / z_period
+
+fn = "= abs( sin(X/%(x_factor)s) * sin(Y/%(y_factor)s) * sin(Z/%(z_factor)s) + sin(X/%(x_factor)s) * cos(Y/%(y_factor)s) * cos(Z/%(z_factor)s) + cos(X/%(x_factor)s) * sin(X/%(x_factor)s) * cos(Z/%(z_factor)s) + cos(X/%(x_factor)s) * cos(Y/%(y_factor)s) * sin(Z/%(z_factor)s)) - %(thickness)s;" % locals()
+
+output('shape', fab.shapes.function_prefix_xyz(fn, xmin, xmax,
+                                                   ymin, ymax,
+                                                   zmin, zmax))

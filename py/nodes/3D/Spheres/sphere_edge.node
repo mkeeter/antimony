@@ -22,11 +22,11 @@ r = math.sqrt((x1 - x0)**2 + (y1 - y0)**2 + (z1 - z0)**2) / 2
 output('shape', fab.shapes.sphere(x, y, z, r))
 
 # UI
-fab.ui.wireframe([
+sb.ui.wireframe([
     (math.cos(i/36. * 2*math.pi) * r + x,
      math.sin(i/36. * 2*math.pi) * r + y, z)
     for i in range(36)], close=True)
-fab.ui.wireframe([(x0,y0,z0), (x1,y1,z1)])
+sb.ui.wireframe([(x0,y0,z0), (x1,y1,z1)])
 
-fab.ui.point(x0, y0, z0)
-fab.ui.point(x1, y1, z1)
+sb.ui.point(x0, y0, z0)
+sb.ui.point(x1, y1, z1)

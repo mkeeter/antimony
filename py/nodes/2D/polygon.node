@@ -2,6 +2,7 @@
 # Matt Keeter 6/12/15
 
 import fab
+import math
 
 title('Polygon')
 
@@ -16,10 +17,10 @@ output('shape', fab.shapes.move(fab.shapes.polygon_radius(x, y, r, N), x, y))
 # (we need to do a bit of work to make the UI work for both even and
 #  odd vertex counts; otherwise it will be off for one or the other)
 a_ = 0 if (N % 2) else (math.pi / N)
-fab.ui.wireframe([
+sb.ui.wireframe([
     (x + r * math.sin(a_ + a * math.pi * 2/N),
      y + r * math.cos(a_ + a * math.pi * 2/N), 0)
     for a in range(N)], close=True)
-fab.ui.point(x, y)
-fab.ui.point(x + r * math.sin(a_), y + r * math.cos(a_),
+sb.ui.point(x, y)
+sb.ui.point(x + r * math.sin(a_), y + r * math.cos(a_),
              drag=(None, r, None))

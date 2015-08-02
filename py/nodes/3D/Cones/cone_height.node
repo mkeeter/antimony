@@ -2,6 +2,7 @@
 # Matt Keeter 6/11/15
 
 import fab
+import math
 
 title('Cone (height)')
 
@@ -14,13 +15,13 @@ input('height', float, 1)
 output('shape', fab.shapes.cone(x, y, z0, z0 + height, r))
 
 # UI
-fab.ui.wireframe([
+sb.ui.wireframe([
     (math.cos(i/36. * 2*math.pi) * r + x,
      math.sin(i/36. * 2*math.pi) * r + y, z0)
     for i in range(36)], close=True)
-fab.ui.wireframe([(x, y, z0), (x+r, y, z0)])
-fab.ui.wireframe([(x, y, z0), (x, y, z0 + height)])
+sb.ui.wireframe([(x, y, z0), (x+r, y, z0)])
+sb.ui.wireframe([(x, y, z0), (x, y, z0 + height)])
 
-fab.ui.point(x, y, z0)
-fab.ui.point(x, y, z0 + height, drag=(None, None, height))
-fab.ui.point(x + r, y, z0, drag=(r, None, None))
+sb.ui.point(x, y, z0)
+sb.ui.point(x, y, z0 + height, drag=(None, None, height))
+sb.ui.point(x + r, y, z0, drag=(r, None, None))

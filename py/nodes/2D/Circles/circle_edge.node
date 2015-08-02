@@ -2,6 +2,7 @@
 # Matt Keeter 6/11/18
 
 import fab
+import math
 
 title('Circle (edge)')
 
@@ -19,11 +20,11 @@ r = math.sqrt((x - x0)**2 + (y - y0)**2)
 output('shape', fab.shapes.circle(x, y, r))
 
 # UI
-fab.ui.wireframe([
+sb.ui.wireframe([
     (math.cos(i/36. * 2*math.pi) * r + x,
      math.sin(i/36. * 2*math.pi) * r + y, 0)
     for i in range(36)], close=True)
 
-fab.ui.point(x0, y0)
-fab.ui.point(x1, y1)
+sb.ui.point(x0, y0)
+sb.ui.point(x1, y1)
 

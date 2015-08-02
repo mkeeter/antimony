@@ -17,14 +17,14 @@ output('sheared', fab.shapes.shear_xy_z(shape, z0, z1, dx0, dy0, dx1, dy1))
 
 # UI
 dz = abs(z1 - z0)
-fab.ui.wireframe([(dx0, dy0, z0), (dx1, dy1, z1)], color=fab.color.teal)
-fab.ui.wireframe([(dx0 - dz/5, dy0, z0), (dx0 + dz/5, dy0, z0)],
-        color=fab.color.teal)
-fab.ui.wireframe([(dx1 - dz/5, dy1, z1), (dx1 + dz/5, dy1, z1)],
-        color=fab.color.teal)
-fab.ui.wireframe([(dx0, dy0 - dz/5, z0), (dx0, dy0 + dz/5, z0)],
-        color=fab.color.teal)
-fab.ui.wireframe([(dx1, dy1 - dz/5, z1), (dx1, dy1 + dz/5, z1)],
-        color=fab.color.teal)
-fab.ui.point(dx0, dy0, z0, color=fab.color.teal)
-fab.ui.point(dx1, dy1, z1, color=fab.color.teal)
+sb.ui.wireframe([(dx0, dy0, z0), (dx1, dy1, z1)], color=sb.color.teal)
+sb.ui.wireframe([(dx0 - dz/5, dy0, z0), (dx0 + dz/5, dy0, z0)],
+        color=sb.color.teal)
+sb.ui.wireframe([(dx1 - dz/5, dy1, z1), (dx1 + dz/5, dy1, z1)],
+        color=sb.color.teal)
+sb.ui.wireframe([(dx0, dy0 - dz/5, z0), (dx0, dy0 + dz/5, z0)],
+        color=sb.color.teal)
+sb.ui.wireframe([(dx1, dy1 - dz/5, z1), (dx1, dy1 + dz/5, z1)],
+        color=sb.color.teal)
+sb.ui.point(dx0, dy0, z0, color=sb.color.teal)
+sb.ui.point(dx1, dy1, z1, color=sb.color.teal)

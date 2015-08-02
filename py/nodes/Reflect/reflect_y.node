@@ -10,11 +10,11 @@ input('shape', fab.types.Shape)
 output('reflected', fab.shapes.reflect_y(shape, y0))
 
 # UI
-fab.ui.wireframe([
+sb.ui.wireframe([
     (_x - 1, y0, _z + 1),
     (_x + 1, y0, _z + 1),
     (_x + 1, y0, _z - 1),
-    (_x - 1, y0, _z - 1)], color=fab.color.teal, close=True)
+    (_x - 1, y0, _z - 1)], color=sb.color.teal, close=True)
 
-fab.ui.point(_x, y0, _z, color=fab.color.teal)
+sb.ui.point(_x, y0, _z, color=sb.color.teal)
 
