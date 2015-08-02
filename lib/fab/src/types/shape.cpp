@@ -30,7 +30,7 @@ object Shape::init(tuple args, dict kwargs)
     object shape = args[0];
     args = tuple(args.slice(1,_));
 
-    std::string math = "=1f;";
+    std::string math = "=1;";
     Bounds bounds;
     int r = -1, g = -1, b = -1;
 
