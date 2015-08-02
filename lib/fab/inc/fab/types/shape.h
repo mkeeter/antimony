@@ -14,15 +14,25 @@
 /** Represents a math expression and a set of bounds. */
 struct Shape
 {
-    /* Constructors all throw fab::ParseError if parsing fails. */
-    explicit Shape();
-    Shape(boost::python::object obj);
-    Shape(std::string math);
-    Shape(std::string math, float xmin, float ymin,
-              float xmax, float ymax);
-    Shape(std::string math, float xmin, float ymin, float zmin,
-              float xmax, float ymax, float zmax);
-    Shape(std::string math, Bounds bounds);
+    /* Constructor throws fab::ParseError if parsing fails. */
+    Shape(std::string math="=1;", Bounds bounds=Bounds(),
+          std::tuple<int,int,int> color={-1,-1,-1});
+
+    /* Simpler constructor that can be wrapped by Boost */
+    Shape(std::string math, Bounds bounds, int r, int g, int b);
+
+    /*
+     *  Raw constructor function
+     */
+    static boost::python::object init(boost::python::tuple args,
+                                      boost::python::dict kwargs);
+
+    /*
+     *  Builder function, which calls one of the above constructors.
+     */
+    static Shape* builder(boost::python::tuple args,
+                          boost::python::dict kwargs);
+
     std::string repr() const;
 
     /** Returns a new shape with re-mapped coordinates and bounds. */
