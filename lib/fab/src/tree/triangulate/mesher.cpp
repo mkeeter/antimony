@@ -11,6 +11,17 @@
 #error "MIN_VOLUME is below minimum for meshing implementation."
 #endif
 
+/*
+ *  When feature detection is enabled, the Mesher implements the algorithm from
+ *
+ *  "Feature Sensitive Surface Extraction from Volume Data"
+ *
+ *  (Kobbelt, Leif P. and Botsch, Mario and
+ *   Schwanecke, Ulrich and Seidel, Hans-Peter)
+ *
+ *  SIGGRAPH 2001
+ */
+
 static const uint8_t VERTEX_LOOP[] = {6, 4, 5, 1, 3, 2, 6};
 
 // Based on which vertices are filled, this map tells you which
