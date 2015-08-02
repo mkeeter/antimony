@@ -188,28 +188,18 @@ bool DatumTextItem::eventFilter(QObject* obj, QEvent* event)
 
 void DatumTextItem::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    /*
-    if (const auto e = dynamic_cast<EvalDatum*>(d))
-    {
-        drag_start = e->getExpr();
-        drag_accumulated = 0;
-    }
-    */
+    drag_start = QString::fromStdString(d->getText());
+    drag_accumulated = 0;
 
     QGraphicsTextItem::mousePressEvent(event);
 }
 
 void DatumTextItem::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
-    /*
-    if (const auto e = dynamic_cast<EvalDatum*>(d))
-    {
-        QString drag_end = e->getExpr();
-        if (drag_start != drag_end)
-            App::instance()->pushStack(
-                    new UndoChangeExprCommand(e, drag_start, drag_end));
-    }
-    */
+    QString drag_end = QString::fromStdString(d->getText());
+    if (drag_start != drag_end)
+        App::instance()->pushStack(
+                new UndoChangeExprCommand(d, drag_start, drag_end));
 
     QGraphicsTextItem::mouseReleaseEvent(event);
 }
