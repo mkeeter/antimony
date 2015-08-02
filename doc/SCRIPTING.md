@@ -55,3 +55,6 @@ node's inspector; clicking on this button will run an export task.  Both
 export functions have extensive documentation; check out the existing export
 nodes for an example of how they are used.
 
+### `sb.color`
+This namespace defines a set of standard colors for use in UI elements.
+Colors are stored as 3-tuples of RGB values (0-255).
