@@ -12,12 +12,12 @@
 using namespace boost::python;
 
 Shape::Shape(std::string math, Bounds bounds, int r, int g, int b)
-    : Shape(math, bounds, {r,g,b})
+    : Shape(math, bounds, int3(r,g,b))
 {
     // Nothing to do here
 }
 
-Shape::Shape(std::string math, Bounds bounds, std::tuple<int,int,int> color)
+Shape::Shape(std::string math, Bounds bounds, int3 color)
     : math(math), bounds(bounds), tree(parse(math.c_str()), free_tree),
       r(std::get<0>(color)), g(std::get<1>(color)), b(std::get<2>(color))
 {
