@@ -37,6 +37,7 @@ void ControlRoot::checkRender(Datum* d)
 
 void ControlRoot::trigger(const NodeState& state)
 {
+    // Make new render workers for any datums that have been added
     for (auto d : state.datums)
         if (RenderWorker::accepts(d) && !workers.contains(d))
         {
@@ -45,12 +46,24 @@ void ControlRoot::trigger(const NodeState& state)
                 new RenderProxy(workers[d].data(), v);
         }
 
-    auto itr = controls.begin();
-    while (itr != controls.end())
-        if (itr.value()->checkTouched())
-            itr++;
-        else
-            itr = controls.erase(itr);
+    {   // Delete any worker that is no longer in the datums list
+        auto itr = workers.begin();
+        while (itr != workers.end())
+            if (std::find(state.datums.begin(), state.datums.end(), itr.key())
+                    == state.datums.end())
+                itr = workers.erase(itr);
+            else
+                itr++;
+    }
+
+    {   // Delete any controls that weren't touched in the last script exec
+        auto itr = controls.begin();
+        while (itr != controls.end())
+            if (itr.value()->checkTouched())
+                itr++;
+            else
+                itr = controls.erase(itr);
+    }
 }
 
 Control* ControlRoot::get(long index) const
