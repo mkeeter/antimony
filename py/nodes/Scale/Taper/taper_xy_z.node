@@ -13,7 +13,7 @@ input('s0', float, 2)
 input('s1', float, 0.5)
 
 input('shape', fab.types.Shape)
-output('transform', fab.shapes.scale_xy_z(shape, x0, y0, z0, z1, s0, s1))
+output('transform', fab.shapes.taper_xy_z(shape, x0, y0, z0, z1, s0, s1))
 
 # UI
 def drag_base(this, dx, dy, dz):
