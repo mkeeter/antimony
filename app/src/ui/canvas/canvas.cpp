@@ -155,11 +155,15 @@ void Canvas::drawBackground(QPainter* painter, const QRectF& rect)
     painter->setPen(Qt::NoPen);
     painter->drawRect(rect);
 
-    const int d = 20;
-    painter->setPen(Colors::base03);
-    for (int i = int(rect.left() / d) * d; i < rect.right(); i += d)
-        for (int j = int(rect.top() / d) * d; j < rect.bottom(); j += d)
-            painter->drawPoint(i, j);
+    if (fabs(rect.left() - rect.right()) < 5e3 &&
+        fabs(rect.top() - rect.bottom()) < 5e3)
+    {
+        const int d = 20;
+        painter->setPen(Colors::base03);
+        for (int i = int(rect.left() / d) * d; i < rect.right(); i += d)
+            for (int j = int(rect.top() / d) * d; j < rect.bottom(); j += d)
+                painter->drawPoint(i, j);
+    }
 }
 
 void Canvas::drawForeground(QPainter* painter, const QRectF& rect)
