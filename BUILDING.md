@@ -51,7 +51,7 @@ sudo apt-get install gcc-4.9 g++-4.9
 sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-4.9
 ```
 
-Then, you can clone and build Antimony:
+Then, you can clone and build Antimony.  Building from the `develop` branch is recommended over `master`, as `develop` has all of the latest bug-fixes and improvements.
 ```
 git clone https://github.com/mkeeter/antimony
 cd antimony
