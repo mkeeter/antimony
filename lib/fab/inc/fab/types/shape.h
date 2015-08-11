@@ -11,12 +11,14 @@
 
 #include "fab/tree/tree.h"
 
+typedef std::tuple<int,int,int> int3;
+
 /** Represents a math expression and a set of bounds. */
 struct Shape
 {
     /* Constructor throws fab::ParseError if parsing fails. */
     Shape(std::string math="=1;", Bounds bounds=Bounds(),
-          std::tuple<int,int,int> color={-1,-1,-1});
+          int3 color=int3(-1,-1,-1));
 
     /* Simpler constructor that can be wrapped by Boost */
     Shape(std::string math, Bounds bounds, int r, int g, int b);
