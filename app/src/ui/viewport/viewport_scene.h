@@ -8,7 +8,6 @@
 #include <QSet>
 #include <QList>
 
-#include "util/hash.h"
 #include "graph/watchers.h"
 
 class Control;

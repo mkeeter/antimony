@@ -126,7 +126,6 @@ HEADERS += \
     src/export/export_mesh.h \
     src/export/export_worker.h \
     src/export/export_heightmap.h \
-    src/util/hash.h \
     src/control/control.h \
     src/control/control_root.h \
     src/control/proxy.h \

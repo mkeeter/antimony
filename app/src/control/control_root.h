@@ -3,8 +3,8 @@
 
 #include <QObject>
 #include <QMap>
+#include <QSharedPointer>
 
-#include "util/hash.h"
 #include "graph/watchers.h"
 
 class Node;
