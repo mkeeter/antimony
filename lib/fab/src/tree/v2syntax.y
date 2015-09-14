@@ -16,6 +16,8 @@
 %name v2Parse
 %extra_argument {Env* environment}
 
+%stack_size 4096
+
 %token_type {const char*}
 %token_prefix TOKEN_
 
