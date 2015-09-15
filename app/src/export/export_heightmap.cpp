@@ -54,10 +54,11 @@ void ExportHeightmapWorker::run()
     auto exporting_dialog = new ExportingDialog();
 
     int halt = 0;
+    bool success = false;
     auto thread = new QThread();
     auto task = new ExportHeightmapTask(
             shape, bounds, _resolution,
-            _mm_per_unit, _filename, &halt);
+            _mm_per_unit, _filename, &halt, &success);
     task->moveToThread(thread);
 
     connect(thread, &QThread::started,
@@ -81,6 +82,14 @@ void ExportHeightmapWorker::run()
             QCoreApplication::processEvents();
     }
     delete exporting_dialog;
+
+    if (!success)
+    {
+        QMessageBox::critical(NULL, "Export error",
+                            "<b>Writing to png file failed</b><br>"
+                            "Check logs for error message with details.");
+    }
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -124,9 +133,13 @@ void ExportHeightmapTask::render()
     for (unsigned i=0; i < r.nj; ++i)
         d16_rows[r.nj - i - 1] = d16 + (r.ni * i);
 
-    if (!*halt)
-        save_png16L(filename.toStdString().c_str(), r.ni, r.nj,
-                    bounds, d16_rows);
+    // If the operation has been cancelled, then mark it as a cuess;
+    // otherwise, attempt to write the file and check the return code.
+    if (*halt)
+        *success = true;
+    else
+        *success = save_png16L(filename.toStdString().c_str(), r.ni, r.nj,
+                               bounds, d16_rows);
 
     free_arrays(&r);
     delete [] d16;
