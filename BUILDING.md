@@ -28,6 +28,7 @@ make -j8
 
 open app/Antimony.app
 ```
+Note: If `make -j8` exits with an "Error 2" just run `make -j8` again to succeed.
 
 Linux
 -----
