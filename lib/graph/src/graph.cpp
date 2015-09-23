@@ -12,11 +12,6 @@ Graph::Graph(std::string n, Graph* parent)
     // Nothing to do here
 }
 
-PyObject* Graph::proxyDict(Datum* caller)
-{
-    return Proxy::makeProxyFor(this, caller);
-}
-
 void Graph::triggerWatchers() const
 {
     if (!watchers.empty())
@@ -112,10 +107,16 @@ void Graph::loadDatumHooks(PyObject* g)
         external->loadDatumHooks(g);
 }
 
-PyObject* Graph::pyGetAttr(std::string name, Downstream* caller) const
+PyObject* Graph::pyGetAttr(std::string name, Downstream* caller,
+                           uint8_t flags) const
 {
     auto m = get(name, nodes);
-    return m ? Proxy::makeProxyFor(m, caller) : NULL;
+    return m ? Proxy::makeProxyFor(m, caller, flags) : NULL;
+}
+
+void Graph::pySetAttr(std::string, PyObject*, uint8_t)
+{
+    assert(false);
 }
 
 void Graph::queue(Downstream* d)

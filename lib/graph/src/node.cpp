@@ -101,14 +101,9 @@ void Node::uninstall(Datum* d)
     Root::uninstall(d, &datums);
 }
 
-PyObject* Node::proxyDict(Datum* caller)
-{
-    return parent->proxyDict(caller);
-}
-
 PyObject* Node::mutableProxy()
 {
-    return Proxy::makeProxyFor(this, NULL, true);
+    return Proxy::makeProxyFor(this, NULL, Proxy::FLAG_MUTABLE);
 }
 
 Datum* Node::getDatum(std::string name) const
@@ -180,8 +175,11 @@ bool Node::makeDatum(std::string n, PyTypeObject* type,
     return true;
 }
 
-void Node::pySetAttr(std::string name, PyObject* obj)
+void Node::pySetAttr(std::string name, PyObject* obj, uint8_t flags)
 {
+    (void)flags;
+    assert(flags & Proxy::FLAG_MUTABLE);
+
     auto d = getByName(name, datums);
     if (!d)
         throw Proxy::Exception("No datum with name '" + name + "' found.");
@@ -227,9 +225,10 @@ void Node::flushQueue()
     parent->flushQueue();
 }
 
-PyObject* Node::pyGetAttr(std::string n, Downstream* caller) const
+PyObject* Node::pyGetAttr(std::string n, Downstream* caller,
+                          uint8_t flags) const
 {
-    auto d = (caller && caller->allowLookupByUID())
+    auto d = (flags & Proxy::FLAG_UID_LOOKUP)
         ? get(n, datums) : getByName(n, datums);
 
     if (!d)

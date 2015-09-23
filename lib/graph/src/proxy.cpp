@@ -8,13 +8,13 @@ using namespace boost::python;
 PyObject* Proxy::proxy_init = NULL;
 
 Proxy::Proxy(Root* r)
-    : root(r), caller(NULL), globals(NULL), settable(false)
+    : root(r), caller(NULL), globals(NULL), flags(0)
 {
     // Nothing to do here
 }
 
 Proxy::Proxy()
-    : root(NULL), caller(NULL), globals(NULL), settable(false)
+    : root(NULL), caller(NULL), globals(NULL), flags(0)
 {
     // Nothing to do here
     // (but we need to set the root before this proxy can be used)
@@ -50,7 +50,7 @@ PyObject* Proxy::getAttr(std::string name)
 
     if (caller)
         root->saveLookup(name, caller);
-    if (auto v = root->pyGetAttr(name, caller))
+    if (auto v = root->pyGetAttr(name, caller, flags))
         return v;
 
     throw Exception("Name '" + name + "' is not defined");
@@ -59,12 +59,12 @@ PyObject* Proxy::getAttr(std::string name)
 
 void Proxy::setAttr(std::string name, object obj)
 {
-    if (!settable)
+    if (!(flags & FLAG_MUTABLE))
         throw Proxy::Exception("Cannot set value with non-mutable Proxy");
-    root->pySetAttr(name, obj.ptr());
+    root->pySetAttr(name, obj.ptr(), flags);
 }
 
-PyObject* Proxy::makeProxyFor(Root* r, Downstream* caller, bool settable)
+PyObject* Proxy::makeProxyFor(Root* r, Downstream* caller, uint8_t flags)
 {
     // Get Python object constructor (with lazy initialization)
     if (proxy_init == NULL)
@@ -85,7 +85,7 @@ PyObject* Proxy::makeProxyFor(Root* r, Downstream* caller, bool settable)
 
     p_->root = r;
     p_->caller = caller;
-    p_->settable = settable;
+    p_->flags = flags;
     return p;
 }
 

@@ -19,13 +19,15 @@ public:
      *  Returns a new reference to the given object or NULL.
      *  May throw Proxy::Exception to indicate a special error.
      */
-    virtual PyObject* pyGetAttr(std::string name, Downstream* caller) const=0;
+    virtual PyObject* pyGetAttr(std::string name, Downstream* caller,
+                                uint8_t flags) const=0;
 
     /*
      *  Attempts to set the given attribute.
      *  Returns true on success.
      */
-    virtual void pySetAttr(std::string name, PyObject* obj)=0;
+    virtual void pySetAttr(std::string name, PyObject* obj,
+                           uint8_t flags)=0;
 
     /*
      *  Record that the given Downstream looked up a particular name

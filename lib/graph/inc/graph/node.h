@@ -99,12 +99,6 @@ public:
     void uninstall(Datum* d);
 
     /*
-     *  Returns a Proxy object that uses the parent Graph as its
-     *  root and the given datum as the caller (for datum evaluation)
-     */
-    PyObject* proxyDict(Datum* caller);
-
-    /*
      *  Returns a mutable proxy for this node
      */
     PyObject* mutableProxy();
@@ -132,8 +126,9 @@ public:
     NodeState getState() const;
 
     /* Root functions */
-    PyObject* pyGetAttr(std::string name, Downstream* caller) const override;
-    void pySetAttr(std::string name, PyObject* obj) override;
+    PyObject* pyGetAttr(std::string name, Downstream* caller,
+                        uint8_t flags) const override;
+    void pySetAttr(std::string name, PyObject* obj, uint8_t flags) override;
     void queue(Downstream* d) override;
     void flushQueue() override;
 

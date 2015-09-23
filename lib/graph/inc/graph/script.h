@@ -20,12 +20,6 @@ protected:
      */
     void inject(std::string name, PyObject* value);
 
-    /*
-     *  Never allow proxies to use UID lookups when a script
-     *  is being evaluated.
-     */
-    bool allowLookupByUID() const override { return false; }
-
     std::string script;
     std::string prev_script;
 

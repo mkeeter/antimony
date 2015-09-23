@@ -62,7 +62,10 @@ bool Datum::hasInput() const
 
 PyObject* Datum::getValue()
 {
-    PyObject* locals = parent->parent->proxyDict(this);
+    PyObject* locals = Proxy::makeProxyFor(
+            parent->parent, this,
+            isLink() ? Proxy::FLAG_UID_LOOKUP : 0);
+
     PyObject* globals = Py_BuildValue(
             "{sO}", "__builtins__", PyEval_GetBuiltins());
     parent->parent->loadDatumHooks(globals);
@@ -340,11 +343,6 @@ bool Datum::acceptsLink(const Datum* upstream) const
     // Otherwise, return true if we don't already a link to this datum.
     auto links = getLinks();
     return links.count(upstream) == 0;
-}
-
-bool Datum::allowLookupByUID() const
-{
-    return isLink();
 }
 
 bool Datum::isLink() const

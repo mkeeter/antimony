@@ -156,12 +156,6 @@ protected:
     PyObject* castToType(PyObject* value);
 
     /*
-     *  If this datum has a connection sigil, allow UID lookups.
-     *  (overrides Root pure virtual function)
-     */
-    bool allowLookupByUID() const override;
-
-    /*
      *  Handles post-processing of a link value.
      *
      *  Returns a new value (from extraction or reduction)
