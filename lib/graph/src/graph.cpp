@@ -6,7 +6,7 @@
 #include "graph/hooks/hooks.h"
 #include "graph/watchers.h"
 
-Graph::Graph(std::string n, Graph* parent)
+Graph::Graph(std::string n, Node* parent)
     : name(n), uid(0), parent(parent), processing_queue(false)
 {
     // Nothing to do here
