@@ -111,12 +111,19 @@ void Graph::pySetAttr(std::string, PyObject*, uint8_t)
 
 void Graph::queue(Downstream* d)
 {
-    downstream_queue.insert(d);
+    if (parent)
+        parent->queue(d);
+    else
+        downstream_queue.insert(d);
 }
 
 void Graph::flushQueue()
 {
-    if (!processing_queue)
+    if (parent)
+    {
+        parent->flushQueue();
+    }
+    else if (!processing_queue)
     {
         processing_queue = true;
         while (downstream_queue.size())
