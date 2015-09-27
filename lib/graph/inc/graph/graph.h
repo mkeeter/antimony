@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "graph/types/root.h"
+#include "graph/types/watched.h"
 #include "graph/node.h"
 #include "graph/watchers.h"
 
@@ -14,10 +15,10 @@
 class Node;
 class GraphWatcher;
 
-class Graph : public Root
+class Graph : public Root, public Watched<GraphWatcher, GraphState>
 {
 public:
-    explicit Graph(std::string name="", Graph* parent=NULL);
+    explicit Graph(Node* parent=NULL);
 
     /*
      *  Installs this node at the end of the node list.
@@ -52,27 +53,9 @@ public:
     Node* getNode(uint32_t uid) const { return Root::getByUID(uid, nodes); }
 
     /*
-     *  Returns a Proxy object that uses this graph as its root,
-     *  the given Node as its locals dictionary, and the given
-     *  Downstream as the caller.
-     */
-    PyObject* proxyDict(Datum* caller);
-
-    /*
-     *  Sets and clears callback objects.
-     */
-    void installWatcher(GraphWatcher* w) { watchers.push_back(w); }
-    void uninstallWatcher(GraphWatcher* w) { watchers.remove(w); }
-
-    /*
-     *  Triggers all of the connected GraphWatchers
-     */
-    void triggerWatchers() const;
-
-    /*
      *  Return the state (used for callbacks)
      */
-    GraphState getState() const;
+    GraphState getState() const override;
 
     /*
      *  Checks that the given name is unique
@@ -98,12 +81,13 @@ public:
     /*
      *  Loads external hooks (if they are present)
      */
-    void loadScriptHooks(PyObject* g, Node* n);
+    void loadScriptHooks(PyObject* g, ScriptNode* n);
     void loadDatumHooks(PyObject* g);
 
     /* Root functions */
-    PyObject* pyGetAttr(std::string name, Downstream* caller) const override;
-    void pySetAttr(std::string, PyObject*) override {}
+    PyObject* pyGetAttr(std::string name, Downstream* caller,
+                        uint8_t flags) const override;
+    void pySetAttr(std::string, PyObject*, uint8_t) override;
     void queue(Downstream* d) override;
     void flushQueue() override;
 
@@ -113,13 +97,9 @@ public:
     static void preInit();
 
 protected:
-    std::string name;
-    const uint32_t uid;
-
-    Graph* parent;
+    Node* parent;
     std::list<std::unique_ptr<Node>> nodes;
 
-    std::list<GraphWatcher*> watchers;
     std::unique_ptr<ExternalHooks> external;
 
     bool processing_queue;

@@ -38,19 +38,23 @@ public:
      *  Lookups will check the root and will be marked as being made by the
      *  given Downstream object (using root->saveLookup)
      */
-    static PyObject* makeProxyFor(Root* r, Downstream* caller, bool settable=false);
+    static PyObject* makeProxyFor(Root* r, Downstream* caller, uint8_t flags=0);
 
     /*
      *  Sets the globals dictionary in a proxy object.
      */
     static void setGlobals(PyObject* proxy, PyObject* globals);
 
+    // These are potential flags for the proxy object
+    const static uint8_t FLAG_MUTABLE  = 1;
+    const static uint8_t FLAG_UID_LOOKUP = 2;
+
 protected:
     Root* root;
     Downstream* caller;
     PyObject* globals;
 
-    bool settable;
+    uint8_t flags;
 
     static PyObject* proxy_init;
 };

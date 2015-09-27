@@ -9,13 +9,13 @@
 
 #include "app/undo/undo_command.h"
 
-class Node;
+class ScriptNode;
 
 class UndoChangeScriptCommand : public UndoCommand
 {
 public:
-    UndoChangeScriptCommand(Node* n, QString before, QString after);
-    UndoChangeScriptCommand(Node* n, QString before, QString after,
+    UndoChangeScriptCommand(ScriptNode* n, QString before, QString after);
+    UndoChangeScriptCommand(ScriptNode* n, QString before, QString after,
                             int cursor_before, int cursor_after,
                             QPlainTextEdit* txt);
 
@@ -28,7 +28,7 @@ protected:
     void saveCursor();
     void restoreCursor(int pos);
 
-    mutable Node* n;
+    mutable ScriptNode* n;
     QString before;
     QString after;
 

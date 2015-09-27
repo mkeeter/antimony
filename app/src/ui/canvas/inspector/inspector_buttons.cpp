@@ -11,15 +11,17 @@
 #include "ui/util/colors.h"
 #include "app/app.h"
 
-#include "graph/node.h"
+#include "graph/script_node.h"
 
-InspectorScriptButton::InspectorScriptButton(Node* n, QGraphicsItem* parent)
-    : GraphicsButton(parent), script_valid(n->getState().error_lineno == -1),
-      node(n)
+InspectorScriptButton::InspectorScriptButton(ScriptNode* n, QGraphicsItem* parent)
+    : GraphicsButton(parent), node(n)
 {
     setToolTip("Edit script");
     connect(this, &GraphicsButton::pressed,
             this, &InspectorScriptButton::onPressed);
+
+    n->installScriptWatcher(this);
+    trigger(n->getScriptState());
 }
 
 QRectF InspectorScriptButton::boundingRect() const
@@ -43,9 +45,9 @@ void InspectorScriptButton::paint(QPainter* painter,
     painter->drawRect(0, 12, 16, 3);
 }
 
-void InspectorScriptButton::setScriptValid(const bool v)
+void InspectorScriptButton::trigger(const ScriptState& state)
 {
-    script_valid = v;
+    script_valid = (state.error_lineno == -1);
     prepareGeometryChange();
 }
 

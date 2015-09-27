@@ -7,7 +7,7 @@
 #include <QTextCursor>
 #include <QHelpEvent>
 
-#include "graph/node.h"
+#include "graph/script_node.h"
 
 #include "ui/script/editor.h"
 #include "ui/script/syntax.h"
@@ -17,7 +17,7 @@
 #include "app/app.h"
 #include "app/undo/undo_change_script.h"
 
-ScriptEditor::ScriptEditor(Node* node, QWidget* parent)
+ScriptEditor::ScriptEditor(ScriptNode* node, QWidget* parent)
     : QPlainTextEdit(parent), node(node)
 {
     styleEditor(this);
@@ -30,10 +30,10 @@ ScriptEditor::ScriptEditor(Node* node, QWidget* parent)
 
     installEventFilter(this);
 
-    trigger(node->getState());
+    trigger(node->getScriptState());
 }
 
-void ScriptEditor::trigger(const NodeState& state)
+void ScriptEditor::trigger(const ScriptState& state)
 {
     // Update the document text
     QString script = QString::fromStdString(state.script);
