@@ -8,6 +8,7 @@ SOURCES += \
     src/graph.cpp \
     src/node.cpp \
     src/script_node.cpp \
+    src/graph_node.cpp \
     src/proxy.cpp \
     src/script.cpp \
     src/util.cpp \
