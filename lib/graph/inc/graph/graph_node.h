@@ -10,6 +10,8 @@ public:
     explicit GraphNode(std::string name, Graph* root);
     explicit GraphNode(std::string name, uint32_t uid, Graph* root);
 
+    Graph* getGraph() const { return subgraph.get(); }
+
 protected:
     std::unique_ptr<Graph> subgraph;
 };
