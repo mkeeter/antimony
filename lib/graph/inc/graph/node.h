@@ -58,12 +58,6 @@ public:
     std::list<Datum*> childDatums() const;
 
     /*
-     *  When the script is done running, update the node
-     *  (which may require removing datums from the list)
-     */
-    void update(const std::unordered_set<Datum*>& active);
-
-    /*
      *  Adds the given datum at the end of the list.
      *  Does NOT trigger NodeWatcher objects.
      *
@@ -111,8 +105,6 @@ protected:
      *  Calls parent->changed and parent->triggerWatchers
      */
     void init();
-
-    void pruneInactive(std::unordered_set<Datum*> active);
 
     std::string name;
     const uint32_t uid;

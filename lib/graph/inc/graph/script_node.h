@@ -59,6 +59,12 @@ public:
      */
     void loadScriptHooks(PyObject* g);
 protected:
+    /*
+     *  When the script is done running, update the node
+     *  (which may require removing datums from the list)
+     */
+    void update(const std::unordered_set<Datum*>& active);
+
     Script script;
 
     friend struct Script;

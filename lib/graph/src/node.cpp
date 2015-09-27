@@ -56,20 +56,6 @@ std::list<Datum*> Node::childDatums() const
     return out;
 }
 
-void Node::update(const std::unordered_set<Datum*>& active)
-{
-    // Remove any datums that weren't marked as active and trigger
-    // changes to anything that was watching them.
-    std::list<Datum*> inactive;
-    for (const auto& d : datums)
-        if (active.find(d.get()) == active.end())
-            inactive.push_back(d.get());
-    for (auto d : inactive)
-        uninstall(d);
-
-    triggerWatchers();
-}
-
 void Node::uninstall(Datum* d)
 {
     auto out = d->outgoingLinks();

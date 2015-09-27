@@ -86,3 +86,18 @@ void ScriptNode::loadScriptHooks(PyObject* g)
 {
     parent->loadScriptHooks(g, this);
 }
+
+void ScriptNode::update(const std::unordered_set<Datum*>& active)
+{
+    // Remove any datums that weren't marked as active and trigger
+    // changes to anything that was watching them.
+    std::list<Datum*> inactive;
+    for (const auto& d : datums)
+        if (active.find(d.get()) == active.end())
+            inactive.push_back(d.get());
+    for (auto d : inactive)
+        uninstall(d);
+
+    triggerWatchers();
+}
+
