@@ -14,13 +14,14 @@
 #include "graph/script_node.h"
 
 InspectorScriptButton::InspectorScriptButton(ScriptNode* n, QGraphicsItem* parent)
-    : GraphicsButton(parent), script_valid(n->getScriptState().error_lineno == -1),
-      node(n)
+    : GraphicsButton(parent), node(n)
 {
     setToolTip("Edit script");
     connect(this, &GraphicsButton::pressed,
             this, &InspectorScriptButton::onPressed);
+
     n->installScriptWatcher(this);
+    trigger(n->getScriptState());
 }
 
 QRectF InspectorScriptButton::boundingRect() const
