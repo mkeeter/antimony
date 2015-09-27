@@ -18,7 +18,7 @@ class GraphWatcher;
 class Graph : public Root, public Watched<GraphWatcher, GraphState>
 {
 public:
-    explicit Graph(std::string name="", Node* parent=NULL);
+    explicit Graph(Node* parent=NULL);
 
     /*
      *  Installs this node at the end of the node list.
@@ -97,9 +97,6 @@ public:
     static void preInit();
 
 protected:
-    std::string name;
-    const uint32_t uid;
-
     Node* parent;
     std::list<std::unique_ptr<Node>> nodes;
 
