@@ -13,10 +13,24 @@ TEST_CASE("Graph node lookups")
 
     auto sub = a->getGraph();
     auto b = new Node("b", sub);
-    auto bx = new Datum("x", "__parent.x", &PyFloat_Type, b);
 
-    CAPTURE(bx->getError());
-    REQUIRE(bx->isValid() == true);
+    SECTION("Allowed")
+    {
+        auto bx = new Datum("x", Datum::SIGIL_CONNECTION +
+                                 std::string("[__parent.__0]"),
+                            &PyFloat_Type, b);
+        CAPTURE(bx->getError());
+        REQUIRE(bx->isValid() == true);
+    }
+
+    SECTION("Not allowed")
+    {
+        auto by = new Datum("y", "__parent.__0", &PyFloat_Type, b);
+        CAPTURE(by->getError());
+        REQUIRE(by->isValid() == false);
+        REQUIRE(by->getError().find("Name '__parent' is not defined")
+                != std::string::npos);
+    }
 
     delete g;
 }

@@ -100,7 +100,14 @@ void Graph::loadDatumHooks(PyObject* g)
 PyObject* Graph::pyGetAttr(std::string name, Downstream* caller,
                            uint8_t flags) const
 {
-    auto m = get(name, nodes);
+    // Special-case for subgraphs: __parent returns parent node
+    if (name == "__parent" && (flags & Proxy::FLAG_UID_LOOKUP))
+        return parent ? Proxy::makeProxyFor(parent, caller, flags)
+                      : NULL;
+
+    // Default case: look up a node by name or UID (depending on flags)
+    auto m = (flags & Proxy::FLAG_UID_LOOKUP)
+        ? get(name, nodes) : getByName(name, nodes);
     return m ? Proxy::makeProxyFor(m, caller, flags) : NULL;
 }
 
