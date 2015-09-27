@@ -5,15 +5,20 @@
 #include <string>
 
 #include "graph/types/downstream.h"
+#include "graph/types/watched.h"
+#include "graph/watchers.h"
 
 class Datum;
-class Node;
+class ScriptNode;
 
-struct Script : public Downstream
+struct Script : public Downstream, public Watched<ScriptWatcher, ScriptState>
 {
 public:
-    Script(Node* parent);
+    Script(ScriptNode* parent);
     void update() override;
+
+    ScriptState getState() const override;
+
 protected:
     /*
      *  Inject a variable into the globals dictionary.
@@ -28,9 +33,9 @@ protected:
     int error_lineno;
 
     std::unordered_set<Datum*> active;
-    Node* parent;
+    ScriptNode* parent;
     PyObject* globals;
 
-    friend class Node;
+    friend class ScriptNode;
     friend class Graph;
 };

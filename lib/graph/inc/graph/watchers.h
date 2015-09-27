@@ -32,10 +32,6 @@ public:
 
 struct NodeState
 {
-    std::string script;
-    std::string error;
-    std::string output;
-    int error_lineno;
     bool name_valid;
     std::list<Datum*> datums;
 };
@@ -45,6 +41,23 @@ class NodeWatcher
 public:
     virtual ~NodeWatcher() {};
     virtual void trigger(const NodeState& state)=0;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+struct ScriptState
+{
+    std::string script;
+    std::string error;
+    std::string output;
+    int error_lineno;
+};
+
+class ScriptWatcher
+{
+public:
+    virtual ~ScriptWatcher() {};
+    virtual void trigger(const ScriptState& state)=0;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

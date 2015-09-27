@@ -12,16 +12,6 @@ Graph::Graph(std::string n, Graph* parent)
     // Nothing to do here
 }
 
-void Graph::triggerWatchers() const
-{
-    if (!watchers.empty())
-    {
-        auto state = getState();
-        for (auto w : watchers)
-            w->trigger(state);
-    }
-}
-
 uint32_t Graph::install(Node* n)
 {
     return Root::install(n, &nodes);
@@ -87,7 +77,7 @@ void Graph::clear()
     triggerWatchers();
 }
 
-void Graph::loadScriptHooks(PyObject* g, Node* n)
+void Graph::loadScriptHooks(PyObject* g, ScriptNode* n)
 {
     if (external)
         external->loadScriptHooks(g, n);

@@ -150,8 +150,6 @@ void NodeInspector::trigger(const NodeState& state)
         rows.remove(d);
     }
 
-    title_row->getButton<InspectorScriptButton>()->setScriptValid(
-            state.error_lineno == -1);
     onLayoutChanged();
 }
 

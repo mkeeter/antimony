@@ -2,7 +2,7 @@
 
 #include "graph/hooks/output.h"
 #include "graph/hooks/hooks.h"
-#include "graph/node.h"
+#include "graph/script_node.h"
 #include "graph/graph.h"
 
 void OutputHook::call(std::string name, boost::python::object obj)

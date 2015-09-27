@@ -11,6 +11,7 @@ class ViewportScene;
 
 class Graph;
 class Node;
+class ScriptNode;
 
 class MainWindow;
 class UndoStack;
@@ -88,7 +89,7 @@ public slots:
     /*
      *  Opens a new editor window targetting the given datum.
      */
-    MainWindow* newEditorWindow(Node* n);
+    MainWindow* newEditorWindow(ScriptNode* n);
     void onAbout();
 
     void onNew();

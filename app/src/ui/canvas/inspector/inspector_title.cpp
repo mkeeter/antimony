@@ -9,6 +9,7 @@
 #include "ui/util/button.h"
 
 #include "graph/node.h"
+#include "graph/script_node.h"
 #include "graph/datum.h"
 
 #include "ui/util/colors.h"
@@ -17,11 +18,15 @@ InspectorTitle::InspectorTitle(Node* n, NodeInspector* parent)
     : QGraphicsObject(parent), node(n),
       name(new QGraphicsTextItem(QString::fromStdString(n->getName()), this)),
       title(new QGraphicsTextItem("", this)),
-      buttons({new InspectorShowHiddenButton(this, parent),
-               new InspectorScriptButton(n, this)}),
+      buttons({new InspectorShowHiddenButton(this, parent)}),
       padding(20)
 
 {
+    if (auto script_node = dynamic_cast<ScriptNode*>(n))
+    {
+        buttons.append(new InspectorScriptButton(script_node, this));
+    }
+
     name->setTextInteractionFlags(Qt::TextEditorInteraction);
 
     auto f = name->font();

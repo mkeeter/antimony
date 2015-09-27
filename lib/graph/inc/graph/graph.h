@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "graph/types/root.h"
+#include "graph/types/watched.h"
 #include "graph/node.h"
 #include "graph/watchers.h"
 
@@ -14,7 +15,7 @@
 class Node;
 class GraphWatcher;
 
-class Graph : public Root
+class Graph : public Root, public Watched<GraphWatcher, GraphState>
 {
 public:
     explicit Graph(std::string name="", Graph* parent=NULL);
@@ -52,20 +53,9 @@ public:
     Node* getNode(uint32_t uid) const { return Root::getByUID(uid, nodes); }
 
     /*
-     *  Sets and clears callback objects.
-     */
-    void installWatcher(GraphWatcher* w) { watchers.push_back(w); }
-    void uninstallWatcher(GraphWatcher* w) { watchers.remove(w); }
-
-    /*
-     *  Triggers all of the connected GraphWatchers
-     */
-    void triggerWatchers() const;
-
-    /*
      *  Return the state (used for callbacks)
      */
-    GraphState getState() const;
+    GraphState getState() const override;
 
     /*
      *  Checks that the given name is unique
@@ -91,7 +81,7 @@ public:
     /*
      *  Loads external hooks (if they are present)
      */
-    void loadScriptHooks(PyObject* g, Node* n);
+    void loadScriptHooks(PyObject* g, ScriptNode* n);
     void loadDatumHooks(PyObject* g);
 
     /* Root functions */
@@ -113,7 +103,6 @@ protected:
     Graph* parent;
     std::list<std::unique_ptr<Node>> nodes;
 
-    std::list<GraphWatcher*> watchers;
     std::unique_ptr<ExternalHooks> external;
 
     bool processing_queue;

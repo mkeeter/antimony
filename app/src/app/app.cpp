@@ -450,7 +450,7 @@ MainWindow* App::newQuadWindow()
     return m;
 }
 
-MainWindow* App::newEditorWindow(Node* n)
+MainWindow* App::newEditorWindow(ScriptNode* n)
 {
     auto m = new MainWindow();
     m->setCentralWidget(new ScriptPane(n, m));

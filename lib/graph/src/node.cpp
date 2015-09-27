@@ -6,26 +6,21 @@
 #include "graph/proxy.h"
 #include "graph/watchers.h"
 
-Node::Node(std::string n, Graph* root)
-    : Node(n, "", root)
+Node::Node(std::string n, Graph* root, bool do_init)
+    : name(n.back() == '*' ? root->nextName(n.substr(0, n.size() - 1)) : n),
+      uid(root->install(this)), parent(root)
 {
-    // Nothing to do here
+    if (do_init)
+        init();
 }
 
-Node::Node(std::string n, uint64_t uid, Graph* root)
+Node::Node(std::string n, uint64_t uid, Graph* root, bool do_init)
     : name(n.back() == '*' ? root->nextName(n.substr(0, n.size() - 1)) : n),
-      uid(uid), script(this), parent(root)
+      uid(uid), parent(root)
 {
     root->install(this);
-    init();
-}
-
-Node::Node(std::string n, std::string script, Graph* root)
-    : name(n.back() == '*' ? root->nextName(n.substr(0, n.size() - 1)) : n),
-      uid(root->install(this)), script(this), parent(root)
-{
-    setScript(script);
-    init();
+    if (do_init)
+        init();
 }
 
 void Node::init()
@@ -34,18 +29,10 @@ void Node::init()
     parent->triggerWatchers();
 }
 
-void Node::setScript(std::string t)
-{
-    script.script = t;
-    script.trigger();
-}
-
 NodeState Node::getState() const
 {
-    return (NodeState){
-            script.script, script.error, script.output, script.error_lineno,
-            isNameValid(name) && parent->isNameUnique(name, this),
-            childDatums()};
+    return (NodeState){isNameValid(name) && parent->isNameUnique(name, this),
+                       childDatums()};
 }
 
 void Node::setName(std::string new_name)
@@ -57,12 +44,7 @@ void Node::setName(std::string new_name)
         parent->changed(old_name, uid);
         parent->changed(new_name, uid);
 
-        if (!watchers.empty())
-        {
-            auto state =  getState();
-            for (auto w : watchers)
-                w->trigger(state);
-        }
+        triggerWatchers();
     }
 }
 
@@ -85,12 +67,7 @@ void Node::update(const std::unordered_set<Datum*>& active)
     for (auto d : inactive)
         uninstall(d);
 
-    if (!watchers.empty())
-    {
-        auto state =  getState();
-        for (auto w : watchers)
-            w->trigger(state);
-    }
+    triggerWatchers();
 }
 
 void Node::uninstall(Datum* d)
@@ -111,68 +88,9 @@ Datum* Node::getDatum(std::string name) const
     return get(name, datums);
 }
 
-void Node::uninstallWatcher(NodeWatcher* w)
-{
-    watchers.remove_if([&](NodeWatcher* w_) { return w_ == w; });
-}
-
-void Node::loadScriptHooks(PyObject* g)
-{
-    parent->loadScriptHooks(g, this);
-}
-
 void Node::loadDatumHooks(PyObject* g)
 {
     parent->loadDatumHooks(g);
-}
-
-bool Node::makeDatum(std::string n, PyTypeObject* type,
-                     std::string value, bool output)
-{
-    for (auto a : script.active)
-        if (a->name == n)
-            return false;
-
-    // If there's an existing datum and it's of the wrong type, delete it.
-    auto d = getDatum(n);
-    if (d != NULL && (d->type != type))
-    {
-        datums.remove_if([&](const std::unique_ptr<Datum>& d_)
-                         { return d_.get() == d; });
-        d = NULL;
-    }
-
-    if (d == NULL)
-    {
-        d = new Datum(n, value, type, this);
-        assert(d->isValid());
-    }
-    else
-    {
-        // Move the existing datum to the end of the list
-        // (so that ordering matches ordering in the script)
-        for (auto itr = datums.begin(); itr != datums.end(); ++itr)
-            if (itr->get() == d)
-            {
-                datums.splice(datums.end(), datums, itr);
-                break;
-            }
-
-        // If the datum is an output, update its expression
-        if (output)
-            d->setText(value);
-        // Otherwise, erase the output sigil by setting the text
-        else if (d->isOutput())
-            d->setText(value);
-    }
-
-    script.active.insert(d);
-
-    // Inject this variable into the script's namespace
-    script.inject(n.c_str(), d->currentValue());
-    saveLookup(n, &script);
-
-    return true;
 }
 
 void Node::pySetAttr(std::string name, PyObject* obj, uint8_t flags)

@@ -6,17 +6,17 @@
 
 #include "app/undo/undo_change_script.h"
 
-#include "graph/node.h"
+#include "graph/script_node.h"
 
 UndoChangeScriptCommand::UndoChangeScriptCommand(
-        Node* n, QString before, QString after)
+        ScriptNode* n, QString before, QString after)
     : UndoChangeScriptCommand(n, before, after, -1, -1, NULL)
 {
     // Nothing to do here
 }
 
 UndoChangeScriptCommand::UndoChangeScriptCommand(
-        Node* n, QString before, QString after,
+        ScriptNode* n, QString before, QString after,
         int cursor_before, int cursor_after,
         QPlainTextEdit* txt)
     : n(n), before(before), after(after),
@@ -64,5 +64,8 @@ void UndoChangeScriptCommand::undo()
 void UndoChangeScriptCommand::swapNode(Node* a, Node* b) const
 {
     if (n == a)
-        n = b;
+    {
+        assert(dynamic_cast<ScriptNode*>(b));
+        n = static_cast<ScriptNode*>(b);
+    }
 }
