@@ -2,8 +2,7 @@ LEMONSOURCE = src/tree/v2syntax.y
 
 lemon.name = lemon ${QMAKE_FILE_IN}
 lemon.input = LEMONSOURCE
-lemon.output = $${OUT_PWD}/${QMAKE_FILE_BASE}.lemon.cpp \
-               $${OUT_PWD}/${QMAKE_FILE_BASE}.lemon.hpp
+lemon.output = $${OUT_PWD}/${QMAKE_FILE_BASE}.lemon.cpp
 lemon.commands = lemon -q -c -s ${QMAKE_FILE_IN} && \
                  mv ${QMAKE_FILE_PATH}/${QMAKE_FILE_BASE}.c \
                     $${OUT_PWD}/${QMAKE_FILE_BASE}.lemon.cpp && \

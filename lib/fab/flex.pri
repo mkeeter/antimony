@@ -2,8 +2,7 @@ FLEXSOURCE = src/tree/v2syntax.l
 
 flex.name = flex ${QMAKE_FILE_IN}
 flex.input = FLEXSOURCE
-flex.output = $${OUT_PWD}/${QMAKE_FILE_BASE}.yy.cpp \
-              $${OUT_PWD}/${QMAKE_FILE_BASE}.yy.hpp
+flex.output = $${OUT_PWD}/${QMAKE_FILE_BASE}.yy.hpp
 flex.commands = flex --outfile=$${OUT_PWD}/${QMAKE_FILE_BASE}.yy.cpp \
                       --header-file=$${OUT_PWD}/${QMAKE_FILE_BASE}.yy.hpp \
                       ${QMAKE_FILE_IN}
