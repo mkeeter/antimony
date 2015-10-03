@@ -60,6 +60,13 @@ public:
      */
     void checkRender(Node* n, Datum* d);
 
+    /*
+     *  When loading is set, we don't create ControlRoot objects for nodes
+     *  (to avoid creating a glut of rendering threads when many shapes are
+     *  in fact connected and don't need to be rendered)
+     */
+    bool loading;
+
 public slots:
     void onGlowChange(Node* n, bool g);
 

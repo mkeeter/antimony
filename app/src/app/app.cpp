@@ -191,7 +191,7 @@ void App::loadFile(QString f)
 {
     filename = f;
     root->clear();
-    root->uninstallWatcher(view_scene);
+    view_scene->loading = true;
 
     QFile file(f);
     if (!file.open(QIODevice::ReadOnly))
@@ -225,7 +225,7 @@ void App::loadFile(QString f)
         emit(windowTitleChanged(getWindowTitle()));
     }
 
-    root->installWatcher(view_scene);
+    view_scene->loading = false;
     view_scene->trigger(root->getState());
 }
 
