@@ -15,6 +15,11 @@ public:
     bool makeDatum(std::string name, PyTypeObject* type,
                    bool output);
 
+    /*
+     *  pyGetAttr is overloaded to add __subgraph as a lookup.
+     */
+    PyObject* pyGetAttr(std::string name, Downstream* caller,
+                        uint8_t flags) const override;
 protected:
     std::unique_ptr<Graph> subgraph;
 };

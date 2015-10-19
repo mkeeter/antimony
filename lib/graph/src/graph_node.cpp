@@ -1,6 +1,7 @@
 #include <Python.h>
 #include "graph/graph_node.h"
 #include "graph/graph.h"
+#include "graph/proxy.h"
 
 GraphNode::GraphNode(std::string name, Graph* root)
     : Node(name, root), subgraph(new Graph(this))
@@ -39,4 +40,13 @@ bool GraphNode::makeDatum(std::string name, PyTypeObject* type,
     triggerWatchers();
 
     return out;
+}
+
+PyObject* GraphNode::pyGetAttr(std::string n, Downstream* caller,
+                               uint8_t flags) const
+{
+    if (n == "__subgraph" && (flags & Proxy::FLAG_UID_LOOKUP))
+        return Proxy::makeProxyFor(subgraph.get(), caller, flags);
+    else
+        return Node::pyGetAttr(n, caller, flags);
 }
