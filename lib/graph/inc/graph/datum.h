@@ -167,6 +167,15 @@ protected:
      */
     void writeLinkExpression(const std::unordered_set<const Datum*> links);
 
+    /*
+     *  Returns a formatted link expression in the form
+     *      __nodeID.__datumID
+     *      __parent.__datumID
+     *      __nodeID.__subgraph.__nodeID.__datumID
+     *  (depending on whether the datum shares a parent with us or not)
+     */
+    std::string formatLink(const Datum* upstream) const;
+
     const std::string name;
     const uint32_t uid;
 

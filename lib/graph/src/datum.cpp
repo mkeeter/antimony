@@ -112,7 +112,6 @@ PyObject* Datum::castToType(PyObject* value)
     return cast;
 }
 
-#include <iostream>
 std::unordered_set<const Datum*> Datum::getLinks() const
 {
     std::unordered_set<const Datum*> out;
@@ -200,10 +199,8 @@ void Datum::writeLinkExpression(const std::unordered_set<const Datum*> links)
     }
 }
 
-void Datum::installLink(const Datum* upstream)
+std::string Datum::formatLink(const Datum* upstream) const
 {
-    assert(acceptsLink(upstream));
-
     std::string id;
 
     if (upstream->parent->parent->parentNode() == parent)
@@ -217,6 +214,15 @@ void Datum::installLink(const Datum* upstream)
         assert(false);
 
     id += ".__" + std::to_string(upstream->uid);
+
+    return id;
+}
+
+void Datum::installLink(const Datum* upstream)
+{
+    assert(acceptsLink(upstream));
+
+    std::string id = formatLink(upstream);
 
     if (isLink())
         setText(expr.substr(0, expr.size() - 1) + "," + id + "]");
