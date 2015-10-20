@@ -192,8 +192,7 @@ void Datum::writeLinkExpression(const std::unordered_set<const Datum*> links)
         {
             if (expr.back() != '[')
                 expr += ",";
-            expr += "__" + std::to_string(d->parent->uid) +
-                   ".__" + std::to_string(d->uid);
+            expr += formatLink(d);
         }
         expr += "]";
     }
