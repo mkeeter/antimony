@@ -65,6 +65,7 @@ public:
 struct GraphState
 {
     std::unordered_set<Node*> nodes;
+    std::unordered_set<Datum*> incoming;
 };
 
 class GraphWatcher

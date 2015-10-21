@@ -22,7 +22,13 @@ GraphState Graph::getState() const
     std::unordered_set<Node*> out;
     for (const auto& ptr : nodes)
         out.insert(ptr.get());
-    return (GraphState){ out };
+
+    std::unordered_set<Datum*> incoming;
+    if (auto n = parent)
+        for (const auto& ptr : n->datums)
+            incoming.insert(ptr.get());
+
+    return (GraphState){ out, incoming };
 }
 
 bool Graph::isNameUnique(std::string name, const Node* n) const
