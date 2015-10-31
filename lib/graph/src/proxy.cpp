@@ -48,6 +48,10 @@ PyObject* Proxy::getAttr(std::string name)
         PyErr_Clear();
     }
 
+    if (name == "this" && for_this) {
+      return for_this;
+      }
+
     if (caller)
         root->saveLookup(name, caller);
     if (auto v = root->pyGetAttr(name, caller, flags))
@@ -87,6 +91,12 @@ PyObject* Proxy::makeProxyFor(Root* r, Downstream* caller, uint8_t flags)
     p_->caller = caller;
     p_->flags = flags;
     return p;
+}
+
+void Proxy::setThis(PyObject* proxy, Root* for_this, Downstream* caller)
+{
+    // "caller" probably wrong
+    boost::python::extract<Proxy*>(proxy)()->for_this = Proxy::makeProxyFor(for_this, caller);
 }
 
 void Proxy::setGlobals(PyObject* proxy, PyObject* globals)

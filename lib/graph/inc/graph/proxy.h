@@ -49,10 +49,16 @@ public:
     const static uint8_t FLAG_MUTABLE  = 1;
     const static uint8_t FLAG_UID_LOOKUP = 2;
 
+    /*
+     * Add a "this" for evaluation
+     */
+    static void setThis(PyObject* proxy, Root* for_this, Downstream* caller);
+
 protected:
     Root* root;
     Downstream* caller;
     PyObject* globals;
+    PyObject* for_this;
 
     uint8_t flags;
 

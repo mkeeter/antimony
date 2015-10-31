@@ -71,6 +71,7 @@ PyObject* Datum::getValue()
             "{sO}", "__builtins__", PyEval_GetBuiltins());
     parent->parent->loadDatumHooks(globals);
     Proxy::setGlobals(locals, globals);
+    Proxy::setThis(locals, this->parent, this);
 
     // If the string begins with a sigil, slice it off
     const std::string e = trimSigil(expr).first;
