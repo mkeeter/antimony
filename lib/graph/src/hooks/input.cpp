@@ -2,7 +2,7 @@
 
 #include "graph/hooks/input.h"
 #include "graph/hooks/hooks.h"
-#include "graph/node.h"
+#include "graph/script_node.h"
 
 void InputHook::call(std::string name, boost::python::object type)
 {

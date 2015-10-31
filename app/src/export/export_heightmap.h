@@ -27,9 +27,11 @@ class ExportHeightmapTask : public QObject
     Q_OBJECT
 public:
     explicit ExportHeightmapTask(Shape s, Bounds b, float r,
-                                 float mm, QString f, volatile int* halt)
+                                 float mm, QString f,
+                                 volatile int* halt, volatile bool* success)
         : shape(s), bounds(b), resolution(r),
-          mm_per_unit(mm), filename(f), halt(halt)
+          mm_per_unit(mm), filename(f),
+          halt(halt), success(success)
         {}
 public slots:
     void render();
@@ -43,6 +45,7 @@ protected:
     QString filename;
 
     volatile int* halt;
+    volatile bool* success;
 };
 
 #endif

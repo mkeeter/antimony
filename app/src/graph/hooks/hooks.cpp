@@ -6,7 +6,7 @@
 #include "graph/hooks/export.h"
 #include "graph/hooks/ui.h"
 
-#include "graph/node.h"
+#include "graph/script_node.h"
 
 #include "app/app.h"
 
@@ -92,7 +92,7 @@ void AppHooks::preInit()
     PyImport_AppendInittab("_AppHooks", PyInit__AppHooks);
 }
 
-void AppHooks::loadScriptHooks(PyObject* g, Node* n)
+void AppHooks::loadScriptHooks(PyObject* g, ScriptNode* n)
 {
     // Lazy initialization of hooks module
     static PyObject* hooks_module = NULL;

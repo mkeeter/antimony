@@ -145,10 +145,11 @@ TEST_CASE("UID lookup")
 
     SECTION("Not allowed")
     {
-        auto y = new Datum("y", "__0.__0", &PyFloat_Type, n);
-        REQUIRE(y->isValid() == false);
-        CAPTURE(y->getError());
-        REQUIRE(y->getError().find("Name '__0' is not defined")
+        auto y = new Datum("y", "1.0", &PyFloat_Type, n);
+        auto z = new Datum("z", "__0.__1", &PyFloat_Type, n);
+        REQUIRE(z->isValid() == false);
+        CAPTURE(z->getError());
+        REQUIRE(z->getError().find("Name '__0' is not defined")
                 != std::string::npos);
     }
 

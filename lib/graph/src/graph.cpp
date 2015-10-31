@@ -6,25 +6,10 @@
 #include "graph/hooks/hooks.h"
 #include "graph/watchers.h"
 
-Graph::Graph(std::string n, Graph* parent)
-    : name(n), uid(0), parent(parent), processing_queue(false)
+Graph::Graph(Node* parent)
+    : parent(parent), processing_queue(false)
 {
     // Nothing to do here
-}
-
-PyObject* Graph::proxyDict(Datum* caller)
-{
-    return Proxy::makeProxyFor(this, caller);
-}
-
-void Graph::triggerWatchers() const
-{
-    if (!watchers.empty())
-    {
-        auto state = getState();
-        for (auto w : watchers)
-            w->trigger(state);
-    }
 }
 
 uint32_t Graph::install(Node* n)
@@ -92,7 +77,7 @@ void Graph::clear()
     triggerWatchers();
 }
 
-void Graph::loadScriptHooks(PyObject* g, Node* n)
+void Graph::loadScriptHooks(PyObject* g, ScriptNode* n)
 {
     if (external)
         external->loadScriptHooks(g, n);
@@ -112,20 +97,40 @@ void Graph::loadDatumHooks(PyObject* g)
         external->loadDatumHooks(g);
 }
 
-PyObject* Graph::pyGetAttr(std::string name, Downstream* caller) const
+PyObject* Graph::pyGetAttr(std::string name, Downstream* caller,
+                           uint8_t flags) const
 {
-    auto m = get(name, nodes);
-    return m ? Proxy::makeProxyFor(m, caller) : NULL;
+    // Special-case for subgraphs: __parent returns parent node
+    if (name == "__parent" && (flags & Proxy::FLAG_UID_LOOKUP))
+        return parent ? Proxy::makeProxyFor(parent, caller, flags)
+                      : NULL;
+
+    // Default case: look up a node by name or UID (depending on flags)
+    auto m = (flags & Proxy::FLAG_UID_LOOKUP)
+        ? get(name, nodes) : getByName(name, nodes);
+    return m ? Proxy::makeProxyFor(m, caller, flags) : NULL;
+}
+
+void Graph::pySetAttr(std::string, PyObject*, uint8_t)
+{
+    assert(false);
 }
 
 void Graph::queue(Downstream* d)
 {
-    downstream_queue.insert(d);
+    if (parent)
+        parent->queue(d);
+    else
+        downstream_queue.insert(d);
 }
 
 void Graph::flushQueue()
 {
-    if (!processing_queue)
+    if (parent)
+    {
+        parent->flushQueue();
+    }
+    else if (!processing_queue)
     {
         processing_queue = true;
         while (downstream_queue.size())

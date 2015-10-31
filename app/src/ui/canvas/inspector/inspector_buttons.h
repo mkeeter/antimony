@@ -10,24 +10,25 @@
 class NodeInspector;
 class ExportWorker;
 
-class Node;
+class ScriptNode;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class InspectorScriptButton : public GraphicsButton
+class InspectorScriptButton : public GraphicsButton, ScriptWatcher
 {
     Q_OBJECT
 public:
-    InspectorScriptButton(Node* n, QGraphicsItem* parent);
+    InspectorScriptButton(ScriptNode* n, QGraphicsItem* parent);
     QRectF boundingRect() const override;
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
                QWidget* widget=0) override;
-    void setScriptValid(const bool v);
+
+    void trigger(const ScriptState& state) override;
 protected slots:
     void onPressed();
 protected:
     bool script_valid;
-    Node* node;
+    ScriptNode* node;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

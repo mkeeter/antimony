@@ -8,7 +8,7 @@
 
 #include "app/app.h"
 
-#include "graph/node.h"
+#include "graph/script_node.h"
 #include "graph/graph.h"
 #include "graph/datum.h"
 
@@ -220,8 +220,8 @@ void MainWindow::populateNodeMenu(QMenu* menu, bool recenter, Viewport* v)
         if (title.size() > 0 && title.at(0).isLetter())
             name = title.at(0).toLower() + QString("*");
         NodeConstructorFunction constructor =
-            [=](Graph *r){ return new Node(name.toStdString(),
-                                           txt.toStdString(), r); };
+            [=](Graph *r){ return new ScriptNode(name.toStdString(),
+                                                 txt.toStdString(), r); };
         nodes[title] = QPair<QStringList, NodeConstructorFunction>(
                 split, constructor);
         node_titles.append(title);
@@ -256,7 +256,7 @@ void MainWindow::populateMenu(QMenu* menu, bool recenter, Viewport* v)
     menu->addSeparator();
 
     addNodeToMenu(QStringList(), "Script", menu, recenter,
-                [](Graph *r){ return new Node("s*",
+                [](Graph *r){ return new ScriptNode("s*",
                     "import fab\n\n"
                     "title('script')\n"
                     "input('r', float, 1)\n"

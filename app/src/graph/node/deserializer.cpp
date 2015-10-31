@@ -10,6 +10,7 @@
 
 #include "graph/node/deserializer.h"
 #include "graph/node.h"
+#include "graph/script_node.h"
 #include "graph/graph.h"
 
 PyObject* SceneDeserializer::globals = NULL;
@@ -75,8 +76,16 @@ bool SceneDeserializer::run(QJsonObject in, Graph* graph, Info* info)
 
 void SceneDeserializer::deserializeNode(QJsonObject in, Graph* p, Info* info)
 {
-    Node* node = new Node(in["name"].toString().toStdString(),
-                          in["uid"].toDouble(), p);
+    Node* node = NULL;
+    if (in.contains("script"))
+    {
+        node = new ScriptNode(in["name"].toString().toStdString(),
+                              in["uid"].toDouble(), p);
+    }
+    else
+    {
+        assert(false);
+    }
 
     // Deserialize inspector position
     auto a = in["inspector"].toArray();
@@ -86,10 +95,13 @@ void SceneDeserializer::deserializeNode(QJsonObject in, Graph* p, Info* info)
     for (auto d : in["datums"].toArray())
         deserializeDatum(d.toObject(), node);
 
-    QStringList s;
-    for (auto line : in["script"].toArray())
-        s.append(line.toString());
-    node->setScript(s.join("\n").toStdString());
+    if (auto script_node = dynamic_cast<ScriptNode*>(node))
+    {
+        QStringList s;
+        for (auto line : in["script"].toArray())
+            s.append(line.toString());
+        script_node->setScript(s.join("\n").toStdString());
+    }
 }
 
 void SceneDeserializer::deserializeDatum(QJsonObject in, Node* node)

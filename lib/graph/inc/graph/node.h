@@ -5,6 +5,7 @@
 #include <memory>
 
 #include "graph/types/root.h"
+#include "graph/types/watched.h"
 #include "graph/script.h"
 #include "graph/datum.h"
 #include "graph/watchers.h"
@@ -13,18 +14,18 @@ class Datum;
 class Graph;
 class NodeWatcher;
 
-class Node : public Root
+class Node : public Root, public Watched<NodeWatcher, NodeState>
 {
 public:
     /*
-     *  On construction, trigger parent Root's watchers.
+     *  On construction, trigger parent Root's watchers if do_init is set.
      *
      *  If the given name ends with '*', it is treated as a wildcard prefix
      *  and Graph::nextName is called to get an appropriate name.
      */
-    explicit Node(std::string name, Graph* root);
-    explicit Node(std::string name, std::string script, Graph* root);
-    explicit Node(std::string name, uint64_t uid, Graph* root);
+    explicit Node(std::string name, Graph* root, bool do_init=true);
+    explicit Node(std::string name, uint64_t uid,
+                  Graph* root, bool do_init=true);
 
     /*
      *  Return the root pointer.
@@ -57,33 +58,6 @@ public:
     std::list<Datum*> childDatums() const;
 
     /*
-     *  Updates the script text and triggers an update.
-     */
-    void setScript(std::string t);
-
-    /*
-     *  Looks up the current text of the script.
-     */
-    std::string getScript() const { return script.script; }
-
-    /*
-     *  Returns the error message from script evaluation.
-     */
-    std::string getError() const { return script.error; }
-
-    /*
-     *  Returns the error line from script evaluation.
-     *  (indexed from 1)
-     */
-    int getErrorLine() const { return script.error_lineno; }
-
-    /*
-     *  When the script is done running, update the node
-     *  (which may require removing datums from the list)
-     */
-    void update(const std::unordered_set<Datum*>& active);
-
-    /*
      *  Adds the given datum at the end of the list.
      *  Does NOT trigger NodeWatcher objects.
      *
@@ -99,12 +73,6 @@ public:
     void uninstall(Datum* d);
 
     /*
-     *  Returns a Proxy object that uses the parent Graph as its
-     *  root and the given datum as the caller (for datum evaluation)
-     */
-    PyObject* proxyDict(Datum* caller);
-
-    /*
      *  Returns a mutable proxy for this node
      */
     PyObject* mutableProxy();
@@ -115,25 +83,19 @@ public:
     Datum* getDatum(std::string name) const;
 
     /*
-     *  Sets the callback object.
-     */
-    void installWatcher(NodeWatcher* w) { watchers.push_back(w); }
-    void uninstallWatcher(NodeWatcher* w);
-
-    /*
      *  Calls load on the parent graph's external hook object.
      */
-    void loadScriptHooks(PyObject* g);
     void loadDatumHooks(PyObject* g);
 
     /*
      *  Return the state (passed into callbacks)
      */
-    NodeState getState() const;
+    NodeState getState() const override;
 
     /* Root functions */
-    PyObject* pyGetAttr(std::string name, Downstream* caller) const override;
-    void pySetAttr(std::string name, PyObject* obj) override;
+    PyObject* pyGetAttr(std::string name, Downstream* caller,
+                        uint8_t flags) const override;
+    void pySetAttr(std::string name, PyObject* obj, uint8_t flags) override;
     void queue(Downstream* d) override;
     void flushQueue() override;
 
@@ -144,35 +106,17 @@ protected:
      */
     void init();
 
-    /*
-     *  Construct a datum with the given name, type, and value.
-     *
-     *  If output is false, then only load the value on new datum
-     *  construction (as a default); if output is true, then load
-     *  the value regardless of whether the datum is new or existing.
-     *
-     *  Returns true on success, false if the datum was already created
-     *  in this pass through the script (checked using script.active).
-     */
-    bool makeDatum(std::string name, PyTypeObject* type,
-                   std::string value, bool output);
-
-    void pruneInactive(std::unordered_set<Datum*> active);
-
     std::string name;
     const uint32_t uid;
 
-    Script script;
     std::list<std::unique_ptr<Datum>> datums;
     Graph* parent;
-
-    std::list<NodeWatcher*> watchers;
 
     friend class Graph;
     friend class Datum;
     friend class Root;
-    friend struct Script;
 
     friend struct InputHook;
     friend struct OutputHook;
 };
+

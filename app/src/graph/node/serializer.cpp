@@ -5,6 +5,7 @@
 #include "graph/node/serializer.h"
 
 #include "graph/node.h"
+#include "graph/script_node.h"
 #include "graph/graph.h"
 #include "graph/datum.h"
 
@@ -49,11 +50,14 @@ QJsonObject SceneSerializer::serializeNode(Node* node, QMap<Node*, QPointF> insp
     out["name"] = QString::fromStdString(node->getName());
     out["uid"] = int(node->getUID());
 
-    auto expr = QString::fromStdString(node->getScript());
-    auto a = QJsonArray();
-    for (auto line : expr.split("\n"))
-        a.append(line);
-    out["script"] = a;
+    if (auto script_node = dynamic_cast<ScriptNode*>(node))
+    {
+        auto expr = QString::fromStdString(script_node->getScript());
+        auto a = QJsonArray();
+        for (auto line : expr.split("\n"))
+            a.append(line);
+        out["script"] = a;
+    }
 
     QJsonArray datum_array;
     for (auto d : node->childDatums())

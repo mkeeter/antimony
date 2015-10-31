@@ -8,10 +8,10 @@
 #include "ui/util/colors.h"
 #include "ui/main_window.h"
 
-#include "graph/node.h"
+#include "graph/script_node.h"
 #include "graph/graph.h"
 
-ScriptPane::ScriptPane(Node* node, QWidget* parent)
+ScriptPane::ScriptPane(ScriptNode* node, QWidget* parent)
     : QWidget(parent), node(node), graph(node->parentGraph()),
       editor(new ScriptEditor(node, this)),
       output(new QPlainTextEdit), error(new QPlainTextEdit)
@@ -40,21 +40,21 @@ ScriptPane::ScriptPane(Node* node, QWidget* parent)
     layout->setSpacing(10);
     layout->setContentsMargins(20, 0, 20, 0);
 
-    node->installWatcher(this);
+    node->installScriptWatcher(this);
     graph->installWatcher(this);
 
     setLayout(layout);
-    trigger(node->getState());
+    trigger(node->getScriptState());
 }
 
 ScriptPane::~ScriptPane()
 {
     if (node)
-        node->uninstallWatcher(this);
+        node->uninstallScriptWatcher(this);
     graph->uninstallWatcher(this);
 }
 
-void ScriptPane::trigger(const NodeState& state)
+void ScriptPane::trigger(const ScriptState& state)
 {
     editor->trigger(state);
 

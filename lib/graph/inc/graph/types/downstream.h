@@ -20,12 +20,6 @@ public:
      */
     virtual void update()=0;
 
-    /*
-     *  Returns true if a proxy lookup is allowed to use UIDs
-     *  (which should only be true for datums with a connection sigil)
-     */
-    virtual bool allowLookupByUID() const=0;
-
 protected:
 
     void trigger();
