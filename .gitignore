@@ -1,4 +1,5 @@
 *.pyc
+*.o
 .tags
 *DS_Store
 fab/c/build*
@@ -20,3 +21,4 @@ src/fab/tree/v2syntax.yy.hpp
 .cproject
 
 .project
+

@@ -45,10 +45,16 @@ public:
      */
     static void setGlobals(PyObject* proxy, PyObject* globals);
 
+    /*
+     * Add a "this" for evaluation
+     */
+    static void setThis(PyObject* proxy, Root* for_this, Downstream* caller);
+
 protected:
     Root* root;
     Downstream* caller;
     PyObject* globals;
+    PyObject* for_this;
 
     bool settable;
 
