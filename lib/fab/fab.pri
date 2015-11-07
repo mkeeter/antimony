@@ -6,8 +6,6 @@ include(../../qt/libpng.pri)
 
 include(flex.pri)
 include(lemon.pri)
-FLEXSOURCE = src/tree/v2syntax.l
-LEMONSOURCE = src/tree/v2syntax.y
 
 SOURCES += \
     src/fab.cpp \

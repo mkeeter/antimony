@@ -1,3 +1,5 @@
+LEMONSOURCE = src/tree/v2syntax.y
+
 lemon.name = lemon ${QMAKE_FILE_IN}
 lemon.input = LEMONSOURCE
 lemon.output = $${OUT_PWD}/${QMAKE_FILE_BASE}.lemon.cpp \
