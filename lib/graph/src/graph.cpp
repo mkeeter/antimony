@@ -1,12 +1,13 @@
 #include <algorithm>
 
 #include "graph/graph.h"
+#include "graph/graph_node.h"
 #include "graph/node.h"
 #include "graph/proxy.h"
 #include "graph/hooks/hooks.h"
 #include "graph/watchers.h"
 
-Graph::Graph(Node* parent)
+Graph::Graph(GraphNode* parent)
     : parent(parent), processing_queue(false)
 {
     // Nothing to do here

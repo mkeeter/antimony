@@ -20,6 +20,7 @@ public:
      */
     PyObject* pyGetAttr(std::string name, Downstream* caller,
                         uint8_t flags) const override;
+
 protected:
     std::unique_ptr<Graph> subgraph;
 };

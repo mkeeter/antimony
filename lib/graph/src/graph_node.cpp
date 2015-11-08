@@ -4,15 +4,15 @@
 #include "graph/proxy.h"
 
 GraphNode::GraphNode(std::string name, Graph* root)
-    : Node(name, root), subgraph(new Graph(this))
+    : Node(name, root, false), subgraph(new Graph(this))
 {
-    // Nothing to do here
+    init();
 }
 
 GraphNode::GraphNode(std::string name, uint32_t uid, Graph* root)
-    : Node(name, uid, root), subgraph(new Graph(this))
+    : Node(name, uid, root, false), subgraph(new Graph(this))
 {
-    // Nothing to do here
+    init();
 }
 
 bool GraphNode::makeDatum(std::string name, PyTypeObject* type,

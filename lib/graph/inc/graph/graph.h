@@ -13,12 +13,13 @@
 #include "hooks/external.h"
 
 class Node;
+class GraphNode;
 class GraphWatcher;
 
 class Graph : public Root, public Watched<GraphWatcher, GraphState>
 {
 public:
-    explicit Graph(Node* parent=NULL);
+    explicit Graph(GraphNode* parent=NULL);
 
     /*
      *  Installs this node at the end of the node list.
@@ -35,6 +36,11 @@ public:
      *  Returns a list of child nodes.
      */
     std::list<Node*> childNodes() const;
+
+     /*
+     *  Returns the parent node or NULL if this is a top-level graph.
+     */
+    GraphNode* parentNode() const { return parent; }
 
     /*
      *  Uninstall the given node.
@@ -97,7 +103,8 @@ public:
     static void preInit();
 
 protected:
-    Node* parent;
+    GraphNode* parent;
+
     std::list<std::unique_ptr<Node>> nodes;
 
     std::unique_ptr<ExternalHooks> external;
