@@ -5,6 +5,7 @@
 #include "ui/canvas/connection.h"
 #include "ui/canvas/inspector/inspector.h"
 #include "ui/canvas/port.h"
+#include "ui/util/scene.h"
 
 #include "app/app.h"
 #include "app/undo/undo_move.h"
