@@ -38,6 +38,7 @@ bool GraphNode::makeDatum(std::string name, PyTypeObject* type,
 
     bool out = d->isValid();
     triggerWatchers();
+    subgraph->triggerWatchers();
 
     return out;
 }
