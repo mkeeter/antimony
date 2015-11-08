@@ -13,3 +13,8 @@ GraphNode::GraphNode(std::string name, uint32_t uid, Graph* root)
 {
     // Nothing to do here
 }
+
+bool GraphNode::makeDatum(std::string name, PyTypeObject* type,
+                          std::string value, bool output)
+{
+}
