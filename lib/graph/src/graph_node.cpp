@@ -15,6 +15,28 @@ GraphNode::GraphNode(std::string name, uint32_t uid, Graph* root)
 }
 
 bool GraphNode::makeDatum(std::string name, PyTypeObject* type,
-                          std::string value, bool output)
+                          bool output)
 {
+    // Construct a default datum of the given type
+    auto obj = PyObject_CallObject((PyObject*)type, NULL);
+    assert(!PyErr_Occurred());
+
+    auto repr = PyObject_Repr(obj);
+    assert(!PyErr_Occurred());
+
+    auto value = std::string(PyUnicode_AsUTF8(repr));
+
+    if (output)
+        value = Datum::SIGIL_OUTPUT + value;
+
+    auto d = new Datum(name, value, type, this);
+    assert(d->isValid());
+
+    Py_DECREF(obj);
+    Py_DECREF(repr);
+
+    bool out = d->isValid();
+    triggerWatchers();
+
+    return out;
 }
