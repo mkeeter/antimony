@@ -14,5 +14,5 @@ typedef struct env_
 	Node* Znode;
 	NodeCache* cache;
 	Node *tempX, *tempY, *tempZ;
-	std::stack <Node*>	*nodestack;
+	std::stack <Node*> *nodestack;
 } Env;

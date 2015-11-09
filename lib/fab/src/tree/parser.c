@@ -33,6 +33,7 @@
 
 #include "fab/tree/tree.h"
 #include "fab/tree/parser.h"
+#include "fab/tree/v2parser.h"
 
 #include "fab/tree/node/node.h"
 #include "fab/tree/node/opcodes.h"
