@@ -2,8 +2,11 @@
 %{
 	#include <math.h>
 	#include <stdlib.h>
-	#include "fab/tree/v2parser.hpp"
+	#include "fab/tree/parser_env.hpp"
 	#include "v2syntax.lemon.hpp"
+	#pragma clang diagnostic ignored "-Wdeprecated-register"
+	#pragma clang diagnostic ignored "-Wunused-parameter"
+	#pragma clang diagnostic ignored "-Wunused-function"
 %}
 
 %option reentrant

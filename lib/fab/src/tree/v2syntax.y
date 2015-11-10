@@ -2,7 +2,10 @@
 	#include <math.h>
 	#include <cassert>
 	#include <iostream>
-	#include "fab/tree/v2parser.hpp"
+	#include "fab/tree/parser_env.hpp"
+
+	#pragma clang diagnostic ignored "-Wunused-parameter"
+	#pragma clang diagnostic ignored "-Wunused-variable"
 
 	extern "C"
 	{
