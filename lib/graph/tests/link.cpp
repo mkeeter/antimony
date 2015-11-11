@@ -101,6 +101,27 @@ TEST_CASE("Link installation")
     delete g;
 }
 
+TEST_CASE("Link installation across nodes")
+{
+    auto g = new Graph();
+    auto a = new Node("a", g);
+    auto ax = new Datum("x", "5.0", &PyFloat_Type, a);
+    auto b = new Node("b", g);
+    auto bx = new Datum("x", "2.0", &PyFloat_Type, b);
+
+    REQUIRE(ax->acceptsLink(bx));
+    ax->installLink(bx);
+
+    REQUIRE(ax->getText() == Datum::SIGIL_CONNECTION +
+                             std::string("[__1.__0]"));
+    REQUIRE(ax->isValid() == true);
+    REQUIRE(ax->currentValue() != NULL);
+    REQUIRE(PyFloat_AsDouble(ax->currentValue()) == 2.0);
+
+    REQUIRE(!bx->acceptsLink(ax));
+    delete g;
+}
+
 TEST_CASE("Link installation with reducer")
 {
     auto g = new Graph();

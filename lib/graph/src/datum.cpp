@@ -202,13 +202,24 @@ std::string Datum::formatLink(const Datum* upstream) const
 {
     std::string id;
 
-    if (upstream->parent->parent->parentNode() == parent)
+    // First, check to see if the upstream comes from the
+    // same graph level as this datum
+    if (upstream->parent->parent == parent->parent)
+        id = "__" + std::to_string(upstream->parent->uid);
+
+    // Next, check to see if the upstream comes from a
+    // subgraph of this datum's parent node.
+    else if (upstream->parent->parent->parentNode() == parent)
         id = "__" + std::to_string(parent->uid) + ".__subgraph.__" +
              std::to_string(upstream->parent->uid);
+
+    // Finally, check to see if the upstream comes from the
+    // supergraph that contains this datum's parent node.
     else if (upstream->parent == parent->parent->parentNode())
         id = "__parent";
-    else if (upstream->parent == parent)
-        id = "__" + std::to_string(upstream->parent->uid);
+
+    // Otherwise, we don't know what to do: datum links are only
+    // allowed to happen across one level of a graph.
     else
         assert(false);
 
