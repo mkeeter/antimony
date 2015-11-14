@@ -24,12 +24,12 @@ GraphState Graph::getState() const
     for (const auto& ptr : nodes)
         out.insert(ptr.get());
 
-    std::unordered_set<Datum*> incoming;
+    std::unordered_set<Datum*> datums;
     if (auto n = parent)
         for (const auto& ptr : n->datums)
-            incoming.insert(ptr.get());
+            datums.insert(ptr.get());
 
-    return (GraphState){ out, incoming };
+    return (GraphState){ out, datums };
 }
 
 bool Graph::isNameUnique(std::string name, const Node* n) const
