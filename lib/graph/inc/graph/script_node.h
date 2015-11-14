@@ -58,6 +58,12 @@ public:
      *  Constructs a set of script hooks pointing to this node.
      */
     void loadScriptHooks(PyObject* g);
+
+    /*
+     *  Returns a NodeState with the script pointer populated.
+     */
+    NodeState getState() const override;
+
 protected:
     /*
      *  When the script is done running, update the node

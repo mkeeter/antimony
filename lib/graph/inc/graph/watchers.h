@@ -7,6 +7,7 @@
 class Datum;
 class Node;
 class Graph;
+struct Script;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -34,6 +35,11 @@ struct NodeState
 {
     bool name_valid;
     std::list<Datum*> datums;
+
+    // Only one of these should be populated at a time
+    // (my kingdom for an Either type!)
+    Graph* subgraph;
+    Script* script;
 };
 
 class NodeWatcher

@@ -87,6 +87,13 @@ void ScriptNode::loadScriptHooks(PyObject* g)
     parent->loadScriptHooks(g, this);
 }
 
+NodeState ScriptNode::getState() const
+{
+    auto s = Node::getState();
+    s.script = const_cast<Script*>(&script);
+    return s;
+}
+
 void ScriptNode::update(const std::unordered_set<Datum*>& active)
 {
     // Remove any datums that weren't marked as active and trigger
