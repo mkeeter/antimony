@@ -81,14 +81,14 @@ MathTree* clone_tree(MathTree* orig)
     MathTree* clone = new_tree(orig->num_levels, orig->num_constants);
 
     // Clone the constants into the new tree.
-    for (int c=0; c < orig->num_constants; ++c) {
+    for (unsigned c=0; c < orig->num_constants; ++c) {
         clone->constants[c] = clone_node(orig->constants[c]);
     }
 
     // Then clone all of the nodes into the new tree:
 
     // Iterate over levels
-    for (int level=0; level < orig->num_levels; ++level) {
+    for (unsigned level=0; level < orig->num_levels; ++level) {
 
         int active = orig->active[level];
         clone->active[level] = active;
@@ -134,15 +134,15 @@ void disable_node(MathTree* tree, int level, int n)
 
 void disable_nodes_binary(MathTree* tree)
 {
-    for (int level=0; level < tree->num_levels; ++level) {
-        for (int n=0; n < tree->active[level]; ++n) {
+    for (unsigned level=0; level < tree->num_levels; ++level) {
+        for (unsigned n=0; n < tree->active[level]; ++n) {
             tree->nodes[level][n]->flags |= NODE_BOOLEAN;
         }
     }
 
     for (int level=tree->num_levels-1; level >= 0; --level) {
 
-        for (int n=0; n < tree->active[level]; ++n) {
+        for (unsigned n=0; n < tree->active[level]; ++n) {
             Node* node = tree->nodes[level][n];
 
             if ((node->flags & NODE_BOOLEAN) &&
@@ -172,8 +172,8 @@ void disable_nodes(MathTree* tree)
 {
     // Mark every node as ignored and binary.
     // We'll then go down the tree and mark nodes as uncacheable.
-    for (int level=0; level < tree->num_levels; ++level) {
-        for (int n=0; n < tree->active[level]; ++n) {
+    for (unsigned level=0; level < tree->num_levels; ++level) {
+        for (unsigned n=0; n < tree->active[level]; ++n) {
             tree->nodes[level][n]->flags |= NODE_IGNORED;
         }
     }
@@ -185,7 +185,7 @@ void disable_nodes(MathTree* tree)
         // we can reverse the operation later.
         ustack_push(&tree->disabled[level], 0);
 
-        for (int n=0; n < tree->active[level]; ++n) {
+        for (unsigned n=0; n < tree->active[level]; ++n) {
             Node* node = tree->nodes[level][n];
 
             // If this node is marked, swap it to the back of the list
@@ -245,7 +245,7 @@ uint8_t active_axes(const MathTree* const tree)
 
     uint8_t active = 0;
     if (tree->num_levels) {
-        for (int a=0; a < tree->active[0]; ++a) {
+        for (unsigned a=0; a < tree->active[0]; ++a) {
             switch (tree->nodes[0][a]->opcode) {
                 case OP_X:  active |= (1 << 2); break;
                 case OP_Y:  active |= (1 << 1); break;

@@ -128,7 +128,6 @@ TEST_CASE("Datum preservation")
     delete g;
 }
 
-
 TEST_CASE("Script re-evaluation on datum change")
 {
     auto g = new Graph();
@@ -303,4 +302,13 @@ TEST_CASE("Output with invalid repr")
     REQUIRE(n->getErrorLine() == 1);
 
     delete g;
+}
+
+TEST_CASE("Recursive loops in script output")
+{
+    auto g = new Graph();
+    auto n = new ScriptNode("n", g);
+    n->setScript("input('x', float)\n"
+                 "output('y', x*1.1)");
+    REQUIRE(!n->getDatum("x")->acceptsLink(n->getDatum("y")));
 }

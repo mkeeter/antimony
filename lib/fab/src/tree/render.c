@@ -53,8 +53,8 @@ void render8(MathTree* tree, Region region,
     // region are already light.
     uint8_t L = region.L[region.nk] >> 8;
     bool cull = true;
-    for (int row = region.jmin; cull && row < region.jmin + region.nj; ++row) {
-        for (int col = region.imin; cull && col < region.imin + region.ni; ++col) {
+    for (unsigned row = region.jmin; cull && row < region.jmin + region.nj; ++row) {
+        for (unsigned col = region.imin; cull && col < region.imin + region.ni; ++col) {
             if (L > img[row][col]) {
                 cull = false;
                 break;
@@ -71,8 +71,8 @@ void render8(MathTree* tree, Region region,
 
     // If we're inside the object, fill with color.
     if (result.upper < 0) {
-        for (int row = region.jmin; row < region.jmin + region.nj; ++row) {
-            for (int col = region.imin; col < region.imin + region.ni; ++col) {
+        for (unsigned row = region.jmin; row < region.jmin + region.nj; ++row) {
+            for (unsigned col = region.imin; col < region.imin + region.ni; ++col) {
                 if (L > img[row][col])  img[row][col] = L;
             }
         }
@@ -114,8 +114,8 @@ void region8(MathTree* tree, Region region, uint8_t** img)
     // Copy the X, Y, Z vectors into a flattened matrix form.
     int q = 0;
     for (int k = region.nk - 1; k >= 0; --k) {
-        for (int j = 0; j < region.nj; ++j) {
-            for (int i = 0; i < region.ni; ++i) {
+        for (unsigned j = 0; j < region.nj; ++j) {
+            for (unsigned i = 0; i < region.ni; ++i) {
                 X[q] = region.X[i];
                 Y[q] = region.Y[j];
                 Z[q] = region.Z[k];
@@ -137,10 +137,10 @@ void region8(MathTree* tree, Region region, uint8_t** img)
     for (int k = region.nk - 1; k >= 0; --k) {
         uint8_t L = region.L[k+1] >> 8;
 
-        for (int j = 0; j < region.nj; ++j) {
+        for (unsigned j = 0; j < region.nj; ++j) {
             int row = j + region.jmin;
 
-            for (int i = 0; i < region.ni; ++i) {
+            for (unsigned i = 0; i < region.ni; ++i) {
                 int col = i + region.imin;
 
                if (*(result++) < 0 && img[row][col] < L) {
@@ -155,8 +155,7 @@ void region8(MathTree* tree, Region region, uint8_t** img)
 
 void get_normals8(MathTree* tree,
                   float* restrict X, float* restrict Y, float* restrict Z,
-                  unsigned count, float epsilon,
-                  float (*normals)[3])
+                  unsigned count, float (*normals)[3])
 {
     Region dummy;
     dummy.X = X;
@@ -167,7 +166,7 @@ void get_normals8(MathTree* tree,
     derivative* result = eval_g(tree, dummy);
 
     // Calculate normals and copy over.
-    for (int i=0; i < count; ++i)
+    for (unsigned i=0; i < count; ++i)
     {
         const float x = result[i].dx;
         const float y = result[i].dy;
@@ -184,7 +183,7 @@ static
 void shade_pixels8(unsigned count, float (*normals)[3],
                    unsigned* is, unsigned* js, uint8_t (**out)[3])
 {
-    for (int a=0; a < count; ++a)
+    for (unsigned a=0; a < count; ++a)
     {
         for (int b=0; b < 3; ++b)
         {
@@ -198,7 +197,7 @@ void shaded8(struct MathTree_ *tree, Region region, uint16_t **depth,
              void (*callback)())
 {
     // Load the correct partial derivatives for constants
-    for (int i=0; i < tree->num_constants; ++i)
+    for (unsigned i=0; i < tree->num_constants; ++i)
         fill_results_g(tree->constants[i], tree->constants[i]->results.f);
 
     float *X = malloc(MIN_VOLUME*sizeof(float)),
@@ -209,8 +208,6 @@ void shaded8(struct MathTree_ *tree, Region region, uint16_t **depth,
     unsigned *js = malloc(MIN_VOLUME*sizeof(unsigned));
 
     float (*normals)[3] = malloc(MIN_VOLUME*sizeof(float[3]));
-
-    const float epsilon = (region.X[1] - region.X[0]) / 10.0f;
 
     unsigned count = 0;
     for (unsigned j=0; j < region.nj && !*halt; ++j)
@@ -235,7 +232,7 @@ void shaded8(struct MathTree_ *tree, Region region, uint16_t **depth,
             if (count == MIN_VOLUME/4 ||
                     (count && j == region.nj - 1 && i == region.ni - 1))
             {
-                get_normals8(tree, X, Y, Z, count, epsilon, normals);
+                get_normals8(tree, X, Y, Z, count, normals);
                 shade_pixels8(count, normals, is, js, out);
                 count = 0;
             }
@@ -252,7 +249,7 @@ void shaded8(struct MathTree_ *tree, Region region, uint16_t **depth,
     free(normals);
 
     // Switch back to normal values for constants array
-    for (int i=0; i < tree->num_constants; ++i)
+    for (unsigned i=0; i < tree->num_constants; ++i)
         fill_results(tree->constants[i], tree->constants[i]->results.f);
 }
 
@@ -277,8 +274,8 @@ void render16(MathTree* tree, Region region,
     // region are already light.
     uint16_t L = region.L[region.nk];
     bool cull = true;
-    for (int row = region.jmin; cull && row < region.jmin + region.nj; ++row) {
-        for (int col = region.imin; cull && col < region.imin + region.ni; ++col) {
+    for (unsigned row = region.jmin; cull && row < region.jmin + region.nj; ++row) {
+        for (unsigned col = region.imin; cull && col < region.imin + region.ni; ++col) {
             if (L > img[row][col]) {
                 cull = false;
                 break;
@@ -295,8 +292,8 @@ void render16(MathTree* tree, Region region,
 
     // If we're inside the object, fill with color.
     if (result.upper < 0) {
-        for (int row = region.jmin; row < region.jmin + region.nj; ++row) {
-            for (int col = region.imin; col < region.imin + region.ni; ++col) {
+        for (unsigned row = region.jmin; row < region.jmin + region.nj; ++row) {
+            for (unsigned col = region.imin; col < region.imin + region.ni; ++col) {
                 if (L > img[row][col])  img[row][col] = L;
             }
         }
@@ -337,8 +334,8 @@ void region16(MathTree* tree, Region region, uint16_t** img)
     // Copy the X, Y, Z vectors into a flattened matrix form.
     int q = 0;
     for (int k = region.nk - 1; k >= 0; --k) {
-        for (int j = 0; j < region.nj; ++j) {
-            for (int i = 0; i < region.ni; ++i) {
+        for (unsigned j = 0; j < region.nj; ++j) {
+            for (unsigned i = 0; i < region.ni; ++i) {
                 X[q] = region.X[i];
                 Y[q] = region.Y[j];
                 Z[q] = region.Z[k];
@@ -360,10 +357,10 @@ void region16(MathTree* tree, Region region, uint16_t** img)
     for (int k = region.nk - 1; k >= 0; --k) {
         uint16_t L = region.L[k+1];
 
-        for (int j = 0; j < region.nj; ++j) {
+        for (unsigned j = 0; j < region.nj; ++j) {
             int row = j + region.jmin;
 
-            for (int i = 0; i < region.ni; ++i) {
+            for (unsigned i = 0; i < region.ni; ++i) {
                 int col = i + region.imin;
 
                if (*(result++) < 0 && img[row][col] < L) {

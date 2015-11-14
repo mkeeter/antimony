@@ -93,7 +93,11 @@ Interval pow_i(Interval A, Interval B)
 }
 
 Interval atan2_i(Interval A, Interval B)
-{   //FIXME: CHECK FOR RIGHTER INTERVAL
+{
+    //FIXME: CHECK FOR RIGHTER INTERVAL
+    (void)A;
+    (void)B;
+
     Interval i;
     i.lower = -M_PI;
     i.upper = M_PI;

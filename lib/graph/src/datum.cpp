@@ -1,5 +1,6 @@
 #include "graph/datum.h"
 #include "graph/node.h"
+#include "graph/graph_node.h"
 #include "graph/util.h"
 #include "graph/graph.h"
 #include "graph/watchers.h"
@@ -118,30 +119,44 @@ std::unordered_set<const Datum*> Datum::getLinks() const
     if (!isLink())
         return out;
 
-    size_t index = 4; // skip initial SIGIL + "[__"
+    // FIXME: #accidentallyquadratic
+    std::string links = expr.substr(2);  // skip initial SIGIL + "["
     while (1)
     {
-        const size_t node_uid_start = index;
-        const size_t node_uid_end = expr.find('.', index);
-        assert(node_uid_end != std::string::npos);
-        const uint64_t node_uid = std::stoull(
-                expr.substr(index, node_uid_end - node_uid_start));
-
-        const size_t datum_uid_start = node_uid_end + 3; // for ".__"
-        const size_t datum_uid_end = expr.find(',', datum_uid_start);
-        const uint64_t datum_uid = std::stoull(expr.substr(
-                    datum_uid_start, (datum_uid_end == std::string::npos)
-                        ? expr.size() - datum_uid_start - 1
-                        : datum_uid_end - datum_uid_start));
-
         auto graph = parent->parent;
-        if (auto node = graph->getNode(node_uid))
+
+        // Get our parent node, which is a node in the graph
+        // that this datum belongs to.
+        Node* node = links.find("__parent") == 0
+                ? graph->parentNode()
+                : graph->getNode(stoull(links.substr(2)));
+        links = links.substr(links.find(".") + 1);
+
+        // Pop into a subgraph if requested
+        if (links.find("__subgraph") == 0)
+        {
+            // We should only be entering our own subgraph (by construction)
+            assert(node == parent);
+            graph = static_cast<GraphNode*>(node)->getGraph();
+
+            links = links.substr(links.find(".") + 1);
+            node = graph->getNode(stoull(links.substr(2)));
+            links = links.substr(links.find(".") + 1);
+        }
+
+        // Extract datum UID
+        if (node)
+        {
+            const uint64_t datum_uid = std::stoull(links.substr(2));
             if (auto datum = node->getDatum(datum_uid))
                 out.insert(datum);
+        }
 
-        if (datum_uid_end == std::string::npos)
+        const size_t next = links.find(",");
+        if (next == std::string::npos)
             break;
-        index = datum_uid_end + 3; // for ",__"
+        else
+            links = links.substr(next + 1);
     }
 
     return out;
@@ -178,19 +193,48 @@ void Datum::writeLinkExpression(const std::unordered_set<const Datum*> links)
         {
             if (expr.back() != '[')
                 expr += ",";
-            expr += "__" + std::to_string(d->parent->uid) +
-                   ".__" + std::to_string(d->uid);
+            expr += formatLink(d);
         }
         expr += "]";
     }
+}
+
+std::string Datum::formatLink(const Datum* upstream) const
+{
+    std::string id;
+
+    // First, check to see if the upstream comes from the
+    // same graph level as this datum
+    if (upstream->parent->parent == parent->parent)
+        id = "__" + std::to_string(upstream->parent->uid);
+
+    // Next, check to see if the upstream comes from a
+    // subgraph of this datum's parent node.
+    else if (upstream->parent->parent->parentNode() == parent)
+        id = "__" + std::to_string(parent->uid) + ".__subgraph.__" +
+             std::to_string(upstream->parent->uid);
+
+    // Finally, check to see if the upstream comes from the
+    // supergraph that contains this datum's parent node.
+    else if (upstream->parent == parent->parent->parentNode())
+        id = "__parent";
+
+    // Otherwise, we don't know what to do: datum links are only
+    // allowed to happen across one level of a graph.
+    else
+        assert(false);
+
+    id += ".__" + std::to_string(upstream->uid);
+
+    return id;
 }
 
 void Datum::installLink(const Datum* upstream)
 {
     assert(acceptsLink(upstream));
 
-    std::string id = "__" +  std::to_string(upstream->parent->uid) +
-                    ".__" + std::to_string(upstream->uid);
+    std::string id = formatLink(upstream);
+
     if (isLink())
         setText(expr.substr(0, expr.size() - 1) + "," + id + "]");
     else

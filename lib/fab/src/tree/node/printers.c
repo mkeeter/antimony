@@ -189,16 +189,19 @@ static void constant_p(Node* n, FILE* f)
 
 static void X_p(Node* n, FILE* f)
 {
+    (void)n; // n is unused
     fprintf(f, "X");
 }
 
 static void Y_p(Node* n, FILE* f)
 {
+    (void)n; // n is unused
     fprintf(f, "Y");
 }
 
 static void Z_p(Node* n, FILE* f)
 {
+    (void)n; // n is unused
     fprintf(f, "Z");
 }
 

@@ -3,7 +3,11 @@
 #include <string>
 #include <stdbool.h>
 
-#include "fab/tree/v2parser.hpp"
+extern "C" {
+#include "fab/tree/v2parser.h"
+}
+
+#include "fab/tree/parser_env.hpp"
 #include "fab/tree/tree.h"
 #include "fab/tree/parser.h"
 #include "fab/tree/node/node.h"
@@ -23,11 +27,6 @@
 #define ANSI_COLOR_RESET    "\x1b[0m"
 
 using namespace std;
-
-extern "C"
-{
-    bool v2parse(Node **result, const char* input, Node* X, Node* Y, Node *Z, NodeCache* cache);
-}
 
 void* v2ParseAlloc(void* (*allocProc)(size_t));
 void v2Parse(void* parser, int token, const char*, Env* environment);

@@ -10,9 +10,9 @@ ScriptNode::ScriptNode(std::string n, Graph* root)
 }
 
 ScriptNode::ScriptNode(std::string name, uint32_t uid, Graph* root)
-    : Node(name, uid, root), script(this)
+    : Node(name, uid, root, false), script(this)
 {
-    // Nothing to do here
+    init();
 }
 
 ScriptNode::ScriptNode(std::string n, std::string s, Graph* root)

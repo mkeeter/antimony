@@ -1,12 +1,13 @@
 #include <algorithm>
 
 #include "graph/graph.h"
+#include "graph/graph_node.h"
 #include "graph/node.h"
 #include "graph/proxy.h"
 #include "graph/hooks/hooks.h"
 #include "graph/watchers.h"
 
-Graph::Graph(Node* parent)
+Graph::Graph(GraphNode* parent)
     : parent(parent), processing_queue(false)
 {
     // Nothing to do here
@@ -22,7 +23,13 @@ GraphState Graph::getState() const
     std::unordered_set<Node*> out;
     for (const auto& ptr : nodes)
         out.insert(ptr.get());
-    return (GraphState){ out };
+
+    std::unordered_set<Datum*> incoming;
+    if (auto n = parent)
+        for (const auto& ptr : n->datums)
+            incoming.insert(ptr.get());
+
+    return (GraphState){ out, incoming };
 }
 
 bool Graph::isNameUnique(std::string name, const Node* n) const
