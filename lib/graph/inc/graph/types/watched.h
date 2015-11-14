@@ -8,6 +8,7 @@ class Watched
 public:
     void installWatcher(T* w) {
         watchers.push_back(w);
+        w->trigger(getState());
     }
 
     void uninstallWatcher(T* w) {
