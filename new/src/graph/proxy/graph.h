@@ -10,6 +10,8 @@ class Node;
 class NodeProxy;
 class SuperDatumProxy;
 
+class CanvasScene;
+
 class GraphProxy : public QObject, public GraphWatcher
 {
 Q_OBJECT
@@ -20,6 +22,8 @@ public:
 
 protected:
     QHash<Node*, QString> title_cache;
+
+    CanvasScene* canvas_scene;
 
     QHash<Node*, QSharedPointer<NodeProxy>> nodes;
     QHash<Datum*, QSharedPointer<SuperDatumProxy>> datums;
