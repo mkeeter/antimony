@@ -6,7 +6,6 @@
 #include <QUrl>
 
 #include "app/app.h"
-#include "window/canvas.h"
 #include "graph/proxy/graph.h"
 
 #include "graph/graph.h"
@@ -104,7 +103,7 @@ void App::onQuit()
 
 void App::newCanvasWindow()
 {
-    new CanvasWindow(proxy->canvasScene());
+    proxy->newCanvasWindow();
 }
 
 void App::newViewportWindow()
