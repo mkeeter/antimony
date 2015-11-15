@@ -68,8 +68,10 @@ linux {
 SOURCES += \
     app/main.cpp                        \
     app/app.cpp                         \
+    app/update.cpp                      \
     canvas/scene.cpp                    \
     canvas/view.cpp                     \
+    window/base.cpp                     \
     graph/constructor/populate.cpp      \
     graph/proxy/graph.cpp               \
     graph/proxy/node.cpp                \
@@ -79,14 +81,21 @@ SOURCES += \
 
 HEADERS += \
     app/app.h                           \
+    app/update.h                        \
     canvas/scene.h                      \
     canvas/view.h                       \
+    window/base.h                       \
     graph/proxy/graph.h                 \
     graph/constructor/populate.h        \
     graph/proxy/node.h                  \
     graph/proxy/script.h                \
     graph/proxy/datum.h                 \
     graph/proxy/superdatum.h            \
+
+FORMS += \
+    forms/base_window.ui \
+    forms/resolution_dialog.ui \
+    forms/exporting_dialog.ui \
 
 RESOURCES += \
     gl/gl.qrc \

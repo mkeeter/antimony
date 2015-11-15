@@ -1,7 +1,9 @@
 #include <Python.h>
 
+#include <QMessageBox>
 #include <QStandardPaths>
 #include <QDir>
+#include <QUrl>
 
 #include "app/app.h"
 #include "graph/proxy/graph.h"
@@ -10,7 +12,8 @@
 
 App::App(int& argc, char** argv)
     : QApplication(argc, argv),
-      graph(new Graph()), proxy(new GraphProxy(graph, this))
+      graph(new Graph()), proxy(new GraphProxy(graph, this)),
+      update_checker(this)
 {
     // Nothing to do here
 }
@@ -56,4 +59,83 @@ QString App::userNodePath() const
             QStandardPaths::AppDataLocation) + "/nodes";
     QDir(path).mkpath(".");
     return path;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void App::onNew()
+{
+
+}
+
+void App::onSave()
+{
+
+}
+
+void App::onSaveAs()
+{
+
+}
+
+void App::onOpen()
+{
+
+}
+
+void App::onQuit()
+{
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void App::newCanvasWindow()
+{
+
+}
+
+void App::newViewportWindow()
+{
+
+}
+
+void App::newQuadWindow()
+{
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void App::onAbout()
+{
+    QString txt(
+            "<i>Antimony</i><br><br>"
+            "CAD from a parallel universe.<br>"
+            "<a href=\"https://github.com/mkeeter/antimony\">https://github.com/mkeeter/antimony</a><br><br>"
+            "© 2013-2014 Matthew Keeter<br>"
+            "<a href=\"mailto:matt.j.keeter@gmail.com\">matt.j.keeter@gmail.com</a><br>"
+            "_________________________________________________<br><br>"
+            "Includes code from <a href=\"https://github.com/mkeeter/kokopelli\">kokopelli</a>, which is <br>"
+            "© 2012-2013 MIT<br>"
+            "© 2013-2014 Matthew Keeter<br><br>"
+            "Inspired by the <a href=\"http://kokompe.cba.mit.edu\">fab modules</a><br>"
+            "_________________________________________________<br><br>"
+    );
+    QString tag(GITTAG);
+    QString branch(GITBRANCH);
+    QString rev(GITREV);
+
+    if (!tag.isEmpty())
+        txt += "Release: <tt>" + tag + "</tt>";
+    else
+        txt += "Branch: <tt>" + branch + "</tt>";
+    txt += "<br>Git revision: <tt>" + rev + "</tt>";
+
+    QMessageBox::about(NULL, "Antimony", txt);
+}
+
+void App::onUpdateCheck()
+{
+    update_checker.start();
 }

@@ -2,6 +2,8 @@
 
 #include <QApplication>
 
+#include "app/update.h"
+
 class Graph;
 class GraphProxy;
 
@@ -28,7 +30,32 @@ public:
     QString bundledNodePath() const;
     QString userNodePath() const;
 
+public slots:
+    /*
+     *  Commands from File menu
+     */
+    void onNew();
+    void onSave();
+    void onSaveAs();
+    void onOpen();
+    void onQuit();
+
+    /*
+     *  Open new windows for the root graph.
+     */
+    void newCanvasWindow();
+    void newViewportWindow();
+    void newQuadWindow();
+
+    /*
+     *  Help menu
+     */
+    void onAbout();
+    void onUpdateCheck();
+
 protected:
     Graph* graph;
     GraphProxy* proxy;
+
+    UpdateChecker update_checker;
 };
