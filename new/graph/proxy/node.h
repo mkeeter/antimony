@@ -23,7 +23,15 @@ public:
     NodeProxy(Node* n, GraphProxy* parent);
     ~NodeProxy();
 
+    /*
+     *  On node change, update datum proxies and name validity.
+     */
     void trigger(const NodeState& state) override;
+
+    /*
+     *  Returns the node's inspector frame object.
+     */
+    InspectorFrame* getInspector() const { return inspector; }
 
 protected:
     QHash<Datum*, DatumProxy*> datums;

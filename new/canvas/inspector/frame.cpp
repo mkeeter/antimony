@@ -28,6 +28,9 @@ void InspectorFrame::paint(QPainter *painter,
                            const QStyleOptionGraphicsItem *option,
                            QWidget *widget)
 {
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
+
     const auto r = boundingRect();
 
     // Draw interior
@@ -49,11 +52,6 @@ void InspectorFrame::paint(QPainter *painter,
 void InspectorFrame::setNameValid(bool valid)
 {
     title_row->setNameValid(valid);
-}
-
-void InspectorFrame::setScriptValid(bool valid)
-{
-    title_row->setScriptValid(valid);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

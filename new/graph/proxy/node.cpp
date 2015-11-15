@@ -12,7 +12,8 @@
 #include "graph/node.h"
 
 NodeProxy::NodeProxy(Node* n, GraphProxy* parent)
-    : QObject(parent), inspector(new InspectorFrame(n, parent->canvasScene()))
+    : QObject(parent), script(NULL), subgraph(NULL),
+      inspector(new InspectorFrame(n, parent->canvasScene()))
 {
     n->installWatcher(this);
 
@@ -39,6 +40,4 @@ void NodeProxy::trigger(const NodeState& state)
 
     // Update inspector
     inspector->setNameValid(state.name_valid);
-    if (state.script)
-        inspector->setScriptValid(state.script->hasError());
 }

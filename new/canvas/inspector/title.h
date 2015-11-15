@@ -4,6 +4,7 @@
 
 class Node;
 class InspectorFrame;
+class InspectorButton;
 
 class InspectorTitle : public QGraphicsObject
 {
@@ -25,11 +26,6 @@ public:
     void setNameValid(bool valid);
 
     /*
-     *  Update color of script button
-     */
-    void setScriptValid(bool valid);
-
-    /*
      *  Update text of title field
      */
     void setTitle(QString title);
@@ -40,11 +36,28 @@ public:
      */
     float minWidth() const;
 
+    /*
+     *  Updates layout, return true if anything has changed.
+     */
+    bool updateLayout();
+
+    /*
+     *  Installs a new button and updates layout
+     */
+    void addButton(InspectorButton* b);
+
 public slots:
     /*
-     *  When the name field is edited, call node->setName
+     *  Updates layout, emitting layoutChanged if anything has changed
      */
-    //void onNameChanged();
+    void checkLayout();
+
+signals:
+    /*
+     *  Emitted when the layout has changed
+     *  (which may cause the parent InspectorFrame to redo layout)
+     */
+    void layoutChanged();
 
 protected:
     static int MIN_TITLE_PADDING;
@@ -52,6 +65,7 @@ protected:
 
     QGraphicsTextItem* name;
     QGraphicsTextItem* title;
+    QList<InspectorButton*> buttons;
 
     /*
      *  Represents padding between name and title fields

@@ -25,14 +25,15 @@ public:
     void setNameValid(bool valid);
 
     /*
-     *  Re-color script editor button (if present)
-     */
-    void setScriptValid(bool valid);
-
-    /*
      *  Callback from Python to set the title field.
      */
     void setTitle(QString title);
+
+    /*
+     *  Returns the title row
+     *  (used to insert buttons)
+     */
+    InspectorTitle* getTitleRow() const { return title_row; }
 
 public slots:
     /*
