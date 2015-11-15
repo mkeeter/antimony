@@ -12,6 +12,7 @@ class App : public QApplication
     Q_OBJECT
 public:
     explicit App(int& argc, char **argv);
+    ~App();
 
     /*
      *  Constructs a canvas and viewport window for the root graph.

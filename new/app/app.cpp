@@ -19,6 +19,12 @@ App::App(int& argc, char** argv)
     // Nothing to do here
 }
 
+App::~App()
+{
+    delete proxy;
+    delete graph;
+}
+
 App* App::instance()
 {
     Q_ASSERT(dynamic_cast<App*>(QApplication::instance()));

@@ -2,9 +2,7 @@
 
 #include <QMainWindow>
 
-namespace Ui {
-class BaseWindow;
-}
+#include "ui_base_window.h"
 
 class App;
 

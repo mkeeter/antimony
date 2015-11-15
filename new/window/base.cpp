@@ -1,6 +1,5 @@
 #include "app/app.h"
 #include "window/base.h"
-#include "ui_base_window.h"
 
 BaseWindow::BaseWindow(QString type)
     : QMainWindow(), window_type(type), ui(new Ui::BaseWindow)
