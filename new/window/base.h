@@ -35,5 +35,5 @@ protected:
     void setShortcuts();
 
     QString window_type;
-    Ui::BaseWindow *ui;
+    QScopedPointer<Ui::BaseWindow> ui;
 };
