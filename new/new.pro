@@ -3,8 +3,6 @@ QT += core gui widgets opengl network
 TARGET = Antimony
 TEMPLATE = app
 
-INCLUDEPATH += src
-
 LIBS += -L../lib/fab -lSbFab -L../lib/graph -lSbGraph
 INCLUDEPATH += ../lib/fab/inc
 INCLUDEPATH += ../lib/graph/inc
@@ -15,7 +13,8 @@ PRE_TARGETDEPS += ../lib/fab/libSbFab.a
 include(../qt/common.pri)
 include(../qt/python.pri)
 include(../qt/libpng.pri)
-include(git.pri)
+
+################################################################################
 
 # Copy the py/fab and py/nodes directory when building the application
 make_sb.commands = $(MKDIR) $$OUT_PWD/sb
@@ -23,6 +22,21 @@ copy_nodes.commands = $(COPY_DIR) $$PWD/../py/nodes $$OUT_PWD/sb
 copy_fab.commands = $(COPY_DIR) $$PWD/../py/fab $$OUT_PWD/sb
 first.depends = $(first) make_sb copy_nodes copy_fab
 QMAKE_EXTRA_TARGETS += first make_sb copy_nodes copy_fab
+
+################################################################################
+
+# Extract the git revision, tag, and branch, then populate them
+# into various preprocessor macros to populate the About box.
+GITREV = $$system(git log --pretty=format:'%h' -n 1)
+GITDIFF = $$system(git diff --quiet --exit-code || echo "+")
+GITTAG = $$system(git describe --exact-match --tags 2> /dev/null)
+GITBRANCH = $$system(git rev-parse --abbrev-ref HEAD)
+
+QMAKE_CXXFLAGS += "-D'GITREV=\"$${GITREV}$${GITDIFF}\"'"
+QMAKE_CXXFLAGS += "-D'GITTAG=\"$${GITTAG}\"'"
+QMAKE_CXXFLAGS += "-D'GITBRANCH=\"$${GITBRANCH}\"'"
+
+################################################################################
 
 # Details for Mac applications
 macx {
@@ -32,6 +46,8 @@ macx {
     QMAKE_POST_LINK += $(COPY) $$PWD/../deploy/mac/Info.plist $$OUT_PWD/$${TARGET}.app/Contents;
     QMAKE_POST_LINK += $(COPY) $$PWD/../deploy/mac/sb.icns $$OUT_PWD/$${TARGET}.app/Contents/Resources;
 }
+
+################################################################################
 
 # Installation details for Linux systems
 linux {
@@ -47,25 +63,30 @@ linux {
     INSTALLS += executable nodes_folder fab_folder
 }
 
+################################################################################
+
 SOURCES += \
-    src/app/main.cpp                        \
-    src/app/app.cpp                         \
-    src/canvas/scene.cpp                    \
-    src/canvas/view.cpp                     \
-    src/graph/constructor/populate.cpp      \
-    src/graph/proxy/graph.cpp               \
-    src/graph/proxy/node.cpp                \
-    src/graph/proxy/script.cpp              \
-    src/graph/proxy/datum.cpp               \
-    src/graph/proxy/superdatum.cpp          \
+    app/main.cpp                        \
+    app/app.cpp                         \
+    canvas/scene.cpp                    \
+    canvas/view.cpp                     \
+    graph/constructor/populate.cpp      \
+    graph/proxy/graph.cpp               \
+    graph/proxy/node.cpp                \
+    graph/proxy/script.cpp              \
+    graph/proxy/datum.cpp               \
+    graph/proxy/superdatum.cpp          \
 
 HEADERS += \
-    src/app/app.h                           \
-    src/canvas/scene.h                      \
-    src/canvas/view.h                       \
-    src/graph/proxy/graph.h                 \
-    src/graph/constructor/populate.h        \
-    src/graph/proxy/node.h                  \
-    src/graph/proxy/script.h                \
-    src/graph/proxy/datum.h                 \
-    src/graph/proxy/superdatum.h            \
+    app/app.h                           \
+    canvas/scene.h                      \
+    canvas/view.h                       \
+    graph/proxy/graph.h                 \
+    graph/constructor/populate.h        \
+    graph/proxy/node.h                  \
+    graph/proxy/script.h                \
+    graph/proxy/datum.h                 \
+    graph/proxy/superdatum.h            \
+
+RESOURCES += \
+    gl/gl.qrc \

@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="gl/">
+        <file>shaded.frag</file>
+        <file>height.frag</file>
+        <file>quad.vert</file>
+    </qresource>
+</RCC>
