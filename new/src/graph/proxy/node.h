@@ -20,8 +20,8 @@ public:
     void trigger(const NodeState& state) override;
 
 protected:
-    QHash<Datum*, QSharedPointer<DatumProxy>> datums;
+    QHash<Datum*, DatumProxy*> datums;
 
-    QSharedPointer<ScriptProxy> script;
-    QSharedPointer<GraphProxy> subgraph;
+    ScriptProxy* script;
+    GraphProxy* subgraph;
 };

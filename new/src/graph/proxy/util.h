@@ -6,8 +6,7 @@
  *  Updates a proxy hash-map
  */
 template <class Container, class Object, class Proxy, class Parent>
-void updateHash(const Container& input,
-                QHash<Object*, QSharedPointer<Proxy>>* hash,
+void updateHash(const Container& input, QHash<Object*, Proxy*>* hash,
                 Parent* parent)
 {
     QSet<Object*> set;
@@ -25,5 +24,5 @@ void updateHash(const Container& input,
 
     for (auto s : set)
         if (!hash->contains(s))
-            (*hash)[s].reset(new Proxy(s, parent));
+            (*hash)[s] = new Proxy(s, parent);
 }

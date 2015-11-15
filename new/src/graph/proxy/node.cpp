@@ -19,7 +19,7 @@ void NodeProxy::trigger(const NodeState& state)
     updateHash(state.datums, &datums, this);
 
     if (state.subgraph && !subgraph)
-        subgraph.reset(new GraphProxy(state.subgraph, this));
+        subgraph = new GraphProxy(state.subgraph, this);
     else if (state.script && !script)
-        script.reset(new ScriptProxy(state.script, this));
+        script = new ScriptProxy(state.script, this);
 }

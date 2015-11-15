@@ -25,6 +25,6 @@ protected:
 
     CanvasScene* canvas_scene;
 
-    QHash<Node*, QSharedPointer<NodeProxy>> nodes;
-    QHash<Datum*, QSharedPointer<SuperDatumProxy>> datums;
+    QHash<Node*, NodeProxy*> nodes;
+    QHash<Datum*, SuperDatumProxy*> datums;
 };
