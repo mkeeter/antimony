@@ -48,6 +48,7 @@ InspectorScriptButton::InspectorScriptButton(ScriptProxy* s,
     setToolTip("Edit script");
     connect(this, &InspectorButton::pressed,
             s, &ScriptProxy::newScriptWindow);
+
     parent->addButton(this);
 }
 

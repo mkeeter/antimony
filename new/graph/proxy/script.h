@@ -7,6 +7,7 @@
 
 struct Script;
 class NodeProxy;
+class ScriptWindow;
 class InspectorScriptButton;
 
 class ScriptProxy : public QObject, public ScriptWatcher
@@ -21,5 +22,8 @@ public slots:
     void newScriptWindow();
 
 protected:
+    const Script* const script;
+    QList<ScriptWindow*> windows;
+
     InspectorScriptButton* button;
 };

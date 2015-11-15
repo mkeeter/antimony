@@ -6,10 +6,12 @@
 #include "graph/proxy/node.h"
 
 #include "graph/script.h"
+#include "window/script.h"
 
 ScriptProxy::ScriptProxy(Script* s, NodeProxy* parent)
-    : QObject(parent), button(new InspectorScriptButton(this,
-                parent->getInspector()->getTitleRow()))
+    : QObject(parent), script(s),
+      button(new InspectorScriptButton(
+                  this, parent->getInspector()->getTitleRow()))
 {
     s->installWatcher(this);
 }
@@ -21,5 +23,12 @@ void ScriptProxy::trigger(const ScriptState& state)
 
 void ScriptProxy::newScriptWindow()
 {
-    // Nothing to do here, yet
+    auto win = new ScriptWindow();
+
+    // Automatically prune the window list when the window is closed
+    connect(win, &QMainWindow::destroyed,
+            [=]{ this->windows.removeAll(win); });
+    windows.append(win);
+
+    trigger(script->getState());
 }
