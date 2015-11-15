@@ -6,6 +6,7 @@
 #include <QUrl>
 
 #include "app/app.h"
+#include "window/canvas.h"
 #include "graph/proxy/graph.h"
 
 #include "graph/graph.h"
@@ -22,6 +23,11 @@ App* App::instance()
 {
     Q_ASSERT(dynamic_cast<App*>(QApplication::instance()));
     return static_cast<App*>(QApplication::instance());
+}
+
+void App::makeDefaultWindows()
+{
+    newCanvasWindow();
 }
 
 QString App::bundledNodePath() const
@@ -92,7 +98,7 @@ void App::onQuit()
 
 void App::newCanvasWindow()
 {
-
+    new CanvasWindow(proxy->canvasScene());
 }
 
 void App::newViewportWindow()

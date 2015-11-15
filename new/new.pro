@@ -72,6 +72,7 @@ SOURCES += \
     canvas/scene.cpp                    \
     canvas/view.cpp                     \
     window/base.cpp                     \
+    window/canvas.cpp                   \
     graph/constructor/populate.cpp      \
     graph/proxy/graph.cpp               \
     graph/proxy/node.cpp                \
@@ -85,6 +86,7 @@ HEADERS += \
     canvas/scene.h                      \
     canvas/view.h                       \
     window/base.h                       \
+    window/canvas.h                     \
     graph/proxy/graph.h                 \
     graph/constructor/populate.h        \
     graph/proxy/node.h                  \

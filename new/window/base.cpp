@@ -2,15 +2,14 @@
 #include "window/base.h"
 #include "ui_base_window.h"
 
-BaseWindow::BaseWindow(QString type, QWidget* parent)
-    : QMainWindow(parent), window_type(type)
+BaseWindow::BaseWindow(QString type)
+    : QMainWindow(), window_type(type), ui(new Ui::BaseWindow)
 {
     ui->setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose);
 
     connectActions(App::instance());
     setShortcuts();
-    // Nothing to do here
 }
 
 void BaseWindow::connectActions(App* app)

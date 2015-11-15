@@ -1,7 +1,8 @@
 #include "canvas/view.h"
+#include "canvas/scene.h"
 
-CanvasView::CanvasView(Graph* g, QWidget* parent)
-    : QGraphicsView(parent), g(g)
+CanvasView::CanvasView(CanvasScene* scene, QWidget* parent)
+    : QGraphicsView(scene, parent)
 {
     // Nothing to do here
 }

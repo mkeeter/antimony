@@ -20,6 +20,8 @@ public:
     GraphProxy(Graph* g, QObject* parent);
     void trigger(const GraphState& state) override;
 
+    CanvasScene* canvasScene() { return canvas_scene; }
+
 protected:
     QHash<Node*, QString> title_cache;
 

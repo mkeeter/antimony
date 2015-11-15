@@ -93,5 +93,6 @@ int main(int argc, char *argv[])
         }
     }
 
+    app.makeDefaultWindows();
     return app.exec();
 }

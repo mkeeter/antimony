@@ -20,7 +20,7 @@ public:
      *    If this is a canvas or viewport, it's the parent node of the
      *      target subgraph (or NULL if we're using the root graph)
      */
-    explicit BaseWindow(QString type, QWidget *parent=0);
+    explicit BaseWindow(QString type);
 
 protected:
     /*
