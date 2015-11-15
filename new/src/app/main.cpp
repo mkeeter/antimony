@@ -10,6 +10,8 @@
 #include <QStringList>
 #include <QMessageBox>
 
+#include "app/app.h"
+
 #include "fab/fab.h"
 #include "graph/graph.h"
 
@@ -18,53 +20,55 @@ int main(int argc, char *argv[])
     // Use UTF-8, ignoring any LANG settings in the environment
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
 
-    // Set the default OpenGL version to be 2.1 with sample buffers
-    QSurfaceFormat format;
-    format.setVersion(2, 1);
-    QSurfaceFormat::setDefaultFormat(format);
+    {   // Set the default OpenGL version to be 2.1 with sample buffers
+        QSurfaceFormat format;
+        format.setVersion(2, 1);
+        QSurfaceFormat::setDefaultFormat(format);
+    }
 
-    // Initialize the _fabtypes Python package and the Python interpreter
+    // Initialize various Python modules and the interpreter itself
     fab::preInit();
     Graph::preInit();
     Py_Initialize();
 
     // Create the Application object
-    QCoreApplication a(argc, argv);
+    App app(argc, argv);
 
     // Set locale to C to make atof correctly parse floats
     setlocale(LC_NUMERIC, "C");
 
-    // Modify Python's default search path to include the application's
-    // directory (as this doesn't happen on Linux by default)
-    QString d = QCoreApplication::applicationDirPath();
+    {   // Modify Python's default search path to include the application's
+        // directory (as this doesn't happen on Linux by default)
+        QString d = QCoreApplication::applicationDirPath();
 #if defined Q_OS_MAC
-    QStringList path = d.split("/");
-    for (int i=0; i < 3; ++i)
-        path.removeLast();
-    d = path.join("/");
+        QStringList path = d.split("/");
+        for (int i=0; i < 3; ++i)
+            path.removeLast();
+        d = path.join("/");
 #endif
-    d += "/sb";
-    fab::postInit(d.toStdString().c_str());
+        d += "/sb";
+        fab::postInit(d.toStdString().c_str());
+    }
 
-    // Install operator.or_ as a reducer for shapes
-    {
+    {   // Install operator.or_ as a reducer for shapes
         auto op = PyImport_ImportModule("operator");
         Datum::installReducer(fab::ShapeType, PyObject_GetAttrString(op, "or_"));
         Py_DECREF(op);
     }
 
-    // Check to make sure that the fab module exists
-    PyObject* fab = PyImport_ImportModule("fab");
-    if (!fab)
-    {
-        PyErr_Print();
-        QMessageBox::critical(NULL, "Import error",
-                "Import Error:<br><br>"
-                "Could not find <tt>fab</tt> Python module.<br>"
-                "Antimony will now exit.");
-        exit(1);
+    {   // Check to make sure that the fab module exists
+        PyObject* fab = PyImport_ImportModule("fab");
+        if (!fab)
+        {
+            PyErr_Print();
+            QMessageBox::critical(NULL, "Import error",
+                    "Import Error:<br><br>"
+                    "Could not find <tt>fab</tt> Python module.<br>"
+                    "Antimony will now exit.");
+            exit(1);
+        }
+        Py_DECREF(fab);
     }
-    Py_DECREF(fab);
 
     {   // Parse command-line arguments
         QCommandLineParser parser;
@@ -75,7 +79,7 @@ int main(int argc, char *argv[])
         parser.addOption(forceHeightmap);
         parser.addPositionalArgument("file", "File to open", "[file]");
 
-        parser.process(a);
+        parser.process(app);
 
         auto args = parser.positionalArguments();
         if (args.length() > 1)
@@ -89,6 +93,5 @@ int main(int argc, char *argv[])
         }
     }
 
-    return 0;
-    return a.exec();
+    return app.exec();
 }

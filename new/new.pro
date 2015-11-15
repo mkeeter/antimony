@@ -48,16 +48,20 @@ linux {
 }
 
 SOURCES += \
-    src/app/main.cpp                \
-    src/graph/proxy/graph.cpp       \
-    src/graph/proxy/node.cpp        \
-    src/graph/proxy/script.cpp      \
-    src/graph/proxy/datum.cpp       \
-    src/graph/proxy/superdatum.cpp  \
+    src/app/main.cpp                        \
+    src/app/app.cpp                         \
+    src/graph/constructor/populate.cpp      \
+    src/graph/proxy/graph.cpp               \
+    src/graph/proxy/node.cpp                \
+    src/graph/proxy/script.cpp              \
+    src/graph/proxy/datum.cpp               \
+    src/graph/proxy/superdatum.cpp          \
 
 HEADERS += \
-    src/graph/proxy/graph.h         \
-    src/graph/proxy/node.h          \
-    src/graph/proxy/script.h        \
-    src/graph/proxy/datum.h         \
-    src/graph/proxy/superdatum.h    \
+    src/app/app.h                           \
+    src/graph/proxy/graph.h                 \
+    src/graph/constructor/populate.h        \
+    src/graph/proxy/node.h                  \
+    src/graph/proxy/script.h                \
+    src/graph/proxy/datum.h                 \
+    src/graph/proxy/superdatum.h            \
