@@ -4,10 +4,11 @@
 #include <QPainter>
 
 #include "canvas/inspector/frame.h"
+#include "canvas/inspector/title.h"
 #include "app/colors.h"
 
 InspectorFrame::InspectorFrame(Node* node, QGraphicsScene* scene)
-    : QGraphicsObject()
+    : QGraphicsObject(), title_row(new InspectorTitle(node, this))
 {
     setFlags(QGraphicsItem::ItemIsMovable |
              QGraphicsItem::ItemIsSelectable);
@@ -47,16 +48,19 @@ void InspectorFrame::paint(QPainter *painter,
 
 void InspectorFrame::setNameValid(bool valid)
 {
+    title_row->setNameValid(valid);
 }
 
 void InspectorFrame::setScriptValid(bool valid)
 {
+    title_row->setScriptValid(valid);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void InspectorFrame::setTitle(QString title)
 {
+    title_row->setTitle(title);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
