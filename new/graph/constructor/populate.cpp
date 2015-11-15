@@ -119,6 +119,10 @@ static void populateFromFiles(QMenu* menu, Graph* g,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void emptyCallback(Node* n)
+{
+    (void)n;
+}
 
 void populateNodeMenu(QMenu* menu, Graph* g,
                       std::function<void(Node*)> callback)

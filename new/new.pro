@@ -69,6 +69,7 @@ SOURCES += \
     app/main.cpp                        \
     app/app.cpp                         \
     app/update.cpp                      \
+    app/colors.cpp                      \
     canvas/scene.cpp                    \
     canvas/view.cpp                     \
     window/base.cpp                     \
@@ -83,6 +84,7 @@ SOURCES += \
 HEADERS += \
     app/app.h                           \
     app/update.h                        \
+    app/colors.h                        \
     canvas/scene.h                      \
     canvas/view.h                       \
     window/base.h                       \
