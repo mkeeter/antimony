@@ -21,8 +21,8 @@ App::App(int& argc, char** argv)
 
 App::~App()
 {
-    delete proxy;
     delete graph;
+    delete proxy;
 }
 
 App* App::instance()
