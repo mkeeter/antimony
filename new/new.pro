@@ -51,6 +51,7 @@ SOURCES += \
     src/app/main.cpp                        \
     src/app/app.cpp                         \
     src/canvas/scene.cpp                    \
+    src/canvas/view.cpp                     \
     src/graph/constructor/populate.cpp      \
     src/graph/proxy/graph.cpp               \
     src/graph/proxy/node.cpp                \
@@ -61,6 +62,7 @@ SOURCES += \
 HEADERS += \
     src/app/app.h                           \
     src/canvas/scene.h                      \
+    src/canvas/view.h                       \
     src/graph/proxy/graph.h                 \
     src/graph/constructor/populate.h        \
     src/graph/proxy/node.h                  \
