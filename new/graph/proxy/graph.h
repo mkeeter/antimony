@@ -22,11 +22,25 @@ public:
     GraphProxy(Graph* g, QObject* parent);
     ~GraphProxy();
 
+    /*
+     *  Create NodeProxies and SuperDatumProxies
+     */
     void trigger(const GraphState& state) override;
 
-    template <class W, class S>
-    W* newWindow(S* scene);
+    /*
+     *  Returns the CanvasScene object
+     */
+    CanvasScene* canvasScene() const { return canvas_scene; }
 
+    /*
+     *  Constructs a new window of the given class, storing it in the
+     *  windows list (and setting up automatic list pruning)
+     */
+    template <class W, class S> W* newWindow(S* scene);
+
+    /*
+     *  Opens a new Canvas window with this object's scene
+     */
     CanvasWindow* newCanvasWindow();
 
 protected:

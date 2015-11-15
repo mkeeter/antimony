@@ -72,6 +72,7 @@ SOURCES += \
     app/colors.cpp                      \
     canvas/scene.cpp                    \
     canvas/view.cpp                     \
+    canvas/inspector/frame.cpp          \
     window/base.cpp                     \
     window/canvas.cpp                   \
     graph/constructor/populate.cpp      \
@@ -89,6 +90,7 @@ HEADERS += \
     canvas/view.h                       \
     window/base.h                       \
     window/canvas.h                     \
+    canvas/inspector/frame.h            \
     graph/proxy/graph.h                 \
     graph/constructor/populate.h        \
     graph/proxy/node.h                  \
