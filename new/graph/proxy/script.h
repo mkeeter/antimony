@@ -16,13 +16,15 @@ Q_OBJECT
 
 public:
     ScriptProxy(Script* s, NodeProxy* parent);
+    ~ScriptProxy();
+
     void trigger(const ScriptState& state) override;
 
 public slots:
     void newScriptWindow();
 
 protected:
-    const Script* const script;
+    Script* const script;
     QList<ScriptWindow*> windows;
 
     InspectorScriptButton* button;

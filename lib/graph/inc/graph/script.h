@@ -18,7 +18,11 @@ public:
     void update() override;
 
     ScriptState getState() const override;
-    bool hasError() const { return error_lineno != -1; }
+
+    /*
+     *  Sets the script's text and calls trigger()
+     */
+    void setText(std::string t);
 
 protected:
     /*

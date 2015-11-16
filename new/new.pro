@@ -85,6 +85,9 @@ SOURCES += \
     graph/proxy/script.cpp              \
     graph/proxy/datum.cpp               \
     graph/proxy/superdatum.cpp          \
+    script/syntax.cpp                   \
+    script/editor.cpp                   \
+    script/frame.cpp                    \
 
 HEADERS += \
     app/app.h                           \
@@ -105,6 +108,9 @@ HEADERS += \
     graph/proxy/script.h                \
     graph/proxy/datum.h                 \
     graph/proxy/superdatum.h            \
+    script/syntax.h                     \
+    script/editor.h                     \
+    script/frame.h                      \
 
 FORMS += \
     forms/base_window.ui \

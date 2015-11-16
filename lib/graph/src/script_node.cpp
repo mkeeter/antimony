@@ -29,8 +29,7 @@ ScriptState ScriptNode::getScriptState() const
 
 void ScriptNode::setScript(std::string t)
 {
-    script.script = t;
-    script.trigger();
+    script.setText(t);
 }
 
 bool ScriptNode::makeDatum(std::string n, PyTypeObject* type,

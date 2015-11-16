@@ -16,14 +16,30 @@ ScriptProxy::ScriptProxy(Script* s, NodeProxy* parent)
     s->installWatcher(this);
 }
 
+ScriptProxy::~ScriptProxy()
+{
+    for (auto w : windows)
+        w->close();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void ScriptProxy::trigger(const ScriptState& state)
 {
     button->setScriptValid(state.error_lineno == -1);
+
+    for (auto w : windows)
+    {
+        w->setText(QString::fromStdString(state.script));
+        w->highlightError(state.error_lineno);
+        w->setOutput(QString::fromStdString(state.output));
+        w->setError(QString::fromStdString(state.error));
+    }
 }
 
 void ScriptProxy::newScriptWindow()
 {
-    auto win = new ScriptWindow();
+    auto win = new ScriptWindow(script);
 
     // Automatically prune the window list when the window is closed
     connect(win, &QMainWindow::destroyed,
@@ -31,4 +47,5 @@ void ScriptProxy::newScriptWindow()
     windows.append(win);
 
     trigger(script->getState());
+    win->show();
 }

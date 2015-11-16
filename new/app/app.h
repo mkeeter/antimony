@@ -31,6 +31,12 @@ public:
     QString bundledNodePath() const;
     QString userNodePath() const;
 
+    /*
+     *  Global Undo and Redo operations
+     */
+    void undo() {}
+    void redo() {}
+
 public slots:
     /*
      *  Commands from File menu
