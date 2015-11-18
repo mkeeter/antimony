@@ -19,7 +19,7 @@ linux {
 
     # Even though this is in QMAKE_LFLAGS, the linker is picky about
     # library ordering (so it needs to be here too).
-    LIBS += -lpython3.4m
+    LIBS += $$system(/usr/bin/python3-config --ldflags | grep -o -- '-lpython3.[0-9]m')
 
     # ldconfig is being used to find libboost_python, but it's in a different
     # place in different distros (and is not in the default $PATH on Debian).
