@@ -81,6 +81,9 @@ public:
 
     /*
      *  Installs an ExternalHooks object (used in dictionary generation)
+     *
+     *  The graph takes ownership of the hooks object and will delete it
+     *  when the graph is deleted.
      */
     void installExternalHooks(ExternalHooks* h) { external.reset(h); }
 

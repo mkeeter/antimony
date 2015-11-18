@@ -23,7 +23,6 @@ GraphProxy::~GraphProxy()
 {
     for (auto w : windows)
         w->close();
-    delete hooks;
 }
 
 void GraphProxy::trigger(const GraphState& state)
