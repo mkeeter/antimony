@@ -11,6 +11,7 @@
 #include <QMessageBox>
 
 #include "app/app.h"
+#include "graph/hooks/hooks.h"
 
 #include "fab/fab.h"
 #include "graph/graph.h"
@@ -29,6 +30,7 @@ int main(int argc, char *argv[])
     // Initialize various Python modules and the interpreter itself
     fab::preInit();
     Graph::preInit();
+    AppHooks::preInit();
     Py_Initialize();
 
     // Create the Application object

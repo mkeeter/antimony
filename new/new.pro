@@ -85,6 +85,8 @@ SOURCES += \
     graph/proxy/script.cpp              \
     graph/proxy/datum.cpp               \
     graph/proxy/superdatum.cpp          \
+    graph/hooks/hooks.cpp               \
+    graph/hooks/title.cpp               \
     script/syntax.cpp                   \
     script/editor.cpp                   \
     script/frame.cpp                    \
@@ -102,12 +104,14 @@ HEADERS += \
     canvas/inspector/title.h            \
     canvas/inspector/buttons.h          \
     canvas/inspector/util.h             \
-    graph/proxy/graph.h                 \
     graph/constructor/populate.h        \
+    graph/proxy/graph.h                 \
     graph/proxy/node.h                  \
     graph/proxy/script.h                \
     graph/proxy/datum.h                 \
     graph/proxy/superdatum.h            \
+    graph/hooks/hooks.h                 \
+    graph/hooks/title.h                 \
     script/syntax.h                     \
     script/editor.h                     \
     script/frame.h                      \

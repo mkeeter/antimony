@@ -71,9 +71,10 @@ void InspectorTitle::setNameValid(bool valid)
     name->setDefaultTextColor(valid ? Colors::base06 : Colors::red);
 }
 
-void InspectorTitle::setTitle(QString title)
+void InspectorTitle::setTitle(QString new_title)
 {
-
+    title->setPlainText(new_title);
+    checkLayout();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

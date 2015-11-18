@@ -10,6 +10,7 @@
 class Node;
 class NodeProxy;
 class SuperDatumProxy;
+class AppHooks;
 
 class CanvasScene;
 class CanvasWindow;
@@ -43,11 +44,16 @@ public:
      */
     CanvasWindow* newCanvasWindow();
 
-protected:
-    QHash<Node*, QString> title_cache;
+    /*
+     *  Returns a proxy for the given node,
+     *  constructing one if no such proxy exists.
+     */
+    NodeProxy* getNodeProxy(Node* g);
 
+protected:
     CanvasScene* canvas_scene;
     QList<QMainWindow*> windows;
+    AppHooks* hooks;
 
     QHash<Node*, NodeProxy*> nodes;
     QHash<Datum*, SuperDatumProxy*> datums;
