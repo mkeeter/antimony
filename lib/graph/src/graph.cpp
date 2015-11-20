@@ -112,7 +112,8 @@ PyObject* Graph::pyGetAttr(std::string name, Downstream* caller,
         return parent ? Proxy::makeProxyFor(parent, caller, flags)
                       : NULL;
 
-    if (name == "this")
+    // Allow "self" in datums
+    if (name == "self")
       if (auto d = dynamic_cast<Datum*>(caller))
         return Proxy::makeProxyFor(d->parentNode(), caller, flags);
 
