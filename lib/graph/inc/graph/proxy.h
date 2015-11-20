@@ -45,11 +45,6 @@ public:
      */
     static void setGlobals(PyObject* proxy, PyObject* globals);
 
-    /*
-     * Add a "this" for evaluation
-     */
-    static void setThis(PyObject* proxy, Root* for_this, Downstream* caller);
-
     // These are potential flags for the proxy object
     const static uint8_t FLAG_MUTABLE  = 1;
     const static uint8_t FLAG_UID_LOOKUP = 2;
@@ -58,7 +53,6 @@ protected:
     Root* root;
     Downstream* caller;
     PyObject* globals;
-    PyObject* for_this;
 
     uint8_t flags;
 

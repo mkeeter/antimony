@@ -112,6 +112,10 @@ PyObject* Graph::pyGetAttr(std::string name, Downstream* caller,
         return parent ? Proxy::makeProxyFor(parent, caller, flags)
                       : NULL;
 
+    if (name == "this")
+      if (auto d = dynamic_cast<Datum*>(caller))
+        return Proxy::makeProxyFor(d->parentNode(), caller, flags);
+
     // Default case: look up a node by name or UID (depending on flags)
     auto m = (flags & Proxy::FLAG_UID_LOOKUP)
         ? get(name, nodes) : getByName(name, nodes);
