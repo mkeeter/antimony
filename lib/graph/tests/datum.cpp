@@ -269,3 +269,44 @@ TEST_CASE("Datum output detection")
     REQUIRE(out.count(y) == 1);
     delete g;
 }
+
+TEST_CASE("'self'")
+{
+    auto g = new Graph();
+    auto n = new Node("a", g);
+    auto x = new Datum("x", "123.0", &PyFloat_Type, n);
+    auto fromself = new Datum("fromself", "self.x", &PyFloat_Type, n);
+    auto expr = new Datum("expr", "self.x + 1", &PyFloat_Type, n);
+    // auto showfromself = new Datum("showfromself", Datum::SIGIL_OUTPUT + "fromself", &PyFloat_Type, n);
+
+    // sanity
+    {
+      REQUIRE(x->isValid() == true);
+      REQUIRE(x->currentValue() != NULL);
+      REQUIRE(PyFloat_AsDouble(x->currentValue()) == 123.0);
+    }
+    // sanity of 'self' datums
+    {
+      REQUIRE(fromself->isValid() == true);
+      REQUIRE(fromself->currentValue() != NULL);
+      // REQUIRE(showfromself->isValid() == true);
+      // REQUIRE(showfromself->currentValue() != NULL);
+    }
+
+    SECTION("use of 'self'")
+    {
+      REQUIRE(PyFloat_AsDouble(fromself->currentValue()) == 123.0);
+      REQUIRE(PyFloat_AsDouble(expr->currentValue()) == 124.0);
+      // REQUIRE(PyFloat_AsDouble(showfromself->currentValue()) == 123.0);
+    }
+
+    SECTION("change datum")
+    {
+    x->setText("231.0");
+    REQUIRE(PyFloat_AsDouble(fromself->currentValue()) == 231.0);
+    REQUIRE(PyFloat_AsDouble(expr->currentValue()) == 232.0);
+    // REQUIRE(PyFloat_AsDouble(showfromself->currentValue()) == 231.0);
+    }
+
+    delete g;
+}
