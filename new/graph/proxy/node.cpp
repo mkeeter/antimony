@@ -16,11 +16,7 @@ NodeProxy::NodeProxy(Node* n, GraphProxy* parent)
       inspector(new InspectorFrame(n, parent->canvasScene()))
 {
     n->installWatcher(this);
-
-    // Automatically set inspector pointer to NULL on its deletion
-    // (to prevent double-deletion in ~NodeProxy)
-    connect(inspector, &QGraphicsObject::destroyed,
-            [=]{ this->inspector = NULL; });
+    NULL_ON_DESTROYED(inspector);
 }
 
 NodeProxy::~NodeProxy()

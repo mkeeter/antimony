@@ -37,20 +37,14 @@ public:
     float minWidth() const;
 
     /*
-     *  Updates layout, return true if anything has changed.
+     *  Sets the row's width
      */
-    bool updateLayout();
+    void setWidth(float width);
 
     /*
      *  Installs a new button and updates layout
      */
     void addButton(InspectorButton* b);
-
-public slots:
-    /*
-     *  Updates layout, emitting layoutChanged if anything has changed
-     */
-    void checkLayout();
 
 signals:
     /*

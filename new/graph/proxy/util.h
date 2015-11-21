@@ -17,12 +17,19 @@ void updateHash(const Container& input, QHash<Object*, Proxy*>* hash,
         auto itr = hash->begin();
         while (itr != hash->end())
             if (!set.contains(itr.key()))
+            {
+                (*itr)->deleteLater();
                 itr = hash->erase(itr);
+            }
             else
+            {
                 itr++;
+            }
     }
 
     for (auto s : set)
         if (!hash->contains(s))
             (*hash)[s] = new Proxy(s, parent);
 }
+
+#define NULL_ON_DESTROYED(s) connect(s, &QObject::destroyed, [=]{ this->s = NULL; })

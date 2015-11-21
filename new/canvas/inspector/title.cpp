@@ -25,7 +25,10 @@ InspectorTitle::InspectorTitle(Node* n, InspectorFrame* parent)
     connect(name->document(), &QTextDocument::contentsChanged,
             [=]() { n->setName(this->name->toPlainText().toStdString()); });
     connect(name->document(), &QTextDocument::contentsChanged,
-            this, &InspectorTitle::checkLayout);
+            parent, &InspectorFrame::redoLayout);
+    connect(this, &InspectorTitle::layoutChanged,
+            parent, &InspectorFrame::redoLayout);
+
 
     {   // Customize font and color of name and title fields
         auto f = name->font();
@@ -38,21 +41,37 @@ InspectorTitle::InspectorTitle(Node* n, InspectorFrame* parent)
             t->setFont(f);
         }
     }
-
-    checkLayout();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 QRectF InspectorTitle::boundingRect() const
 {
-    float width = name->boundingRect().width() +
-                  title_padding +
+    float width = title->pos().x()+
                   title->boundingRect().width();
 
-    // Take buttons into account here
+    for (auto b : buttons)
+            if (b->isVisible())
+                width += BUTTON_PADDING + b->boundingRect().width();
 
     return QRectF(0, 0, width, name->boundingRect().height());
+}
+
+void InspectorTitle::setWidth(float width)
+{
+    title->setPos(name->boundingRect().width() + MIN_TITLE_PADDING +
+                  width - minWidth(), 0);
+
+    float x = title->pos().x() + title->boundingRect().width();
+    float height = title->boundingRect().height();
+    for (auto b : buttons)
+        if (b->isVisible())
+        {
+            moveTo(b, QPointF(x, (height - b->boundingRect().height())/2));
+            x += b->boundingRect().width() + 4;
+        }
+
+    prepareGeometryChange();
 }
 
 void InspectorTitle::paint(QPainter *painter,
@@ -74,7 +93,8 @@ void InspectorTitle::setNameValid(bool valid)
 void InspectorTitle::setTitle(QString new_title)
 {
     title->setPlainText(new_title);
-    checkLayout();
+    prepareGeometryChange();
+    emit(layoutChanged());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -92,42 +112,11 @@ float InspectorTitle::minWidth() const
     return width;
 }
 
-bool InspectorTitle::updateLayout()
-{
-    bool changed = false;
-    const float height = boundingRect().height();
-
-    // Name stays put at 0,0
-
-    float x = name->boundingRect().width() + title_padding;
-
-    changed |= moveTo(title, QPointF(x, 0));
-    x += title->boundingRect().width();
-
-    for (auto b : buttons)
-        if (b->isVisible())
-        {
-            changed |= moveTo(
-                    b, QPointF(x, (height - b->boundingRect().height())/2));
-            x += b->boundingRect().width() + 4;
-        }
-
-    return changed;
-}
-
-void InspectorTitle::checkLayout()
-{
-    if (updateLayout())
-        emit(layoutChanged());
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 
 void InspectorTitle::addButton(InspectorButton* b)
 {
     buttons.push_back(b);
-    checkLayout();
+    emit(layoutChanged());
 }
-
-////////////////////////////////////////////////////////////////////////////////
 

@@ -76,6 +76,7 @@ SOURCES += \
     canvas/inspector/title.cpp          \
     canvas/inspector/buttons.cpp        \
     canvas/inspector/util.cpp           \
+    canvas/inspector/row.cpp            \
     window/base.cpp                     \
     window/canvas.cpp                   \
     window/script.cpp                   \
@@ -104,6 +105,7 @@ HEADERS += \
     canvas/inspector/title.h            \
     canvas/inspector/buttons.h          \
     canvas/inspector/util.h             \
+    canvas/inspector/row.h              \
     graph/constructor/populate.h        \
     graph/proxy/graph.h                 \
     graph/proxy/node.h                  \

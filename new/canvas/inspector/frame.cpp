@@ -4,6 +4,7 @@
 #include <QPainter>
 
 #include "canvas/inspector/frame.h"
+#include "canvas/inspector/row.h"
 #include "canvas/inspector/title.h"
 #include "app/colors.h"
 
@@ -17,6 +18,7 @@ InspectorFrame::InspectorFrame(Node* node, QGraphicsScene* scene)
     Q_UNUSED(node);
 
     scene->addItem(this);
+    redoLayout();
 }
 
 QRectF InspectorFrame::boundingRect() const
@@ -65,4 +67,39 @@ void InspectorFrame::setTitle(QString title)
 
 void InspectorFrame::redoLayout()
 {
+    QList<InspectorRow*> rows;
+    for (auto c : childItems())
+        if (auto row = dynamic_cast<InspectorRow*>(c))
+            rows.append(row);
+
+    // Sort datums by row order
+    qSort(rows.begin(), rows.end(),
+          [](const InspectorRow* a, const InspectorRow* b)
+          { return a->getIndex() < b->getIndex(); });
+
+    {   // Pad the row labels for alignment
+        float max_label = 0;
+        for (auto row : rows)
+            max_label = std::max(max_label, row->labelWidth());
+        for (auto row : rows)
+            row->padLabel(max_label);
+    }
+
+    {   // Pad all of the rows (including the title) to the same width
+        float max_width = title_row->minWidth();
+        for (auto row : rows)
+            max_width = std::max(max_width, row->minWidth());
+        title_row->setWidth(max_width);
+        for (auto row : rows)
+            row->setWidth(max_width);
+    }
+
+    {   // Spread out the rows along the Y axis
+        float y = title_row->boundingRect().height();
+        for (auto row : rows)
+        {
+            row->setPos(0, y);
+            y += row->boundingRect().height();
+        }
+    }
 }
