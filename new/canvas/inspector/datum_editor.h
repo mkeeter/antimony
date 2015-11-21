@@ -45,6 +45,16 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 
     /*
+     *  Uses regular expressions to truncate floats to sane length
+     */
+    static QString trimFloat(QString t);
+
+    /*
+     *  Formats special datum text (links, outputs, etc)
+     */
+    static QString formatSpecial(QString t, const DatumState& state);
+
+    /*
      *  Specialized functions to drag different number types
      */
     void dragFloat(float a);

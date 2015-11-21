@@ -32,38 +32,42 @@ InspectorDatumEditor::InspectorDatumEditor(Datum* d, InspectorRow* parent)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+QString InspectorDatumEditor::trimFloat(QString t)
+{
+    // Use QString to truncate floats to a sane number of decimal places
+    QRegularExpression num("([0-9]+)\\.([0-9]+)");
+    QRegularExpressionMatch match = num.match(t);
+    if (match.isValid() && match.captured(2).size() > 6)
+    {
+        auto decimals = match.captured(2);
+        decimals.truncate(6);
+        return match.captured(1) + "." + decimals;
+    }
+    return t;
+}
+
+QString InspectorDatumEditor::formatSpecial(QString t, const DatumState& state)
+{
+    // Special-case to avoid printing long shapes
+    if (t.startsWith("fab.types.Shape"))
+        t = "Shape";
+
+    if (state.sigil == Datum::SIGIL_CONNECTION)
+        t += state.links.size() > 1 ? " [links]" : " [link]";
+    else if (state.sigil == Datum::SIGIL_OUTPUT)
+        t += " [output]";
+
+    return t;
+}
+
 void InspectorDatumEditor::update(const DatumState& state)
 {
-    QString t;
-    if (state.sigil == Datum::SIGIL_NONE)
-    {
-        t = QString::fromStdString(state.text);
-
-        // Use QString to truncate floats to a sane number of decimal places
-        QRegularExpression num("([0-9]+)\\.([0-9]+)");
-        QRegularExpressionMatch match = num.match(t);
-        if (match.isValid() && match.captured(2).size() > 6)
-        {
-            auto decimals = match.captured(2);
-            decimals.truncate(6);
-            t = match.captured(1) + "." + decimals;
-        }
-    }
-    else
-    {
-        t = QString::fromStdString(state.repr);
-
-        // Special-case to avoid printing long shapes
-        if (t.startsWith("fab.types.Shape"))
-            t = "Shape";
-
-        if (state.sigil == Datum::SIGIL_CONNECTION)
-            t += state.links.size() > 1 ? " [links]" : " [link]";
-        else if (state.sigil == Datum::SIGIL_OUTPUT)
-            t += " [output]";
-    }
 
     {   // Update editor's text, holding cursor position if possible
+        const QString t = (state.sigil == Datum::SIGIL_NONE)
+                    ? trimFloat(QString::fromStdString(state.text))
+                    : formatSpecial(QString::fromStdString(state.repr), state);
+
         QTextCursor cursor = textCursor();
         size_t p = cursor.position();
 
