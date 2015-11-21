@@ -42,5 +42,7 @@ public slots:
     void redoLayout();
 
 protected:
+    static const float PADDING_ROWS;
+
     InspectorTitle* title_row;
 };

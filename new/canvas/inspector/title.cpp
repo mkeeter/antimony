@@ -24,8 +24,6 @@ InspectorTitle::InspectorTitle(Node* n, InspectorFrame* parent)
 
     connect(name->document(), &QTextDocument::contentsChanged,
             [=]() { n->setName(this->name->toPlainText().toStdString()); });
-    connect(name->document(), &QTextDocument::contentsChanged,
-            parent, &InspectorFrame::redoLayout);
     connect(this, &InspectorTitle::layoutChanged,
             parent, &InspectorFrame::redoLayout);
 

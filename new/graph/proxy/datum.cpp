@@ -25,5 +25,10 @@ DatumProxy::~DatumProxy()
 
 void DatumProxy::trigger(const DatumState& state)
 {
-    (void)state;
+    row->setText(QString::fromStdString(state.text));
+}
+
+void DatumProxy::setIndex(int i)
+{
+    row->setIndex(i);
 }

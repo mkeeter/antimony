@@ -27,13 +27,19 @@ NodeProxy::~NodeProxy()
 
 void NodeProxy::trigger(const NodeState& state)
 {
-    updateHash(state.datums, &datums, this);
-
     if (state.subgraph && !subgraph)
         subgraph = new GraphProxy(state.subgraph, this);
     else if (state.script && !script)
         script = new ScriptProxy(state.script, this);
 
+    updateHash(state.datums, &datums, this);
+    {
+        int i=0;
+        for (auto d : state.datums)
+            datums[d]->setIndex(i++);
+    }
+
     // Update inspector
     inspector->setNameValid(state.name_valid);
+    inspector->redoLayout();
 }

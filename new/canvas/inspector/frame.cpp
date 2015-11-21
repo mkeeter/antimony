@@ -8,6 +8,8 @@
 #include "canvas/inspector/title.h"
 #include "app/colors.h"
 
+const float InspectorFrame::PADDING_ROWS = 3;
+
 InspectorFrame::InspectorFrame(Node* node, QGraphicsScene* scene)
     : QGraphicsObject(), title_row(new InspectorTitle(node, this))
 {
@@ -23,7 +25,9 @@ InspectorFrame::InspectorFrame(Node* node, QGraphicsScene* scene)
 
 QRectF InspectorFrame::boundingRect() const
 {
-    return QRectF(0, 0, 100, 100);
+    auto r = childrenBoundingRect();
+    r.setBottom(r.bottom() + PADDING_ROWS);
+    return r;
 }
 
 void InspectorFrame::paint(QPainter *painter,
@@ -99,7 +103,9 @@ void InspectorFrame::redoLayout()
         for (auto row : rows)
         {
             row->setPos(0, y);
-            y += row->boundingRect().height();
+            y += row->boundingRect().height() + PADDING_ROWS;
         }
     }
+
+    prepareGeometryChange();
 }

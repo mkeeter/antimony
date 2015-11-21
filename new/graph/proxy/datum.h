@@ -18,6 +18,11 @@ public:
 
     void trigger(const DatumState& state) override;
 
+    /*
+     *  Sets the index of this datum (for sorting in inspector)
+     */
+    void setIndex(int i);
+
 protected:
     const Datum* datum;
 

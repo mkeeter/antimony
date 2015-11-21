@@ -17,7 +17,7 @@ public:
     /*
      *  Updates the datum's text field
      */
-    void setText();
+    void setText(QString t);
 
     /*
      *  Returns the width of the datum's label
@@ -26,7 +26,6 @@ public:
 
     /*
      *  Pads the label to the given width
-     *  (changing label_padding)
      */
     void padLabel(float width);
 
@@ -52,13 +51,6 @@ public:
      */
     QRectF boundingRect() const override;
 
-signals:
-    /*
-     *  Emitted when the layout has changed
-     *  (which may cause the parent InspectorFrame to redo layout)
-     */
-    void layoutChanged();
-
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget) override;
@@ -74,8 +66,6 @@ protected:
     OutputPort* output;
     QGraphicsTextItem* label;
     InspectorDatumText* editor;
-
-    float label_padding;
 
     int index;
 };
