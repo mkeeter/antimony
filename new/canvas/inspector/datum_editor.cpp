@@ -71,9 +71,9 @@ void InspectorDatumEditor::update(const DatumState& state)
         QTextCursor cursor = textCursor();
         size_t p = cursor.position();
 
-        blockSignals(true);
+        txt->blockSignals(true);
         txt->setPlainText(t);
-        blockSignals(false);
+        txt->blockSignals(false);
 
         // Restore cursor position
         if (p < state.text.length())
