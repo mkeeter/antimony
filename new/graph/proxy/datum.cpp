@@ -9,8 +9,7 @@
 
 DatumProxy::DatumProxy(Datum* d, NodeProxy* parent)
     : QObject(parent), datum(d),
-      row(new InspectorRow(QString::fromStdString(d->getName()),
-                           parent->getInspector()))
+      row(new InspectorRow(d, parent->getInspector()))
 {
     d->installWatcher(this);
 
@@ -25,7 +24,7 @@ DatumProxy::~DatumProxy()
 
 void DatumProxy::trigger(const DatumState& state)
 {
-    row->setText(QString::fromStdString(state.text));
+    row->update(state);
 }
 
 void DatumProxy::setIndex(int i)

@@ -2,22 +2,25 @@
 
 #include <QGraphicsObject>
 
+#include "graph/watchers.h"
+
 class InputPort;
 class OutputPort;
 class InspectorFrame;
 
-typedef QGraphicsTextItem InspectorDatumText;
+class InspectorDatumEditor;
+class Datum;
 
 class InspectorRow : public QGraphicsObject
 {
     Q_OBJECT
 public:
-    explicit InspectorRow(QString name, InspectorFrame* parent);
+    explicit InspectorRow(Datum* d, InspectorFrame* parent);
 
     /*
      *  Updates the datum's text field
      */
-    void setText(QString t);
+    void setText(QString t, QString error);
 
     /*
      *  Returns the width of the datum's label
@@ -51,6 +54,11 @@ public:
      */
     QRectF boundingRect() const override;
 
+    /*
+     *  Updates from the given state
+     */
+    void update(const DatumState& state);
+
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget) override;
@@ -65,7 +73,7 @@ protected:
     InputPort* input;
     OutputPort* output;
     QGraphicsTextItem* label;
-    InspectorDatumText* editor;
+    InspectorDatumEditor* editor;
 
     int index;
 };

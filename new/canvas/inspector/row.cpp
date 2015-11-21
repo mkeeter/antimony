@@ -4,22 +4,23 @@
 
 #include "canvas/inspector/row.h"
 #include "canvas/inspector/frame.h"
+#include "canvas/inspector/datum_editor.h"
 
 #include "app/colors.h"
+
+#include "graph/datum.h"
 
 const float InspectorRow::PORT_SIZE = 10;
 const float InspectorRow::GAP_PADDING = 15;
 const float InspectorRow::TEXT_WIDTH = 150;
 
-InspectorRow::InspectorRow(QString name, InspectorFrame* parent)
+InspectorRow::InspectorRow(Datum* d, InspectorFrame* parent)
     : QGraphicsObject(parent), input(NULL), output(NULL),
-      label(new QGraphicsTextItem(name, this)),
-      editor(new QGraphicsTextItem("", this))
+      label(new QGraphicsTextItem(QString::fromStdString(d->getName()), this)),
+      editor(new InspectorDatumEditor(d, this))
 {
-
     label->setDefaultTextColor(Colors::base04);
     editor->setDefaultTextColor(Colors::base04);
-    // Nothing to do here
 }
 
 QRectF InspectorRow::boundingRect() const
@@ -35,13 +36,9 @@ void InspectorRow::paint(QPainter* painter,
                          const QStyleOptionGraphicsItem* option,
                          QWidget* widget)
 {
+    Q_UNUSED(painter);
     Q_UNUSED(option);
     Q_UNUSED(widget);
-
-    painter->setBrush(Qt::red);
-    painter->drawRect(label->boundingRect().translated(label->pos()));
-    painter->setBrush(Qt::blue);
-    painter->drawRect(editor->boundingRect().translated(editor->pos()));
 }
 
 float InspectorRow::labelWidth() const
@@ -70,7 +67,7 @@ void InspectorRow::setWidth(float width)
     prepareGeometryChange();
 }
 
-void InspectorRow::setText(QString t)
+void InspectorRow::update(const DatumState& state)
 {
-    editor->setPlainText(t);
+    editor->update(state);
 }

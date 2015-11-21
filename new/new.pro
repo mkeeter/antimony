@@ -1,5 +1,7 @@
 QT += core gui widgets opengl network
 
+CONFIG += object_parallel_to_source
+
 TARGET = Antimony
 TEMPLATE = app
 
@@ -77,6 +79,7 @@ SOURCES += \
     canvas/inspector/buttons.cpp        \
     canvas/inspector/util.cpp           \
     canvas/inspector/row.cpp            \
+    canvas/inspector/datum_editor.cpp   \
     window/base.cpp                     \
     window/canvas.cpp                   \
     window/script.cpp                   \
@@ -106,6 +109,7 @@ HEADERS += \
     canvas/inspector/buttons.h          \
     canvas/inspector/util.h             \
     canvas/inspector/row.h              \
+    canvas/inspector/datum_editor.h     \
     graph/constructor/populate.h        \
     graph/proxy/graph.h                 \
     graph/proxy/node.h                  \
