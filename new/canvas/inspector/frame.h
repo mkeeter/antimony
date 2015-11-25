@@ -35,6 +35,10 @@ public:
      */
     InspectorTitle* getTitleRow() const { return title_row; }
 
+    /*
+     *  Get the node object
+     */
+    Node* getNode() const { return node; }
 public slots:
     /*
      *  Update layout of text labels and fields
@@ -42,7 +46,38 @@ public slots:
     void redoLayout();
 
 protected:
+    /*
+     *  On mouse move, fake the left button being held down.
+     */
+    void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+
+    /*
+     *  On mouse press, open a 'jump to node' menu
+     */
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent* event) override;
+
+    /*
+     *  On mouse move, fake the left button being held down.
+     */
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
+
+    /*
+     *  On hover, set glow to true.
+     */
+    void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
+
+    /*
+     *  On hover, set glow to true.
+     */
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
+
     static const float PADDING_ROWS;
 
+    Node* const node;
     InspectorTitle* title_row;
+
+    // Ugly hack because simply grabbing the mouse doesn't set up all of the
+    // magic that QGraphicsScene uses to drag items: upon first insertion,
+    // set this flag to true (then overload mouseMoveEvent to work correctly)
+    bool dragging;
 };

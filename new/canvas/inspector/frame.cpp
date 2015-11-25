@@ -2,16 +2,21 @@
 
 #include <QGraphicsScene>
 #include <QPainter>
+#include <QGraphicsSceneMouseEvent>
+#include <QGraphicsSceneContextMenuEvent>
 
 #include "canvas/inspector/frame.h"
 #include "canvas/inspector/row.h"
 #include "canvas/inspector/title.h"
+#include "canvas/scene.h"
+
 #include "app/colors.h"
 
 const float InspectorFrame::PADDING_ROWS = 3;
 
 InspectorFrame::InspectorFrame(Node* node, QGraphicsScene* scene)
-    : QGraphicsObject(), title_row(new InspectorTitle(node, this))
+    : QGraphicsObject(), node(node), title_row(new InspectorTitle(node, this)),
+      dragging(false)
 {
     setFlags(QGraphicsItem::ItemIsMovable |
              QGraphicsItem::ItemIsSelectable);
@@ -118,3 +123,55 @@ void InspectorFrame::redoLayout()
 
     prepareGeometryChange();
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+void InspectorFrame::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
+{
+    if (dragging)
+    {
+        setPos(event->scenePos());
+        event->accept();
+    }
+    else
+    {
+        QGraphicsItem::mouseMoveEvent(event);
+    }
+}
+
+void InspectorFrame::contextMenuEvent(QGraphicsSceneContextMenuEvent* e)
+{
+    // XXX open context menu with 'jump to' here
+}
+
+void InspectorFrame::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
+{
+    QGraphicsItem::mouseReleaseEvent(event);
+
+    if (dragging)
+    {
+        ungrabMouse();
+    }
+    else if (event->button() == Qt::LeftButton)
+    {
+        // Store an Undo command for this drag
+        const auto delta = event->scenePos() -
+                     event->buttonDownScenePos(Qt::LeftButton);
+        static_cast<CanvasScene*>(scene())->endDrag(delta);
+    }
+    dragging = false;
+}
+
+void InspectorFrame::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    // XXX Handle glowing here
+    QGraphicsItem::hoverEnterEvent(event);
+}
+
+void InspectorFrame::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    // XXX Handle glowing here
+    QGraphicsItem::hoverLeaveEvent(event);
+}
+
+////////////////////////////////////////////////////////////////////////////////

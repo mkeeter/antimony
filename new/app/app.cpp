@@ -8,16 +8,19 @@
 #include <QJsonDocument>
 
 #include "app/app.h"
+
 #include "graph/proxy/graph.h"
 #include "graph/serialize/serializer.h"
 #include "graph/serialize/deserializer.h"
+
+#include "undo/undo_stack.h"
 
 #include "graph/graph.h"
 
 App::App(int& argc, char** argv)
     : QApplication(argc, argv),
       graph(new Graph()), proxy(new GraphProxy(graph, this)),
-      update_checker(this)
+      undo_stack(new UndoStack(this)), update_checker(this)
 {
     // Nothing to do here
 }
@@ -246,4 +249,45 @@ void App::loadFile(QString f)
         proxy->setInspectorPositions(ds.inspectors);
         // XXX emit(windowTitleChanged(getWindowTitle()));
     }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void App::undo()
+{
+    undo_stack->undo();
+}
+
+void App::redo()
+{
+    undo_stack->redo();
+}
+
+void App::pushUndoStack(UndoCommand* c)
+{
+    undo_stack->push(c);
+}
+
+void App::beginUndoMacro(QString text)
+{
+    undo_stack->beginMacro(text);
+}
+
+void App::endUndoMacro()
+{
+    undo_stack->endMacro();
+}
+
+QAction* App::getUndoAction()
+{
+    auto a = undo_stack->createUndoAction(this);
+    a->setShortcuts(QKeySequence::Undo);
+    return a;
+}
+
+QAction* App::getRedoAction()
+{
+    auto a = undo_stack->createRedoAction(this);
+    a->setShortcuts(QKeySequence::Redo);
+    return a;
 }

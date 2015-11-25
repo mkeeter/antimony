@@ -1,11 +1,14 @@
 #pragma once
 
 #include <QApplication>
+#include <QAction>
 
 #include "app/update.h"
 
 class Graph;
 class GraphProxy;
+class UndoCommand;
+class UndoStack;
 
 class App : public QApplication
 {
@@ -39,8 +42,29 @@ public:
     /*
      *  Global Undo and Redo operations
      */
-    void undo() {}
-    void redo() {}
+    void undo();
+    void redo();
+
+    /*
+     *  Pushes an undo command to the stack
+     */
+    void pushUndoStack(UndoCommand* c);
+
+    /*
+     *  Begins a multi-command undo macro with the given description
+     */
+    void beginUndoMacro(QString text);
+
+    /*
+     *  Ends a multi-command undo macro
+     */
+    void endUndoMacro();
+
+    /*
+     *  Get undo and redo actions to populate in menus
+     */
+    QAction* getUndoAction();
+    QAction* getRedoAction();
 
 public slots:
     /*
@@ -78,6 +102,7 @@ protected:
 
     Graph* graph;
     GraphProxy* proxy;
+    UndoStack* undo_stack;
 
     QString filename;
 

@@ -25,6 +25,10 @@ void BaseWindow::connectActions(App* app)
     connect(ui->actionQuit, &QAction::triggered,
             app, &App::onQuit);
 
+    // Add undo / redo to edit menu
+    ui->menuEdit->addAction(App::instance()->getUndoAction());
+    ui->menuEdit->addAction(App::instance()->getRedoAction());
+
     // View window
     connect(ui->actionNewCanvas, &QAction::triggered,
             app, &App::newCanvasWindow);
