@@ -55,6 +55,11 @@ protected:
     static QString formatSpecial(QString t, const DatumState& state);
 
     /*
+     *  Change the datum's value by a small amount
+     */
+    void tweakValue(int dx);
+
+    /*
      *  Specialized functions to drag different number types
      */
     void dragFloat(float a);

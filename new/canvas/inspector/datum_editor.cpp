@@ -102,6 +102,25 @@ void InspectorDatumEditor::update(const DatumState& state)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void InspectorDatumEditor::tweakValue(int dx)
+{
+    if (datum->isValid())
+    {
+        if (datum->getType() == &PyFloat_Type)
+        {
+            const double scale = fmax(
+                    0.01, fabs(PyFloat_AsDouble(datum->currentValue()) * 0.01));
+            dragFloat(scale * dx);
+        }
+        else if (datum->getType() == &PyLong_Type)
+        {
+            dragInt(dx);
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 bool InspectorDatumEditor::eventFilter(QObject* obj, QEvent* event)
 {
     if (obj == this && event->type() == QEvent::KeyPress)
@@ -116,23 +135,7 @@ bool InspectorDatumEditor::eventFilter(QObject* obj, QEvent* event)
         else if (keyEvent->matches(QKeySequence::Redo))
             App::instance()->redo();
         else if (keyEvent->key() == Qt::Key_Up || keyEvent->key() == Qt::Key_Down)
-        {
-            const int dx = keyEvent->key() == Qt::Key_Up ? 1 : -1;
-            if (datum->isValid())
-            {
-                if (datum->getType() == &PyFloat_Type)
-                {
-                    const double scale = fmax(
-                            0.01, fabs(PyFloat_AsDouble(datum->currentValue()) * 0.01));
-                    dragFloat(scale * dx);
-                }
-                else if (datum->getType() == &PyLong_Type)
-                {
-                    dragInt(dx);
-                }
-
-            }
-        }
+            tweakValue(keyEvent->key() == Qt::Key_Up ? 1 : -1);
         else
             return false;
         return true;
