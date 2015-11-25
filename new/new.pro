@@ -96,6 +96,9 @@ SOURCES += \
     script/syntax.cpp                   \
     script/editor.cpp                   \
     script/frame.cpp                    \
+    undo/undo_command.cpp               \
+    undo/undo_move_node.cpp             \
+    undo/undo_stack.cpp                 \
 
 HEADERS += \
     app/app.h                           \
@@ -125,6 +128,9 @@ HEADERS += \
     script/syntax.h                     \
     script/editor.h                     \
     script/frame.h                      \
+    undo/undo_command.h                 \
+    undo/undo_move_node.h               \
+    undo/undo_stack.h                   \
 
 FORMS += \
     forms/base_window.ui \

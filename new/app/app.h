@@ -32,6 +32,11 @@ public:
     QString userNodePath() const;
 
     /*
+     *  Returns the top-level graph proxy object
+     */
+    GraphProxy* getProxy() const { return proxy; }
+
+    /*
      *  Global Undo and Redo operations
      */
     void undo() {}
