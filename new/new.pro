@@ -91,6 +91,8 @@ SOURCES += \
     graph/proxy/superdatum.cpp          \
     graph/hooks/hooks.cpp               \
     graph/hooks/title.cpp               \
+    graph/serialize/serializer.cpp      \
+    graph/serialize/deserializer.cpp    \
     script/syntax.cpp                   \
     script/editor.cpp                   \
     script/frame.cpp                    \
@@ -118,6 +120,8 @@ HEADERS += \
     graph/proxy/superdatum.h            \
     graph/hooks/hooks.h                 \
     graph/hooks/title.h                 \
+    graph/serialize/serializer.h        \
+    graph/serialize/deserializer.h      \
     script/syntax.h                     \
     script/editor.h                     \
     script/frame.h                      \
