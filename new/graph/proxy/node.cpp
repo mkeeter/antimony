@@ -33,7 +33,8 @@ void NodeProxy::trigger(const NodeState& state)
         script = new ScriptProxy(state.script, this);
 
     updateHash(state.datums, &datums, this);
-    {
+
+    {   // Set indices of datums for proper sorting
         int i=0;
         for (auto d : state.datums)
             datums[d]->setIndex(i++);
