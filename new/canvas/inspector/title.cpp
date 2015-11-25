@@ -15,12 +15,15 @@
 int InspectorTitle::MIN_TITLE_PADDING = 20;
 int InspectorTitle::BUTTON_PADDING = 4;
 
+////////////////////////////////////////////////////////////////////////////////
+
 InspectorTitle::InspectorTitle(Node* n, InspectorFrame* parent)
     : QGraphicsObject(parent),
       name(new QGraphicsTextItem(QString::fromStdString(n->getName()), this)),
       title(new QGraphicsTextItem("omg", this)), title_padding(MIN_TITLE_PADDING)
 {
     name->setTextInteractionFlags(Qt::TextEditorInteraction);
+    name->setPos(BUTTON_PADDING, 0);
 
     connect(name->document(), &QTextDocument::contentsChanged,
             [=]() { n->setName(this->name->toPlainText().toStdString()); });
@@ -34,7 +37,6 @@ InspectorTitle::InspectorTitle(Node* n, InspectorFrame* parent)
 
         for (auto t : {name, title})
         {
-            t->setPos(0, 0);
             t->setDefaultTextColor(Colors::base06);
             t->setFont(f);
         }
@@ -57,7 +59,7 @@ QRectF InspectorTitle::boundingRect() const
 
 void InspectorTitle::setWidth(float width)
 {
-    title->setPos(name->boundingRect().width() + MIN_TITLE_PADDING +
+    title->setPos(name->boundingRect().right() + MIN_TITLE_PADDING +
                   width - minWidth(), 0);
 
     float x = title->pos().x() + title->boundingRect().width();
@@ -99,7 +101,7 @@ void InspectorTitle::setTitle(QString new_title)
 
 float InspectorTitle::minWidth() const
 {
-    float width = name->boundingRect().width() +
+    float width = name->boundingRect().right() +
                   MIN_TITLE_PADDING +
                   title->boundingRect().width();
 

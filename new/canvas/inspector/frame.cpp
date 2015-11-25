@@ -108,7 +108,7 @@ void InspectorFrame::redoLayout()
     }
 
     {   // Spread out the rows along the Y axis
-        float y = title_row->boundingRect().height();
+        float y = title_row->boundingRect().height() + PADDING_ROWS;
         for (auto row : rows)
         {
             row->setPos(0, y);
