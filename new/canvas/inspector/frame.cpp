@@ -44,6 +44,15 @@ void InspectorFrame::paint(QPainter *painter,
     painter->setPen(Qt::NoPen);
     painter->drawRoundedRect(r, 8, 8);
 
+    {   // Draw light-colored rectangle under title bar
+        painter->setBrush(Colors::base03);
+        painter->drawRoundedRect(title_row->boundingRect(), 8, 8);
+        painter->setBrush(Qt::NoBrush);
+        painter->setPen(QPen(Colors::base03, 4));
+        const auto y = title_row->boundingRect().bottom();
+        painter->drawLine(2, y, boundingRect().right() - 2, y);
+    }
+
     // Draw outer edge
     painter->setBrush(Qt::NoBrush);
     if (isSelected())
