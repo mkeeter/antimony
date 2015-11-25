@@ -21,11 +21,6 @@ public:
     PyObject* pyGetAttr(std::string name, Downstream* caller,
                         uint8_t flags) const override;
 
-    /*
-     *  Returns a NodeState with the subgraph pointer populated.
-     */
-    NodeState getState() const override;
-
 protected:
     std::unique_ptr<Graph> subgraph;
 };

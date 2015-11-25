@@ -51,10 +51,3 @@ PyObject* GraphNode::pyGetAttr(std::string n, Downstream* caller,
     else
         return Node::pyGetAttr(n, caller, flags);
 }
-
-NodeState GraphNode::getState() const
-{
-    auto s = Node::getState();
-    s.subgraph = const_cast<Graph*>(subgraph.get());
-    return s;
-}

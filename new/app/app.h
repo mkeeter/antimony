@@ -61,8 +61,20 @@ public slots:
     void onUpdateCheck();
 
 protected:
+    /*
+     *  Loads a file specified by name
+     */
+    void loadFile(QString f);
+
+    /*
+     *  Overload event handling to detect drag-and-drop events
+     */
+    bool event(QEvent* event);
+
     Graph* graph;
     GraphProxy* proxy;
+
+    QString filename;
 
     UpdateChecker update_checker;
 };

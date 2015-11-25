@@ -50,6 +50,16 @@ public:
      */
     NodeProxy* getNodeProxy(Node* g);
 
+    /*
+     *  Records positions of all inspectors (recursively)
+     */
+    QMap<Node*, QPointF> inspectorPositions() const;
+
+    /*
+     *  Sets positions of all inspectors (recursively)
+     */
+    void setInspectorPositions(const QMap<Node*, QPointF>& pos);
+
 protected:
     CanvasScene* canvas_scene;
     QList<QMainWindow*> windows;

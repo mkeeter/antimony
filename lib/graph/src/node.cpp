@@ -32,7 +32,7 @@ void Node::init()
 NodeState Node::getState() const
 {
     return (NodeState){isNameValid(name) && parent->isNameUnique(name, this),
-                       childDatums(), NULL, NULL};
+                       childDatums()};
 }
 
 void Node::setName(std::string new_name)

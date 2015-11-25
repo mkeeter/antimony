@@ -59,3 +59,19 @@ NodeProxy* GraphProxy::getNodeProxy(Node* n)
         nodes[n] = new NodeProxy(n, this);
     return nodes[n];
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+QMap<Node*, QPointF> GraphProxy::inspectorPositions() const
+{
+    QMap<Node*, QPointF> out;
+    for (auto n : nodes)
+        out.unite(n->inspectorPositions());
+    return out;
+}
+
+void GraphProxy::setInspectorPositions(const QMap<Node*, QPointF>& pos)
+{
+    for (auto n : nodes)
+        n->setInspectorPositions(pos);
+}

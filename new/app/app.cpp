@@ -3,10 +3,14 @@
 #include <QMessageBox>
 #include <QStandardPaths>
 #include <QDir>
-#include <QUrl>
+#include <QFileDialog>
+#include <QFileOpenEvent>
+#include <QJsonDocument>
 
 #include "app/app.h"
 #include "graph/proxy/graph.h"
+#include "graph/serialize/serializer.h"
+#include "graph/serialize/deserializer.h"
 
 #include "graph/graph.h"
 
@@ -76,22 +80,60 @@ QString App::userNodePath() const
 
 void App::onNew()
 {
-
+    graph->clear();
+    filename.clear();
+    /* XXX
+    stack->clear();
+    emit(windowTitleChanged(getWindowTitle()));
+    */
 }
 
 void App::onSave()
 {
+    if (filename.isEmpty())
+        return onSaveAs();
 
+    QFile file(filename);
+    file.open(QIODevice::WriteOnly);
+
+    file.write(QJsonDocument(
+            SceneSerializer::run(
+                graph, proxy->inspectorPositions())).toJson());
+
+    // XXX stack->setClean();
 }
 
 void App::onSaveAs()
 {
-
+    QString f = QFileDialog::getSaveFileName(NULL, "Save as", "", "*.sb");
+    if (!f.isEmpty())
+    {
+#ifdef Q_OS_LINUX
+        if (!f.endsWith(".sb"))
+            f += ".sb";
+#endif
+        if (!QFileInfo(QFileInfo(f).path()).isWritable())
+        {
+            QMessageBox::critical(NULL, "Save As error",
+                    "<b>Save As error:</b><br>"
+                    "Target file is not writable.");
+            return;
+        }
+        filename = f;
+        // XXX emit(windowTitleChanged(getWindowTitle()));
+        return onSave();
+    }
 }
 
 void App::onOpen()
 {
-
+    if (QMessageBox::question(NULL, "Discard unsaved changes?",
+                "Discard unsaved changes?") == QMessageBox::Yes)
+    {
+        QString f = QFileDialog::getOpenFileName(NULL, "Open", "", "*.sb");
+        if (!f.isEmpty())
+            loadFile(f);
+    }
 }
 
 void App::onQuit()
@@ -149,4 +191,59 @@ void App::onAbout()
 void App::onUpdateCheck()
 {
     update_checker.start();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+bool App::event(QEvent *event)
+{
+    switch (event->type()) {
+        case QEvent::FileOpen:
+            loadFile(static_cast<QFileOpenEvent*>(event)->file());
+            return true;
+        default:
+            return QApplication::event(event);
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void App::loadFile(QString f)
+{
+    filename = f;
+    graph->clear();
+
+    // XXX disable rendering
+
+    QFile file(f);
+    if (!file.open(QIODevice::ReadOnly))
+    {
+        QMessageBox::critical(NULL, "Loading error",
+                "<b>Loading error:</b><br>"
+                "File does not exist.");
+        onNew();
+        return;
+    }
+
+    SceneDeserializer::Info ds;
+    const bool success = SceneDeserializer::run(
+            QJsonDocument::fromJson(file.readAll()).object(),
+            graph, &ds);
+
+    if (!success)
+    {
+        QMessageBox::critical(NULL, "Loading error",
+                "<b>Loading error:</b><br>" +
+                ds.error_message);
+        onNew();
+    } else {
+        // If there's a warning message, show it in a box.
+        if (!ds.warning_message.isNull())
+            QMessageBox::information(NULL, "Loading information",
+                    "<b>Loading information:</b><br>" +
+                    ds.warning_message);
+
+        proxy->setInspectorPositions(ds.inspectors);
+        // XXX emit(windowTitleChanged(getWindowTitle()));
+    }
 }

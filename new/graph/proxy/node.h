@@ -33,7 +33,25 @@ public:
      */
     InspectorFrame* getInspector() const { return inspector; }
 
+    /*
+     *  Records positions of all inspectors
+     *
+     *  Normally, this will be single-item map, but for GraphNodes
+     *  we recurse down into subgraphs.
+     */
+    QMap<Node*, QPointF> inspectorPositions() const;
+
+    /*
+     *  Sets positions of all inspectors.
+     *
+     *  Normally, this checks against the single node, but we also
+     *  recurse for GraphNodes.
+     */
+    void setInspectorPositions(const QMap<Node*, QPointF>& pos);
+
 protected:
+    Node* const node;
+
     QHash<Datum*, DatumProxy*> datums;
 
     ScriptProxy* script;
