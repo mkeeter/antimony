@@ -31,6 +31,10 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
+// 4 gets to edge of "buttons" in title-row, 4 more padding/margin
+// Probably there is a 4 lurking in canvas/inspector/inspector_buttons
+const int NodeInspector::TitleRightPadding = 8; 
+
 NodeInspector::NodeInspector(Node* node)
     : node(node), title_row(NULL),
       export_button(new InspectorExportButton(this)),
@@ -69,7 +73,7 @@ float NodeInspector::maxLabelWidth() const
 QRectF NodeInspector::boundingRect() const
 {
     float height = title_row->boundingRect().height() + 4;
-    float width =  title_row->boundingRect().width() + 8;
+    float width =  title_row->boundingRect().width() + TitleRightPadding;
 
     for (auto row=rows.begin(); row != rows.end(); ++row)
     {

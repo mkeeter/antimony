@@ -66,6 +66,8 @@ public:
     void setExportWorker(ExportWorker* worker);
     void clearExportWorker();
 
+    static const int TitleRightPadding;
+
 signals:
     void glowChanged(Node* node, bool g);
 
