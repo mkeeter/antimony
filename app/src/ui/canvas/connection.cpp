@@ -53,9 +53,9 @@ Connection::Connection(OutputPort* source, InputPort* target)
 
 void Connection::onPortsMoved()
 {
-    start_pos = source->mapToScene(source->boundingRect().center());
+    start_pos = source->mapToScene(source->dropRect().center());
     if (drag_state == CONNECTED)
-        end_pos = target->mapToScene(target->boundingRect().center());
+        end_pos = target->mapToScene(target->dropRect().center());
     prepareGeometryChange();
 }
 
@@ -245,7 +245,7 @@ void Connection::updateSnap()
     if (Port* p = gscene()->getInputPortNear(drag_pos, source->getDatum()))
     {
         has_snap_pos = true;
-        snap_pos = p->mapToScene(p->boundingRect().center());
+        snap_pos = p->mapToScene(p->dropRect().center());
     }
     else
     {
