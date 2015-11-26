@@ -4,6 +4,7 @@
 #include <QPointer>
 
 struct Script;
+class ScriptNode;
 
 class ScriptEditor: public QPlainTextEdit
 {
@@ -30,4 +31,8 @@ protected:
      */
     bool eventFilter(QObject* obj, QEvent* event);
 
+    /*
+     *  Store the script node so that we can make undo / redo actions
+     */
+    ScriptNode* const node;
 };

@@ -8,10 +8,12 @@
 #include "app/colors.h"
 #include "app/app.h"
 
+#include "undo/undo_change_script.h"
+
 #include "graph/script_node.h"
 
 ScriptEditor::ScriptEditor(Script* script, QWidget* parent)
-    : QPlainTextEdit(parent)
+    : QPlainTextEdit(parent), node(script->parentNode())
 {
     //  Propagate script changes back to the node
     auto doc = document();
@@ -68,7 +70,9 @@ void ScriptEditor::setText(QString text)
 
 void ScriptEditor::onUndoCommandAdded()
 {
-    // Nothing to do here
+    document()->blockSignals(true);
+    App::instance()->pushUndoStack(new UndoChangeScript(node, this));
+    document()->blockSignals(false);
 }
 
 bool ScriptEditor::eventFilter(QObject* obj, QEvent* event)

@@ -98,6 +98,7 @@ SOURCES += \
     script/frame.cpp                    \
     undo/undo_command.cpp               \
     undo/undo_move_node.cpp             \
+    undo/undo_change_script.cpp         \
     undo/undo_stack.cpp                 \
 
 HEADERS += \
@@ -130,6 +131,7 @@ HEADERS += \
     script/frame.h                      \
     undo/undo_command.h                 \
     undo/undo_move_node.h               \
+    undo/undo_change_script.h           \
     undo/undo_stack.h                   \
 
 FORMS += \
