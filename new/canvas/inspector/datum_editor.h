@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Python.h>
+
 #include <QGraphicsTextItem>
 #include <QRegularExpression>
 #include <QToolTip>
@@ -7,10 +9,14 @@
 
 #include "graph/watchers.h"
 
+#include "undo/undo_catcher.h"
+#include "undo/undo_change_expr.h"
+
 class Datum;
 class InspectorRow;
 
-class InspectorDatumEditor : public QGraphicsTextItem
+class InspectorDatumEditor :
+    public UndoCatcher<QGraphicsTextItem, InspectorRow, Datum, UndoChangeExpr>
 {
     Q_OBJECT
 public:
@@ -64,6 +70,8 @@ protected:
      */
     void dragFloat(float a);
     void dragInt(int a);
+
+    Datum* getUndoTarget() const override { return datum; }
 
     Datum* datum;
     QTextDocument* txt;

@@ -17,8 +17,8 @@ public:
      *  Constructs an undo command that reverses a change to datum
      */
     UndoChangeExpr(Datum* d, QString before, QString after,
-                   QGraphicsTextItem* editor,
-                   int cursor_before, int cursor_after);
+                   QGraphicsTextItem* editor=NULL,
+                   int cursor_before=0, int cursor_after=0);
 
     void redo() override;
     void undo() override;

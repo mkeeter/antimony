@@ -18,7 +18,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 InspectorDatumEditor::InspectorDatumEditor(Datum* d, InspectorRow* parent)
-    : QGraphicsTextItem(parent), datum(d), txt(document()),
+    : UndoCatcher(parent), datum(d), txt(document()),
       valid(true), recursing(false)
 {
     setTextInteractionFlags(Qt::TextEditorInteraction);
@@ -123,22 +123,25 @@ void InspectorDatumEditor::tweakValue(int dx)
 
 bool InspectorDatumEditor::eventFilter(QObject* obj, QEvent* event)
 {
-    if (obj == this && event->type() == QEvent::KeyPress)
+    if (!UndoCatcher::eventFilter(obj, event) &&
+        obj == this && event->type() == QEvent::KeyPress)
     {
         QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
         if (keyEvent->key() == Qt::Key_Tab || keyEvent->key() == Qt::Key_Return)
+        {
             emit(tabPressed(this));
+            return true;
+        }
         else if (keyEvent->key() == Qt::Key_Backtab)
+        {
             emit(shiftTabPressed(this));
-        else if (keyEvent->matches(QKeySequence::Undo))
-            App::instance()->undo();
-        else if (keyEvent->matches(QKeySequence::Redo))
-            App::instance()->redo();
+            return true;
+        }
         else if (keyEvent->key() == Qt::Key_Up || keyEvent->key() == Qt::Key_Down)
+        {
             tweakValue(keyEvent->key() == Qt::Key_Up ? 1 : -1);
-        else
-            return false;
-        return true;
+            return true;
+        }
     }
     return false;
 }
@@ -172,12 +175,8 @@ void InspectorDatumEditor::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     QString drag_end = QString::fromStdString(datum->getText());
     if (drag_start != drag_end)
-    {
-        /* XXX 
-        App::instance()->pushStack(
-                new UndoChangeExprCommand(d, drag_start, drag_end));
-                */
-    }
+        App::instance()->pushUndoStack(
+                new UndoChangeExpr(datum, drag_start, drag_end));
 
     QGraphicsTextItem::mouseReleaseEvent(event);
 }

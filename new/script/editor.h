@@ -11,8 +11,8 @@
 struct Script;
 class ScriptNode;
 
-class ScriptEditor: public UndoCatcher<QPlainTextEdit, QWidget,
-                                       ScriptNode, UndoChangeScript>
+class ScriptEditor:
+    public UndoCatcher<QPlainTextEdit, QWidget, ScriptNode, UndoChangeScript>
 {
     Q_OBJECT
 public:
