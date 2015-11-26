@@ -29,6 +29,7 @@ App::~App()
 {
     delete graph;
     delete proxy;
+    delete undo_stack;
 }
 
 App* App::instance()
