@@ -8,8 +8,11 @@
 
 #include "graph/script_node.h"
 
-UndoChangeScript::UndoChangeScript(ScriptNode* n, QPlainTextEdit* editor)
-    : node(n), editor(editor)
+UndoChangeScript::UndoChangeScript(ScriptNode* n, QString before,
+                                   QString after, QPlainTextEdit* editor,
+                                   int cursor_before, int cursor_after)
+    : node(n), before(before), after(after), editor(editor),
+      cursor_before(cursor_before), cursor_after(cursor_after)
 {
     setText("'change script'");
 

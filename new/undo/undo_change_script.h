@@ -14,10 +14,11 @@ class UndoChangeScript: public UndoCommand
 {
 public:
     /*
-     *  Calls editor->undo() and editor->redo() to get the previous
-     *  and current state of the script.
+     *  Constructs an undo command that reverses a change to a script
      */
-    UndoChangeScript(ScriptNode* n, QPlainTextEdit* editor);
+    UndoChangeScript(ScriptNode* n, QString before, QString after,
+                     QPlainTextEdit* editor,
+                     int cursor_before, int cursor_after);
 
     void redo() override;
     void undo() override;

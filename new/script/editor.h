@@ -1,12 +1,18 @@
 #pragma once
 
+#include <Python.h>
+
 #include <QPlainTextEdit>
 #include <QPointer>
+
+#include "undo/undo_catcher.h"
+#include "undo/undo_change_script.h"
 
 struct Script;
 class ScriptNode;
 
-class ScriptEditor: public QPlainTextEdit
+class ScriptEditor: public UndoCatcher<QPlainTextEdit, QWidget,
+                                       ScriptNode, UndoChangeScript>
 {
     Q_OBJECT
 public:
@@ -22,15 +28,9 @@ public:
      */
     void highlightError(int lineno);
 
-protected slots:
-    void onUndoCommandAdded();
+    ScriptNode* getUndoTarget() const override { return node; }
 
 protected:
-    /*
-     *  Filter out control+Z events.
-     */
-    bool eventFilter(QObject* obj, QEvent* event);
-
     /*
      *  Store the script node so that we can make undo / redo actions
      */

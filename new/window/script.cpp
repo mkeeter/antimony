@@ -1,3 +1,5 @@
+#include <Python.h>
+
 #include "window/script.h"
 #include "script/frame.h"
 #include "script/editor.h"

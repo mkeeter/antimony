@@ -13,17 +13,12 @@
 #include "graph/script_node.h"
 
 ScriptEditor::ScriptEditor(Script* script, QWidget* parent)
-    : QPlainTextEdit(parent), node(script->parentNode())
+    : UndoCatcher(parent), node(script->parentNode())
 {
     //  Propagate script changes back to the node
     auto doc = document();
     connect(doc, &QTextDocument::contentsChanged,
             [=](){ script->setText(doc->toPlainText().toStdString()); });
-
-    //  Subsume undo commands into our global undo system.
-    connect(doc, &QTextDocument::undoCommandAdded,
-            this, &ScriptEditor::onUndoCommandAdded);
-    installEventFilter(this);
 
     {   // Use Courier as our default font
         QFont font;
@@ -64,31 +59,6 @@ void ScriptEditor::setText(QString text)
             setTextCursor(cursor);
         }
     }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void ScriptEditor::onUndoCommandAdded()
-{
-    document()->blockSignals(true);
-    App::instance()->pushUndoStack(new UndoChangeScript(node, this));
-    document()->blockSignals(false);
-}
-
-bool ScriptEditor::eventFilter(QObject* obj, QEvent* event)
-{
-    if (obj == this && event->type() == QEvent::KeyPress)
-    {
-        QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
-        if (keyEvent->matches(QKeySequence::Undo))
-            App::instance()->undo();
-        else if (keyEvent->matches(QKeySequence::Redo))
-            App::instance()->redo();
-        else
-            return false;
-        return true;
-    }
-    return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
