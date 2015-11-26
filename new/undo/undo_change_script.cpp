@@ -15,15 +15,6 @@ UndoChangeScript::UndoChangeScript(ScriptNode* n, QString before,
       cursor_before(cursor_before), cursor_after(cursor_after)
 {
     setText("'change script'");
-
-    auto doc = editor->document();
-    doc->undo();
-    before = doc->toPlainText();
-    cursor_before = editor->textCursor().position();
-
-    doc->redo();
-    after = doc->toPlainText();
-    cursor_after = editor->textCursor().position();
 }
 
 void UndoChangeScript::setCursor(int pos)
