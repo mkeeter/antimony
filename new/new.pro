@@ -90,6 +90,7 @@ SOURCES += \
     graph/proxy/datum.cpp               \
     graph/proxy/superdatum.cpp          \
     graph/hooks/hooks.cpp               \
+    graph/hooks/export.cpp              \
     graph/hooks/title.cpp               \
     graph/serialize/serializer.cpp      \
     graph/serialize/deserializer.cpp    \
@@ -124,6 +125,7 @@ HEADERS += \
     graph/proxy/datum.h                 \
     graph/proxy/superdatum.h            \
     graph/hooks/hooks.h                 \
+    graph/hooks/export.h                \
     graph/hooks/title.h                 \
     graph/serialize/serializer.h        \
     graph/serialize/deserializer.h      \
