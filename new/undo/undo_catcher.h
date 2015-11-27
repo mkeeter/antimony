@@ -19,15 +19,13 @@ template <class T, class P, class G, class U>
 class UndoCatcher : public T
 {
 public:
-    UndoCatcher(P* parent=NULL)
-        : T(parent)
+    UndoCatcher(G* target, P* parent=NULL)
+        : T(parent), target(target)
     {
         T::connect(T::document(), &QTextDocument::undoCommandAdded,
                    this, &UndoCatcher<T, P, G, U>::onUndoCommandAdded);
         T::installEventFilter(this);
     }
-
-    virtual G* getUndoTarget() const=0;
 
 protected slots:
     void onUndoCommandAdded()
@@ -44,7 +42,7 @@ protected slots:
         const int cursor_after = T::textCursor().position();
 
         App::instance()->pushUndoStack(
-                new U(getUndoTarget(), before, after,
+                new U(target, before, after,
                       this, cursor_before, cursor_after));
         T::document()->blockSignals(false);
     }
@@ -68,4 +66,6 @@ protected:
         }
         return false;
     }
+
+    G* const target;
 };

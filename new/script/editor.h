@@ -27,12 +27,4 @@ public:
      *  Highlights the given line in red
      */
     void highlightError(int lineno);
-
-    ScriptNode* getUndoTarget() const override { return node; }
-
-protected:
-    /*
-     *  Store the script node so that we can make undo / redo actions
-     */
-    ScriptNode* const node;
 };

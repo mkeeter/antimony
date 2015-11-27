@@ -70,9 +70,6 @@ protected:
     void dragFloat(float a);
     void dragInt(int a);
 
-    Datum* getUndoTarget() const override { return datum; }
-
-    Datum* datum;
     QTextDocument* txt;
 
     bool valid;

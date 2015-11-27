@@ -18,7 +18,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 DatumEditor::DatumEditor(Datum* d, QGraphicsItem* parent)
-    : UndoCatcher(parent), datum(d), txt(document()),
+    : UndoCatcher(d, parent), txt(document()),
       valid(true), recursing(false)
 {
     setTextInteractionFlags(Qt::TextEditorInteraction);
@@ -104,15 +104,15 @@ void DatumEditor::update(const DatumState& state)
 
 void DatumEditor::tweakValue(int dx)
 {
-    if (datum->isValid())
+    if (target->isValid())
     {
-        if (datum->getType() == &PyFloat_Type)
+        if (target->getType() == &PyFloat_Type)
         {
             const double scale = fmax(
-                    0.01, fabs(PyFloat_AsDouble(datum->currentValue()) * 0.01));
+                    0.01, fabs(PyFloat_AsDouble(target->currentValue()) * 0.01));
             dragFloat(scale * dx);
         }
-        else if (datum->getType() == &PyLong_Type)
+        else if (target->getType() == &PyLong_Type)
         {
             dragInt(dx);
         }
@@ -165,7 +165,7 @@ void DatumEditor::paint(QPainter* painter,
 
 void DatumEditor::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    drag_start = QString::fromStdString(datum->getText());
+    drag_start = QString::fromStdString(target->getText());
     drag_accumulated = 0;
 
     QGraphicsTextItem::mousePressEvent(event);
@@ -173,27 +173,27 @@ void DatumEditor::mousePressEvent(QGraphicsSceneMouseEvent* event)
 
 void DatumEditor::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
-    QString drag_end = QString::fromStdString(datum->getText());
+    QString drag_end = QString::fromStdString(target->getText());
     if (drag_start != drag_end)
         App::instance()->pushUndoStack(
-                new UndoChangeExpr(datum, drag_start, drag_end));
+                new UndoChangeExpr(target, drag_start, drag_end));
 
     QGraphicsTextItem::mouseReleaseEvent(event);
 }
 
 void DatumEditor::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
-    if (datum->isValid() && (event->modifiers() & Qt::ShiftModifier))
+    if (target->isValid() && (event->modifiers() & Qt::ShiftModifier))
     {
-        if (datum->getType() == &PyFloat_Type)
+        if (target->getType() == &PyFloat_Type)
         {
             const double scale = fmax(
-                    0.01, fabs(PyFloat_AsDouble(datum->currentValue()) * 0.01));
+                    0.01, fabs(PyFloat_AsDouble(target->currentValue()) * 0.01));
             const double dx = (event->screenPos() - event->lastScreenPos()).x();
             dragFloat(scale * dx);
             return;
         }
-        else if (datum->getType() == &PyLong_Type)
+        else if (target->getType() == &PyLong_Type)
         {
             drag_accumulated += (event->screenPos() -
                                  event->lastScreenPos()).x() / 30.;
@@ -212,18 +212,18 @@ void DatumEditor::dragFloat(float a)
 {
     bool ok = false;
 
-    QString s = QString::fromStdString(datum->getText());
+    QString s = QString::fromStdString(target->getText());
     double v = s.toFloat(&ok);
     if (ok)
-        datum->setText(QString::number(v + a).toStdString());
+        target->setText(QString::number(v + a).toStdString());
 }
 
 void DatumEditor::dragInt(int a)
 {
     bool ok = false;
 
-    QString s = QString::fromStdString(datum->getText());
+    QString s = QString::fromStdString(target->getText());
     double i = s.toInt(&ok);
     if (ok)
-        datum->setText(QString::number(i + a).toStdString());
+        target->setText(QString::number(i + a).toStdString());
 }

@@ -13,7 +13,7 @@
 #include "graph/script_node.h"
 
 ScriptEditor::ScriptEditor(Script* script, QWidget* parent)
-    : UndoCatcher(parent), node(script->parentNode())
+    : UndoCatcher(script->parentNode(), parent)
 {
     //  Propagate script changes back to the node
     auto doc = document();
