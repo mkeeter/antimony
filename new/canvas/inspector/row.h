@@ -8,7 +8,7 @@ class InputPort;
 class OutputPort;
 class InspectorFrame;
 
-class InspectorDatumEditor;
+class DatumEditor;
 class Datum;
 
 class InspectorRow : public QGraphicsObject
@@ -73,7 +73,7 @@ protected:
     InputPort* input;
     OutputPort* output;
     QGraphicsTextItem* label;
-    InspectorDatumEditor* editor;
+    DatumEditor* editor;
 
     int index;
 };

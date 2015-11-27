@@ -4,7 +4,7 @@
 
 #include "canvas/inspector/row.h"
 #include "canvas/inspector/frame.h"
-#include "canvas/inspector/datum_editor.h"
+#include "canvas/datum_editor.h"
 
 #include "app/colors.h"
 
@@ -17,7 +17,7 @@ const float InspectorRow::TEXT_WIDTH = 150;
 InspectorRow::InspectorRow(Datum* d, InspectorFrame* parent)
     : QGraphicsObject(parent), input(NULL), output(NULL),
       label(new QGraphicsTextItem(QString::fromStdString(d->getName()), this)),
-      editor(new InspectorDatumEditor(d, this))
+      editor(new DatumEditor(d, this))
 {
     label->setDefaultTextColor(Colors::base04);
     editor->setDefaultTextColor(Colors::base04);

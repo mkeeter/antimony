@@ -13,14 +13,13 @@
 #include "undo/undo_change_expr.h"
 
 class Datum;
-class InspectorRow;
 
-class InspectorDatumEditor :
-    public UndoCatcher<QGraphicsTextItem, InspectorRow, Datum, UndoChangeExpr>
+class DatumEditor :
+    public UndoCatcher<QGraphicsTextItem, QGraphicsItem, Datum, UndoChangeExpr>
 {
     Q_OBJECT
 public:
-    InspectorDatumEditor(Datum* d, InspectorRow* parent);
+    DatumEditor(Datum* d, QGraphicsItem* parent);
 
     /*
      *  Updates from the given state
@@ -28,8 +27,8 @@ public:
     void update(const DatumState& state);
 
 signals:
-    void tabPressed(InspectorDatumEditor* item);
-    void shiftTabPressed(InspectorDatumEditor* item);
+    void tabPressed(DatumEditor* item);
+    void shiftTabPressed(DatumEditor* item);
 
 protected:
     /*

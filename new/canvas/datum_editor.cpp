@@ -6,7 +6,7 @@
 #include <QPainter>
 #include <QGraphicsSceneMouseEvent>
 
-#include "canvas/inspector/datum_editor.h"
+#include "canvas/datum_editor.h"
 #include "canvas/inspector/frame.h"
 #include "canvas/inspector/row.h"
 
@@ -17,7 +17,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
-InspectorDatumEditor::InspectorDatumEditor(Datum* d, InspectorRow* parent)
+DatumEditor::DatumEditor(Datum* d, QGraphicsItem* parent)
     : UndoCatcher(parent), datum(d), txt(document()),
       valid(true), recursing(false)
 {
@@ -32,7 +32,7 @@ InspectorDatumEditor::InspectorDatumEditor(Datum* d, InspectorRow* parent)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-QString InspectorDatumEditor::trimFloat(QString t)
+QString DatumEditor::trimFloat(QString t)
 {
     // Use QString to truncate floats to a sane number of decimal places
     QRegularExpression num("([0-9]+)\\.([0-9]+)");
@@ -46,7 +46,7 @@ QString InspectorDatumEditor::trimFloat(QString t)
     return t;
 }
 
-QString InspectorDatumEditor::formatSpecial(QString t, const DatumState& state)
+QString DatumEditor::formatSpecial(QString t, const DatumState& state)
 {
     // Special-case to avoid printing long shapes
     if (t.startsWith("fab.types.Shape"))
@@ -60,7 +60,7 @@ QString InspectorDatumEditor::formatSpecial(QString t, const DatumState& state)
     return t;
 }
 
-void InspectorDatumEditor::update(const DatumState& state)
+void DatumEditor::update(const DatumState& state)
 {
 
     {   // Update editor's text, holding cursor position if possible
@@ -102,7 +102,7 @@ void InspectorDatumEditor::update(const DatumState& state)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void InspectorDatumEditor::tweakValue(int dx)
+void DatumEditor::tweakValue(int dx)
 {
     if (datum->isValid())
     {
@@ -121,7 +121,7 @@ void InspectorDatumEditor::tweakValue(int dx)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool InspectorDatumEditor::eventFilter(QObject* obj, QEvent* event)
+bool DatumEditor::eventFilter(QObject* obj, QEvent* event)
 {
     if (!UndoCatcher::eventFilter(obj, event) &&
         obj == this && event->type() == QEvent::KeyPress)
@@ -148,7 +148,7 @@ bool InspectorDatumEditor::eventFilter(QObject* obj, QEvent* event)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void InspectorDatumEditor::paint(QPainter* painter,
+void DatumEditor::paint(QPainter* painter,
                                const QStyleOptionGraphicsItem* o,
                                QWidget* w)
 {
@@ -163,7 +163,7 @@ void InspectorDatumEditor::paint(QPainter* painter,
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void InspectorDatumEditor::mousePressEvent(QGraphicsSceneMouseEvent* event)
+void DatumEditor::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     drag_start = QString::fromStdString(datum->getText());
     drag_accumulated = 0;
@@ -171,7 +171,7 @@ void InspectorDatumEditor::mousePressEvent(QGraphicsSceneMouseEvent* event)
     QGraphicsTextItem::mousePressEvent(event);
 }
 
-void InspectorDatumEditor::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
+void DatumEditor::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     QString drag_end = QString::fromStdString(datum->getText());
     if (drag_start != drag_end)
@@ -181,7 +181,7 @@ void InspectorDatumEditor::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     QGraphicsTextItem::mouseReleaseEvent(event);
 }
 
-void InspectorDatumEditor::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
+void DatumEditor::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     if (datum->isValid() && (event->modifiers() & Qt::ShiftModifier))
     {
@@ -208,7 +208,7 @@ void InspectorDatumEditor::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void InspectorDatumEditor::dragFloat(float a)
+void DatumEditor::dragFloat(float a)
 {
     bool ok = false;
 
@@ -218,7 +218,7 @@ void InspectorDatumEditor::dragFloat(float a)
         datum->setText(QString::number(v + a).toStdString());
 }
 
-void InspectorDatumEditor::dragInt(int a)
+void DatumEditor::dragInt(int a)
 {
     bool ok = false;
 
