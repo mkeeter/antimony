@@ -14,6 +14,7 @@
 
 int InspectorTitle::MIN_TITLE_PADDING = 20;
 int InspectorTitle::BUTTON_PADDING = 4;
+int InspectorTitle::TOP_PADDING = 4;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -23,7 +24,7 @@ InspectorTitle::InspectorTitle(Node* n, InspectorFrame* parent)
       title(new QGraphicsTextItem("omg", this)), title_padding(MIN_TITLE_PADDING)
 {
     name->setTextInteractionFlags(Qt::TextEditorInteraction);
-    name->setPos(BUTTON_PADDING, 0);
+    name->setPos(BUTTON_PADDING, TOP_PADDING);
 
     connect(name->document(), &QTextDocument::contentsChanged,
             [=]() { n->setName(this->name->toPlainText().toStdString()); });
@@ -54,20 +55,20 @@ QRectF InspectorTitle::boundingRect() const
             if (b->isVisible())
                 width += BUTTON_PADDING + b->boundingRect().width();
 
-    return QRectF(0, 0, width, name->boundingRect().height());
+    return QRectF(0, 0, width, name->boundingRect().height() + TOP_PADDING);
 }
 
 void InspectorTitle::setWidth(float width)
 {
     title->setPos(name->boundingRect().right() + MIN_TITLE_PADDING +
-                  width - minWidth(), 0);
+                  width - minWidth(), TOP_PADDING);
 
     float x = title->pos().x() + title->boundingRect().width();
     float height = title->boundingRect().height();
     for (auto b : buttons)
         if (b->isVisible())
         {
-            moveTo(b, QPointF(x, (height - b->boundingRect().height())/2));
+            moveTo(b, QPointF(x, TOP_PADDING + (height - b->boundingRect().height())/2));
             x += b->boundingRect().width() + 4;
         }
 
@@ -119,4 +120,3 @@ void InspectorTitle::addButton(InspectorButton* b)
     buttons.push_back(b);
     emit(layoutChanged());
 }
-

@@ -54,6 +54,7 @@ signals:
     void layoutChanged();
 
 protected:
+    static int TOP_PADDING;
     static int MIN_TITLE_PADDING;
     static int BUTTON_PADDING;
 
