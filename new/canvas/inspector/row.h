@@ -59,6 +59,11 @@ public:
      */
     void update(const DatumState& state);
 
+    /*
+     *  Returns true if this row's name begins with '_'
+     */
+    bool shouldBeHidden() const;
+
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget) override;

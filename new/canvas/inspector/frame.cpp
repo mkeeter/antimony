@@ -17,7 +17,8 @@ const float InspectorFrame::PADDING_ROWS = 3;
 
 InspectorFrame::InspectorFrame(Node* node, QGraphicsScene* scene)
     : QGraphicsObject(), node(node), title_row(new InspectorTitle(node, this)),
-      export_button(new InspectorExportButton(this)), dragging(false)
+      export_button(new InspectorExportButton(this)),
+      show_hidden(false), dragging(false)
 {
     setFlags(QGraphicsItem::ItemIsMovable |
              QGraphicsItem::ItemIsSelectable);
@@ -31,9 +32,12 @@ InspectorFrame::InspectorFrame(Node* node, QGraphicsScene* scene)
 
 QRectF InspectorFrame::boundingRect() const
 {
-    auto r = childrenBoundingRect();
-    r.setBottom(r.bottom() + PADDING_ROWS);
-    return r;
+    QRectF b;
+    for (auto c : childItems())
+        if (c->isVisible())
+            b = b.united(c->boundingRect().translated(c->pos()));
+    b.setBottom(b.bottom() + PADDING_ROWS);
+    return b;
 }
 
 void InspectorFrame::paint(QPainter *painter,
@@ -84,12 +88,32 @@ void InspectorFrame::setTitle(QString title)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void InspectorFrame::setShowHidden(bool h)
+{
+    if (h != show_hidden)
+    {
+        show_hidden = h;
+        redoLayout();
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void InspectorFrame::redoLayout()
 {
     QList<InspectorRow*> rows;
     for (auto c : childItems())
         if (auto row = dynamic_cast<InspectorRow*>(c))
-            rows.append(row);
+        {
+            if (show_hidden || !row->shouldBeHidden())
+                rows.append(row);
+            else
+                row->hide();
+        }
+
+    // Show all rows that made it into our list
+    for (auto r : rows)
+        r->show();
 
     // Sort datums by row order
     qSort(rows.begin(), rows.end(),

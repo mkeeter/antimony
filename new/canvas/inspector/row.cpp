@@ -71,3 +71,10 @@ void InspectorRow::update(const DatumState& state)
 {
     editor->update(state);
 }
+
+bool InspectorRow::shouldBeHidden() const
+{
+    QString name = label->toPlainText();
+    return name.startsWith("_") &&
+          !name.startsWith("__");
+}

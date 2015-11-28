@@ -7,6 +7,7 @@
 
 #include "canvas/inspector/buttons.h"
 #include "canvas/inspector/title.h"
+#include "canvas/inspector/frame.h"
 
 #include "graph/proxy/script.h"
 
@@ -84,3 +85,32 @@ void InspectorScriptButton::setScriptValid(bool valid)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+InspectorShowHiddenButton::InspectorShowHiddenButton(InspectorFrame* frame)
+    : InspectorButton(frame->getTitleRow()), toggled(false), inspector(frame)
+{
+    setToolTip("Show hidden datums");
+    connect(this, &InspectorButton::pressed,
+            [=](){ this->toggled = !this->toggled;
+                   this->inspector->setShowHidden(this->toggled); });
+
+    frame->getTitleRow()->addButton(this);
+}
+
+QRectF InspectorShowHiddenButton::boundingRect() const
+{
+    return QRectF(0, 0, 10, 15);
+}
+
+void InspectorShowHiddenButton::paint(QPainter* painter,
+                                const QStyleOptionGraphicsItem* option,
+                                QWidget* widget)
+{
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
+
+    painter->setPen(Qt::NoPen);
+    painter->setBrush(hover ? Colors::base06 :
+                      toggled ? Colors::base04 : Colors::base02);
+    painter->drawRect(0, 12, 10, 3);
+    painter->drawEllipse(3, 4, 4, 4);
+}

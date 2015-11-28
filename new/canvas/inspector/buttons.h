@@ -4,6 +4,9 @@
 
 class ScriptProxy;
 class InspectorTitle;
+class InspectorFrame;
+
+////////////////////////////////////////////////////////////////////////////////
 
 class InspectorButton : public QGraphicsObject
 {
@@ -44,4 +47,24 @@ public:
 
 protected:
     bool script_valid;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+class InspectorShowHiddenButton : public InspectorButton
+{
+    Q_OBJECT
+public:
+    InspectorShowHiddenButton(InspectorFrame* parent);
+
+    /*
+     *  QGraphicsItem functions
+     */
+    QRectF boundingRect() const override;
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
+               QWidget* widget=0) override;
+
+protected:
+    bool toggled;
+    InspectorFrame* inspector;
 };

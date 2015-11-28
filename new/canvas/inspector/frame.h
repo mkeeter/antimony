@@ -32,6 +32,12 @@ public:
     void setTitle(QString title);
 
     /*
+     *  Sets whether hidden datums should be drawn or not
+     *  Triggers a layout update if a change is made.
+     */
+    void setShowHidden(bool h);
+
+    /*
      *  Returns the title row
      *  (used to insert buttons)
      */
@@ -89,6 +95,8 @@ protected:
     Node* const node;
     InspectorTitle* title_row;
     InspectorExportButton* export_button;
+
+    bool show_hidden;
 
     // Ugly hack because simply grabbing the mouse doesn't set up all of the
     // magic that QGraphicsScene uses to drag items: upon first insertion,

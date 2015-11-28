@@ -15,6 +15,7 @@ class DatumProxy;
 class ExportWorker;
 
 class InspectorFrame;
+class InspectorShowHiddenButton;
 
 class NodeProxy : public QObject, public NodeWatcher
 {
@@ -69,4 +70,5 @@ protected:
     GraphProxy* subgraph;
 
     InspectorFrame* inspector;
+    InspectorShowHiddenButton* show_hidden;
 };
