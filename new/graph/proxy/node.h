@@ -12,6 +12,7 @@ class Node;
 class GraphProxy;
 class ScriptProxy;
 class DatumProxy;
+class ExportWorker;
 
 class InspectorFrame;
 
@@ -48,6 +49,16 @@ public:
      *  recurse for GraphNodes.
      */
     void setInspectorPositions(const QMap<Node*, QPointF>& pos);
+
+    /*
+     *  Clears the inspector's 'Export' button
+     */
+    void clearExportWorker();
+
+    /*
+     *  Assigns the given export worker to the inspector's 'Export' button
+     */
+    void setExportWorker(ExportWorker* worker);
 
 protected:
     Node* const node;

@@ -6,6 +6,7 @@
 #include "graph/hooks/export.h"
 
 #include "graph/proxy/graph.h"
+#include "graph/proxy/node.h"
 
 #include "graph/script_node.h"
 
@@ -103,7 +104,8 @@ void AppHooks::loadScriptHooks(PyObject* g, ScriptNode* n)
                 hooks_module, "ScriptExportHooks", NULL);
         auto export_ref = extract<ScriptExportHooks*>(export_obj)();
         export_ref->node = n;
-        export_ref->proxy = NULL;
+        export_ref->proxy = proxy->getNodeProxy(n);
+        export_ref->proxy->clearExportWorker();
     }
 
     {   // Pack export, ui, and colors into the 'sb' tuple

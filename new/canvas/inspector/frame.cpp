@@ -8,6 +8,7 @@
 #include "canvas/inspector/frame.h"
 #include "canvas/inspector/row.h"
 #include "canvas/inspector/title.h"
+#include "canvas/inspector/export.h"
 #include "canvas/scene.h"
 
 #include "app/colors.h"
@@ -16,7 +17,7 @@ const float InspectorFrame::PADDING_ROWS = 3;
 
 InspectorFrame::InspectorFrame(Node* node, QGraphicsScene* scene)
     : QGraphicsObject(), node(node), title_row(new InspectorTitle(node, this)),
-      dragging(false)
+      export_button(new InspectorExportButton(this)), dragging(false)
 {
     setFlags(QGraphicsItem::ItemIsMovable |
              QGraphicsItem::ItemIsSelectable);
@@ -119,6 +120,13 @@ void InspectorFrame::redoLayout()
             row->setPos(0, y);
             y += row->boundingRect().height() + PADDING_ROWS;
         }
+
+        // Set the export button's size and position
+        if (export_button->isVisible()) {
+            auto w = boundingRect().width() / 2;
+            export_button->setPos(w/2, y);
+            export_button->setWidth(w);
+        }
     }
 
     prepareGeometryChange();
@@ -162,6 +170,8 @@ void InspectorFrame::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     dragging = false;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 void InspectorFrame::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     // XXX Handle glowing here
@@ -175,3 +185,15 @@ void InspectorFrame::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+void InspectorFrame::setExportWorker(ExportWorker* worker)
+{
+    if (export_button->setWorker(worker))
+        redoLayout();
+}
+
+void InspectorFrame::clearExportWorker()
+{
+    if (export_button->clearWorker())
+        redoLayout();
+}

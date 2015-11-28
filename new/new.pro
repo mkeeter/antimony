@@ -1,4 +1,4 @@
-QT += core gui widgets opengl network
+QT += core gui widgets opengl network concurrent
 
 CONFIG += object_parallel_to_source
 
@@ -75,6 +75,7 @@ SOURCES += \
     canvas/scene.cpp                    \
     canvas/view.cpp                     \
     canvas/inspector/frame.cpp          \
+    canvas/inspector/export.cpp         \
     canvas/inspector/title.cpp          \
     canvas/inspector/buttons.cpp        \
     canvas/inspector/util.cpp           \
@@ -102,6 +103,10 @@ SOURCES += \
     undo/undo_change_script.cpp         \
     undo/undo_change_expr.cpp           \
     undo/undo_stack.cpp                 \
+    dialog/exporting.cpp                \
+    dialog/resolution.cpp               \
+    export/export_mesh.cpp              \
+    export/export_worker.cpp            \
 
 HEADERS += \
     app/app.h                           \
@@ -113,6 +118,7 @@ HEADERS += \
     window/canvas.h                     \
     window/script.h                     \
     canvas/inspector/frame.h            \
+    canvas/inspector/export.h           \
     canvas/inspector/title.h            \
     canvas/inspector/buttons.h          \
     canvas/inspector/util.h             \
@@ -137,6 +143,10 @@ HEADERS += \
     undo/undo_change_script.h           \
     undo/undo_change_expr.h             \
     undo/undo_stack.h                   \
+    dialog/exporting.h                  \
+    dialog/resolution.h                 \
+    export/export_mesh.h                \
+    export/export_worker.h              \
 
 FORMS += \
     forms/base_window.ui \

@@ -4,6 +4,8 @@
 
 class Node;
 class InspectorTitle;
+class InspectorExportButton;
+class ExportWorker;
 
 class InspectorFrame : public QGraphicsObject
 {
@@ -39,6 +41,17 @@ public:
      *  Get the node object
      */
     Node* getNode() const { return node; }
+
+    /*
+     *  Clears the inspector's 'Export' button
+     */
+    void clearExportWorker();
+
+    /*
+     *  Assigns the given export worker to the inspector's 'Export' button
+     */
+    void setExportWorker(ExportWorker* worker);
+
 public slots:
     /*
      *  Update layout of text labels and fields
@@ -75,6 +88,7 @@ protected:
 
     Node* const node;
     InspectorTitle* title_row;
+    InspectorExportButton* export_button;
 
     // Ugly hack because simply grabbing the mouse doesn't set up all of the
     // magic that QGraphicsScene uses to drag items: upon first insertion,

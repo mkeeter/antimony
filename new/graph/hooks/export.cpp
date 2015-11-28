@@ -2,7 +2,7 @@
 #include "graph/hooks/hooks.h"
 
 #include "graph/proxy/node.h"
-//#include "export/export_mesh.h"
+#include "export/export_mesh.h"
 //#include "export/export_heightmap.h"
 
 #include <QString>
@@ -72,10 +72,8 @@ object ScriptExportHooks::stl(tuple args, dict kwargs)
     const float resolution = get_object("resolution", kwargs, -1);
     const bool detect_features = get_object("detect_features", kwargs, false);
 
-    /*
-    self->scene->setExportWorker(self->node, new ExportMeshWorker(
+    self->proxy->setExportWorker(new ExportMeshWorker(
                 shape, bounds, filename, resolution, detect_features));
-                */
     return object();
 }
 

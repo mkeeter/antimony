@@ -67,3 +67,16 @@ void NodeProxy::setInspectorPositions(const QMap<Node*, QPointF>& pos)
     if (subgraph)
         subgraph->setInspectorPositions(pos);
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+void NodeProxy::clearExportWorker()
+{
+    inspector->clearExportWorker();
+}
+
+void NodeProxy::setExportWorker(ExportWorker* worker)
+{
+    inspector->setExportWorker(worker);
+}
+
