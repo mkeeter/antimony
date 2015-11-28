@@ -3,7 +3,7 @@
 
 #include "graph/proxy/node.h"
 #include "export/export_mesh.h"
-//#include "export/export_heightmap.h"
+#include "export/export_heightmap.h"
 
 #include <QString>
 
@@ -101,12 +101,9 @@ object ScriptExportHooks::heightmap(tuple args, dict kwargs)
     const QString filename = QString::fromStdString(
             get_object("filename", kwargs, ""));
     const float resolution = get_object("resolution", kwargs, -1);
-    const bool detect_features = get_object("detect_features", kwargs, false);
     const float mm_per_unit = get_object("mm_per_unit", kwargs, 25.4);
 
-    /*
-    self->scene->setExportWorker(self->node, new ExportHeightmapWorker(
+    self->proxy->setExportWorker(new ExportHeightmapWorker(
                 shape, bounds, filename, resolution, mm_per_unit));
-    */
     return object();
 }

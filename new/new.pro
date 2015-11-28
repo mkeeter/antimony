@@ -106,6 +106,7 @@ SOURCES += \
     dialog/exporting.cpp                \
     dialog/resolution.cpp               \
     export/export_mesh.cpp              \
+    export/export_heightmap.cpp         \
     export/export_worker.cpp            \
 
 HEADERS += \
@@ -146,6 +147,7 @@ HEADERS += \
     dialog/exporting.h                  \
     dialog/resolution.h                 \
     export/export_mesh.h                \
+    export/export_heightmap.h           \
     export/export_worker.h              \
 
 FORMS += \
