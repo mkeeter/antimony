@@ -80,11 +80,21 @@ void InspectorRow::setWidth(float width)
     prepareGeometryChange();
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
 void InspectorRow::update(const DatumState& state)
 {
     editor->update(state);
+
+    if (state.sigil == Datum::SIGIL_OUTPUT)
+        input->hide();
+    else
+        input->show();
+
     static_cast<InspectorFrame*>(parentItem())->redoLayout();
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 bool InspectorRow::shouldBeHidden() const
 {
