@@ -233,7 +233,8 @@ void Datum::installLink(const Datum* upstream)
     if (isLink())
         setText(expr.substr(0, expr.size() - 1) + "," + id + "]");
     else
-        setText(SIGIL_CONNECTION + ("[" + id + "]"));
+        setText((isFromSubgraph() ? SIGIL_SUBGRAPH_CONNECTION
+                                  : SIGIL_CONNECTION) + ("[" + id + "]"));
 }
 
 void Datum::uninstallLink(const Datum* upstream)
