@@ -222,11 +222,10 @@ TEST_CASE("Subgraph link deletion")
 
     auto b = new GraphNode("b", a->getGraph());
     auto bx = new Datum("x", Datum::SIGIL_CONNECTION +
-                             std::string("[__parent.__0,__0.__subgraph.__0.__0]"),
+                             std::string("[__parent.__0,__0.__1]"),
                         &PyFloat_Type, b);
 
-    auto c = new GraphNode("c", b->getGraph());
-    auto cx = new Datum("x", "4.0", &PyFloat_Type, c);
+    auto by = new Datum("y", "4.0", &PyFloat_Type, b);
 
     CAPTURE(bx->getError());
     REQUIRE(bx->isValid());
@@ -235,7 +234,7 @@ TEST_CASE("Subgraph link deletion")
 
     SECTION("Subgraph")
     {
-        c->uninstall(cx);
+        b->uninstall(by);
 
         CAPTURE(bx->getError());
         CAPTURE(bx->getText());
