@@ -70,6 +70,7 @@ void InspectorRow::setWidth(float width)
 void InspectorRow::update(const DatumState& state)
 {
     editor->update(state);
+    static_cast<InspectorFrame*>(parentItem())->redoLayout();
 }
 
 bool InspectorRow::shouldBeHidden() const
