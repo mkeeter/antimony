@@ -5,6 +5,7 @@
 #include "canvas/inspector/row.h"
 #include "canvas/inspector/frame.h"
 #include "canvas/datum_editor.h"
+#include "canvas/datum_port.h"
 
 #include "app/colors.h"
 
@@ -15,11 +16,20 @@ const float InspectorRow::GAP_PADDING = 15;
 const float InspectorRow::TEXT_WIDTH = 150;
 
 InspectorRow::InspectorRow(Datum* d, InspectorFrame* parent)
-    : QGraphicsObject(parent), input(NULL), output(NULL),
+    : QGraphicsObject(parent),
+      input(new InputPort(d, this)), output(new OutputPort(d, this)),
       label(new QGraphicsTextItem(QString::fromStdString(d->getName()), this)),
       editor(new DatumEditor(d, this))
 {
     label->setDefaultTextColor(Colors::base04);
+
+    {   // Set port heights centered vertically
+        const float port_height = (label->boundingRect().height() -
+                                   input->boundingRect().height()) / 2;
+        input->setPos(0, port_height);
+        output->setPos(0, port_height);
+    }
+
     editor->setDefaultTextColor(Colors::base04);
 }
 
@@ -64,6 +74,9 @@ void InspectorRow::setWidth(float width)
 {
     editor->setTextWidth(TEXT_WIDTH + (width - minWidth()));
     editor->setPos(label->pos().x() + labelWidth() + GAP_PADDING, 0);
+
+    output->setPos(boundingRect().right() - output->boundingRect().width(),
+                   output->pos().y());
     prepareGeometryChange();
 }
 
