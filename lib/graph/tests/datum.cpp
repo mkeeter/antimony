@@ -269,3 +269,32 @@ TEST_CASE("Datum output detection")
     REQUIRE(out.count(y) == 1);
     delete g;
 }
+
+TEST_CASE("Looking using 'self'")
+{
+    auto g = new Graph();
+    auto n = new Node("a", g);
+    auto x = new Datum("x", "123.0", &PyFloat_Type, n);
+    auto from_self = new Datum("from_self", "self.x", &PyFloat_Type, n);
+
+    // Sanity-checking of x datum
+    REQUIRE(x->isValid() == true);
+    REQUIRE(x->currentValue() != NULL);
+    REQUIRE(PyFloat_AsDouble(x->currentValue()) == 123.0);
+
+    SECTION("Use of 'self'")
+    {
+        CAPTURE(from_self->getError());
+        REQUIRE(from_self->isValid() == true);
+        REQUIRE(from_self->currentValue() != NULL);
+        REQUIRE(PyFloat_AsDouble(from_self->currentValue()) == 123.0);
+    }
+
+    SECTION("Change tracking with 'self'")
+    {
+        x->setText("231.0");
+        REQUIRE(PyFloat_AsDouble(from_self->currentValue()) == 231.0);
+    }
+
+    delete g;
+}
