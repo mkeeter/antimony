@@ -2,8 +2,9 @@
 
 #include <QPainter>
 
-#include "canvas/inspector/row.h"
 #include "canvas/inspector/frame.h"
+
+#include "canvas/datum_row.h"
 #include "canvas/datum_editor.h"
 #include "canvas/datum_port.h"
 
@@ -11,11 +12,13 @@
 
 #include "graph/datum.h"
 
-const float InspectorRow::PORT_SIZE = 10;
-const float InspectorRow::GAP_PADDING = 15;
-const float InspectorRow::TEXT_WIDTH = 150;
+const float DatumRow::PORT_SIZE = 10;
+const float DatumRow::GAP_PADDING = 15;
+const float DatumRow::TEXT_WIDTH = 150;
 
-InspectorRow::InspectorRow(Datum* d, InspectorFrame* parent)
+////////////////////////////////////////////////////////////////////////////////
+
+DatumRow::DatumRow(Datum* d, QGraphicsItem* parent)
     : QGraphicsObject(parent),
       input(new InputPort(d, this)), output(new OutputPort(d, this)),
       label(new QGraphicsTextItem(QString::fromStdString(d->getName()), this)),
@@ -33,7 +36,16 @@ InspectorRow::InspectorRow(Datum* d, InspectorFrame* parent)
     editor->setDefaultTextColor(Colors::base04);
 }
 
-QRectF InspectorRow::boundingRect() const
+DatumRow::DatumRow(Datum* d, InspectorFrame* parent)
+    : DatumRow(d, static_cast<QGraphicsItem*>(parent))
+{
+    connect(this, &DatumRow::layoutChanged,
+            parent, &InspectorFrame::redoLayout);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+QRectF DatumRow::boundingRect() const
 {
     const float height = editor->boundingRect().height();
     const float width = editor->pos().x() + editor->boundingRect().width() +
@@ -42,21 +54,21 @@ QRectF InspectorRow::boundingRect() const
     return QRectF(0, 0, width, height);
 }
 
-void InspectorRow::paint(QPainter* painter,
-                         const QStyleOptionGraphicsItem* option,
-                         QWidget* widget)
+void DatumRow::paint(QPainter* painter,
+                     const QStyleOptionGraphicsItem* option,
+                     QWidget* widget)
 {
     Q_UNUSED(painter);
     Q_UNUSED(option);
     Q_UNUSED(widget);
 }
 
-float InspectorRow::labelWidth() const
+float DatumRow::labelWidth() const
 {
     return label->boundingRect().width();
 }
 
-float InspectorRow::minWidth() const
+float DatumRow::minWidth() const
 {
     return label->pos().x() + labelWidth() +
            GAP_PADDING +
@@ -64,13 +76,13 @@ float InspectorRow::minWidth() const
            GAP_PADDING + PORT_SIZE;
 }
 
-void InspectorRow::padLabel(float width)
+void DatumRow::padLabel(float width)
 {
     label->setPos(PORT_SIZE + GAP_PADDING + width - labelWidth(), 0);
     prepareGeometryChange();
 }
 
-void InspectorRow::setWidth(float width)
+void DatumRow::setWidth(float width)
 {
     editor->setTextWidth(TEXT_WIDTH + (width - minWidth()));
     editor->setPos(label->pos().x() + labelWidth() + GAP_PADDING, 0);
@@ -82,7 +94,7 @@ void InspectorRow::setWidth(float width)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void InspectorRow::update(const DatumState& state)
+void DatumRow::update(const DatumState& state)
 {
     editor->update(state);
 
@@ -90,13 +102,11 @@ void InspectorRow::update(const DatumState& state)
         input->hide();
     else
         input->show();
-
-    static_cast<InspectorFrame*>(parentItem())->redoLayout();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-bool InspectorRow::shouldBeHidden() const
+bool DatumRow::shouldBeHidden() const
 {
     QString name = label->toPlainText();
     return name.startsWith("_") &&

@@ -5,11 +5,11 @@
 #include "graph/proxy/util.h"
 
 #include "graph/datum.h"
-#include "canvas/inspector/row.h"
+#include "canvas/datum_row.h"
 
 DatumProxy::DatumProxy(Datum* d, NodeProxy* parent)
     : QObject(parent), datum(d),
-      row(new InspectorRow(d, parent->getInspector()))
+      row(new DatumRow(d, parent->getInspector()))
 {
     d->installWatcher(this);
 

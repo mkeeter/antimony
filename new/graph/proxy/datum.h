@@ -6,7 +6,7 @@
 #include "graph/watchers.h"
 
 class NodeProxy;
-class InspectorRow;
+class DatumRow;
 
 class DatumProxy : public QObject, public DatumWatcher
 {
@@ -26,5 +26,5 @@ public:
 protected:
     const Datum* datum;
 
-    InspectorRow* row;
+    DatumRow* row;
 };

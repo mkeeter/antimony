@@ -6,7 +6,7 @@
 #include <QGraphicsSceneContextMenuEvent>
 
 #include "canvas/inspector/frame.h"
-#include "canvas/inspector/row.h"
+#include "canvas/datum_row.h"
 #include "canvas/inspector/title.h"
 #include "canvas/inspector/export.h"
 #include "canvas/scene.h"
@@ -101,9 +101,9 @@ void InspectorFrame::setShowHidden(bool h)
 
 void InspectorFrame::redoLayout()
 {
-    QList<InspectorRow*> rows;
+    QList<DatumRow*> rows;
     for (auto c : childItems())
-        if (auto row = dynamic_cast<InspectorRow*>(c))
+        if (auto row = dynamic_cast<DatumRow*>(c))
         {
             if (show_hidden || !row->shouldBeHidden())
                 rows.append(row);
@@ -117,7 +117,7 @@ void InspectorFrame::redoLayout()
 
     // Sort datums by row order
     qSort(rows.begin(), rows.end(),
-          [](const InspectorRow* a, const InspectorRow* b)
+          [](const DatumRow* a, const DatumRow* b)
           { return a->getIndex() < b->getIndex(); });
 
     {   // Pad the row labels for alignment

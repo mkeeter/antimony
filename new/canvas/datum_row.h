@@ -11,11 +11,12 @@ class InspectorFrame;
 class DatumEditor;
 class Datum;
 
-class InspectorRow : public QGraphicsObject
+class DatumRow : public QGraphicsObject
 {
     Q_OBJECT
 public:
-    explicit InspectorRow(Datum* d, InspectorFrame* parent);
+    explicit DatumRow(Datum* d, QGraphicsItem* parent);
+    explicit DatumRow(Datum* d, InspectorFrame* parent);
 
     /*
      *  Updates the datum's text field
@@ -63,6 +64,13 @@ public:
      *  Returns true if this row's name begins with '_'
      */
     bool shouldBeHidden() const;
+
+signals:
+    /*
+     *  Emitted when the parent (be it an inspector or a superdatum frame)
+     *  should redo its layout.
+     */
+    void layoutChanged();
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,

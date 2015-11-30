@@ -8,7 +8,6 @@
 
 #include "canvas/datum_editor.h"
 #include "canvas/inspector/frame.h"
-#include "canvas/inspector/row.h"
 
 #include "app/colors.h"
 #include "app/app.h"

@@ -9,7 +9,7 @@
 class Datum;
 class Canvas;
 class Connection;
-class InspectorRow;
+class DatumRow;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +17,7 @@ class DatumPort : public QGraphicsObject
 {
     Q_OBJECT
 public:
-    explicit DatumPort(Datum* d, InspectorRow* parent);
+    explicit DatumPort(Datum* d, DatumRow* parent);
 
     /*
      *  QGraphicsItem functions
@@ -72,7 +72,7 @@ protected:
 class InputPort : public DatumPort
 {
 public:
-    explicit InputPort(Datum* d, InspectorRow* parent=NULL);
+    explicit InputPort(Datum* d, DatumRow* parent);
 
     /*
      *  Handle dropping a connection on the given port
@@ -90,7 +90,7 @@ public:
 class OutputPort : public DatumPort
 {
 public:
-    explicit OutputPort(Datum* d, InspectorRow* parent=NULL);
+    explicit OutputPort(Datum* d, DatumRow* parent);
 
 protected:
     /*

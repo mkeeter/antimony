@@ -4,9 +4,9 @@
 
 #include "app/colors.h"
 #include "canvas/datum_port.h"
-#include "canvas/inspector/row.h"
+#include "canvas/datum_row.h"
 
-DatumPort::DatumPort(Datum* d, InspectorRow* parent)
+DatumPort::DatumPort(Datum* d, DatumRow* parent)
     : QGraphicsObject(parent), datum(d), hover(false),
       color(Colors::getColor(d))
 {
@@ -42,7 +42,7 @@ void DatumPort::paint(QPainter *painter,
 
 ////////////////////////////////////////////////////////////////////////////////
 
-InputPort::InputPort(Datum* d, InspectorRow* parent)
+InputPort::InputPort(Datum* d, DatumRow* parent)
     : DatumPort(d, parent)
 {
     // Nothing to do here
@@ -55,7 +55,7 @@ QRectF InputPort::portRect() const
 
 ////////////////////////////////////////////////////////////////////////////////
 
-OutputPort::OutputPort(Datum* d, InspectorRow* parent)
+OutputPort::OutputPort(Datum* d, DatumRow* parent)
     : DatumPort(d, parent)
 {
     // Nothing to do here
