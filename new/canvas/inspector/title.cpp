@@ -21,7 +21,7 @@ int InspectorTitle::TOP_PADDING = 4;
 InspectorTitle::InspectorTitle(Node* n, InspectorFrame* parent)
     : QGraphicsObject(parent),
       name(new QGraphicsTextItem(QString::fromStdString(n->getName()), this)),
-      title(new QGraphicsTextItem("omg", this)), title_padding(MIN_TITLE_PADDING)
+      title(new QGraphicsTextItem("", this)), title_padding(MIN_TITLE_PADDING)
 {
     name->setTextInteractionFlags(Qt::TextEditorInteraction);
     name->setPos(BUTTON_PADDING, TOP_PADDING);
