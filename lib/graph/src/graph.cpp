@@ -114,8 +114,8 @@ PyObject* Graph::pyGetAttr(std::string name, Downstream* caller,
 
     // Allow "self" in datums
     if (name == "self")
-      if (auto d = dynamic_cast<Datum*>(caller))
-        return Proxy::makeProxyFor(d->parentNode(), caller, flags);
+        if (auto d = dynamic_cast<Datum*>(caller))
+            return Proxy::makeProxyFor(d->parentNode(), caller, flags);
 
     // Default case: look up a node by name or UID (depending on flags)
     auto m = (flags & Proxy::FLAG_UID_LOOKUP)
