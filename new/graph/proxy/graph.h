@@ -20,7 +20,7 @@ class GraphProxy : public QObject, public GraphWatcher
 Q_OBJECT
 
 public:
-    GraphProxy(Graph* g, QObject* parent);
+    GraphProxy(Graph* g, NodeProxy* parent=NULL);
     ~GraphProxy();
 
     /*
@@ -43,6 +43,12 @@ public:
      *  Opens a new Canvas window with this object's scene
      */
     CanvasWindow* newCanvasWindow();
+
+    /*
+     *  Dummy functions for viewport and quad view
+     */
+    void newViewWindow() {}
+    void newQuadWindow() {}
 
     /*
      *  Returns a proxy for the given node,

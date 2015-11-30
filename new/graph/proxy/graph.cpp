@@ -7,16 +7,24 @@
 #include "graph/hooks/hooks.h"
 
 #include "canvas/scene.h"
+#include "canvas/inspector/buttons.h"
 #include "window/canvas.h"
 
 #include "graph/graph.h"
 
-GraphProxy::GraphProxy(Graph* g, QObject* parent)
+GraphProxy::GraphProxy(Graph* g, NodeProxy* parent)
     : QObject(parent), canvas_scene(new CanvasScene(g, this)),
       hooks(new AppHooks(this))
 {
     g->installWatcher(this);
     g->installExternalHooks(hooks);
+
+    if (parent != NULL)
+    {
+        new InspectorGraphButton(this, parent->getInspector()->getTitleRow());
+        new InspectorViewButton(this, parent->getInspector()->getTitleRow());
+        new InspectorQuadButton(this, parent->getInspector()->getTitleRow());
+    }
 }
 
 GraphProxy::~GraphProxy()

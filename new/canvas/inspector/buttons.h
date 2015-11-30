@@ -3,6 +3,8 @@
 #include <QGraphicsObject>
 
 class ScriptProxy;
+class GraphProxy;
+
 class InspectorTitle;
 class InspectorFrame;
 
@@ -67,4 +69,48 @@ public:
 protected:
     bool toggled;
     InspectorFrame* inspector;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
+class InspectorGraphButton : public InspectorButton
+{
+    Q_OBJECT
+public:
+    InspectorGraphButton(GraphProxy* n, InspectorTitle* parent);
+
+    /*
+     *  QGraphicsItem overloaded functions
+     */
+    QRectF boundingRect() const override;
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
+               QWidget* widget=0) override;
+};
+
+class InspectorViewButton : public InspectorButton
+{
+    Q_OBJECT
+public:
+    InspectorViewButton(GraphProxy* n, InspectorTitle* parent);
+
+    /*
+     *  QGraphicsItem overloaded functions
+     */
+    QRectF boundingRect() const override;
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
+               QWidget* widget=0) override;
+};
+
+class InspectorQuadButton : public InspectorButton
+{
+    Q_OBJECT
+public:
+    InspectorQuadButton(GraphProxy* n, InspectorTitle* parent);
+
+    /*
+     *  QGraphicsItem overloaded functions
+     */
+    QRectF boundingRect() const override;
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
+               QWidget* widget=0) override;
 };

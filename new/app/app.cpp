@@ -19,7 +19,7 @@
 
 App::App(int& argc, char** argv)
     : QApplication(argc, argv),
-      graph(new Graph()), proxy(new GraphProxy(graph, this)),
+      graph(new Graph()), proxy(new GraphProxy(graph)),
       undo_stack(new UndoStack(this)), update_checker(this)
 {
     // Nothing to do here
