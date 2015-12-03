@@ -4,6 +4,7 @@
 #include <QDirIterator>
 #include <QMenu>
 #include <QTextStream>
+#include <QInputDialog>
 
 #include "graph/constructor/populate.h"
 #include "graph/constructor/constructor.h"
@@ -11,6 +12,7 @@
 
 #include "graph/script_node.h"
 #include "graph/graph_node.h"
+#include "fab/fab.h"
 
 static void addNodeToMenu(QMenu* menu, QStringList category, QString name,
                           Graph* g, NodeConstructorFunction f,
@@ -119,9 +121,42 @@ static void populateFromFiles(QMenu* menu, Graph* g,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+void makeDatum(GraphNode* node, PyTypeObject* type, bool output)
+{
+    bool ok;
+    QString text = QInputDialog::getText(
+            NULL, "Datum name?", "Datum name:",
+            QLineEdit::Normal, "x", &ok);
+    if (ok && !text.isEmpty())
+        node->makeDatum(text.toStdString(), type, output);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void emptyCallback(Node* n)
 {
     (void)n;
+}
+
+void populateDatumCommands(QMenu* menu, GraphNode* node)
+{
+    auto inputs = menu->addMenu("Input");
+    auto outputs = menu->addMenu("Output");
+
+    QList<QPair<QString, PyTypeObject*>> items =
+        {{"Float",  &PyFloat_Type},
+         {"Int",    &PyLong_Type},
+         {"String", &PyUnicode_Type},
+         {"Shape", fab::ShapeType}};
+
+    for (auto i : items)
+    {
+        inputs->connect(inputs->addAction(i.first), &QAction::triggered,
+            [=](){ makeDatum(node, i.second, false); });
+        outputs->connect(outputs->addAction(i.first), &QAction::triggered,
+            [=](){ makeDatum(node, i.second, true); });
+    }
 }
 
 void populateNodeMenu(QMenu* menu, Graph* g,
@@ -145,4 +180,7 @@ void populateNodeMenu(QMenu* menu, Graph* g,
                     r); }, callback);
     addNodeToMenu(menu, QStringList(), "Graph", g,
             [](Graph *r){ return new GraphNode("g*", r); }, callback);
+
+    if (g->parentNode())
+        populateDatumCommands(menu, g->parentNode());
 }

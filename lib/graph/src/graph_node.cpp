@@ -28,7 +28,7 @@ bool GraphNode::makeDatum(std::string name, PyTypeObject* type,
     auto value = std::string(PyUnicode_AsUTF8(repr));
 
     if (output)
-        value = Datum::SIGIL_OUTPUT + value;
+        value = Datum::SIGIL_SUBGRAPH_OUTPUT + value;
 
     auto d = new Datum(name, value, type, this);
     assert(d->isValid());
