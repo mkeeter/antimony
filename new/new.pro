@@ -80,6 +80,7 @@ SOURCES += \
     canvas/inspector/buttons.cpp        \
     canvas/inspector/util.cpp           \
     canvas/datum_row.cpp                \
+    canvas/datum_frame.cpp              \
     canvas/datum_editor.cpp             \
     canvas/datum_port.cpp               \
     window/base.cpp                     \
@@ -125,6 +126,7 @@ HEADERS += \
     canvas/inspector/buttons.h          \
     canvas/inspector/util.h             \
     canvas/datum_row.h                  \
+    canvas/datum_frame.h                \
     canvas/datum_editor.h               \
     canvas/datum_port.h                 \
     graph/constructor/populate.h        \

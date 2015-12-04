@@ -24,8 +24,6 @@ InspectorFrame::InspectorFrame(Node* node, QGraphicsScene* scene)
              QGraphicsItem::ItemIsSelectable);
     setAcceptHoverEvents(true);
 
-    Q_UNUSED(node);
-
     scene->addItem(this);
     redoLayout();
 }

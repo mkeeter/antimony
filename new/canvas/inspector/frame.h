@@ -69,6 +69,7 @@ protected:
      *  On mouse move, fake the left button being held down.
      */
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event) override;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
 
     /*
      *  On mouse press, open a 'jump to node' menu
@@ -76,18 +77,9 @@ protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent* event) override;
 
     /*
-     *  On mouse move, fake the left button being held down.
-     */
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent* event) override;
-
-    /*
      *  On hover, set glow to true.
      */
     void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
-
-    /*
-     *  On hover, set glow to true.
-     */
     void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 
     static const float PADDING_ROWS;

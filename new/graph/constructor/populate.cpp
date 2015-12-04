@@ -182,5 +182,8 @@ void populateNodeMenu(QMenu* menu, Graph* g,
             [](Graph *r){ return new GraphNode("g*", r); }, callback);
 
     if (g->parentNode())
+    {
+        menu->addSeparator();
         populateDatumCommands(menu, g->parentNode());
+    }
 }
