@@ -1,0 +1,8 @@
+import fab
+
+title('Voxels')
+
+input('shape', fab.types.Shape)
+output('out', shape)
+
+sb.export.voxels(shape)

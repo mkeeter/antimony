@@ -52,6 +52,9 @@ BOOST_PYTHON_MODULE(_AppHooks)
                 );
 
     class_<ScriptExportHooks>("ScriptExportHooks", init<>())
+        .def("voxels", raw_function(&ScriptExportHooks::voxels),
+                "FIXME"
+                )
         .def("stl", raw_function(&ScriptExportHooks::stl),
                 "stl(shape, bounds=None, pad=True, filename=None,\n"
                 "    resolution=None, detect_features=False)\n"
@@ -145,4 +148,3 @@ void AppHooks::loadDatumHooks(PyObject* g)
     PyDict_SetItemString(g, "math", PyImport_ImportModule("math"));
     Q_ASSERT(!PyErr_Occurred());
 }
-

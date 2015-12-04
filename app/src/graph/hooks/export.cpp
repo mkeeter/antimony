@@ -4,6 +4,7 @@
 #include "ui/canvas/graph_scene.h"
 #include "export/export_mesh.h"
 #include "export/export_heightmap.h"
+#include "export/export_voxels.h"
 
 #include <QString>
 
@@ -123,6 +124,47 @@ object ScriptExportHooks::stl(tuple args, dict kwargs)
     return object();
 }
 
+object ScriptExportHooks::voxels(tuple args, dict kwargs)
+{
+    ScriptExportHooks* self = extract<ScriptExportHooks*>(args[0])();
+
+    if (self->called)
+        throw AppHooks::Exception(
+                "Cannot define multiple export tasks in a single script.");
+    self->called = true;
+
+    if (len(args) != 2)
+        throw AppHooks::Exception(
+                "export.stl must be called with shape as first argument.");
+
+    Shape shape = get_shape(args);
+
+    Bounds bounds = shape.bounds;
+    if (kwargs.has_key("bounds"))
+        bounds = get_bounds(kwargs);
+
+    // Sanity-check bounds
+    if (isinf(bounds.xmin) || isinf(bounds.xmax) ||
+        isinf(bounds.ymin) || isinf(bounds.ymax) ||
+        isinf(bounds.zmin) || isinf(bounds.zmax))
+    {
+        throw AppHooks::Exception(
+                "Exporting mesh with invalid (infinite) bounds");
+    }
+
+    bool pad = get_pad(kwargs);
+
+    if (pad)
+        bounds = pad_bounds(bounds);
+
+    QString filename = get_filename(kwargs);
+    float resolution = get_resolution(kwargs);;
+
+    self->scene->setExportWorker(self->node, new ExportVoxelsWorker(
+                shape, bounds, filename, resolution));
+
+    return object();
+}
 object ScriptExportHooks::heightmap(tuple args, dict kwargs)
 {
     ScriptExportHooks* self = extract<ScriptExportHooks*>(args[0])();

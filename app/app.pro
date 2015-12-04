@@ -78,6 +78,7 @@ SOURCES += \
     src/render/render_image.cpp \
     src/export/export_mesh.cpp \
     src/export/export_heightmap.cpp \
+    src/export/export_voxels.cpp \
     src/control/control.cpp \
     src/control/control_root.cpp \
     src/control/proxy.cpp \
@@ -126,6 +127,7 @@ HEADERS += \
     src/export/export_mesh.h \
     src/export/export_worker.h \
     src/export/export_heightmap.h \
+    src/export/export_voxels.h \
     src/control/control.h \
     src/control/control_root.h \
     src/control/proxy.h \
