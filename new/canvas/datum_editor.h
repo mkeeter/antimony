@@ -23,8 +23,10 @@ public:
 
     /*
      *  Updates from the given state
+     *
+     *  Overloaded by derived class to work correctly in subgraph
      */
-    void update(const DatumState& state);
+    virtual void update(const DatumState& state);
 
 signals:
     void tabPressed(DatumEditor* item);
@@ -36,6 +38,20 @@ protected:
      */
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget) override;
+
+    /*
+     *  Sets the datum's text
+     *
+     *  Overloaded by derived class to work correctly in subgraph
+     */
+    virtual void setDatumText(QString s);
+
+    /*
+     *  Gets datum text
+     *
+     *  Overloaded by derived class to work correctly in subgraph
+     */
+    virtual QString getDatumText() const;
 
     /*
      *  Filter tab events to shift focus to next text panel on tab.

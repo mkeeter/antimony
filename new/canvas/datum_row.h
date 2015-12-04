@@ -6,7 +6,9 @@
 
 class InputPort;
 class OutputPort;
+
 class InspectorFrame;
+class DatumFrame;
 
 class DatumEditor;
 class Datum;
@@ -17,6 +19,7 @@ class DatumRow : public QGraphicsObject
 public:
     explicit DatumRow(Datum* d, QGraphicsItem* parent);
     explicit DatumRow(Datum* d, InspectorFrame* parent);
+    explicit DatumRow(Datum* d, DatumFrame* parent);
 
     /*
      *  Updates the datum's text field
@@ -57,8 +60,10 @@ public:
 
     /*
      *  Updates from the given state
+     *
+     *  Overloaded by derived class to work correctly in subgraph
      */
-    void update(const DatumState& state);
+    virtual void update(const DatumState& state);
 
     /*
      *  Returns true if this row's name begins with '_'

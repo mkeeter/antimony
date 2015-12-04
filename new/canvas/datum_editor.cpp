@@ -24,7 +24,7 @@ DatumEditor::DatumEditor(Datum* d, QGraphicsItem* parent)
 
     // Propagate text document changes into the datum
     connect(txt, &QTextDocument::contentsChanged,
-            [=]{ d->setText(txt->toPlainText().toStdString()); });
+            [=]{ this->setDatumText(txt->toPlainText()); });
 
     installEventFilter(this);
 }
@@ -162,8 +162,22 @@ void DatumEditor::paint(QPainter* painter,
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void DatumEditor::setDatumText(QString s)
+{
+    target->setText(s.toStdString());
+}
+
+QString DatumEditor::getDatumText() const
+{
+    return QString::fromStdString(target->getText());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void DatumEditor::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
+    // Use bare getText (instead of subgraph-safe getDatumText)
+    // because we're creating an undo / redo event here
     drag_start = QString::fromStdString(target->getText());
     drag_accumulated = 0;
 
@@ -172,6 +186,8 @@ void DatumEditor::mousePressEvent(QGraphicsSceneMouseEvent* event)
 
 void DatumEditor::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
+    // Use bare getText (instead of subgraph-safe getDatumText)
+    // because we're creating an undo / redo event here
     QString drag_end = QString::fromStdString(target->getText());
     if (drag_start != drag_end)
         App::instance()->pushUndoStack(
@@ -211,18 +227,18 @@ void DatumEditor::dragFloat(float a)
 {
     bool ok = false;
 
-    QString s = QString::fromStdString(target->getText());
+    QString s = getDatumText();
     double v = s.toFloat(&ok);
     if (ok)
-        target->setText(QString::number(v + a).toStdString());
+        setDatumText(QString::number(v + a));
 }
 
 void DatumEditor::dragInt(int a)
 {
     bool ok = false;
 
-    QString s = QString::fromStdString(target->getText());
+    QString s = getDatumText();
     double i = s.toInt(&ok);
     if (ok)
-        target->setText(QString::number(i + a).toStdString());
+        setDatumText(QString::number(i + a));
 }

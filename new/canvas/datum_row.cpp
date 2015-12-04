@@ -3,6 +3,7 @@
 #include <QPainter>
 
 #include "canvas/inspector/frame.h"
+#include "canvas/datum_frame.h"
 
 #include "canvas/datum_row.h"
 #include "canvas/datum_editor.h"
@@ -41,6 +42,13 @@ DatumRow::DatumRow(Datum* d, InspectorFrame* parent)
 {
     connect(this, &DatumRow::layoutChanged,
             parent, &InspectorFrame::redoLayout);
+}
+
+DatumRow::DatumRow(Datum* d, DatumFrame* parent)
+    : DatumRow(d, static_cast<QGraphicsItem*>(parent))
+{
+    connect(this, &DatumRow::layoutChanged,
+            parent, &DatumFrame::redoLayout);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
