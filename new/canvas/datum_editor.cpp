@@ -83,8 +83,8 @@ void DatumEditor::update(const DatumState& state)
     }
 
     // Set editable and adjust text color
-    setEnabled(state.editable);
-    setDefaultTextColor(state.editable ? Colors::base04 : Colors::base03);
+    setEnabled(state.sigil == Datum::SIGIL_NONE);
+    setDefaultTextColor(isEnabled() ? Colors::base04 : Colors::base03);
 
     // Store validity and set tooltip if there was a Python evaluation error.
     valid = state.valid;

@@ -16,7 +16,6 @@ struct DatumState
     std::string text;
     std::string repr;
     char sigil;
-    bool editable;
     bool valid;
     std::string error;
     std::unordered_set<const Datum*> links;

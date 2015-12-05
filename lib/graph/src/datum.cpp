@@ -344,7 +344,7 @@ DatumState Datum::getState() const
 
     return (DatumState){
         trimmed.first, repr, trimmed.second ? expr.front() : SIGIL_NONE,
-        !trimmed.second, valid, error, getLinks()};
+        valid, error, getLinks()};
 }
 
 std::pair<std::string, bool> Datum::trimSigil(std::string e)
