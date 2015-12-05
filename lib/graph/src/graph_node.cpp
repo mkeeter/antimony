@@ -15,8 +15,8 @@ GraphNode::GraphNode(std::string name, uint32_t uid, Graph* root)
     init();
 }
 
-bool GraphNode::makeDatum(std::string name, PyTypeObject* type,
-                          bool output)
+Datum* GraphNode::makeDatum(std::string name, PyTypeObject* type,
+                            bool output)
 {
     // Construct a default datum of the given type
     auto obj = PyObject_CallObject((PyObject*)type, NULL);
@@ -36,9 +36,8 @@ bool GraphNode::makeDatum(std::string name, PyTypeObject* type,
     Py_DECREF(obj);
     Py_DECREF(repr);
 
-    bool out = d->isValid();
     triggerWatchers();
     subgraph->triggerWatchers();
 
-    return out;
+    return d;
 }

@@ -12,8 +12,8 @@ public:
 
     Graph* getGraph() const { return subgraph.get(); }
 
-    bool makeDatum(std::string name, PyTypeObject* type,
-                   bool output);
+    Datum* makeDatum(std::string name, PyTypeObject* type,
+                     bool output);
 
 protected:
     std::unique_ptr<Graph> subgraph;

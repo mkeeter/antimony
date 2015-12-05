@@ -6,7 +6,10 @@
 
 #include "graph/graph.h"
 
-void emptyCallback(Node* n);
+void emptyNodeCallback(Node* n);
+void emptyDatumCallback(Datum* d);
 
-void populateNodeMenu(QMenu* menu, Graph* g,
-                      std::function<void(Node*)> callback=emptyCallback);
+void populateNodeMenu(
+        QMenu* menu, Graph* g,
+        std::function<void(Node*)> callback=emptyNodeCallback,
+        std::function<void(Datum*)> datum_callback=emptyDatumCallback);

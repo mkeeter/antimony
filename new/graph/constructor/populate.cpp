@@ -122,24 +122,33 @@ static void populateFromFiles(QMenu* menu, Graph* g,
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void makeDatum(GraphNode* node, PyTypeObject* type, bool output)
+Datum* makeDatum(GraphNode* node, PyTypeObject* type, bool output)
 {
     bool ok;
     QString text = QInputDialog::getText(
             NULL, "Datum name?", "Datum name:",
             QLineEdit::Normal, "x", &ok);
     if (ok && !text.isEmpty())
-        node->makeDatum(text.toStdString(), type, output);
+        return node->makeDatum(text.toStdString(), type, output);
+    return NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void emptyCallback(Node* n)
+void emptyNodeCallback(Node* n)
 {
     (void)n;
 }
 
-void populateDatumCommands(QMenu* menu, GraphNode* node)
+void emptyDatumCallback(Datum* d)
+{
+    (void)d;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void populateDatumCommands(QMenu* menu, GraphNode* node,
+                          std::function<void(Datum*)> callback)
 {
     auto inputs = menu->addMenu("Input");
     auto outputs = menu->addMenu("Output");
@@ -153,21 +162,24 @@ void populateDatumCommands(QMenu* menu, GraphNode* node)
     for (auto i : items)
     {
         inputs->connect(inputs->addAction(i.first), &QAction::triggered,
-            [=](){ makeDatum(node, i.second, false); });
+            [=](){ if (auto d = makeDatum(node, i.second, false))
+                       callback(d); });
         outputs->connect(outputs->addAction(i.first), &QAction::triggered,
-            [=](){ makeDatum(node, i.second, true); });
+            [=](){ if (auto d = makeDatum(node, i.second, true))
+                       callback(d); });
     }
 }
 
 void populateNodeMenu(QMenu* menu, Graph* g,
-                      std::function<void(Node*)> callback)
+                      std::function<void(Node*)>  node_callback,
+                      std::function<void(Datum*)> datum_callback)
 {
     // Hard-code important menu names to set their order.
     for (auto c : {"2D", "3D", "2D → 3D", "3D → 2D", "CSG"})
         menu->addMenu(c);
     menu->addSeparator();
 
-    populateFromFiles(menu, g, callback);
+    populateFromFiles(menu, g, node_callback);
 
     menu->addSeparator();
 
@@ -177,13 +189,13 @@ void populateNodeMenu(QMenu* menu, Graph* g,
                     "title('script')\n"
                     "input('r', float, 1)\n"
                     "output('c', fab.shapes.circle(0, 0, r))",
-                    r); }, callback);
+                    r); }, node_callback);
     addNodeToMenu(menu, QStringList(), "Graph", g,
-            [](Graph *r){ return new GraphNode("g*", r); }, callback);
+            [](Graph *r){ return new GraphNode("g*", r); }, node_callback);
 
     if (g->parentNode())
     {
         menu->addSeparator();
-        populateDatumCommands(menu, g->parentNode());
+        populateDatumCommands(menu, g->parentNode(), datum_callback);
     }
 }
