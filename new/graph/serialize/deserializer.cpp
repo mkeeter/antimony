@@ -120,6 +120,8 @@ void SceneDeserializer::deserializeNode(QJsonObject in, Graph* p, Info* info)
     else if (auto graph_node = dynamic_cast<GraphNode*>(node))
     {
         deserializeGraph(in["subgraph"].toArray(), graph_node->getGraph());
+        graph_node->triggerWatchers();
+        graph_node->getGraph()->triggerWatchers();
     }
 }
 
