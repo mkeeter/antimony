@@ -7,11 +7,11 @@
 class Datum;
 class DatumRow;
 
-class DatumFrame : public QGraphicsObject
+class SubdatumFrame : public QGraphicsObject
 {
     Q_OBJECT
 public:
-    explicit DatumFrame(Datum* d, QGraphicsScene* scene);
+    explicit SubdatumFrame(Datum* d, QGraphicsScene* scene);
 
     /*
      *  Overloaded QGraphicsObject functions

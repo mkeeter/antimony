@@ -72,7 +72,7 @@ public:
 
 signals:
     /*
-     *  Emitted when the parent (be it an inspector or a superdatum frame)
+     *  Emitted when the parent (be it an inspector or a subdatum frame)
      *  should redo its layout.
      */
     void layoutChanged();

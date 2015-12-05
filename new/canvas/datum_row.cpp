@@ -3,8 +3,6 @@
 #include <QPainter>
 
 #include "canvas/inspector/frame.h"
-#include "canvas/datum_frame.h"
-#include "canvas/subdatum/subdatum_editor.h"
 
 #include "canvas/datum_row.h"
 #include "canvas/datum_editor.h"

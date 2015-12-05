@@ -2,7 +2,7 @@
 
 #include "graph/proxy/graph.h"
 #include "graph/proxy/node.h"
-#include "graph/proxy/superdatum.h"
+#include "graph/proxy/subdatum.h"
 #include "graph/proxy/util.h"
 #include "graph/hooks/hooks.h"
 

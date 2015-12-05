@@ -9,7 +9,7 @@
 
 class Node;
 class NodeProxy;
-class SuperDatumProxy;
+class SubdatumProxy;
 class AppHooks;
 
 class CanvasScene;
@@ -24,7 +24,7 @@ public:
     ~GraphProxy();
 
     /*
-     *  Create NodeProxies and SuperDatumProxies
+     *  Create NodeProxies and SubdatumProxies
      */
     void trigger(const GraphState& state) override;
 
@@ -72,5 +72,5 @@ protected:
     AppHooks* hooks;
 
     QHash<Node*, NodeProxy*> nodes;
-    QHash<Datum*, SuperDatumProxy*> datums;
+    QHash<Datum*, SubdatumProxy*> datums;
 };

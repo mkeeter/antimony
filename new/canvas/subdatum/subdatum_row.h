@@ -2,10 +2,12 @@
 
 #include "canvas/datum_row.h"
 
+class SubdatumFrame;
+
 class SubdatumRow : public DatumRow
 {
 public:
-    explicit SubdatumRow(Datum* d, DatumFrame* parent);
+    explicit SubdatumRow(Datum* d, SubdatumFrame* parent);
 
     /*
      *  Override trigger function to properly handle subgraph

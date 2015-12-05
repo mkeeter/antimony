@@ -3,17 +3,17 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
 
-#include "canvas/datum_frame.h"
+#include "canvas/subdatum/subdatum_frame.h"
 #include "canvas/subdatum/subdatum_row.h"
 #include "canvas/scene.h"
 
 #include "app/colors.h"
 
-const float DatumFrame::PADDING = 3;
+const float SubdatumFrame::PADDING = 3;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-DatumFrame::DatumFrame(Datum* d, QGraphicsScene* scene)
+SubdatumFrame::SubdatumFrame(Datum* d, QGraphicsScene* scene)
     : datum_row(new SubdatumRow(d, this))
 {
     setFlags(QGraphicsItem::ItemIsMovable |
@@ -27,7 +27,7 @@ DatumFrame::DatumFrame(Datum* d, QGraphicsScene* scene)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-QRectF DatumFrame::boundingRect() const
+QRectF SubdatumFrame::boundingRect() const
 {
     QRectF b;
     for (auto c : childItems())
@@ -40,7 +40,7 @@ QRectF DatumFrame::boundingRect() const
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void DatumFrame::paint(QPainter *painter,
+void SubdatumFrame::paint(QPainter *painter,
                        const QStyleOptionGraphicsItem *option,
                        QWidget *widget)
 {
@@ -65,7 +65,7 @@ void DatumFrame::paint(QPainter *painter,
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void DatumFrame::redoLayout()
+void SubdatumFrame::redoLayout()
 {
     datum_row->setWidth(datum_row->minWidth());
     prepareGeometryChange();
@@ -73,14 +73,14 @@ void DatumFrame::redoLayout()
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void DatumFrame::update(const DatumState& state)
+void SubdatumFrame::update(const DatumState& state)
 {
     datum_row->update(state);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void DatumFrame::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
+void SubdatumFrame::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     if (dragging)
     {
@@ -93,7 +93,7 @@ void DatumFrame::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     }
 }
 
-void DatumFrame::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
+void SubdatumFrame::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     QGraphicsItem::mouseReleaseEvent(event);
 
@@ -112,13 +112,13 @@ void DatumFrame::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 }
 ////////////////////////////////////////////////////////////////////////////////
 
-void DatumFrame::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+void SubdatumFrame::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     // XXX Handle glowing here
     QGraphicsItem::hoverEnterEvent(event);
 }
 
-void DatumFrame::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+void SubdatumFrame::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     // XXX Handle glowing here
     QGraphicsItem::hoverLeaveEvent(event);

@@ -80,9 +80,9 @@ SOURCES += \
     canvas/inspector/buttons.cpp        \
     canvas/inspector/util.cpp           \
     canvas/datum_row.cpp                \
-    canvas/datum_frame.cpp              \
     canvas/datum_editor.cpp             \
     canvas/datum_port.cpp               \
+    canvas/subdatum/subdatum_frame.cpp  \
     canvas/subdatum/subdatum_editor.cpp \
     canvas/subdatum/subdatum_row.cpp    \
     window/base.cpp                     \
@@ -93,7 +93,7 @@ SOURCES += \
     graph/proxy/node.cpp                \
     graph/proxy/script.cpp              \
     graph/proxy/datum.cpp               \
-    graph/proxy/superdatum.cpp          \
+    graph/proxy/subdatum.cpp            \
     graph/hooks/hooks.cpp               \
     graph/hooks/export.cpp              \
     graph/hooks/title.cpp               \
@@ -128,9 +128,9 @@ HEADERS += \
     canvas/inspector/buttons.h          \
     canvas/inspector/util.h             \
     canvas/datum_row.h                  \
-    canvas/datum_frame.h                \
     canvas/datum_editor.h               \
     canvas/datum_port.h                 \
+    canvas/subdatum/subdatum_frame.h    \
     canvas/subdatum/subdatum_editor.h   \
     canvas/subdatum/subdatum_row.h      \
     graph/constructor/populate.h        \
@@ -138,7 +138,7 @@ HEADERS += \
     graph/proxy/node.h                  \
     graph/proxy/script.h                \
     graph/proxy/datum.h                 \
-    graph/proxy/superdatum.h            \
+    graph/proxy/subdatum.h              \
     graph/hooks/hooks.h                 \
     graph/hooks/export.h                \
     graph/hooks/title.h                 \

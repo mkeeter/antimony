@@ -2,19 +2,19 @@
 
 #include "canvas/subdatum/subdatum_row.h"
 #include "canvas/subdatum/subdatum_editor.h"
+#include "canvas/subdatum/subdatum_frame.h"
 
 #include "canvas/datum_port.h"
-#include "canvas/datum_frame.h"
 
 #include "graph/datum.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
-SubdatumRow::SubdatumRow(Datum* d, DatumFrame* parent)
+SubdatumRow::SubdatumRow(Datum* d, SubdatumFrame* parent)
     : DatumRow(d, static_cast<QGraphicsItem*>(parent))
 {
     connect(this, &DatumRow::layoutChanged,
-            parent, &DatumFrame::redoLayout);
+            parent, &SubdatumFrame::redoLayout);
     editor = new SubdatumEditor(d, this);
 }
 
