@@ -66,6 +66,11 @@ public:
     QAction* getUndoAction();
     QAction* getRedoAction();
 
+    /*
+     *  Loads a file specified by name
+     */
+    void loadFile(QString f);
+
 public slots:
     /*
      *  Commands from File menu
@@ -90,11 +95,6 @@ public slots:
     void onUpdateCheck();
 
 protected:
-    /*
-     *  Loads a file specified by name
-     */
-    void loadFile(QString f);
-
     /*
      *  Overload event handling to detect drag-and-drop events
      */

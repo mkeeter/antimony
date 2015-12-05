@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
         }
         else if (args.length() == 1)
         {
-            // Load the filename
+            app.loadFile(args[0]);
         }
     }
 
