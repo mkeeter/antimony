@@ -86,8 +86,8 @@ void App::onNew()
 {
     graph->clear();
     filename.clear();
+    undo_stack->clear();
     /* XXX
-    stack->clear();
     emit(windowTitleChanged(getWindowTitle()));
     */
 }
@@ -104,7 +104,7 @@ void App::onSave()
             SceneSerializer::run(
                 graph, proxy->inspectorPositions())).toJson());
 
-    // XXX stack->setClean();
+    undo_stack->setClean();
 }
 
 void App::onSaveAs()
@@ -131,7 +131,8 @@ void App::onSaveAs()
 
 void App::onOpen()
 {
-    if (QMessageBox::question(NULL, "Discard unsaved changes?",
+    if (undo_stack->isClean() || QMessageBox::question(
+                NULL, "Discard unsaved changes?",
                 "Discard unsaved changes?") == QMessageBox::Yes)
     {
         QString f = QFileDialog::getOpenFileName(NULL, "Open", "", "*.sb");
