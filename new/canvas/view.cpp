@@ -83,6 +83,31 @@ void CanvasView::wheelEvent(QWheelEvent* event)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void CanvasView::keyPressEvent(QKeyEvent* event)
+{
+    QGraphicsView::keyPressEvent(event);
+    if (event->isAccepted())
+    {
+        return;
+    }
+    else if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace)
+    {
+        // XXX deleteSelected();
+    }
+    else if (event->key() == Qt::Key_A &&
+                (event->modifiers() & Qt::ShiftModifier))
+    {
+        QMenu* m = new QMenu(this);
+        populateNodeMenu(
+                m, static_cast<CanvasScene*>(scene())->getGraph());
+
+        m->exec(QCursor::pos());
+        m->deleteLater();
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void CanvasView::drawBackground(QPainter* painter, const QRectF& rect)
 {
     painter->setBrush(Colors::base00);
