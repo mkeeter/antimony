@@ -4,7 +4,7 @@
 #include <QPainter>
 
 #include "canvas/datum_frame.h"
-#include "canvas/datum_row.h"
+#include "canvas/subdatum/subdatum_row.h"
 #include "canvas/scene.h"
 
 #include "app/colors.h"
@@ -14,7 +14,7 @@ const float DatumFrame::PADDING = 3;
 ////////////////////////////////////////////////////////////////////////////////
 
 DatumFrame::DatumFrame(Datum* d, QGraphicsScene* scene)
-    : datum_row(new DatumRow(d, this))
+    : datum_row(new SubdatumRow(d, this))
 {
     setFlags(QGraphicsItem::ItemIsMovable |
              QGraphicsItem::ItemIsSelectable);

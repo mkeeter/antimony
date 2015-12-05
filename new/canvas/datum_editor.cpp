@@ -26,6 +26,7 @@ DatumEditor::DatumEditor(Datum* d, QGraphicsItem* parent)
     connect(txt, &QTextDocument::contentsChanged,
             [=]{ this->setDatumText(txt->toPlainText()); });
 
+    setDefaultTextColor(Colors::base04);
     installEventFilter(this);
 }
 

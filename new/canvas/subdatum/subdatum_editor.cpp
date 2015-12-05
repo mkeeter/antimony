@@ -6,6 +6,15 @@
 
 void SubdatumEditor::update(const DatumState& state)
 {
+    DatumState mod = state;
+    if (mod.sigil == Datum::SIGIL_NONE)
+        mod.sigil = Datum::SIGIL_OUTPUT;
+    else if (mod.sigil == Datum::SIGIL_SUBGRAPH_OUTPUT)
+        mod.sigil = Datum::SIGIL_NONE;
+    else if (mod.sigil == Datum::SIGIL_SUBGRAPH_CONNECTION)
+        mod.sigil = Datum::SIGIL_CONNECTION;
+
+    DatumEditor::update(mod);
 }
 
 void SubdatumEditor::setDatumText(QString s)

@@ -18,8 +18,8 @@ class DatumRow : public QGraphicsObject
     Q_OBJECT
 public:
     explicit DatumRow(Datum* d, QGraphicsItem* parent);
+
     explicit DatumRow(Datum* d, InspectorFrame* parent);
-    explicit DatumRow(Datum* d, DatumFrame* parent);
 
     /*
      *  Updates the datum's text field

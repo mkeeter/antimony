@@ -4,6 +4,7 @@
 
 #include "canvas/inspector/frame.h"
 #include "canvas/datum_frame.h"
+#include "canvas/subdatum/subdatum_editor.h"
 
 #include "canvas/datum_row.h"
 #include "canvas/datum_editor.h"
@@ -23,7 +24,7 @@ DatumRow::DatumRow(Datum* d, QGraphicsItem* parent)
     : QGraphicsObject(parent),
       input(new InputPort(d, this)), output(new OutputPort(d, this)),
       label(new QGraphicsTextItem(QString::fromStdString(d->getName()), this)),
-      editor(new DatumEditor(d, this))
+      editor(NULL)
 {
     label->setDefaultTextColor(Colors::base04);
 
@@ -34,7 +35,6 @@ DatumRow::DatumRow(Datum* d, QGraphicsItem* parent)
         output->setPos(0, port_height);
     }
 
-    editor->setDefaultTextColor(Colors::base04);
 }
 
 DatumRow::DatumRow(Datum* d, InspectorFrame* parent)
@@ -42,13 +42,7 @@ DatumRow::DatumRow(Datum* d, InspectorFrame* parent)
 {
     connect(this, &DatumRow::layoutChanged,
             parent, &InspectorFrame::redoLayout);
-}
-
-DatumRow::DatumRow(Datum* d, DatumFrame* parent)
-    : DatumRow(d, static_cast<QGraphicsItem*>(parent))
-{
-    connect(this, &DatumRow::layoutChanged,
-            parent, &DatumFrame::redoLayout);
+    editor = new DatumEditor(d, this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

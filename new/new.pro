@@ -84,6 +84,7 @@ SOURCES += \
     canvas/datum_editor.cpp             \
     canvas/datum_port.cpp               \
     canvas/subdatum/subdatum_editor.cpp \
+    canvas/subdatum/subdatum_row.cpp    \
     window/base.cpp                     \
     window/canvas.cpp                   \
     window/script.cpp                   \
@@ -131,6 +132,7 @@ HEADERS += \
     canvas/datum_editor.h               \
     canvas/datum_port.h                 \
     canvas/subdatum/subdatum_editor.h   \
+    canvas/subdatum/subdatum_row.h      \
     graph/constructor/populate.h        \
     graph/proxy/graph.h                 \
     graph/proxy/node.h                  \
