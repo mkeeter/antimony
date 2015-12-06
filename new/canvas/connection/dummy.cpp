@@ -94,6 +94,9 @@ void DummyConnection::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 void DummyConnection::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     Q_UNUSED(event);
+
+    if (target && target->getDatum()->acceptsLink(source->getDatum()))
+        target->getDatum()->installLink(source->getDatum());
     deleteLater();
 }
 
