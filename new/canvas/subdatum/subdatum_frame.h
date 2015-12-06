@@ -5,7 +5,7 @@
 #include "graph/watchers.h"
 
 class Datum;
-class DatumRow;
+class SubdatumRow;
 
 class SubdatumFrame : public QGraphicsObject
 {
@@ -31,6 +31,11 @@ public:
      */
     Datum* getDatum() const { return datum; }
 
+    /*
+     *  Returns the datum row associated with this frame
+     */
+    SubdatumRow* getRow() const { return datum_row; }
+
 public slots:
     /*
      *  Update layout of text labels and fields
@@ -51,7 +56,7 @@ protected:
     void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 
     Datum* const datum;
-    DatumRow* datum_row;
+    SubdatumRow* datum_row;
 
     // Ugly hack because simply grabbing the mouse doesn't set up all of the
     // magic that QGraphicsScene uses to drag items: upon first insertion,

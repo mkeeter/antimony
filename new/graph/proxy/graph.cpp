@@ -3,6 +3,7 @@
 #include "graph/proxy/graph.h"
 #include "graph/proxy/node.h"
 #include "graph/proxy/subdatum.h"
+#include "graph/proxy/datum.h"
 #include "graph/proxy/util.h"
 #include "graph/hooks/hooks.h"
 
@@ -66,6 +67,16 @@ NodeProxy* GraphProxy::getNodeProxy(Node* n)
     if (!nodes.contains(n))
         nodes[n] = new NodeProxy(n, this);
     return nodes[n];
+}
+
+BaseDatumProxy* GraphProxy::getDatumProxy(const Datum* d) const
+{
+    if (nodes.contains(d->parentNode()))
+        return nodes[d->parentNode()]->getDatumProxy(d);
+    else if (datums.contains(const_cast<Datum*>(d)))
+        return datums[const_cast<Datum*>(d)];
+    else
+        return NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

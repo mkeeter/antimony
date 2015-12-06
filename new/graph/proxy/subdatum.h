@@ -2,13 +2,13 @@
 
 #include <QObject>
 
-#include "graph/watchers.h"
+#include "graph/proxy/base_datum.h"
 #include "canvas/info.h"
 
 class GraphProxy;
 class SubdatumFrame;
 
-class SubdatumProxy : public QObject, public DatumWatcher
+class SubdatumProxy : public BaseDatumProxy
 {
 Q_OBJECT
 
@@ -28,8 +28,13 @@ public:
      */
     void setPositions(const CanvasInfo& info);
 
-protected:
-    Datum* const datum;
+    /*
+     *  Return input and output ports (from the associated row)
+     *  (used in creating connections)
+     */
+    InputPort* inputPort() const override;
+    OutputPort* outputPort() const override;
 
+protected:
     SubdatumFrame* frame;
 };

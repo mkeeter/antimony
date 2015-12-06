@@ -95,3 +95,12 @@ void NodeProxy::setExportWorker(ExportWorker* worker)
     inspector->setExportWorker(worker);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+DatumProxy* NodeProxy::getDatumProxy(const Datum* d) const
+{
+    if (datums.contains(const_cast<Datum*>(d)))
+        return datums[const_cast<Datum*>(d)];
+    else
+        return NULL;
+}

@@ -46,7 +46,7 @@ QColor dim(QColor c)
     return adjust(c, 1/1.4);
 }
 
-QColor getColor(Datum *d)
+QColor getColor(const Datum *d)
 {
     auto t = d->getType();
     if (t == &PyUnicode_Type)

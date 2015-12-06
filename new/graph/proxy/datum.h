@@ -1,15 +1,12 @@
 #pragma once
 
 #include <QObject>
-#include <QHash>
 
-#include "graph/watchers.h"
+#include "graph/proxy/base_datum.h"
 
 class NodeProxy;
-class DatumRow;
-class Connection;
 
-class DatumProxy : public QObject, public DatumWatcher
+class DatumProxy : public BaseDatumProxy
 {
 Q_OBJECT
 
@@ -24,9 +21,13 @@ public:
      */
     void setIndex(int i);
 
-protected:
-    const Datum* datum;
-    QHash<Datum*, Connection*> links;
+    /*
+     *  Return input and output ports (from the associated row)
+     *  (used in creating connections)
+     */
+    InputPort* inputPort() const override;
+    OutputPort* outputPort() const override;
 
+protected:
     DatumRow* row;
 };

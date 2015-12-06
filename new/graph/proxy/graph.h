@@ -10,6 +10,7 @@
 
 class Node;
 class NodeProxy;
+class BaseDatumProxy;
 class SubdatumProxy;
 class AppHooks;
 
@@ -52,10 +53,21 @@ public:
     void newQuadWindow() {}
 
     /*
-     *  Returns a proxy for the given node,
-     *  constructing one if no such proxy exists.
+     *  Returns a proxy for the given node, constructing one if none exists.
+     *
+     *  Just-in-time construction is necessary because script nodes call
+     *  functions like sb.export.* before the graph has informed us of its
+     *  new nodes.
      */
     NodeProxy* getNodeProxy(Node* g);
+
+    /*
+     *  Returns the datum proxy for the given datum, non-recursively
+     *
+     *  Checks first for a node proxy, then a subdatum proxy
+     *  (returning NULL if neither exists)
+     */
+    BaseDatumProxy* getDatumProxy(const Datum* d) const;
 
     /*
      *  Records positions of all inspectors and subdatums

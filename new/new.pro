@@ -87,6 +87,7 @@ SOURCES += \
     canvas/subdatum/subdatum_editor.cpp \
     canvas/subdatum/subdatum_row.cpp    \
     canvas/connection/base.cpp          \
+    canvas/connection/connection.cpp    \
     canvas/connection/dummy.cpp         \
     window/base.cpp                     \
     window/canvas.cpp                   \
@@ -139,6 +140,7 @@ HEADERS += \
     canvas/subdatum/subdatum_editor.h   \
     canvas/subdatum/subdatum_row.h      \
     canvas/connection/base.h            \
+    canvas/connection/connection.h      \
     canvas/connection/dummy.h           \
     graph/constructor/populate.h        \
     graph/proxy/graph.h                 \
@@ -146,6 +148,7 @@ HEADERS += \
     graph/proxy/script.h                \
     graph/proxy/datum.h                 \
     graph/proxy/subdatum.h              \
+    graph/proxy/base_datum.h            \
     graph/hooks/hooks.h                 \
     graph/hooks/export.h                \
     graph/hooks/title.h                 \

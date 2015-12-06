@@ -6,13 +6,12 @@
 
 #include "graph/datum.h"
 #include "canvas/datum_row.h"
+#include "canvas/connection/connection.h"
 
 DatumProxy::DatumProxy(Datum* d, NodeProxy* parent)
-    : QObject(parent), datum(d),
-      row(new DatumRow(d, parent->getInspector()))
+    : BaseDatumProxy(d, parent), row(new DatumRow(d, parent->getInspector()))
 {
     d->installWatcher(this);
-
     NULL_ON_DESTROYED(row);
 }
 
@@ -25,9 +24,27 @@ DatumProxy::~DatumProxy()
 void DatumProxy::trigger(const DatumState& state)
 {
     row->update(state);
+
+    if (state.sigil == Datum::SIGIL_NONE ||
+        state.sigil == Datum::SIGIL_CONNECTION)
+    {
+        updateHash(state.links, &connections, this);
+    }
 }
 
 void DatumProxy::setIndex(int i)
 {
     row->setIndex(i);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+InputPort* DatumProxy::inputPort() const
+{
+    return row->inputPort();
+}
+
+OutputPort* DatumProxy::outputPort() const
+{
+    return row->outputPort();
 }

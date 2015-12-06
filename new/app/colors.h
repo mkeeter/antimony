@@ -29,7 +29,7 @@ extern QColor base07;
 QColor adjust(QColor c, float scale);
 QColor highlight(QColor c);
 QColor dim(QColor c);
-QColor getColor(Datum* d);
+QColor getColor(const Datum* d);
 
 /*
  * Returns a Python object that has all of our colors as tuples

@@ -69,6 +69,13 @@ public:
      */
     bool shouldBeHidden() const;
 
+    /*
+     *  Accessor functions to get input and output ports
+     *  (used in creating connections)
+     */
+    InputPort* inputPort() const { return input; }
+    OutputPort* outputPort() const { return output; }
+
 signals:
     /*
      *  Emitted when the parent (be it an inspector or a subdatum frame)
