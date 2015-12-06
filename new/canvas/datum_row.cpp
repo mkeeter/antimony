@@ -98,10 +98,16 @@ void DatumRow::update(const DatumState& state)
 {
     editor->update(state);
 
-    if (state.sigil == Datum::SIGIL_OUTPUT)
+    if (state.sigil == Datum::SIGIL_OUTPUT ||
+        state.sigil == Datum::SIGIL_SUBGRAPH_OUTPUT ||
+        state.sigil == Datum::SIGIL_SUBGRAPH_CONNECTION)
+    {
         input->hide();
+    }
     else
+    {
         input->show();
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
