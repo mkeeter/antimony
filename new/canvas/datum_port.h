@@ -92,12 +92,12 @@ class OutputPort : public DatumPort
 public:
     explicit OutputPort(Datum* d, DatumRow* parent);
 
-protected:
     /*
      *  Output port rectangles are on the right
      */
     QRectF portRect() const override;
 
+protected:
     /*
      *  Handle mouse events to create outgoing ports and hover highlighting
      */

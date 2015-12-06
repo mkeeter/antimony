@@ -22,7 +22,7 @@ DummyConnection::DummyConnection(OutputPort* source, CanvasScene* scene)
 
 QPointF DummyConnection::startPos() const
 {
-    return source->mapToScene(source->boundingRect().center());
+    return source->mapToScene(source->portRect().center());
 }
 
 QPointF DummyConnection::endPos() const
@@ -62,7 +62,7 @@ void DummyConnection::updateSnap()
                 drag_pos, source->getDatum()))
     {
         has_snap_pos = true;
-        snap_pos = p->mapToScene(p->boundingRect().center());
+        snap_pos = p->mapToScene(p->portRect().center());
     }
     else
     {
