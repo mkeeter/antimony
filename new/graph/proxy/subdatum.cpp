@@ -9,7 +9,7 @@
 #include "canvas/scene.h"
 
 SubdatumProxy::SubdatumProxy(Datum* d, GraphProxy* parent)
-    : QObject(parent), frame(new SubdatumFrame(d, parent->canvasScene()))
+    : QObject(parent), datum(d), frame(new SubdatumFrame(d, parent->canvasScene()))
 {
     d->installWatcher(this);
     NULL_ON_DESTROYED(frame);
@@ -24,4 +24,17 @@ SubdatumProxy::~SubdatumProxy()
 void SubdatumProxy::trigger(const DatumState& state)
 {
     frame->update(state);
+}
+
+CanvasInfo SubdatumProxy::canvasInfo() const
+{
+    CanvasInfo out;
+    out.subdatum[datum] = frame->pos();
+    return out;
+}
+
+void SubdatumProxy::setPositions(const CanvasInfo& info)
+{
+    if (info.subdatum.contains(datum))
+        frame->setPos(info.subdatum[datum]);
 }

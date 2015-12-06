@@ -100,9 +100,10 @@ void App::onSave()
     QFile file(filename);
     file.open(QIODevice::WriteOnly);
 
-    file.write(QJsonDocument(
-            SceneSerializer::run(
-                graph, proxy->inspectorPositions())).toJson());
+    {
+        auto i = proxy->canvasInfo();
+        file.write(QJsonDocument(SceneSerializer::run(graph, &i)).toJson());
+    }
 
     undo_stack->setClean();
 }
@@ -248,7 +249,7 @@ void App::loadFile(QString f)
                     "<b>Loading information:</b><br>" +
                     ds.warning_message);
 
-        proxy->setInspectorPositions(ds.inspectors);
+        proxy->setPositions(ds.frames);
         // XXX emit(windowTitleChanged(getWindowTitle()));
     }
 }

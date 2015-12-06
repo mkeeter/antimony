@@ -74,6 +74,7 @@ SOURCES += \
     app/colors.cpp                      \
     canvas/scene.cpp                    \
     canvas/view.cpp                     \
+    canvas/info.cpp                     \
     canvas/inspector/frame.cpp          \
     canvas/inspector/export.cpp         \
     canvas/inspector/title.cpp          \
@@ -119,6 +120,7 @@ HEADERS += \
     app/colors.h                        \
     canvas/scene.h                      \
     canvas/view.h                       \
+    canvas/info.h                       \
     window/base.h                       \
     window/canvas.h                     \
     window/script.h                     \

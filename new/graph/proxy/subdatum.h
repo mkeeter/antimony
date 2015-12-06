@@ -3,6 +3,7 @@
 #include <QObject>
 
 #include "graph/watchers.h"
+#include "canvas/info.h"
 
 class GraphProxy;
 class SubdatumFrame;
@@ -17,6 +18,18 @@ public:
 
     void trigger(const DatumState& state) override;
 
+    /*
+     *  Returns the position of the subdatum frame
+     */
+    CanvasInfo canvasInfo() const;
+
+    /*
+     * Sets the position of the subdatum frame
+     */
+    void setPositions(const CanvasInfo& info);
+
 protected:
+    Datum* const datum;
+
     SubdatumFrame* frame;
 };

@@ -13,13 +13,17 @@ UndoMoveNode::UndoMoveNode(Node* n, QPointF before, QPointF after)
 void UndoMoveNode::redo()
 {
     // FIXME: very inefficient
-    App::instance()->getProxy()->setInspectorPositions({{n, after}});
+    CanvasInfo i;
+    i.inspector[n] = after;
+    App::instance()->getProxy()->setPositions(i);
 }
 
 void UndoMoveNode::undo()
 {
     // FIXME: very inefficient
-    App::instance()->getProxy()->setInspectorPositions({{n, before}});
+    CanvasInfo i;
+    i.inspector[n] = before;
+    App::instance()->getProxy()->setPositions(i);
 }
 
 void UndoMoveNode::swapPointer(Node* a, Node* b) const

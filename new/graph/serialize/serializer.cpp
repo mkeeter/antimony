@@ -10,6 +10,8 @@
 #include "graph/script_node.h"
 #include "graph/graph_node.h"
 
+#include "canvas/info.h"
+
 // Protocol version change-log:
 // 2 -> 3:
 //   Change hard-coded nodes into matching scripts
@@ -23,31 +25,33 @@
 //   Remove explicit connections array
 int SceneSerializer::PROTOCOL_VERSION = 6;
 
-QJsonObject SceneSerializer::run(Graph* root, QMap<Node*, QPointF> inspectors)
+QJsonObject SceneSerializer::run(Graph* root, CanvasInfo* info)
 {
     QJsonObject out;
     out["type"] = "sb";
     out["protocol"] = PROTOCOL_VERSION;
-    out["nodes"] = serializeGraph(root, inspectors);
+    out["nodes"] = serializeGraph(root, info);
 
     return out;
 }
 
-QJsonArray SceneSerializer::serializeGraph(Graph* g, QMap<Node*, QPointF> inspectors)
+QJsonArray SceneSerializer::serializeGraph(Graph* g, CanvasInfo* info)
 {
     QJsonArray out;
     for (auto node : g->childNodes())
-        out.append(serializeNode(node, inspectors));
+        out.append(serializeNode(node, info));
     return out;
 }
 
-QJsonObject SceneSerializer::serializeNode(Node* node, QMap<Node*, QPointF> inspectors)
+QJsonObject SceneSerializer::serializeNode(Node* node, CanvasInfo* info)
 {
     QJsonObject out;
 
-    out["inspector"] = QJsonArray({
-            inspectors[node].x(),
-            inspectors[node].y()});
+    if (info && info->inspector.contains(node))
+        out["inspector"] = QJsonArray({
+                info->inspector[node].x(),
+                info->inspector[node].y()});
+
     out["name"] = QString::fromStdString(node->getName());
     out["uid"] = int(node->getUID());
 
@@ -61,21 +65,26 @@ QJsonObject SceneSerializer::serializeNode(Node* node, QMap<Node*, QPointF> insp
     }
     else if (auto graph_node = dynamic_cast<GraphNode*>(node))
     {
-        out["subgraph"] = serializeGraph(graph_node->getGraph(), inspectors);
+        out["subgraph"] = serializeGraph(graph_node->getGraph(), info);
     }
 
 
     QJsonArray datum_array;
     for (auto d : node->childDatums())
-        datum_array.append(serializeDatum(d));
+        datum_array.append(serializeDatum(d, info));
     out["datums"] = datum_array;
 
     return out;
 }
 
-QJsonObject SceneSerializer::serializeDatum(Datum* datum)
+QJsonObject SceneSerializer::serializeDatum(Datum* datum, CanvasInfo* info)
 {
     QJsonObject out;
+
+    if (info && info->subdatum.contains(datum))
+        out["subdatum"] = QJsonArray({
+                info->subdatum[datum].x(),
+                info->subdatum[datum].y()});
 
     out["name"] = QString::fromStdString(datum->getName());
     out["uid"] = int(datum->getUID());

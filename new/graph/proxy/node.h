@@ -7,6 +7,7 @@
 #include "graph/watchers.h"
 
 #include "canvas/inspector/frame.h"
+#include "canvas/info.h"
 
 class Node;
 class GraphProxy;
@@ -36,20 +37,20 @@ public:
     InspectorFrame* getInspector() const { return inspector; }
 
     /*
-     *  Records positions of all inspectors
+     *  Records positions of all inspectors and subdatums
      *
-     *  Normally, this will be single-item map, but for GraphNodes
-     *  we recurse down into subgraphs.
+     *  Normally, this will be a single item in the inspector member
+     *  variablej, but for GraphNodes we recurse down into subgraphs.
      */
-    QMap<Node*, QPointF> inspectorPositions() const;
+    CanvasInfo canvasInfo() const;
 
     /*
-     *  Sets positions of all inspectors.
+     *  Sets positions of all inspectors and subdatums
      *
      *  Normally, this checks against the single node, but we also
      *  recurse for GraphNodes.
      */
-    void setInspectorPositions(const QMap<Node*, QPointF>& pos);
+    void setPositions(const CanvasInfo& info);
 
     /*
      *  Clears the inspector's 'Export' button

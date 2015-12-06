@@ -103,12 +103,14 @@ void SceneDeserializer::deserializeNode(QJsonObject in, Graph* p, Info* info)
                              in["uid"].toDouble(), p);
 
     // Deserialize inspector position
-    auto a = in["inspector"].toArray();
-    if (info)
-        info->inspectors[node] = QPointF(a[0].toDouble(), a[1].toDouble());
+    if (info && in.contains("inspector"))
+    {
+        auto i = in["inspector"].toArray();
+        info->frames.inspector[node] = QPointF(i[0].toDouble(), i[1].toDouble());
+    }
 
     for (auto d : in["datums"].toArray())
-        deserializeDatum(d.toObject(), node);
+        deserializeDatum(d.toObject(), node, info);
 
     if (auto script_node = dynamic_cast<ScriptNode*>(node))
     {
@@ -125,7 +127,7 @@ void SceneDeserializer::deserializeNode(QJsonObject in, Graph* p, Info* info)
     }
 }
 
-void SceneDeserializer::deserializeDatum(QJsonObject in, Node* node)
+void SceneDeserializer::deserializeDatum(QJsonObject in, Node* node, Info* info)
 {
     // Lazy initialization of globals dictionary
     static PyObject* globals = NULL;
@@ -144,8 +146,14 @@ void SceneDeserializer::deserializeDatum(QJsonObject in, Node* node)
     Q_ASSERT(t);
     Q_ASSERT(PyType_Check(t));
 
-    new Datum(in["name"].toString().toStdString(),
-              in["uid"].toDouble(),
-              in["expr"].toString().toStdString(),
-              (PyTypeObject*)t, node);
+    auto datum = new Datum(in["name"].toString().toStdString(),
+                           in["uid"].toDouble(),
+                           in["expr"].toString().toStdString(),
+                           (PyTypeObject*)t, node);
+
+    if (info && in.contains("subdatum"))
+    {
+        auto i = in["subdatum"].toArray();
+        info->frames.subdatum[datum] = QPointF(i[0].toDouble(), i[1].toDouble());
+    }
 }

@@ -6,6 +6,7 @@
 #include <QMainWindow>
 
 #include "graph/watchers.h"
+#include "canvas/info.h"
 
 class Node;
 class NodeProxy;
@@ -57,14 +58,16 @@ public:
     NodeProxy* getNodeProxy(Node* g);
 
     /*
-     *  Records positions of all inspectors (recursively)
+     *  Records positions of all inspectors and subdatums
+     *  (recursively descending into subgraphs)
      */
-    QMap<Node*, QPointF> inspectorPositions() const;
+    CanvasInfo canvasInfo() const;
 
     /*
-     *  Sets positions of all inspectors (recursively)
+     *  Sets positions of all inspectors and subdatums
+     *  (recursively descending into subgraphs)
      */
-    void setInspectorPositions(const QMap<Node*, QPointF>& pos);
+    void setPositions(const CanvasInfo& info);
 
 protected:
     CanvasScene* canvas_scene;

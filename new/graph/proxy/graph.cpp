@@ -70,16 +70,22 @@ NodeProxy* GraphProxy::getNodeProxy(Node* n)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-QMap<Node*, QPointF> GraphProxy::inspectorPositions() const
+CanvasInfo GraphProxy::canvasInfo() const
 {
-    QMap<Node*, QPointF> out;
+    CanvasInfo out;
     for (auto n : nodes)
-        out.unite(n->inspectorPositions());
+        out.unite(n->canvasInfo());
+
+    for (auto d : datums)
+        out.unite(d->canvasInfo());
+
     return out;
 }
 
-void GraphProxy::setInspectorPositions(const QMap<Node*, QPointF>& pos)
+void GraphProxy::setPositions(const CanvasInfo& info)
 {
     for (auto n : nodes)
-        n->setInspectorPositions(pos);
+        n->setPositions(info);
+    for (auto d : datums)
+        d->setPositions(info);
 }

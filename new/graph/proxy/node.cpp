@@ -63,24 +63,24 @@ void NodeProxy::trigger(const NodeState& state)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-QMap<Node*, QPointF> NodeProxy::inspectorPositions() const
+CanvasInfo NodeProxy::canvasInfo() const
 {
-    QMap<Node*, QPointF> out;
-    out[node] = inspector->pos();
+    CanvasInfo out;
+    out.inspector[node] = inspector->pos();
 
     if (subgraph)
-        out.unite(subgraph->inspectorPositions());
+        out.unite(subgraph->canvasInfo());
 
     return out;
 }
 
-void NodeProxy::setInspectorPositions(const QMap<Node*, QPointF>& pos)
+void NodeProxy::setPositions(const CanvasInfo& info)
 {
-    if (pos.contains(node))
-        inspector->setPos(pos[node]);
+    if (info.inspector.contains(node))
+        inspector->setPos(info.inspector[node]);
 
     if (subgraph)
-        subgraph->setInspectorPositions(pos);
+        subgraph->setPositions(info);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
