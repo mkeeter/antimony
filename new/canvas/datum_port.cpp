@@ -1,10 +1,13 @@
 #include <Python.h>
 
 #include <QPainter>
+#include <QGraphicsSceneMouseEvent>
 
 #include "app/colors.h"
+#include "canvas/scene.h"
 #include "canvas/datum_port.h"
 #include "canvas/datum_row.h"
+#include "canvas/connection/dummy.h"
 
 DatumPort::DatumPort(Datum* d, DatumRow* parent)
     : QGraphicsObject(parent), datum(d), hover(false),
@@ -68,14 +71,13 @@ QRectF OutputPort::portRect() const
 
 void OutputPort::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    /* XXX
     if (event->button() == Qt::LeftButton)
     {
-        auto g = static_cast<GraphScene*>(scene());
-        Connection* c = g->makeLinkFrom(datum);
-        c->setDragPos(mapToScene(event->pos()));
-        c->grabMouse();
-        c->setFocus();
+        auto cs = static_cast<CanvasScene*>(scene());
+        auto conn = new DummyConnection(this, cs);
+        conn->setDragPos(mapToScene(event->pos()));
+        conn->grabMouse();
+        conn->setFocus();
 
         // Turn off the hover highlighting.
         hover = false;
@@ -84,6 +86,16 @@ void OutputPort::mousePressEvent(QGraphicsSceneMouseEvent *event)
     else
     {
         event->ignore();
+    }
+    /* XXX
+    if (event->button() == Qt::LeftButton)
+    {
+        auto g = static_cast<GraphScene*>(scene());
+        Connection* c = g->makeLinkFrom(datum);
+
+        // Turn off the hover highlighting.
+        hover = false;
+        update();
     }
     */
 }

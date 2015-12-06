@@ -7,6 +7,7 @@
 
 class NodeProxy;
 class DatumRow;
+class Connection;
 
 class DatumProxy : public QObject, public DatumWatcher
 {
@@ -25,6 +26,7 @@ public:
 
 protected:
     const Datum* datum;
+    QHash<Datum*, Connection*> links;
 
     DatumRow* row;
 };
