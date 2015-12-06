@@ -26,4 +26,11 @@ public:
      *  SIGIL_SUBGRAPH_CONNECTION becomes SIGIL_CONNECTION
      */
     QString getDatumText() const override;
+
+    /*
+     *  Override formatSpecial so that inputs from the parent graph
+     *  are labelled [input] (though they're disguised with SIGIL_OUTPUT
+     *  in the override for update
+     */
+    QString formatSpecial(QString t, const DatumState& s) const override;
 };

@@ -46,7 +46,7 @@ QString DatumEditor::trimFloat(QString t)
     return t;
 }
 
-QString DatumEditor::formatSpecial(QString t, const DatumState& state)
+QString DatumEditor::formatSpecial(QString t, const DatumState& state) const
 {
     // Special-case to avoid printing long shapes
     if (t.startsWith("fab.types.Shape"))

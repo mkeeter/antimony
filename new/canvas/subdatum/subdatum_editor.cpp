@@ -33,3 +33,9 @@ QString SubdatumEditor::getDatumText() const
 
     return raw;
 }
+
+QString SubdatumEditor::formatSpecial(QString t, const DatumState& state) const
+{
+    auto s = DatumEditor::formatSpecial(t, state);
+    return s.replace("[output]", "[input]");
+}

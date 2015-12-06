@@ -73,7 +73,7 @@ protected:
     /*
      *  Formats special datum text (links, outputs, etc)
      */
-    static QString formatSpecial(QString t, const DatumState& state);
+    virtual QString formatSpecial(QString t, const DatumState& state) const;
 
     /*
      *  Change the datum's value by a small amount
