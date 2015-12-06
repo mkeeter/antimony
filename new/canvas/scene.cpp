@@ -1,12 +1,17 @@
+#include <Python.h>
+
 #include "canvas/scene.h"
 #include "canvas/view.h"
 
 #include "app/app.h"
 #include "canvas/inspector/frame.h"
 #include "canvas/subdatum/subdatum_frame.h"
+#include "canvas/datum_port.h"
 
 #include "undo/undo_move_node.h"
 #include "undo/undo_move_datum.h"
+
+#include "graph/datum.h"
 
 CanvasScene::CanvasScene(Graph* g, QObject* parent)
     : QGraphicsScene(parent), g(g)
@@ -30,4 +35,29 @@ void CanvasScene::endDrag(QPointF delta)
             App::instance()->pushUndoStack(new UndoMoveDatum(
                         s->getDatum(), s->pos() - delta, s->pos()));
     App::instance()->endUndoMacro();
+}
+
+InputPort* CanvasScene::inputPortNear(QPointF pos, Datum* source)
+{
+    float distance = INFINITY;
+    InputPort* port = NULL;
+
+    for (auto i : items())
+    {
+        InputPort* p = dynamic_cast<InputPort*>(i);
+        if (p && p->isVisible() && (source == NULL ||
+                                    p->getDatum()->acceptsLink(source)))
+        {
+            QPointF delta = p->mapToScene(p->boundingRect().center()) - pos;
+            float d = QPointF::dotProduct(delta, delta);
+            if (d < distance)
+            {
+                distance = d;
+                port = p;
+            }
+        }
+    }
+
+    return port;
+
 }
