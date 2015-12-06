@@ -5,6 +5,7 @@
 #include "canvas/connection/base.h"
 
 class OutputPort;
+class InputPort;
 class CanvasScene;
 
 class DummyConnection : public BaseConnection
@@ -13,8 +14,12 @@ class DummyConnection : public BaseConnection
 public:
     explicit DummyConnection(OutputPort* source, CanvasScene* scene);
 
+    /*
+     *  Overloaded functions for BaseConnection
+     */
     QPointF startPos() const override;
     QPointF endPos() const override;
+    QColor color() const override;
 
     /*
      *  Set the ending position of the connection, update state, and redraw
@@ -38,12 +43,21 @@ protected:
     void updateSnap();
 
     /*
+     *  Checks for a port under the current endPos
+     *  Sets drag_state and target member variables
+     */
+    void checkDragTarget();
+
+    /*
      *  Catch spacebar and snap to nearest port when it is pressed
      */
     void keyPressEvent(QKeyEvent* event) override;
     void keyReleaseEvent(QKeyEvent* event) override;
 
     OutputPort* source;
+    InputPort* target;
+    enum { NONE, VALID, INVALID } drag_state;
+
     QPointF drag_pos;
     QPointF snap_pos;
 

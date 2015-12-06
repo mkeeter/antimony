@@ -37,7 +37,9 @@ void CanvasScene::endDrag(QPointF delta)
     App::instance()->endUndoMacro();
 }
 
-InputPort* CanvasScene::inputPortNear(QPointF pos, Datum* source)
+////////////////////////////////////////////////////////////////////////////////
+
+InputPort* CanvasScene::inputPortNear(QPointF pos, Datum* source) const
 {
     float distance = INFINITY;
     InputPort* port = NULL;
@@ -61,3 +63,17 @@ InputPort* CanvasScene::inputPortNear(QPointF pos, Datum* source)
     return port;
 
 }
+
+template <class T> T* CanvasScene::itemAt(QPointF pos) const
+{
+    for (auto i : items(pos))
+        if (auto t = dynamic_cast<T*>(i))
+            return t;
+    return NULL;
+}
+
+InputPort* CanvasScene::inputPortAt(QPointF pos) const
+{
+    return itemAt<InputPort>(pos);
+}
+

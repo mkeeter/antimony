@@ -28,10 +28,20 @@ public:
     void endDrag(QPointF delta);
 
     /*
+     *  Returns the top item of the given class at the given position
+     */
+    template <class T> T* itemAt(QPointF pos) const;
+
+    /*
      *  Returns the input port nearest to the given point
      *  that accepts the given datum as an incoming link.
      */
-    InputPort* inputPortNear(QPointF pos, Datum* source=NULL);
+    InputPort* inputPortNear(QPointF pos, Datum* source=NULL) const;
+
+    /*
+     *  Returns the top input port at the given position
+     */
+    InputPort* inputPortAt(QPointF pos) const;
 
 protected:
     Graph* const g;

@@ -8,9 +8,11 @@
 #include "canvas/scene.h"
 #include "app/colors.h"
 
+#include "graph/datum.h"
+
 DummyConnection::DummyConnection(OutputPort* source, CanvasScene* scene)
     : BaseConnection(Colors::getColor(source->getDatum())), source(source),
-      snapping(false), has_snap_pos(false)
+      target(NULL), drag_state(NONE), snapping(false), has_snap_pos(false)
 {
     setFlags(QGraphicsItem::ItemIsFocusable);
     scene->addItem(this);
@@ -28,6 +30,17 @@ QPointF DummyConnection::endPos() const
     return (snapping && has_snap_pos) ? snap_pos : drag_pos;
 }
 
+QColor DummyConnection::color() const
+{
+    const auto c = BaseConnection::color();
+    if (drag_state == VALID)
+        return Colors::highlight(c);
+    else if (drag_state == INVALID)
+        return Colors::red;
+    else
+        return c;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 void DummyConnection::setDragPos(QPointF p)
@@ -37,6 +50,7 @@ void DummyConnection::setDragPos(QPointF p)
     if (snapping)
         updateSnap();
 
+    checkDragTarget();
     prepareGeometryChange();
 }
 
@@ -54,6 +68,20 @@ void DummyConnection::updateSnap()
     {
         has_snap_pos = false;
     }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void DummyConnection::checkDragTarget()
+{
+    target = static_cast<CanvasScene*>(scene())->inputPortAt(endPos());
+
+    if (target && target->getDatum()->acceptsLink(source->getDatum()))
+        drag_state = VALID;
+    else if (target)
+        drag_state = INVALID;
+    else
+        drag_state = NONE;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -77,6 +105,7 @@ void DummyConnection::keyPressEvent(QKeyEvent* event)
     {
         snapping = true;
         updateSnap();
+        checkDragTarget();
         prepareGeometryChange();
     }
 }
@@ -86,6 +115,7 @@ void DummyConnection::keyReleaseEvent(QKeyEvent* event)
     if (event->key() == Qt::Key_Space && snapping)
     {
         snapping = false;
+        checkDragTarget();
         prepareGeometryChange();
     }
 }
