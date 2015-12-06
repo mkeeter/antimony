@@ -14,7 +14,7 @@ const float SubdatumFrame::PADDING = 3;
 ////////////////////////////////////////////////////////////////////////////////
 
 SubdatumFrame::SubdatumFrame(Datum* d, QGraphicsScene* scene)
-    : datum_row(new SubdatumRow(d, this))
+    : datum(d), datum_row(new SubdatumRow(d, this))
 {
     setFlags(QGraphicsItem::ItemIsMovable |
              QGraphicsItem::ItemIsSelectable);

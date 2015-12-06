@@ -26,6 +26,11 @@ public:
      */
     void update(const DatumState& state);
 
+    /*
+     *  Returns the datum associated with this subdatum frame
+     */
+    Datum* getDatum() const { return datum; }
+
 public slots:
     /*
      *  Update layout of text labels and fields
@@ -45,6 +50,7 @@ protected:
     void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
     void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 
+    Datum* const datum;
     DatumRow* datum_row;
 
     // Ugly hack because simply grabbing the mouse doesn't set up all of the

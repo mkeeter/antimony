@@ -18,7 +18,6 @@ class DatumRow : public QGraphicsObject
     Q_OBJECT
 public:
     explicit DatumRow(Datum* d, QGraphicsItem* parent);
-
     explicit DatumRow(Datum* d, InspectorFrame* parent);
 
     /*
