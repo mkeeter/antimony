@@ -2,21 +2,44 @@
 
 #include "canvas/connection/base.h"
 
+////////////////////////////////////////////////////////////////////////////////
+
 class Datum;
-class DatumProxy;
+class BaseDatumProxy;
+
+class CanvasScene;
 
 class OutputPort;
 class InputPort;
+
+////////////////////////////////////////////////////////////////////////////////
 
 class Connection : public BaseConnection
 {
     Q_OBJECT
 public:
-    explicit Connection(const Datum* source, DatumProxy* target);
+    explicit Connection(const Datum* source, BaseDatumProxy* target);
+
+protected slots:
+    /*
+     *  When ports have moved, call prepareGeometryChange()
+     */
+    void onPortsMoved();
+
+    /*
+     *  When the hidden state of a port changes, hide or show ourself
+     */
+    void onHiddenChanged();
 
 protected:
-    QPointF startPos() const override { return QPointF(); }
-    QPointF endPos() const override { return QPointF(); }
+    /*
+     *  Check if either of the ports is hidden
+     */
+    bool isHidden() const;
 
-    void setPorts(OutputPort* source, InputPort* sink) {}
+    QPointF startPos() const override;
+    QPointF endPos() const override;
+
+    InputPort* target_port;
+    OutputPort* source_port;
 };
