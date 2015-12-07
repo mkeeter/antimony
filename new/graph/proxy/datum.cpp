@@ -1,5 +1,6 @@
 #include <Python.h>
 
+#include "graph/proxy/graph.h"
 #include "graph/proxy/datum.h"
 #include "graph/proxy/node.h"
 #include "graph/proxy/util.h"
@@ -47,4 +48,9 @@ InputPort* DatumProxy::inputPort() const
 OutputPort* DatumProxy::outputPort() const
 {
     return row->outputPort();
+}
+
+GraphProxy* DatumProxy::graphProxy() const
+{
+    return static_cast<GraphProxy*>(parent()->parent());
 }

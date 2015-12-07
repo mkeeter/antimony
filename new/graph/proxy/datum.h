@@ -28,6 +28,11 @@ public:
     InputPort* inputPort() const override;
     OutputPort* outputPort() const override;
 
+    /*
+     *  Return the parent's parent object (cast to a GraphProxy)
+     */
+    GraphProxy* graphProxy() const override;
+
 protected:
     DatumRow* row;
 };

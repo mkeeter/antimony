@@ -11,6 +11,7 @@ class Datum;
 
 class OutputPort;
 class InputPort;
+class GraphProxy;
 
 class DatumRow;
 class Connection;
@@ -31,6 +32,11 @@ public:
      */
     virtual InputPort* inputPort() const=0;
     virtual OutputPort* outputPort() const=0;
+
+    /*
+     *  Return the enclosing graph proxy
+     */
+    virtual GraphProxy* graphProxy() const=0;
 
 protected:
     Datum* const datum;

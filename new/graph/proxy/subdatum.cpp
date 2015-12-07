@@ -6,6 +6,7 @@
 
 #include "graph/datum.h"
 #include "canvas/subdatum/subdatum_frame.h"
+#include "canvas/connection/connection.h"
 #include "canvas/subdatum/subdatum_row.h"
 #include "canvas/scene.h"
 
@@ -26,6 +27,12 @@ SubdatumProxy::~SubdatumProxy()
 void SubdatumProxy::trigger(const DatumState& state)
 {
     frame->update(state);
+
+    if (state.sigil == Datum::SIGIL_SUBGRAPH_OUTPUT ||
+        state.sigil == Datum::SIGIL_SUBGRAPH_CONNECTION)
+    {
+        updateHash(state.links, &connections, this);
+    }
 }
 
 CanvasInfo SubdatumProxy::canvasInfo() const
@@ -51,4 +58,9 @@ InputPort* SubdatumProxy::inputPort() const
 OutputPort* SubdatumProxy::outputPort() const
 {
     return frame->getRow()->outputPort();
+}
+
+GraphProxy* SubdatumProxy::graphProxy() const
+{
+    return static_cast<GraphProxy*>(parent());
 }

@@ -16,7 +16,7 @@ Connection::Connection(const Datum* source, BaseDatumProxy* target)
     setFlags(QGraphicsItem::ItemIsSelectable);
 
     // Get the GraphProxy in which our target datum lives
-    GraphProxy* g = static_cast<GraphProxy*>(target->parent()->parent());
+    const auto g = target->graphProxy();
 
     {   // Find the source port from the graph proxy
         auto p = g->getDatumProxy(source);
