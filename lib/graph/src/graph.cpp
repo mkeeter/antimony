@@ -75,13 +75,13 @@ std::list<uint64_t> Graph::getUIDs(unsigned n) const
 void Graph::uninstall(Node* n)
 {
     Root::uninstall(n, &nodes);
-    triggerWatchers();
+    triggerWatcher();
 }
 
 void Graph::clear()
 {
     nodes.clear();
-    triggerWatchers();
+    triggerWatcher();
 }
 
 void Graph::loadScriptHooks(PyObject* g, ScriptNode* n)

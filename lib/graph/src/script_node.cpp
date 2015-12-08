@@ -97,6 +97,6 @@ void ScriptNode::update(const std::unordered_set<Datum*>& active)
     for (auto d : inactive)
         uninstall(d);
 
-    triggerWatchers();
+    triggerWatcher();
 }
 

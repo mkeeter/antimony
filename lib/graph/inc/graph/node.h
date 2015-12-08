@@ -102,7 +102,7 @@ public:
 protected:
 
     /*
-     *  Calls parent->changed and parent->triggerWatchers
+     *  Calls parent->changed and parent->triggerWatcher
      */
     void init();
 
