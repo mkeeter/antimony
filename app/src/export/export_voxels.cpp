@@ -7,6 +7,9 @@
 #include <QThread>
 #include <QTime>
 #include <QDebug>
+#include <QDir>
+#include <QTemporaryDir>
+
 #include <stdlib.h>
 #include <string.h>
 #include <iomanip>
@@ -89,9 +92,16 @@ void ExportVoxelsWorker::run()
 
 void ExportVoxelsTask::render()
 {
+    const float THRESH = -0.1;
+
     auto ni=uint32_t((bounds.xmax - bounds.xmin) * resolution);
     auto nj=uint32_t((bounds.ymax - bounds.ymin) * resolution);
     auto nk=uint32_t((bounds.zmax - bounds.zmin) * resolution);
+
+    QTemporaryDir outputDir("svx-output");
+
+    auto densityPath = outputDir.path() + "/density";
+    QDir().mkdir(densityPath);
 
     std::ostringstream max_number_width_oss;
     max_number_width_oss << (nk - 1);
@@ -109,31 +119,41 @@ void ExportVoxelsTask::render()
                 for (unsigned i = 0; i < ni; ++i) {
                     auto X = bounds.xmin*(ni - i)/(float)ni + bounds.xmax*i/(float)ni;
 
-                    slice_data[j*nj + i] = static_cast<unsigned char>(eval_f(shape.tree.get(), X, Y, Z) < 0 ? 255 : 0);
+                    float result = eval_f(shape.tree.get(), X, Y, Z);
+                    unsigned char voxel_value = 0;
+                    if(result > 0) {
+                        voxel_value = 0;
+                    }
+                    else if(result < THRESH) {
+                        voxel_value = 255;
+                    }
+                    else {
+                        voxel_value = static_cast<unsigned char>( (result / THRESH) * 255);
+                    }
+
+                    slice_data[j*nj + i] = voxel_value;
                 }
         }
 
         std::stringstream ss;
-        ss << "slice";
+        ss <<  densityPath.toStdString();
+        ss << "/slice";
         ss << std::setfill(' ') << std::setw(max_number_width);
         ss << k;
         ss << ".png";
 
         lodepng::State state;
-		// input color type  (make sure to set this to what your input is, e.g. RGBA+8 below assumes your raw input is 4 bytes per pixel)
 		state.info_raw.colortype = LCT_GREY;
 		state.info_raw.bitdepth = 8;
-		// output color type
 		state.info_png.color.colortype = LCT_GREY;
 		state.info_png.color.bitdepth = 8;
-		state.encoder.auto_convert = 0; // without this, it would ignore the output color type specified above and choose an optimal one instead
-
+		state.encoder.auto_convert = 0;
 		std::vector<unsigned char> buffer;
 		unsigned error = lodepng::encode(buffer, &slice_data[0], ni, nj, state);
         lodepng::save_file(buffer, ss.str().c_str());
     }
 
-    std::ofstream manifest_file("manifest.xml");
+    std::ofstream manifest_file(outputDir.path().toStdString() + "/manifest.xml");
     manifest_file << "<?xml version=\"1.0\"?>" << std::endl;
 	manifest_file << "<grid gridSizeX = \"" << ni << "\" gridSizeY = \"" << nj << "\" gridSizeZ = \"" << nk << "\" voxelSize = \"1.0E-4\" slicesOrientation='Z' subvoxelBits = \"8\">" << std::endl;
 	manifest_file << " <channels>" << std::endl;
