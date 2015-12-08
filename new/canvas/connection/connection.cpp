@@ -19,7 +19,7 @@ Connection::Connection(const Datum* source, BaseDatumProxy* target)
     const auto g = target->graphProxy();
 
     {   // Find the source port from the graph proxy
-        auto p = g->getDatumProxy(source);
+        auto p = g->getDatumProxy(const_cast<Datum*>(source));
         Q_ASSERT(p != NULL);
 
         source_port = p->outputPort();

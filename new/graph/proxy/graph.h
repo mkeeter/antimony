@@ -62,12 +62,20 @@ public:
     NodeProxy* getNodeProxy(Node* g);
 
     /*
-     *  Returns the datum proxy for the given datum, non-recursively
+     *  Returns a datum for the given datum, constructing one if none exists.
      *
-     *  Checks first for a node proxy, then a subdatum proxy
-     *  (returning NULL if neither exists)
+     *  Just-in-time construction is necessary because, when loading a file,
+     *  connection targets may not already be created.
+     *
+     *  Checks first for whether the datum's parent belongs in this graph.
+     *  If so, looks up the node proxy and gets the datum proxy from it.
+     *
+     *  Otherwise, the datum must be a subdatum belonging to this graph,
+     *  so a subdatum proxy is constructed.
+     *
+     *  If neither of those cases is true, raises an assertion.
      */
-    BaseDatumProxy* getDatumProxy(const Datum* d) const;
+    BaseDatumProxy* getDatumProxy(Datum* d);
 
     /*
      *  Records positions of all inspectors and subdatums
@@ -82,6 +90,8 @@ public:
     void setPositions(const CanvasInfo& info);
 
 protected:
+    Graph* const graph;
+
     CanvasScene* canvas_scene;
     QList<QMainWindow*> windows;
     AppHooks* hooks;

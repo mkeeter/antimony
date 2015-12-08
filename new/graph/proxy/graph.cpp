@@ -12,9 +12,10 @@
 #include "window/canvas.h"
 
 #include "graph/graph.h"
+#include "graph/graph_node.h"
 
 GraphProxy::GraphProxy(Graph* g, NodeProxy* parent)
-    : QObject(parent), canvas_scene(new CanvasScene(g, this)),
+    : QObject(parent), graph(g), canvas_scene(new CanvasScene(g, this)),
       hooks(new AppHooks(this))
 {
     g->installWatcher(this);
@@ -69,14 +70,21 @@ NodeProxy* GraphProxy::getNodeProxy(Node* n)
     return nodes[n];
 }
 
-BaseDatumProxy* GraphProxy::getDatumProxy(const Datum* d) const
+BaseDatumProxy* GraphProxy::getDatumProxy(Datum* d)
 {
-    if (nodes.contains(d->parentNode()))
-        return nodes[d->parentNode()]->getDatumProxy(d);
-    else if (datums.contains(const_cast<Datum*>(d)))
-        return datums[const_cast<Datum*>(d)];
-    else
-        return NULL;
+    if (d->parentNode()->parentGraph() == graph)
+    {
+        return getNodeProxy(d->parentNode())->getDatumProxy(d);
+    }
+    else if (auto gn = dynamic_cast<GraphNode*>(d->parentNode()))
+    {
+        Q_ASSERT(gn->getGraph() == graph);
+        datums[d] = new SubdatumProxy(d, this);
+        return datums[d];
+    }
+
+    Q_ASSERT(false);
+    return NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

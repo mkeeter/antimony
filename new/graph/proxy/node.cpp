@@ -97,10 +97,12 @@ void NodeProxy::setExportWorker(ExportWorker* worker)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-DatumProxy* NodeProxy::getDatumProxy(const Datum* d) const
+DatumProxy* NodeProxy::getDatumProxy(Datum* d)
 {
-    if (datums.contains(const_cast<Datum*>(d)))
-        return datums[const_cast<Datum*>(d)];
-    else
-        return NULL;
+    if (!datums.contains(const_cast<Datum*>(d)))
+    {
+        Q_ASSERT(d->parentNode() == node);
+        datums[d] = new DatumProxy(d, this);
+    }
+    return datums[const_cast<Datum*>(d)];
 }

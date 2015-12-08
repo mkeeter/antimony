@@ -331,7 +331,6 @@ void Datum::update()
         for (auto w : watchers)
             w->trigger(state);
     }
-
 }
 
 DatumState Datum::getState() const
