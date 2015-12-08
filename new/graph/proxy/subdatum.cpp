@@ -22,6 +22,8 @@ SubdatumProxy::~SubdatumProxy()
 {
     if (frame)
         delete frame;
+    for (auto c : connections)
+        delete c;
 }
 
 void SubdatumProxy::trigger(const DatumState& state)
