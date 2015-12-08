@@ -33,7 +33,7 @@ void SubdatumProxy::trigger(const DatumState& state)
     if (state.sigil == Datum::SIGIL_SUBGRAPH_OUTPUT ||
         state.sigil == Datum::SIGIL_SUBGRAPH_CONNECTION)
     {
-        updateHash(state.links, &connections, this);
+        updateHash(state.links, &connections, this, true);
     }
 }
 

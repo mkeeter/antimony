@@ -31,7 +31,7 @@ void DatumProxy::trigger(const DatumState& state)
     if (state.sigil == Datum::SIGIL_NONE ||
         state.sigil == Datum::SIGIL_CONNECTION)
     {
-        updateHash(state.links, &connections, this);
+        updateHash(state.links, &connections, this, true);
     }
 }
 
