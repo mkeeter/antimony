@@ -19,7 +19,8 @@
 
 #include "fab/util/region.h"
 #include "fab/tree/eval.h"
-#include "fab/formats/png.h"
+#include "fab/formats/lodepng.h"
+
 
 void ExportVoxelsWorker::run()
 {
@@ -96,13 +97,8 @@ void ExportVoxelsTask::render()
     max_number_width_oss << (nk - 1);
     size_t max_number_width = max_number_width_oss.str().length() + 1;
 
-    auto slice(new uint16_t[ni* nj]);
-    auto rows(new uint16_t*[nj]);
-
-    for(unsigned i = 0; i < nj; ++i)
-        rows[i] = &slice[ni * i];
-
-    float dummy[6] = {0, 0, 0, 0, 0, 0};
+    std::vector<unsigned char> slice_data;
+    slice_data.resize(ni * nj);
 
     for(unsigned k = 0; k < nk; ++k) {
         auto Z = bounds.zmin*(nk - k)/(float)nk + bounds.zmax*k/(float)nk;
@@ -113,13 +109,8 @@ void ExportVoxelsTask::render()
                 for (unsigned i = 0; i < ni; ++i) {
                     auto X = bounds.xmin*(ni - i)/(float)ni + bounds.xmax*i/(float)ni;
 
-                    *(slice + j*nj + i) = eval_f(shape.tree.get(), X, Y, Z) < 0 ? 65535 : 0;
+                    slice_data[j*nj + i] = static_cast<unsigned char>(eval_f(shape.tree.get(), X, Y, Z) < 0 ? 255 : 0);
                 }
-            }
-
-        /* Flip rows for png saving*/
-        for(unsigned i = 0; i < nj; ++i) {
-            rows[nj - i - 1] = slice + (ni * i);
         }
 
         std::stringstream ss;
@@ -128,15 +119,19 @@ void ExportVoxelsTask::render()
         ss << k;
         ss << ".png";
 
-        save_png16L(ss.str().c_str(), ni, nj, dummy, rows);
+        lodepng::State state;
+		// input color type  (make sure to set this to what your input is, e.g. RGBA+8 below assumes your raw input is 4 bytes per pixel)
+		state.info_raw.colortype = LCT_GREY;
+		state.info_raw.bitdepth = 8;
+		// output color type
+		state.info_png.color.colortype = LCT_GREY;
+		state.info_png.color.bitdepth = 8;
+		state.encoder.auto_convert = 0; // without this, it would ignore the output color type specified above and choose an optimal one instead
 
-        /* Flip them back */
-        for(unsigned i = 0; i < nj; ++i)
-            rows[i] = &slice[ni * i];
-        }
-
-    delete [] slice;
-    delete [] rows;
+		std::vector<unsigned char> buffer;
+		unsigned error = lodepng::encode(buffer, &slice_data[0], ni, nj, state);
+        lodepng::save_file(buffer, ss.str().c_str());
+    }
 
     std::ofstream manifest_file("manifest.xml");
     manifest_file << "<?xml version=\"1.0\"?>" << std::endl;

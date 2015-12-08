@@ -10,6 +10,7 @@ include(lemon.pri)
 SOURCES += \
     src/fab.cpp \
     src/formats/png.c \
+    src/formats/lodepng.cpp \
     src/formats/stl.c \
     src/tree/eval.c \
     src/tree/math/math_f.c \
