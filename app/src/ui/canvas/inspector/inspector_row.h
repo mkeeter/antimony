@@ -23,11 +23,12 @@ public:
     const static qreal LabelPadding; // padding between label & datum-text
     const static qreal TextPadding; // padding between datum-text & output-port
 
-    InputPort* input;
-    OutputPort* output;
     QGraphicsTextItem* label;
     DatumTextItem* editor;
-    QRectF boundingRect() const;
+    InputPort* input;
+    OutputPort* output;
+
+    QRectF boundingRect() const override;
 
     void setWidth(float width);
     float minWidth() const;

@@ -12,14 +12,14 @@
 const qreal InspectorRow::LeftPadding = 1;
 const qreal InspectorRow::LabelPadding = 10; // padding between label & datum-text
 const qreal InspectorRow::TextPadding = 5; // padding between datum-text & output-port
-         
+
 InspectorRow::InspectorRow(Datum* d, NodeInspector* parent)
     : QGraphicsObject(static_cast<QGraphicsItem*>(parent)),
-      input(new InputPort(d, static_cast<QGraphicsItem*>(this))),
-      output(new OutputPort(d, static_cast<QGraphicsItem*>(this))),
       label(new QGraphicsTextItem(
                   QString::fromStdString(d->getName()), this)),
-      editor(new DatumTextItem(d, this))
+      editor(new DatumTextItem(d, this)),
+      input(new InputPort(d, static_cast<QGraphicsItem*>(this))),
+      output(new OutputPort(d, static_cast<QGraphicsItem*>(this)))
 {
     label->setDefaultTextColor(Colors::base04);
 

@@ -33,14 +33,16 @@ ResolutionDialog::ResolutionDialog(Bounds bounds, bool dimensions, bool has_unit
     {
         float area = (bounds.xmax - bounds.xmin) *
                      (bounds.ymax - bounds.ymin);
-        ui->export_res->setValue(pow(max_voxels / area, 1/2.) / 4.);
+        ui->export_res->setValue(
+                std::max(1.0, pow(max_voxels / area, 1/2.) / 4.));
     }
     else
     {
         float volume = (bounds.xmax - bounds.xmin) *
                        (bounds.ymax - bounds.ymin) *
                        (bounds.zmax - bounds.zmin);
-        ui->export_res->setValue(pow(max_voxels / volume, 1/3.) / 2.52);
+        ui->export_res->setValue(
+                std::max(1.0, pow(max_voxels / volume, 1/3.) / 2.52));
     }
 }
 
