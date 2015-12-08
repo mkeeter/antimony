@@ -35,7 +35,7 @@ ResolutionDialog::ResolutionDialog(Bounds bounds, bool dimensions, bool has_unit
         float area = (bounds.xmax - bounds.xmin) *
                      (bounds.ymax - bounds.ymin);
         ui->export_res->setValue(
-                std::min(1.0, pow(max_voxels / area, 1/2.) / 4.));
+                std::max(1.0, pow(max_voxels / area, 1/2.) / 4.));
     }
     else
     {
@@ -43,7 +43,7 @@ ResolutionDialog::ResolutionDialog(Bounds bounds, bool dimensions, bool has_unit
                        (bounds.ymax - bounds.ymin) *
                        (bounds.zmax - bounds.zmin);
         ui->export_res->setValue(
-                std::min(1.0, pow(max_voxels / volume, 1/3.) / 2.52));
+                std::max(1.0, pow(max_voxels / volume, 1/3.) / 2.52));
     }
 }
 
