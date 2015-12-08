@@ -6,6 +6,7 @@ class BaseConnection : public QGraphicsObject
 {
 public:
     explicit BaseConnection(QColor color);
+    virtual ~BaseConnection() {}
 
 protected:
     /*

@@ -20,6 +20,8 @@ DatumProxy::~DatumProxy()
 {
     if (row)
         delete row;
+    for (auto c : connections)
+        delete c;
 }
 
 void DatumProxy::trigger(const DatumState& state)
