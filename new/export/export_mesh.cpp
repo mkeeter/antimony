@@ -43,6 +43,14 @@ void ExportMeshWorker::run()
         _detect_features = detect_features;
     }
 
+    if (_resolution == 0)
+    {
+        QMessageBox::critical(NULL, "Export error",
+                "<b>Export error:</b><br>"
+                "Resolution cannot be set to 0");
+        return;
+    }
+
     //  Get a target filename, either hardcoded or from the user
     if (filename.isEmpty())
         _filename = QFileDialog::getSaveFileName(

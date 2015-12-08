@@ -41,6 +41,14 @@ void ExportHeightmapWorker::run()
         _mm_per_unit = mm_per_unit;
     }
 
+    if (_resolution == 0)
+    {
+        QMessageBox::critical(NULL, "Export error",
+                "<b>Export error:</b><br>"
+                "Resolution cannot be set to 0");
+        return;
+    }
+
     if (filename.isEmpty())
         _filename = QFileDialog::getSaveFileName(
                 NULL, "Export .png", "", "*.png");
