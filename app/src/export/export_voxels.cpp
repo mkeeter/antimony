@@ -7,6 +7,10 @@
 #include <QThread>
 #include <QTime>
 #include <QDebug>
+#include <stdlib.h>
+#include <string.h>
+#include <iomanip>
+#include <fstream>
 
 #include "export/export_voxels.h"
 
@@ -15,6 +19,7 @@
 
 #include "fab/util/region.h"
 #include "fab/tree/eval.h"
+#include "fab/formats/png.h"
 
 void ExportVoxelsWorker::run()
 {
@@ -33,7 +38,7 @@ void ExportVoxelsWorker::run()
 
     if (filename.isEmpty())
         _filename = QFileDialog::getSaveFileName(
-                NULL, "Export Voxels", "", "*.voxels");
+                NULL, "Export Voxels", "", "*");
 
     if (_filename.isEmpty())
         return;
@@ -87,19 +92,59 @@ void ExportVoxelsTask::render()
     auto nj=uint32_t((bounds.ymax - bounds.ymin) * resolution);
     auto nk=uint32_t((bounds.zmax - bounds.zmin) * resolution);
 
-    for (unsigned k = 0; k < nk; ++k) {
+    std::ostringstream max_number_width_oss;
+    max_number_width_oss << (nk - 1);
+    size_t max_number_width = max_number_width_oss.str().length() + 1;
+
+    auto slice(new uint16_t[ni* nj]);
+    auto rows(new uint16_t*[nj]);
+
+    for(unsigned i = 0; i < nj; ++i)
+        rows[i] = &slice[ni * i];
+
+    float dummy[6] = {0, 0, 0, 0, 0, 0};
+
+    for(unsigned k = 0; k < nk; ++k) {
         auto Z = bounds.zmin*(nk - k)/(float)nk + bounds.zmax*k/(float)nk;
+
         for (unsigned j = 0; j < nj; ++j) {
             auto Y = bounds.ymin*(nj - j)/(float)nj + bounds.ymax*j/(float)nj;
-            for (unsigned i = 0; i < ni; ++i) {
-                if(*halt) return;
 
-                auto X  = bounds.xmin*(ni - i)/(float)ni + bounds.xmax*i/(float)ni;
-                float result = eval_f(shape.tree.get(), X, Y, Z);
-                printf("@ %f, %f, %f => %f\n", X, Y, Z, result);
+                for (unsigned i = 0; i < ni; ++i) {
+                    auto X = bounds.xmin*(ni - i)/(float)ni + bounds.xmax*i/(float)ni;
+
+                    *(slice + j*nj + i) = eval_f(shape.tree.get(), X, Y, Z) < 0 ? 65535 : 0;
+                }
             }
+
+        /* Flip rows for png saving*/
+        for(unsigned i = 0; i < nj; ++i) {
+            rows[nj - i - 1] = slice + (ni * i);
         }
-    }
+
+        std::stringstream ss;
+        ss << "slice";
+        ss << std::setfill(' ') << std::setw(max_number_width);
+        ss << k;
+        ss << ".png";
+
+        save_png16L(ss.str().c_str(), ni, nj, dummy, rows);
+
+        /* Flip them back */
+        for(unsigned i = 0; i < nj; ++i)
+            rows[i] = &slice[ni * i];
+        }
+
+    delete [] slice;
+    delete [] rows;
+
+    std::ofstream manifest_file("manifest.xml");
+    manifest_file << "<?xml version=\"1.0\"?>" << std::endl;
+	manifest_file << "<grid gridSizeX = \"" << ni << "\" gridSizeY = \"" << nj << "\" gridSizeZ = \"" << nk << "\" voxelSize = \"1.0E-4\" slicesOrientation='Z' subvoxelBits = \"8\">" << std::endl;
+	manifest_file << " <channels>" << std::endl;
+	manifest_file << "  <channel type = \"DENSITY\" slices = \"density/slice%" << max_number_width << "d.png\"/>" << std::endl;
+	manifest_file << " </channels>" << std::endl;
+	manifest_file << "</grid>" << std::endl;
 
     emit(finished());
 }
