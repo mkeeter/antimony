@@ -51,6 +51,18 @@ QPointF Connection::endPos() const
 
 ////////////////////////////////////////////////////////////////////////////////
 
+Datum* Connection::sourceDatum() const
+{
+    return source_port->getDatum();
+}
+
+Datum* Connection::targetDatum() const
+{
+    return target_port->getDatum();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void Connection::onPortsMoved()
 {
     prepareGeometryChange();

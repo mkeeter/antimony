@@ -3,10 +3,20 @@
 #include <QMenu>
 #include <QMouseEvent>
 
+#include "app/app.h"
 #include "app/colors.h"
 #include "canvas/view.h"
 #include "canvas/scene.h"
+
+#include "canvas/connection/connection.h"
+#include "canvas/inspector/frame.h"
+#include "canvas/subdatum/subdatum_frame.h"
+
+#include "undo/undo_delete_multi.h"
+
 #include "graph/constructor/populate.h"
+
+////////////////////////////////////////////////////////////////////////////////
 
 CanvasView::CanvasView(CanvasScene* scene, QWidget* parent)
     : QGraphicsView(scene, parent), selecting(false)
@@ -104,6 +114,28 @@ void CanvasView::keyPressEvent(QKeyEvent* event)
         m->exec(QCursor::pos());
         m->deleteLater();
     }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void CanvasView::deleteSelected()
+{
+    QSet<Node*> nodes;
+    QSet<QPair<const Datum*, Datum*>> links;
+    QSet<Datum*> datums;
+
+     // Find all selected links
+    for (auto i : scene()->selectedItems())
+        if (auto c = dynamic_cast<Connection*>(i))
+            links.insert(QPair<const Datum*, Datum*>(
+                        c->sourceDatum(),
+                        c->targetDatum()));
+        else if (auto p = dynamic_cast<InspectorFrame*>(i))
+            nodes.insert(p->getNode());
+        else if (auto s = dynamic_cast<SubdatumFrame*>(i))
+            datums.insert(s->getDatum());
+
+    App::instance()->pushUndoStack(new UndoDeleteMulti(nodes, datums, links));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

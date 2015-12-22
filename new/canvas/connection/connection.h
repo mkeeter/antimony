@@ -20,6 +20,12 @@ class Connection : public BaseConnection
 public:
     explicit Connection(const Datum* source, BaseDatumProxy* target);
 
+    /*
+     *  Helper functions to get relevant datums
+     */
+    Datum* sourceDatum() const;
+    Datum* targetDatum() const;
+
 protected slots:
     /*
      *  When ports have moved, call prepareGeometryChange()

@@ -29,6 +29,11 @@ protected:
      */
     void keyPressEvent(QKeyEvent* event) override;
 
+    /*
+     *  Creates an UndoDeleteMulti that deletes all selected objects
+     */
+    void deleteSelected();
+
     QPointF click_pos;
     QPointF drag_pos;
     bool selecting;
