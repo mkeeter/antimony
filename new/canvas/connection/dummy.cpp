@@ -6,7 +6,10 @@
 #include "canvas/connection/dummy.h"
 #include "canvas/datum_port.h"
 #include "canvas/scene.h"
+
+#include "app/app.h"
 #include "app/colors.h"
+#include "undo/undo_change_expr.h"
 
 #include "graph/datum.h"
 
@@ -96,7 +99,17 @@ void DummyConnection::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     Q_UNUSED(event);
 
     if (target && target->getDatum()->acceptsLink(source->getDatum()))
-        target->getDatum()->installLink(source->getDatum());
+    {
+        auto d = target->getDatum();
+
+        QString before = QString::fromStdString(d->getText());
+        d->installLink(source->getDatum());
+        QString after = QString::fromStdString(d->getText());
+
+        auto cmd = new UndoChangeExpr(d, before, after);
+        cmd->setText("'create link'");
+        App::instance()->pushUndoStack(cmd);
+    }
     deleteLater();
 }
 

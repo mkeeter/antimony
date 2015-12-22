@@ -18,8 +18,9 @@ void updateHash(const Container& input, QHash<Object*, Proxy*>* hash,
         while (itr != hash->end())
             if (!set.contains(itr.key()))
             {
-                delete(*itr);
+                Proxy* ptr = *itr;
                 itr = hash->erase(itr);
+                delete ptr;
             }
             else
             {
