@@ -187,7 +187,8 @@ void InspectorFrame::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
         // Store an Undo command for this drag
         const auto delta = event->scenePos() -
                      event->buttonDownScenePos(Qt::LeftButton);
-        static_cast<CanvasScene*>(scene())->endDrag(delta);
+        if (delta != QPointF(0,0))
+            static_cast<CanvasScene*>(scene())->endDrag(delta);
     }
     dragging = false;
 }
