@@ -9,6 +9,7 @@
 #include "graph/constructor/populate.h"
 #include "graph/constructor/constructor.h"
 #include "app/app.h"
+#include "undo/undo_add_node.h"
 
 #include "graph/script_node.h"
 #include "graph/graph_node.h"
@@ -40,6 +41,8 @@ static void addNodeToMenu(QMenu* menu, QStringList category, QString name,
     }
     menu->connect(menu->addAction(name), &QAction::triggered,
                   [=]{ Node* n = f(g);
+                       App::instance()->pushUndoStack(
+                           new UndoAddNode(n));
                        callback(n);  });
 }
 

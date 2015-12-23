@@ -19,6 +19,12 @@ UndoDeleteNode::UndoDeleteNode(Node* n, UndoDeleteMulti* parent)
     setText("'delete node'");
 }
 
+UndoDeleteNode::UndoDeleteNode(Node* n)
+    : UndoDeleteNode(n, NULL)
+{
+    // Nothing to do here
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 template <class T>
