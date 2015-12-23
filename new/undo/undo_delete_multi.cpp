@@ -1,6 +1,7 @@
 #include <Python.h>
 
 #include "undo/undo_delete_multi.h"
+#include "undo/undo_delete_node.h"
 
 #include "graph/node.h"
 
@@ -21,8 +22,8 @@ UndoDeleteMulti::UndoDeleteMulti(QSet<Node*> nodes, QSet<Datum*> datums,
     /*
     for (auto k : links)
         new UndoDeleteLinkCommand(k.first, k.second, this);
+    */
 
     for (auto n : nodes)
-        new UndoDeleteNodeCommand(n, this);
-    */
+        new UndoDeleteNode(n, this);
 }

@@ -102,7 +102,7 @@ void CanvasView::keyPressEvent(QKeyEvent* event)
     }
     else if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace)
     {
-        // XXX deleteSelected();
+        deleteSelected();
     }
     else if (event->key() == Qt::Key_A &&
                 (event->modifiers() & Qt::ShiftModifier))
