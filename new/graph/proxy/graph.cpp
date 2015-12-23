@@ -79,7 +79,8 @@ BaseDatumProxy* GraphProxy::getDatumProxy(Datum* d)
     else if (auto gn = dynamic_cast<GraphNode*>(d->parentNode()))
     {
         Q_ASSERT(gn->getGraph() == graph);
-        datums[d] = new SubdatumProxy(d, this);
+        if (!datums.contains(d))
+            datums[d] = new SubdatumProxy(d, this);
         return datums[d];
     }
 
