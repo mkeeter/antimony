@@ -25,7 +25,7 @@ class BaseDatumProxy : public QObject, public DatumWatcher
 public:
     BaseDatumProxy(Datum* d, QObject* parent)
         : QObject(parent), datum(d) {}
-    virtual ~BaseDatumProxy() {}
+    virtual ~BaseDatumProxy();
 
     /*
      *  Return input and output ports (from the associated row)

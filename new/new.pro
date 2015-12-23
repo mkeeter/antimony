@@ -98,6 +98,7 @@ SOURCES += \
     graph/proxy/script.cpp              \
     graph/proxy/datum.cpp               \
     graph/proxy/subdatum.cpp            \
+    graph/proxy/base_datum.cpp          \
     graph/hooks/hooks.cpp               \
     graph/hooks/export.cpp              \
     graph/hooks/title.cpp               \
