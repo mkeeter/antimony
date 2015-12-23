@@ -5,6 +5,7 @@
 #include "undo/undo_command.h"
 
 class UndoDeleteMulti;
+class GraphNode;
 
 class UndoDeleteDatum : public UndoCommand
 {
@@ -36,7 +37,7 @@ protected:
 
     /*  Pointer to the target datum and its parent node */
     mutable Datum* d;
-    mutable Node* n;
+    mutable GraphNode* n;
 
     /*  This object stores the serialized datum  */
     QJsonObject data;

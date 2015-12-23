@@ -15,7 +15,7 @@ public:
         watchers.remove_if([&](T* w_) { return w_ == w; });
     }
 
-    void triggerWatchers() {
+    virtual void triggerWatchers() {
         if (!watchers.empty())
         {
             auto s = getState();

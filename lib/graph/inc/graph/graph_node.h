@@ -14,6 +14,13 @@ public:
 
     Datum* makeDatum(std::string name, PyTypeObject* type,
                      bool output);
+    void removeDatum(Datum* d);
+
+    /*
+     *  Override triggerWatchers so that subgraph watchers
+     *  are also triggered (for subdatum proxies)
+     */
+    void triggerWatchers() override;
 
 protected:
     std::unique_ptr<Graph> subgraph;

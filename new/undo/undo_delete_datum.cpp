@@ -11,10 +11,12 @@
 
 #include "graph/datum.h"
 #include "graph/node.h"
+#include "graph/graph_node.h"
 
 UndoDeleteDatum::UndoDeleteDatum(Datum* d, UndoDeleteMulti* parent)
-    : UndoCommand(parent), d(d), n(d->parentNode())
+    : UndoCommand(parent), d(d), n(static_cast<GraphNode*>(d->parentNode()))
 {
+    Q_ASSERT(dynamic_cast<GraphNode*>(d->parentNode()));
     setText("'delete datum'");
 }
 
@@ -35,7 +37,10 @@ void UndoDeleteDatum::swapPointer(Datum* a, Datum* b) const
 void UndoDeleteDatum::swapPointer(Node* a, Node* b) const
 {
     if (n == a)
-        n = b;
+    {
+        Q_ASSERT(dynamic_cast<GraphNode*>(b));
+        n = static_cast<GraphNode*>(b);
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -47,7 +52,7 @@ void UndoDeleteDatum::redo()
     data = SceneSerializer::serializeDatum(d, &i);
 
     // Tell the graph engine to delete the datum
-    n->uninstall(d);
+    n->removeDatum(d);
 }
 
 void UndoDeleteDatum::undo()
@@ -63,6 +68,7 @@ void UndoDeleteDatum::undo()
         d = d_new;
     }
 
+    n->triggerWatchers();
     App::instance()->getProxy()->setPositions(ds.frames);
 }
 

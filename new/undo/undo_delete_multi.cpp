@@ -7,6 +7,7 @@
 
 #include "graph/node.h"
 
+#include <QDebug>
 UndoDeleteMulti::UndoDeleteMulti(QSet<Node*> nodes, QSet<Datum*> datums,
                                  QSet<QPair<const Datum*, Datum*>> links)
 {

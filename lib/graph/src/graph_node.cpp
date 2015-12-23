@@ -37,7 +37,20 @@ Datum* GraphNode::makeDatum(std::string name, PyTypeObject* type,
     Py_DECREF(repr);
 
     triggerWatchers();
-    subgraph->triggerWatchers();
 
     return d;
+}
+
+void GraphNode::removeDatum(Datum* d)
+{
+    assert(d->parentNode() == this);
+    uninstall(d);
+
+    triggerWatchers();
+}
+
+void GraphNode::triggerWatchers()
+{
+    Watched::triggerWatchers();
+    subgraph->triggerWatchers();
 }
