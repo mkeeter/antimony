@@ -325,7 +325,12 @@ void Datum::update()
     if (changed)
         parent->changed(name, uid);
 
-    triggerWatcher();
+    if (!watchers.empty())
+    {
+        const auto state = getState();
+        for (auto w : watchers)
+            w->trigger(state);
+    }
 }
 
 DatumState Datum::getState() const

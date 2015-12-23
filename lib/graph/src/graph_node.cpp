@@ -36,8 +36,8 @@ Datum* GraphNode::makeDatum(std::string name, PyTypeObject* type,
     Py_DECREF(obj);
     Py_DECREF(repr);
 
-    triggerWatcher();
-    subgraph->triggerWatcher();
+    triggerWatchers();
+    subgraph->triggerWatchers();
 
     return d;
 }

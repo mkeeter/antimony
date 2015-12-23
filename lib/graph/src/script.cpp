@@ -92,7 +92,7 @@ void Script::update()
             d->sources.insert(sources.begin(), sources.end());
 
     // Finally, update anything that's registered itself as a watcher
-    triggerWatcher();
+    triggerWatchers();
 }
 
 ScriptState Script::getState() const

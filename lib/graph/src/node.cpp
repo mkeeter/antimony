@@ -26,7 +26,7 @@ Node::Node(std::string n, uint64_t uid, Graph* root, bool do_init)
 void Node::init()
 {
     parent->changed(name, uid);
-    parent->triggerWatcher();
+    parent->triggerWatchers();
 }
 
 NodeState Node::getState() const
@@ -44,7 +44,7 @@ void Node::setName(std::string new_name)
         parent->changed(old_name, uid);
         parent->changed(new_name, uid);
 
-        triggerWatcher();
+        triggerWatchers();
     }
 }
 

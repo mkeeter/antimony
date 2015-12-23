@@ -6,27 +6,26 @@ template <class T, class S>
 class Watched
 {
 public:
-    Watched() : watcher(NULL) {}
-
     void installWatcher(T* w) {
-        assert(watcher == NULL);
-        watcher = w;
-        watcher->trigger(getState());
+        watchers.push_back(w);
+        w->trigger(getState());
     }
 
     void uninstallWatcher(T* w) {
-        (void)w;
-        assert(watcher == w);
-        watcher = NULL;
+        watchers.remove_if([&](T* w_) { return w_ == w; });
     }
 
-    void triggerWatcher() {
-        if (watcher != NULL)
-            watcher->trigger(getState());
+    void triggerWatchers() {
+        if (!watchers.empty())
+        {
+            auto s = getState();
+            for (auto w : watchers)
+                w->trigger(s);
+        }
     }
 
     virtual S getState() const=0;
 
 protected:
-    T* watcher;
+    std::list<T*> watchers;
 };
