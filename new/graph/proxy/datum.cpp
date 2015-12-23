@@ -20,7 +20,14 @@ DatumProxy::~DatumProxy()
 {
     if (row)
         delete row;
-    for (auto c : connections)
+
+    // I don't understand why this is necessary, but doing the deletions
+    // directly from the QHash leads to a reproducible crash.
+    QList<Connection*> cs;
+    for (Connection* c : connections)
+        cs.push_back(c);
+
+    for (auto c : cs)
         delete c;
 }
 
