@@ -65,7 +65,7 @@ void UndoDeleteNode::redo()
     data = SceneSerializer::serializeNode(n, &i);
 
     // Tell the system to delete the node
-    n->parentGraph()->uninstall(n);
+    g->uninstall(n);
 }
 
 void UndoDeleteNode::undo()

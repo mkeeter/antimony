@@ -2,6 +2,7 @@
 
 #include "undo/undo_delete_multi.h"
 #include "undo/undo_delete_node.h"
+#include "undo/undo_delete_datum.h"
 #include "undo/undo_delete_link.h"
 
 #include "graph/node.h"
@@ -25,4 +26,7 @@ UndoDeleteMulti::UndoDeleteMulti(QSet<Node*> nodes, QSet<Datum*> datums,
 
     for (auto n : nodes)
         new UndoDeleteNode(n, this);
+
+    for (auto d : datums)
+        new UndoDeleteDatum(d, this);
 }
