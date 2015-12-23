@@ -32,7 +32,10 @@ GraphProxy::GraphProxy(Graph* g, NodeProxy* parent)
 GraphProxy::~GraphProxy()
 {
     for (auto w : windows)
+    {
+        disconnect(w, &QMainWindow::destroyed, 0, 0);
         w->close();
+    }
 }
 
 void GraphProxy::trigger(const GraphState& state)
