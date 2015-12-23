@@ -10,6 +10,7 @@
 #include "graph/constructor/constructor.h"
 #include "app/app.h"
 #include "undo/undo_add_node.h"
+#include "undo/undo_add_datum.h"
 
 #include "graph/script_node.h"
 #include "graph/graph_node.h"
@@ -165,11 +166,19 @@ void populateDatumCommands(QMenu* menu, GraphNode* node,
     for (auto i : items)
     {
         inputs->connect(inputs->addAction(i.first), &QAction::triggered,
-            [=](){ if (auto d = makeDatum(node, i.second, false))
-                       callback(d); });
+            [=](){  if (auto d = makeDatum(node, i.second, false))
+                    {
+                        App::instance()->pushUndoStack(
+                           new UndoAddDatum(d));
+                        callback(d);
+                    }});
         outputs->connect(outputs->addAction(i.first), &QAction::triggered,
-            [=](){ if (auto d = makeDatum(node, i.second, true))
-                       callback(d); });
+            [=](){  if (auto d = makeDatum(node, i.second, true))
+                    {
+                        App::instance()->pushUndoStack(
+                           new UndoAddDatum(d));
+                        callback(d);
+                    }});
     }
 }
 

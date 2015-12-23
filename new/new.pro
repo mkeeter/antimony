@@ -109,6 +109,7 @@ SOURCES += \
     script/frame.cpp                    \
     undo/undo_command.cpp               \
     undo/undo_add_node.cpp              \
+    undo/undo_add_datum.cpp             \
     undo/undo_delete_datum.cpp          \
     undo/undo_delete_multi.cpp          \
     undo/undo_delete_node.cpp           \
@@ -165,6 +166,7 @@ HEADERS += \
     script/frame.h                      \
     undo/undo_command.h                 \
     undo/undo_add_node.h                \
+    undo/undo_add_datum.h               \
     undo/undo_delete_datum.h            \
     undo/undo_delete_multi.h            \
     undo/undo_delete_node.h             \
