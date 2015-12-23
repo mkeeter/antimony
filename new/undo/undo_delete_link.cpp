@@ -16,12 +16,12 @@ UndoDeleteLink::UndoDeleteLink(const Datum* source, Datum* target,
 
 void UndoDeleteLink::undo()
 {
-    target->uninstallLink(source);
+    target->installLink(source);
 }
 
 void UndoDeleteLink::redo()
 {
-    target->installLink(source);
+    target->uninstallLink(source);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
