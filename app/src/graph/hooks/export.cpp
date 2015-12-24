@@ -135,7 +135,7 @@ object ScriptExportHooks::voxels(tuple args, dict kwargs)
 
     if (len(args) != 2)
         throw AppHooks::Exception(
-                "export.stl must be called with shape as first argument.");
+                "export.voxels must be called with shape as first argument.");
 
     Shape shape = get_shape(args);
 
@@ -149,7 +149,7 @@ object ScriptExportHooks::voxels(tuple args, dict kwargs)
         isinf(bounds.zmin) || isinf(bounds.zmax))
     {
         throw AppHooks::Exception(
-                "Exporting mesh with invalid (infinite) bounds");
+                "Exporting voxels with invalid (infinite) bounds");
     }
 
     bool pad = get_pad(kwargs);
