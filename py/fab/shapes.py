@@ -518,19 +518,22 @@ def taper_x_y(part, x0, y0, y1, s0, s1):
         '+f%(x0)g*-Xf%(x0)g/-+*Yf%(ds)gf%(s0y1)gf%(s1y0)gf%(dy)g' % locals(),
         'Y'))
 
-
 @preserve_color
 def iterate2d(part, i, j, dx, dy):
-    """ Tiles a part in the X and Y directions.
+    return iterate3d(part, i, j, 1, dx, dy, 1)
+
+@preserve_color
+def iterate3d(part, i, j, k, dx, dy, dz):
+    """ Tiles a part in the X, Y, and Z directions.
     """
-    if i < 1 or j < 1:
+    if i < 1 or j < 1 or k < 1:
         raise ValueError("Invalid value for iteration")
 
-    return functools.reduce(operator.or_,
-            [move(functools.reduce(operator.or_,
-                    [move(part, a*dx, 0, 0) for a in range(i)]), 0, b*dy, 0)
-                for b in range(j)])
-
+    #FIXME: if you try to do this all at once, segfault
+    xiterate = functools.reduce(operator.or_, [move(part, a*dx, 0, 0) for a in range(i)])
+    yiterate = functools.reduce(operator.or_, [move(xiterate, 0, b*dy, 0) for b in range(j)])
+    ziterate = functools.reduce(operator.or_, [move(yiterate, 0, 0, c*dz) for c in range(k)])
+    return ziterate
 
 @preserve_color
 def iterate_polar(part, x, y, n):
