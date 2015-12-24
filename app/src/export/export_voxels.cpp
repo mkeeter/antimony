@@ -24,6 +24,7 @@
 #include "fab/tree/eval.h"
 #include "fab/formats/lodepng.h"
 
+#include "quazip/JlCompress.h"
 
 void ExportVoxelsWorker::run()
 {
@@ -160,6 +161,9 @@ void ExportVoxelsTask::render()
 	manifest_file << "  <channel type = \"DENSITY\" slices = \"density/slice%" << max_number_width << "d.png\"/>" << std::endl;
 	manifest_file << " </channels>" << std::endl;
 	manifest_file << "</grid>" << std::endl;
+    manifest_file.close();
+
+    JlCompress::compressDir(filename, outputDir.path());
 
     emit(finished());
 }
