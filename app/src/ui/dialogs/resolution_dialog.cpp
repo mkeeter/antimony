@@ -4,7 +4,7 @@
 #include "ui_resolution_dialog.h"
 #include "ui/dialogs/resolution_dialog.h"
 
-ResolutionDialog::ResolutionDialog(Bounds bounds, bool dimensions, bool has_units,
+ResolutionDialog::ResolutionDialog(Bounds bounds, bool dimensions, bool has_units, bool has_detect_features,
                                    long max_voxels, QWidget* parent)
     : QDialog(parent), bounds(bounds), ui(new Ui::ResolutionDialog),
       z_bounded(!isinf(bounds.zmax) && !isinf(bounds.zmin))
@@ -17,7 +17,7 @@ ResolutionDialog::ResolutionDialog(Bounds bounds, bool dimensions, bool has_unit
         ui->unit_label->hide();
     }
 
-    if (dimensions == RESOLUTION_DIALOG_2D)
+    if (dimensions == RESOLUTION_DIALOG_2D || !has_detect_features)
         ui->detect_features->hide();
 
     // Re-do the layout, since things may have just been hidden

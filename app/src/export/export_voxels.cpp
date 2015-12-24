@@ -34,7 +34,7 @@ void ExportVoxelsWorker::run()
     if (resolution == -1)
     {
         auto resolution_dialog = new ResolutionDialog(
-                bounds, RESOLUTION_DIALOG_3D, UNITLESS);
+                bounds, RESOLUTION_DIALOG_3D, UNITLESS, NO_DETECT_FEATURES);
         if (!resolution_dialog->exec())
             return;
         _resolution = resolution_dialog->getResolution();
@@ -121,6 +121,7 @@ void ExportVoxelsTask::render()
                     auto Z = bounds.zmin*(nk - k)/(float)nk + bounds.zmax*k/(float)nk;
 
                     float result = eval_f(shape.tree.get(), X, Y, Z);
+                
                     unsigned char voxel_value = 0;
                     if(result > 0) {
                         voxel_value = 0;
@@ -150,7 +151,7 @@ void ExportVoxelsTask::render()
 		state.info_png.color.bitdepth = 8;
 		state.encoder.auto_convert = 0;
 		std::vector<unsigned char> buffer;
-		unsigned error = lodepng::encode(buffer, &slice_data[0], ni, nj, state);
+		unsigned error = lodepng::encode(buffer, slice_data, ni, nk, state);
         lodepng::save_file(buffer, ss.str().c_str());
     }
 
