@@ -5,12 +5,13 @@ TEMPLATE = app
 
 INCLUDEPATH += src
 
-LIBS += -L../lib/fab -lSbFab -L../lib/graph -lSbGraph
+LIBS += -L../lib/fab -lSbFab -L../lib/graph -lSbGraph -L../lib/quazip -lquazip -lz
 INCLUDEPATH += ../lib/fab/inc
 INCLUDEPATH += ../lib/graph/inc
 
 PRE_TARGETDEPS += ../lib/graph/libSbGraph.a
 PRE_TARGETDEPS += ../lib/fab/libSbFab.a
+PRE_TARGETDEPS += ../lib/quazip/libquazip.a
 
 include(../qt/common.pri)
 include(../qt/python.pri)
