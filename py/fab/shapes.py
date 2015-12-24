@@ -519,6 +519,10 @@ def taper_x_y(part, x0, y0, y1, s0, s1):
         'Y'))
 
 @preserve_color
+def iterate2d(part, i, j, dx, dy):
+    return iterate3d(part, i, j, 1, dx, dy, 1)
+
+@preserve_color
 def iterate3d(part, i, j, k, dx, dy, dz):
     """ Tiles a part in the X, Y, and Z directions.
     """
