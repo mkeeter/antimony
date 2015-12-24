@@ -156,7 +156,7 @@ void ExportVoxelsTask::render()
 
     std::ofstream manifest_file(outputDir.path().toStdString() + "/manifest.xml");
     manifest_file << "<?xml version=\"1.0\"?>" << std::endl;
-	manifest_file << "<grid gridSizeX = \"" << ni << "\" gridSizeY = \"" << nj << "\" gridSizeZ = \"" << nk << "\" voxelSize = \"1.0E-4\" slicesOrientation='Z' subvoxelBits = \"8\">" << std::endl;
+	manifest_file << "<grid gridSizeX = \"" << ni << "\" gridSizeY = \"" << nj << "\" gridSizeZ = \"" << nk << "\" voxelSize = \"1.0E-4\" subvoxelBits = \"8\">" << std::endl;
 	manifest_file << " <channels>" << std::endl;
 	manifest_file << "  <channel type = \"DENSITY\" slices = \"density/slice%" << max_number_width << "d.png\"/>" << std::endl;
 	manifest_file << " </channels>" << std::endl;
