@@ -43,7 +43,7 @@ void ExportVoxelsWorker::run()
 
     if (filename.isEmpty())
         _filename = QFileDialog::getSaveFileName(
-                NULL, "Export Voxels", "", "*");
+                NULL, "Export Voxels", "", "*.svx");
 
     if (_filename.isEmpty())
         return;
@@ -105,20 +105,20 @@ void ExportVoxelsTask::render()
     QDir().mkdir(densityPath);
 
     std::ostringstream max_number_width_oss;
-    max_number_width_oss << (nk - 1);
+    max_number_width_oss << (nj - 1);
     size_t max_number_width = max_number_width_oss.str().length() + 1;
 
     std::vector<unsigned char> slice_data;
-    slice_data.resize(ni * nj);
-
-    for(unsigned k = 0; k < nk; ++k) {
-        auto Z = bounds.zmin*(nk - k)/(float)nk + bounds.zmax*k/(float)nk;
+    slice_data.resize(ni * nk);
 
         for (unsigned j = 0; j < nj; ++j) {
             auto Y = bounds.ymin*(nj - j)/(float)nj + bounds.ymax*j/(float)nj;
 
-                for (unsigned i = 0; i < ni; ++i) {
-                    auto X = bounds.xmin*(ni - i)/(float)ni + bounds.xmax*i/(float)ni;
+            for (unsigned i = 0; i < ni; ++i) {
+                auto X = bounds.xmin*(ni - i)/(float)ni + bounds.xmax*i/(float)ni;
+
+                for(unsigned k = 0; k < nk; ++k) {
+                    auto Z = bounds.zmin*(nk - k)/(float)nk + bounds.zmax*k/(float)nk;
 
                     float result = eval_f(shape.tree.get(), X, Y, Z);
                     unsigned char voxel_value = 0;
@@ -132,7 +132,7 @@ void ExportVoxelsTask::render()
                         voxel_value = static_cast<unsigned char>( (result / THRESH) * 255);
                     }
 
-                    slice_data[j*nj + i] = voxel_value;
+                    slice_data[ni*k+i] = voxel_value;
                 }
         }
 
@@ -140,7 +140,7 @@ void ExportVoxelsTask::render()
         ss <<  densityPath.toStdString();
         ss << "/slice";
         ss << std::setfill(' ') << std::setw(max_number_width);
-        ss << k;
+        ss << j;
         ss << ".png";
 
         lodepng::State state;
