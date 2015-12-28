@@ -42,10 +42,14 @@ CanvasInfo SubdatumProxy::canvasInfo() const
     return out;
 }
 
-void SubdatumProxy::setPositions(const CanvasInfo& info)
+void SubdatumProxy::setPositions(const CanvasInfo& info, bool select)
 {
     if (info.subdatum.contains(datum))
+    {
         frame->setPos(info.subdatum[datum]);
+        if (select)
+            frame->setSelected(true);
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

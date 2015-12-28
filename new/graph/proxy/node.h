@@ -50,7 +50,7 @@ public:
      *  Normally, this checks against the single node, but we also
      *  recurse for GraphNodes.
      */
-    void setPositions(const CanvasInfo& info);
+    void setPositions(const CanvasInfo& info, bool select=false);
 
     /*
      *  Clears the inspector's 'Export' button

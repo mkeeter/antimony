@@ -26,7 +26,7 @@ public:
     /*
      * Sets the position of the subdatum frame
      */
-    void setPositions(const CanvasInfo& info);
+    void setPositions(const CanvasInfo& info, bool select=false);
 
     /*
      *  Return input and output ports (from the associated row)

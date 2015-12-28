@@ -105,10 +105,10 @@ CanvasInfo GraphProxy::canvasInfo() const
     return out;
 }
 
-void GraphProxy::setPositions(const CanvasInfo& info)
+void GraphProxy::setPositions(const CanvasInfo& info, bool select)
 {
     for (auto n : nodes)
-        n->setPositions(info);
+        n->setPositions(info, select);
     for (auto d : datums)
-        d->setPositions(info);
+        d->setPositions(info, select);
 }

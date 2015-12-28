@@ -9,6 +9,20 @@ class CanvasView : public QGraphicsView
 {
 public:
     CanvasView(CanvasScene* scene, QWidget* parent);
+
+public slots:
+    /*
+     *  Loads either text (if a datum editor is focused) or a set of nodes
+     *  to the system clipboard
+     */
+    void onCopy();
+    void onCut();
+
+    /*
+     *  Pastes either text (if a datum editor is focused) or a set of nodes
+     */
+    void onPaste();
+
 protected:
     /*
      *  Overload draw events for background and selection rectangle.
@@ -33,6 +47,11 @@ protected:
      *  Creates an UndoDeleteMulti that deletes all selected objects
      */
     void deleteSelected();
+
+    /*
+     *  Paste in an array of nodes, properly updating UIDs and names
+     */
+    void pasteNodes(QJsonArray array);
 
     QPointF click_pos;
     QPointF drag_pos;

@@ -7,7 +7,16 @@
 CanvasWindow::CanvasWindow(CanvasScene* scene)
     : BaseWindow("Graph")
 {
-    setCentralWidget(scene->getView());
+    auto view = scene->getView();
+    setCentralWidget(view);
+
+    // Connect copy / paste actions
+    connect(ui->actionCopy, &QAction::triggered,
+            view, &CanvasView::onCopy);
+    connect(ui->actionCut, &QAction::triggered,
+            view, &CanvasView::onCut);
+    connect(ui->actionPaste, &QAction::triggered,
+            view, &CanvasView::onPaste);
 
     ui->menuView->deleteLater();
     ui->menuReference->deleteLater();

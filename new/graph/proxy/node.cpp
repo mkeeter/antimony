@@ -74,13 +74,17 @@ CanvasInfo NodeProxy::canvasInfo() const
     return out;
 }
 
-void NodeProxy::setPositions(const CanvasInfo& info)
+void NodeProxy::setPositions(const CanvasInfo& info, bool select)
 {
     if (info.inspector.contains(node))
+    {
         inspector->setPos(info.inspector[node]);
+        if (select)
+            inspector->setSelected(true);
+    }
 
     if (subgraph)
-        subgraph->setPositions(info);
+        subgraph->setPositions(info, select);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

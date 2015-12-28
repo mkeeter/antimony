@@ -87,7 +87,7 @@ public:
      *  Sets positions of all inspectors and subdatums
      *  (recursively descending into subgraphs)
      */
-    void setPositions(const CanvasInfo& info);
+    void setPositions(const CanvasInfo& info, bool select=false);
 
 protected:
     Graph* const graph;
