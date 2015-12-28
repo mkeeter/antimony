@@ -68,7 +68,6 @@ QJsonObject SceneSerializer::serializeNode(Node* node, CanvasInfo* info)
         out["subgraph"] = serializeGraph(graph_node->getGraph(), info);
     }
 
-
     QJsonArray datum_array;
     for (auto d : node->childDatums())
         datum_array.append(serializeDatum(d, info));
