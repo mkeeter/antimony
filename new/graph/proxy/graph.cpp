@@ -11,12 +11,15 @@
 #include "canvas/inspector/buttons.h"
 #include "window/canvas.h"
 
+#include "viewport/scene.h"
+#include "window/viewport.h"
+
 #include "graph/graph.h"
 #include "graph/graph_node.h"
 
 GraphProxy::GraphProxy(Graph* g, NodeProxy* parent)
     : QObject(parent), graph(g), canvas_scene(new CanvasScene(g, this)),
-      hooks(new AppHooks(this))
+      viewport_scene(new ViewportScene(g, this)), hooks(new AppHooks(this))
 {
     g->installWatcher(this);
     g->installExternalHooks(hooks);
@@ -62,6 +65,11 @@ W* GraphProxy::newWindow(S* scene)
 CanvasWindow* GraphProxy::newCanvasWindow()
 {
     return newWindow<CanvasWindow>(canvas_scene);
+}
+
+ViewportWindow* GraphProxy::newViewportWindow()
+{
+    return newWindow<ViewportWindow>(viewport_scene);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

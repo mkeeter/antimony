@@ -50,9 +50,13 @@ public:
     CanvasWindow* newCanvasWindow();
 
     /*
-     *  Dummy functions for viewport and quad view
+     *  Opens a new Viewport window with this object's scene
      */
-    void newViewWindow() {}
+    ViewportWindow* newViewportWindow();
+
+    /*
+     *  Dummy functions for quad view
+     */
     void newQuadWindow() {}
 
     /*
@@ -96,7 +100,7 @@ protected:
     Graph* const graph;
 
     CanvasScene* canvas_scene;
-    ViewportScene* view_scene;
+    ViewportScene* viewport_scene;
     QList<QMainWindow*> windows;
     AppHooks* hooks;
 

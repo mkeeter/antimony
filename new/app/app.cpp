@@ -41,6 +41,7 @@ App* App::instance()
 void App::makeDefaultWindows()
 {
     newCanvasWindow();
+    newViewportWindow();
 }
 
 QString App::bundledNodePath() const
@@ -156,7 +157,7 @@ void App::newCanvasWindow()
 
 void App::newViewportWindow()
 {
-
+    proxy->newViewportWindow();
 }
 
 void App::newQuadWindow()

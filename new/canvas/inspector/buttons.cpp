@@ -161,7 +161,7 @@ InspectorViewButton::InspectorViewButton(GraphProxy* n, InspectorTitle* parent)
 {
     setToolTip("Open viewport");
     connect(this, &InspectorButton::pressed,
-            n, &GraphProxy::newViewWindow);
+            n, &GraphProxy::newViewportWindow);
     parent->addButton(this);
 }
 

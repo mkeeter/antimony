@@ -91,6 +91,7 @@ SOURCES += \
     canvas/connection/dummy.cpp         \
     window/base.cpp                     \
     window/canvas.cpp                   \
+    window/viewport.cpp                 \
     window/script.cpp                   \
     graph/constructor/populate.cpp      \
     graph/proxy/graph.cpp               \
@@ -139,6 +140,7 @@ HEADERS += \
     canvas/info.h                       \
     window/base.h                       \
     window/canvas.h                     \
+    window/viewport.h                   \
     window/script.h                     \
     canvas/inspector/frame.h            \
     canvas/inspector/export.h           \

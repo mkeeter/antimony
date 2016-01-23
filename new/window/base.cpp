@@ -9,6 +9,8 @@ BaseWindow::BaseWindow(QString type)
 
     connectActions(App::instance());
     setShortcuts();
+
+    setWindowTitle(type);
 }
 
 void BaseWindow::connectActions(App* app)
