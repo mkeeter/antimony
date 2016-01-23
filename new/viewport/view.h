@@ -25,6 +25,26 @@ public:
      */
     void drawForeground(QPainter* painter, const QRectF& rect) override;
 
+    /*
+     *  On mouse move, drag or rotate the view
+     */
+    void mouseMoveEvent(QMouseEvent* event) override;
+
+    /*
+     *  On mouse click, save click_pos and click_pos_world
+     */
+    void mousePressEvent(QMouseEvent* event) override;
+
+    /*
+     *  On resize, update scene rectangle size
+     */
+    void resizeEvent(QResizeEvent* e) override;
+
+    /*
+     *  Convert from a mouse position in scene coordinates to a world position
+     */
+    QVector3D sceneToWorld(QPointF pos) const;
+
     /*  Publically accessible handle to get shaders and VBO  */
     ViewportGL gl;
 
@@ -43,4 +63,13 @@ protected:
     /*  Angles for rotation  */
     float pitch;
     float yaw;
+
+    /*  Mouse position during a drag  */
+    QPoint current_pos;
+
+    /*  Mouse coordinates at which the click started  */
+    QPointF click_pos;
+
+    /*  Mouse click coordinates in the world's coordinate frame  */
+    QVector3D click_pos_world;
 };

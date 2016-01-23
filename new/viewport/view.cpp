@@ -2,6 +2,7 @@
 
 #include <QOpenGLWidget>
 #include <QMatrix4x4>
+#include <QMouseEvent>
 
 #include "viewport/view.h"
 #include "app/colors.h"
@@ -16,9 +17,13 @@ ViewportView::ViewportView(QWidget* parent)
     auto gl = new QOpenGLWidget(this);
     setViewport(gl);
 
+    setSceneRect(-width()/2, -height()/2, width(), height());
+
     QAbstractScrollArea::setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     QAbstractScrollArea::setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 QMatrix4x4 ViewportView::getMatrix() const
 {
@@ -32,6 +37,13 @@ QMatrix4x4 ViewportView::getMatrix() const
 
     return M;
 }
+
+QVector3D ViewportView::sceneToWorld(QPointF p) const
+{
+    return getMatrix().inverted() * QVector3D(p.x(), p.y(), 0);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 void ViewportView::drawBackground(QPainter* painter, const QRectF& rect)
 {
@@ -78,4 +90,56 @@ void ViewportView::drawForeground(QPainter* painter, const QRectF& rect)
 {
     QGraphicsView::drawForeground(painter, rect);
     drawAxes(painter);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ViewportView::mousePressEvent(QMouseEvent* event)
+{
+    QGraphicsView::mousePressEvent(event);
+
+    // If the event hasn't been accepted, record click position for
+    // panning / rotation on mouse drag.
+    if (!event->isAccepted())
+    {
+        if (event->button() == Qt::LeftButton)
+        {
+            click_pos = mapToScene(event->pos());
+            click_pos_world = sceneToWorld(click_pos);
+        }
+        else
+        {
+            click_pos = event->pos();
+        }
+    }
+}
+
+void ViewportView::mouseMoveEvent(QMouseEvent* event)
+{
+    QGraphicsView::mouseMoveEvent(event);
+
+    current_pos = event->pos();
+    if (scene()->mouseGrabberItem() == NULL)
+    {
+        if (event->buttons() == Qt::LeftButton)
+        {
+            center += click_pos_world - sceneToWorld(mapToScene(event->pos()));
+            update();
+        }
+        else if (event->buttons() == Qt::RightButton)
+        {
+            QPointF d = click_pos - event->pos();
+            pitch = fmin(0, fmax(-M_PI, pitch - 0.01 * d.y()));
+            yaw = fmod(yaw + M_PI - 0.01 * d.x(), M_PI*2) - M_PI;
+
+            click_pos = event->pos();
+            update();
+        }
+    }
+}
+
+void ViewportView::resizeEvent(QResizeEvent* e)
+{
+    Q_UNUSED(e);
+    setSceneRect(-width()/2, -height()/2, width(), height());
 }
