@@ -17,6 +17,9 @@ class AppHooks;
 class CanvasScene;
 class CanvasWindow;
 
+class ViewportScene;
+class ViewportWindow;
+
 class GraphProxy : public QObject, public GraphWatcher
 {
 Q_OBJECT
@@ -93,6 +96,7 @@ protected:
     Graph* const graph;
 
     CanvasScene* canvas_scene;
+    ViewportScene* view_scene;
     QList<QMainWindow*> windows;
     AppHooks* hooks;
 

@@ -124,6 +124,11 @@ SOURCES += \
     export/export_mesh.cpp              \
     export/export_heightmap.cpp         \
     export/export_worker.cpp            \
+    viewport/scene.cpp                  \
+    viewport/view.cpp                   \
+    viewport/control/control.cpp        \
+    viewport/control/instance.cpp       \
+    viewport/control/root.cpp           \
 
 HEADERS += \
     app/app.h                           \
@@ -181,6 +186,11 @@ HEADERS += \
     export/export_mesh.h                \
     export/export_heightmap.h           \
     export/export_worker.h              \
+    viewport/scene.h                    \
+    viewport/view.h                     \
+    viewport/control/control.h          \
+    viewport/control/instance.h         \
+    viewport/control/root.h             \
 
 FORMS += \
     forms/base_window.ui \
