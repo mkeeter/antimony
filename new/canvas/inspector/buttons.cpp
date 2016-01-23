@@ -181,9 +181,9 @@ void InspectorViewButton::paint(QPainter* painter,
     const QColor base = Colors::base04;
     painter->setPen(QPen(hover ? Colors::highlight(base) : base, 2));
 
-    painter->drawRect(1, 1, 14, 14);
-    painter->drawLine(1, 8, 15, 8);
-    painter->drawLine(8, 1, 8, 15);
+    painter->drawRect(1, 15, 15, 1);
+    painter->drawLine(1, 15, 1, 1);
+    painter->drawLine(1, 15, 8, 8);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -213,7 +213,7 @@ void InspectorQuadButton::paint(QPainter* painter,
     const QColor base = Colors::base04;
     painter->setPen(QPen(hover ? Colors::highlight(base) : base, 2));
 
-    painter->drawRect(1, 15, 15, 1);
-    painter->drawLine(1, 15, 1, 1);
-    painter->drawLine(1, 15, 8, 8);
+    painter->drawRect(1, 1, 14, 14);
+    painter->drawLine(1, 8, 15, 8);
+    painter->drawLine(8, 1, 8, 15);
 }
