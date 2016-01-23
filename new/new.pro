@@ -126,6 +126,7 @@ SOURCES += \
     export/export_heightmap.cpp         \
     export/export_worker.cpp            \
     viewport/scene.cpp                  \
+    viewport/gl.cpp                     \
     viewport/view.cpp                   \
     viewport/control/control.cpp        \
     viewport/control/instance.cpp       \
@@ -190,6 +191,7 @@ HEADERS += \
     export/export_worker.h              \
     viewport/scene.h                    \
     viewport/view.h                     \
+    viewport/gl.h                       \
     viewport/control/control.h          \
     viewport/control/instance.h         \
     viewport/control/root.h             \
