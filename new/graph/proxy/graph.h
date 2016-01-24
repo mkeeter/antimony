@@ -19,6 +19,7 @@ class CanvasWindow;
 
 class ViewportScene;
 class ViewportWindow;
+class Control;
 
 class GraphProxy : public QObject, public GraphWatcher
 {
@@ -37,6 +38,11 @@ public:
      *  Returns the CanvasScene object
      */
     CanvasScene* canvasScene() const { return canvas_scene; }
+
+    /*
+     *  Returns the ViewportScene object
+     */
+    ViewportScene* viewportScene() const { return viewport_scene; }
 
     /*
      *  Constructs a new window of the given class, storing it in the
@@ -95,6 +101,11 @@ public:
      *  (recursively descending into subgraphs)
      */
     void setPositions(const CanvasInfo& info, bool select=false);
+
+    /*
+     *  Make instances for a new control
+     */
+    void makeInstancesFor(Control* c);
 
 protected:
     Graph* const graph;

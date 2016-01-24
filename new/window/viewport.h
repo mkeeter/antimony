@@ -2,10 +2,10 @@
 
 #include "window/base.h"
 
-class ViewportScene;
+class ViewportView;
 
 class ViewportWindow : public BaseWindow
 {
 public:
-    ViewportWindow(ViewportScene* scene);
+    ViewportWindow(ViewportView* view);
 };

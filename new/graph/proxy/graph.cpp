@@ -69,7 +69,20 @@ CanvasWindow* GraphProxy::newCanvasWindow()
 
 ViewportWindow* GraphProxy::newViewportWindow()
 {
-    return newWindow<ViewportWindow>(viewport_scene);
+    auto view = viewport_scene->getView();
+    auto win = newWindow<ViewportWindow>(view);
+
+    for (auto n : nodes)
+    {
+        n->makeInstancesFor(view);
+    }
+
+    return win;
+}
+
+void GraphProxy::makeInstancesFor(Control* c)
+{
+    viewport_scene->makeInstancesFor(c);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

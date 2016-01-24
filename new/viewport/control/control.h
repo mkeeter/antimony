@@ -14,6 +14,11 @@ public:
     Control(ControlRoot* parent);
 
     /*
+     *  Destructor asks all instances to delete themselves
+     */
+    ~Control();
+
+    /*
      *  Create a new ControlInstance for the given viewport
      */
     void makeInstanceFor(ViewportView* v);

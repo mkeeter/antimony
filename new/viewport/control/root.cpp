@@ -16,3 +16,13 @@ void ControlRoot::makeInstancesFor(ViewportView* v)
         c->makeInstanceFor(v);
     }
 }
+
+Control* ControlRoot::getControl(long lineno)
+{
+    return controls.contains(lineno) ? controls[lineno] : nullptr;
+}
+
+void ControlRoot::registerControl(long lineno, Control* c)
+{
+    controls[lineno] = c;
+}

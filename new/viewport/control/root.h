@@ -17,6 +17,16 @@ public:
      */
     void makeInstancesFor(ViewportView* v);
 
+    /*
+     *  Look up a control by name
+     */
+    Control* getControl(long lineno);
+
+    /*
+     *  Registers a control by line number
+     */
+    void registerControl(long lineno, Control* c);
+
 protected:
     /*  Mapping from line numbers to control objects (owned by this root)  */
     QMap<long, Control*> controls;

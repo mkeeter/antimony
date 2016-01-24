@@ -5,10 +5,9 @@
 
 #include "ui_base_window.h"
 
-ViewportWindow::ViewportWindow(ViewportScene* scene)
+ViewportWindow::ViewportWindow(ViewportView* view)
     : BaseWindow("Viewport")
 {
-    auto view = scene->getView();
     setCentralWidget(view);
 
     ui->menuAdd->deleteLater();

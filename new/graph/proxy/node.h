@@ -14,6 +14,9 @@ class GraphProxy;
 class ScriptProxy;
 class DatumProxy;
 class ExportWorker;
+class ControlRoot;
+class Control;
+class ViewportView;
 
 class InspectorFrame;
 class InspectorShowHiddenButton;
@@ -67,6 +70,22 @@ public:
      */
     DatumProxy* getDatumProxy(Datum* d);
 
+    /*
+     *  Make Control and Render instances for a new viewport view
+     */
+    void makeInstancesFor(ViewportView* v);
+
+    /*
+     *  Look up a control by line number in the control root
+     *  (returning nullptr if none is found)
+     */
+    Control* getControl(long lineno);
+
+    /*
+     *  Register a control, constructing appropriate instances
+     */
+    void registerControl(long lineno, Control* c);
+
 protected:
     Node* const node;
 
@@ -74,6 +93,8 @@ protected:
 
     ScriptProxy* script;
     GraphProxy* subgraph;
+
+    ControlRoot* controls;
 
     InspectorFrame* inspector;
     InspectorShowHiddenButton* show_hidden;

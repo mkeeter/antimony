@@ -6,6 +6,7 @@
 class Graph;
 class ViewportView;
 
+class Control;
 class ControlRoot;
 class RenderTarget;
 
@@ -30,16 +31,9 @@ public:
     ViewportView* getView(QWidget* parent=NULL);
 
     /*
-     *  Adds a new control root
+     *  Make instances for every viewport
      */
-    void addControl(ControlRoot* c);
-
-    /*
-     *  Adds a new render target without taking ownership
-     */
-    /*
-    void addTarget(RenderTarget* t);
-    */
+    void makeInstancesFor(Control* c);
 
     /*
      *  Returns this scene's graph object without taking ownership
@@ -50,8 +44,5 @@ protected:
     Graph* const g;
 
     /* Stores viewports for which we've made a QGraphicsScene */
-    QSet<ViewportView*> viewports;
-
-    QList<ControlRoot*> roots;
-    //QList<RenderTarget*> targets;
+    QList<ViewportView*> viewports;
 };

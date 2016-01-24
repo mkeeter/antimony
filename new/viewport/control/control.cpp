@@ -11,6 +11,15 @@ Control::Control(ControlRoot* parent)
     // Nothing to do here
 }
 
+Control::~Control()
+{
+    for (auto i : instances)
+    {
+        disconnect(i, &QGraphicsObject::destroyed, 0, 0);
+        i->deleteLater();
+    }
+}
+
 void Control::makeInstanceFor(ViewportView* v)
 {
     auto i = new ControlInstance(this, v);
