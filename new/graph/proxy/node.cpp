@@ -10,7 +10,7 @@
 #include "canvas/inspector/buttons.h"
 #include "canvas/scene.h"
 
-#include "viewport/control/root.h"
+#include "viewport/control/control.h"
 
 #include "graph/node.h"
 #include "graph/graph_node.h"
@@ -18,7 +18,6 @@
 
 NodeProxy::NodeProxy(Node* n, GraphProxy* parent)
     : QObject(parent), node(n), script(NULL), subgraph(NULL),
-      controls(new ControlRoot(this)),
       inspector(new InspectorFrame(n, parent->canvasScene())),
       show_hidden(new InspectorShowHiddenButton(inspector))
 {
@@ -118,16 +117,20 @@ DatumProxy* NodeProxy::getDatumProxy(Datum* d)
 
 Control* NodeProxy::getControl(long lineno)
 {
-    return controls->getControl(lineno);
+    return controls.contains(lineno) ? controls[lineno] : nullptr;
 }
 
 void NodeProxy::registerControl(long lineno, Control* c)
 {
-    controls->registerControl(lineno, c);
+    Q_ASSERT(!controls.contains(lineno));
+    controls[lineno] = c;
     static_cast<GraphProxy*>(parent())->makeInstancesFor(c);
 }
 
 void NodeProxy::makeInstancesFor(ViewportView* view)
 {
-    controls->makeInstancesFor(view);
+    for (auto c : controls)
+    {
+        c->makeInstanceFor(view);
+    }
 }

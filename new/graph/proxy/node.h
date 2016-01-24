@@ -94,7 +94,7 @@ protected:
     ScriptProxy* script;
     GraphProxy* subgraph;
 
-    ControlRoot* controls;
+    QMap<long, Control*> controls;
 
     InspectorFrame* inspector;
     InspectorShowHiddenButton* show_hidden;

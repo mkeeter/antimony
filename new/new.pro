@@ -130,7 +130,6 @@ SOURCES += \
     viewport/view.cpp                   \
     viewport/control/control.cpp        \
     viewport/control/instance.cpp       \
-    viewport/control/root.cpp           \
 
 HEADERS += \
     app/app.h                           \
@@ -194,7 +193,6 @@ HEADERS += \
     viewport/gl.h                       \
     viewport/control/control.h          \
     viewport/control/instance.h         \
-    viewport/control/root.h             \
 
 FORMS += \
     forms/base_window.ui \
