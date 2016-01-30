@@ -1,0 +1,57 @@
+#include <Python.h>
+
+#include <QMatrix4x4>
+#include <QPainter>
+
+#include "viewport/control/point.h"
+#include "app/colors.h"
+
+PointControl::PointControl(NodeProxy* node, PyObject* drag_func)
+    : Control(node), x(0), y(0), z(0), r(5), color(Colors::blue)
+{
+    // Nothing to do here
+}
+
+void PointControl::update(float x_, float y_, float z_, float r_,
+                          QColor color_, bool relative_, PyObject* drag_func)
+{
+    bool changed = (x != x_) || (y != y_) || (z != z_) || (r != r_) ||
+                   (color != color_) || (relative != relative_);
+
+    x = x_;
+    y = y_;
+    z = z_;
+    r = r_;
+    color = color_;
+    relative = relative_;
+
+    /*
+    if (changed)
+        emit(redraw());
+
+    setDragFunc(drag_func);
+    */
+}
+
+QPainterPath PointControl::shape(QMatrix4x4 m) const
+{
+    QPainterPath path;
+    QPointF pt = (m * QVector3D(x, y, z)).toPointF();
+    path.addEllipse(QRectF(pt.x() - r, pt.y() - r, 2*r, 2*r));
+    return path;
+}
+
+void PointControl::paint(QMatrix4x4 m, bool highlight, QPainter* painter)
+{
+    QColor edge = Colors::dim(color);
+
+#warning Faking glow value
+    bool glow = false;
+
+    painter->setPen(QPen((highlight || glow) ? Colors::highlight(edge)
+                                             : edge, 2));
+    painter->setBrush(QBrush((highlight || glow) ? Colors::highlight(color)
+                                                 : color));
+    painter->drawPath(shape(m));
+}
+

@@ -102,6 +102,7 @@ SOURCES += \
     graph/proxy/base_datum.cpp          \
     graph/hooks/hooks.cpp               \
     graph/hooks/export.cpp              \
+    graph/hooks/ui.cpp                  \
     graph/hooks/title.cpp               \
     graph/serialize/serializer.cpp      \
     graph/serialize/deserializer.cpp    \
@@ -130,6 +131,7 @@ SOURCES += \
     viewport/view.cpp                   \
     viewport/control/control.cpp        \
     viewport/control/instance.cpp       \
+    viewport/control/point.cpp          \
 
 HEADERS += \
     app/app.h                           \
@@ -166,6 +168,7 @@ HEADERS += \
     graph/hooks/hooks.h                 \
     graph/hooks/export.h                \
     graph/hooks/title.h                 \
+    graph/hooks/ui.cpp                  \
     graph/serialize/serializer.h        \
     graph/serialize/deserializer.h      \
     script/syntax.h                     \
@@ -193,6 +196,7 @@ HEADERS += \
     viewport/gl.h                       \
     viewport/control/control.h          \
     viewport/control/instance.h         \
+    viewport/control/point.h            \
 
 FORMS += \
     forms/base_window.ui \

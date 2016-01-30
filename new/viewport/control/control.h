@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QMap>
 #include <QPainter>
+#include <QVector3D>
 
 class NodeProxy;
 class ViewportView;
@@ -40,8 +41,29 @@ public:
      */
     virtual void paint(QMatrix4x4 m, bool highlight, QPainter* painter)=0;
 
+    /*
+     *  Return a central point associated with this control
+     */
+    virtual QVector3D pos() const=0;
+
+    /*
+     *  Set the touched flag to true
+     */
+    void touch() { touched = true; }
+
+    /*
+     *  Check whether this control uses a relative drag function
+     */
+    bool getRelative() const { return relative; }
+
 protected:
     /*  Instances (which are QGraphicsItems) for each viewport  *
      *  (ownership unclear at the moment)                       */
     QMap<ViewportView*, ControlInstance*> instances;
+
+    /*  Flag indicating whether this control has been touched  */
+    bool touched=false;
+
+    /*  Flag indicating whether drag function is relative or absolute  */
+    bool relative=false;
 };

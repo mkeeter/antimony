@@ -4,6 +4,7 @@
 #include "graph/hooks/hooks.h"
 #include "graph/hooks/title.h"
 #include "graph/hooks/export.h"
+#include "graph/hooks/ui.h"
 
 #include "graph/proxy/graph.h"
 #include "graph/proxy/node.h"
@@ -20,6 +21,30 @@ BOOST_PYTHON_MODULE(_AppHooks)
 {
     class_<ScriptTitleHook>("ScriptTitleHook", init<>())
         .def("__call__", &ScriptTitleHook::call);
+
+    class_<ScriptUIHooks>("ScriptUIHooks", init<>())
+        .def("point", raw_function(&ScriptUIHooks::point),
+                "point(x, y, z, r=5, color=(150, 150, 255), drag=None)\n"
+                "    Constructs a point in the 3D viewport\n"
+                "    x, y, z are the point's position\n\n"
+                "    Valid kwargs:\n"
+                "    r sets the point's radius\n"
+                "    color sets the color as a 3-tuple (0-255)\n"
+                "    drag is an optional callback:\n"
+                "      It is invoked as drag(this, x, y, z)\n"
+                "      where this is a representation of the parent\n"
+                "      object and x, y, z are the position to which\n"
+                "      the point has been dragged."
+                )
+        .def("wireframe", raw_function(&ScriptUIHooks::wireframe),
+                "wireframe(pts, t=3, color=(150, 150, 255), close=false)\n"
+                "    Constructs a wireframe in the 3D viewport\n"
+                "    pts is a list of 3-float tuples\n\n"
+                "    Valid kwargs:\n"
+                "    t sets the line's thickness\n"
+                "    color sets the color as a 3-tuple (0-255)\n"
+                "    close makes the loop closed"
+                );
 
     class_<ScriptExportHooks>("ScriptExportHooks", init<>())
         .def("stl", raw_function(&ScriptExportHooks::stl),
@@ -98,6 +123,15 @@ void AppHooks::loadScriptHooks(PyObject* g, ScriptNode* n)
         PyDict_SetItemString(g, "title", title_func);
     }
 
+    PyObject* ui_obj = NULL;
+    {   // Create UI object
+        ui_obj = PyObject_CallMethod(
+                hooks_module, "ScriptUIHooks", NULL);
+        auto ui_ref = extract<ScriptUIHooks*>(ui_obj)();
+        ui_ref->proxy = proxy->getNodeProxy(n);
+#warning Need to clear Control's touched flags
+    }
+
     PyObject* export_obj = NULL;
     {   // Create export object
         export_obj = PyObject_CallMethod(
@@ -110,7 +144,7 @@ void AppHooks::loadScriptHooks(PyObject* g, ScriptNode* n)
 
     {   // Pack export, ui, and colors into the 'sb' tuple
         PyObject* sb = PyObject_CallFunctionObjArgs(
-                sb_tuple, Py_None, export_obj, Colors::PyColors(), NULL);
+                sb_tuple, ui_obj, export_obj, Colors::PyColors(), NULL);
         PyDict_SetItemString(g, "sb", sb);
     }
 }
