@@ -14,7 +14,6 @@ class GraphProxy;
 class ScriptProxy;
 class DatumProxy;
 class ExportWorker;
-class ControlRoot;
 class Control;
 class ViewportView;
 

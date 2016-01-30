@@ -7,7 +7,6 @@ class Graph;
 class ViewportView;
 
 class Control;
-class ControlRoot;
 class RenderTarget;
 
 class ViewportScene : public QObject
