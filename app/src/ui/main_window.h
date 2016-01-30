@@ -37,7 +37,25 @@ public:
      */
     bool isShaded() const;
 
+protected:
+    /*
+     *  On close, check to see if this is the last window
+     */
+    void closeEvent(QCloseEvent *event) override;
+
+protected slots:
+    /*
+     *  Close the window, asking permission if it is the last one
+     */
+    void tryClose();
+
 private:
+    /*
+     *  If there are unsaved changes and this is the last window,
+     *  whether it should be closed.
+     */
+    bool askClose();
+
     /*
      *  Connects menu actions to App slots.
      */
@@ -67,6 +85,8 @@ private:
 
     QString window_type;
     Ui::MainWindow *ui;
+
+    static int window_count;
 };
 
 #endif // MAIN_WINDOW_H

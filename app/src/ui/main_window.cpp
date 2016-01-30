@@ -1,5 +1,6 @@
 #include <Python.h>
 
+#include <QMessageBox>
 #include <QKeySequence>
 #include <QMouseEvent>
 #include <QDebug>
@@ -21,6 +22,9 @@
 
 #include "control/proxy.h"
 
+// Initialize global window count (used to detect when last window closes)
+int MainWindow::window_count = 0;
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -34,10 +38,13 @@ MainWindow::MainWindow(QWidget *parent) :
     setShortcuts();
 
     populateMenu(ui->menuAdd);
+
+    window_count++;
 }
 
 MainWindow::~MainWindow()
 {
+    window_count--;
     delete ui;
 }
 
@@ -77,8 +84,9 @@ void MainWindow::connectActions(App* app)
             app, &App::onOpen);
     connect(ui->actionQuit, &QAction::triggered,
             app, &App::onQuit);
+
     connect(ui->actionClose, &QAction::triggered,
-            this, &MainWindow::deleteLater);
+            this, &MainWindow::tryClose);
 
     // View window
     connect(ui->actionNewCanvas, &QAction::triggered,
@@ -99,6 +107,36 @@ void MainWindow::connectActions(App* app)
     connect(app, &App::windowTitleChanged, this,
             [=](QString title){
                 this->setWindowTitle(title.arg(window_type));});
+}
+
+bool MainWindow::askClose()
+{
+    if(window_count <= 1 && !App::instance()->isUndoStackClean())
+    {
+        auto res = QMessageBox::question(
+                this, "APP_NAME", "There are unsaved changes!\n"
+                                  "Do you still want to close this window?\n",
+                QMessageBox::No | QMessageBox::Yes, QMessageBox::Yes);
+
+        return (res == QMessageBox::Yes);
+    }
+    return true;
+}
+
+void MainWindow::closeEvent(QCloseEvent* event)
+{
+    if (!askClose())
+    {
+        event->ignore();
+    }
+}
+
+void MainWindow::tryClose()
+{
+    if (askClose())
+    {
+        deleteLater();
+    }
 }
 
 void MainWindow::setShortcuts()

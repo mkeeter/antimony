@@ -62,6 +62,7 @@ public:
     void redo();
     void beginUndoMacro(QString text);
     void endUndoMacro();
+    bool isUndoStackClean() const;
 
     void loadFile(QString f);
 

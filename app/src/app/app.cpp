@@ -497,3 +497,8 @@ void App::endUndoMacro()
 {
     stack->endMacro();
 }
+
+bool App::isUndoStackClean() const
+{
+    return stack->isClean();
+}
