@@ -1,11 +1,12 @@
 #include <QMatrix4x4>
 
-#include "viewport/control/root.h"
 #include "viewport/control/control.h"
 #include "viewport/control/instance.h"
 #include "viewport/view.h"
 
-Control::Control(ControlRoot* parent)
+#include "graph/proxy/node.h"
+
+Control::Control(NodeProxy* parent)
     : QObject(parent)
 {
     // Nothing to do here

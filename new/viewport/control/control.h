@@ -4,14 +4,14 @@
 #include <QMap>
 #include <QPainter>
 
-class ControlRoot;
+class NodeProxy;
 class ViewportView;
 class ControlInstance;
 
 class Control : public QObject
 {
 public:
-    Control(ControlRoot* parent);
+    Control(NodeProxy* parent);
 
     /*
      *  Destructor asks all instances to delete themselves
