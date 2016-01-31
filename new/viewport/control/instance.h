@@ -48,6 +48,12 @@ public:
      */
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
 
+    /*
+     *  On hover enter and exit, set hover flag and call update
+     */
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
+
 protected:
     /*
      *  Returns the transform matrix from the parent view
@@ -62,4 +68,7 @@ protected:
 
     /*  Cursor position (used when dragging)  */
     QPointF click_pos;
+
+    /*  Flag indicating whether the mouse is over this point  */
+    bool hover=false;
 };

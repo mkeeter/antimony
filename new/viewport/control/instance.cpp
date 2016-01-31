@@ -39,7 +39,7 @@ void ControlInstance::paint(QPainter* painter,
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    control->paint(getMatrix(), isSelected(), painter);
+    control->paint(getMatrix(), isSelected() || hover, painter);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -71,4 +71,24 @@ void ControlInstance::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
                   p1 - p0);
 
     click_pos = event->pos();
+}
+
+void ControlInstance::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    QGraphicsObject::hoverEnterEvent(event);
+    if (!hover)
+    {
+        hover = true;
+        update();
+    }
+}
+
+void ControlInstance::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    QGraphicsObject::hoverLeaveEvent(event);
+    if (hover)
+    {
+        hover = false;
+        update();
+    }
 }

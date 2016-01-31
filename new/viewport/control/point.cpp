@@ -50,13 +50,8 @@ void PointControl::paint(QMatrix4x4 m, bool highlight, QPainter* painter)
 {
     QColor edge = Colors::dim(color);
 
-#warning Faking glow value
-    bool glow = false;
-
-    painter->setPen(QPen((highlight || glow) ? Colors::highlight(edge)
-                                             : edge, 2));
-    painter->setBrush(QBrush((highlight || glow) ? Colors::highlight(color)
-                                                 : color));
+    painter->setPen(QPen(highlight ? Colors::highlight(edge) : edge, 2));
+    painter->setBrush(QBrush(highlight ? Colors::highlight(color) : color));
     painter->drawPath(shape(m));
 }
 
