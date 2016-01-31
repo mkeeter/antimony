@@ -4,6 +4,8 @@
 #include <QPainter>
 
 #include "viewport/control/point.h"
+#include "viewport/control/instance.h"
+
 #include "app/colors.h"
 
 PointControl::PointControl(NodeProxy* node, PyObject* drag_func)
@@ -25,6 +27,10 @@ void PointControl::update(float x_, float y_, float z_, float r_,
     color = color_;
     relative = relative_;
 
+    for (auto i : instances)
+    {
+        i->redraw();
+    }
     /*
     if (changed)
         emit(redraw());

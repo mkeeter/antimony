@@ -53,6 +53,7 @@ public:
 
     /*  Flag indicating whether this control has been touched  */
     bool touched=false;
+
 protected:
     /*  Instances (which are QGraphicsItems) for each viewport  *
      *  (ownership unclear at the moment)                       */

@@ -27,6 +27,12 @@ public:
      */
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
                QWidget* widget) override;
+
+    /*
+     *  Indicate that the control should be redrawn
+     */
+    void redraw() { prepareGeometryChange(); }
+
 protected:
     /*
      *  Returns the transform matrix from the parent view
