@@ -24,7 +24,10 @@ public:
     QVector3D pos() const override { return QVector3D(x, y, z); }
 
 protected:
+    /*  Position and radius  */
     float x, y, z, r;
+
+    /*  Point color  */
     QColor color;
 
     friend struct ScriptUIHooks;

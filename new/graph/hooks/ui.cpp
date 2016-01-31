@@ -318,7 +318,6 @@ object ScriptUIHooks::wireframe(tuple args, dict kwargs)
         throw AppHooks::Exception("Wireframe must have at least one point");
     }
 
-    /*
     WireframeControl* w = dynamic_cast<WireframeControl*>(
             self.proxy->getControl(lineno));
 
@@ -336,14 +335,13 @@ object ScriptUIHooks::wireframe(tuple args, dict kwargs)
                 "without drag function");
     }
 
-    const float t = getFloat(w->getT(), kwargs, "t");
-    const QColor color = getColor(w->getColor(), kwargs);
-    const bool close = getBool(w->getClose(), kwargs, "close");
-    const bool relative = getBool(w->getRelative(), kwargs, "relative");
+    const float t = getFloat(w->t, kwargs, "t");
+    const QColor color = getColor(w->color, kwargs);
+    const bool close = getBool(w->close, kwargs, "close");
+    const bool relative = getBool(w->relative, kwargs, "relative");
 
     w->update(v, t, color, close, relative, drag_func);
-    w->touch();
-    */
+    w->touched = true;
 
     return object();
 }
