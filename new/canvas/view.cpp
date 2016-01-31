@@ -134,14 +134,22 @@ void CanvasView::deleteSelected()
 
      // Find all selected links
     for (auto i : scene()->selectedItems())
+    {
         if (auto c = dynamic_cast<Connection*>(i))
+        {
             links.insert(QPair<const Datum*, Datum*>(
                         c->sourceDatum(),
                         c->targetDatum()));
+        }
         else if (auto p = dynamic_cast<InspectorFrame*>(i))
+        {
             nodes.insert(p->getNode());
+        }
         else if (auto s = dynamic_cast<SubdatumFrame*>(i))
+        {
             datums.insert(s->getDatum());
+        }
+    }
 
     App::instance()->pushUndoStack(new UndoDeleteMulti(nodes, datums, links));
 }

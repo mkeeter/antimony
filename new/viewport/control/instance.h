@@ -54,6 +54,11 @@ public:
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 
+    /*
+     *  On backspace or delete, pass a deletion request up to the proxy
+     */
+    void keyPressEvent(QKeyEvent* event) override;
+
 protected:
     /*
      *  Returns the transform matrix from the parent view

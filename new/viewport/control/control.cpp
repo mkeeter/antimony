@@ -9,6 +9,9 @@
 #include "graph/proxy/node.h"
 #include "graph/node.h"
 
+#include "app/app.h"
+#include "undo/undo_delete_multi.h"
+
 Control::Control(NodeProxy* parent)
     : QObject(parent)
 {
@@ -66,4 +69,12 @@ void Control::drag(QVector3D center, QVector3D diff)
     {
         Py_DECREF(i);
     }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void Control::deleteNode()
+{
+    auto node = static_cast<NodeProxy*>(parent())->getMutableNode();
+    App::instance()->pushUndoStack(new UndoDeleteMulti({node}, {}, {}));
 }

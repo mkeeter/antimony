@@ -65,6 +65,11 @@ public:
      */
     void drag(QVector3D center, QVector3D diff);
 
+    /*
+     *  Delete the parent node
+     */
+    void deleteNode();
+
     /*  Flag indicating whether this control has been touched  */
     bool touched=false;
 

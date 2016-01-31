@@ -2,6 +2,7 @@
 
 #include <QMatrix4x4>
 #include <QGraphicsSceneMouseEvent>
+#include <QKeyEvent>
 
 #include "viewport/control/instance.h"
 #include "viewport/control/control.h"
@@ -90,5 +91,18 @@ void ControlInstance::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     {
         hover = false;
         update();
+    }
+}
+
+void ControlInstance::keyPressEvent(QKeyEvent* event)
+{
+    if (event->key() == Qt::Key_Delete ||
+        event->key() == Qt::Key_Backspace)
+    {
+        control->deleteNode();
+    }
+    else
+    {
+        event->ignore();
     }
 }
