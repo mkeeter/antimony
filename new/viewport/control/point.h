@@ -7,7 +7,7 @@
 class PointControl : public Control
 {
 public:
-    PointControl(NodeProxy* node, PyObject* drag_func=NULL);
+    PointControl(NodeProxy* node);
 
     /*
      *  Updates the node, calling redraw if anything changed.

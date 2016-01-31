@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Python.h>
+
 #include <QObject>
 #include <QMap>
 #include <QPainter>
@@ -51,14 +53,35 @@ public:
      */
     bool getRelative() const { return relative; }
 
+    /*
+     *  Assigns to drag_func
+     *      Removes a reference from the previous drag_func
+     *      Steals a reference from new_drag_func
+     */
+    void setDragFunc(PyObject* new_drag_func);
+
+    /*
+     *  Drags the node around using the Python drag_func
+     */
+    void drag(QVector3D center, QVector3D diff);
+
     /*  Flag indicating whether this control has been touched  */
     bool touched=false;
 
 protected:
-    /*  Instances (which are QGraphicsItems) for each viewport  *
-     *  (ownership unclear at the moment)                       */
+    /*  Instances (which are QGraphicsItems) for each viewport               *
+     *  These are owned by the relevant ViewportView and configured to       *
+     *  auto-remove themselves from the list on deletion, but the Control's  *
+     *  destructor will call deleteLater on each Instance.                   */
     QMap<ViewportView*, ControlInstance*> instances;
 
+    /*  Function that is called when the control is dragged  *
+     *  The function is invoked as drag_func(this, x, y, z)  *
+     *      this is a mutable node proxy                     *
+     *      x, y, z are either absolute positions or deltas  *
+     *        (depending on whether relative is set)         */
+    PyObject* drag_func=nullptr;
+
     /*  Flag indicating whether drag function is relative or absolute  */
-    bool relative=false;
+    bool relative=true;
 };

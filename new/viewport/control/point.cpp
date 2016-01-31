@@ -8,7 +8,7 @@
 
 #include "app/colors.h"
 
-PointControl::PointControl(NodeProxy* node, PyObject* drag_func)
+PointControl::PointControl(NodeProxy* node)
     : Control(node), x(0), y(0), z(0), r(5), color(Colors::blue)
 {
     // Nothing to do here
@@ -27,16 +27,15 @@ void PointControl::update(float x_, float y_, float z_, float r_,
     color = color_;
     relative = relative_;
 
-    for (auto i : instances)
-    {
-        i->redraw();
-    }
-    /*
     if (changed)
-        emit(redraw());
+    {
+        for (auto i : instances)
+        {
+            i->redraw();
+        }
+    }
 
     setDragFunc(drag_func);
-    */
 }
 
 QPainterPath PointControl::shape(QMatrix4x4 m) const

@@ -1,4 +1,7 @@
+#include <Python.h>
+
 #include <QMatrix4x4>
+#include <QGraphicsSceneMouseEvent>
 
 #include "viewport/control/instance.h"
 #include "viewport/control/control.h"
@@ -7,6 +10,10 @@
 ControlInstance::ControlInstance(Control* c, ViewportView* v)
     : control(c), view(v)
 {
+    setFlags(QGraphicsItem::ItemIsSelectable |
+             QGraphicsItem::ItemIsFocusable);
+    setAcceptHoverEvents(true);
+
     v->scene()->addItem(this);
 }
 
@@ -33,4 +40,35 @@ void ControlInstance::paint(QPainter* painter,
     Q_UNUSED(widget);
 
     control->paint(getMatrix(), isSelected(), painter);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ControlInstance::mousePressEvent(QGraphicsSceneMouseEvent* event)
+{
+    click_pos = event->pos();
+    //control->beginDrag();
+    QGraphicsObject::mousePressEvent(event);
+}
+
+void ControlInstance::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
+{
+    //control->endDrag();
+    QGraphicsObject::mouseReleaseEvent(event);
+}
+
+void ControlInstance::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
+{
+    QGraphicsObject::mouseMoveEvent(event);
+
+    QMatrix4x4 mi = getMatrix().inverted();
+    QVector3D p0 = mi * QVector3D(click_pos);
+    QVector3D p1 = mi * QVector3D(event->pos());
+
+    QVector3D eye = (mi*QVector3D(0, 0, -1)).normalized();
+
+    control->drag(p1 + eye * QVector3D::dotProduct(eye, control->pos() - p1),
+                  p1 - p0);
+
+    click_pos = event->pos();
 }

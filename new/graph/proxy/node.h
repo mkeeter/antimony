@@ -94,6 +94,7 @@ public:
      *  Return a pointer to the target node
      */
     const Node* getNode() const { return node; }
+    Node* getMutableNode() const { return node; }
 
 protected:
     Node* const node;
