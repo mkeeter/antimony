@@ -395,9 +395,9 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
         self.proxy->registerControl(lineno, p);
     }
 
-    const float r = getFloat(p->getR(), kwargs, "r");
-    const QColor color = getColor(p->getColor(), kwargs);
-    const bool relative = getBool(p->getRelative(), kwargs, "relative");
+    const float r = getFloat(p->r, kwargs, "r");
+    const QColor color = getColor(p->color, kwargs);
+    const bool relative = getBool(p->relative, kwargs, "relative");
 
     PyObject* drag_func = self.getDragFunction(kwargs);
 

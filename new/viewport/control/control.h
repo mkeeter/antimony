@@ -49,11 +49,6 @@ public:
     virtual QVector3D pos() const=0;
 
     /*
-     *  Check whether this control uses a relative drag function
-     */
-    bool getRelative() const { return relative; }
-
-    /*
      *  Assigns to drag_func
      *      Removes a reference from the previous drag_func
      *      Steals a reference from new_drag_func
@@ -89,4 +84,6 @@ protected:
 
     /*  Flag indicating whether drag function is relative or absolute  */
     bool relative=true;
+
+    friend struct ScriptUIHooks;
 };

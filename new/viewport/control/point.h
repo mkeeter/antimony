@@ -21,12 +21,11 @@ public:
     QPainterPath shape(QMatrix4x4 m) const override;
     void paint(QMatrix4x4 m, bool highlight, QPainter* painter) override;
 
-    float getR() const { return r; }
-    QColor getColor() const { return color; }
-
     QVector3D pos() const override { return QVector3D(x, y, z); }
 
 protected:
     float x, y, z, r;
     QColor color;
+
+    friend struct ScriptUIHooks;
 };
