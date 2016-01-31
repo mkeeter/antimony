@@ -58,7 +58,25 @@ void NodeProxy::trigger(const NodeState& state)
     inspector->setNameValid(state.name_valid);
 
     if (has_hidden != show_hidden->isVisible())
+    {
         show_hidden->setVisible(has_hidden);
+    }
+
+    {   // Delete any controls that weren't touched in the last script exec
+        auto itr = controls.begin();
+        while (itr != controls.end())
+        {
+            if (itr.value()->touched)
+            {
+                itr++;
+            }
+            else
+            {
+                itr.value()->deleteLater();
+                itr = controls.erase(itr);
+            }
+        }
+    }
 
     inspector->redoLayout();
 }
@@ -99,6 +117,16 @@ void NodeProxy::clearExportWorker()
 void NodeProxy::setExportWorker(ExportWorker* worker)
 {
     inspector->setExportWorker(worker);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void NodeProxy::clearControlTouched()
+{
+    for (auto c : controls)
+    {
+        c->touched = false;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

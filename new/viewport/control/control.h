@@ -47,22 +47,16 @@ public:
     virtual QVector3D pos() const=0;
 
     /*
-     *  Set the touched flag to true
-     */
-    void touch() { touched = true; }
-
-    /*
      *  Check whether this control uses a relative drag function
      */
     bool getRelative() const { return relative; }
 
+    /*  Flag indicating whether this control has been touched  */
+    bool touched=false;
 protected:
     /*  Instances (which are QGraphicsItems) for each viewport  *
      *  (ownership unclear at the moment)                       */
     QMap<ViewportView*, ControlInstance*> instances;
-
-    /*  Flag indicating whether this control has been touched  */
-    bool touched=false;
 
     /*  Flag indicating whether drag function is relative or absolute  */
     bool relative=false;

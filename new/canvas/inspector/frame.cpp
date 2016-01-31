@@ -32,8 +32,12 @@ QRectF InspectorFrame::boundingRect() const
 {
     QRectF b;
     for (auto c : childItems())
+    {
         if (c->isVisible())
+        {
             b = b.united(c->boundingRect().translated(c->pos()));
+        }
+    }
     b.setBottom(b.bottom() + PADDING_ROWS);
     return b;
 }
@@ -63,10 +67,7 @@ void InspectorFrame::paint(QPainter *painter,
 
     // Draw outer edge
     painter->setBrush(Qt::NoBrush);
-    if (isSelected())
-        painter->setPen(QPen(Colors::base05, 2));
-    else
-        painter->setPen(QPen(Colors::base03, 2));
+    painter->setPen(QPen(isSelected() ? Colors::base05 : Colors::base03, 2));
     painter->drawRoundedRect(r, 8, 8);
 }
 
@@ -104,14 +105,20 @@ void InspectorFrame::redoLayout()
         if (auto row = dynamic_cast<DatumRow*>(c))
         {
             if (show_hidden || !row->shouldBeHidden())
+            {
                 rows.append(row);
+            }
             else
+            {
                 row->hide();
+            }
         }
 
     // Show all rows that made it into our list
     for (auto r : rows)
+    {
         r->show();
+    }
 
     // Sort datums by row order
     qSort(rows.begin(), rows.end(),
@@ -188,7 +195,9 @@ void InspectorFrame::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
         const auto delta = event->scenePos() -
                      event->buttonDownScenePos(Qt::LeftButton);
         if (delta != QPointF(0,0))
+        {
             static_cast<CanvasScene*>(scene())->endDrag(delta);
+        }
     }
     dragging = false;
 }
@@ -212,11 +221,15 @@ void InspectorFrame::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 void InspectorFrame::setExportWorker(ExportWorker* worker)
 {
     if (export_button->setWorker(worker))
+    {
         redoLayout();
+    }
 }
 
 void InspectorFrame::clearExportWorker()
 {
     if (export_button->clearWorker())
+    {
         redoLayout();
+    }
 }

@@ -60,6 +60,11 @@ public:
     void clearExportWorker();
 
     /*
+     *  Clears the 'Touched' flag for every Control
+     */
+    void clearControlTouched();
+
+    /*
      *  Assigns the given export worker to the inspector's 'Export' button
      */
     void setExportWorker(ExportWorker* worker);

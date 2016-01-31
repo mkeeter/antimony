@@ -21,7 +21,9 @@ InspectorExportButton::InspectorExportButton(QGraphicsItem* parent)
 bool InspectorExportButton::clearWorker()
 {
     if (worker)
+    {
         worker.reset();
+    }
 
     if (isVisible())
     {

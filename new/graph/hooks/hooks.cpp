@@ -129,7 +129,7 @@ void AppHooks::loadScriptHooks(PyObject* g, ScriptNode* n)
                 hooks_module, "ScriptUIHooks", NULL);
         auto ui_ref = extract<ScriptUIHooks*>(ui_obj)();
         ui_ref->proxy = proxy->getNodeProxy(n);
-#warning Need to clear Control's touched flags
+        ui_ref->proxy->clearControlTouched();
     }
 
     PyObject* export_obj = NULL;

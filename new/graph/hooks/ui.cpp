@@ -255,11 +255,17 @@ QString ScriptUIHooks::getDatum(PyObject* obj)
 {
     // Special case: None matches no datum.
     if (obj == Py_None)
+    {
         return QString();
+    }
 
     for (auto d : proxy->getNode()->childDatums())
+    {
         if (d->currentValue() == obj)
+        {
             return QString::fromStdString(d->getName());
+        }
+    }
     return QString();
 }
 
@@ -277,11 +283,15 @@ long ScriptUIHooks::getInstruction()
 
     // Clean up these objects immediately
     for (auto o : {inspect_module, frame, f_lineno})
+    {
         Py_DECREF(o);
+    }
 
     if (instructions.contains(lineno))
+    {
         throw AppHooks::Exception(
                 "Cannot declare multiple UI elements on same line.");
+    }
     instructions.insert(lineno);
 
     return lineno;
@@ -298,7 +308,9 @@ object ScriptUIHooks::wireframe(tuple args, dict kwargs)
     long lineno = self.getInstruction();
 
     if (len(args) != 2)
+    {
         throw AppHooks::Exception("Expected list of 3-tuples as argument");
+    }
 
     auto v = extractVectors(extract<object>(args[1])());
     if (v.isEmpty())
@@ -345,17 +357,23 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
     long lineno = self.getInstruction();
 
     if (len(args) != 4 && len(args) != 3)
+    {
         throw AppHooks::Exception("Expected x, y, z as arguments");
+    }
 
     // Extract x, y, z as floats from first three arguments.
     extract<float> x_(args[1]);
     if (!x_.check())
+    {
         throw AppHooks::Exception("x value must be a number");
+    }
     float x = x_();
 
     extract<float> y_(args[2]);
     if (!y_.check())
+    {
         throw AppHooks::Exception("y value must be a number");
+    }
     float y = y_();
 
     float z = 0;
@@ -414,7 +432,7 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
     }
 
     p->update(x, y, z, r, color, relative, drag_func);
-    p->touch();
+    p->touched = true;
 
     // Return None
     return object();
