@@ -59,9 +59,12 @@ linux {
 }
 
 macx {
-    LIBS += -L/usr/local/lib -lpng
-    INCLUDEPATH += /usr/local/include/libpng15/
-    INCLUDEPATH += /usr/local/include/libpng16/
+    !contains(DEFINES, BREW_HOME){
+        BREW_HOME=/usr/local
+    }
+    LIBS += -L$$(BREW_HOME)/lib -lpng
+    INCLUDEPATH += $$(BREW_HOME)/include/libpng15/
+    INCLUDEPATH += $$(BREW_HOME)/include/libpng16/
 }
 
 
