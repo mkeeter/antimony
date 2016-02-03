@@ -48,13 +48,13 @@ void ControlInstance::paint(QPainter* painter,
 void ControlInstance::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     click_pos = event->pos();
-    //control->beginDrag();
+    control->beginDrag();
     QGraphicsObject::mousePressEvent(event);
 }
 
 void ControlInstance::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
-    //control->endDrag();
+    control->endDrag();
     QGraphicsObject::mouseReleaseEvent(event);
 }
 

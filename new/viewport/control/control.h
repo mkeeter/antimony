@@ -11,6 +11,8 @@ class NodeProxy;
 class ViewportView;
 class ControlInstance;
 
+class Datum;
+
 class Control : public QObject
 {
 public:
@@ -61,6 +63,17 @@ public:
     void drag(QVector3D center, QVector3D diff);
 
     /*
+     *  Saves all datum expressions
+     *  (so that we can detect which ones were dragged)
+     */
+    void beginDrag();
+
+    /*
+     *  If datum expressions changed, push an undo command to undo the drag
+     */
+    void endDrag();
+
+    /*
      *  Delete the parent node
      */
     void deleteNode();
@@ -84,6 +97,9 @@ protected:
 
     /*  Flag indicating whether drag function is relative or absolute  */
     bool relative=true;
+
+    /*  Map of datum string values (used to undo dragging)  */
+    QMap<Datum*, QString> datum_text;
 
     friend struct ScriptUIHooks;
 };

@@ -11,6 +11,7 @@
 
 #include "app/app.h"
 #include "undo/undo_delete_multi.h"
+#include "undo/undo_change_expr.h"
 
 Control::Control(NodeProxy* parent)
     : QObject(parent)
@@ -44,6 +45,39 @@ void Control::setDragFunc(PyObject* new_drag_func)
 {
     Py_XDECREF(drag_func);
     drag_func = new_drag_func;
+}
+
+void Control::beginDrag()
+{
+    // Store all datum expressions so that we can make an undo action
+    // that undoes the upcoming drag operation.
+    datum_text.clear();
+    auto node = static_cast<NodeProxy*>(parent())->getMutableNode();
+    for (auto d : node->childDatums())
+        datum_text[d] = QString::fromStdString(d->getText());
+}
+
+void Control::endDrag()
+{
+    bool started = false;
+    for (auto d=datum_text.begin(); d != datum_text.end(); ++d)
+    {
+        auto expr = QString::fromStdString(d.key()->getText());
+        if (datum_text[d.key()] != expr)
+        {
+            if (!started)
+            {
+                App::instance()->beginUndoMacro("'drag'");
+                started = true;
+            }
+            App::instance()->pushUndoStack(
+                    new UndoChangeExpr(
+                        d.key(), datum_text[d.key()], expr));
+        }
+    }
+
+    if (started)
+        App::instance()->endUndoMacro();
 }
 
 void Control::drag(QVector3D center, QVector3D diff)
