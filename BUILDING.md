@@ -24,15 +24,6 @@ make -j8
 
 open antimony.app
 ```
-### Troubleshooting:
-If you have installed homebrew in a non-standard directory like ~/.homebrew (the default is /usr/local) you need to provide a path to your homebrew files. It you need to further adjust your library paths, mac specific settings can be found in ./qt/fab.pri and ./qt/shared.pri
-
-```
-export BREW_HOME=/Users/yourusername/.homebrew
-
-$BREW_HOME/Cellar/qt5/5.*/bin/qmake ../qt/antimony.pro
-make -j8
-```
 
 Linux
 -----
@@ -58,7 +49,7 @@ make -j8
 
 You can use `make install`, or set up a symlink to run `antimony` from outside the build directory:
 ```
-ln -s ~/antimony/build/antimony /usr/local/bin/antimony
+ln -s ~/antimony/build/antimony /usr/local/bin/antimony 
 ```
 
 ### Caveats
@@ -93,3 +84,5 @@ Change [this line](https://github.com/mkeeter/antimony/blob/develop/qt/shared.pr
 LIBS += -lboost_python3
 ```
 (or whatever the library is named).
+
+
