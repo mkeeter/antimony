@@ -1,0 +1,32 @@
+# Neil Gershenfeld 1/24/15
+# Matt Keeter 5/31/15
+
+import math
+import fab
+
+title('Sphere (edge)')
+
+input('x0',float,-1)
+input('y0',float,-1)
+input('z0',float,-1)
+
+input('x1',float,1)
+input('y1',float,1)
+input('z1',float,1)
+
+x = (x0 + x1) / 2
+y = (y0 + y1) / 2
+z = (z0 + z1) / 2
+r = math.sqrt((x1 - x0)**2 + (y1 - y0)**2 + (z1 - z0)**2) / 2
+
+output('shape', fab.shapes.sphere(x, y, z, r))
+
+# UI
+sb.ui.wireframe([
+    (math.cos(i/36. * 2*math.pi) * r + x,
+     math.sin(i/36. * 2*math.pi) * r + y, z)
+    for i in range(36)], close=True)
+sb.ui.wireframe([(x0,y0,z0), (x1,y1,z1)])
+
+sb.ui.point(x0, y0, z0)
+sb.ui.point(x1, y1, z1)

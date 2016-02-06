@@ -1,0 +1,29 @@
+# Neil Gershenfeld 1/24/15
+# Matt Keeter 5/31/15
+
+import fab
+
+title('Taper (XY,Z)')
+
+input('x0', float, 0)
+input('y0', float, 0)
+input('z0', float, 0)
+input('z1', float, 1)
+input('s0', float, 2)
+input('s1', float, 0.5)
+
+input('shape', fab.types.Shape)
+output('transform', fab.shapes.taper_xy_z(shape, x0, y0, z0, z1, s0, s1))
+
+# UI
+def drag_base(this, dx, dy, dz):
+    this.x0 += dx
+    this.y0 += dy
+    this.z0 += dz
+    this.z1 += dz
+
+sb.ui.wireframe([(x0 + s0, y0, z0), (x0, y0, z0),
+                  (x0, y0, z1), (x0 + s1, y0, z1)], color=sb.color.teal)
+sb.ui.point(x0, y0, z0, color=sb.color.teal, drag=drag_base)
+sb.ui.point(x0 + s0, y0, z0, color=sb.color.teal, drag=(s0, None, None))
+sb.ui.point(x0 + s1, y0, z1, color=sb.color.teal, drag=(s1, None, z1))

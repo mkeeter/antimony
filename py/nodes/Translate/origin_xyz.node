@@ -17,7 +17,7 @@ input('z1', float, 1)
 output('out', fab.shapes.origin_xyz(a, x0, y0, z0, x1, y1, z1))
 
 # UI
-fab.ui.wireframe([(x0, y0, z0), (x1, y1, z1)], color=fab.color.green)
-fab.ui.point(x0, y0, z0, color=fab.color.green)
-fab.ui.point(x1, y1, z1, color=fab.color.green)
+sb.ui.wireframe([(x0, y0, z0), (x1, y1, z1)], color=sb.color.green)
+sb.ui.point(x0, y0, z0, color=sb.color.green)
+sb.ui.point(x1, y1, z1, color=sb.color.green)
 

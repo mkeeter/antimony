@@ -1,0 +1,29 @@
+# Neil Gershenfeld 1/24/15 
+# Matt Keeter 5/31/15
+
+import math
+import fab
+
+title('Pyramid (center)')
+
+input('x', float, 0)
+input('y', float, 0)
+input('z', float, 0)
+input('width', float, 2)
+input('height', float, 1)
+
+output('shape', fab.shapes.pyramid(x - width/2, x + width/2,
+                                   y - width/2, y + width/2,
+                                   z, z + height))
+
+# UI
+def drag_w(this, x, y, z):
+   dx = x - this.x
+   dy = y - this.y
+   this.width = math.sqrt(2) * math.sqrt(dx**2 +dy**2)
+
+sb.ui.wireframe([(x, y, z+height), (x, y, z), (x + width/2, y + width/2, z)])
+sb.ui.point(x, y, z)
+sb.ui.point(x + width/2, y + width/2, z, drag=drag_w, relative=False)
+sb.ui.point(x, y, z + height, drag=(None, None, height))
+

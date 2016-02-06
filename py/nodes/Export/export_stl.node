@@ -5,4 +5,4 @@ title('Mesh (.stl)')
 input('shape', fab.types.Shape)
 output('out', shape)
 
-meta.export_stl(shape)
+sb.export.stl(shape)

@@ -1,29 +1,22 @@
 # Neil Gershenfeld 1/24/15
+# Matt Keeter 5/31/15
 
 import fab
 
-title('reflect xz')
+title('Reflect (XZ)')
 
-def reflect_xz(part,x0,z0):
-   from fab.types import Shape, Transform
-   # X' = x0 + (Z-z0)
-   # Z' = z0 + (X-x0)
-   # X = x0 + (Z'-z0)
-   # Z = z0 + (X'-x0)
-   return part.map(Transform(
-      '+f%(x0)g-Zf%(z0)g' % locals(),
-      'Y',
-      '+f%(z0)g-Xf%(x0)g' % locals(),
-      '+f%(x0)g-Zf%(z0)g' % locals(),
-      'Y',
-      '+f%(z0)g-Xf%(x0)g' % locals()))
+input('x0', float, 0)
+input('_y', float, 0)
+input('z0', float, 0)
 
-input('x0',float,0)
-input('y0',float,0)
-input('z0',float,0)
+input('shape', fab.types.Shape)
+output('out', fab.shapes.reflect_xz(shape, x0, z0))
 
-input('shape',fab.types.Shape)
-output('transform',reflect_xz(shape,x0,z0))
-
-fab.ui.point(x0,y0,z0)
+# UI
+sb.ui.wireframe([
+    (x0 - 0.7, _y - 1, z0 - 0.7),
+    (x0 + 0.7, _y - 1, z0 + 0.7),
+    (x0 + 0.7, _y + 1, z0 + 0.7),
+    (x0 - 0.7, _y + 1, z0 - 0.7)], color=sb.color.teal, close=True)
+sb.ui.point(x0, _y, z0, color=sb.color.teal)
 

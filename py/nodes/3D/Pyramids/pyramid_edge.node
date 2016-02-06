@@ -1,0 +1,25 @@
+# Neil Gershenfeld 1/24/15
+# Matt Keeter 5/31/15
+
+import fab
+
+title('Pyramid (edge)')
+
+input('xmin', float, -1)
+input('xmax', float, 1)
+input('ymin', float, -1)
+input('ymax', float, 1)
+input('z0', float, -1)
+input('z1', float, 1)
+
+output('shape', fab.shapes.pyramid(xmin, xmax, ymin, ymax, z0, z1))
+
+# UI
+x = (xmin + xmax) / 2
+y = (ymin + ymax) / 2
+sb.ui.wireframe([(xmin, ymin, z0), (x, y, z1), (xmax, ymax, z0)])
+
+sb.ui.point(x, y, z1, drag=(None, None, z1))
+sb.ui.point(xmin, ymin, z0)
+sb.ui.point(xmax, ymax, z0)
+

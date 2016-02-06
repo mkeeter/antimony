@@ -1,0 +1,7 @@
+import fab
+
+title('Cylinder Wrap (Y-axis)')
+input('shape', fab.types.Shape)
+input('radius', float, 1)
+
+output("wrapped", fab.shapes.cylinder_y_wrap(shape, radius))

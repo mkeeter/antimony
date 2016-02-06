@@ -1,0 +1,22 @@
+import fab
+import math
+
+title('Sphere (center)')
+
+input('x', float)
+input('y', float)
+input('z', float)
+input('r', float, 1)
+
+output('shape', fab.shapes.sphere(x, y, z, r))
+
+# UI
+sb.ui.wireframe([
+    (math.cos(i/36. * 2*math.pi) * r + x,
+     math.sin(i/36. * 2*math.pi) * r + y, z)
+    for i in range(36)], close=True)
+sb.ui.wireframe([(x,y,z-r), (x,y,z+r)])
+
+sb.ui.point(x, y, z)
+sb.ui.point(x, y, z + r, drag=(None, None, r))
+sb.ui.point(x, y, z - r, drag=(None, None, r))

@@ -5,4 +5,4 @@ title('Heightmap (.png)')
 input('shape', fab.types.Shape)
 output('out', shape)
 
-meta.export_heightmap(shape)
+sb.export.heightmap(shape)

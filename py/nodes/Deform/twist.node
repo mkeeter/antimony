@@ -5,7 +5,7 @@ import fab
 
 title('Twist (Z)')
 
-input('a', fab.types.Shape)
+input('shape', fab.types.Shape)
 input('x', float, 0)
 input('y', float, 0)
 input('z0', float, -1)
@@ -13,5 +13,5 @@ input('z1', float, 1)
 input('theta0', float, 0)
 input('theta1', float, 90)
 
-output('out', fab.shapes.twist_xy_z(a, x, y, z0, z1, theta0, theta1))
+output('twisted', fab.shapes.twist_xy_z(shape, x, y, z0, z1, theta0, theta1))
 

@@ -1,0 +1,34 @@
+import fab
+
+title('Array (3D)')
+
+input('shape', fab.types.Shape)
+input('_x', float)
+input('_y', float)
+input('_z', float)
+input('i', int, 2)
+input('j', int, 2)
+input('k', int, 2)
+input('dx', float, 1)
+input('dy', float, 1)
+input('dz', float, 1)
+
+output('array', fab.shapes.iterate3d(shape, i, j, k, dx, dy, dz))
+
+# UI
+fab.ui.wireframe([(_x, _y, _z), (_x + dx, _y, _z)], color=fab.color.teal)
+fab.ui.wireframe([(_x, _y, _z), (_x, _y + dy, _z)], color=fab.color.teal)
+fab.ui.wireframe([(_x, _y, _z), (_x, _y, _z + dz)], color=fab.color.teal)
+
+fab.ui.wireframe([
+    (_x + dx, _y - 0.3, 0), (_x + dx, _y + 0.3, 0)], color=fab.color.teal)
+fab.ui.wireframe([
+    (_x + 0.3, _y + dy, 0), (_x - 0.3, _y + dy, 0)], color=fab.color.teal)
+fab.ui.wireframe([
+	(_x, _y - 0.3, _z + dz), (_x, _y + 0.3, _z + dz)], color=fab.color.teal)
+
+
+fab.ui.point(_x, _y, 0, color=fab.color.teal)
+fab.ui.point(_x + dx, _y, 0, color=fab.color.teal, drag=(dx, None, None))
+fab.ui.point(_x, _y + dy, 0, color=fab.color.teal, drag=(None, dy, None))
+fab.ui.point(_x, _y, _z + dz, color=fab.color.teal, drag=(None, None, dz))

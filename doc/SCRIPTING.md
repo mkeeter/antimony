@@ -37,19 +37,24 @@ solid body.  It is often used as the second argument to `input`, i.e.
 Other types include `Bounds` (representing 2D or 3D bounds) and
 `Transform` (representing a coordinate transform).
 
-### `fab.ui`
-`fab.ui` contains magic functions that modify the user interface in
-3D viewports.  The relevant functions are `fab.ui.wireframe` and
-`fab.ui.point`.  Both have detailed docstrings and are used extensively
+`sb` module
+-----------
+Antimony-specific behavior lives in the `sb` module.
+
+### `sb.ui`
+`sb.ui` contains magic functions that modify the user interface in
+3D viewports.  The relevant functions are `sb.ui.wireframe` and
+`sb.ui.point`.  Both have detailed docstrings and are used extensively
 in the standard node library; check out existing nodes to get an idea
 of how they can be used.
 
-`meta` object
--------------
-At the moment, the `meta` object is only used for nodes that define export
-tasks.  It has two relevant functions: `meta.export_stl` and
-`meta.export_heightmap`.  When called, each will add a arrow icon to the
-top right of the node's representation in the graph; clicking on this arrow
-will run the export task.  Both export functions have extensive documentation;
-check out the existing export nodes for an example of how they are used.
+### `sb.export`
+This namespace has two relevant functions: `sb.export.stl` and
+`sb.export.heightmap`.  When called, each will add an extra button to the
+node's inspector; clicking on this button will run an export task.  Both
+export functions have extensive documentation; check out the existing export
+nodes for an example of how they are used.
 
+### `sb.color`
+This namespace defines a set of standard colors for use in UI elements.
+Colors are stored as 3-tuples of RGB values (0-255).

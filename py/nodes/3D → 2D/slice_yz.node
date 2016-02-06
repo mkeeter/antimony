@@ -1,0 +1,17 @@
+# Neil Gershenfeld 7/12/15
+
+import fab
+from fab.types import Shape
+
+title('Slice (YZ)')
+
+def slice_yz(shape,x):
+    return Shape(('mf%gXY' % x) + shape.math,
+       shape.bounds.ymin,shape.bounds.zmin,
+       shape.bounds.ymax,shape.bounds.zmax)
+
+input('shape',fab.types.Shape)
+input('x',float,0)
+
+output('slice',slice_yz(shape,x))
+

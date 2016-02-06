@@ -2,19 +2,19 @@ import fab
 
 title('Scale (X)')
 
-input('x', float)
+input('x0', float)
 input('_y', float)
 input('_z', float)
 input('s', float, 1)
-input('input', fab.types.Shape)
-output('shape', fab.shapes.scale_x(input, x, s))
+input('shape', fab.types.Shape)
+output('scaled', fab.shapes.scale_x(shape, x0, s))
 
 # UI
-kwargs = {'color':fab.color.teal}
-fab.ui.wireframe([(x, _y + 0.2*s, _z), (x, _y - 0.2*s, _z)], **kwargs)
-fab.ui.wireframe([(x, _y, _z), (x + s, _y, _z)], **kwargs)
-fab.ui.wireframe([(x + 0.9*s, _y - 0.1*s, _z), (x + s, _y, _z),
-                  (x + 0.9*s, _y + 0.1*s, _z)], **kwargs)
+kwargs = {'color':sb.color.teal}
+sb.ui.wireframe([(x0, _y + 0.2*s, _z), (x0, _y - 0.2*s, _z)], **kwargs)
+sb.ui.wireframe([(x0, _y, _z), (x0 + s, _y, _z)], **kwargs)
+sb.ui.wireframe([(x0 + 0.9*s, _y - 0.1*s, _z), (x0 + s, _y, _z),
+                  (x0 + 0.9*s, _y + 0.1*s, _z)], **kwargs)
 
-fab.ui.point(x, _y, _z, color=fab.color.teal)
-fab.ui.point(x + s, _y, _z, color=fab.color.teal, drag=(s,None,None))
+sb.ui.point(x0, _y, _z, **kwargs)
+sb.ui.point(x0 + s, _y, _z, color=sb.color.teal, drag=(s,None,None))

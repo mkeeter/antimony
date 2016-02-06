@@ -1,0 +1,32 @@
+# Neil Gershenfeld 1/25/15
+# Matt Keeter 5/31/15
+
+import fab
+import math
+
+title('Torus (Z)')
+
+input('x', float, 0)
+input('y', float, 0)
+input('z', float, 0)
+input('R', float, 1)
+input('r', float, 0.25)
+
+output('shape', fab.shapes.torus_z(x, y, z, R, r))
+
+# UI
+sb.ui.wireframe([
+     (x,
+      math.sin(i/36. * 2*math.pi) * r + y + R,
+      math.cos(i/36. * 2*math.pi) * r + z)
+    for i in range(36)], close=True)
+sb.ui.wireframe([
+     (math.sin(i/36. * 2*math.pi) * R + x,
+      math.cos(i/36. * 2*math.pi) * R + y,
+      z)
+    for i in range(36)], close=True)
+sb.ui.wireframe([(x, y, z), (x, y, z + R + r)])
+sb.ui.point(x, y, z)
+sb.ui.point(x, y + R, z, drag=(None, R, None))
+sb.ui.point(x, y + R + r, z, drag=(None, r, None))
+

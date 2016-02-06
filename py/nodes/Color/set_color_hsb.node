@@ -1,3 +1,4 @@
+import math
 import fab
 
 title('Set color (HSB)')

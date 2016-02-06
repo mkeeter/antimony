@@ -1,19 +1,19 @@
 import fab
 
-title('Reflect Z')
+title('Reflect (Z)')
 
 input('_x', float)
 input('_y', float)
-input('z', float)
+input('z0', float)
 
-input('input', fab.types.Shape)
-output('shape', fab.shapes.reflect_z(input, z))
+input('shape', fab.types.Shape)
+output('reflected', fab.shapes.reflect_z(shape, z0))
 
 # UI
-fab.ui.wireframe([
-    (_x + 1, _y - 1, z),
-    (_x + 1, _y + 1, z),
-    (_x - 1, _y + 1, z),
-    (_x - 1, _y - 1, z)], color=fab.color.teal, close=True)
+sb.ui.wireframe([
+    (_x + 1, _y - 1, z0),
+    (_x + 1, _y + 1, z0),
+    (_x - 1, _y + 1, z0),
+    (_x - 1, _y - 1, z0)], color=sb.color.teal, close=True)
 
-fab.ui.point(_x, _y, z, color=fab.color.teal)
+sb.ui.point(_x, _y, z0, color=sb.color.teal)
