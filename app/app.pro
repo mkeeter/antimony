@@ -5,12 +5,13 @@ TEMPLATE = app
 
 INCLUDEPATH += src
 
-LIBS += -L../lib/fab -lSbFab -L../lib/graph -lSbGraph
+LIBS += -L../lib/fab -lSbFab -L../lib/graph -lSbGraph -L../lib/quazip -lquazip -lz
 INCLUDEPATH += ../lib/fab/inc
 INCLUDEPATH += ../lib/graph/inc
 
 PRE_TARGETDEPS += ../lib/graph/libSbGraph.a
 PRE_TARGETDEPS += ../lib/fab/libSbFab.a
+PRE_TARGETDEPS += ../lib/quazip/libquazip.a
 
 include(../qt/common.pri)
 include(../qt/python.pri)
@@ -78,6 +79,7 @@ SOURCES += \
     src/render/render_image.cpp \
     src/export/export_mesh.cpp \
     src/export/export_heightmap.cpp \
+    src/export/export_voxels.cpp \
     src/control/control.cpp \
     src/control/control_root.cpp \
     src/control/proxy.cpp \
@@ -126,6 +128,7 @@ HEADERS += \
     src/export/export_mesh.h \
     src/export/export_worker.h \
     src/export/export_heightmap.h \
+    src/export/export_voxels.h \
     src/control/control.h \
     src/control/control_root.h \
     src/control/proxy.h \
