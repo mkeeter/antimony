@@ -5,6 +5,8 @@
 
 #include "viewport/gl.h"
 
+class DepthImage;
+
 class ViewportView : public QGraphicsView
 {
 public:
@@ -45,6 +47,11 @@ public:
      */
     QVector3D sceneToWorld(QPointF pos) const;
 
+    /*
+     *  Installs a depth image (to be drawn if relevant)
+     */
+    void installImage(DepthImage* d);
+
     /*  Publically accessible handle to get shaders and VBO  */
     ViewportGL gl;
 
@@ -72,4 +79,7 @@ protected:
 
     /*  Mouse click coordinates in the world's coordinate frame  */
     QVector3D click_pos_world;
+
+    /*  Depth images to draw  */
+    QList<DepthImage*> images;
 };

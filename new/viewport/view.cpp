@@ -5,6 +5,7 @@
 #include <QMouseEvent>
 
 #include "viewport/view.h"
+#include "viewport/image.h"
 #include "app/colors.h"
 
 ViewportView::ViewportView(QWidget* parent)
@@ -41,6 +42,13 @@ QMatrix4x4 ViewportView::getMatrix() const
 QVector3D ViewportView::sceneToWorld(QPointF p) const
 {
     return getMatrix().inverted() * QVector3D(p.x(), p.y(), 0);
+}
+
+void ViewportView::installImage(DepthImage* d)
+{
+    images << d;
+    connect(d, &DepthImage::destroyed,
+            [=]{ this->images.removeAll(d); });
 }
 
 ////////////////////////////////////////////////////////////////////////////////

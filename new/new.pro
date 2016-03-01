@@ -129,10 +129,12 @@ SOURCES += \
     viewport/scene.cpp                  \
     viewport/gl.cpp                     \
     viewport/view.cpp                   \
+    viewport/image.cpp                  \
     viewport/control/control.cpp        \
     viewport/control/instance.cpp       \
     viewport/control/point.cpp          \
     viewport/control/wireframe.cpp      \
+    viewport/render/instance.cpp        \
 
 HEADERS += \
     app/app.h                           \
@@ -194,11 +196,13 @@ HEADERS += \
     export/export_worker.h              \
     viewport/scene.h                    \
     viewport/view.h                     \
+    viewport/image.h                    \
     viewport/gl.h                       \
     viewport/control/control.h          \
     viewport/control/instance.h         \
     viewport/control/point.h            \
     viewport/control/wireframe.h        \
+    viewport/render/instance.h          \
 
 FORMS += \
     forms/base_window.ui \

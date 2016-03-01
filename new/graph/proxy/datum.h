@@ -1,10 +1,13 @@
 #pragma once
 
 #include <QObject>
+#include <QMap>
 
 #include "graph/proxy/base_datum.h"
 
 class NodeProxy;
+class RenderInstance;
+class ViewportView;
 
 class DatumProxy : public BaseDatumProxy
 {
@@ -34,5 +37,9 @@ public:
     GraphProxy* graphProxy() const override;
 
 protected:
+    /*  UI row in the canvas / inspector view  */
     DatumRow* row;
+
+    /*  Instances for rendering images in various viewports  */
+    QMap<ViewportView*, RenderInstance*> instances;
 };
