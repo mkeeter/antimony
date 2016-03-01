@@ -2,7 +2,6 @@
 
 #include "viewport/scene.h"
 #include "viewport/control/control.h"
-#include "viewport/render/target.h"
 #include "viewport/view.h"
 
 ViewportScene::ViewportScene(Graph* g, QObject* parent)

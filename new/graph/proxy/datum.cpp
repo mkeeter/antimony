@@ -9,11 +9,25 @@
 #include "canvas/datum_row.h"
 #include "canvas/connection/connection.h"
 
+#include "viewport/render/instance.h"
+#include "viewport/view.h"
+#include "viewport/scene.h"
+
 DatumProxy::DatumProxy(Datum* d, NodeProxy* parent)
     : BaseDatumProxy(d, parent), row(new DatumRow(d, parent->getInspector()))
 {
     d->installWatcher(this);
     NULL_ON_DESTROYED(row);
+
+    /*
+     *  Install the render instance for every existing viewport
+     */
+    for (auto v : static_cast<GraphProxy*>(parent->parent())
+                    ->viewportScene()->getViews())
+    {
+        qDebug() << v;
+        addViewport(v);
+    }
 }
 
 DatumProxy::~DatumProxy()
@@ -53,4 +67,12 @@ OutputPort* DatumProxy::outputPort() const
 GraphProxy* DatumProxy::graphProxy() const
 {
     return static_cast<GraphProxy*>(parent()->parent());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void DatumProxy::addViewport(ViewportView* view)
+{
+    render[view] = new RenderInstance(this, view);
+    connect(view, &QObject::destroyed, [=]{ this->render.remove(view); });
 }

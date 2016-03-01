@@ -161,4 +161,8 @@ void NodeProxy::makeInstancesFor(ViewportView* view)
     {
         c->makeInstanceFor(view);
     }
+    for (auto d : datums)
+    {
+        d->addViewport(view);
+    }
 }

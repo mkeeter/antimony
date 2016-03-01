@@ -47,7 +47,7 @@ QVector3D ViewportView::sceneToWorld(QPointF p) const
 void ViewportView::installImage(DepthImage* d)
 {
     images << d;
-    connect(d, &DepthImage::destroyed,
+    connect(d, &QObject::destroyed,
             [=]{ this->images.removeAll(d); });
 }
 
@@ -61,10 +61,11 @@ void ViewportView::drawBackground(QPainter* painter, const QRectF& rect)
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    /*
-    for (auto d : findChildren<DepthImageItem*>())
-        d->paint();
-    */
+    for (auto i : images)
+    {
+        i->draw(painter);
+    }
+
     painter->endNativePainting();
 }
 

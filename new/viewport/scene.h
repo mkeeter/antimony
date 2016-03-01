@@ -7,7 +7,6 @@ class Graph;
 class ViewportView;
 
 class Control;
-class RenderTarget;
 
 class ViewportScene : public QObject
 {
@@ -38,6 +37,11 @@ public:
      *  Returns this scene's graph object without taking ownership
      */
     Graph* getGraph() const { return g; }
+
+    /*
+     *  Return a read-only list of viewports
+     */
+    const QList<ViewportView*>& getViews() const { return viewports; }
 
 protected:
     Graph* const g;

@@ -36,10 +36,15 @@ public:
      */
     GraphProxy* graphProxy() const override;
 
+    /*
+     *  Make a RenderInstance for the given viewport
+     */
+    void addViewport(ViewportView* view);
+
 protected:
     /*  UI row in the canvas / inspector view  */
     DatumRow* row;
 
     /*  Instances for rendering images in various viewports  */
-    QMap<ViewportView*, RenderInstance*> instances;
+    QMap<ViewportView*, RenderInstance*> render;
 };
