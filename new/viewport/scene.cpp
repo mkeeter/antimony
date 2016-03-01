@@ -14,6 +14,7 @@ ViewportView* ViewportScene::getView(QWidget* parent)
 {
     auto v = new ViewportView(parent);
     viewports.push_back(v);
+    connect(v, &QObject::destroyed, [=]{ this->viewports.removeAll(v); });
     return v;
 }
 
