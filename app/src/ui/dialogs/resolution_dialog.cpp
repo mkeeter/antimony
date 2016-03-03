@@ -7,7 +7,7 @@
 ResolutionDialog::ResolutionDialog(Bounds bounds, bool dimensions, bool has_units,
                                    long max_voxels, QWidget* parent)
     : QDialog(parent), bounds(bounds), ui(new Ui::ResolutionDialog),
-      z_bounded(!isinf(bounds.zmax) && !isinf(bounds.zmin))
+      z_bounded(!std::isinf(bounds.zmax) && !std::isinf(bounds.zmin))
 {
     ui->setupUi(this);
 

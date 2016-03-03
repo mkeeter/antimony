@@ -103,7 +103,7 @@ void ExportHeightmapTask::render()
         .nk=1
     };
 
-    if (!isinf(bounds.zmin) && !isinf(bounds.zmax))
+    if (!std::isinf(bounds.zmin) && !std::isinf(bounds.zmax))
         r.nk = uint32_t((bounds.zmax - bounds.zmin) * resolution);
 
     build_arrays(

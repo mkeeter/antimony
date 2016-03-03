@@ -81,13 +81,13 @@ Bounds Bounds::map(Transform t) const
 
 bool Bounds::is_bounded_xy() const
 {
-    return !isinf(xmin) && !isinf(ymin) &&
-           !isinf(xmax) && !isinf(ymax);
+    return !std::isinf(xmin) && !std::isinf(ymin) &&
+           !std::isinf(xmax) && !std::isinf(ymax);
 
 }
 
 bool Bounds::is_bounded_xyz() const
 {
-    return !isinf(xmin) && !isinf(ymin) && !isinf(zmin) &&
-           !isinf(xmax) && !isinf(ymax) && !isinf(zmax);
+    return !std::isinf(xmin) && !std::isinf(ymin) && !std::isinf(zmin) &&
+           !std::isinf(xmax) && !std::isinf(ymax) && !std::isinf(zmax);
 }
