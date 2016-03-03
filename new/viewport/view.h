@@ -52,6 +52,12 @@ public:
      */
     void installImage(DepthImage* d);
 
+    /*
+     *  Returns the smallest and largest depth image Z values
+     */
+    float getZmin() const;
+    float getZmax() const;
+
     /*  Publically accessible handle to get shaders and VBO  */
     ViewportGL gl;
 

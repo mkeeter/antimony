@@ -1,18 +1,78 @@
 #pragma once
 
 #include <QObject>
-#include <QPainter>
+#include <QVector>
+#include <QtGui/QOpenGLFunctions>
+#include <QtGui/QOpenGLShaderProgram>
+#include <QImage>
+#include <QPointer>
+#include <QColor>
 
 class ViewportView;
+class ViewportGL;
+class RenderInstance;
 
-class DepthImage : public QObject
+class DepthImage : public QObject, protected QOpenGLFunctions
 {
 public:
-    DepthImage(ViewportView* view);
+    DepthImage(RenderInstance* parent, ViewportView* view);
+    ~DepthImage();
 
     /*
-     *  Draws the given depth image
-     *  (should be called inside a native painting block)
+     *  Update the image settings, generating new textures
      */
-    void draw(QPainter* painter);
+    void updateImage(QVector3D pos, QVector3D size,
+                     QImage depth, QImage shaded, QColor color,
+                     bool flat);
+
+    /*
+     *  Releases OpenGL texture objects and clears the viewport pointer
+     *  (called on deletion and by the Viewport destructor)
+     */
+    void clearTextures();
+
+    /*
+     *  Paints the image with the given world-to-scene transform matrix
+     */
+    void paint(QMatrix4x4 m);
+
+protected:
+    /*
+     *  Initializes OpenGL textures
+     */
+    void buildTexture(QImage img, GLuint* tex);
+
+    /*
+     *  Paints the given images as shaded textures
+     */
+    void paintShaded(QMatrix4x4 m);
+
+    /*
+     *  Paints the given images as heightmap textures
+     */
+    void paintHeightmap(QMatrix4x4 m);
+
+    /*
+     *  Loads variables that are shared between height-map and shaded shaders.
+     *  m is the world-to-scene transform matrix
+     */
+    void loadSharedShaderVariables(QMatrix4x4 m, QOpenGLShaderProgram* shader);
+
+    /*  Pointer to the viewport view that this image draws into  */
+    QPointer<ViewportView> view;
+    ViewportGL* gl;
+
+    /*  Position of center (in original scene units) */
+    QVector3D pos;
+
+    /*  Scale (in rotated scene coordinates) */
+    QVector3D size;
+
+    /*  OpenGL textures  */
+    GLuint depth_tex;
+    GLuint shaded_tex;
+
+    /*  Other relevant settings for drawing images  */
+    QColor color;
+    bool flat;
 };

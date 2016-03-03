@@ -17,6 +17,16 @@ public:
      */
     QOpenGLBuffer* getQuadVertices();
 
+    /*
+     *  Make the relevant context current
+     */
+    void makeCurrent();
+
+    /*
+     *  Finish the current context operations
+     */
+    void doneCurrent();
+
 protected:
     /*
      *  Initialize the shader and VBO
