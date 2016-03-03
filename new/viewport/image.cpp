@@ -41,6 +41,7 @@ void DepthImage::updateImage(QVector3D pos_, QVector3D size_,
     flat = flat_;
 
     // Force a redraw of the viewport
+    valid = true;
     view->scene()->invalidate(QRect(), QGraphicsScene::BackgroundLayer);
 }
 

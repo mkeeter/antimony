@@ -36,6 +36,16 @@ public:
      */
     void paint(QMatrix4x4 m);
 
+    /*
+     *  Lookup functions for position and size
+     */
+    QVector3D getPos() const    { return pos; }
+    QVector3D getSize() const   { return size; }
+
+    /*
+     *  Check if the image is valid
+     */
+    bool isValid() const { return valid; }
 protected:
     /*
      *  Initializes OpenGL textures
@@ -57,6 +67,9 @@ protected:
      *  m is the world-to-scene transform matrix
      */
     void loadSharedShaderVariables(QMatrix4x4 m, QOpenGLShaderProgram* shader);
+
+    /*  The image is invalid until data is loaded for the first time  */
+    bool valid=false;
 
     /*  Pointer to the viewport view that this image draws into  */
     QPointer<ViewportView> view;

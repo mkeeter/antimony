@@ -51,6 +51,28 @@ void ViewportView::installImage(DepthImage* d)
             [=]{ this->images.removeAll(d); });
 }
 
+float ViewportView::getZmin() const
+{
+    float zmin = INFINITY;
+    for (auto i : images)
+    {
+        zmin = fmin((getMatrix() * i->getPos()).z() - i->getSize().z()/2,
+                    zmin);
+    }
+    return zmin;
+}
+
+float ViewportView::getZmax() const
+{
+    float zmax = -INFINITY;
+    for (auto i : images)
+    {
+        zmax = fmax((getMatrix() * i->getPos()).z() + i->getSize().z()/2,
+                    zmax);
+    }
+    return zmax;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 void ViewportView::drawBackground(QPainter* painter, const QRectF& rect)
@@ -64,7 +86,10 @@ void ViewportView::drawBackground(QPainter* painter, const QRectF& rect)
     auto m = getMatrix();
     for (auto i : images)
     {
-        i->paint(m);
+        if (i->isValid())
+        {
+            i->paint(m);
+        }
     }
 
     painter->endNativePainting();
