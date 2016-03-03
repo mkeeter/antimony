@@ -1,4 +1,7 @@
+#include <QOpenGLWidget>
+
 #include "viewport/gl.h"
+#include "viewport/view.h"
 
 QOpenGLBuffer* ViewportGL::getQuadVertices()
 {
@@ -46,4 +49,14 @@ void ViewportGL::initialize()
     height_shader.link();
 
     initialized = true;
+}
+
+void ViewportGL::makeCurrent()
+{
+    static_cast<QOpenGLWidget*>(view->viewport())->makeCurrent();
+}
+
+void ViewportGL::doneCurrent()
+{
+    static_cast<QOpenGLWidget*>(view->viewport())->doneCurrent();
 }

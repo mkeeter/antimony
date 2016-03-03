@@ -3,9 +3,17 @@
 #include <QOpenGLShaderProgram>
 #include <QOpenGLBuffer>
 
+class ViewportView;
+
 class ViewportGL
 {
 public:
+    /*
+     *  Construct the GL object, storing the view
+     *  so that we can set its context as current
+     */
+    ViewportGL(ViewportView* v) : view(v) {};
+
     /*
      *  Returns the shaders for shaded and heightmap rendering, respectively
      */
@@ -32,6 +40,10 @@ protected:
      *  Initialize the shader and VBO
      */
     void initialize();
+
+    /*  The ViewportView is a subclass of QGraphicsView.          *
+     *  It better have been constructed with an OpenGL viewport!  */
+    ViewportView* view;
 
     bool initialized=false;
 
