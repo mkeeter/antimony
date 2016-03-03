@@ -92,9 +92,9 @@ object ScriptExportHooks::stl(tuple args, dict kwargs)
         bounds = get_bounds(kwargs);
 
     // Sanity-check bounds
-    if (isinf(bounds.xmin) || isinf(bounds.xmax) ||
-        isinf(bounds.ymin) || isinf(bounds.ymax) ||
-        isinf(bounds.zmin) || isinf(bounds.zmax))
+    if (std::isinf(bounds.xmin) || std::isinf(bounds.xmax) ||
+        std::isinf(bounds.ymin) || std::isinf(bounds.ymax) ||
+        std::isinf(bounds.zmin) || std::isinf(bounds.zmax))
     {
         throw AppHooks::Exception(
                 "Exporting mesh with invalid (infinite) bounds");
@@ -143,8 +143,8 @@ object ScriptExportHooks::heightmap(tuple args, dict kwargs)
         bounds = get_bounds(kwargs);
 
     // Sanity-check bounds
-    if (isinf(bounds.xmin) || isinf(bounds.xmax) ||
-        isinf(bounds.ymin) || isinf(bounds.ymax))
+    if (std::isinf(bounds.xmin) || std::isinf(bounds.xmax) ||
+        std::isinf(bounds.ymin) || std::isinf(bounds.ymax))
     {
         throw AppHooks::Exception(
                 "Exporting heightmap with invalid (infinite) bounds");
