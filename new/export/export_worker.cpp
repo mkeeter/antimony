@@ -18,8 +18,8 @@ void ExportWorker::runAsync()
     QFutureWatcher<void> watcher;
     watcher.setFuture(future);
 
-    connect(&watcher, SIGNAL(finished()),
-            exporting_dialog, SLOT(accept()));
+    connect(&watcher, &decltype(watcher)::finished,
+            exporting_dialog, &ExportingDialog::accept);
 
     // Run until the dialog closes, either because it was accepeted
     // (which indicates that the future has finished) or cancelled
