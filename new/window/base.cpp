@@ -26,6 +26,8 @@ void BaseWindow::connectActions(App* app)
             app, &App::onOpen);
     connect(ui->actionQuit, &QAction::triggered,
             app, &App::onQuit);
+    connect(ui->actionClose, &QAction::triggered,
+            this, &QObject::deleteLater);
 
     // Add undo / redo to edit menu
     ui->menuEdit->addAction(App::instance()->getUndoAction());

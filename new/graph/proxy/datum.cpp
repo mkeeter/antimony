@@ -25,7 +25,6 @@ DatumProxy::DatumProxy(Datum* d, NodeProxy* parent)
     for (auto v : static_cast<GraphProxy*>(parent->parent())
                     ->viewportScene()->getViews())
     {
-        qDebug() << v;
         addViewport(v);
     }
 }
