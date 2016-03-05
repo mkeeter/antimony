@@ -64,7 +64,7 @@ void RenderInstance::setPending()
 
         if (current)
         {   // Tell in-progress renders to abort
-            emit(abort());
+            current->halt();
         }
         else
         {   // Otherwise, start the next render
@@ -98,6 +98,6 @@ void RenderInstance::startNextRender()
     assert(current == nullptr);
     assert(orphan == false);
 
-    current.reset(new RenderTask(shape, M));
+    current.reset(new RenderTask(this, shape, M));
     pending = false;
 }

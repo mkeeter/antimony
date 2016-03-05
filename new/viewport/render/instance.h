@@ -38,7 +38,6 @@ public slots:
      */
     void viewChanged(QMatrix4x4 m);
 
-protected slots:
     /*
      *  When a render task finishes, load in its image and start the next
      *  render operation (if one is queued up)

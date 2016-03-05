@@ -38,6 +38,8 @@ QMAKE_CXXFLAGS += "-D'GITREV=\"$${GITREV}$${GITDIFF}\"'"
 QMAKE_CXXFLAGS += "-D'GITTAG=\"$${GITTAG}\"'"
 QMAKE_CXXFLAGS += "-D'GITBRANCH=\"$${GITBRANCH}\"'"
 
+QMAKE_CXXFLAGS += "-g -O0"
+
 ################################################################################
 
 # Details for Mac applications
