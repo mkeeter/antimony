@@ -38,6 +38,11 @@ public:
      */
     virtual GraphProxy* graphProxy() const=0;
 
+    /*
+     *  Return the actual pointed-to datum
+     */
+    Datum* getDatum() { return datum; }
+
 protected:
     Datum* const datum;
     QHash<const Datum*, Connection*> connections;

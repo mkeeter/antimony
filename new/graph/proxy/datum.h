@@ -45,6 +45,9 @@ protected:
     /*  UI row in the canvas / inspector view  */
     DatumRow* row;
 
+    /*  True if we should be making RenderInstances for this datum */
+    const bool should_render;
+
     /*  Instances for rendering images in various viewports  */
     QMap<ViewportView*, RenderInstance*> render;
 };

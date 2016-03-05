@@ -9,6 +9,7 @@ class DepthImage;
 
 class ViewportView : public QGraphicsView
 {
+    Q_OBJECT
 public:
     ViewportView(QWidget* parent);
 
@@ -60,6 +61,9 @@ public:
 
     /*  Publically accessible handle to get shaders and VBO  */
     ViewportGL gl;
+
+signals:
+    void changed(QMatrix4x4 m);
 
 protected:
     /*

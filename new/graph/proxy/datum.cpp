@@ -13,8 +13,11 @@
 #include "viewport/view.h"
 #include "viewport/scene.h"
 
+#include "fab/fab.h"
+
 DatumProxy::DatumProxy(Datum* d, NodeProxy* parent)
-    : BaseDatumProxy(d, parent), row(new DatumRow(d, parent->getInspector()))
+    : BaseDatumProxy(d, parent), row(new DatumRow(d, parent->getInspector())),
+      should_render(d->getType() == fab::ShapeType)
 {
     d->installWatcher(this);
     NULL_ON_DESTROYED(row);
@@ -44,6 +47,11 @@ void DatumProxy::trigger(const DatumState& state)
     {
         updateHash(state.links, &connections, this, true);
     }
+
+    for (auto r : render)
+    {
+        r->datumChanged(getDatum());
+    }
 }
 
 void DatumProxy::setIndex(int i)
@@ -72,6 +80,11 @@ GraphProxy* DatumProxy::graphProxy() const
 
 void DatumProxy::addViewport(ViewportView* view)
 {
-    render[view] = new RenderInstance(this, view);
-    connect(view, &QObject::destroyed, [=]{ this->render.remove(view); });
+    if (should_render)
+    {
+        render[view] = new RenderInstance(this, view);
+        connect(view, &QObject::destroyed, [=]{
+                this->render[view]->makeOrphan();
+                this->render.remove(view); });
+    }
 }

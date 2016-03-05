@@ -135,6 +135,7 @@ SOURCES += \
     viewport/control/point.cpp          \
     viewport/control/wireframe.cpp      \
     viewport/render/instance.cpp        \
+    viewport/render/task.cpp            \
 
 HEADERS += \
     app/app.h                           \
@@ -203,6 +204,7 @@ HEADERS += \
     viewport/control/point.h            \
     viewport/control/wireframe.h        \
     viewport/render/instance.h          \
+    viewport/render/task.h              \
 
 FORMS += \
     forms/base_window.ui \
