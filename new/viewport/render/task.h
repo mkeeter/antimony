@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Python.h>
+#include <QtConcurrent>
 
 #include <QObject>
 #include <QMatrix4x4>
@@ -27,4 +28,7 @@ protected:
 
     PyObject* shape;
     QMatrix4x4 M;
+
+    QFuture<void> future;
+    QFutureWatcher<void> watcher;
 };

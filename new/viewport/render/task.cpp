@@ -1,6 +1,5 @@
 #include <Python.h>
 
-#include <QtConcurrent>
 #include <QThread>
 
 #include "viewport/render/task.h"
@@ -11,8 +10,7 @@ RenderTask::RenderTask(RenderInstance* parent, PyObject* s, QMatrix4x4 M)
 {
     Py_INCREF(shape);
 
-    auto future = QtConcurrent::run(this, &RenderTask::async);
-    QFutureWatcher<void> watcher;
+    future = QtConcurrent::run(this, &RenderTask::async);
     watcher.setFuture(future);
 
     connect(&watcher, &decltype(watcher)::finished,

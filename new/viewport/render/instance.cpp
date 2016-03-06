@@ -81,10 +81,12 @@ void RenderInstance::onTaskFinished()
     }
     else
     {
+        // Clear task pointer
+        current.reset();
+
         // Start up next render
         if (pending && shape)
         {
-            current.reset();
             startNextRender();
         }
     }
