@@ -72,6 +72,11 @@ signals:
 
 protected:
     /*
+     *  Emits a changed signal and calls QGraphicsView::update
+     */
+    void update();
+
+    /*
      *  Draws X, Y, Z axes transformed with the viewport's matrix
      */
     void drawAxes(QPainter* painter) const;

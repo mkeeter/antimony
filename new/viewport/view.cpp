@@ -129,6 +129,14 @@ void ViewportView::drawForeground(QPainter* painter, const QRectF& rect)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void ViewportView::update()
+{
+    QGraphicsView::update();
+    emit(changed(getMatrix()));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void ViewportView::mousePressEvent(QMouseEvent* event)
 {
     QGraphicsView::mousePressEvent(event);

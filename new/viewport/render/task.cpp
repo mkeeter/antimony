@@ -49,6 +49,12 @@ void RenderTask::async()
             render3d(s, M);
         }
     }
+
+    // Compensate for screen scale
+    float scale = sqrt(pow(M(0, 0), 2) +
+                       pow(M(0, 1), 2) +
+                       pow(M(0, 2), 2));
+    size /= scale;
 }
 
 void RenderTask::render3d(const Shape& s, const QMatrix4x4& matrix)
@@ -63,6 +69,9 @@ void RenderTask::render3d(const Shape& s, const QMatrix4x4& matrix)
                 (transformed.bounds.ymin + transformed.bounds.ymax)/2,
                 (transformed.bounds.zmin + transformed.bounds.zmax)/2);
 
+    size = {transformed.bounds.xmax - transformed.bounds.xmin,
+            transformed.bounds.ymax - transformed.bounds.ymin,
+            transformed.bounds.zmax - transformed.bounds.zmin};
     /*
     if (s.r != -1 && s.g != -1 && s.g != -1)
         image->setColor(QColor(s.r, s.g, s.b));
@@ -97,6 +106,9 @@ void RenderTask::render2d(const Shape& s, const QMatrix4x4& matrix)
                     (b3d.ymin + b3d.ymax)/2,
                     (b3d.zmin + b3d.zmax)/2);
 
+    size = {b3d.xmax - b3d.xmin,
+            b3d.ymax - b3d.ymin,
+            b3d.zmax - b3d.zmin};
     /*
     if (matrix(1,2))
         image->applyGradient(matrix(2,2) > 0);
