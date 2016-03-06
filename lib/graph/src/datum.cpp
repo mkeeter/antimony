@@ -172,6 +172,7 @@ void Datum::writeLinkExpression(const std::unordered_set<const Datum*> links)
 {
     // If the list has been pruned down to emptiness, construct a new
     // expression by calling 'str' on the existing value.
+    std::string out;
     if (links.empty())
     {
         assert(value);
@@ -182,20 +183,21 @@ void Datum::writeLinkExpression(const std::unordered_set<const Datum*> links)
         const std::string e(PyUnicode_AsUTF8(s));
 
         // Preserve subgraph sigil if present
-        expr = isFromSubgraph() ? SIGIL_SUBGRAPH_OUTPUT + e : e;
+        out = isFromSubgraph() ? SIGIL_SUBGRAPH_OUTPUT + e : e;
     }
     else
     {
-        expr = (isFromSubgraph() ? SIGIL_SUBGRAPH_CONNECTION
-                                 : SIGIL_CONNECTION) + std::string("[");
+        out = (isFromSubgraph() ? SIGIL_SUBGRAPH_CONNECTION
+                                : SIGIL_CONNECTION) + std::string("[");
         for (auto d : links)
         {
             if (expr.back() != '[')
-                expr += ",";
-            expr += formatLink(d);
+                out += ",";
+            out += formatLink(d);
         }
-        expr += "]";
+        out += "]";
     }
+    setText(out);
 }
 
 std::string Datum::formatLink(const Datum* upstream) const
@@ -331,6 +333,22 @@ void Datum::update()
         for (auto w : watchers)
             w->trigger(state);
     }
+
+    const auto new_links = getLinks();
+    for (auto o : links)
+    {
+        if (!new_links.count(o))
+        {
+            o->triggerWatchers();
+        }
+    }
+    for (auto n : new_links)
+    {
+        if (!links.count(n))
+        {
+            n->triggerWatchers();
+        }
+    }
 }
 
 DatumState Datum::getState() const
@@ -357,6 +375,7 @@ void Datum::setText(std::string s)
 {
     if (s != expr)
     {
+        links = getLinks();
         expr = s;
         trigger();
     }

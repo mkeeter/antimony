@@ -49,7 +49,7 @@ void GraphNode::removeDatum(Datum* d)
     triggerWatchers();
 }
 
-void GraphNode::triggerWatchers()
+void GraphNode::triggerWatchers() const
 {
     Watched::triggerWatchers();
     subgraph->triggerWatchers();

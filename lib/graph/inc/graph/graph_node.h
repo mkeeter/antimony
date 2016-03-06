@@ -20,7 +20,7 @@ public:
      *  Override triggerWatchers so that subgraph watchers
      *  are also triggered (for subdatum proxies)
      */
-    void triggerWatchers() override;
+    void triggerWatchers() const override;
 
 protected:
     std::unique_ptr<Graph> subgraph;

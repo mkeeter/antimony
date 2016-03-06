@@ -205,6 +205,11 @@ protected:
 
     Node* parent;
 
+    /*  Links are cached before changing expr, so that we can ask upstream
+     *  datums to trigger their watchers (used because Shapes are only
+     *  rendered if they have no outgoing connections)  */
+    std::unordered_set<const Datum*> links;
+
     /*
      *  Sigils are single characters at the beginning of an expression
      *  that mark it as special in some way (connection, output, etc).
