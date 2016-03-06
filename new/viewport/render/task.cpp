@@ -59,9 +59,6 @@ void RenderTask::async()
                        pow(M(0, 1), 2) +
                        pow(M(0, 2), 2));
     size /= scale;
-
-    // Compensate for screen offset
-    pos -= QVector3D(-M(0, 3), M(1, 3), M(2, 3)) / scale;
 }
 
 void RenderTask::render3d(const Shape& s, const QMatrix4x4& matrix)
@@ -71,10 +68,14 @@ void RenderTask::render3d(const Shape& s, const QMatrix4x4& matrix)
 
     render(&transformed, transformed.bounds, 1);
 
-    pos = matrix.inverted() * QVector3D(
+    {   // Apply a transform-less mapping to the bounds
+        auto m = matrix;
+        m.setColumn(3, {0, 0, 0, m(3,3)});
+        pos = m.inverted() * QVector3D(
                 (transformed.bounds.xmin + transformed.bounds.xmax)/2,
                 (transformed.bounds.ymin + transformed.bounds.ymax)/2,
                 (transformed.bounds.zmin + transformed.bounds.zmax)/2);
+    }
 
     size = {transformed.bounds.xmax - transformed.bounds.xmin,
             transformed.bounds.ymax - transformed.bounds.ymin,
@@ -106,10 +107,14 @@ void RenderTask::render2d(const Shape& s, const QMatrix4x4& matrix)
 
     render(&transformed, b3d, 1);
 
-    pos = matrix.inverted() *
-          QVector3D((b3d.xmin + b3d.xmax)/2,
-                    (b3d.ymin + b3d.ymax)/2,
-                    (b3d.zmin + b3d.zmax)/2);
+    {   // Apply a transform-less mapping to the bounds
+        auto m = matrix;
+        m.setColumn(3, {0, 0, 0, m(3, 3)});
+        pos = m.inverted() *
+              QVector3D((b3d.xmin + b3d.xmax)/2,
+                        (b3d.ymin + b3d.ymax)/2,
+                        (b3d.zmin + b3d.zmax)/2);
+    }
 
     size = {b3d.xmax - b3d.xmin,
             b3d.ymax - b3d.ymin,
