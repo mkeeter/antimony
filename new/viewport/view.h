@@ -39,6 +39,11 @@ public:
     void mousePressEvent(QMouseEvent* event) override;
 
     /*
+     *  On mouse wheel, scroll
+     */
+    void wheelEvent(QWheelEvent* event) override;
+
+    /*
      *  On resize, update scene rectangle size
      */
     void resizeEvent(QResizeEvent* e) override;

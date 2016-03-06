@@ -173,6 +173,15 @@ void ViewportView::mouseMoveEvent(QMouseEvent* event)
     }
 }
 
+void ViewportView::wheelEvent(QWheelEvent* event)
+{
+    QVector3D a = sceneToWorld(mapToScene(event->pos()));
+    scale *= pow(1.001, -event->delta());
+    QVector3D b = sceneToWorld(mapToScene(event->pos()));
+    center += a - b;
+    update();
+}
+
 void ViewportView::resizeEvent(QResizeEvent* e)
 {
     Q_UNUSED(e);
