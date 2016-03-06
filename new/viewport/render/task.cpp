@@ -55,6 +55,9 @@ void RenderTask::async()
                        pow(M(0, 1), 2) +
                        pow(M(0, 2), 2));
     size /= scale;
+
+    // Compensate for screen offset
+    pos -= QVector3D(M(0, 3), M(1, 3), M(2, 3));
 }
 
 void RenderTask::render3d(const Shape& s, const QMatrix4x4& matrix)

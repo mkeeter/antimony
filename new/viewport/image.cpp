@@ -122,8 +122,8 @@ void DepthImage::loadSharedShaderVariables(QMatrix4x4 m, QOpenGLShaderProgram* s
 
     glUniform2f(
             offset_loc,
-             2.0*(center.x() - view->width()/2) / view->width(),
-            -2.0*(center.y() - view->height()/2) / view->height());
+             2*(center.x() - view->width()/2) / view->width(),
+            -2*(center.y() - view->height()/2) / view->height());
 
     // Load image's width and height into shader
     const GLuint width_loc = shader->uniformLocation("width");
