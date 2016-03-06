@@ -12,6 +12,7 @@ class ViewportView : public QGraphicsView
     Q_OBJECT
 public:
     ViewportView(QWidget* parent);
+    ~ViewportView();
 
     /*
      *  Returns a generic matrix transform from the view

@@ -24,6 +24,17 @@ ViewportView::ViewportView(QWidget* parent)
     QAbstractScrollArea::setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
+ViewportView::~ViewportView()
+{
+    // Disconnect image destructor signals, otherwise they will try to
+    // remove themselves from the non-existent list of images attached
+    // to this (soon-to-be-delete) ViewportView.
+    for (auto i : images)
+    {
+        disconnect(i, &QObject::destroyed, 0, 0);
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 QMatrix4x4 ViewportView::getMatrix() const
