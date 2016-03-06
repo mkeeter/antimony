@@ -10,13 +10,12 @@
 
 ViewportView::ViewportView(QWidget* parent)
     : QGraphicsView(new QGraphicsScene(), parent),
-      gl(this), scale(100), pitch(0), yaw(0)
+      gl(new QOpenGLWidget(this)), scale(100), pitch(0), yaw(0)
 {
     setStyleSheet("QGraphicsView { border-style: none; }");
     setRenderHints(QPainter::Antialiasing);
 
-    auto gl = new QOpenGLWidget(this);
-    setViewport(gl);
+    setViewport(gl.context);
 
     setSceneRect(-width()/2, -height()/2, width(), height());
 

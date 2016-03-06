@@ -26,6 +26,8 @@ QOpenGLShaderProgram* ViewportGL::getHeightmapShader()
 
 void ViewportGL::initialize()
 {
+    Q_ASSERT(context->isValid());
+
     float vbuf[] = {
          -1, -1,
          -1,  1,
@@ -53,10 +55,10 @@ void ViewportGL::initialize()
 
 void ViewportGL::makeCurrent()
 {
-    static_cast<QOpenGLWidget*>(view->viewport())->makeCurrent();
+    context->makeCurrent();
 }
 
 void ViewportGL::doneCurrent()
 {
-    static_cast<QOpenGLWidget*>(view->viewport())->doneCurrent();
+    context->doneCurrent();
 }
