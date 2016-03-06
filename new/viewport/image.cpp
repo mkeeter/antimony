@@ -12,6 +12,8 @@
 #include "viewport/view.h"
 #include "viewport/render/instance.h"
 
+#include "window/viewport.h"
+
 DepthImage::DepthImage(RenderInstance* parent, ViewportView* view)
     : QObject(parent), view(view), gl(&view->gl)
 {
@@ -88,16 +90,18 @@ void DepthImage::paint(QMatrix4x4 m)
     gl->getQuadVertices()->bind();
 
     // Find the parent MainWindow of our Viewport
-    /* XXX
     QWidget* p = view;
-    while (p && !dynamic_cast<MainWindow*>(p))
+    while (p && !dynamic_cast<ViewportWindow*>(p))
         p = p->parentWidget();
 
-    if (p && dynamic_cast<MainWindow*>(p)->isShaded())
+    if (p && dynamic_cast<ViewportWindow*>(p)->isShaded())
+    {
         paintShaded(m);
+    }
     else
-    */
+    {
         paintHeightmap(m);
+    }
 
     gl->getQuadVertices()->release();
 }
