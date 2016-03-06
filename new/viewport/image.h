@@ -82,8 +82,8 @@ protected:
     QVector3D size;
 
     /*  OpenGL textures  */
-    GLuint depth_tex;
-    GLuint shaded_tex;
+    GLuint depth_tex=0;
+    GLuint shaded_tex=0;
 
     /*  Other relevant settings for drawing images  */
     QColor color;
