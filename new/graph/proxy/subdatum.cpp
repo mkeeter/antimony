@@ -15,13 +15,11 @@ SubdatumProxy::SubdatumProxy(Datum* d, GraphProxy* parent)
       frame(new SubdatumFrame(d, parent->canvasScene()))
 {
     d->installWatcher(this);
-    NULL_ON_DESTROYED(frame);
 }
 
 SubdatumProxy::~SubdatumProxy()
 {
-    if (frame)
-        delete frame;
+    delete frame;
 }
 
 void SubdatumProxy::trigger(const DatumState& state)

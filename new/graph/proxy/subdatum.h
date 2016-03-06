@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QObject>
+#include <QPointer>
 
 #include "graph/proxy/base_datum.h"
 #include "canvas/info.h"
@@ -41,5 +42,8 @@ public:
     GraphProxy* graphProxy() const override;
 
 protected:
-    SubdatumFrame* frame;
+    /*  Strong pointer to UI frame.  We use a QPointer here because otherwise
+     *  subdatum frames can be deleted out from underneath us (i.e. when a
+     *  window closes  */
+    QPointer<SubdatumFrame> frame;
 };

@@ -20,7 +20,6 @@ DatumProxy::DatumProxy(Datum* d, NodeProxy* parent)
       should_render(d->getType() == fab::ShapeType)
 {
     d->installWatcher(this);
-    NULL_ON_DESTROYED(row);
 
     /*
      *  Install the render instance for every existing viewport
@@ -30,12 +29,6 @@ DatumProxy::DatumProxy(Datum* d, NodeProxy* parent)
     {
         addViewport(v);
     }
-}
-
-DatumProxy::~DatumProxy()
-{
-    if (row)
-        delete row;
 }
 
 void DatumProxy::trigger(const DatumState& state)

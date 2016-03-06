@@ -2,7 +2,7 @@
 
 #include <QObject>
 #include <QHash>
-#include <QSharedPointer>
+#include <QPointer>
 
 #include "graph/watchers.h"
 
@@ -36,7 +36,7 @@ public:
     /*
      *  Returns the node's inspector frame object.
      */
-    InspectorFrame* getInspector() const { return inspector; }
+    InspectorFrame* getInspector() const { return inspector.data(); }
 
     /*
      *  Records positions of all inspectors and subdatums
@@ -106,6 +106,12 @@ protected:
 
     QMap<long, Control*> controls;
 
-    InspectorFrame* inspector;
+    /*  Strong pointer to inspector frame, to delete it when the node proxy
+     *  is destroyed.  We use QPointer here instead of QScopedPointer because
+     *  the pointer should be cleared if a window is closed (taking the
+     *  InspectorFrames with it)    */
+    QPointer<InspectorFrame> inspector;
+
+    /*  Weak pointer to inspector buttons, as they are owned by the frame  */
     InspectorShowHiddenButton* show_hidden;
 };

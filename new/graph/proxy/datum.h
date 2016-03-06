@@ -15,7 +15,6 @@ Q_OBJECT
 
 public:
     DatumProxy(Datum* d, NodeProxy* parent);
-    ~DatumProxy();
 
     void trigger(const DatumState& state) override;
 
@@ -42,7 +41,8 @@ public:
     void addViewport(ViewportView* view);
 
 protected:
-    /*  UI row in the canvas / inspector view  */
+    /*  Weak pointer to UI row in the canvas / inspector view
+     *  (since it is owned by the parent InspectorFrame  */
     DatumRow* row;
 
     /*  True if we should be making RenderInstances for this datum */
