@@ -50,6 +50,10 @@ void RenderTask::async()
         }
     }
 
+    // Set color from shape or to white
+    color = (s.r != -1 && s.g != -1 && s.g != -1)
+        ? QColor(s.r, s.g, s.b) : QColor(255);
+
     // Compensate for screen scale
     float scale = sqrt(pow(M(0, 0), 2) +
                        pow(M(0, 1), 2) +
@@ -75,10 +79,8 @@ void RenderTask::render3d(const Shape& s, const QMatrix4x4& matrix)
     size = {transformed.bounds.xmax - transformed.bounds.xmin,
             transformed.bounds.ymax - transformed.bounds.ymin,
             transformed.bounds.zmax - transformed.bounds.zmin};
-    /*
-    if (s.r != -1 && s.g != -1 && s.g != -1)
-        image->setColor(QColor(s.r, s.g, s.b));
-    */
+
+    flat = false;
 }
 
 void RenderTask::render2d(const Shape& s, const QMatrix4x4& matrix)
@@ -112,18 +114,36 @@ void RenderTask::render2d(const Shape& s, const QMatrix4x4& matrix)
     size = {b3d.xmax - b3d.xmin,
             b3d.ymax - b3d.ymin,
             b3d.zmax - b3d.zmin};
-    /*
+
+    // Apply a gradient to the depth-map based on tilt
     if (matrix(1,2))
-        image->applyGradient(matrix(2,2) > 0);
+    {
+        bool direction = matrix(2,2) > 0;
+        for (int j=0; j < depth.height(); ++j)
+        {
+            for (int i=0; i < depth.width(); ++i)
+            {
+                uint8_t pix = depth.pixel(i, j) & 0xff;
+                if (pix)
+                {
+                    if (direction)
+                        pix *= j / float(depth.height());
+                    else
+                        pix *= 1 - j / float(depth.height());
+                    depth.setPixel(i, j, pix | (pix << 8) | (pix << 16));
+                }
+            }
+        }
+    }
 
-    if (s.r != -1 && s.g != -1 && s.g != -1)
-        image->setColor(QColor(s.r, s.g, s.b));
 
-    image->setNormals(
-            sqrt(pow(matrix(0,2),2) + pow(matrix(1,2),2)),
-            fabs(matrix(2,2)));
-    image->setFlat(true);
-    */
+    {   // Set normals to a flat value (rather than derivatives)
+        float xy = fabs(matrix(2,2));
+        float z = sqrt(pow(matrix(0,2),2) + pow(matrix(1,2),2));
+        shaded.fill((int(z * 255) << 16) | int(xy * 255));
+    }
+
+    flat = true;
 }
 
 Transform RenderTask::getTransform(QMatrix4x4 m)

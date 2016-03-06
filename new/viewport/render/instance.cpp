@@ -83,7 +83,7 @@ void RenderInstance::onTaskFinished()
     {
         image.update(current->pos, current->size,
                      current->depth, current->shaded,
-                     QColor(255), false);
+                     current->color, current->flat);
 
         // Clear task pointer
         current.reset();

@@ -6,6 +6,7 @@
 #include <QObject>
 #include <QImage>
 #include <QMatrix4x4>
+#include <QColor>
 
 #include "fab/types/transform.h"
 #include "fab/types/bounds.h"
@@ -59,9 +60,11 @@ protected:
     /*  Size of rendered image  */
     QVector3D size;
 
-    /*  Depth and shaded image  */
+    /*  Output data (pulled into DepthImages for rendering)  */
     QImage depth;
     QImage shaded;
+    QColor color;
+    bool flat;
 
     /*  Flag used to abort rendering asynchronously  */
     int halt_flag=0;
