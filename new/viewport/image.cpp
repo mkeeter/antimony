@@ -27,9 +27,9 @@ DepthImage::~DepthImage()
     clearTextures();
 }
 
-void DepthImage::updateImage(QVector3D pos_, QVector3D size_,
-                             QImage depth, QImage shaded, QColor color_,
-                             bool flat_)
+void DepthImage::update(QVector3D pos_, QVector3D size_,
+                        QImage depth, QImage shaded, QColor color_,
+                        bool flat_)
 {
     clearTextures();
     buildTexture(depth, &depth_tex);
@@ -57,9 +57,9 @@ void DepthImage::clearTextures()
             glDeleteTextures(1, &shaded_tex);
             gl->doneCurrent();
         }
+        valid = false;
         view->scene()->invalidate(QRect(), QGraphicsScene::BackgroundLayer);
     }
-    view.clear();
 }
 
 void DepthImage::buildTexture(QImage img, GLuint* tex)
@@ -86,6 +86,8 @@ void DepthImage::buildTexture(QImage img, GLuint* tex)
 
 void DepthImage::paint(QMatrix4x4 m)
 {
+    assert(valid);
+
     gl->getQuadVertices()->bind();
 
     // Find the parent MainWindow of our Viewport

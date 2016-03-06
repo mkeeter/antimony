@@ -21,9 +21,9 @@ public:
     /*
      *  Update the image settings, generating new textures
      */
-    void updateImage(QVector3D pos, QVector3D size,
-                     QImage depth, QImage shaded, QColor color,
-                     bool flat);
+    void update(QVector3D pos, QVector3D size,
+                QImage depth, QImage shaded, QColor color,
+                bool flat);
 
     /*
      *  Releases OpenGL texture objects and clears the viewport pointer

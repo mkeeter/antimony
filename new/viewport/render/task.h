@@ -4,6 +4,7 @@
 #include <QtConcurrent>
 
 #include <QObject>
+#include <QImage>
 #include <QMatrix4x4>
 
 #include "fab/types/transform.h"
@@ -37,10 +38,9 @@ protected:
     void render3d(const Shape& s, const QMatrix4x4& matrix);
 
     /*
-     *  Renders a shape, returning a pair of images for depth and normals
+     *  Renders a shape, storing results in depth and shaded
      */
-    QPair<QImage, QImage> render(
-            Shape* shape, Bounds b, float scale);
+    void render(Shape* shape, Bounds b, float scale);
 
     /*
      *  Converts the given matrix into a Transform
@@ -53,6 +53,19 @@ protected:
     QFuture<void> future;
     QFutureWatcher<void> watcher;
 
+    /*  Position of image center (in screen coordinates)  */
+    QVector3D pos;
+
+    /*  Size of rendered image  */
+    QVector3D size;
+
+    /*  Depth and shaded image  */
+    QImage depth;
+    QImage shaded;
+
     /*  Flag used to abort rendering asynchronously  */
     int halt_flag=0;
+
+    /*  Give RenderInstance access to internal members  */
+    friend class RenderInstance;
 };

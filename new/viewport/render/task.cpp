@@ -56,9 +56,9 @@ void RenderTask::render3d(const Shape& s, const QMatrix4x4& matrix)
     Transform T = getTransform(matrix);
     Shape transformed = s.map(T);
 
-    auto out = render(&transformed, transformed.bounds, 100);
+    render(&transformed, transformed.bounds, 1);
 
-    QVector3D pos = matrix.inverted() * QVector3D(
+    pos = matrix.inverted() * QVector3D(
                 (transformed.bounds.xmin + transformed.bounds.xmax)/2,
                 (transformed.bounds.ymin + transformed.bounds.ymax)/2,
                 (transformed.bounds.zmin + transformed.bounds.zmax)/2);
@@ -90,12 +90,12 @@ void RenderTask::render2d(const Shape& s, const QMatrix4x4& matrix)
                         s.bounds.xmax, s.bounds.ymax, 0.0001).
                  map(getTransform(matrix));
 
-    auto out = render(&transformed, b3d, 100);
+    render(&transformed, b3d, 1);
 
-    QVector3D pos = matrix.inverted() *
-                QVector3D((b3d.xmin + b3d.xmax)/2,
-                          (b3d.ymin + b3d.ymax)/2,
-                          (b3d.zmin + b3d.zmax)/2);
+    pos = matrix.inverted() *
+          QVector3D((b3d.xmin + b3d.xmax)/2,
+                    (b3d.ymin + b3d.ymax)/2,
+                    (b3d.zmin + b3d.zmax)/2);
 
     /*
     if (matrix(1,2))
@@ -135,12 +135,11 @@ Transform RenderTask::getTransform(QMatrix4x4 m)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-QPair<QImage, QImage> RenderTask::render(
-        Shape* shape, Bounds b, float scale)
+void RenderTask::render(Shape* shape, Bounds b, float scale)
 {
-    QImage depth((b.xmax - b.xmin) * scale, (b.ymax - b.ymin) * scale,
+    depth = QImage((b.xmax - b.xmin) * scale, (b.ymax - b.ymin) * scale,
                  QImage::Format_RGB32);
-    QImage shaded(depth.width(), depth.height(), depth.format());
+    shaded = QImage(depth.width(), depth.height(), depth.format());
 
     depth.fill(0x000000);
 
@@ -192,6 +191,4 @@ QPair<QImage, QImage> RenderTask::render(
     delete [] s8_rows;
     delete [] d16;
     delete [] d16_rows;
-
-    return {depth, shaded};
 }
