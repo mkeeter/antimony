@@ -52,7 +52,7 @@ void RenderTask::async()
 
     // Set color from shape or to white
     color = (s.r != -1 && s.g != -1 && s.g != -1)
-        ? QColor(s.r, s.g, s.b) : QColor(255);
+        ? QColor(s.r, s.g, s.b) : QColor(255, 255, 255);
 
     // Compensate for screen scale
     float scale = sqrt(pow(M(0, 0), 2) +
