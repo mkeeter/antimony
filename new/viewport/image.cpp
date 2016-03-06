@@ -49,14 +49,11 @@ void DepthImage::clearTextures()
 {
     if (view)
     {
-        auto v =  dynamic_cast<QOpenGLWidget*>(view->viewport());
-        if (v && v->isValid())
-        {
-            gl->makeCurrent();
-            glDeleteTextures(1, &depth_tex);
-            glDeleteTextures(1, &shaded_tex);
-            gl->doneCurrent();
-        }
+        gl->makeCurrent();
+        glDeleteTextures(1, &depth_tex);
+        glDeleteTextures(1, &shaded_tex);
+        gl->doneCurrent();
+
         valid = false;
         view->scene()->invalidate(QRect(), QGraphicsScene::BackgroundLayer);
     }
