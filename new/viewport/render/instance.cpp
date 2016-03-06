@@ -44,6 +44,7 @@ void RenderInstance::datumChanged(Datum* d)
     {
         Py_XDECREF(shape);
         shape = nullptr;
+        image.clearTextures();
     }
 
     setPending();
