@@ -214,9 +214,9 @@ void RenderTask::render(Shape* shape, Bounds b, float scale)
             uint8_t* norm = s8_rows[j][i];
             if (pix)
             {
-                depth.setPixel(i, depth.height() - j - 1,
+                depth.setPixel(i, j,
                                pix | (pix << 8) | (pix << 16));
-                shaded.setPixel(i, depth.height() - j - 1,
+                shaded.setPixel(i, j,
                         norm[0] | (norm[1] << 8) | (norm[2] << 16));
             }
         }
