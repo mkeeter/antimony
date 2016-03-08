@@ -71,5 +71,8 @@ protected:
     /*  Current (active) render task, or null  */
     QScopedPointer<RenderTask> current;
 
+    /*  Default refinement to use (dynamically changes)  */
+    int starting_refinement=4;
+
     DepthImage image;
 };

@@ -40,6 +40,9 @@ RenderTask* RenderTask::getNext(RenderInstance* parent) const
 
 void RenderTask::async()
 {
+    QTime timer;
+    timer.start();
+
     boost::python::extract<const Shape&> get_shape(shape);
 
     Q_ASSERT(get_shape.check());
@@ -67,6 +70,8 @@ void RenderTask::async()
                        pow(M(0, 1), 2) +
                        pow(M(0, 2), 2));
     size /= scale;
+
+    render_time = timer.elapsed();
 }
 
 void RenderTask::render3d(const Shape& s, const QMatrix4x4& matrix)

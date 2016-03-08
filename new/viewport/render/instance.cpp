@@ -90,6 +90,16 @@ void RenderInstance::onTaskFinished()
                          current->depth, current->shaded,
                          current->color, current->flat);
 
+            // Dynamically adjust default refinement level based on render time
+            if (current->render_time < 25)
+            {
+                starting_refinement = std::max(1, starting_refinement - 1);
+            }
+            else
+            {
+                starting_refinement = std::min(starting_refinement + 1, 5);
+            }
+
             // If we don't have a pending render task, then begin
             // a refinement render task.
             if (!pending)
@@ -97,6 +107,11 @@ void RenderInstance::onTaskFinished()
                 current.reset(current->getNext(this));
                 restarted = true;
             }
+        }
+        else
+        {   // If we didn't have enough time to render before the abort flag
+            // went up, then increase the starting refinement here
+            starting_refinement = std::min(starting_refinement + 1, 5);
         }
 
         if (!restarted)
@@ -121,6 +136,8 @@ void RenderInstance::startNextRender()
     assert(current == nullptr);
     assert(orphan == false);
 
-    current.reset(new RenderTask(this, shape, M));
+    Q_ASSERT(starting_refinement >= 1);
+    current.reset(new RenderTask(this, shape, M, starting_refinement));
+
     pending = false;
 }

@@ -19,7 +19,7 @@ class RenderTask : public QObject
 Q_OBJECT
 public:
     RenderTask(RenderInstance* parent, PyObject* s, QMatrix4x4 M,
-               int refinement=4);
+               int refinement=1);
     ~RenderTask();
 
     /*
