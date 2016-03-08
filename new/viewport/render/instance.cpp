@@ -82,9 +82,12 @@ void RenderInstance::onTaskFinished()
     }
     else
     {
-        image.update(current->pos, current->size,
-                     current->depth, current->shaded,
-                     current->color, current->flat);
+        if (!current->halt_flag)
+        {
+            image.update(current->pos, current->size,
+                         current->depth, current->shaded,
+                         current->color, current->flat);
+        }
 
         // Clear task pointer
         current.reset();
