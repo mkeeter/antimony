@@ -8,8 +8,9 @@
 #include "fab/util/region.h"
 #include "fab/tree/render.h"
 
-RenderTask::RenderTask(RenderInstance* parent, PyObject* s, QMatrix4x4 M)
-    : shape(s), M(M)
+RenderTask::RenderTask(RenderInstance* parent, PyObject* s, QMatrix4x4 M,
+                       int refinement)
+    : shape(s), M(M), refinement(refinement)
 {
     Py_INCREF(shape);
 
@@ -28,6 +29,13 @@ RenderTask::~RenderTask()
 void RenderTask::halt()
 {
     halt_flag = 1;
+}
+
+RenderTask* RenderTask::getNext(RenderInstance* parent) const
+{
+    return refinement > 1
+        ? new RenderTask(parent, shape, M, refinement - 1)
+        : NULL;
 }
 
 void RenderTask::async()
@@ -66,7 +74,7 @@ void RenderTask::render3d(const Shape& s, const QMatrix4x4& matrix)
     Transform T = getTransform(matrix);
     Shape transformed = s.map(T);
 
-    render(&transformed, transformed.bounds, 1);
+    render(&transformed, transformed.bounds, 1.0 / refinement);
 
     {   // Apply a transform-less mapping to the bounds
         auto m = matrix;
@@ -105,7 +113,7 @@ void RenderTask::render2d(const Shape& s, const QMatrix4x4& matrix)
                         s.bounds.xmax, s.bounds.ymax, 0.0001).
                  map(getTransform(matrix));
 
-    render(&transformed, b3d, 1);
+    render(&transformed, b3d, 1.0 / refinement);
 
     {   // Apply a transform-less mapping to the bounds
         auto m = matrix;

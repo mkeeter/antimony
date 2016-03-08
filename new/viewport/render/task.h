@@ -18,13 +18,20 @@ class RenderTask : public QObject
 {
 Q_OBJECT
 public:
-    RenderTask(RenderInstance* parent, PyObject* s, QMatrix4x4 M);
+    RenderTask(RenderInstance* parent, PyObject* s, QMatrix4x4 M,
+               int refinement=4);
     ~RenderTask();
 
     /*
      *  Request that the rendering task halts early
      */
     void halt();
+
+    /*
+     *  Returns a render task at the next level of refinement
+     *  (or null if this task is at refinement = 0)
+     */
+    RenderTask* getNext(RenderInstance* parent) const;
 
 protected:
     /*
@@ -68,6 +75,13 @@ protected:
 
     /*  Flag used to abort rendering asynchronously  */
     int halt_flag=0;
+
+    /*  Render time (used to decide how to adjust starting refinement  */
+    int render_time=-1;
+
+    /*  Scale factor used to reduce resolution  *
+     *  1 is pixel-perfect resolution           */
+    int refinement;
 
     /*  Give RenderInstance access to internal members  */
     friend class RenderInstance;

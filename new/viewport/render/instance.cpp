@@ -82,20 +82,33 @@ void RenderInstance::onTaskFinished()
     }
     else
     {
+        bool restarted = false;
+
         if (!current->halt_flag)
         {
             image.update(current->pos, current->size,
                          current->depth, current->shaded,
                          current->color, current->flat);
+
+            // If we don't have a pending render task, then begin
+            // a refinement render task.
+            if (!pending)
+            {
+                current.reset(current->getNext(this));
+                restarted = true;
+            }
         }
 
-        // Clear task pointer
-        current.reset();
-
-        // Start up next render
-        if (pending && shape)
+        if (!restarted)
         {
-            startNextRender();
+            // Clear task pointer
+            current.reset();
+
+            // Start up next render
+            if (pending && shape)
+            {
+                startNextRender();
+            }
         }
     }
 }
