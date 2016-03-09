@@ -64,10 +64,10 @@ void RenderTask::render()
     Q_ASSERT(get_shape.check());
     Shape s = get_shape();
 
-    if (!isinf(s.bounds.xmin) && !isinf(s.bounds.xmax) &&
-        !isinf(s.bounds.xmin) && !isinf(s.bounds.xmax))
+    if (!std::isinf(s.bounds.xmin) && !std::isinf(s.bounds.xmax) &&
+        !std::isinf(s.bounds.xmin) && !std::isinf(s.bounds.xmax))
     {
-        if (isinf(s.bounds.zmin) || isinf(s.bounds.zmax))
+        if (std::isinf(s.bounds.zmin) || std::isinf(s.bounds.zmax))
             render2d(s);
         else
             render3d(s);
