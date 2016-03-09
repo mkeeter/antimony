@@ -7,13 +7,11 @@ cygwin {
 }
 
 macx {
-    !contains(DEFINES, BREW_HOME){
-        BREW_HOME=/usr/local
-    }
-    QMAKE_CXXFLAGS += $$system($$(BREW_HOME)/bin/python3-config --includes)
-    QMAKE_LFLAGS   += $$system($$(BREW_HOME)/bin/python3-config --ldflags)
-    LIBS += -L$$(BREW_HOME)/lib -lboost_python3
-    QMAKE_CXXFLAGS += -isystem$$(BREW_HOME)/include
+    include(brew.pri)
+    QMAKE_CXXFLAGS += $$system($${BREW_HOME}/bin/python3-config --includes)
+    QMAKE_LFLAGS   += $$system($${BREW_HOME}/bin/python3-config --ldflags)
+    LIBS += -L$${BREW_HOME}/lib -lboost_python3
+    QMAKE_CXXFLAGS += -isystem$${BREW_HOME}/include
 }
 
 linux {
