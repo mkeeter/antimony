@@ -2,6 +2,7 @@
 *.o
 *.a
 .tags
+.qmake.stash
 *DS_Store
 fab/c/build*
 *.dylib
