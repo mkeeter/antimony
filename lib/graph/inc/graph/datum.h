@@ -61,11 +61,6 @@ public:
     PyObject* currentValue() const { return value; }
 
     /*
-     *  Returns true unless the leading character is an OUTPUT sigil.
-     */
-    bool hasInput() const;
-
-    /*
      *  Registers d as an upstream datum, loading it into sources
      *
      *  Returns true on success, false on recursive lookup failure.

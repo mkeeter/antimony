@@ -59,11 +59,6 @@ Datum::~Datum()
     Py_XDECREF(value);
 }
 
-bool Datum::hasInput() const
-{
-    return !isOutput();
-}
-
 PyObject* Datum::getValue()
 {
     Graph* const env = environment();
@@ -419,7 +414,7 @@ bool Datum::isFromSubgraph() const
 bool Datum::isOutput() const
 {
     return !expr.empty() && (expr.front() == SIGIL_OUTPUT ||
-                             expr.front() == SIGIL_SUBGRAPH_OUTPUT);
+                             isFromSubgraph());
 }
 
 Graph* Datum::environment() const
