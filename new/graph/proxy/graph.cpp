@@ -69,7 +69,7 @@ ViewportWindow* GraphProxy::newViewportWindow()
 
 void GraphProxy::makeInstancesFor(Control* c)
 {
-    viewport_scene->makeInstancesFor(c);
+    viewport_scene->installControl(c);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

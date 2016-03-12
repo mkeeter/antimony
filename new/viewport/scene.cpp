@@ -3,6 +3,7 @@
 #include "viewport/scene.h"
 #include "viewport/control/control.h"
 #include "viewport/view.h"
+#include "graph/proxy/datum.h"
 
 ViewportScene::ViewportScene(Graph* g, QObject* parent)
     : QObject(parent), g(g)
@@ -13,7 +14,9 @@ ViewportScene::ViewportScene(Graph* g, QObject* parent)
 ViewportView* ViewportScene::getView(QWidget* parent)
 {
     auto v = new ViewportView(parent);
-    connect(this, &ViewportScene::makeInstancesFor,
+    connect(this, &ViewportScene::installControl,
             v, &ViewportView::installControl);
+    connect(this, &ViewportScene::installDatum,
+            v, &ViewportView::installDatum);
     return v;
 }

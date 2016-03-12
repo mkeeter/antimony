@@ -8,6 +8,7 @@
 #include "viewport/image.h"
 #include "viewport/control/control.h"
 #include "app/colors.h"
+#include "graph/proxy/datum.h"
 
 ViewportView::ViewportView(QWidget* parent)
     : QGraphicsView(new QGraphicsScene(), parent),
@@ -151,6 +152,11 @@ void ViewportView::update()
 void ViewportView::installControl(Control* c)
 {
     c->makeInstanceFor(this);
+}
+
+void ViewportView::installDatum(DatumProxy* d)
+{
+    d->addViewport(this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

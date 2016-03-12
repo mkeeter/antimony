@@ -7,6 +7,7 @@ class Graph;
 class ViewportView;
 
 class Control;
+class DatumProxy;
 
 class ViewportScene : public QObject
 {
@@ -33,20 +34,17 @@ public:
      */
     Graph* getGraph() const { return g; }
 
-    /*
-     *  Return a read-only list of viewports
-     */
-    const QList<ViewportView*>& getViews() const { return viewports; }
-
 signals:
     /*
-     *  Make instances for every viewport
+     *  Requests that every viewport calls installViewport on the given control
      */
-    void makeInstancesFor(Control* c);
+    void installControl(Control* c);
+
+    /*
+     *  Requests that every viewport calls addViewport on the given proxy
+     */
+    void installDatum(DatumProxy* d);
 
 protected:
     Graph* const g;
-
-    /* Stores viewports for which we've made a QGraphicsScene */
-    QList<ViewportView*> viewports;
 };

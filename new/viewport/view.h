@@ -7,6 +7,7 @@
 
 class DepthImage;
 class Control;
+class DatumProxy;
 
 class ViewportView : public QGraphicsView
 {
@@ -77,6 +78,11 @@ public slots:
      *  Creates controller instances for the given controller and this viewport
      */
     void installControl(Control* c);
+
+    /*
+     *  Asks the datum proxy to create a render instances for this viewport
+     */
+    void installDatum(DatumProxy* p);
 
 protected:
     /*

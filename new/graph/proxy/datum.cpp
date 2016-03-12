@@ -20,15 +20,7 @@ DatumProxy::DatumProxy(Datum* d, NodeProxy* parent)
       should_render(d->getType() == fab::ShapeType)
 {
     d->installWatcher(this);
-
-    /*
-     *  Install the render instance for every existing viewport
-     */
-    for (auto v : static_cast<GraphProxy*>(parent->parent())
-                    ->viewportScene()->getViews())
-    {
-        addViewport(v);
-    }
+    static_cast<GraphProxy*>(parent->parent())->viewportScene()->installDatum(this);
 }
 
 void DatumProxy::trigger(const DatumState& state)
