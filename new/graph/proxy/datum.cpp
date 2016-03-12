@@ -9,15 +9,12 @@
 #include "canvas/datum_row.h"
 #include "canvas/connection/connection.h"
 
-#include "viewport/render/instance.h"
-#include "viewport/view.h"
 #include "viewport/scene.h"
 
-#include "fab/fab.h"
-
 DatumProxy::DatumProxy(Datum* d, NodeProxy* parent)
-    : BaseDatumProxy(d, parent), row(new DatumRow(d, parent->getInspector())),
-      should_render(d->getType() == fab::ShapeType)
+    : BaseDatumProxy(d, parent, static_cast<GraphProxy*>(
+                parent->parent())->viewportScene()),
+      row(new DatumRow(d, parent->getInspector()))
 {
     d->installWatcher(this);
     static_cast<GraphProxy*>(parent->parent())->viewportScene()->installDatum(this);
@@ -56,18 +53,4 @@ OutputPort* DatumProxy::outputPort() const
 GraphProxy* DatumProxy::graphProxy() const
 {
     return static_cast<GraphProxy*>(parent()->parent());
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void DatumProxy::addViewport(ViewportView* view)
-{
-    if (should_render)
-    {
-        auto r = new RenderInstance(this, view);
-        connect(view, &QObject::destroyed,
-                r, &RenderInstance::makeOrphan);
-        connect(this, &DatumProxy::datumChanged,
-                r, &RenderInstance::datumChanged);
-    }
 }

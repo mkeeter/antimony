@@ -16,6 +16,9 @@ class GraphProxy;
 class DatumRow;
 class Connection;
 
+class ViewportView;
+class ViewportScene;
+
 ////////////////////////////////////////////////////////////////////////////////
 
 class BaseDatumProxy : public QObject, public DatumWatcher
@@ -23,8 +26,7 @@ class BaseDatumProxy : public QObject, public DatumWatcher
     Q_OBJECT
 
 public:
-    BaseDatumProxy(Datum* d, QObject* parent)
-        : QObject(parent), datum(d) {}
+    BaseDatumProxy(Datum* d, QObject* parent, ViewportScene* scene);
     virtual ~BaseDatumProxy();
 
     /*
@@ -43,7 +45,23 @@ public:
      */
     Datum* getDatum() { return datum; }
 
+    /*
+     *  Creates a new RenderInstance for this datum and the given view,
+     *  then makes various connections to make everything work
+     */
+    void addViewport(ViewportView* view);
+
+signals:
+    /*
+     *  Emitted to ask RenderInstances to update themselves
+     */
+    void datumChanged(Datum* d);
+
 protected:
     Datum* const datum;
+
+    /*  True if we should be making RenderInstances for this datum */
+    const bool should_render;
+
     QHash<const Datum*, Connection*> connections;
 };

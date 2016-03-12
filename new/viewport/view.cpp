@@ -122,7 +122,7 @@ void ViewportView::installControl(Control* c)
     c->makeInstanceFor(this);
 }
 
-void ViewportView::installDatum(DatumProxy* d)
+void ViewportView::installDatum(BaseDatumProxy* d)
 {
     d->addViewport(this);
 }

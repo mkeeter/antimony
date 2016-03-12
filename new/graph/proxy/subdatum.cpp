@@ -11,7 +11,7 @@
 #include "canvas/scene.h"
 
 SubdatumProxy::SubdatumProxy(Datum* d, GraphProxy* parent)
-    : BaseDatumProxy(d, parent),
+    : BaseDatumProxy(d, parent, parent->viewportScene()),
       frame(new SubdatumFrame(d, parent->canvasScene()))
 {
     d->installWatcher(this);
@@ -27,6 +27,8 @@ void SubdatumProxy::trigger(const DatumState& state)
     {
         updateHash(state.links, &connections, this, true);
     }
+
+    emit(datumChanged(getDatum()));
 }
 
 CanvasInfo SubdatumProxy::canvasInfo() const

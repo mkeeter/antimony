@@ -6,7 +6,7 @@
 #include "viewport/image.h"
 
 class Datum;
-class DatumProxy;
+class BaseDatumProxy;
 class ViewportView;
 class RenderTask;
 
@@ -14,7 +14,7 @@ class RenderInstance : public QObject
 {
     Q_OBJECT
 public:
-    RenderInstance(DatumProxy* parent, ViewportView* view);
+    RenderInstance(BaseDatumProxy* parent, ViewportView* view);
 
     ~RenderInstance();
 

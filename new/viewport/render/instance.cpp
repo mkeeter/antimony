@@ -5,7 +5,7 @@
 #include "graph/proxy/datum.h"
 #include "graph/datum.h"
 
-RenderInstance::RenderInstance(DatumProxy* parent, ViewportView* view)
+RenderInstance::RenderInstance(BaseDatumProxy* parent, ViewportView* view)
     : QObject(), M(view->getMatrix()), image(this, view)
 {
     connect(parent, &QObject::destroyed, this, &RenderInstance::makeOrphan);

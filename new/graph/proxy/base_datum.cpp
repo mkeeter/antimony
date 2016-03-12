@@ -1,5 +1,22 @@
+#include <Python.h>
+
 #include "graph/proxy/base_datum.h"
 #include "canvas/connection/connection.h"
+
+#include "viewport/render/instance.h"
+#include "viewport/view.h"
+#include "viewport/scene.h"
+
+#include "graph/datum.h"
+
+#include "fab/fab.h"
+
+BaseDatumProxy::BaseDatumProxy(Datum* d, QObject* parent, ViewportScene* scene)
+    : QObject(parent), datum(d),
+      should_render(d->getType() == fab::ShapeType)
+{
+    scene->installDatum(this);
+}
 
 BaseDatumProxy::~BaseDatumProxy()
 {
@@ -10,4 +27,18 @@ BaseDatumProxy::~BaseDatumProxy()
         cs.push_back(c);
     for (auto c : cs)
         delete c;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void BaseDatumProxy::addViewport(ViewportView* view)
+{
+    if (should_render)
+    {
+        auto r = new RenderInstance(this, view);
+        connect(view, &QObject::destroyed,
+                r, &RenderInstance::makeOrphan);
+        connect(this, &BaseDatumProxy::datumChanged,
+                r, &RenderInstance::datumChanged);
+    }
 }

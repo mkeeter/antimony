@@ -7,7 +7,6 @@
 
 class NodeProxy;
 class RenderInstance;
-class ViewportView;
 
 class DatumProxy : public BaseDatumProxy
 {
@@ -35,22 +34,8 @@ public:
      */
     GraphProxy* graphProxy() const override;
 
-    /*
-     *  Make a RenderInstance for the given viewport
-     */
-    void addViewport(ViewportView* view);
-
-signals:
-    /*
-     *  Emitted to ask RenderInstances to update themselves
-     */
-    void datumChanged(Datum* d);
-
 protected:
     /*  Weak pointer to UI row in the canvas / inspector view
      *  (since it is owned by the parent InspectorFrame  */
     DatumRow* row;
-
-    /*  True if we should be making RenderInstances for this datum */
-    const bool should_render;
 };

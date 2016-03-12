@@ -7,7 +7,7 @@ class Graph;
 class ViewportView;
 
 class Control;
-class DatumProxy;
+class BaseDatumProxy;
 
 class ViewportScene : public QObject
 {
@@ -43,7 +43,7 @@ signals:
     /*
      *  Requests that every viewport calls addViewport on the given proxy
      */
-    void installDatum(DatumProxy* d);
+    void installDatum(BaseDatumProxy* d);
 
 protected:
     Graph* const g;
