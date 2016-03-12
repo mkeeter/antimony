@@ -33,10 +33,7 @@ void DatumProxy::trigger(const DatumState& state)
         updateHash(state.links, &connections, this, true);
     }
 
-    for (auto r : render)
-    {
-        r->datumChanged(getDatum());
-    }
+    emit(datumChanged(getDatum()));
 }
 
 void DatumProxy::setIndex(int i)
@@ -67,10 +64,10 @@ void DatumProxy::addViewport(ViewportView* view)
 {
     if (should_render)
     {
-        render[view] = new RenderInstance(this, view);
+        auto r = new RenderInstance(this, view);
         connect(view, &QObject::destroyed,
-                render[view], &RenderInstance::makeOrphan);
-        connect(view, &QObject::destroyed, [=]{
-                this->render.remove(view); });
+                r, &RenderInstance::makeOrphan);
+        connect(this, &DatumProxy::datumChanged,
+                r, &RenderInstance::datumChanged);
     }
 }

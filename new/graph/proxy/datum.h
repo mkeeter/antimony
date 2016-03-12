@@ -40,6 +40,12 @@ public:
      */
     void addViewport(ViewportView* view);
 
+signals:
+    /*
+     *  Emitted to ask RenderInstances to update themselves
+     */
+    void datumChanged(Datum* d);
+
 protected:
     /*  Weak pointer to UI row in the canvas / inspector view
      *  (since it is owned by the parent InspectorFrame  */
@@ -47,7 +53,4 @@ protected:
 
     /*  True if we should be making RenderInstances for this datum */
     const bool should_render;
-
-    /*  Instances for rendering images in various viewports  */
-    QMap<ViewportView*, RenderInstance*> render;
 };
