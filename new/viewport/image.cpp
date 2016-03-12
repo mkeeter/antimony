@@ -49,6 +49,7 @@ void DepthImage::update(QVector3D pos_, QVector3D size_,
 
 void DepthImage::getDepth(QMatrix4x4 m, float* zmin, float* zmax)
 {
+    m.scale(1 / sqrt(pow(m(0,0), 2) + pow(m(0, 1), 2) + pow(m(0, 2), 2)));
     *zmin = fmin(*zmin, (m * pos).z() - size.z()/2);
     *zmax = fmax(*zmax, (m * pos).z() + size.z()/2);
 }
@@ -148,6 +149,7 @@ void DepthImage::loadSharedShaderVariables(
     const float dz_global = zmax_global - zmin_global;
 
     const float dz_local= size.z();
+    m.scale(1 / sqrt(pow(m(0,0), 2) + pow(m(0, 1), 2) + pow(m(0, 2), 2)));
     const float zmin_local = (m * pos).z() - dz_local/2;
 
     // Set z values for depth blending.
