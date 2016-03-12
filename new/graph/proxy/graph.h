@@ -27,7 +27,6 @@ Q_OBJECT
 
 public:
     GraphProxy(Graph* g, NodeProxy* parent=NULL);
-    ~GraphProxy();
 
     /*
      *  Create NodeProxies and SubdatumProxies
@@ -45,8 +44,8 @@ public:
     ViewportScene* viewportScene() const { return viewport_scene; }
 
     /*
-     *  Constructs a new window of the given class, storing it in the
-     *  windows list (and setting up automatic list pruning)
+     *  Constructs a new window of the given class, connecting it so that it
+     *  will be deleted when this graph proxy is destroyed.
      */
     template <class W, class S> W* newWindow(S* scene);
 
@@ -112,7 +111,6 @@ protected:
 
     CanvasScene* canvas_scene;
     ViewportScene* viewport_scene;
-    QList<QMainWindow*> windows;
     AppHooks* hooks;
 
     QHash<Node*, NodeProxy*> nodes;

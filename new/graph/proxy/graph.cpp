@@ -32,15 +32,6 @@ GraphProxy::GraphProxy(Graph* g, NodeProxy* parent)
     }
 }
 
-GraphProxy::~GraphProxy()
-{
-    for (auto w : windows)
-    {
-        disconnect(w, &QMainWindow::destroyed, 0, 0);
-        w->close();
-    }
-}
-
 void GraphProxy::trigger(const GraphState& state)
 {
     updateHash(state.nodes,  &nodes,  this);
@@ -53,11 +44,7 @@ template <class W, class S>
 W* GraphProxy::newWindow(S* scene)
 {
     auto win = new W(scene);
-
-    // Automatically prune the window list when the window is closed
-    connect(win, &QMainWindow::destroyed,
-            [=]{ this->windows.removeAll(win); });
-    windows.append(win);
+    connect(this, &GraphProxy::destroyed, win, &QObject::deleteLater);
 
     return win;
 }

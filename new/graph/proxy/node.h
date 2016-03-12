@@ -2,7 +2,6 @@
 
 #include <QObject>
 #include <QHash>
-#include <QPointer>
 
 #include "graph/watchers.h"
 
@@ -26,7 +25,6 @@ Q_OBJECT
 
 public:
     NodeProxy(Node* n, GraphProxy* parent);
-    ~NodeProxy();
 
     /*
      *  On node change, update datum proxies and name validity.
@@ -36,7 +34,7 @@ public:
     /*
      *  Returns the node's inspector frame object.
      */
-    InspectorFrame* getInspector() const { return inspector.data(); }
+    InspectorFrame* getInspector() const { return inspector; }
 
     /*
      *  Records positions of all inspectors and subdatums
@@ -106,11 +104,10 @@ protected:
 
     QMap<long, Control*> controls;
 
-    /*  Strong pointer to inspector frame, to delete it when the node proxy
-     *  is destroyed.  We use QPointer here instead of QScopedPointer because
-     *  the pointer should be cleared if a window is closed (taking the
-     *  InspectorFrames with it)    */
-    QPointer<InspectorFrame> inspector;
+    /*  Strong pointer to inspector frame.  We connect it to the proxy's
+     *  destroyed signal, but it may also be deleted when the window is
+     *  closed (since it's technically owned by the QGraphicsScene)  */
+    InspectorFrame* inspector;
 
     /*  Weak pointer to inspector buttons, as they are owned by the frame  */
     InspectorShowHiddenButton* show_hidden;

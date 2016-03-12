@@ -13,15 +13,7 @@ ViewportScene::ViewportScene(Graph* g, QObject* parent)
 ViewportView* ViewportScene::getView(QWidget* parent)
 {
     auto v = new ViewportView(parent);
-    viewports.push_back(v);
-    connect(v, &QObject::destroyed, [=]{ this->viewports.removeAll(v); });
+    connect(this, &ViewportScene::makeInstancesFor,
+            v, &ViewportView::installControl);
     return v;
-}
-
-void ViewportScene::makeInstancesFor(Control* c)
-{
-    for (auto v : viewports)
-    {
-        c->makeInstanceFor(v);
-    }
 }

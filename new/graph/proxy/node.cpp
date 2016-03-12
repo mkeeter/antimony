@@ -19,19 +19,15 @@
 NodeProxy::NodeProxy(Node* n, GraphProxy* parent)
     : QObject(parent), node(n), script(NULL), subgraph(NULL),
       inspector(new InspectorFrame(n, parent->canvasScene())),
-      show_hidden(new InspectorShowHiddenButton(inspector.data()))
+      show_hidden(new InspectorShowHiddenButton(inspector))
 {
     if (auto graph_node = dynamic_cast<GraphNode*>(n))
         subgraph = new GraphProxy(graph_node->getGraph(), this);
     else if (auto script_node = dynamic_cast<ScriptNode*>(n))
         script = new ScriptProxy(script_node->getScriptPointer(), this);
 
+    connect(this, &QObject::destroyed, inspector, &QObject::deleteLater);
     n->installWatcher(this);
-}
-
-NodeProxy::~NodeProxy()
-{
-    delete inspector;
 }
 
 void NodeProxy::trigger(const NodeState& state)

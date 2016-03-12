@@ -1,8 +1,10 @@
 #include <Python.h>
 
-#include "window/script.h"
+#include "window/script_window.h"
 #include "script/frame.h"
 #include "script/editor.h"
+
+#include "graph/watchers.h"
 
 ScriptWindow::ScriptWindow(Script* script)
     : BaseWindow("Script"), frame(new ScriptFrame(script, this))
@@ -17,23 +19,10 @@ ScriptWindow::ScriptWindow(Script* script)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ScriptWindow::setText(QString text)
+void ScriptWindow::onStateChanged(const ScriptState& state)
 {
-    frame->getEditor()->setText(text);
+    frame->getEditor()->setText(QString::fromStdString(state.script));
+    frame->getEditor()->highlightError(state.error_lineno);
+    frame->setOutput(QString::fromStdString(state.output));
+    frame->setError(QString::fromStdString(state.error));
 }
-
-void ScriptWindow::highlightError(int lineno)
-{
-    frame->getEditor()->highlightError(lineno);
-}
-
-void ScriptWindow::setOutput(QString text)
-{
-    frame->setOutput(text);
-}
-
-void ScriptWindow::setError(QString text)
-{
-    frame->setError(text);
-}
-

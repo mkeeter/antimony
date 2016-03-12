@@ -76,8 +76,9 @@ void DatumProxy::addViewport(ViewportView* view)
     if (should_render)
     {
         render[view] = new RenderInstance(this, view);
+        connect(view, &QObject::destroyed,
+                render[view], &RenderInstance::makeOrphan);
         connect(view, &QObject::destroyed, [=]{
-                this->render[view]->makeOrphan();
                 this->render.remove(view); });
     }
 }

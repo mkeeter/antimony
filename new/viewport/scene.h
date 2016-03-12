@@ -29,11 +29,6 @@ public:
     ViewportView* getView(QWidget* parent=NULL);
 
     /*
-     *  Make instances for every viewport
-     */
-    void makeInstancesFor(Control* c);
-
-    /*
      *  Returns this scene's graph object without taking ownership
      */
     Graph* getGraph() const { return g; }
@@ -42,6 +37,12 @@ public:
      *  Return a read-only list of viewports
      */
     const QList<ViewportView*>& getViews() const { return viewports; }
+
+signals:
+    /*
+     *  Make instances for every viewport
+     */
+    void makeInstancesFor(Control* c);
 
 protected:
     Graph* const g;

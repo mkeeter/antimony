@@ -6,6 +6,7 @@
 
 #include "viewport/view.h"
 #include "viewport/image.h"
+#include "viewport/control/control.h"
 #include "app/colors.h"
 
 ViewportView::ViewportView(QWidget* parent)
@@ -143,6 +144,13 @@ void ViewportView::update()
 {
     QGraphicsView::update();
     emit(changed(getMatrix()));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ViewportView::installControl(Control* c)
+{
+    c->makeInstanceFor(this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

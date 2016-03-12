@@ -6,6 +6,7 @@
 #include "viewport/gl.h"
 
 class DepthImage;
+class Control;
 
 class ViewportView : public QGraphicsView
 {
@@ -70,6 +71,12 @@ public:
 
 signals:
     void changed(QMatrix4x4 m);
+
+public slots:
+    /*
+     *  Creates controller instances for the given controller and this viewport
+     */
+    void installControl(Control* c);
 
 protected:
     /*
