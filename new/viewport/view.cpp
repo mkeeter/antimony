@@ -25,17 +25,6 @@ ViewportView::ViewportView(QWidget* parent)
     QAbstractScrollArea::setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
-ViewportView::~ViewportView()
-{
-    // Disconnect image destructor signals, otherwise they will try to
-    // remove themselves from the non-existent list of images attached
-    // to this (soon-to-be-delete) ViewportView.
-    for (auto i : images)
-    {
-        disconnect(i, &QObject::destroyed, 0, 0);
-    }
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 
 QMatrix4x4 ViewportView::getMatrix() const
@@ -58,31 +47,10 @@ QVector3D ViewportView::sceneToWorld(QPointF p) const
 
 void ViewportView::installImage(DepthImage* d)
 {
-    images << d;
-    connect(d, &QObject::destroyed,
-            [=]{ this->images.removeAll(d); });
-}
-
-float ViewportView::getZmin() const
-{
-    float zmin = INFINITY;
-    for (auto i : images)
-    {
-        zmin = fmin((getMatrix() * i->getPos()).z() - i->getSize().z()/2,
-                    zmin);
-    }
-    return zmin;
-}
-
-float ViewportView::getZmax() const
-{
-    float zmax = -INFINITY;
-    for (auto i : images)
-    {
-        zmax = fmax((getMatrix() * i->getPos()).z() + i->getSize().z()/2,
-                    zmax);
-    }
-    return zmax;
+    connect(this, &ViewportView::getDepth,
+            d, &DepthImage::getDepth);
+    connect(this, &ViewportView::paintImage,
+            d, &DepthImage::paint);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -95,14 +63,14 @@ void ViewportView::drawBackground(QPainter* painter, const QRectF& rect)
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    // Get bounds from all child images
+    float zmin = INFINITY;
+    float zmax = -INFINITY;
     auto m = getMatrix();
-    for (auto i : images)
-    {
-        if (i->isValid())
-        {
-            i->paint(m);
-        }
-    }
+    emit(getDepth(m, &zmin, &zmax));
+
+    // Paint all images
+    emit(paintImage(m, zmin, zmax));
 
     painter->endNativePainting();
 }

@@ -32,20 +32,21 @@ public:
     void clearTextures();
 
     /*
-     *  Paints the image with the given world-to-scene transform matrix
-     */
-    void paint(QMatrix4x4 m);
-
-    /*
-     *  Lookup functions for position and size
-     */
-    QVector3D getPos() const    { return pos; }
-    QVector3D getSize() const   { return size; }
-
-    /*
      *  Check if the image is valid
      */
     bool isValid() const { return valid; }
+
+public slots:
+    /*
+     *  Populate zmin and zmax with the image's depth
+     */
+    void getDepth(QMatrix4x4 m, float* zmin, float* zmax);
+
+    /*
+     *  Paints the image with the given world-to-scene transform matrix
+     */
+    void paint(QMatrix4x4 m, float zmin, float zmax);
+
 protected:
     /*
      *  Initializes OpenGL textures
@@ -55,18 +56,19 @@ protected:
     /*
      *  Paints the given images as shaded textures
      */
-    void paintShaded(QMatrix4x4 m);
+    void paintShaded(QMatrix4x4 m, float zmin_global, float zmax_global);
 
     /*
      *  Paints the given images as heightmap textures
      */
-    void paintHeightmap(QMatrix4x4 m);
+    void paintHeightmap(QMatrix4x4 m, float zmin_global, float zmax_global);
 
     /*
      *  Loads variables that are shared between height-map and shaded shaders.
      *  m is the world-to-scene transform matrix
      */
-    void loadSharedShaderVariables(QMatrix4x4 m, QOpenGLShaderProgram* shader);
+    void loadSharedShaderVariables(QMatrix4x4 m, QOpenGLShaderProgram* shader,
+                                   float zmin_global, float zmax_global);
 
     /*  The image is invalid until data is loaded for the first time  */
     bool valid=false;

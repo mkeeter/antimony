@@ -14,7 +14,6 @@ class ViewportView : public QGraphicsView
     Q_OBJECT
 public:
     ViewportView(QWidget* parent);
-    ~ViewportView();
 
     /*
      *  Returns a generic matrix transform from the view
@@ -61,17 +60,22 @@ public:
      */
     void installImage(DepthImage* d);
 
-    /*
-     *  Returns the smallest and largest depth image Z values
-     */
-    float getZmin() const;
-    float getZmax() const;
-
     /*  Publically accessible handle to get shaders and VBO  */
     ViewportGL gl;
 
 signals:
     void changed(QMatrix4x4 m);
+
+    /*
+     *  Signal used to request that images adjust zmin and zmax based on
+     *  their z bounds.
+     */
+    void getDepth(QMatrix4x4 m, float* zmin, float* zmax);
+
+    /*
+     *  Signal used to request that images draw themselves
+     */
+    void paintImage(QMatrix4x4 m, float zmin, float zmax);
 
 public slots:
     /*
@@ -113,7 +117,4 @@ protected:
 
     /*  Mouse click coordinates in the world's coordinate frame  */
     QVector3D click_pos_world;
-
-    /*  Depth images to draw  */
-    QList<DepthImage*> images;
 };

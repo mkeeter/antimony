@@ -47,6 +47,12 @@ void DepthImage::update(QVector3D pos_, QVector3D size_,
     view->scene()->invalidate(QRect(), QGraphicsScene::BackgroundLayer);
 }
 
+void DepthImage::getDepth(QMatrix4x4 m, float* zmin, float* zmax)
+{
+    *zmin = fmin(*zmin, (m * pos).z() - size.z()/2);
+    *zmax = fmax(*zmax, (m * pos).z() + size.z()/2);
+}
+
 void DepthImage::clearTextures()
 {
     if (view)
@@ -83,30 +89,33 @@ void DepthImage::buildTexture(QImage img, GLuint* tex)
     gl->doneCurrent();
 }
 
-void DepthImage::paint(QMatrix4x4 m)
+void DepthImage::paint(QMatrix4x4 m, float zmin, float zmax)
 {
-    assert(valid);
-
-    gl->getQuadVertices()->bind();
-
-    // Find the parent MainWindow of our Viewport
-    QWidget* p = view;
-    while (p && !dynamic_cast<ViewportWindow*>(p))
-        p = p->parentWidget();
-
-    if (p && dynamic_cast<ViewportWindow*>(p)->isShaded())
+    if (valid)
     {
-        paintShaded(m);
-    }
-    else
-    {
-        paintHeightmap(m);
-    }
+        gl->getQuadVertices()->bind();
 
-    gl->getQuadVertices()->release();
+        // Find the parent MainWindow of our Viewport
+        QWidget* p = view;
+        while (p && !dynamic_cast<ViewportWindow*>(p))
+            p = p->parentWidget();
+
+        if (p && dynamic_cast<ViewportWindow*>(p)->isShaded())
+        {
+            paintShaded(m, zmin, zmax);
+        }
+        else
+        {
+            paintHeightmap(m, zmin, zmax);
+        }
+
+        gl->getQuadVertices()->release();
+    }
 }
 
-void DepthImage::loadSharedShaderVariables(QMatrix4x4 m, QOpenGLShaderProgram* shader)
+void DepthImage::loadSharedShaderVariables(
+        QMatrix4x4 m, QOpenGLShaderProgram* shader,
+        float zmin_global, float zmax_global)
 {
     float scale = sqrt(pow(m(0, 0), 2) + pow(m(0, 1), 2) + pow(m(0, 2), 2));
     shader->bind();
@@ -136,15 +145,14 @@ void DepthImage::loadSharedShaderVariables(QMatrix4x4 m, QOpenGLShaderProgram* s
     glBindTexture(GL_TEXTURE_2D, depth_tex);
     glUniform1i(shader->uniformLocation("depth_tex"), 0);
 
-    const float zmin_global = view->getZmin();
-    const float dz_global = view->getZmax() - zmin_global;
+    const float dz_global = zmax_global - zmin_global;
 
-    const float dz = size.z();
-    const float zmin = (m * pos).z() - dz/2;
+    const float dz_local= size.z();
+    const float zmin_local = (m * pos).z() - dz_local/2;
 
     // Set z values for depth blending.
-    glUniform1f(shader->uniformLocation("dz_local"), dz);
-    glUniform1f(shader->uniformLocation("zmin_local"), zmin);
+    glUniform1f(shader->uniformLocation("dz_local"), dz_local);
+    glUniform1f(shader->uniformLocation("zmin_local"), zmin_local);
     glUniform1f(shader->uniformLocation("dz_global"), dz_global);
     glUniform1f(shader->uniformLocation("zmin_global"), zmin_global);
     glUniform1i(shader->uniformLocation("is_2d"), flat);
@@ -153,11 +161,12 @@ void DepthImage::loadSharedShaderVariables(QMatrix4x4 m, QOpenGLShaderProgram* s
                 color.redF(), color.greenF(), color.blueF());
 }
 
-void DepthImage::paintShaded(QMatrix4x4 m)
+void DepthImage::paintShaded(
+        QMatrix4x4 m, float zmin_global, float zmax_global)
 {
     auto shaded_shader = gl->getShadedShader();
     glEnable(GL_DEPTH_TEST);
-    loadSharedShaderVariables(m, shaded_shader);
+    loadSharedShaderVariables(m, shaded_shader, zmin_global, zmax_global);
 
     glActiveTexture(GL_TEXTURE0 + 1);
     glBindTexture(GL_TEXTURE_2D, shaded_tex);
@@ -168,13 +177,14 @@ void DepthImage::paintShaded(QMatrix4x4 m)
     glDisable(GL_DEPTH_TEST);
 }
 
-void DepthImage::paintHeightmap(QMatrix4x4 m)
+void DepthImage::paintHeightmap(
+        QMatrix4x4 m, float zmin_global, float zmax_global)
 {
     auto height_shader = gl->getHeightmapShader();
 
     glEnable(GL_BLEND);
     glBlendEquation(GL_MAX);
-    loadSharedShaderVariables(m, height_shader);
+    loadSharedShaderVariables(m, height_shader, zmin_global, zmax_global);
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     height_shader->release();
