@@ -42,5 +42,3 @@ void updateHash(const Container& input, QHash<Object*, Proxy*>* hash,
                         [=]{ hash->remove(s); });
         }
 }
-
-#define NULL_ON_DESTROYED(s) connect(s, &QObject::destroyed, [=]{ this->s = NULL; })

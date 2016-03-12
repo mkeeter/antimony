@@ -3,7 +3,7 @@
 #include <QMatrix4x4>
 
 #include "viewport/control/control.h"
-#include "viewport/control/instance.h"
+#include "viewport/control/control_instance.h"
 #include "viewport/view.h"
 
 #include "graph/proxy/node.h"
@@ -19,20 +19,11 @@ Control::Control(NodeProxy* parent)
     // Nothing to do here
 }
 
-Control::~Control()
-{
-    for (auto i : instances)
-    {
-        disconnect(i, &QGraphicsObject::destroyed, 0, 0);
-        i->deleteLater();
-    }
-}
-
 void Control::makeInstanceFor(ViewportView* v)
 {
     auto i = new ControlInstance(this, v);
-    instances[v] = i;
-    connect(i, &QObject::destroyed, [=]{ this->instances.remove(v); });
+    connect(this, &QObject::destroyed, i, &QObject::deleteLater);
+    connect(this, &Control::redraw, i, &ControlInstance::redraw);
 }
 
 QRectF Control::bounds(QMatrix4x4 m) const

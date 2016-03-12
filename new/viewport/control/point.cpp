@@ -4,7 +4,6 @@
 #include <QPainter>
 
 #include "viewport/control/point.h"
-#include "viewport/control/instance.h"
 
 #include "app/colors.h"
 
@@ -29,10 +28,7 @@ void PointControl::update(float x_, float y_, float z_, float r_,
 
     if (changed)
     {
-        for (auto i : instances)
-        {
-            i->redraw();
-        }
+        emit(redraw());
     }
 
     setDragFunc(drag_func);

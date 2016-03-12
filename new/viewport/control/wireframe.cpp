@@ -3,7 +3,6 @@
 #include <QMatrix4x4>
 
 #include "viewport/control/wireframe.h"
-#include "viewport/control/instance.h"
 
 #include "app/colors.h"
 
@@ -29,10 +28,7 @@ void WireframeControl::update(QVector<QVector3D> pts_, float t_,
 
     if (changed)
     {
-        for (auto i : instances)
-        {
-            i->redraw();
-        }
+        emit(redraw());
     }
 
     setDragFunc(drag_func_);

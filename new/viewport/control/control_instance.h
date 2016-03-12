@@ -8,6 +8,8 @@ class ViewportView;
 
 class ControlInstance : public QGraphicsObject
 {
+Q_OBJECT
+
 public:
     ControlInstance(Control* c, ViewportView* view);
 
@@ -27,11 +29,6 @@ public:
      */
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,
                QWidget* widget) override;
-
-    /*
-     *  Indicate that the control should be redrawn
-     */
-    void redraw() { prepareGeometryChange(); }
 
     /*
      *  Handle mouse clicks by preparing to drag.
@@ -58,6 +55,12 @@ public:
      *  On backspace or delete, pass a deletion request up to the proxy
      */
     void keyPressEvent(QKeyEvent* event) override;
+
+public slots:
+    /*
+     *  Indicate that the control should be redrawn
+     */
+    void redraw();
 
 protected:
     /*

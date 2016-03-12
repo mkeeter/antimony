@@ -15,13 +15,10 @@ class Datum;
 
 class Control : public QObject
 {
+Q_OBJECT
+
 public:
     Control(NodeProxy* parent);
-
-    /*
-     *  Destructor asks all instances to delete themselves
-     */
-    ~Control();
 
     /*
      *  Create a new ControlInstance for the given viewport
@@ -81,13 +78,13 @@ public:
     /*  Flag indicating whether this control has been touched  */
     bool touched=false;
 
-protected:
-    /*  Instances (which are QGraphicsItems) for each viewport               *
-     *  These are owned by the relevant ViewportView and configured to       *
-     *  auto-remove themselves from the list on deletion, but the Control's  *
-     *  destructor will call deleteLater on each Instance.                   */
-    QMap<ViewportView*, ControlInstance*> instances;
+signals:
+    /*
+     *  Used to request that instances redraw themselves
+     */
+    void redraw();
 
+protected:
     /*  Function that is called when the control is dragged  *
      *  The function is invoked as drag_func(this, x, y, z)  *
      *      this is a mutable node proxy                     *

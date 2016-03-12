@@ -4,7 +4,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QKeyEvent>
 
-#include "viewport/control/instance.h"
+#include "viewport/control/control_instance.h"
 #include "viewport/control/control.h"
 #include "viewport/view.h"
 
@@ -105,4 +105,9 @@ void ControlInstance::keyPressEvent(QKeyEvent* event)
     {
         event->ignore();
     }
+}
+
+void ControlInstance::redraw()
+{
+    prepareGeometryChange();
 }

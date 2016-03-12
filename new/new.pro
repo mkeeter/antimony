@@ -133,7 +133,7 @@ SOURCES += \
     viewport/view.cpp                   \
     viewport/image.cpp                  \
     viewport/control/control.cpp        \
-    viewport/control/instance.cpp       \
+    viewport/control/control_instance.cpp   \
     viewport/control/point.cpp          \
     viewport/control/wireframe.cpp      \
     viewport/render/instance.cpp        \
@@ -202,7 +202,7 @@ HEADERS += \
     viewport/image.h                    \
     viewport/gl.h                       \
     viewport/control/control.h          \
-    viewport/control/instance.h         \
+    viewport/control/control_instance.h \
     viewport/control/point.h            \
     viewport/control/wireframe.h        \
     viewport/render/instance.h          \
