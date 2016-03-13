@@ -1,17 +1,11 @@
 #pragma once
 
-#include "window/base.h"
+#include "window/base_viewport_window.h"
 
 class ViewportView;
 
-class ViewportWindow : public BaseWindow
+class ViewportWindow : public BaseViewportWindow
 {
 public:
     ViewportWindow(ViewportView* view);
-
-    /*
-     *  Checks whether the Shaded box is selected
-     *  (if not, the Heightmap box should be selected)
-     */
-    bool isShaded() const;
 };
