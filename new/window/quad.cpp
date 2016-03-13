@@ -33,10 +33,13 @@ QuadWindow::QuadWindow(ViewportView* front, ViewportView* top,
     g->setSpacing(2);
 
     auto w = new QWidget();
-    w->setStyleSheet(QString(
-                "QWidget {"
-                "   background-color: %1;"
-                "}").arg(Colors::base01.name()));
+    w->setStyleSheet(QString(R"(
+                QWidget {
+                   background-color: %1;
+                }
+                QMenu {
+                   background-color: none;
+                })").arg(Colors::base01.name()));
     w->setLayout(g);
 
     setCentralWidget(w);
