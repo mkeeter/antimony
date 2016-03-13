@@ -46,13 +46,9 @@ void CanvasView::mousePressEvent(QMouseEvent* event)
             if (event->button() == Qt::LeftButton) {
                 click_pos = mapToScene(event->pos());
             }
-            else if (event->button() == Qt::RightButton) {
-                QMenu* m = new QMenu(this);
-                populateNodeMenu(
-                        m, static_cast<CanvasScene*>(scene())->getGraph());
-
-                m->exec(QCursor::pos());
-                m->deleteLater();
+            else if (event->button() == Qt::RightButton)
+            {
+                openAddMenu();
             }
     }
 }
@@ -115,15 +111,20 @@ void CanvasView::keyPressEvent(QKeyEvent* event)
     else if (event->key() == Qt::Key_A &&
                 (event->modifiers() & Qt::ShiftModifier))
     {
-        QMenu* m = new QMenu(this);
-        populateNodeMenu(
-                m, static_cast<CanvasScene*>(scene())->getGraph(),
-                [&](Node* n){ this->grabNode(n); },
-                [&](Datum* d){ this->grabDatum(d); });
-
-        m->exec(QCursor::pos());
-        m->deleteLater();
+        openAddMenu();
     }
+}
+
+void CanvasView::openAddMenu()
+{
+    QMenu* m = new QMenu(this);
+    populateNodeMenu(
+            m, static_cast<CanvasScene*>(scene())->getGraph(),
+            [&](Node* n){ this->grabNode(n); },
+            [&](Datum* d){ this->grabDatum(d); });
+
+    m->exec(QCursor::pos());
+    m->deleteLater();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

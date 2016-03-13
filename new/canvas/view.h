@@ -63,6 +63,11 @@ protected:
     template <class T>
     void grab(T* t);
 
+    /*
+     *  Opens a menu that allows us to add new shapes
+     */
+    void openAddMenu();
+
     void grabNode(Node* n);
     void grabDatum(Datum* n);
 
