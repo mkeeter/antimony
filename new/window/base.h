@@ -27,6 +27,11 @@ public slots:
     void setFilename(QString file);
 
     /*
+     *  Sets the nested subgraph name
+     */
+    void setSub(QString s);
+
+    /*
      *  Adjusts the window's title based on whether the file has been saved
      */
     void setClean(bool changed);
@@ -50,6 +55,7 @@ protected:
 
     QString window_type;
     QString filename="";
+    QString sub="";
     bool clean=true;
 
     QScopedPointer<Ui::BaseWindow> ui;

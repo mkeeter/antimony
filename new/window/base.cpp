@@ -1,3 +1,5 @@
+#include <QDir>
+
 #include "app/app.h"
 #include "window/base.h"
 
@@ -67,6 +69,12 @@ void BaseWindow::setClean(bool c)
     updateTitle();
 }
 
+void BaseWindow::setSub(QString s)
+{
+    sub = s;
+    updateTitle();
+}
+
 void BaseWindow::updateTitle()
 {
     auto title = window_type + " [";
@@ -76,8 +84,15 @@ void BaseWindow::updateTitle()
     }
     else
     {
-        title += filename;
+        title += sub.isEmpty()
+            ? filename : filename.split(QDir::separator()).last();
     }
+
+    if (!sub.isEmpty())
+    {
+        title += "." + sub;
+    }
+
     title += "]";
     if (!clean)
     {
