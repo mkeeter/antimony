@@ -16,8 +16,8 @@
 void ExportHeightmapWorker::run()
 {
     // Sanity-check bounds
-    if (isinf(bounds.xmin) || isinf(bounds.xmax) ||
-        isinf(bounds.ymin) || isinf(bounds.ymax))
+    if (std::isinf(bounds.xmin) || std::isinf(bounds.xmax) ||
+        std::isinf(bounds.ymin) || std::isinf(bounds.ymax))
     {
         QMessageBox::critical(NULL, "Export error",
                 "<b>Export error:</b><br>"
@@ -82,7 +82,7 @@ void ExportHeightmapWorker::async()
         .nk=1
     };
 
-    if (!isinf(bounds.zmin) && !isinf(bounds.zmax))
+    if (!std::isinf(bounds.zmin) && !std::isinf(bounds.zmax))
         r.nk = uint32_t((bounds.zmax - bounds.zmin) * _resolution);
 
     build_arrays(

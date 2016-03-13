@@ -16,9 +16,9 @@
 void ExportMeshWorker::run()
 {
     // Sanity-check bounds
-    if (isinf(bounds.xmin) || isinf(bounds.xmax) ||
-        isinf(bounds.ymin) || isinf(bounds.ymax) ||
-        isinf(bounds.zmin) || isinf(bounds.zmax))
+    if (std::isinf(bounds.xmin) || std::isinf(bounds.xmax) ||
+        std::isinf(bounds.ymin) || std::isinf(bounds.ymax) ||
+        std::isinf(bounds.zmin) || std::isinf(bounds.zmax))
     {
         QMessageBox::critical(NULL, "Export error",
                 "<b>Export error:</b><br>"
