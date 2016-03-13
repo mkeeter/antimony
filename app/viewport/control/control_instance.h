@@ -2,6 +2,7 @@
 
 #include <QGraphicsScene>
 #include <QGraphicsObject>
+#include <QPointer>
 
 class Control;
 class ViewportView;
@@ -68,8 +69,8 @@ protected:
      */
     QMatrix4x4 getMatrix() const;
 
-    /*  Parent control  */
-    Control* control;
+    /*  Weak pointer to parent control  */
+    QPointer<Control> control;
 
     /*  ViewportView associated with this instance  */
     ViewportView* view;

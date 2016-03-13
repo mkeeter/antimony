@@ -25,12 +25,14 @@ QMatrix4x4 ControlInstance::getMatrix() const
 
 QRectF ControlInstance::boundingRect() const
 {
-    return control->bounds(getMatrix());
+    return control ? control->bounds(getMatrix())
+                   : QRectF();
 }
 
 QPainterPath ControlInstance::shape() const
 {
-    return control->shape(getMatrix());
+    return control ? control->shape(getMatrix())
+                   : QPainterPath();
 }
 
 void ControlInstance::paint(QPainter* painter,
@@ -40,7 +42,10 @@ void ControlInstance::paint(QPainter* painter,
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    control->paint(getMatrix(), isSelected() || hover, painter);
+    if (control)
+    {
+        control->paint(getMatrix(), isSelected() || hover, painter);
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
