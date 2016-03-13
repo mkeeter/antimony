@@ -10,7 +10,7 @@ BaseWindow::BaseWindow(QString type)
     connectActions(App::instance());
     setShortcuts();
 
-    setWindowTitle(type);
+    updateTitle();
 }
 
 void BaseWindow::connectActions(App* app)
@@ -46,7 +46,47 @@ void BaseWindow::connectActions(App* app)
             app, &App::onAbout);
     connect(ui->actionCheckUpdate, &QAction::triggered,
             app, &App::onUpdateCheck);
+
+    connect(app, &App::filenameChanged,
+            this, &BaseWindow::setFilename);
+    connect(app, &App::cleanChanged,
+            this, &BaseWindow::setClean);
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+void BaseWindow::setFilename(QString f)
+{
+    filename = f;
+    updateTitle();
+}
+
+void BaseWindow::setClean(bool c)
+{
+    clean = c;
+    updateTitle();
+}
+
+void BaseWindow::updateTitle()
+{
+    auto title = window_type + " [";
+    if (filename.isEmpty())
+    {
+        title += "untitled";
+    }
+    else
+    {
+        title += filename;
+    }
+    title += "]";
+    if (!clean)
+    {
+        title += "*";
+    }
+    setWindowTitle(title);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 void BaseWindow::setShortcuts()
 {

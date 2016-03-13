@@ -22,7 +22,8 @@ App::App(int& argc, char** argv)
       graph(new Graph()), proxy(new GraphProxy(graph)),
       undo_stack(new UndoStack(this)), update_checker(this)
 {
-    // Nothing to do here
+    connect(undo_stack, &QUndoStack::cleanChanged,
+            this, &App::cleanChanged);
 }
 
 App::~App()
@@ -88,9 +89,8 @@ void App::onNew()
     graph->clear();
     filename.clear();
     undo_stack->clear();
-    /* XXX
-    emit(windowTitleChanged(getWindowTitle()));
-    */
+
+    emit(filenameChanged(""));
 }
 
 void App::onSave()
@@ -126,7 +126,7 @@ void App::onSaveAs()
             return;
         }
         filename = f;
-        // XXX emit(windowTitleChanged(getWindowTitle()));
+        emit(filenameChanged(filename));
         return onSave();
     }
 }
@@ -251,7 +251,7 @@ void App::loadFile(QString f)
                     ds.warning_message);
 
         proxy->setPositions(ds.frames);
-        // XXX emit(windowTitleChanged(getWindowTitle()));
+        emit(filenameChanged(filename));
     }
 }
 

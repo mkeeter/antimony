@@ -94,6 +94,17 @@ public slots:
     void onAbout();
     void onUpdateCheck();
 
+signals:
+    /*
+     *  Emitted when the file's name changes
+     */
+    void filenameChanged(QString f);
+
+    /*
+     *  Emitted when the unsaved state changes
+     */
+    void cleanChanged(bool u);
+
 protected:
     /*
      *  Overload event handling to detect drag-and-drop events

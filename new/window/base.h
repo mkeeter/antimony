@@ -20,6 +20,17 @@ public:
      */
     explicit BaseWindow(QString type);
 
+public slots:
+    /*
+     *  Adjusts the window's title based on filename
+     */
+    void setFilename(QString file);
+
+    /*
+     *  Adjusts the window's title based on whether the file has been saved
+     */
+    void setClean(bool changed);
+
 protected:
     /*
      *  Connects menu actions to App slots.
@@ -32,6 +43,14 @@ protected:
      */
     void setShortcuts();
 
+    /*
+     *  Changes the window's title based on filename, type, unsaved
+     */
+    void updateTitle();
+
     QString window_type;
+    QString filename="";
+    bool clean=true;
+
     QScopedPointer<Ui::BaseWindow> ui;
 };
