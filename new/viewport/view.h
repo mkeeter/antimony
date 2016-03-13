@@ -57,6 +57,11 @@ public:
     void resizeEvent(QResizeEvent* e) override;
 
     /*
+     *  Override key events for menu opening
+     */
+    void keyPressEvent(QKeyEvent* event) override;
+
+    /*
      *  Convert from a mouse position in scene coordinates to a world position
      */
     QVector3D sceneToWorld(QPointF pos) const;

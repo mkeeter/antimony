@@ -203,6 +203,20 @@ void ViewportView::resizeEvent(QResizeEvent* e)
     setSceneRect(-width()/2, -height()/2, width(), height());
 }
 
+void ViewportView::keyPressEvent(QKeyEvent* event)
+{
+    QGraphicsView::keyPressEvent(event);
+    if (event->isAccepted())
+    {
+        return;
+    }
+    if (event->key() == Qt::Key_A &&
+        (event->modifiers() & Qt::ShiftModifier))
+    {
+        openAddMenu();
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 void ViewportView::openAddMenu()
