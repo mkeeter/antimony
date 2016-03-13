@@ -13,7 +13,7 @@
 
 DatumProxy::DatumProxy(Datum* d, NodeProxy* parent)
     : BaseDatumProxy(d, parent, static_cast<GraphProxy*>(
-                parent->parent())->viewportScene()),
+                parent->parent())->viewportScene(), false),
       row(new DatumRow(d, parent->getInspector()))
 {
     d->installWatcher(this);

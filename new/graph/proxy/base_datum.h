@@ -26,7 +26,7 @@ class BaseDatumProxy : public QObject, public DatumWatcher
     Q_OBJECT
 
 public:
-    BaseDatumProxy(Datum* d, QObject* parent, ViewportScene* scene);
+    BaseDatumProxy(Datum* d, QObject* parent, ViewportScene* scene, bool sub);
     virtual ~BaseDatumProxy();
 
     /*
@@ -59,6 +59,7 @@ signals:
 
 protected:
     Datum* const datum;
+    const bool sub;
 
     /*  True if we should be making RenderInstances for this datum */
     const bool should_render;

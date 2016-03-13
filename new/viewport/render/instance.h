@@ -14,7 +14,8 @@ class RenderInstance : public QObject
 {
     Q_OBJECT
 public:
-    RenderInstance(BaseDatumProxy* parent, ViewportView* view);
+    RenderInstance(BaseDatumProxy* parent, ViewportView* view,
+                   bool sub);
 
     ~RenderInstance();
 
@@ -54,6 +55,9 @@ protected:
      *  Start a new render from cached shape and matrix
      */
     void startNextRender();
+
+    /*  Set to true if this instance represents a subdatum  */
+    bool sub;
 
     /*  Set to true if the datum or viewport are gone  */
     bool orphan=false;

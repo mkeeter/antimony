@@ -11,7 +11,7 @@
 #include "canvas/scene.h"
 
 SubdatumProxy::SubdatumProxy(Datum* d, GraphProxy* parent)
-    : BaseDatumProxy(d, parent, parent->viewportScene()),
+    : BaseDatumProxy(d, parent, parent->viewportScene(), true),
       frame(new SubdatumFrame(d, parent->canvasScene()))
 {
     d->installWatcher(this);
