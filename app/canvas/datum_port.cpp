@@ -87,17 +87,6 @@ void OutputPort::mousePressEvent(QGraphicsSceneMouseEvent *event)
     {
         event->ignore();
     }
-    /* XXX
-    if (event->button() == Qt::LeftButton)
-    {
-        auto g = static_cast<GraphScene*>(scene());
-        Connection* c = g->makeLinkFrom(datum);
-
-        // Turn off the hover highlighting.
-        hover = false;
-        update();
-    }
-    */
 }
 
 void OutputPort::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
