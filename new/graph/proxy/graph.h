@@ -106,6 +106,12 @@ public:
      */
     void makeInstancesFor(Control* c);
 
+signals:
+    /*
+     *  Signal connected to windows that renames them
+     */
+    void subnameChanged(QString n);
+
 protected:
     Graph* const graph;
 

@@ -71,6 +71,12 @@ public:
      */
     void loadFile(QString f);
 
+    /*
+     *  Emits the signals used by windows to set their titles
+     *  (to give a new window a correct title bar)
+     */
+    void onNewWindow();
+
 public slots:
     /*
      *  Commands from File menu

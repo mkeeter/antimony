@@ -11,8 +11,6 @@ BaseWindow::BaseWindow(QString type)
 
     connectActions(App::instance());
     setShortcuts();
-
-    updateTitle();
 }
 
 void BaseWindow::connectActions(App* app)
@@ -49,10 +47,14 @@ void BaseWindow::connectActions(App* app)
     connect(ui->actionCheckUpdate, &QAction::triggered,
             app, &App::onUpdateCheck);
 
+    // Connect to the App-level signals that adjust window titles
     connect(app, &App::filenameChanged,
             this, &BaseWindow::setFilename);
     connect(app, &App::cleanChanged,
             this, &BaseWindow::setClean);
+
+    // Ask the app to emit those signals to set our title
+    App::instance()->onNewWindow();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -84,8 +86,10 @@ void BaseWindow::updateTitle()
     }
     else
     {
+        // Use a shorter version of the filename if we're in a subgraph
         title += sub.isEmpty()
-            ? filename : filename.split(QDir::separator()).last();
+            ? filename
+            : filename.split(QDir::separator()).last().replace(".sb", "");
     }
 
     if (!sub.isEmpty())

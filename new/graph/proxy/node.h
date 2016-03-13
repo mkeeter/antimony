@@ -94,6 +94,22 @@ public:
     const Node* getNode() const { return node; }
     Node* getMutableNode() const { return node; }
 
+public slots:
+    /*
+     *  Connected to the parent GraphProxy's subnameChanged signal
+     *
+     *  Ignores the incoming QString and emits subnameChanged with
+     *  this node's fully qualified node name.
+     */
+    void onSubnameChanged(QString ignored="");
+
+signals:
+    /*
+     *  Signal connected to child GraphProxies that instructs them to
+     *  change their window titles
+     */
+    void subnameChanged(QString subname);
+
 protected:
     Node* const node;
 

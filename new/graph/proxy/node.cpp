@@ -22,9 +22,21 @@ NodeProxy::NodeProxy(Node* n, GraphProxy* parent)
       show_hidden(new InspectorShowHiddenButton(inspector))
 {
     if (auto graph_node = dynamic_cast<GraphNode*>(n))
+    {
         subgraph = new GraphProxy(graph_node->getGraph(), this);
+        connect(this, &NodeProxy::subnameChanged,
+                subgraph, &GraphProxy::subnameChanged);
+    }
     else if (auto script_node = dynamic_cast<ScriptNode*>(n))
+    {
         script = new ScriptProxy(script_node->getScriptPointer(), this);
+    }
+
+    if (parent)
+    {
+        connect(parent, &GraphProxy::subnameChanged,
+                this, &NodeProxy::onSubnameChanged);
+    }
 
     connect(this, &QObject::destroyed, inspector, &QObject::deleteLater);
     n->installWatcher(this);
@@ -70,6 +82,12 @@ void NodeProxy::trigger(const NodeState& state)
     }
 
     inspector->redoLayout();
+
+    // Request that subgraph windows update their titles
+    if (subgraph)
+    {
+        emit(subnameChanged(QString::fromStdString(node->getFullName())));
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -144,6 +162,14 @@ void NodeProxy::registerControl(long lineno, Control* c)
     Q_ASSERT(!controls.contains(lineno));
     controls[lineno] = c;
     static_cast<GraphProxy*>(parent())->makeInstancesFor(c);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void NodeProxy::onSubnameChanged(QString ignored)
+{
+    Q_UNUSED(ignored);
+    emit(subnameChanged(QString::fromStdString(node->getFullName())));
 }
 
 void NodeProxy::makeInstancesFor(ViewportView* view)

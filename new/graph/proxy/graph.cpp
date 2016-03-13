@@ -45,6 +45,14 @@ W* GraphProxy::newWindow(S* scene)
 {
     auto win = new W(scene);
     connect(this, &GraphProxy::destroyed, win, &QObject::deleteLater);
+    connect(this, &GraphProxy::subnameChanged,
+            win, &BaseWindow::setSub);
+
+    // If we're in a subgraph, update the window title
+    if (auto p = dynamic_cast<NodeProxy*>(parent()))
+    {
+        p->onSubnameChanged();
+    }
 
     return win;
 }
