@@ -13,7 +13,7 @@ ViewportScene::ViewportScene(Graph* g, QObject* parent)
 
 ViewportView* ViewportScene::getView(QWidget* parent)
 {
-    auto v = new ViewportView(parent);
+    auto v = new ViewportView(parent, this);
     connect(this, &ViewportScene::installControl,
             v, &ViewportView::installControl);
     connect(this, &ViewportScene::installDatum,

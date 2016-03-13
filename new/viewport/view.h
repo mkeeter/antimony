@@ -8,12 +8,13 @@
 class DepthImage;
 class Control;
 class BaseDatumProxy;
+class ViewportScene;
 
 class ViewportView : public QGraphicsView
 {
     Q_OBJECT
 public:
-    ViewportView(QWidget* parent);
+    ViewportView(QWidget* parent, ViewportScene* scene);
 
     /*
      *  Returns a generic matrix transform from the view
@@ -59,6 +60,11 @@ public:
      *  Installs a depth image (to be drawn if relevant)
      */
     void installImage(DepthImage* d);
+
+    /*
+     *  Opens a menu that allows us to add new shapes
+     */
+    void openAddMenu();
 
     /*  Publically accessible handle to get shaders and VBO  */
     ViewportGL gl;
@@ -117,4 +123,7 @@ protected:
 
     /*  Mouse click coordinates in the world's coordinate frame  */
     QVector3D click_pos_world;
+
+    /*  Pointer back to parent pseudo-scene  */
+    ViewportScene* view_scene;
 };

@@ -3,16 +3,21 @@
 #include <QOpenGLWidget>
 #include <QMatrix4x4>
 #include <QMouseEvent>
+#include <QMenu>
 
 #include "viewport/view.h"
+#include "viewport/scene.h"
 #include "viewport/image.h"
 #include "viewport/control/control.h"
-#include "app/colors.h"
-#include "graph/proxy/datum.h"
 
-ViewportView::ViewportView(QWidget* parent)
-    : QGraphicsView(new QGraphicsScene(), parent),
-      gl(new QOpenGLWidget(this)), scale(100), pitch(0), yaw(0)
+#include "app/colors.h"
+
+#include "graph/proxy/datum.h"
+#include "graph/constructor/populate.h"
+
+ViewportView::ViewportView(QWidget* parent, ViewportScene* scene)
+    : QGraphicsView(new QGraphicsScene(), parent), gl(new QOpenGLWidget(this)),
+      scale(100), pitch(0), yaw(0), view_scene(scene)
 {
     setStyleSheet("QGraphicsView { border-style: none; }");
     setRenderHints(QPainter::Antialiasing);
@@ -186,4 +191,15 @@ void ViewportView::resizeEvent(QResizeEvent* e)
 {
     Q_UNUSED(e);
     setSceneRect(-width()/2, -height()/2, width(), height());
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ViewportView::openAddMenu()
+{
+    QMenu* m = new QMenu(this);
+    populateNodeMenu(m, view_scene->getGraph());
+
+    m->exec(QCursor::pos());
+    m->deleteLater();
 }
