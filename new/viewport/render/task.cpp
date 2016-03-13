@@ -156,8 +156,11 @@ void RenderTask::render2d(const Shape& s, const QMatrix4x4& matrix)
 
 
     {   // Set normals to a flat value (rather than derivatives)
-        float xy = fabs(matrix(2,2));
-        float z = sqrt(pow(matrix(0,2),2) + pow(matrix(1,2),2));
+        float xy = sqrt(pow(matrix(0,2),2) + pow(matrix(1,2),2));
+        float z = fabs(matrix(2,2));
+        float len = sqrt(pow(xy, 2) + pow(z, 2));
+        xy /= len;
+        z /= len;
         shaded.fill((int(z * 255) << 16) | int(xy * 255));
     }
 
