@@ -151,6 +151,7 @@ void ViewportView::mousePressEvent(QMouseEvent* event)
         {
             click_pos = event->pos();
         }
+        dragged = false;
     }
 }
 
@@ -175,6 +176,15 @@ void ViewportView::mouseMoveEvent(QMouseEvent* event)
             click_pos = event->pos();
             update();
         }
+        dragged = true;
+    }
+}
+
+void ViewportView::mouseReleaseEvent(QMouseEvent* event)
+{
+    if (event->button() == Qt::RightButton && !dragged)
+    {
+        openAddMenu();
     }
 }
 

@@ -42,6 +42,11 @@ public:
     void mousePressEvent(QMouseEvent* event) override;
 
     /*
+     *  On right-click release (if we didn't drag), open add menu
+     */
+    void mouseReleaseEvent(QMouseEvent* event) override;
+
+    /*
      *  On mouse wheel, scroll
      */
     void wheelEvent(QWheelEvent* event) override;
@@ -123,6 +128,9 @@ protected:
 
     /*  Mouse click coordinates in the world's coordinate frame  */
     QVector3D click_pos_world;
+
+    /*  Used to detect if we dragged with the mouse down or just clicked  */
+    bool dragged=false;
 
     /*  Pointer back to parent pseudo-scene  */
     ViewportScene* view_scene;
