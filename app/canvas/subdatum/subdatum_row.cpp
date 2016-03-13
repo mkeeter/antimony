@@ -20,16 +20,25 @@ SubdatumRow::SubdatumRow(Datum* d, SubdatumFrame* parent)
 
 void SubdatumRow::update(const DatumState& state)
 {
+    auto bbox = boundingRect();
     editor->update(state);
+    bool changed = bbox != boundingRect();
 
     Q_ASSERT(state.sigil != Datum::SIGIL_OUTPUT);
     if (state.sigil == Datum::SIGIL_NONE ||
         state.sigil == Datum::SIGIL_CONNECTION)
     {
         input->hide();
+        changed = true;
     }
     else
     {
         input->show();
+        changed = true;
+    }
+
+    if (changed)
+    {
+        emit(layoutChanged());
     }
 }

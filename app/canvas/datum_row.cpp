@@ -96,9 +96,8 @@ void DatumRow::setWidth(float width)
 void DatumRow::update(const DatumState& state)
 {
     auto bbox = boundingRect();
-    bool changed = false;
     editor->update(state);
-    changed |= bbox != boundingRect();
+    bool changed = bbox != boundingRect();
 
     if (state.sigil == Datum::SIGIL_OUTPUT ||
         state.sigil == Datum::SIGIL_SUBGRAPH_OUTPUT ||
