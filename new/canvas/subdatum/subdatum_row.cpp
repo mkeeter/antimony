@@ -23,8 +23,13 @@ void SubdatumRow::update(const DatumState& state)
     editor->update(state);
 
     Q_ASSERT(state.sigil != Datum::SIGIL_OUTPUT);
-    if (state.sigil == Datum::SIGIL_NONE)
+    if (state.sigil == Datum::SIGIL_NONE ||
+        state.sigil == Datum::SIGIL_CONNECTION)
+    {
         input->hide();
+    }
     else
+    {
         input->show();
+    }
 }
