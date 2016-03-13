@@ -17,13 +17,27 @@ Q_OBJECT
 public:
     ScriptProxy(Script* s, NodeProxy* parent);
 
+    /*
+     *  On script state changes, update the UI
+     */
     void trigger(const ScriptState& state) override;
 
 public slots:
+    /*
+     *  Creates a new script window
+     */
     void newScriptWindow();
 
 signals:
+    /*
+     *  Instructs windows to update themselves
+     */
     void stateChanged(const ScriptState& state);
+
+    /*
+     *  Signal connected to windows that renames them
+     */
+    void subnameChanged(QString n);
 
 protected:
     Script* const script;

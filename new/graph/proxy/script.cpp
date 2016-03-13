@@ -31,6 +31,8 @@ void ScriptProxy::newScriptWindow()
     connect(this, &QObject::destroyed, win, &QObject::deleteLater);
     connect(this, &ScriptProxy::stateChanged,
             win, &ScriptWindow::onStateChanged);
+    connect(this, &ScriptProxy::subnameChanged,
+            win, &BaseWindow::setSub);
 
     trigger(script->getState());
     win->show();

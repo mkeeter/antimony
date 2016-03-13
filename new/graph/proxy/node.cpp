@@ -30,6 +30,8 @@ NodeProxy::NodeProxy(Node* n, GraphProxy* parent)
     else if (auto script_node = dynamic_cast<ScriptNode*>(n))
     {
         script = new ScriptProxy(script_node->getScriptPointer(), this);
+        connect(this, &NodeProxy::subnameChanged,
+                script, &ScriptProxy::subnameChanged);
     }
 
     if (parent)
@@ -83,11 +85,8 @@ void NodeProxy::trigger(const NodeState& state)
 
     inspector->redoLayout();
 
-    // Request that subgraph windows update their titles
-    if (subgraph)
-    {
-        emit(subnameChanged(QString::fromStdString(node->getFullName())));
-    }
+    // Request that subgraph and script windows update their titles
+    emit(subnameChanged(QString::fromStdString(node->getFullName())));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
