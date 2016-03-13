@@ -32,7 +32,6 @@ public:
 
 struct NodeState
 {
-    std::string name;
     bool name_valid;
     std::list<Datum*> datums;
 };

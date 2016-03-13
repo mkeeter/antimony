@@ -1,6 +1,7 @@
 #include <Python.h>
 
 #include "graph/node.h"
+#include "graph/graph_node.h"
 #include "graph/graph.h"
 #include "graph/datum.h"
 #include "graph/proxy.h"
@@ -32,9 +33,18 @@ void Node::init()
 NodeState Node::getState() const
 {
     return (NodeState){
-        name,
         isNameValid(name) && parent->isNameUnique(name, this),
         childDatums()};
+}
+
+std::string Node::getFullName() const
+{
+    auto out = name;
+    if (auto n = parent->parentNode())
+    {
+        out = n->getFullName() + "." + out;
+    }
+    return out;
 }
 
 void Node::setName(std::string new_name)

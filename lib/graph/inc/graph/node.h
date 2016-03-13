@@ -43,6 +43,12 @@ public:
     std::string getName() const { return name; }
 
     /*
+     *  Look up fully qualified name
+     *  (with dots separating nested graph levels)
+     */
+    std::string getFullName() const;
+
+    /*
      *  Look up the node's UID.
      */
     uint64_t getUID() const { return uid; }
@@ -100,7 +106,6 @@ public:
     void flushQueue() override;
 
 protected:
-
     /*
      *  Calls parent->changed and parent->triggerWatchers
      */
