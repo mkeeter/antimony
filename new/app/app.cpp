@@ -162,7 +162,7 @@ void App::newViewportWindow()
 
 void App::newQuadWindow()
 {
-
+    proxy->newQuadWindow();
 }
 
 ////////////////////////////////////////////////////////////////////////////////

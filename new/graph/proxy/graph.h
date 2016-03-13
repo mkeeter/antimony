@@ -19,6 +19,7 @@ class CanvasWindow;
 
 class ViewportScene;
 class ViewportWindow;
+class QuadWindow;
 class Control;
 
 class GraphProxy : public QObject, public GraphWatcher
@@ -60,9 +61,9 @@ public:
     ViewportWindow* newViewportWindow();
 
     /*
-     *  Dummy functions for quad view
+     *  Opens a new Viewport window with this object's scene
      */
-    void newQuadWindow() {}
+    QuadWindow* newQuadWindow();
 
     /*
      *  Returns a proxy for the given node, constructing one if none exists.

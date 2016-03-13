@@ -72,9 +72,9 @@ public:
     void installImage(DepthImage* d);
 
     /*
-     *  Opens a menu that allows us to add new shapes
+     *  Locks yaw and pitch to the given values.
      */
-    void openAddMenu();
+    void lockAngle(float y, float p);
 
     /*  Publically accessible handle to get shaders and VBO  */
     ViewportGL gl;
@@ -93,6 +93,12 @@ signals:
      */
     void paintImage(QMatrix4x4 m, float zmin, float zmax);
 
+    /*
+     *  Signals emitted to sync up viewports in a quad view
+     */
+    void centerChanged(QVector3D c);
+    void scaleChanged(float);
+
 public slots:
     /*
      *  Creates controller instances for the given controller and this viewport
@@ -104,6 +110,12 @@ public slots:
      */
     void installDatum(BaseDatumProxy* p);
 
+    /*
+     *  Used to sync up multiple viewports in a quad window
+     */
+    void setCenter(QVector3D c);
+    void setScale(float s);
+
 protected:
     /*
      *  Emits a changed signal and calls QGraphicsView::update
@@ -114,6 +126,11 @@ protected:
      *  Draws X, Y, Z axes transformed with the viewport's matrix
      */
     void drawAxes(QPainter* painter) const;
+
+    /*
+     *  Opens a menu that allows us to add new shapes
+     */
+    void openAddMenu();
 
     /*  Center of 3D scene  */
     QVector3D center;
@@ -136,6 +153,9 @@ protected:
 
     /*  Used to detect if we dragged with the mouse down or just clicked  */
     bool dragged=false;
+
+    /*  Used to lock the angle, preventing 3D rotation  */
+    bool angle_locked=false;
 
     /*  Pointer back to parent pseudo-scene  */
     ViewportScene* view_scene;

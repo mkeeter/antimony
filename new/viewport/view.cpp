@@ -60,6 +60,15 @@ void ViewportView::installImage(DepthImage* d)
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void ViewportView::lockAngle(float y, float p)
+{
+    yaw = y;
+    pitch = p;
+    angle_locked = true;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void ViewportView::drawBackground(QPainter* painter, const QRectF& rect)
 {
     QGraphicsView::drawBackground(painter, rect);
@@ -118,6 +127,9 @@ void ViewportView::update()
 {
     QGraphicsView::update();
     emit(changed(getMatrix()));
+
+    emit(centerChanged(center));
+    emit(scaleChanged(scale));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -130,6 +142,28 @@ void ViewportView::installControl(Control* c)
 void ViewportView::installDatum(BaseDatumProxy* d)
 {
     d->addViewport(this);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ViewportView::setScale(float s)
+{
+    scale = s;
+
+    // Update the view without calling ViewportView::update
+    // (because that would lead to infinite recursion)
+    QGraphicsView::update();
+    emit(changed(getMatrix()));
+}
+
+void ViewportView::setCenter(QVector3D c)
+{
+    center = c;
+
+    // Update the view without calling ViewportView::update
+    // (because that would lead to infinite recursion)
+    QGraphicsView::update();
+    emit(changed(getMatrix()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -167,7 +201,7 @@ void ViewportView::mouseMoveEvent(QMouseEvent* event)
             center += click_pos_world - sceneToWorld(mapToScene(event->pos()));
             update();
         }
-        else if (event->buttons() == Qt::RightButton)
+        else if (event->buttons() == Qt::RightButton && !angle_locked)
         {
             QPointF d = click_pos - event->pos();
             pitch = fmin(0, fmax(-M_PI, pitch - 0.01 * d.y()));

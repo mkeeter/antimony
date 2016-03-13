@@ -13,6 +13,7 @@
 
 #include "viewport/scene.h"
 #include "window/viewport.h"
+#include "window/quad.h"
 
 #include "graph/graph.h"
 #include "graph/graph_node.h"
@@ -74,6 +75,27 @@ ViewportWindow* GraphProxy::newViewportWindow()
 
     return win;
 }
+
+QuadWindow* GraphProxy::newQuadWindow()
+{
+    auto front = viewport_scene->getView();
+    auto top = viewport_scene->getView();
+    auto side = viewport_scene->getView();
+    auto ortho = viewport_scene->getView();
+
+    auto win = new QuadWindow(front, top, side, ortho);
+    connect(this, &GraphProxy::destroyed, win, &QObject::deleteLater);
+    connect(this, &GraphProxy::subnameChanged,
+            win, &BaseWindow::setSub);
+
+    // If we're in a subgraph, update the window title
+    if (auto p = dynamic_cast<NodeProxy*>(parent()))
+    {
+        p->onSubnameChanged();
+    }
+    return win;
+}
+
 
 void GraphProxy::makeInstancesFor(Control* c)
 {

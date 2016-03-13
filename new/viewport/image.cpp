@@ -98,10 +98,10 @@ void DepthImage::paint(QMatrix4x4 m, float zmin, float zmax)
 
         // Find the parent MainWindow of our Viewport
         QWidget* p = view;
-        while (p && !dynamic_cast<ViewportWindow*>(p))
+        while (p && !dynamic_cast<BaseViewportWindow*>(p))
             p = p->parentWidget();
 
-        if (p && dynamic_cast<ViewportWindow*>(p)->isShaded())
+        if (p && static_cast<BaseViewportWindow*>(p)->isShaded())
         {
             paintShaded(m, zmin, zmax);
         }
