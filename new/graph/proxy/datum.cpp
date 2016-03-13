@@ -18,6 +18,7 @@ DatumProxy::DatumProxy(Datum* d, NodeProxy* parent)
 {
     d->installWatcher(this);
     static_cast<GraphProxy*>(parent->parent())->viewportScene()->installDatum(this);
+    connect(this, &QObject::destroyed, row, &QObject::deleteLater);
 }
 
 void DatumProxy::trigger(const DatumState& state)
