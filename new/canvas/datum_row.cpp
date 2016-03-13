@@ -32,7 +32,6 @@ DatumRow::DatumRow(Datum* d, QGraphicsItem* parent)
         input->setPos(0, port_height);
         output->setPos(0, port_height);
     }
-
 }
 
 DatumRow::DatumRow(Datum* d, InspectorFrame* parent)
