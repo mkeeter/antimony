@@ -31,8 +31,6 @@ void RenderInstance::makeOrphan()
 
 void RenderInstance::datumChanged(Datum* d)
 {
-    qDebug() << sub << d->isFromSubgraph();
-
     bool should_render = d->outgoingLinks().size() == 0 &&
                          d->isValid() &&
                          d->currentValue() &&

@@ -26,7 +26,6 @@ ViewportWindow::ViewportWindow(ViewportView* view)
     if (App::instance()->arguments().contains("--heightmap"))
         ui->actionHeightmap->setChecked(true);
 
-    qDebug() << "Binding with" << view;
     connect(ui->actionShaded, &QAction::triggered,
             [=]{ view->scene()->invalidate(); });
     connect(ui->actionHeightmap, &QAction::triggered,
