@@ -58,6 +58,13 @@ public:
      */
     void setExportWorker(ExportWorker* worker);
 
+    /*
+     *  Sets the dragging flag
+     *  (should only be called on first insertion, see comment
+     *   below for why this is necessary)
+     */
+    void setDragging(bool d) { dragging = d; }
+
 public slots:
     /*
      *  Update layout of text labels and fields

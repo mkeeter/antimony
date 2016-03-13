@@ -117,7 +117,9 @@ void CanvasView::keyPressEvent(QKeyEvent* event)
     {
         QMenu* m = new QMenu(this);
         populateNodeMenu(
-                m, static_cast<CanvasScene*>(scene())->getGraph());
+                m, static_cast<CanvasScene*>(scene())->getGraph(),
+                [&](Node* n){ this->grabNode(n); },
+                [&](Datum* d){ this->grabDatum(d); });
 
         m->exec(QCursor::pos());
         m->deleteLater();
@@ -314,4 +316,43 @@ void CanvasView::pasteNodes(QJsonArray array)
 
     // Load new inspector positions and select them
     App::instance()->getProxy()->setPositions(ds.frames, true);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+template <class T>
+void CanvasView::grab(T* t)
+{
+    t->setSelected(true);
+    t->setPos(mapToScene(mapFromGlobal(QCursor::pos())));
+    t->setDragging(true);
+    t->grabMouse();
+}
+
+void CanvasView::grabNode(Node* n)
+{
+    for (auto c : scene()->items())
+    {
+        if (auto i = dynamic_cast<InspectorFrame*>(c))
+        {
+            if (i->getNode() == n)
+            {
+                grab(i);
+            }
+        }
+    }
+}
+
+void CanvasView::grabDatum(Datum* d)
+{
+    for (auto c : scene()->items())
+    {
+        if (auto s = dynamic_cast<SubdatumFrame*>(c))
+        {
+            if (s->getDatum() == d)
+            {
+                grab(s);
+            }
+        }
+    }
 }

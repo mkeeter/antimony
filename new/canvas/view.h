@@ -3,6 +3,9 @@
 #include <QGraphicsView>
 
 class Graph;
+class Node;
+class Datum;
+
 class CanvasScene;
 
 class CanvasView : public QGraphicsView
@@ -52,6 +55,16 @@ protected:
      *  Paste in an array of nodes, properly updating UIDs and names
      */
     void pasteNodes(QJsonArray array);
+
+    /*
+     *  Grabs the given node or datum
+     *  (used when inserting things into the canvas)
+     */
+    template <class T>
+    void grab(T* t);
+
+    void grabNode(Node* n);
+    void grabDatum(Datum* n);
 
     QPointF click_pos;
     QPointF drag_pos;
