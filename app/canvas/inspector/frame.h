@@ -65,11 +65,22 @@ public:
      */
     void setDragging(bool d) { dragging = d; }
 
+signals:
+    /*
+     *  Emitted when focus changes
+     */
+    void onFocus(bool focus);
+
 public slots:
     /*
      *  Update layout of text labels and fields
      */
     void redoLayout();
+
+    /*
+     *  Sets whether the inspector is highlighted
+     */
+    void setFocus(bool focus);
 
 protected:
     /*
@@ -89,6 +100,11 @@ protected:
     void hoverEnterEvent(QGraphicsSceneHoverEvent* event) override;
     void hoverLeaveEvent(QGraphicsSceneHoverEvent* event) override;
 
+    /*
+     *  Returns the tight bounding rectangle (not including focus border)
+     */
+    QRectF tightBoundingRect() const;
+
     static const float PADDING_ROWS;
 
     Node* const node;
@@ -96,6 +112,9 @@ protected:
     InspectorExportButton* export_button;
 
     bool show_hidden;
+
+    /*  Set to true when we should highlight the inspector  */
+    bool has_focus=false;
 
     // Ugly hack because simply grabbing the mouse doesn't set up all of the
     // magic that QGraphicsScene uses to drag items: upon first insertion,

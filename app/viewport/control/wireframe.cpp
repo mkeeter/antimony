@@ -55,8 +55,14 @@ QPainterPath WireframeControl::path(QMatrix4x4 m) const
 
 void WireframeControl::paint(QMatrix4x4 m, bool highlight, QPainter* painter)
 {
+    auto p = path(m);
+    if (has_focus)
+    {
+        painter->setPen(QPen(QColor(255, 255, 255, 128), t + 10));
+        painter->drawPath(p);
+    }
     painter->setPen(QPen(highlight ? Colors::highlight(color) : color, t));
-    painter->drawPath(path(m));
+    painter->drawPath(p);
 }
 
 QVector3D WireframeControl::pos() const

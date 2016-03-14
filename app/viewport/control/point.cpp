@@ -46,8 +46,15 @@ void PointControl::paint(QMatrix4x4 m, bool highlight, QPainter* painter)
 {
     QColor edge = Colors::dim(color);
 
+    auto s = shape(m);
+    if (has_focus)
+    {
+        painter->setPen(QPen(QColor(255, 255, 255, 128), 10));
+        painter->drawPath(s);
+    }
+
     painter->setPen(QPen(highlight ? Colors::highlight(edge) : edge, 2));
     painter->setBrush(QBrush(highlight ? Colors::highlight(color) : color));
-    painter->drawPath(shape(m));
+    painter->drawPath(s);
 }
 

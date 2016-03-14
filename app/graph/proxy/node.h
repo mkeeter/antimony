@@ -110,6 +110,11 @@ signals:
      */
     void subnameChanged(QString subname);
 
+    /*
+     *  Used to set highlighting for inspector and controls
+     */
+    void setFocus(bool focus);
+
 protected:
     Node* const node;
 

@@ -84,6 +84,17 @@ signals:
      */
     void redraw();
 
+    /*
+     *  Emitted when focus changes
+     */
+    void onFocus(bool focus);
+
+public slots:
+    /*
+     *  Sets whether the control is highlighted
+     */
+    void setFocus(bool focus);
+
 protected:
     /*  Function that is called when the control is dragged  *
      *  The function is invoked as drag_func(this, x, y, z)  *
@@ -97,6 +108,9 @@ protected:
 
     /*  Map of datum string values (used to undo dragging)  */
     QMap<Datum*, QString> datum_text;
+
+    /*  Set to true when we should highlight the control  */
+    bool has_focus=false;
 
     friend struct ScriptUIHooks;
 };

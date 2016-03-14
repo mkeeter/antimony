@@ -87,6 +87,7 @@ void ControlInstance::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
         hover = true;
         update();
     }
+    emit(onFocus(true));
 }
 
 void ControlInstance::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
@@ -97,6 +98,7 @@ void ControlInstance::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
         hover = false;
         update();
     }
+    emit(onFocus(false));
 }
 
 void ControlInstance::keyPressEvent(QKeyEvent* event)

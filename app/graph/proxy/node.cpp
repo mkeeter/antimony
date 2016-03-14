@@ -41,6 +41,10 @@ NodeProxy::NodeProxy(Node* n, GraphProxy* parent)
     }
 
     connect(this, &QObject::destroyed, inspector, &QObject::deleteLater);
+
+    connect(inspector, &InspectorFrame::onFocus, this, &NodeProxy::setFocus);
+    connect(this, &NodeProxy::setFocus, inspector, &InspectorFrame::setFocus);
+
     n->installWatcher(this);
 }
 
@@ -161,6 +165,12 @@ void NodeProxy::registerControl(long lineno, Control* c)
     Q_ASSERT(!controls.contains(lineno));
     controls[lineno] = c;
     static_cast<GraphProxy*>(parent())->makeInstancesFor(c);
+
+    // Set highlight actions on focus
+    connect(c, &Control::onFocus,
+            this, &NodeProxy::setFocus);
+    connect(this, &NodeProxy::setFocus,
+            c, &Control::setFocus);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

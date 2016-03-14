@@ -28,7 +28,7 @@ InspectorFrame::InspectorFrame(Node* node, QGraphicsScene* scene)
     redoLayout();
 }
 
-QRectF InspectorFrame::boundingRect() const
+QRectF InspectorFrame::tightBoundingRect() const
 {
     QRectF b;
     for (auto c : childItems())
@@ -42,6 +42,13 @@ QRectF InspectorFrame::boundingRect() const
     return b;
 }
 
+QRectF InspectorFrame::boundingRect() const
+{
+    auto r = tightBoundingRect();
+    r += {10, 10, 10, 10};
+    return r;
+}
+
 void InspectorFrame::paint(QPainter *painter,
                            const QStyleOptionGraphicsItem *option,
                            QWidget *widget)
@@ -49,7 +56,14 @@ void InspectorFrame::paint(QPainter *painter,
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    const auto r = boundingRect();
+    const auto r = tightBoundingRect();
+
+    // Draw higlight
+    if (has_focus)
+    {
+        painter->setPen(QPen(QColor(255, 255, 255, 128), 10));
+        painter->drawRoundedRect(r, 8, 8);
+    }
 
     // Draw interior
     painter->setBrush(Colors::base01);
@@ -62,7 +76,7 @@ void InspectorFrame::paint(QPainter *painter,
         painter->setBrush(Qt::NoBrush);
         painter->setPen(QPen(Colors::base03, 4));
         const auto y = title_row->boundingRect().bottom();
-        painter->drawLine(2, y, boundingRect().right() - 2, y);
+        painter->drawLine(2, y, tightBoundingRect().right() - 2, y);
     }
 
     // Draw outer edge
@@ -163,6 +177,17 @@ void InspectorFrame::redoLayout()
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void InspectorFrame::setFocus(bool focus)
+{
+    if (focus != has_focus)
+    {
+        has_focus = focus;
+        prepareGeometryChange();
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 void InspectorFrame::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     if (dragging)
@@ -206,14 +231,14 @@ void InspectorFrame::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
 void InspectorFrame::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-    // XXX Handle glowing here
     QGraphicsItem::hoverEnterEvent(event);
+    emit(onFocus(true));
 }
 
 void InspectorFrame::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
-    // XXX Handle glowing here
     QGraphicsItem::hoverLeaveEvent(event);
+    emit(onFocus(false));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -63,6 +63,12 @@ public slots:
      */
     void redraw();
 
+signals:
+    /*
+     *  Emitted when hover changes
+     */
+    void onFocus(bool focus);
+
 protected:
     /*
      *  Returns the transform matrix from the parent view

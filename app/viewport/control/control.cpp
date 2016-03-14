@@ -24,6 +24,7 @@ void Control::makeInstanceFor(ViewportView* v)
     auto i = new ControlInstance(this, v);
     connect(this, &QObject::destroyed, i, &QObject::deleteLater);
     connect(this, &Control::redraw, i, &ControlInstance::redraw);
+    connect(i, &ControlInstance::onFocus, this, &Control::onFocus);
 }
 
 QRectF Control::bounds(QMatrix4x4 m) const
@@ -102,4 +103,13 @@ void Control::deleteNode()
 {
     auto node = static_cast<NodeProxy*>(parent())->getMutableNode();
     App::instance()->pushUndoStack(new UndoDeleteMulti({node}, {}, {}));
+}
+
+void Control::setFocus(bool focus)
+{
+    if (focus != has_focus)
+    {
+        has_focus = focus;
+        emit(redraw());
+    }
 }
