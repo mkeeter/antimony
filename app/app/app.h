@@ -77,6 +77,11 @@ public:
      */
     void onNewWindow();
 
+    /*
+     *  Checks if undo stack is clean
+     */
+    bool isUndoStackClean() const;
+
 public slots:
     /*
      *  Commands from File menu

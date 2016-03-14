@@ -19,6 +19,12 @@ public:
      *      target subgraph (or NULL if we're using the root graph)
      */
     explicit BaseWindow(QString type);
+    virtual ~BaseWindow();
+
+    /*
+     *  On close attempt, check to see if this is the last window
+     */
+    void closeEvent(QCloseEvent *event) override;
 
 public slots:
     /*
@@ -35,6 +41,17 @@ public slots:
      *  Adjusts the window's title based on whether the file has been saved
      */
     void setClean(bool changed);
+
+    /*
+     *  Closes the window if there are no unsaved changes; asks otherwise
+     */
+    void tryClose();
+
+    /*
+     *  Returns true if the window should close (either because there are other
+     *  windows open, there aren't unsaved changes, or the user accepts)
+     */
+    bool askClose();
 
 protected:
     /*
@@ -59,4 +76,7 @@ protected:
     bool clean=true;
 
     QScopedPointer<Ui::BaseWindow> ui;
+
+    /*  Global count of windows (used to warn when last closes)  */
+    static int window_count;
 };

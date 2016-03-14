@@ -303,3 +303,8 @@ QAction* App::getRedoAction()
     a->setShortcuts(QKeySequence::Redo);
     return a;
 }
+
+bool App::isUndoStackClean() const
+{
+    return undo_stack->isClean();
+}

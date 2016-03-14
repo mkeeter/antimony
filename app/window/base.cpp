@@ -1,7 +1,12 @@
 #include <QDir>
+#include <QMessageBox>
+#include <QCloseEvent>
 
 #include "app/app.h"
 #include "window/base.h"
+
+// Initialize global window count (used to detect when last window closes)
+int BaseWindow::window_count = 0;
 
 BaseWindow::BaseWindow(QString type)
     : QMainWindow(), window_type(type), ui(new Ui::BaseWindow)
@@ -11,6 +16,13 @@ BaseWindow::BaseWindow(QString type)
 
     connectActions(App::instance());
     setShortcuts();
+
+    window_count++;
+}
+
+BaseWindow::~BaseWindow()
+{
+    window_count--;
 }
 
 void BaseWindow::connectActions(App* app)
@@ -27,7 +39,7 @@ void BaseWindow::connectActions(App* app)
     connect(ui->actionQuit, &QAction::triggered,
             app, &App::onQuit);
     connect(ui->actionClose, &QAction::triggered,
-            this, &QObject::deleteLater);
+            this, &BaseWindow::tryClose);
 
     // Add undo / redo to edit menu
     ui->menuEdit->addAction(App::instance()->getUndoAction());
@@ -118,4 +130,36 @@ void BaseWindow::setShortcuts()
     ui->actionCut->setShortcuts(QKeySequence::Cut);
     ui->actionCopy->setShortcuts(QKeySequence::Copy);
     ui->actionPaste->setShortcuts(QKeySequence::Paste);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+bool BaseWindow::askClose()
+{
+    if(window_count <= 1 && !App::instance()->isUndoStackClean())
+    {
+        auto res = QMessageBox::question(
+                this, "APP_NAME", "There are unsaved changes!\n"
+                                  "Do you still want to close this window?\n",
+                QMessageBox::No | QMessageBox::Yes, QMessageBox::Yes);
+
+        return (res == QMessageBox::Yes);
+    }
+    return true;
+}
+
+void BaseWindow::closeEvent(QCloseEvent* event)
+{
+    if (!askClose())
+    {
+        event->ignore();
+    }
+}
+
+void BaseWindow::tryClose()
+{
+    if (askClose())
+    {
+        deleteLater();
+    }
 }
