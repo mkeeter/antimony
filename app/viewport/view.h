@@ -130,12 +130,17 @@ protected:
     /*
      *  Opens a menu that allows us to add new shapes
      */
-    void openAddMenu();
+    void openAddMenu(bool view_commands=false);
 
     /*
      *  Opens a menu that allows us to raise an item
      */
     void openRaiseMenu(QList<QGraphicsItem*> items);
+
+    /*
+     *  Constructs a pair of QPropertyAnimations to spin the view
+     */
+    void spinTo(float new_yaw, float new_pitch);
 
     /*  Center of 3D scene  */
     QVector3D center;
@@ -146,6 +151,14 @@ protected:
     /*  Angles for rotation  */
     float pitch;
     float yaw;
+
+    /*  Properties to animate yaw and pitch with QPropertyAnimation  */
+    float getYaw() const { return yaw; }
+    float getPitch() const { return pitch; }
+    void setYaw(float y);
+    Q_PROPERTY(float _yaw READ getYaw WRITE setYaw)
+    void setPitch(float p);
+    Q_PROPERTY(float _pitch READ getPitch WRITE setPitch)
 
     /*  Mouse position during a drag  */
     QPoint current_pos;

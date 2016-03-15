@@ -4,6 +4,7 @@
 #include <QMatrix4x4>
 #include <QMouseEvent>
 #include <QMenu>
+#include <QPropertyAnimation>
 
 #include "viewport/view.h"
 #include "viewport/scene.h"
@@ -226,7 +227,7 @@ void ViewportView::mouseReleaseEvent(QMouseEvent* event)
         }
         else
         {
-            openAddMenu();
+            openAddMenu(true);
         }
     }
 }
@@ -262,9 +263,31 @@ void ViewportView::keyPressEvent(QKeyEvent* event)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void ViewportView::openAddMenu()
+void ViewportView::openAddMenu(bool view_commands)
 {
     QMenu* m = new QMenu(this);
+
+    if (view_commands && !angle_locked)
+    {
+        auto sub = new QMenu("View");
+
+        connect(sub->addAction("Top"), &QAction::triggered,
+                [=]{ this->spinTo(0, 0); });
+        connect(sub->addAction("Bottom"), &QAction::triggered,
+                [=]{ this->spinTo(0, -M_PI); });
+        connect(sub->addAction("Left"), &QAction::triggered,
+                [=]{ this->spinTo(M_PI/2, -M_PI/2); });
+        connect(sub->addAction("Right"), &QAction::triggered,
+                [=]{ this->spinTo(-M_PI/2, -M_PI/2); });
+        connect(sub->addAction("Front"), &QAction::triggered,
+                [=]{ this->spinTo(0, -M_PI/2); });
+        connect(sub->addAction("Back"), &QAction::triggered,
+                [=]{ this->spinTo(-M_PI, -M_PI/2); });
+
+        m->addMenu(sub);
+        m->addSeparator();
+    }
+
     populateNodeMenu(m, view_scene->getGraph());
 
     m->exec(QCursor::pos());
@@ -299,4 +322,34 @@ void ViewportView::openRaiseMenu(QList<QGraphicsItem*> items)
         raised = chosen->data().value<ControlInstance*>();
         raised->setZValue(0.1);
     }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+void ViewportView::setYaw(float y)
+{
+    yaw = y;
+    update();
+}
+
+void ViewportView::setPitch(float p)
+{
+    pitch = p;
+    update();
+}
+
+void ViewportView::spinTo(float new_yaw, float new_pitch)
+{
+    QPropertyAnimation* a = new QPropertyAnimation(this, "_yaw", this);
+    a->setDuration(100);
+    a->setStartValue(yaw);
+    a->setEndValue(new_yaw);
+
+    QPropertyAnimation* b = new QPropertyAnimation(this, "_pitch", this);
+    b->setDuration(100);
+    b->setStartValue(pitch);
+    b->setEndValue(new_pitch);
+
+    a->start(QPropertyAnimation::DeleteWhenStopped);
+    b->start(QPropertyAnimation::DeleteWhenStopped);
 }
