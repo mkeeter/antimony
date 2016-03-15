@@ -9,6 +9,7 @@
 #include "viewport/scene.h"
 #include "viewport/image.h"
 #include "viewport/control/control.h"
+#include "viewport/control/control_instance.h"
 
 #include "app/colors.h"
 
@@ -218,7 +219,15 @@ void ViewportView::mouseReleaseEvent(QMouseEvent* event)
 {
     if (event->button() == Qt::RightButton && !dragged)
     {
-        openAddMenu();
+        auto is = items(event->pos());
+        if (is.size())
+        {
+            openRaiseMenu(is);
+        }
+        else
+        {
+            openAddMenu();
+        }
     }
 }
 
@@ -260,4 +269,34 @@ void ViewportView::openAddMenu()
 
     m->exec(QCursor::pos());
     m->deleteLater();
+}
+
+void ViewportView::openRaiseMenu(QList<QGraphicsItem*> items)
+{
+    QScopedPointer<QMenu> m(new QMenu(this));
+
+    int found = 0;
+    for (auto i : items)
+    {
+        if (auto c = dynamic_cast<ControlInstance*>(i))
+        {
+            auto a = new QAction(c->getName(), m.data());
+            a->setData(QVariant::fromValue(c));
+            m->addAction(a);
+            found++;
+        }
+    }
+
+    QAction* chosen = (found > 1) ? m->exec(QCursor::pos())
+                                  : NULL;
+
+    if (chosen)
+    {
+        if (raised)
+        {
+            raised->setZValue(0);
+        }
+        raised = chosen->data().value<ControlInstance*>();
+        raised->setZValue(0.1);
+    }
 }

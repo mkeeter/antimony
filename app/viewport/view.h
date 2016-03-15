@@ -132,6 +132,11 @@ protected:
      */
     void openAddMenu();
 
+    /*
+     *  Opens a menu that allows us to raise an item
+     */
+    void openRaiseMenu(QList<QGraphicsItem*> items);
+
     /*  Center of 3D scene  */
     QVector3D center;
 
@@ -159,4 +164,7 @@ protected:
 
     /*  Pointer back to parent pseudo-scene  */
     ViewportScene* view_scene;
+
+    /*  Pointer to raised ControlInstance  */
+    QGraphicsItem* raised=nullptr;
 };

@@ -35,6 +35,11 @@ QPainterPath ControlInstance::shape() const
                    : QPainterPath();
 }
 
+QString ControlInstance::getName() const
+{
+    return control ? control->getName() : "";
+}
+
 void ControlInstance::paint(QPainter* painter,
                          const QStyleOptionGraphicsItem* option,
                          QWidget* widget)

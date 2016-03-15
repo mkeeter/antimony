@@ -75,6 +75,11 @@ public:
      */
     void deleteNode();
 
+    /*
+     *  Looks up Node's name
+     */
+    QString getName() const;
+
     /*  Flag indicating whether this control has been touched  */
     bool touched=false;
 

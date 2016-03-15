@@ -26,6 +26,11 @@ public:
     QPainterPath shape() const override;
 
     /*
+     *  Looks up this node's name
+     */
+    QString getName() const;
+
+    /*
      * Paint this object by calling the control's paint function.
      */
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option,

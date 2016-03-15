@@ -105,6 +105,12 @@ void Control::deleteNode()
     App::instance()->pushUndoStack(new UndoDeleteMulti({node}, {}, {}));
 }
 
+QString Control::getName() const
+{
+    return QString::fromStdString(
+            static_cast<NodeProxy*>(parent())->getNode()->getName());
+}
+
 void Control::setFocus(bool focus)
 {
     if (focus != has_focus)
