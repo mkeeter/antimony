@@ -145,7 +145,12 @@ void App::onOpen()
 
 void App::onQuit()
 {
-    quit();
+    if (undo_stack->isClean() || QMessageBox::question(
+                NULL, "Discard unsaved changes?",
+                "Discard unsaved changes?") == QMessageBox::Yes)
+    {
+        quit();
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
