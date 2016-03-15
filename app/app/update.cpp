@@ -80,4 +80,6 @@ void UpdateChecker::done(QNetworkReply* reply)
     else
         QMessageBox::information(NULL, "No update available",
                 "No update is available at this time.");
+
+    deleteLater();
 }

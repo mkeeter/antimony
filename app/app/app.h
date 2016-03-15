@@ -3,8 +3,6 @@
 #include <QApplication>
 #include <QAction>
 
-#include "app/update.h"
-
 class Graph;
 class GraphProxy;
 class UndoCommand;
@@ -127,6 +125,4 @@ protected:
     UndoStack* undo_stack;
 
     QString filename;
-
-    UpdateChecker update_checker;
 };

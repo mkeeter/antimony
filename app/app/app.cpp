@@ -8,6 +8,7 @@
 #include <QJsonDocument>
 
 #include "app/app.h"
+#include "app/update.h"
 
 #include "graph/proxy/graph.h"
 #include "graph/serialize/serializer.h"
@@ -20,7 +21,7 @@
 App::App(int& argc, char** argv)
     : QApplication(argc, argv),
       graph(new Graph()), proxy(new GraphProxy(graph)),
-      undo_stack(new UndoStack(this)), update_checker(this)
+      undo_stack(new UndoStack(this))
 {
     connect(undo_stack, &QUndoStack::cleanChanged,
             this, &App::cleanChanged);
@@ -202,7 +203,8 @@ void App::onAbout()
 
 void App::onUpdateCheck()
 {
-    update_checker.start();
+    auto u = new UpdateChecker(this);
+    u->start();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
