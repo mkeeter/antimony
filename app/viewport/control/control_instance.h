@@ -52,6 +52,11 @@ public:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
 
     /*
+     *  On mouse press, open a 'jump to node' menu
+     */
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent* event) override;
+
+    /*
      *  On hover enter and exit, set hover flag and call update
      */
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;

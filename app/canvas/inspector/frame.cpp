@@ -4,12 +4,15 @@
 #include <QPainter>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsSceneContextMenuEvent>
+#include <QMenu>
 
 #include "canvas/inspector/frame.h"
 #include "canvas/datum_row.h"
 #include "canvas/inspector/title.h"
 #include "canvas/inspector/export.h"
 #include "canvas/scene.h"
+
+#include "graph/node.h"
 
 #include "app/colors.h"
 
@@ -203,7 +206,16 @@ void InspectorFrame::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 
 void InspectorFrame::contextMenuEvent(QGraphicsSceneContextMenuEvent* e)
 {
-    // XXX open context menu with 'jump to' here
+    Q_UNUSED(e);
+    QString desc = QString::fromStdString(node->getName());
+
+    QScopedPointer<QMenu> menu(new QMenu());
+    auto jump_to = new QAction("Zoom to " + desc, menu.data());
+
+    menu->addAction(jump_to);
+    connect(jump_to, &QAction::triggered, this, &InspectorFrame::onZoomTo);
+
+    menu->exec(QCursor::pos());
 }
 
 void InspectorFrame::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)

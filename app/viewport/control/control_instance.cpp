@@ -3,6 +3,7 @@
 #include <QMatrix4x4>
 #include <QGraphicsSceneMouseEvent>
 #include <QKeyEvent>
+#include <QMenu>
 
 #include "viewport/control/control_instance.h"
 #include "viewport/control/control.h"
@@ -82,6 +83,20 @@ void ControlInstance::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
                   p1 - p0);
 
     click_pos = event->pos();
+}
+
+void ControlInstance::contextMenuEvent(QGraphicsSceneContextMenuEvent* e)
+{
+    Q_UNUSED(e);
+    QString desc = control->getName();
+
+    QScopedPointer<QMenu> menu(new QMenu());
+    auto jump_to = new QAction("Zoom to " + desc, menu.data());
+
+    menu->addAction(jump_to);
+    connect(jump_to, &QAction::triggered, this, &ControlInstance::onZoomTo);
+
+    menu->exec(QCursor::pos());
 }
 
 void ControlInstance::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
