@@ -114,6 +114,11 @@ QString Control::getName() const
             static_cast<NodeProxy*>(parent())->getNode()->getName());
 }
 
+const Node* Control::getNode() const
+{
+    return static_cast<NodeProxy*>(parent())->getNode();
+}
+
 void Control::setFocus(bool focus)
 {
     if (focus != has_focus)

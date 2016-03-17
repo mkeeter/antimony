@@ -356,8 +356,37 @@ void ViewportView::spinTo(float new_yaw, float new_pitch)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <QDebug>
 void ViewportView::zoomTo(Node* n)
 {
-    qDebug() << "Zooming to" << n << "in" << this;
+    // Find all ControlInstances that are declared by this node
+    QList<ControlInstance*> instances;
+    for (auto i : items())
+    {
+        if (auto c = dynamic_cast<ControlInstance*>(i))
+        {
+            if (c->getNode() == n)
+            {
+                instances.push_back(c);
+            }
+        }
+    }
+
+    // Find a weighted sum of central points
+    QVector3D pos;
+    float area_sum = 0;
+    for (auto i : instances)
+    {
+        const float area = i->boundingRect().width() *
+                           i->boundingRect().height();
+        pos += i->getControl()->pos() * area;
+        area_sum += area;
+    }
+    pos /= area_sum;
+
+    auto a = new QPropertyAnimation(this, "_center");
+    a->setDuration(100);
+    a->setStartValue(center);
+    a->setEndValue(pos);
+
+    a->start(QPropertyAnimation::DeleteWhenStopped);
 }

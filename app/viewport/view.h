@@ -162,9 +162,12 @@ protected:
     float getYaw() const { return yaw; }
     float getPitch() const { return pitch; }
     void setYaw(float y);
-    Q_PROPERTY(float _yaw READ getYaw WRITE setYaw)
     void setPitch(float p);
+    Q_PROPERTY(float _yaw READ getYaw WRITE setYaw)
     Q_PROPERTY(float _pitch READ getPitch WRITE setPitch)
+
+    QVector3D getCenter() const { return center; }
+    Q_PROPERTY(QVector3D _center READ getCenter WRITE setCenter)
 
     /*  Mouse position during a drag  */
     QPoint current_pos;

@@ -12,6 +12,7 @@ class ViewportView;
 class ControlInstance;
 
 class Datum;
+class Node;
 
 class Control : public QObject
 {
@@ -79,6 +80,11 @@ public:
      *  Looks up Node's name
      */
     QString getName() const;
+
+    /*
+     *  Looks up a node by value
+     */
+    const Node* getNode() const;
 
     /*  Flag indicating whether this control has been touched  */
     bool touched=false;

@@ -6,6 +6,7 @@
 
 class Control;
 class ViewportView;
+class Node;
 
 class ControlInstance : public QGraphicsObject
 {
@@ -29,6 +30,16 @@ public:
      *  Looks up this node's name
      */
     QString getName() const;
+
+    /*
+     *  Looks up the relevant node
+     */
+    const Node* getNode() const;
+
+    /*
+     *  Looks up the parent control
+     */
+    Control* getControl() const;
 
     /*
      * Paint this object by calling the control's paint function.

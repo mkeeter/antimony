@@ -41,6 +41,16 @@ QString ControlInstance::getName() const
     return control ? control->getName() : "";
 }
 
+const Node* ControlInstance::getNode() const
+{
+    return control ? control->getNode() : nullptr;
+}
+
+Control* ControlInstance::getControl() const
+{
+    return control;
+}
+
 void ControlInstance::paint(QPainter* painter,
                          const QStyleOptionGraphicsItem* option,
                          QWidget* widget)
