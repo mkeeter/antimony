@@ -71,6 +71,11 @@ signals:
      */
     void onFocus(bool focus);
 
+    /*
+     *  Emitted when the "zoom to" action is used
+     */
+    void onZoomTo();
+
 public slots:
     /*
      *  Update layout of text labels and fields

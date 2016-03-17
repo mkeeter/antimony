@@ -8,15 +8,20 @@
 #include "graph/hooks/hooks.h"
 
 #include "canvas/scene.h"
+#include "canvas/view.h"
 #include "canvas/inspector/buttons.h"
 #include "window/canvas.h"
 
 #include "viewport/scene.h"
+#include "viewport/view.h"
+
 #include "window/viewport.h"
 #include "window/quad.h"
 
 #include "graph/graph.h"
 #include "graph/graph_node.h"
+
+////////////////////////////////////////////////////////////////////////////////
 
 GraphProxy::GraphProxy(Graph* g, NodeProxy* parent)
     : QObject(parent), graph(g), canvas_scene(new CanvasScene(g, this)),
@@ -46,8 +51,7 @@ W* GraphProxy::newWindow(S* scene)
 {
     auto win = new W(scene);
     connect(this, &GraphProxy::destroyed, win, &QObject::deleteLater);
-    connect(this, &GraphProxy::subnameChanged,
-            win, &BaseWindow::setSub);
+    connect(this, &GraphProxy::subnameChanged, win, &BaseWindow::setSub);
 
     // If we're in a subgraph, update the window title
     if (auto p = dynamic_cast<NodeProxy*>(parent()))
@@ -60,12 +64,16 @@ W* GraphProxy::newWindow(S* scene)
 
 CanvasWindow* GraphProxy::newCanvasWindow()
 {
-    return newWindow<CanvasWindow>(canvas_scene);
+    auto view = canvas_scene->getView();
+    connect(this, &GraphProxy::zoomTo, view, &CanvasView::zoomTo);
+    return newWindow<CanvasWindow>(view);
 }
 
 ViewportWindow* GraphProxy::newViewportWindow()
 {
     auto view = viewport_scene->getView();
+    connect(this, &GraphProxy::zoomTo, view, &ViewportView::zoomTo);
+
     auto win = newWindow<ViewportWindow>(view);
 
     for (auto n : nodes)
@@ -82,6 +90,11 @@ QuadWindow* GraphProxy::newQuadWindow()
     auto top = viewport_scene->getView();
     auto side = viewport_scene->getView();
     auto ortho = viewport_scene->getView();
+
+    for (auto v : {front, top, side, ortho})
+    {
+        connect(this, &GraphProxy::zoomTo, v, &ViewportView::zoomTo);
+    }
 
     auto win = new QuadWindow(front, top, side, ortho);
     connect(this, &GraphProxy::destroyed, win, &QObject::deleteLater);

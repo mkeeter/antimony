@@ -353,3 +353,11 @@ void ViewportView::spinTo(float new_yaw, float new_pitch)
     a->start(QPropertyAnimation::DeleteWhenStopped);
     b->start(QPropertyAnimation::DeleteWhenStopped);
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+#include <QDebug>
+void ViewportView::zoomTo(Node* n)
+{
+    qDebug() << "Zooming to" << n << "in" << this;
+}

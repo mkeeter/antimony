@@ -26,6 +26,11 @@ public slots:
      */
     void onPaste();
 
+    /*
+     *  Starts an animation zooming to the given node
+     */
+    void zoomTo(Node* n);
+
 protected:
     /*
      *  Overload draw events for background and selection rectangle.

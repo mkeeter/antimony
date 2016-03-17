@@ -2,10 +2,10 @@
 
 #include "window/base.h"
 
-class CanvasScene;
+class CanvasView;
 
 class CanvasWindow : public BaseWindow
 {
 public:
-    CanvasWindow(CanvasScene* scene);
+    CanvasWindow(CanvasView* view);
 };

@@ -7,6 +7,7 @@
 
 class DepthImage;
 class Control;
+class Node;
 class BaseDatumProxy;
 class ViewportScene;
 
@@ -115,6 +116,11 @@ public slots:
      */
     void setCenter(QVector3D c);
     void setScale(float s);
+
+    /*
+     *  Starts an animation zooming to the given node
+     */
+    void zoomTo(Node* n);
 
 protected:
     /*

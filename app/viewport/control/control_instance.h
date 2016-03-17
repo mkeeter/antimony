@@ -74,6 +74,11 @@ signals:
      */
     void onFocus(bool focus);
 
+    /*
+     *  Requests that we zoom to the given node
+     */
+    void onZoomTo();
+
 protected:
     /*
      *  Returns the transform matrix from the parent view

@@ -24,7 +24,10 @@ void Control::makeInstanceFor(ViewportView* v)
     auto i = new ControlInstance(this, v);
     connect(this, &QObject::destroyed, i, &QObject::deleteLater);
     connect(this, &Control::redraw, i, &ControlInstance::redraw);
+
+    // Echo onZoomTo and onFocus signals up from instances
     connect(i, &ControlInstance::onFocus, this, &Control::onFocus);
+    connect(i, &ControlInstance::onZoomTo, this, &Control::onZoomTo);
 }
 
 QRectF Control::bounds(QMatrix4x4 m) const

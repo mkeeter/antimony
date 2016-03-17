@@ -113,6 +113,11 @@ signals:
      */
     void subnameChanged(QString n);
 
+    /*
+     *  Zooms to the given node in all viewports and canvases
+     */
+    void zoomTo(Node* n);
+
 protected:
     Graph* const graph;
 

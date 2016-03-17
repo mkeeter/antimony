@@ -357,3 +357,11 @@ void CanvasView::grabDatum(Datum* d)
         }
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+#include <QDebug>
+void CanvasView::zoomTo(Node* n)
+{
+    qDebug() << "Zooming to" << n << "in" << this;
+}

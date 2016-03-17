@@ -4,10 +4,9 @@
 
 #include "ui_base_window.h"
 
-CanvasWindow::CanvasWindow(CanvasScene* scene)
+CanvasWindow::CanvasWindow(CanvasView* view)
     : BaseWindow("Graph")
 {
-    auto view = scene->getView();
     setCentralWidget(view);
 
     // Connect copy / paste actions

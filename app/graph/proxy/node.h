@@ -103,6 +103,12 @@ public slots:
      */
     void onSubnameChanged(QString ignored="");
 
+    /*
+     *  Requests that inspectors and controls are zoomed to
+     *  in their respective scenes
+     */
+    void onZoomTo();
+
 signals:
     /*
      *  Signal connected to child GraphProxies that instructs them to

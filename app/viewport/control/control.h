@@ -94,6 +94,11 @@ signals:
      */
     void onFocus(bool focus);
 
+    /*
+     *  Used to request zooming to the given node in all relevant windows
+     */
+    void onZoomTo();
+
 public slots:
     /*
      *  Sets whether the control is highlighted

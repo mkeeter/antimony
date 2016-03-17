@@ -45,6 +45,8 @@ NodeProxy::NodeProxy(Node* n, GraphProxy* parent)
     connect(inspector, &InspectorFrame::onFocus, this, &NodeProxy::setFocus);
     connect(this, &NodeProxy::setFocus, inspector, &InspectorFrame::setFocus);
 
+    connect(inspector, &InspectorFrame::onZoomTo, this, &NodeProxy::onZoomTo);
+
     n->installWatcher(this);
 }
 
@@ -167,10 +169,11 @@ void NodeProxy::registerControl(long lineno, Control* c)
     static_cast<GraphProxy*>(parent())->makeInstancesFor(c);
 
     // Set highlight actions on focus
-    connect(c, &Control::onFocus,
-            this, &NodeProxy::setFocus);
-    connect(this, &NodeProxy::setFocus,
-            c, &Control::setFocus);
+    connect(c, &Control::onFocus, this, &NodeProxy::setFocus);
+    connect(this, &NodeProxy::setFocus, c, &Control::setFocus);
+
+    // Call onZoomTo if control requests zooming
+    connect(c, &Control::onZoomTo, this, &NodeProxy::onZoomTo);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -180,6 +183,13 @@ void NodeProxy::onSubnameChanged(QString ignored)
     Q_UNUSED(ignored);
     emit(subnameChanged(QString::fromStdString(node->getFullName())));
 }
+
+void NodeProxy::onZoomTo()
+{
+    static_cast<GraphProxy*>(parent())->zoomTo(node);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 void NodeProxy::makeInstancesFor(ViewportView* view)
 {
