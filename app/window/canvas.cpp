@@ -1,6 +1,6 @@
 #include "window/canvas.h"
 #include "canvas/scene.h"
-#include "canvas/view.h"
+#include "canvas/canvas_view.h"
 
 #include "ui_base_window.h"
 

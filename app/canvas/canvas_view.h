@@ -7,9 +7,12 @@ class Node;
 class Datum;
 
 class CanvasScene;
+class InspectorFrame;
 
 class CanvasView : public QGraphicsView
 {
+    Q_OBJECT
+
 public:
     CanvasView(CanvasScene* scene, QWidget* parent);
 
@@ -73,8 +76,21 @@ protected:
      */
     void openAddMenu();
 
+    /*
+     *  Looks up the inspector for the given node
+     */
+    InspectorFrame* inspectorFor(Node* n);
+
     void grabNode(Node* n);
     void grabDatum(Datum* n);
+
+    /*  Properties used to animate zooming to a particular node  */
+    QPointF getCenter() const;
+    void setCenter(QPointF p);
+    Q_PROPERTY(QPointF _center READ getCenter WRITE setCenter);
+    void setZoom(float z);
+    float getZoom() const;
+    Q_PROPERTY(float _zoom READ getZoom WRITE setZoom);
 
     QPointF click_pos;
     QPointF drag_pos;

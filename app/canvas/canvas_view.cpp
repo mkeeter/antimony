@@ -6,10 +6,11 @@
 #include <QMimeData>
 #include <QTextCursor>
 #include <QJsonDocument>
+#include <QPropertyAnimation>
 
 #include "app/app.h"
 #include "app/colors.h"
-#include "canvas/view.h"
+#include "canvas/canvas_view.h"
 #include "canvas/scene.h"
 
 #include "canvas/connection/connection.h"
@@ -330,7 +331,7 @@ void CanvasView::grab(T* t)
     t->grabMouse();
 }
 
-void CanvasView::grabNode(Node* n)
+InspectorFrame* CanvasView::inspectorFor(Node* n)
 {
     for (auto c : scene()->items())
     {
@@ -338,9 +339,18 @@ void CanvasView::grabNode(Node* n)
         {
             if (i->getNode() == n)
             {
-                grab(i);
+                return i;
             }
         }
+    }
+    return nullptr;
+}
+
+void CanvasView::grabNode(Node* n)
+{
+    if (auto i = inspectorFor(n))
+    {
+        grab(i);
     }
 }
 
@@ -360,8 +370,46 @@ void CanvasView::grabDatum(Datum* d)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#include <QDebug>
 void CanvasView::zoomTo(Node* n)
 {
-    qDebug() << "Zooming to" << n << "in" << this;
+    auto inspector = inspectorFor(n);
+    Q_ASSERT(inspector);
+
+    auto a = new QPropertyAnimation(this, "_center");
+    a->setDuration(100);
+    a->setStartValue(getCenter());
+    a->setEndValue(inspector->sceneBoundingRect().center());
+
+    auto b = new QPropertyAnimation(this, "_zoom");
+    b->setDuration(100);
+    b->setStartValue(getZoom());
+    b->setEndValue(1);
+    b->setEasingCurve(QEasingCurve::InQuart);
+
+    a->start(QPropertyAnimation::DeleteWhenStopped);
+    b->start(QPropertyAnimation::DeleteWhenStopped);
+}
+
+void CanvasView::setCenter(QPointF p)
+{
+    auto t = sceneRect();
+    setSceneRect(sceneRect().translated(p.x() - t.center().x(),
+                                        p.y() - t.center().y()));
+}
+
+QPointF CanvasView::getCenter() const
+{
+    auto t = sceneRect();
+    return QPointF(t.center().x(), t.center().y());
+}
+
+void CanvasView::setZoom(float z)
+{
+    auto t = transform();
+    scale(z / t.m11(), z / t.m22());
+}
+
+float CanvasView::getZoom() const
+{
+    return transform().m11();
 }

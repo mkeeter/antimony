@@ -8,7 +8,7 @@
 #include "graph/hooks/hooks.h"
 
 #include "canvas/scene.h"
-#include "canvas/view.h"
+#include "canvas/canvas_view.h"
 #include "canvas/inspector/buttons.h"
 #include "window/canvas.h"
 

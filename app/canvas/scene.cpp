@@ -1,7 +1,7 @@
 #include <Python.h>
 
 #include "canvas/scene.h"
-#include "canvas/view.h"
+#include "canvas/canvas_view.h"
 
 #include "app/app.h"
 #include "canvas/inspector/frame.h"
