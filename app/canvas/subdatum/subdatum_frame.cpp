@@ -114,12 +114,10 @@ void SubdatumFrame::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 
 void SubdatumFrame::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-    // XXX Handle glowing here
     QGraphicsItem::hoverEnterEvent(event);
 }
 
 void SubdatumFrame::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
-    // XXX Handle glowing here
     QGraphicsItem::hoverLeaveEvent(event);
 }
