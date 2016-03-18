@@ -55,9 +55,15 @@ public:
                    std::string value, bool output);
 
     /*
+     *  Get pointer to script object
+     */
+    Script* getScriptPointer() const { return const_cast<Script*>(&script); }
+
+    /*
      *  Constructs a set of script hooks pointing to this node.
      */
     void loadScriptHooks(PyObject* g);
+
 protected:
     /*
      *  When the script is done running, update the node

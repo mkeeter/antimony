@@ -18,7 +18,7 @@ vec4 shade(vec4 norm)
     vec3 dark = vec3(0.20 * color.r, 0.25 * color.g, 0.3 * color.b);
 
     float a = dot(2 * (norm.xyz - vec3(0.5)), vec3(0.0, 0.0, 1.0));
-    float b = dot(2 * (norm.xyz - vec3(0.5)), vec3(0.57, 0.57, 0.57));
+    float b = dot(2 * (norm.xyz - vec3(0.5)), vec3(0.57, -0.57, 0.57));
 
     if (is_2d == 1)
     {

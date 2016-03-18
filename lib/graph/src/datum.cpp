@@ -9,9 +9,12 @@
 const char Datum::SIGIL_NONE = 0;
 const char Datum::SIGIL_CONNECTION = 0x11;
 const char Datum::SIGIL_OUTPUT = 0x12;
+const char Datum::SIGIL_SUBGRAPH_CONNECTION = 0x13;
+const char Datum::SIGIL_SUBGRAPH_OUTPUT = 0x14;
 
 std::unordered_set<char> Datum::sigils = {
-    SIGIL_CONNECTION, SIGIL_OUTPUT
+    SIGIL_CONNECTION, SIGIL_OUTPUT,
+    SIGIL_SUBGRAPH_CONNECTION, SIGIL_SUBGRAPH_OUTPUT,
 };
 
 std::unordered_map<PyTypeObject*, PyObject*> Datum::reducers;
@@ -56,20 +59,16 @@ Datum::~Datum()
     Py_XDECREF(value);
 }
 
-bool Datum::hasInput() const
-{
-    return !isOutput();
-}
-
 PyObject* Datum::getValue()
 {
-    PyObject* locals = Proxy::makeProxyFor(
-            parent->parent, this,
-            isLink() ? Proxy::FLAG_UID_LOOKUP : 0);
+    Graph* const env = environment();
+
+    PyObject* locals = Proxy::makeProxyFor(env,
+            this, isLink() ? Proxy::FLAG_UID_LOOKUP : 0);
 
     PyObject* globals = Py_BuildValue(
             "{sO}", "__builtins__", PyEval_GetBuiltins());
-    parent->parent->loadDatumHooks(globals);
+    env->loadDatumHooks(globals);
     Proxy::setGlobals(locals, globals);
 
     // If the string begins with a sigil, slice it off
@@ -122,7 +121,10 @@ std::unordered_set<const Datum*> Datum::getLinks() const
     std::string links = expr.substr(2);  // skip initial SIGIL + "["
     while (1)
     {
-        auto graph = parent->parent;
+        // Get our execution environment, which is either the parent node's
+        // parent graph (in normal cases) or the parent node itself (when the
+        // datum belongs to a subgraph)
+        auto graph = environment();
 
         // Get our parent node, which is a node in the graph
         // that this datum belongs to.
@@ -130,18 +132,6 @@ std::unordered_set<const Datum*> Datum::getLinks() const
                 ? graph->parentNode()
                 : graph->getNode(stoull(links.substr(2)));
         links = links.substr(links.find(".") + 1);
-
-        // Pop into a subgraph if requested
-        if (links.find("__subgraph") == 0)
-        {
-            // We should only be entering our own subgraph (by construction)
-            assert(node == parent);
-            graph = static_cast<GraphNode*>(node)->getGraph();
-
-            links = links.substr(links.find(".") + 1);
-            node = graph->getNode(stoull(links.substr(2)));
-            links = links.substr(links.find(".") + 1);
-        }
 
         // Extract datum UID
         if (node)
@@ -177,45 +167,48 @@ void Datum::writeLinkExpression(const std::unordered_set<const Datum*> links)
 {
     // If the list has been pruned down to emptiness, construct a new
     // expression by calling 'str' on the existing value.
+    std::string out;
     if (links.empty())
     {
         assert(value);
         auto s = PyObject_Repr(value);
         assert(!PyErr_Occurred());
 
-        expr = std::string(PyUnicode_AsUTF8(s));
+        // Get string from Python
+        const std::string e(PyUnicode_AsUTF8(s));
+
+        // Preserve subgraph sigil if present
+        out = isFromSubgraph() ? SIGIL_SUBGRAPH_OUTPUT + e : e;
     }
     else
     {
-        expr = SIGIL_CONNECTION + std::string("[");
+        out = (isFromSubgraph() ? SIGIL_SUBGRAPH_CONNECTION
+                                : SIGIL_CONNECTION) + std::string("[");
         for (auto d : links)
         {
             if (expr.back() != '[')
-                expr += ",";
-            expr += formatLink(d);
+                out += ",";
+            out += formatLink(d);
         }
-        expr += "]";
+        out += "]";
     }
+    setText(out);
 }
 
 std::string Datum::formatLink(const Datum* upstream) const
 {
     std::string id;
 
+    Graph* const env = environment();
+
     // First, check to see if the upstream comes from the
     // same graph level as this datum
-    if (upstream->parent->parent == parent->parent)
+    if (upstream->parent->parent == env)
         id = "__" + std::to_string(upstream->parent->uid);
 
-    // Next, check to see if the upstream comes from a
-    // subgraph of this datum's parent node.
-    else if (upstream->parent->parent->parentNode() == parent)
-        id = "__" + std::to_string(parent->uid) + ".__subgraph.__" +
-             std::to_string(upstream->parent->uid);
-
-    // Finally, check to see if the upstream comes from the
+    // Then, check to see if the upstream comes from the
     // supergraph that contains this datum's parent node.
-    else if (upstream->parent == parent->parent->parentNode())
+    else if (upstream->parent == env->parentNode())
         id = "__parent";
 
     // Otherwise, we don't know what to do: datum links are only
@@ -237,7 +230,8 @@ void Datum::installLink(const Datum* upstream)
     if (isLink())
         setText(expr.substr(0, expr.size() - 1) + "," + id + "]");
     else
-        setText(SIGIL_CONNECTION + ("[" + id + "]"));
+        setText((isFromSubgraph() ? SIGIL_SUBGRAPH_CONNECTION
+                                  : SIGIL_CONNECTION) + ("[" + id + "]"));
 }
 
 void Datum::uninstallLink(const Datum* upstream)
@@ -335,6 +329,21 @@ void Datum::update()
             w->trigger(state);
     }
 
+    const auto new_links = getLinks();
+    for (auto o : links)
+    {
+        if (!new_links.count(o))
+        {
+            o->triggerWatchers();
+        }
+    }
+    for (auto n : new_links)
+    {
+        if (!links.count(n))
+        {
+            n->triggerWatchers();
+        }
+    }
 }
 
 DatumState Datum::getState() const
@@ -347,7 +356,7 @@ DatumState Datum::getState() const
 
     return (DatumState){
         trimmed.first, repr, trimmed.second ? expr.front() : SIGIL_NONE,
-        !trimmed.second, valid, error, getLinks()};
+        valid, error, getLinks()};
 }
 
 std::pair<std::string, bool> Datum::trimSigil(std::string e)
@@ -361,6 +370,7 @@ void Datum::setText(std::string s)
 {
     if (s != expr)
     {
+        links = getLinks();
         expr = s;
         trigger();
     }
@@ -391,12 +401,26 @@ bool Datum::acceptsLink(const Datum* upstream) const
 
 bool Datum::isLink() const
 {
-    return !expr.empty() && (expr.front() == SIGIL_CONNECTION);
+    return !expr.empty() && (expr.front() == SIGIL_CONNECTION ||
+                             expr.front() == SIGIL_SUBGRAPH_CONNECTION);
+}
+
+bool Datum::isFromSubgraph() const
+{
+    return !expr.empty() && (expr.front() == SIGIL_SUBGRAPH_CONNECTION ||
+                             expr.front() == SIGIL_SUBGRAPH_OUTPUT);
 }
 
 bool Datum::isOutput() const
 {
-    return !expr.empty() && (expr.front() == SIGIL_OUTPUT);
+    return !expr.empty() && (expr.front() == SIGIL_OUTPUT ||
+                             isFromSubgraph());
+}
+
+Graph* Datum::environment() const
+{
+    return isFromSubgraph() ? static_cast<GraphNode*>(parent)->getGraph()
+                            : parent->parent;
 }
 
 void Datum::installReducer(PyTypeObject* t, PyObject* f)

@@ -8,13 +8,14 @@ class Watched
 public:
     void installWatcher(T* w) {
         watchers.push_back(w);
+        w->trigger(getState());
     }
 
     void uninstallWatcher(T* w) {
         watchers.remove_if([&](T* w_) { return w_ == w; });
     }
 
-    void triggerWatchers() {
+    virtual void triggerWatchers() const {
         if (!watchers.empty())
         {
             auto s = getState();

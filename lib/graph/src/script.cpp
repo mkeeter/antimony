@@ -106,3 +106,8 @@ void Script::inject(std::string name, PyObject* value)
     PyDict_SetItemString(globals, name.c_str(), value);
 }
 
+void Script::setText(std::string t)
+{
+    script = t;
+    trigger();
+}

@@ -61,11 +61,6 @@ public:
     PyObject* currentValue() const { return value; }
 
     /*
-     *  Returns true unless the leading character is an OUTPUT sigil.
-     */
-    bool hasInput() const;
-
-    /*
      *  Registers d as an upstream datum, loading it into sources
      *
      *  Returns true on success, false on recursive lookup failure.
@@ -101,14 +96,30 @@ public:
     void uninstallLink(const Datum* upstream);
 
     /*
-     *  Returns true if this expression is a connection.
+     *  Returns true if this expression is a connection
+     *  (either with SIGIL_LINK or SIGIL_SUBGRAPH_LINK)
      */
     bool isLink() const;
 
     /*
-     *  Returns true if this expression is an output.
+     *  Returns true if this expression is a subgraph output
+     *  (either with SIGIL_SUBGRAPH_OUTPUT or SIGIL_SUBGRAPH_LINK)
+     */
+    bool isFromSubgraph() const;
+
+    /*
+     *  Returns true if this expression is an output
+     *  (either with SIGIL_OUTPUT or SIGIL_SUBGRAPH_OUTPUT)
      */
     bool isOutput() const;
+
+    /*
+     *  Returns the Graph in which this datum should be evaluated
+     *
+     *  (usually parent->parent, but if the datum is from a subgraph
+     *   is parent->getGraph() instead)
+     */
+    Graph* environment() const;
 
     /*
      *  Sets up a global reducer function
@@ -122,6 +133,8 @@ public:
     static const char SIGIL_NONE;
     static const char SIGIL_CONNECTION;
     static const char SIGIL_OUTPUT;
+    static const char SIGIL_SUBGRAPH_CONNECTION;
+    static const char SIGIL_SUBGRAPH_OUTPUT;
 
 protected:
     /*
@@ -171,7 +184,6 @@ protected:
      *  Returns a formatted link expression in the form
      *      __nodeID.__datumID
      *      __parent.__datumID
-     *      __nodeID.__subgraph.__nodeID.__datumID
      *  (depending on whether the datum shares a parent with us or not)
      */
     std::string formatLink(const Datum* upstream) const;
@@ -187,6 +199,11 @@ protected:
     PyTypeObject* type;
 
     Node* parent;
+
+    /*  Links are cached before changing expr, so that we can ask upstream
+     *  datums to trigger their watchers (used because Shapes are only
+     *  rendered if they have no outgoing connections)  */
+    std::unordered_set<const Datum*> links;
 
     /*
      *  Sigils are single characters at the beginning of an expression

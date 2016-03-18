@@ -12,14 +12,15 @@ public:
 
     Graph* getGraph() const { return subgraph.get(); }
 
-    bool makeDatum(std::string name, PyTypeObject* type,
-                   bool output);
+    Datum* makeDatum(std::string name, PyTypeObject* type,
+                     bool output);
+    void removeDatum(Datum* d);
 
     /*
-     *  pyGetAttr is overloaded to add __subgraph as a lookup.
+     *  Override triggerWatchers so that subgraph watchers
+     *  are also triggered (for subdatum proxies)
      */
-    PyObject* pyGetAttr(std::string name, Downstream* caller,
-                        uint8_t flags) const override;
+    void triggerWatchers() const override;
 
 protected:
     std::unique_ptr<Graph> subgraph;

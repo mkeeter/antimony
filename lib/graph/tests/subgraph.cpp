@@ -47,8 +47,8 @@ TEST_CASE("Subgraph datum lookups (outbound)")
 
     SECTION("Allowed")
     {
-        auto ax = new Datum("x", Datum::SIGIL_CONNECTION +
-                                 std::string("[__0.__subgraph.__0.__0]"),
+        auto ax = new Datum("x", Datum::SIGIL_SUBGRAPH_CONNECTION +
+                                 std::string("[__0.__0]"),
                             &PyFloat_Type, a);
         CAPTURE(ax->getError());
         REQUIRE(ax->isValid() == true);
@@ -57,7 +57,9 @@ TEST_CASE("Subgraph datum lookups (outbound)")
 
     SECTION("Not allowed")
     {
-        auto ay = new Datum("y", "__0.__subgraph.__0.__0", &PyFloat_Type, a);
+        auto ay = new Datum("y", Datum::SIGIL_SUBGRAPH_OUTPUT +
+                                 std::string("__0.__0"),
+                            &PyFloat_Type, a);
         CAPTURE(ay->getError());
         REQUIRE(ay->isValid() == false);
         REQUIRE(ay->getError().find("Name '__0' is not defined")
@@ -98,8 +100,8 @@ TEST_CASE("Subgraph value tracking (outbound)")
     auto b = new Node("b", sub);
     auto bx = new Datum("x", "3.0", &PyFloat_Type, b);
 
-    auto ax = new Datum("x", Datum::SIGIL_CONNECTION +
-                             std::string("[__0.__subgraph.__0.__0]"),
+    auto ax = new Datum("x", Datum::SIGIL_SUBGRAPH_CONNECTION +
+                             std::string("[__0.__0]"),
                         &PyFloat_Type, a);
 
     CAPTURE(ax->getError());
@@ -142,7 +144,8 @@ TEST_CASE("Subgraph link installation (outbound)")
 {
     auto g = new Graph();
     auto a = new GraphNode("a", g);
-    auto ax = new Datum("x", "3.0", &PyFloat_Type, a);
+    auto ax = new Datum("x", Datum::SIGIL_SUBGRAPH_OUTPUT + std::string("3.0"),
+                        &PyFloat_Type, a);
 
     auto sub = a->getGraph();
     auto b = new Node("b", sub);
@@ -189,8 +192,8 @@ TEST_CASE("Subgraph datum creation (outbound)")
 {
     auto g = new Graph();
     auto a = new GraphNode("a", g);
-    auto ax = new Datum("x", Datum::SIGIL_CONNECTION +
-                             std::string("[__0.__subgraph.__0.__0]"),
+    auto ax = new Datum("x", Datum::SIGIL_SUBGRAPH_CONNECTION +
+                             std::string("[__0.__0]"),
                         &PyFloat_Type, a);
 
     auto sub = a->getGraph();
@@ -219,11 +222,10 @@ TEST_CASE("Subgraph link deletion")
 
     auto b = new GraphNode("b", a->getGraph());
     auto bx = new Datum("x", Datum::SIGIL_CONNECTION +
-                             std::string("[__parent.__0,__0.__subgraph.__0.__0]"),
+                             std::string("[__parent.__0,__0.__1]"),
                         &PyFloat_Type, b);
 
-    auto c = new GraphNode("c", b->getGraph());
-    auto cx = new Datum("x", "4.0", &PyFloat_Type, c);
+    auto by = new Datum("y", "4.0", &PyFloat_Type, b);
 
     CAPTURE(bx->getError());
     REQUIRE(bx->isValid());
@@ -232,7 +234,7 @@ TEST_CASE("Subgraph link deletion")
 
     SECTION("Subgraph")
     {
-        c->uninstall(cx);
+        b->uninstall(by);
 
         CAPTURE(bx->getError());
         CAPTURE(bx->getText());

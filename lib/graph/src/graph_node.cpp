@@ -15,8 +15,8 @@ GraphNode::GraphNode(std::string name, uint32_t uid, Graph* root)
     init();
 }
 
-bool GraphNode::makeDatum(std::string name, PyTypeObject* type,
-                          bool output)
+Datum* GraphNode::makeDatum(std::string name, PyTypeObject* type,
+                            bool output)
 {
     // Construct a default datum of the given type
     auto obj = PyObject_CallObject((PyObject*)type, NULL);
@@ -28,7 +28,7 @@ bool GraphNode::makeDatum(std::string name, PyTypeObject* type,
     auto value = std::string(PyUnicode_AsUTF8(repr));
 
     if (output)
-        value = Datum::SIGIL_OUTPUT + value;
+        value = Datum::SIGIL_SUBGRAPH_OUTPUT + value;
 
     auto d = new Datum(name, value, type, this);
     assert(d->isValid());
@@ -36,18 +36,21 @@ bool GraphNode::makeDatum(std::string name, PyTypeObject* type,
     Py_DECREF(obj);
     Py_DECREF(repr);
 
-    bool out = d->isValid();
     triggerWatchers();
-    subgraph->triggerWatchers();
 
-    return out;
+    return d;
 }
 
-PyObject* GraphNode::pyGetAttr(std::string n, Downstream* caller,
-                               uint8_t flags) const
+void GraphNode::removeDatum(Datum* d)
 {
-    if (n == "__subgraph" && (flags & Proxy::FLAG_UID_LOOKUP))
-        return Proxy::makeProxyFor(subgraph.get(), caller, flags);
-    else
-        return Node::pyGetAttr(n, caller, flags);
+    assert(d->parentNode() == this);
+    uninstall(d);
+
+    triggerWatchers();
+}
+
+void GraphNode::triggerWatchers() const
+{
+    Watched::triggerWatchers();
+    subgraph->triggerWatchers();
 }

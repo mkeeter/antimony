@@ -19,6 +19,16 @@ public:
 
     ScriptState getState() const override;
 
+    /*
+     *  Sets the script's text and calls trigger()
+     */
+    void setText(std::string t);
+
+    /*
+     *  Returns the parent node
+     */
+    ScriptNode* parentNode() const { return parent; }
+
 protected:
     /*
      *  Inject a variable into the globals dictionary.
