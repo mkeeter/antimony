@@ -27,6 +27,7 @@ ViewportView::ViewportView(QWidget* parent, ViewportScene* scene)
     setViewport(gl.context);
 
     setSceneRect(-width()/2, -height()/2, width(), height());
+    setMouseTracking(true);
 
     QAbstractScrollArea::setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     QAbstractScrollArea::setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -117,10 +118,66 @@ void ViewportView::drawAxes(QPainter* painter) const
     }
 }
 
+void ViewportView::drawCoords(QPainter* painter) const
+{
+    QPointF mouse_pos = mapToScene(mapFromGlobal(QCursor::pos()));
+    if (!sceneRect().contains(mouse_pos))
+    {
+        return;
+    }
+
+    // Get rotate-only transform matrix
+    QMatrix4x4 M;
+    M.rotate(pitch * 180 / M_PI, QVector3D(1, 0, 0));
+    M.rotate(yaw  *  180 / M_PI, QVector3D(0, 0, 1));
+    const float threshold = 0.98;
+
+    const auto a = M.inverted() * QVector3D(0, 0, 1);
+
+    QList<QPair<char, QVector3D>> axes = {
+        {'x', QVector3D(1, 0, 0)},
+        {'y', QVector3D(0, 1, 0)},
+        {'z', QVector3D(0, 0, 1)}};
+
+    char axis = 0;
+    float opacity = 0;
+    for (const auto v : axes)
+    {
+        float dot = fabs(QVector3D::dotProduct(a, v.second));
+        if (dot > threshold)
+        {
+            axis = v.first;
+            opacity = (dot - threshold) / (1 - threshold);
+        }
+    }
+
+    auto p = sceneToWorld(mouse_pos);
+
+    int value = opacity * 200;
+
+    painter->setPen(QPen(QColor(255, 255, 255, value)));
+    QString txt;
+    if (axis == 'z')
+    {
+        txt = QString("X: %1\nY: %2").arg(p.x()).arg(p.y());
+    }
+    else if (axis == 'y')
+    {
+        txt = QString("X: %1\nZ: %2").arg(p.x()).arg(p.z());
+    }
+    else if (axis == 'x')
+    {
+        txt = QString("Y: %1\nZ: %2").arg(p.y()).arg(p.z());
+    }
+
+    painter->drawText({-width()/2.0 + 10, -height()/2.0 + 10, 300, 200}, txt);
+}
+
 void ViewportView::drawForeground(QPainter* painter, const QRectF& rect)
 {
     QGraphicsView::drawForeground(painter, rect);
     drawAxes(painter);
+    drawCoords(painter);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -214,6 +271,9 @@ void ViewportView::mouseMoveEvent(QMouseEvent* event)
         }
         dragged = true;
     }
+
+    // Redraw to update cursor position
+    scene()->invalidate(QRect(), QGraphicsScene::ForegroundLayer);
 }
 
 void ViewportView::mouseReleaseEvent(QMouseEvent* event)

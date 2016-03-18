@@ -134,6 +134,12 @@ protected:
     void drawAxes(QPainter* painter) const;
 
     /*
+     *  If we're looking down an axis, draws the coordinates in the
+     *  upper-left corner of the window
+     */
+    void drawCoords(QPainter* painter) const;
+
+    /*
      *  Opens a menu that allows us to add new shapes
      */
     void openAddMenu(bool view_commands=false);
