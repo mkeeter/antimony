@@ -106,6 +106,15 @@ QuadWindow* GraphProxy::newQuadWindow()
     {
         p->onSubnameChanged();
     }
+
+    for (auto n : nodes)
+    {
+        for (auto v : {front, top, side, ortho})
+        {
+            n->makeInstancesFor(v);
+        }
+    }
+
     return win;
 }
 
