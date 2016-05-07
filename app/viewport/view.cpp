@@ -184,7 +184,7 @@ void ViewportView::drawForeground(QPainter* painter, const QRectF& rect)
 
 void ViewportView::update()
 {
-    QGraphicsView::update();
+    scene()->invalidate();
     emit(changed(getMatrix()));
 
     emit(centerChanged(center));
@@ -211,7 +211,7 @@ void ViewportView::setScale(float s)
 
     // Update the view without calling ViewportView::update
     // (because that would lead to infinite recursion)
-    QGraphicsView::update();
+    scene()->invalidate();
     emit(changed(getMatrix()));
 }
 
@@ -221,7 +221,7 @@ void ViewportView::setCenter(QVector3D c)
 
     // Update the view without calling ViewportView::update
     // (because that would lead to infinite recursion)
-    QGraphicsView::update();
+    scene()->invalidate();
     emit(changed(getMatrix()));
 }
 
