@@ -244,7 +244,7 @@ void CanvasView::onPaste()
 
 void CanvasView::pasteNodes(QJsonArray array)
 {
-    QList<QPair<uint64_t, uint64_t>> uid_map;
+    QMap<uint64_t, uint64_t> uid_map;
     auto g = static_cast<CanvasScene*>(scene())->getGraph();
 
     {   // Get the next n UIDs and update the nodes in the array.
@@ -254,7 +254,7 @@ void CanvasView::pasteNodes(QJsonArray array)
         {
             // Update this node's UID and store the change in uid_map
             auto node = array[i].toObject();
-            uid_map << QPair<uint64_t, uint64_t>(node["uid"].toInt(), *itr);
+            uid_map[node["uid"].toInt()] = *itr;
             node["uid"] = int((*itr)++);
             array[i] = node;
         }
@@ -268,10 +268,38 @@ void CanvasView::pasteNodes(QJsonArray array)
             {
                 auto d = datums[j].toObject();
                 auto expr = d["expr"].toString();
+
                 if (expr.startsWith(Datum::SIGIL_CONNECTION))
-                    for (auto u : uid_map)
-                        expr.replace(QString::number(u.first) + ".",
-                                     QString::number(u.second) + ".");
+                {
+                    // Process the list of connections, remapping any
+                    // connection that is within the pasted group.
+                    QStringList ds = expr.mid(2, expr.size() - 3).split(",");
+                    QString out = Datum::SIGIL_CONNECTION + QString("[");
+                    for (auto d : ds)
+                    {
+                        bool ok = true;
+                        auto split = d.replace("__", "").split(".");
+                        int n = split[0].toInt(&ok);
+                        if (ok)
+                        {
+                            if (out.size() > 2)
+                            {
+                                out += ",";
+                            }
+
+                            if (uid_map.contains(n))
+                            {
+                                out += "__" + QString::number(uid_map[n]);
+                            }
+                            else
+                            {
+                                out += "__" + QString::number(n);
+                            }
+                            out += ".__" + split[1];
+                        }
+                    }
+                    expr = out + "]";
+                }
                 d["expr"] = expr;
                 datums[j] = d;
             }
