@@ -110,14 +110,3 @@ void SubdatumFrame::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     }
     dragging = false;
 }
-////////////////////////////////////////////////////////////////////////////////
-
-void SubdatumFrame::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
-{
-    QGraphicsItem::hoverEnterEvent(event);
-}
-
-void SubdatumFrame::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
-{
-    QGraphicsItem::hoverLeaveEvent(event);
-}
