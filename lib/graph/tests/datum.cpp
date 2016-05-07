@@ -298,3 +298,13 @@ TEST_CASE("Looking using 'self'")
 
     delete g;
 }
+
+TEST_CASE("Constructing a datum with empty link list")
+{
+    auto g = new Graph();
+    auto n = new Node("a", g);
+    auto x = new Datum("x", Datum::SIGIL_CONNECTION + std::string("[]"),
+                       &PyFloat_Type, n);
+
+    REQUIRE(PyFloat_AsDouble(x->currentValue()) == 0.0);
+}

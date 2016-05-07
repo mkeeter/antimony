@@ -40,6 +40,14 @@ Datum::Datum(std::string name, uint64_t uid, std::string expr,
 
 void Datum::init()
 {
+    // Special-case if the datum is constructed with an empty list of
+    // connections as its expression (often due to copy-pasting)
+    if (expr.size() == 3 && (expr[0] == SIGIL_CONNECTION ||
+                             expr[0] == SIGIL_SUBGRAPH_CONNECTION))
+    {
+        expr = "";
+    }
+
     // Attempt to update our value
     trigger();
 
