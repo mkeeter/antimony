@@ -194,7 +194,7 @@ void Datum::writeLinkExpression(const std::unordered_set<const Datum*> links)
                                 : SIGIL_CONNECTION) + std::string("[");
         for (auto d : links)
         {
-            if (expr.back() != '[')
+            if (out.back() != '[')
                 out += ",";
             out += formatLink(d);
         }
