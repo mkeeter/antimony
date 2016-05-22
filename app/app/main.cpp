@@ -27,14 +27,24 @@ int main(int argc, char *argv[])
         QSurfaceFormat::setDefaultFormat(format);
     }
 
+    // Create the Application object
+    App app(argc, argv);
+
+#if defined Q_OS_MAC
+    if (QCoreApplication::applicationDirPath().startsWith("/Volumes/"))
+    {
+        QMessageBox::critical(NULL, "Cannot run from disk image",
+                "Antimony cannot run from a disk image.\n"
+                "Please copy it out of the disk image and relaunch.");
+        exit(1);
+    }
+#endif
+
     // Initialize various Python modules and the interpreter itself
     fab::preInit();
     Graph::preInit();
     AppHooks::preInit();
     Py_Initialize();
-
-    // Create the Application object
-    App app(argc, argv);
 
     // Set locale to C to make atof correctly parse floats
     setlocale(LC_NUMERIC, "C");
