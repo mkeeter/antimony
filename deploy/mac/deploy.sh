@@ -25,8 +25,7 @@ rm -rf QtDeclarative.framework QtMultimedia.framework QtMultimediaWidgets.framew
 PY_VERSION=3.5
 cp -r /usr/local/Frameworks/Python.framework .
 rm -rf Python.framework/Versions/2.7 Python.framework/Versions/Current
-ln -s Python.framework/Versions/$PY_VERSION Python.framework/Versions/Current
-rm -rf Python.framework/Current/lib/python$PY_VERSION/site-packages/*
+rm -rf Python.framework/Versions/$PY_VERSION/lib/python$PY_VERSION/site-packages/*
 chmod a+w libboost_python3.dylib
 
 cd ../Resources
