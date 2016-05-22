@@ -16,23 +16,24 @@ rm -rf app lib
 make -j8
 macdeployqt app/Antimony.app
 
-PY_VERSION=3.5
 cd app/Antimony.app/Contents/PlugIns
 rm -rf accessible audio imageformats mediaservice playlistformats position printsupport qml1tooling sensorgestures sensors
 
 cd ../Frameworks
 rm -rf QtDeclarative.framework QtMultimedia.framework QtMultimediaWidgets.framework QtPositioning.framework QtQml.framework QtQuick.framework QtScript.framework QtSensors.framework QtSql.framework QtXmlPatterns.framework Qt3DCore.framework Qt3DRender.framework QtLocation.framework QtSerialBus.framework QtSerialPort.framework
+
+PY_VERSION=3.5
 cp -r /usr/local/Frameworks/Python.framework .
+rm -rf Python.framework/Versions/2.7 Python.framework/Versions/Current
+ln -s Python.framework/Versions/$PY_VERSION Python.framework/Versions/Current
+rm -rf Python.framework/Current/lib/python$PY_VERSION/site-packages/*
 chmod a+w libboost_python3.dylib
-install_name_tool -change /usr/local/Frameworks/Python.framework/Versions/$PY_VERSION/Python \
-                         @executable_path/../Frameworks/Python.framework/Versions/$PY_VERSION/Python \
-                         libboost_python3.dylib
 
 cd ../Resources
 rm empty.lproj
 
 cd ../MacOS
-install_name_tool -change /usr/local/Frameworks/Python.framework/Versions/$PY_VERSION/Python \
+install_name_tool -change /usr/local/opt/python3/Frameworks/Python.framework/Versions/$PY_VERSION/Python \
                          @executable_path/../Frameworks/Python.framework/Versions/$PY_VERSION/Python \
                          Antimony
 
