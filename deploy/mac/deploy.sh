@@ -23,20 +23,20 @@ cd ../Frameworks
 rm -rf QtDeclarative.framework QtMultimedia.framework QtMultimediaWidgets.framework QtPositioning.framework QtQml.framework QtQuick.framework QtScript.framework QtSensors.framework QtSql.framework QtXmlPatterns.framework
 cp -r /usr/local/Frameworks/Python.framework .
 chmod a+w libboost_python3.dylib
-install_name_tool -change /usr/local/Frameworks/Python.framework/Versions/3.4/Python \
-                         @executable_path/../Frameworks/Python.framework/Versions/3.4/Python \
+install_name_tool -change /usr/local/Frameworks/Python.framework/Versions/3.5/Python \
+                         @executable_path/../Frameworks/Python.framework/Versions/3.5/Python \
                          libboost_python3.dylib
 
 cd ../Resources
 rm empty.lproj
 
 cd ../MacOS
-install_name_tool -change /usr/local/Frameworks/Python.framework/Versions/3.4/Python \
-                         @executable_path/../Frameworks/Python.framework/Versions/3.4/Python \
+install_name_tool -change /usr/local/Frameworks/Python.framework/Versions/3.5/Python \
+                         @executable_path/../Frameworks/Python.framework/Versions/3.5/Python \
                          Antimony
 
 cd ../../..
-cp -r sb/fab Antimony.app/Contents/Frameworks/Python.framework/Versions/3.4/lib/python3.4/fab
+cp -r sb/fab Antimony.app/Contents/Frameworks/Python.framework/Versions/3.5/lib/python3.5/fab
 cp -r sb/nodes Antimony.app/Contents/Resources
 
 sed -i "" "s:0\.0\.0:$RELEASE:g" Antimony.app/Contents/Info.plist
