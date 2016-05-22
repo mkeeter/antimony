@@ -1,30 +1,16 @@
 #include <algorithm>
 
 #include "graph/graph.h"
+#include "graph/graph_node.h"
 #include "graph/node.h"
 #include "graph/proxy.h"
 #include "graph/hooks/hooks.h"
 #include "graph/watchers.h"
 
-Graph::Graph(std::string n, Graph* parent)
-    : name(n), uid(0), parent(parent), processing_queue(false)
+Graph::Graph(GraphNode* parent)
+    : parent(parent), processing_queue(false)
 {
     // Nothing to do here
-}
-
-PyObject* Graph::proxyDict(Datum* caller)
-{
-    return Proxy::makeProxyFor(this, caller);
-}
-
-void Graph::triggerWatchers() const
-{
-    if (!watchers.empty())
-    {
-        auto state = getState();
-        for (auto w : watchers)
-            w->trigger(state);
-    }
 }
 
 uint32_t Graph::install(Node* n)
@@ -37,7 +23,13 @@ GraphState Graph::getState() const
     std::unordered_set<Node*> out;
     for (const auto& ptr : nodes)
         out.insert(ptr.get());
-    return (GraphState){ out };
+
+    std::unordered_set<Datum*> datums;
+    if (auto n = parent)
+        for (const auto& ptr : n->datums)
+            datums.insert(ptr.get());
+
+    return (GraphState){ out, datums };
 }
 
 bool Graph::isNameUnique(std::string name, const Node* n) const
@@ -92,7 +84,7 @@ void Graph::clear()
     triggerWatchers();
 }
 
-void Graph::loadScriptHooks(PyObject* g, Node* n)
+void Graph::loadScriptHooks(PyObject* g, ScriptNode* n)
 {
     if (external)
         external->loadScriptHooks(g, n);
@@ -112,20 +104,45 @@ void Graph::loadDatumHooks(PyObject* g)
         external->loadDatumHooks(g);
 }
 
-PyObject* Graph::pyGetAttr(std::string name, Downstream* caller) const
+PyObject* Graph::pyGetAttr(std::string name, Downstream* caller,
+                           uint8_t flags) const
 {
-    auto m = get(name, nodes);
-    return m ? Proxy::makeProxyFor(m, caller) : NULL;
+    // Special-case for subgraphs: __parent returns parent node
+    if (name == "__parent" && (flags & Proxy::FLAG_UID_LOOKUP))
+        return parent ? Proxy::makeProxyFor(parent, caller, flags)
+                      : NULL;
+
+    // Allow "self" in datums
+    if (name == "self")
+        if (auto d = dynamic_cast<Datum*>(caller))
+            return Proxy::makeProxyFor(d->parentNode(), caller, flags);
+
+    // Default case: look up a node by name or UID (depending on flags)
+    auto m = (flags & Proxy::FLAG_UID_LOOKUP)
+        ? get(name, nodes) : getByName(name, nodes);
+    return m ? Proxy::makeProxyFor(m, caller, flags) : NULL;
+}
+
+void Graph::pySetAttr(std::string, PyObject*, uint8_t)
+{
+    assert(false);
 }
 
 void Graph::queue(Downstream* d)
 {
-    downstream_queue.insert(d);
+    if (parent)
+        parent->queue(d);
+    else
+        downstream_queue.insert(d);
 }
 
 void Graph::flushQueue()
 {
-    if (!processing_queue)
+    if (parent)
+    {
+        parent->flushQueue();
+    }
+    else if (!processing_queue)
     {
         processing_queue = true;
         while (downstream_queue.size())

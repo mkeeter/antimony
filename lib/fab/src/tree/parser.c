@@ -33,6 +33,7 @@
 
 #include "fab/tree/tree.h"
 #include "fab/tree/parser.h"
+#include "fab/tree/v2parser.h"
 
 #include "fab/tree/node/node.h"
 #include "fab/tree/node/opcodes.h"
@@ -43,26 +44,6 @@
 /** @brief Recursively sets the flag of nodes to contain NODE_IN_TREE */
 static
 void flag_in_tree(Node* n);
-
-/** @brief Returns the next token (recursively) in the input stream,
-    @param input Input stream, incremented as we go
-    @param failed Flag set if we fail
-    @param X Node to use for 'X' token
-    @param Y Node to use for 'Y' token
-    @param Z Node to use for 'Z' token
-    @param cache Node cache
-*/
-static
-Node* get_token(const char** input, _Bool* const failed,
-                Node* X, Node* Y, Node* Z, NodeCache* const cache);
-
-/** @brief Gets a float from the input stream
-    @param input Input stream (incremented as we go)
-    @param failed Flag (set to True if something goes wrong)
-    @returns An OP_CONST node wrapping the float
-*/
-static
-Node* get_float(const char** input, _Bool* const failed);
 
 /*  Counts the number of nodes in this list with NODE_IN_TREE in their flags
  */
@@ -129,163 +110,6 @@ void flag_in_tree(Node* n)
     flag_in_tree(n->rhs);
 }
 
-
-static
-Node* get_token(const char** const input, _Bool* const failed,
-                Node* X, Node* Y, Node* Z,
-                NodeCache* const cache)
-{
-    Node *lhs = NULL, *rhs = NULL, *out = NULL;
-    Node *X_ = NULL, *Y_ = NULL, *Z_ = NULL;
-
-    char c = *((*input)++);
-
-    if (c == 0) {
-        *failed = true;
-        return NULL;
-    }
-
-    switch(c) {
-        case ' ':   return NULL;
-
-        case 'X':   out = X; break;
-        case 'Y':   out = Y; break;
-        case 'Z':   out = Z; break;
-        case 'f':   out = get_float(input, failed); break;
-
-        case 'm':
-            X_ = get_token(input, failed, X, Y, Z, cache);
-            Y_ = get_token(input, failed, X, Y, Z, cache);
-            Z_ = get_token(input, failed, X, Y, Z, cache);
-            out = get_token(input, failed,
-                            X_ ? X_ : X,
-                            Y_ ? Y_ : Y,
-                            Z_ ? Z_ : Z,
-                            cache);
-            break;
-
-        case '+':
-        case '-':
-        case '*':
-        case '/':
-        case 'i':
-        case 'a':
-        case 'p':
-            lhs = get_token(input, failed, X, Y, Z, cache);
-            rhs = get_token(input, failed, X, Y, Z, cache);
-            break;
-
-        case 's':
-        case 'c':
-        case 't':
-        case 'S':
-        case 'C':
-        case 'T':
-        case 'b':
-        case 'q':
-        case 'r':
-        case 'n':
-        case 'x':
-            lhs = get_token(input, failed, X, Y, Z, cache);
-            break;
-
-        default:
-            *failed = true;
-    };
-
-    if (*failed)    c = 0;
-
-    switch(c) {
-
-        case 'X':
-        case 'Y':
-        case 'Z':
-        case 'f':
-        case 'm':   break;
-
-        case '+':   out = add_n(lhs, rhs); break;
-        case '-':   out = sub_n(lhs, rhs); break;
-        case '*':   out = mul_n(lhs, rhs); break;
-        case '/':   out = div_n(lhs, rhs); break;
-        case 'i':   out = min_n(lhs, rhs); break;
-        case 'a':   out = max_n(lhs, rhs); break;
-        case 'p':   out = pow_n(lhs, rhs); break;
-
-        case 's':   out = sin_n(lhs); break;
-        case 'c':   out = cos_n(lhs); break;
-        case 't':   out = tan_n(lhs); break;
-        case 'S':   out = asin_n(lhs); break;
-        case 'C':   out = acos_n(lhs); break;
-        case 'T':   out = atan_n(lhs); break;
-        case 'b':   out = abs_n(lhs); break;
-        case 'q':   out = square_n(lhs); break;
-        case 'r':   out = sqrt_n(lhs); break;
-        case 'n':   out = neg_n(lhs); break;
-        case 'x':   out = exp_n(lhs); break;
-
-        default:
-            *failed = true;
-    };
-
-    return get_cached_node(cache, out);
-}
-
-
-static
-Node* get_float(const char** const input, _Bool* const failed)
-{
-    // Accumulated value
-    float v = 0;
-    _Bool neg = false;
-    float divider = 0;
-
-    if (**input == 0) {
-        *failed = true;
-        return NULL;
-    }
-
-    if (**input == '-') {
-        neg = true;
-        (*input)++;
-    }
-
-    while ((**input >= '0' && **input <= '9') || **input == '.') {
-        if (**input == '.') {
-            divider = 10;
-        } else if (divider) {
-            v += (**input - '0') / divider;
-            divider *= 10;
-        } else {
-            v = v * 10 + (**input - '0');
-        }
-        (*input)++;
-    }
-
-    // Check for scientific notation.
-    if (**input == 'e') {
-        int e = 0;
-        _Bool neg_exp = false;
-        (*input)++;
-        if (**input == '-') {
-            neg_exp = true;
-            (*input)++;
-        } else if (**input == '+') {
-            neg_exp = false;
-            (*input)++;
-        }
-        do {
-            e = e * 10 + (*((*input)++) - '0');
-        } while (**input >= '0' && **input <= '9');
-
-        // Negate the exponent if needed.
-        e = e * (neg_exp ? -1 : 1);
-        v = v * pow(10, e);
-    }
-
-    v = neg ? -v : v;
-
-    return constant_n(v);
-}
 
 Node* get_cached_node(NodeCache* const cache, Node* const n)
 {

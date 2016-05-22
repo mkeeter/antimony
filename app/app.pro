@@ -1,9 +1,9 @@
-QT += core gui widgets opengl network
+QT += core gui widgets opengl network concurrent
+
+CONFIG += object_parallel_to_source
 
 TARGET = Antimony
 TEMPLATE = app
-
-INCLUDEPATH += src
 
 LIBS += -L../lib/fab -lSbFab -L../lib/graph -lSbGraph
 INCLUDEPATH += ../lib/fab/inc
@@ -15,8 +15,8 @@ PRE_TARGETDEPS += ../lib/fab/libSbFab.a
 include(../qt/common.pri)
 include(../qt/python.pri)
 include(../qt/libpng.pri)
-include(src/graph/graph.pri)
-include(git.pri)
+
+################################################################################
 
 # Copy the py/fab and py/nodes directory when building the application
 make_sb.commands = $(MKDIR) $$OUT_PWD/sb
@@ -24,6 +24,23 @@ copy_nodes.commands = $(COPY_DIR) $$PWD/../py/nodes $$OUT_PWD/sb
 copy_fab.commands = $(COPY_DIR) $$PWD/../py/fab $$OUT_PWD/sb
 first.depends = $(first) make_sb copy_nodes copy_fab
 QMAKE_EXTRA_TARGETS += first make_sb copy_nodes copy_fab
+
+################################################################################
+
+# Extract the git revision, tag, and branch, then populate them
+# into various preprocessor macros to populate the About box.
+GITREV = $$system(git log --pretty=format:'%h' -n 1)
+GITDIFF = $$system(git diff --quiet --exit-code || echo "+")
+GITTAG = $$system(git describe --exact-match --tags 2> /dev/null)
+GITBRANCH = $$system(git rev-parse --abbrev-ref HEAD)
+
+QMAKE_CXXFLAGS += "-D'GITREV=\"$${GITREV}$${GITDIFF}\"'"
+QMAKE_CXXFLAGS += "-D'GITTAG=\"$${GITTAG}\"'"
+QMAKE_CXXFLAGS += "-D'GITBRANCH=\"$${GITBRANCH}\"'"
+
+QMAKE_CXXFLAGS += "-g -O0"
+
+################################################################################
 
 # Details for Mac applications
 macx {
@@ -33,6 +50,8 @@ macx {
     QMAKE_POST_LINK += $(COPY) $$PWD/../deploy/mac/Info.plist $$OUT_PWD/$${TARGET}.app/Contents;
     QMAKE_POST_LINK += $(COPY) $$PWD/../deploy/mac/sb.icns $$OUT_PWD/$${TARGET}.app/Contents/Resources;
 }
+
+################################################################################
 
 # Installation details for Linux systems
 linux {
@@ -48,106 +67,155 @@ linux {
     INSTALLS += executable nodes_folder fab_folder
 }
 
+################################################################################
+
 SOURCES += \
-    src/app/main.cpp \
-    src/app/app.cpp \
-    src/ui/main_window.cpp \
-    src/ui/canvas/canvas.cpp \
-    src/ui/canvas/graph_scene.cpp \
-    src/ui/canvas/inspector/inspector.cpp \
-    src/ui/canvas/inspector/inspector_title.cpp \
-    src/ui/canvas/inspector/inspector_text.cpp \
-    src/ui/canvas/inspector/inspector_row.cpp \
-    src/ui/canvas/inspector/inspector_buttons.cpp \
-    src/ui/canvas/inspector/inspector_export.cpp \
-    src/ui/canvas/port.cpp \
-    src/ui/viewport/viewport.cpp \
-    src/ui/viewport/viewport_scene.cpp \
-    src/ui/viewport/view_selector.cpp \
-    src/ui/viewport/depth_image.cpp \
-    src/ui/script/syntax.cpp \
-    src/ui/script/editor.cpp \
-    src/ui/script/script_pane.cpp \
-    src/ui/util/button.cpp \
-    src/ui/util/colors.cpp \
-    src/ui/dialogs/resolution_dialog.cpp \
-    src/ui/dialogs/exporting_dialog.cpp \
-    src/render/render_task.cpp \
-    src/render/render_worker.cpp \
-    src/render/render_proxy.cpp \
-    src/render/render_image.cpp \
-    src/export/export_mesh.cpp \
-    src/export/export_heightmap.cpp \
-    src/control/control.cpp \
-    src/control/control_root.cpp \
-    src/control/proxy.cpp \
-    src/control/point.cpp \
-    src/control/wireframe.cpp \
-    src/app/undo/stack.cpp \
-    src/app/undo/undo_command.cpp \
-    src/app/undo/undo_move.cpp \
-    src/app/undo/undo_change_expr.cpp \
-    src/app/undo/undo_change_script.cpp \
-    src/app/undo/undo_delete_node.cpp \
-    src/app/undo/undo_delete_link.cpp \
-    src/app/undo/undo_delete_multi.cpp \
-    src/app/undo/undo_add_multi.cpp \
-    src/app/undo/undo_add_node.cpp \
-    src/app/undo/undo_add_link.cpp \
-    src/ui/canvas/connection.cpp \
+    app/main.cpp                        \
+    app/app.cpp                         \
+    app/update.cpp                      \
+    app/colors.cpp                      \
+    canvas/scene.cpp                    \
+    canvas/canvas_view.cpp              \
+    canvas/info.cpp                     \
+    canvas/inspector/frame.cpp          \
+    canvas/inspector/export.cpp         \
+    canvas/inspector/title.cpp          \
+    canvas/inspector/buttons.cpp        \
+    canvas/inspector/util.cpp           \
+    canvas/datum_row.cpp                \
+    canvas/datum_editor.cpp             \
+    canvas/datum_port.cpp               \
+    canvas/subdatum/subdatum_frame.cpp  \
+    canvas/subdatum/subdatum_editor.cpp \
+    canvas/subdatum/subdatum_row.cpp    \
+    canvas/connection/base.cpp          \
+    canvas/connection/connection.cpp    \
+    canvas/connection/dummy.cpp         \
+    window/base.cpp                     \
+    window/canvas.cpp                   \
+    window/viewport.cpp                 \
+    window/quad.cpp                     \
+    window/base_viewport_window.cpp     \
+    window/script_window.cpp            \
+    graph/constructor/populate.cpp      \
+    graph/proxy/graph.cpp               \
+    graph/proxy/node.cpp                \
+    graph/proxy/script.cpp              \
+    graph/proxy/datum.cpp               \
+    graph/proxy/subdatum.cpp            \
+    graph/proxy/base_datum.cpp          \
+    graph/hooks/hooks.cpp               \
+    graph/hooks/export.cpp              \
+    graph/hooks/ui.cpp                  \
+    graph/hooks/title.cpp               \
+    graph/serialize/serializer.cpp      \
+    graph/serialize/deserializer.cpp    \
+    script/syntax.cpp                   \
+    script/editor.cpp                   \
+    script/frame.cpp                    \
+    undo/undo_command.cpp               \
+    undo/undo_add_node.cpp              \
+    undo/undo_add_datum.cpp             \
+    undo/undo_delete_datum.cpp          \
+    undo/undo_delete_multi.cpp          \
+    undo/undo_delete_node.cpp           \
+    undo/undo_delete_link.cpp           \
+    undo/undo_move_node.cpp             \
+    undo/undo_move_datum.cpp            \
+    undo/undo_change_script.cpp         \
+    undo/undo_change_expr.cpp           \
+    undo/undo_stack.cpp                 \
+    dialog/exporting.cpp                \
+    dialog/resolution.cpp               \
+    export/export_mesh.cpp              \
+    export/export_heightmap.cpp         \
+    export/export_worker.cpp            \
+    viewport/scene.cpp                  \
+    viewport/gl.cpp                     \
+    viewport/view.cpp                   \
+    viewport/image.cpp                  \
+    viewport/control/control.cpp        \
+    viewport/control/control_instance.cpp   \
+    viewport/control/point.cpp          \
+    viewport/control/wireframe.cpp      \
+    viewport/render/instance.cpp        \
+    viewport/render/task.cpp            \
 
 HEADERS += \
-    src/ui/main_window.h \
-    src/app/app.h \
-    src/ui/canvas/canvas.h \
-    src/ui/canvas/graph_scene.h \
-    src/ui/canvas/inspector/inspector.h \
-    src/ui/canvas/inspector/inspector_title.h \
-    src/ui/canvas/inspector/inspector_text.h \
-    src/ui/canvas/inspector/inspector_row.h \
-    src/ui/canvas/inspector/inspector_buttons.h \
-    src/ui/canvas/inspector/inspector_export.h \
-    src/ui/canvas/port.h \
-    src/ui/viewport/viewport.h \
-    src/ui/viewport/viewport_scene.h \
-    src/ui/viewport/view_selector.h \
-    src/ui/viewport/depth_image.h \
-    src/ui/script/syntax.h \
-    src/ui/script/editor.h \
-    src/ui/script/script_pane.h \
-    src/ui/util/button.h \
-    src/ui/util/colors.h \
-    src/ui/dialogs/resolution_dialog.h \
-    src/ui/dialogs/exporting_dialog.h \
-    src/render/render_task.h \
-    src/render/render_worker.h \
-    src/render/render_proxy.h \
-    src/render/render_image.h \
-    src/export/export_mesh.h \
-    src/export/export_worker.h \
-    src/export/export_heightmap.h \
-    src/util/hash.h \
-    src/control/control.h \
-    src/control/control_root.h \
-    src/control/proxy.h \
-    src/control/point.h \
-    src/control/wireframe.h \
-    src/app/undo/stack.h \
-    src/app/undo/undo_move.h \
-    src/app/undo/undo_change_expr.h \
-    src/app/undo/undo_change_script.h \
-    src/app/undo/undo_delete_node.h \
-    src/app/undo/undo_delete_link.h \
-    src/app/undo/undo_delete_multi.h \
-    src/app/undo/undo_add_multi.h \
-    src/app/undo/undo_add_node.h \
-    src/app/undo/undo_add_link.h \
-    src/ui/canvas/connection.h \
+    app/app.h                           \
+    app/update.h                        \
+    app/colors.h                        \
+    canvas/scene.h                      \
+    canvas/canvas_view.h                \
+    canvas/info.h                       \
+    window/base.h                       \
+    window/canvas.h                     \
+    window/viewport.h                   \
+    window/quad.h                       \
+    window/base_viewport_window.h       \
+    window/script_window.h              \
+    canvas/inspector/frame.h            \
+    canvas/inspector/export.h           \
+    canvas/inspector/title.h            \
+    canvas/inspector/buttons.h          \
+    canvas/inspector/util.h             \
+    canvas/datum_row.h                  \
+    canvas/datum_editor.h               \
+    canvas/datum_port.h                 \
+    canvas/subdatum/subdatum_frame.h    \
+    canvas/subdatum/subdatum_editor.h   \
+    canvas/subdatum/subdatum_row.h      \
+    canvas/connection/base.h            \
+    canvas/connection/connection.h      \
+    canvas/connection/dummy.h           \
+    graph/constructor/populate.h        \
+    graph/proxy/graph.h                 \
+    graph/proxy/node.h                  \
+    graph/proxy/script.h                \
+    graph/proxy/datum.h                 \
+    graph/proxy/subdatum.h              \
+    graph/proxy/base_datum.h            \
+    graph/hooks/hooks.h                 \
+    graph/hooks/export.h                \
+    graph/hooks/title.h                 \
+    graph/hooks/ui.cpp                  \
+    graph/serialize/serializer.h        \
+    graph/serialize/deserializer.h      \
+    script/syntax.h                     \
+    script/editor.h                     \
+    script/frame.h                      \
+    undo/undo_command.h                 \
+    undo/undo_add_node.h                \
+    undo/undo_add_datum.h               \
+    undo/undo_delete_datum.h            \
+    undo/undo_delete_multi.h            \
+    undo/undo_delete_node.h             \
+    undo/undo_delete_link.h             \
+    undo/undo_move_node.h               \
+    undo/undo_move_datum.h              \
+    undo/undo_change_script.h           \
+    undo/undo_change_expr.h             \
+    undo/undo_stack.h                   \
+    dialog/exporting.h                  \
+    dialog/resolution.h                 \
+    export/export_mesh.h                \
+    export/export_heightmap.h           \
+    export/export_worker.h              \
+    viewport/scene.h                    \
+    viewport/view.h                     \
+    viewport/image.h                    \
+    viewport/gl.h                       \
+    viewport/control/control.h          \
+    viewport/control/control_instance.h \
+    viewport/control/point.h            \
+    viewport/control/wireframe.h        \
+    viewport/render/instance.h          \
+    viewport/render/task.h              \
 
 FORMS += \
-    src/ui/forms/main_window.ui \
-    src/ui/forms/resolution_dialog.ui \
-    src/ui/forms/exporting_dialog.ui \
+    forms/base_window.ui \
+    forms/resolution_dialog.ui \
+    forms/exporting_dialog.ui \
 
 RESOURCES += \
     gl/gl.qrc \

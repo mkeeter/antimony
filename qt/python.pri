@@ -7,10 +7,11 @@ cygwin {
 }
 
 macx {
-    QMAKE_CXXFLAGS += $$system(/usr/local/bin/python3-config --includes)
-    QMAKE_LFLAGS   += $$system(/usr/local/bin/python3-config --ldflags)
-    LIBS += -L/usr/local/lib -lboost_python3
-    QMAKE_CXXFLAGS += -isystem/usr/local/include
+    include(brew.pri)
+    QMAKE_CXXFLAGS += $$system($${BREW_HOME}/bin/python3-config --includes)
+    QMAKE_LFLAGS   += $$system($${BREW_HOME}/bin/python3-config --ldflags)
+    LIBS += -L$${BREW_HOME}/lib -lboost_python3
+    QMAKE_CXXFLAGS += -isystem$${BREW_HOME}/include
 }
 
 linux {
@@ -19,7 +20,7 @@ linux {
 
     # Even though this is in QMAKE_LFLAGS, the linker is picky about
     # library ordering (so it needs to be here too).
-    LIBS += -lpython3.4m
+    LIBS += $$system(/usr/bin/python3-config --ldflags | grep -o -- '-lpython3.[0-9]m')
 
     # ldconfig is being used to find libboost_python, but it's in a different
     # place in different distros (and is not in the default $PATH on Debian).
@@ -40,7 +41,7 @@ linux {
 
     # Check for different boost::python naming schemes
     LDCONFIG_OUT = $$system($$LDCONFIG_BIN -p|grep python)
-    for (b, $$list(boost_python-py34 boost_python3)) {
+    for (b, $$list(boost_python-py34 boost_python-py35 boost_python3)) {
         contains(LDCONFIG_OUT, "lib$${b}.so") {
             LIBS += "-l$$b"
             GOT_BOOST_PYTHON = True

@@ -3,14 +3,14 @@
 #include <catch/catch.hpp>
 
 #include "graph/graph.h"
-#include "graph/node.h"
+#include "graph/script_node.h"
 #include "graph/datum.h"
 #include "graph/proxy.h"
 
 TEST_CASE("Script evaluation")
 {
     auto g = new Graph();
-    auto n = new Node("n", g);
+    auto n = new ScriptNode("n", g);
     n->setScript("print('hi there!')");
     CAPTURE(n->getError());
     REQUIRE(n->getErrorLine() == -1);
@@ -20,7 +20,7 @@ TEST_CASE("Script evaluation")
 TEST_CASE("Invalid script")
 {
     auto g = new Graph();
-    auto n = new Node("n", g);
+    auto n = new ScriptNode("n", g);
     n->setScript("wargarble");
     CAPTURE(n->getError());
     REQUIRE(n->getErrorLine() == 1);
@@ -30,7 +30,7 @@ TEST_CASE("Invalid script")
 TEST_CASE("Script with import")
 {
     auto g = new Graph();
-    auto n = new Node("n", g);
+    auto n = new ScriptNode("n", g);
     n->setScript("import os");
     CAPTURE(n->getError());
     REQUIRE(n->getErrorLine() == -1);
@@ -40,7 +40,7 @@ TEST_CASE("Script with import")
 TEST_CASE("Import namespace")
 {
     auto g = new Graph();
-    auto n = new Node("n", g);
+    auto n = new ScriptNode("n", g);
     n->setScript("import os\n"
                  "def f():\n"
                  "    print(os.name)\n"
@@ -54,7 +54,7 @@ TEST_CASE("Import namespace")
 TEST_CASE("Script input")
 {
     auto g = new Graph();
-    auto n = new Node("n", g);
+    auto n = new ScriptNode("n", g);
     n->setScript("input('x', float)");
     CAPTURE(n->getError());
     REQUIRE(n->getErrorLine() == -1);
@@ -70,7 +70,7 @@ TEST_CASE("Script input")
 TEST_CASE("Script input with default argument")
 {
     auto g = new Graph();
-    auto n = new Node("n", g);
+    auto n = new ScriptNode("n", g);
     n->setScript("input('x', float, 3.0)");
     CAPTURE(n->getError());
     REQUIRE(n->getErrorLine() == -1);
@@ -86,7 +86,7 @@ TEST_CASE("Script input with default argument")
 TEST_CASE("Inter-script datum lookup")
 {
     auto g = new Graph();
-    auto n = new Node("n", g);
+    auto n = new ScriptNode("n", g);
     n->setScript("input('x', float, 3.0)\n"
                  "print(x)");
     CAPTURE(n->getError());
@@ -97,7 +97,7 @@ TEST_CASE("Inter-script datum lookup")
 TEST_CASE("Datum pinning")
 {
     auto g = new Graph();
-    auto n = new Node("n", g);
+    auto n = new ScriptNode("n", g);
 
     n->setScript("input('x', float, 1.0)");
     auto x = n->getDatum("x");
@@ -115,7 +115,7 @@ TEST_CASE("Datum pinning")
 TEST_CASE("Datum preservation")
 {
     auto g = new Graph();
-    auto n = new Node("n", g);
+    auto n = new ScriptNode("n", g);
 
     n->setScript("input('x', float, 1.0)");
     auto x = n->getDatum("x");
@@ -128,11 +128,10 @@ TEST_CASE("Datum preservation")
     delete g;
 }
 
-
 TEST_CASE("Script re-evaluation on datum change")
 {
     auto g = new Graph();
-    auto n = new Node("n", g);
+    auto n = new ScriptNode("n", g);
     n->setScript("input('x', float)\n"
                  "raise RuntimeError(str(x))");
     n->getDatum("x")->setText("2.0");
@@ -146,10 +145,10 @@ TEST_CASE("Script re-evaluation on datum change")
 TEST_CASE("Script re-evaluation on linked datum change")
 {
     auto g = new Graph();
-    auto a = new Node("a", g);
+    auto a = new ScriptNode("a", g);
     auto ax = new Datum("x", "3.0", &PyFloat_Type, a);
 
-    auto b = new Node("b", g);
+    auto b = new ScriptNode("b", g);
     b->setScript("input('x', float, 1.0)\n"
                  "output('y', x)");
     b->getDatum("x")->setText("a.x");
@@ -166,7 +165,7 @@ TEST_CASE("Script re-evaluation on linked datum change")
 TEST_CASE("Script output")
 {
     auto g = new Graph();
-    auto n = new Node("n", g);
+    auto n = new ScriptNode("n", g);
     n->setScript("output('x', 1.0)\n");
 
     CAPTURE(n->getError());
@@ -183,7 +182,7 @@ TEST_CASE("Script output")
 TEST_CASE("Script input pruning")
 {
     auto g = new Graph();
-    auto n = new Node("n", g);
+    auto n = new ScriptNode("n", g);
     n->setScript("input('x', float, 1.0)");
 
     CAPTURE(n->getScript());
@@ -194,7 +193,7 @@ TEST_CASE("Script input pruning")
 TEST_CASE("Removing datum from script")
 {
     auto g = new Graph();
-    auto n = new Node("n", g);
+    auto n = new ScriptNode("n", g);
     n->setScript("input('x', float, 1.0)");
     REQUIRE(n->getDatum("x") != NULL);
 
@@ -206,7 +205,7 @@ TEST_CASE("Removing datum from script")
 TEST_CASE("Many datums")
 {
     auto g = new Graph();
-    auto n = new Node("n", g);
+    auto n = new ScriptNode("n", g);
     n->setScript("input('x', float)\n"
                  "input('y', float)\n"
                  "input('z', float)");
@@ -217,7 +216,7 @@ TEST_CASE("Many datums")
 TEST_CASE("Datum removal triggering update")
 {
     auto g = new Graph();
-    auto n = new Node("n", g);
+    auto n = new ScriptNode("n", g);
     n->setScript("input('x', float, 1.0)\n"
                  "input('y', float)");
 
@@ -237,7 +236,7 @@ TEST_CASE("Datum removal triggering update")
 TEST_CASE("Invalid datum names")
 {
     auto g = new Graph();
-    auto n = new Node("n", g);
+    auto n = new ScriptNode("n", g);
 
     SECTION("Keyword")
     {
@@ -271,7 +270,7 @@ TEST_CASE("Invalid datum names")
 TEST_CASE("Variable namespaces")
 {
     auto g = new Graph();
-    auto n = new Node("n", g);
+    auto n = new ScriptNode("n", g);
     n->setScript("input('x', float, 1.0)\n"
                   "def f(g):\n"
                   "    return g + x\n"
@@ -283,7 +282,7 @@ TEST_CASE("Variable namespaces")
 TEST_CASE("Preserving datums in invalid script")
 {
     auto g = new Graph();
-    auto n = new Node("n", g);
+    auto n = new ScriptNode("n", g);
     auto d = new Datum("d", 2, "1.0", &PyFloat_Type, n);
     n->setScript("aargh");
     n->setScript("input('d', float)");
@@ -295,7 +294,7 @@ TEST_CASE("Preserving datums in invalid script")
 TEST_CASE("Output with invalid repr")
 {
     auto g = new Graph();
-    auto n = new Node("n", g);
+    auto n = new ScriptNode("n", g);
     n->setScript("output('x', float)");
     CAPTURE(n->getError());
     REQUIRE(n->getError().find("Could not evaluate __repr__ of output")
@@ -303,4 +302,13 @@ TEST_CASE("Output with invalid repr")
     REQUIRE(n->getErrorLine() == 1);
 
     delete g;
+}
+
+TEST_CASE("Recursive loops in script output")
+{
+    auto g = new Graph();
+    auto n = new ScriptNode("n", g);
+    n->setScript("input('x', float)\n"
+                 "output('y', x*1.1)");
+    REQUIRE(!n->getDatum("x")->acceptsLink(n->getDatum("y")));
 }

@@ -8,6 +8,7 @@
 #include "fab/tree/math/math_f.h"
 #include "fab/tree/math/math_i.h"
 #include "fab/tree/math/math_g.h"
+#include "fab/tree/math/math_r.h"
 
 float eval_f(MathTree* tree, const float x, const float y, const float z)
 {

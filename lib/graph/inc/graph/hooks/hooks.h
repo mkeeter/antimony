@@ -3,7 +3,7 @@
 #include <Python.h>
 #include <string>
 
-class Node;
+class ScriptNode;
 
 namespace Hooks {
 
@@ -19,5 +19,5 @@ namespace Hooks {
     void preInit();
 
     // Populate script IO hooks for the given node.
-    void load(PyObject* g, Node* n);
+    void load(PyObject* g, ScriptNode* n);
 };

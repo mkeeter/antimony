@@ -13,7 +13,7 @@ extern "C" {
     @param nj Image height (pixels)
     @param bounds Image bounds (mm) in the order [xmin, ymin, zmin, xmax, ymax, zmax]
 */
-void save_png16L(const char *output_file_name, const int ni, const int nj,
+bool save_png16L(const char *output_file_name, const int ni, const int nj,
                  const float bounds[6], uint16_t const*const*const pixels);
 
 

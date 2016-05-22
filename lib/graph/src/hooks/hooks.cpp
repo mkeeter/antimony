@@ -38,7 +38,7 @@ void Hooks::preInit()
     PyImport_AppendInittab("_scriptIO", PyInit__scriptIO);;
 }
 
-void Hooks::load(PyObject* g, Node* n)
+void Hooks::load(PyObject* g, ScriptNode* n)
 {
     // Lazy initialization of the scriptIO module.
     static PyObject* scriptIO_module = NULL;

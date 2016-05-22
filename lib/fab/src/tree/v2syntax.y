@@ -2,7 +2,10 @@
 	#include <math.h>
 	#include <cassert>
 	#include <iostream>
-	#include "fab/tree/v2parser.hpp"
+	#include "fab/tree/parser_env.hpp"
+
+	#pragma clang diagnostic ignored "-Wunused-parameter"
+	#pragma clang diagnostic ignored "-Wunused-variable"
 
 	extern "C"
 	{
@@ -15,6 +18,8 @@
 
 %name v2Parse
 %extra_argument {Env* environment}
+
+%stack_size 4096
 
 %token_type {const char*}
 %token_prefix TOKEN_

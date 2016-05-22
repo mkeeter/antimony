@@ -10,7 +10,7 @@ input('j', int, 2)
 input('dx', float, 1)
 input('dy', float, 1)
 
-output('array', fab.shapes.iterate2d(shape, i, j, dx, dy))
+output('array', fab.shapes.iterate3d(shape, i, j, 1, dx, dy, 0))
 
 # UI
 sb.ui.wireframe([

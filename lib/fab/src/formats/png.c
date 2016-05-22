@@ -2,24 +2,51 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #include <png.h>
 
 #include "fab/formats/png.h"
 
-void save_png16L(const char *output_file_name, const int ni, const int nj,
+static void on_png_error(png_structp p, png_const_charp msg)
+{
+    (void)p; // unused
+    fprintf(stderr, "libpng error with message '%s'\n", msg);
+}
+
+static void on_png_warn(png_structp p, png_const_charp msg)
+{
+    (void)p; // unused
+    fprintf(stderr, "libpng warning with message '%s'\n", msg);
+}
+
+bool save_png16L(const char *output_file_name, const int ni, const int nj,
                  const float bounds[6], uint16_t const*const*const pixels)
 {
-
     // Open up a file for writing
     FILE* output = fopen(output_file_name, "wb");
+    if (output == NULL)
+    {
+        printf("Failed to open PNG file for writing (errno = %i)\n", errno);
+        return false;
+    }
 
     // Create a png pointer without any special callbacks
     png_structp png_ptr = png_create_write_struct(
-        PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+        PNG_LIBPNG_VER_STRING, NULL, on_png_error, on_png_warn);
+    if (png_ptr == NULL)
+    {
+        fprintf(stderr, "Failed to allocate png write_struct\n");
+        return false;
+    }
 
     // Create an info pointer
     png_infop info_ptr = png_create_info_struct(png_ptr);
+    if (info_ptr == NULL)
+    {
+        fprintf(stderr, "Failed to create png info_struct");
+        return false;
+    }
 
     // Set physical vars
     png_set_IHDR(png_ptr, info_ptr, ni, nj, 16, PNG_COLOR_TYPE_GRAY,
@@ -57,6 +84,8 @@ void save_png16L(const char *output_file_name, const int ni, const int nj,
     fclose(output);
 
     png_destroy_write_struct(&png_ptr, &info_ptr);
+
+    return true;
 }
 
 

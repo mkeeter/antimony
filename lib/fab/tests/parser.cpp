@@ -56,4 +56,16 @@ TEST_CASE("Basic parsing")
         REQUIRE(t == NULL);
         free(t);
     }
+
+    SECTION("Long expression")
+    {
+        std::string s;
+        for (int i=0; i < 99; ++i)
+            s += "i";
+        for (int i=0; i < 100; ++i)
+            s += "X";
+
+        t = parse(s.c_str());
+        REQUIRE(t != NULL);
+    }
 }

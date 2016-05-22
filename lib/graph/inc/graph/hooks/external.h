@@ -2,7 +2,7 @@
 
 #include <Python.h>
 
-class Node;
+class ScriptNode;
 
 class ExternalHooks
 {
@@ -12,7 +12,7 @@ public:
     /*
      *  Load hooks appropriate for calling a script
      */
-    virtual void loadScriptHooks(PyObject* g, Node* n)=0;
+    virtual void loadScriptHooks(PyObject* g, ScriptNode* n)=0;
 
     /*
      *  Load hooks appropriate for evaluating a datum

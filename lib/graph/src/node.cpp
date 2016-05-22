@@ -1,31 +1,27 @@
 #include <Python.h>
 
 #include "graph/node.h"
+#include "graph/graph_node.h"
 #include "graph/graph.h"
 #include "graph/datum.h"
 #include "graph/proxy.h"
 #include "graph/watchers.h"
 
-Node::Node(std::string n, Graph* root)
-    : Node(n, "", root)
+Node::Node(std::string n, Graph* root, bool do_init)
+    : name(n.back() == '*' ? root->nextName(n.substr(0, n.size() - 1)) : n),
+      uid(root->install(this)), parent(root)
 {
-    // Nothing to do here
+    if (do_init)
+        init();
 }
 
-Node::Node(std::string n, uint64_t uid, Graph* root)
+Node::Node(std::string n, uint64_t uid, Graph* root, bool do_init)
     : name(n.back() == '*' ? root->nextName(n.substr(0, n.size() - 1)) : n),
-      uid(uid), script(this), parent(root)
+      uid(uid), parent(root)
 {
     root->install(this);
-    init();
-}
-
-Node::Node(std::string n, std::string script, Graph* root)
-    : name(n.back() == '*' ? root->nextName(n.substr(0, n.size() - 1)) : n),
-      uid(root->install(this)), script(this), parent(root)
-{
-    setScript(script);
-    init();
+    if (do_init)
+        init();
 }
 
 void Node::init()
@@ -34,18 +30,21 @@ void Node::init()
     parent->triggerWatchers();
 }
 
-void Node::setScript(std::string t)
-{
-    script.script = t;
-    script.trigger();
-}
-
 NodeState Node::getState() const
 {
     return (NodeState){
-            script.script, script.error, script.output, script.error_lineno,
-            isNameValid(name) && parent->isNameUnique(name, this),
-            childDatums()};
+        isNameValid(name) && parent->isNameUnique(name, this),
+        childDatums()};
+}
+
+std::string Node::getFullName() const
+{
+    auto out = name;
+    if (auto n = parent->parentNode())
+    {
+        out = n->getFullName() + "." + out;
+    }
+    return out;
 }
 
 void Node::setName(std::string new_name)
@@ -57,12 +56,7 @@ void Node::setName(std::string new_name)
         parent->changed(old_name, uid);
         parent->changed(new_name, uid);
 
-        if (!watchers.empty())
-        {
-            auto state =  getState();
-            for (auto w : watchers)
-                w->trigger(state);
-        }
+        triggerWatchers();
     }
 }
 
@@ -74,25 +68,6 @@ std::list<Datum*> Node::childDatums() const
     return out;
 }
 
-void Node::update(const std::unordered_set<Datum*>& active)
-{
-    // Remove any datums that weren't marked as active and trigger
-    // changes to anything that was watching them.
-    std::list<Datum*> inactive;
-    for (const auto& d : datums)
-        if (active.find(d.get()) == active.end())
-            inactive.push_back(d.get());
-    for (auto d : inactive)
-        uninstall(d);
-
-    if (!watchers.empty())
-    {
-        auto state =  getState();
-        for (auto w : watchers)
-            w->trigger(state);
-    }
-}
-
 void Node::uninstall(Datum* d)
 {
     auto out = d->outgoingLinks();
@@ -101,14 +76,9 @@ void Node::uninstall(Datum* d)
     Root::uninstall(d, &datums);
 }
 
-PyObject* Node::proxyDict(Datum* caller)
-{
-    return parent->proxyDict(caller);
-}
-
 PyObject* Node::mutableProxy()
 {
-    return Proxy::makeProxyFor(this, NULL, true);
+    return Proxy::makeProxyFor(this, NULL, Proxy::FLAG_MUTABLE);
 }
 
 Datum* Node::getDatum(std::string name) const
@@ -116,72 +86,16 @@ Datum* Node::getDatum(std::string name) const
     return get(name, datums);
 }
 
-void Node::uninstallWatcher(NodeWatcher* w)
-{
-    watchers.remove_if([&](NodeWatcher* w_) { return w_ == w; });
-}
-
-void Node::loadScriptHooks(PyObject* g)
-{
-    parent->loadScriptHooks(g, this);
-}
-
 void Node::loadDatumHooks(PyObject* g)
 {
     parent->loadDatumHooks(g);
 }
 
-bool Node::makeDatum(std::string n, PyTypeObject* type,
-                     std::string value, bool output)
+void Node::pySetAttr(std::string name, PyObject* obj, uint8_t flags)
 {
-    for (auto a : script.active)
-        if (a->name == n)
-            return false;
+    (void)flags;
+    assert(flags & Proxy::FLAG_MUTABLE);
 
-    // If there's an existing datum and it's of the wrong type, delete it.
-    auto d = getDatum(n);
-    if (d != NULL && (d->type != type))
-    {
-        datums.remove_if([&](const std::unique_ptr<Datum>& d_)
-                         { return d_.get() == d; });
-        d = NULL;
-    }
-
-    if (d == NULL)
-    {
-        d = new Datum(n, value, type, this);
-        assert(d->isValid());
-    }
-    else
-    {
-        // Move the existing datum to the end of the list
-        // (so that ordering matches ordering in the script)
-        for (auto itr = datums.begin(); itr != datums.end(); ++itr)
-            if (itr->get() == d)
-            {
-                datums.splice(datums.end(), datums, itr);
-                break;
-            }
-
-        // If the datum is an output, update its expression
-        if (output)
-            d->setText(value);
-        // Otherwise, erase the output sigil by setting the text
-        else if (d->isOutput())
-            d->setText(value);
-    }
-
-    script.active.insert(d);
-
-    // Inject this variable into the script's namespace
-    script.inject(n.c_str(), d->currentValue());
-    saveLookup(n, &script);
-
-    return true;
-}
-
-void Node::pySetAttr(std::string name, PyObject* obj)
-{
     auto d = getByName(name, datums);
     if (!d)
         throw Proxy::Exception("No datum with name '" + name + "' found.");
@@ -227,9 +141,10 @@ void Node::flushQueue()
     parent->flushQueue();
 }
 
-PyObject* Node::pyGetAttr(std::string n, Downstream* caller) const
+PyObject* Node::pyGetAttr(std::string n, Downstream* caller,
+                          uint8_t flags) const
 {
-    auto d = (caller && caller->allowLookupByUID())
+    auto d = (flags & Proxy::FLAG_UID_LOOKUP)
         ? get(n, datums) : getByName(n, datums);
 
     if (!d)

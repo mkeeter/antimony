@@ -1,22 +1,13 @@
 *.pyc
 .tags
+.qmake.stash
 *DS_Store
-fab/c/build*
-*.dylib
 *.pro.user
-build-*/*
+
+build-*
 build
 
 *.sublime-workspace
-
-src/fab/tree/v2syntax.lemon.cpp
-
-src/fab/tree/v2syntax.lemon.hpp
-
-src/fab/tree/v2syntax.yy.cpp
-
-src/fab/tree/v2syntax.yy.hpp
-
 .cproject
-
 .project
+.ycm_extra_conf.py
