@@ -20,23 +20,24 @@ cd app/Antimony.app/Contents/PlugIns
 rm -rf accessible audio imageformats mediaservice playlistformats position printsupport qml1tooling sensorgestures sensors
 
 cd ../Frameworks
-rm -rf QtDeclarative.framework QtMultimedia.framework QtMultimediaWidgets.framework QtPositioning.framework QtQml.framework QtQuick.framework QtScript.framework QtSensors.framework QtSql.framework QtXmlPatterns.framework
+rm -rf QtDeclarative.framework QtMultimedia.framework QtMultimediaWidgets.framework QtPositioning.framework QtQml.framework QtQuick.framework QtScript.framework QtSensors.framework QtSql.framework QtXmlPatterns.framework Qt3DCore.framework Qt3DRender.framework QtLocation.framework QtSerialBus.framework QtSerialPort.framework
+
+PY_VERSION=3.5
 cp -r /usr/local/Frameworks/Python.framework .
+rm -rf Python.framework/Versions/2.7 Python.framework/Versions/Current
+rm -rf Python.framework/Versions/$PY_VERSION/lib/python$PY_VERSION/site-packages/*
 chmod a+w libboost_python3.dylib
-install_name_tool -change /usr/local/Frameworks/Python.framework/Versions/3.5/Python \
-                         @executable_path/../Frameworks/Python.framework/Versions/3.5/Python \
-                         libboost_python3.dylib
 
 cd ../Resources
 rm empty.lproj
 
 cd ../MacOS
-install_name_tool -change /usr/local/Frameworks/Python.framework/Versions/3.5/Python \
-                         @executable_path/../Frameworks/Python.framework/Versions/3.5/Python \
+install_name_tool -change /usr/local/opt/python3/Frameworks/Python.framework/Versions/$PY_VERSION/Python \
+                         @executable_path/../Frameworks/Python.framework/Versions/$PY_VERSION/Python \
                          Antimony
 
 cd ../../..
-cp -r sb/fab Antimony.app/Contents/Frameworks/Python.framework/Versions/3.5/lib/python3.5/fab
+cp -r sb/fab Antimony.app/Contents/Frameworks/Python.framework/Versions/$PY_VERSION/lib/python$PY_VERSION/fab
 cp -r sb/nodes Antimony.app/Contents/Resources
 
 sed -i "" "s:0\.0\.0:$RELEASE:g" Antimony.app/Contents/Info.plist
