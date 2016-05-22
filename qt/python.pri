@@ -41,7 +41,7 @@ linux {
 
     # Check for different boost::python naming schemes
     LDCONFIG_OUT = $$system($$LDCONFIG_BIN -p|grep python)
-    for (b, $$list(boost_python-py34 boost_python3)) {
+    for (b, $$list(boost_python-py34 boost_python-py35 boost_python3)) {
         contains(LDCONFIG_OUT, "lib$${b}.so") {
             LIBS += "-l$$b"
             GOT_BOOST_PYTHON = True
