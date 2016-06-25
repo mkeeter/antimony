@@ -87,10 +87,10 @@ protected:
     /*  Properties used to animate zooming to a particular node  */
     QPointF getCenter() const;
     void setCenter(QPointF p);
-    Q_PROPERTY(QPointF _center READ getCenter WRITE setCenter);
+    Q_PROPERTY(QPointF _center READ getCenter WRITE setCenter)
     void setZoom(float z);
     float getZoom() const;
-    Q_PROPERTY(float _zoom READ getZoom WRITE setZoom);
+    Q_PROPERTY(float _zoom READ getZoom WRITE setZoom)
 
     QPointF click_pos;
     QPointF drag_pos;
