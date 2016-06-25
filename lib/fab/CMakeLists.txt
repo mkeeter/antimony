@@ -1,14 +1,3 @@
-cmake_minimum_required(VERSION 2.6)
-set(CMAKE_BUILD_TYPE RELEASE)
-
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -g -Werror=switch -pedantic -std=c++11")
-set(CMAKE_CXX_FLAGS_RELEASE  "-O3 -DRELEASE")
-set(CMAKE_CXX_FLAGS_DEBUG    "-O0")
-
-################################################################################
-
-find_package(PythonLibs 3.3 REQUIRED)
-find_package(Boost REQUIRED COMPONENTS python3)
 find_package(PNG REQUIRED)
 find_package(FLEX REQUIRED)
 
@@ -66,7 +55,7 @@ add_library(SbFab STATIC
     ${CMAKE_CURRENT_BINARY_DIR}/v2syntax.yy.cpp
 )
 
-target_include_directories(SbFab SYSTEM PUBLIC
+target_include_directories(SbFab SYSTEM PRIVATE
     ${PYTHON_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     ${PNG_INCLUDE_DIR}
@@ -97,7 +86,10 @@ target_link_libraries(SbFabTest SbFab)
 
 target_include_directories(SbFabTest SYSTEM PRIVATE
     ../../vendor
+    ${PYTHON_INCLUDE_DIRS}
 )
 
 ################################################################################
 
+set_property(TARGET SbFab PROPERTY CXX_STANDARD 11)
+set_property(TARGET SbFabTest PROPERTY CXX_STANDARD 11)

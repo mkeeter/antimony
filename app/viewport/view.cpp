@@ -26,6 +26,10 @@ ViewportView::ViewportView(QWidget* parent, ViewportScene* scene)
 
     setViewport(gl.context);
 
+    gl.makeCurrent();
+    initializeOpenGLFunctions();
+    gl.doneCurrent();
+
     setSceneRect(-width()/2, -height()/2, width(), height());
     setMouseTracking(true);
 

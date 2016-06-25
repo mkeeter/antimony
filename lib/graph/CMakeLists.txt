@@ -1,17 +1,3 @@
-cmake_minimum_required(VERSION 2.6)
-set(CMAKE_BUILD_TYPE RELEASE)
-
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -g -Werror=switch -pedantic -std=c++11")
-set(CMAKE_CXX_FLAGS_RELEASE  "-O3 -DRELEASE")
-set(CMAKE_CXX_FLAGS_DEBUG    "-O0")
-
-################################################################################
-
-find_package(PythonLibs 3.3 REQUIRED)
-find_package(Boost REQUIRED COMPONENTS python3)
-
-################################################################################
-
 add_library(SbGraph STATIC
     src/datum.cpp
     src/graph.cpp
@@ -28,7 +14,7 @@ add_library(SbGraph STATIC
     src/hooks/output.cpp
 )
 
-target_include_directories(SbGraph SYSTEM PUBLIC
+target_include_directories(SbGraph SYSTEM PRIVATE
     ${PYTHON_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
 )
@@ -52,7 +38,11 @@ add_executable(SbGraphTest
 target_link_libraries(SbGraphTest SbGraph)
 
 target_include_directories(SbGraphTest SYSTEM PRIVATE
+    ${PYTHON_INCLUDE_DIRS}
     ../../vendor
 )
 
 ################################################################################
+
+set_property(TARGET SbGraph PROPERTY CXX_STANDARD 11)
+set_property(TARGET SbGraphTest PROPERTY CXX_STANDARD 11)
