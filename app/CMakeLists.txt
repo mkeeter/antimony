@@ -13,7 +13,7 @@ find_package(Qt5OpenGL REQUIRED)
 find_package(Qt5Network REQUIRED)
 find_package(Qt5Concurrent REQUIRED)
 
-add_executable(Antimony
+set(SRC_FILES
     app/main.cpp
     app/app.cpp
     app/update.cpp
@@ -88,6 +88,34 @@ add_executable(Antimony
 
     gl/gl.qrc
 )
+
+if (APPLE)
+    set(CMAKE_MACOSX_RPATH ON)
+
+    # Add the icon file and deploy it to Resources
+    set(SB_ICON ../deploy/mac/sb.icns)
+    set_source_files_properties(${SB_ICON}
+        PROPERTIES MACOSX_PACKAGE_LOCATION "Resources"
+    )
+
+    add_executable(Antimony MACOSX_BUNDLE
+        ${SRC_FILES}
+        ${SB_ICON}
+    )
+
+    # Set application Info.plist file
+    set_target_properties(Antimony PROPERTIES
+        MACOSX_BUNDLE_INFO_PLIST ../deploy/mac/Info.plist
+    )
+
+    # Copy node directory into application bundle
+    add_custom_command(TARGET Antimony POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_SOURCE_DIR}/py/nodes
+            ${CMAKE_CURRENT_BINARY_DIR}/Antimony.app/Contents/Resources/nodes)
+else()
+    add_executable(Antimony ${SRC_FILES})
+endif()
 
 target_link_libraries(Antimony
     Qt5::Widgets
