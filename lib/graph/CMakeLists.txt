@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 2.6)
-project(ao)
 set(CMAKE_BUILD_TYPE RELEASE)
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -g -Werror=switch -pedantic -std=c++11")
