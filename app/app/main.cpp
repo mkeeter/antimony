@@ -54,11 +54,14 @@ int main(int argc, char *argv[])
         QString d = QCoreApplication::applicationDirPath();
 #if defined Q_OS_MAC
         QStringList path = d.split("/");
-        for (int i=0; i < 3; ++i)
-            path.removeLast();
+        path.removeLast();
+        path << "Resources";
         d = path.join("/");
-#endif
+#elif Q_OS_LINUX
         d += "/sb";
+#else
+#error "Unknown OS!"
+#endif
         fab::postInit(d.toStdString().c_str());
     }
 
