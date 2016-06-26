@@ -5,8 +5,6 @@
 
 #include "window/base_viewport_window.h"
 
-#include "ui_base_window.h"
-
 BaseViewportWindow::BaseViewportWindow(QList<ViewportView*> views)
     : BaseWindow("Viewport")
 {

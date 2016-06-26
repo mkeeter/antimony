@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QVector3D>
+#include <QtGui/QOpenGLFunctions>
 #include <QGraphicsView>
 
 #include "viewport/gl.h"
@@ -11,7 +12,7 @@ class Node;
 class BaseDatumProxy;
 class ViewportScene;
 
-class ViewportView : public QGraphicsView
+class ViewportView : public QGraphicsView, protected QOpenGLFunctions
 {
     Q_OBJECT
 public:
@@ -195,4 +196,7 @@ protected:
 
     /*  Pointer to raised ControlInstance  */
     QGraphicsItem* raised=nullptr;
+
+    /*  Records whether initializeOpenGLFunctions has been called */
+    bool gl_initialized=false;
 };

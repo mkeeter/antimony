@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Python.h>
+
 #include <QApplication>
 #include <QAction>
 

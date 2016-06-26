@@ -1,3 +1,5 @@
+#include <Python.h>
+
 #include <QDir>
 #include <QMessageBox>
 #include <QCloseEvent>

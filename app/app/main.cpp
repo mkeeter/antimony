@@ -51,15 +51,19 @@ int main(int argc, char *argv[])
 
     {   // Modify Python's default search path to include the application's
         // directory (as this doesn't happen on Linux by default)
-        QString d = QCoreApplication::applicationDirPath();
 #if defined Q_OS_MAC
-        QStringList path = d.split("/");
-        for (int i=0; i < 3; ++i)
-            path.removeLast();
-        d = path.join("/");
+        QStringList path = QCoreApplication::applicationDirPath().split("/");
+        path.removeLast();
+        path << "Resources";
+        fab::postInit({path.join("/").toStdString()});
+#elif defined Q_OS_LINUX
+        QCoreApplication::applicationDirPath() + "/sb";
+        fab::postInit(
+            {(QCoreApplication::applicationDirPath() + "/sb").toStdString(),
+             "/usr/local/share/antimony"});
+#else
+#error "Unknown OS!"
 #endif
-        d += "/sb";
-        fab::postInit(d.toStdString().c_str());
     }
 
     {   // Install operator.or_ as a reducer for shapes
