@@ -74,12 +74,15 @@ void fab::preInit()
     PyImport_AppendInittab("_fabtypes", PyInit__fabtypes);
 }
 
-void fab::postInit(const char* path_dir)
+void fab::postInit(std::vector<std::string> fab_paths)
 {
     PyObject* fabtypes = PyImport_ImportModule("_fabtypes");
     ShapeType = (PyTypeObject*)PyObject_GetAttrString(fabtypes, "Shape");
 
     // Modify the default search path to include the application's directory
     // (as this doesn't happen on Linux by default)
-    PyList_Insert(PySys_GetObject("path"), 0, PyUnicode_FromString(path_dir));
+    for (auto p : fab_paths)
+    {
+        PyList_Insert(PySys_GetObject("path"), 0, PyUnicode_FromString(p.c_str()));
+    }
 }

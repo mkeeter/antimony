@@ -3,6 +3,9 @@
 
 #include <Python.h>
 
+#include <vector>
+#include <string>
+
 namespace fab
 {
     struct ParseError {};
@@ -22,9 +25,9 @@ namespace fab
 
     /** Loads the fab module in Python's namespace.
      *
-     *  path_dir is added to Python's search path.
+     *  fab_paths are added to Python's search path.
      */
-    void postInit(const char* path_dir);
+    void postInit(std::vector<std::string> fab_paths);
 
     extern PyTypeObject* ShapeType;
 }
