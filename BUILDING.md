@@ -55,14 +55,13 @@ cd build
 
 # Build and launch the application
 qmake ../sb.pro
-make -j8
-./app/Antimony
+ninja
+./app/antimony
 ```
 
-You can use `make install`, or set up a symlink to run `antimony` from outside the build directory:
-```
-ln -s ~/antimony/build/app/antimony /usr/local/bin/antimony
-```
+To put Antimony on your path, call `sudo ninja install`.  This does two things:
+- The `antimony` executable is copied to `/usr/local/bin`
+- Antimony's Python libraries are copied to `/usr/local/share/antimony`
 
 ## Debugging
 ### `cannot find -lGL`
