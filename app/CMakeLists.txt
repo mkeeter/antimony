@@ -89,6 +89,12 @@ set(SRC_FILES
     gl/gl.qrc
 )
 
+set(PY_FAB_FILES
+    ../py/fab/__init__.py
+    ../py/fab/shapes.py
+    ../py/fab/types.py
+)
+
 if (APPLE)
     set(CMAKE_MACOSX_RPATH ON)
 
@@ -98,9 +104,15 @@ if (APPLE)
         PROPERTIES MACOSX_PACKAGE_LOCATION "Resources"
     )
 
+    # Deploy fab module's files into Resources/fab
+    set_source_files_properties(${PY_FAB_FILES}
+        PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/fab"
+    )
+
     add_executable(Antimony MACOSX_BUNDLE
         ${SRC_FILES}
         ${SB_ICON}
+        ${PY_FAB_FILES}
     )
 
     # Set application Info.plist file
