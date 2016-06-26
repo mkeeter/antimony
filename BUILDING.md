@@ -8,6 +8,8 @@ Requirements
 - [Flex](http://flex.sourceforge.net)
 - [ninja](https://ninja-build.org/) (recommended)
 
+--------------------------------------------------------------------------------
+
 Mac OS X
 --------
 Tested on Mac OS X 10.9.4 with [homebrew](http://brew.sh/) already installed:
@@ -19,6 +21,7 @@ brew install qt5
 brew install lemon
 brew install flex
 brew install ninja
+brew install cmake
 
 git clone https://github.com/mkeeter/antimony
 cd antimony
@@ -31,16 +34,8 @@ ninja
 
 open app/Antimony.app
 ```
-### Troubleshooting
-If you have installed Homebrew in a non-standard directory like `~/.homebrew`
-(the default is `/usr/local`), you'll need to provide a path to your Homebrew
-files:
-```
-export BREW_HOME=/Users/yourusername/.homebrew
 
-cmake -DCMAKE_PREFIX_PATH=$BREW_HOME/Cellar/qt5/5.6.1 -GNinja ..
-make -j8
-```
+--------------------------------------------------------------------------------
 
 Linux
 -----
@@ -69,22 +64,14 @@ You can use `make install`, or set up a symlink to run `antimony` from outside t
 ln -s ~/antimony/build/app/antimony /usr/local/bin/antimony
 ```
 
-### Caveats
-
-The path to `qmake` may vary depending on how Qt 5 was installed; if the instructions don't work, try
-```
-~/Qt/5.4/gcc_64/bin/qmake ../sb.pro
-```
-
---------------------------------------------------------------------------------
-
+## Debugging
+### `cannot find -lGL`
 If running `make` gives the `/usr/bin/ld: cannot find -lGL`, create a symlink to the `libGL` file:
 ```
 ln -s /usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0 /usr/lib/libGL.so
 ```
 
---------------------------------------------------------------------------------
-
+### Missing top menu
 If the top menu bar is not appearing in Ubuntu with a non-Unity
 desktop environment (e.g. `gnome-session-flashback`), run
 ```
