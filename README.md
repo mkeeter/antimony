@@ -11,15 +11,14 @@ For more details and screenshots, look at [this writeup](http://mattkeeter.com/p
 *Antimony* is under active development.  It's at a beta level of stability:
 solid, but not recommended for mission-critical use.
 
-If you're on a Mac, you can download a [pre-built application](https://github.com/mkeeter/antimony/releases)
-and get started immediately.
+To get started, there are two main options:
+- Download a [pre-built application](https://github.com/mkeeter/antimony/releases) (Mac only)
+- [Build from source](https://github.com/mkeeter/antimony/blob/develop/BUILDING.md) (Mac and Linux)
 
-Antimony has also been [packaged for Fedora 22/23](https://admin.fedoraproject.org/pkgdb/package/antimony/):
+There is also an *unofficial*, *unsupported* package for [Fedora 22/23](https://admin.fedoraproject.org/pkgdb/package/antimony/):
 ```
 dnf install antimony --enablerepo=updates-testing
 ```
-
-Otherwise, please refer to the [build instructions](https://github.com/mkeeter/antimony/blob/develop/BUILDING.md).
 
 ## Support
 
