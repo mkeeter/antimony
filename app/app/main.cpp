@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
         path.removeLast();
         path << "Resources";
         d = path.join("/");
-#elif Q_OS_LINUX
+#elif defined Q_OS_LINUX
         d += "/sb";
 #else
 #error "Unknown OS!"

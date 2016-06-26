@@ -55,7 +55,7 @@ QString App::bundledNodePath() const
     // Antimony.app/Contents/Resources/nodes
     path.removeLast(); // Trim the MacOS folder from the path
     path << "Resources" << "nodes";
-#elif Q_OS_LINUX
+#elif defined Q_OS_LINUX
     path << "sb" << "nodes";
 #else
 #error "Unknown OS!"
