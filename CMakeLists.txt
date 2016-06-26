@@ -9,7 +9,17 @@ set(CMAKE_CXX_FLAGS_DEBUG    "-O0")
 ################################################################################
 
 find_package(PythonLibs 3.3 REQUIRED)
-find_package(Boost REQUIRED COMPONENTS python3)
+
+if (APPLE)
+    find_package(Boost REQUIRED COMPONENTS python3)
+elseif (UNIX)
+    foreach (PYTHON_NAME python3 python-py35 python-py34)
+        find_package(Boost COMPONENTS ${PYTHON_NAME})
+        if (${Boost_FOUND})
+            break()
+        endif()
+    endforeach()
+endif()
 
 ################################################################################
 
