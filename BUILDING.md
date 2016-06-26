@@ -54,7 +54,7 @@ mkdir build
 cd build
 
 # Build and launch the application
-qmake ../sb.pro
+cmake -GNinja ..
 ninja
 ./app/antimony
 ```
