@@ -48,7 +48,7 @@ Tested on a clean Xubuntu 16.04 virtual machine:
 
 ```
 # Install dependencies
-sudo apt install git build-essential libpng-dev python3-dev libboost-all-dev  libgl1-mesa-dev lemon flex qt5-default
+sudo apt install git build-essential libpng-dev python3-dev libboost-all-dev  libgl1-mesa-dev lemon flex qt5-default ninja-build cmake
 
 # Clone the repo
 git clone https://github.com/mkeeter/antimony
