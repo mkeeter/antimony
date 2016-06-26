@@ -196,4 +196,7 @@ protected:
 
     /*  Pointer to raised ControlInstance  */
     QGraphicsItem* raised=nullptr;
+
+    /*  Records whether initializeOpenGLFunctions has been called */
+    bool gl_initialized=false;
 };
