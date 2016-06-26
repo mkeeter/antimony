@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.6)
 project(Antimony)
 set(CMAKE_BUILD_TYPE RELEASE)
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -g -Werror=switch -pedantic")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -g -Werror=switch")
 set(CMAKE_CXX_FLAGS_RELEASE  "-O3 -DRELEASE")
 set(CMAKE_CXX_FLAGS_DEBUG    "-O0")
 
