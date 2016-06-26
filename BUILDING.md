@@ -26,7 +26,7 @@ mkdir build
 cd build
 
 
-cmake .. -DCMAKE_PREFIX_PATH=/usr/local/Cellar/qt5/5.6.1 -GNinja ..
+cmake -DCMAKE_PREFIX_PATH=/usr/local/Cellar/qt5/5.6.1 -GNinja ..
 ninja
 
 open app/Antimony.app
@@ -38,7 +38,7 @@ files:
 ```
 export BREW_HOME=/Users/yourusername/.homebrew
 
-cmake .. -DCMAKE_PREFIX_PATH=$BREW_HOME/Cellar/qt5/5.6.1 -GNinja ..
+cmake -DCMAKE_PREFIX_PATH=$BREW_HOME/Cellar/qt5/5.6.1 -GNinja ..
 make -j8
 ```
 
