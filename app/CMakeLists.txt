@@ -69,7 +69,6 @@ set(SRC_FILES
     undo/undo_change_script.cpp
     undo/undo_change_expr.cpp
     undo/undo_stack.cpp
-
     dialog/exporting.cpp
     dialog/resolution.cpp
     export/export_mesh.cpp
