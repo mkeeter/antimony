@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
         path << "Resources";
         fab::postInit({path.join("/").toStdString()});
 #elif defined Q_OS_LINUX
-        QCoreApplication::applicationDirPath() + "/sb"
+        QCoreApplication::applicationDirPath() + "/sb";
         fab::postInit(
             {(QCoreApplication::applicationDirPath() + "/sb").toStdString(),
              "/usr/local/share/antimony"});
