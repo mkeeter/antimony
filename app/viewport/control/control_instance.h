@@ -73,16 +73,16 @@ public:
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 
-    /*
-     *  On backspace or delete, pass a deletion request up to the proxy
-     */
-    void keyPressEvent(QKeyEvent* event) override;
-
 public slots:
     /*
      *  Indicate that the control should be redrawn
      */
     void redraw();
+
+    /*
+     *  Deletes the associated node
+     */
+    void onDeleteNode();
 
 signals:
     /*

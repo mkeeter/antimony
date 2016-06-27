@@ -56,6 +56,11 @@ public:
     void setDragFunc(PyObject* new_drag_func);
 
     /*
+     *  Returns true if the given control has a drag function
+     */
+    bool hasDragFunc() const { return drag_func; }
+
+    /*
      *  Drags the node around using the Python drag_func
      */
     void drag(QVector3D center, QVector3D diff);

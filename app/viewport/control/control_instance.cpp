@@ -12,8 +12,8 @@
 ControlInstance::ControlInstance(Control* c, ViewportView* v)
     : control(c), view(v)
 {
-    setFlags(QGraphicsItem::ItemIsSelectable |
-             QGraphicsItem::ItemIsFocusable);
+    // To enable dragging, the item needs to be selectable
+    setFlags(QGraphicsItem::ItemIsSelectable);
     setAcceptHoverEvents(true);
 
     v->scene()->addItem(this);
@@ -60,7 +60,7 @@ void ControlInstance::paint(QPainter* painter,
 
     if (control)
     {
-        control->paint(getMatrix(), isSelected() || hover, painter);
+        control->paint(getMatrix(), hover && control->hasDragFunc(), painter);
     }
 }
 
@@ -106,6 +106,11 @@ void ControlInstance::contextMenuEvent(QGraphicsSceneContextMenuEvent* e)
     menu->addAction(jump_to);
     connect(jump_to, &QAction::triggered, this, &ControlInstance::onZoomTo);
 
+    auto delete_node = new QAction("Delete node " + desc, menu.data());
+    menu->addAction(delete_node);
+    connect(delete_node, &QAction::triggered,
+            this, &ControlInstance::onDeleteNode);
+
     menu->exec(QCursor::pos());
 }
 
@@ -131,17 +136,9 @@ void ControlInstance::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     emit(onFocus(false));
 }
 
-void ControlInstance::keyPressEvent(QKeyEvent* event)
+void ControlInstance::onDeleteNode()
 {
-    if (event->key() == Qt::Key_Delete ||
-        event->key() == Qt::Key_Backspace)
-    {
-        control->deleteNode();
-    }
-    else
-    {
-        event->ignore();
-    }
+    control->deleteNode();
 }
 
 void ControlInstance::redraw()
