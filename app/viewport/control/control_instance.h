@@ -2,6 +2,7 @@
 
 #include <QGraphicsScene>
 #include <QGraphicsObject>
+#include <QMatrix4x4>
 #include <QPointer>
 
 class Control;
@@ -76,7 +77,9 @@ public:
 public slots:
     /*
      *  Indicate that the control should be redrawn
+     *  M is unused, present just for ease of connection.
      */
+    void onViewChanged(QMatrix4x4 M=QMatrix4x4());
     void redraw();
 
     /*

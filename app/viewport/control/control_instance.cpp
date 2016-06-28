@@ -16,6 +16,7 @@ ControlInstance::ControlInstance(Control* c, ViewportView* v)
     setFlags(QGraphicsItem::ItemIsSelectable);
     setAcceptHoverEvents(true);
 
+    connect(v, &ViewportView::changed, this, &ControlInstance::onViewChanged);
     v->scene()->addItem(this);
 }
 
@@ -139,6 +140,12 @@ void ControlInstance::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 void ControlInstance::onDeleteNode()
 {
     control->deleteNode();
+}
+
+void ControlInstance::onViewChanged(QMatrix4x4 M)
+{
+    Q_UNUSED(M);
+    redraw();
 }
 
 void ControlInstance::redraw()
