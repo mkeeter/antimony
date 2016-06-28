@@ -283,7 +283,9 @@ void ViewportView::mouseMoveEvent(QMouseEvent* event)
 
 void ViewportView::mouseReleaseEvent(QMouseEvent* event)
 {
-    if (event->button() == Qt::RightButton && !dragged)
+    QGraphicsView::mouseReleaseEvent(event);
+
+    if (!event->isAccepted() && event->button() == Qt::RightButton && !dragged)
     {
         auto is = items(event->pos());
         if (is.size())
