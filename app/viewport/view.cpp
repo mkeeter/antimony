@@ -292,19 +292,28 @@ void ViewportView::mouseMoveEvent(QMouseEvent* event)
 
 void ViewportView::mouseReleaseEvent(QMouseEvent* event)
 {
-    QGraphicsView::mouseReleaseEvent(event);
-
-    if (!event->isAccepted() && event->button() == Qt::RightButton && !dragged)
+    if (event->button() == Qt::RightButton && !dragged)
     {
         auto is = items(event->pos());
-        if (is.size())
+        if (is.size() > 1)
         {
             openRaiseMenu(is);
+        }
+        else if (is.size())
+        {
+            if (auto c = dynamic_cast<ControlInstance*>(is.front()))
+            {
+                c->openContextMenu();
+            }
         }
         else
         {
             openAddMenu(true);
         }
+    }
+    else
+    {
+        QGraphicsView::mouseReleaseEvent(event);
     }
 }
 

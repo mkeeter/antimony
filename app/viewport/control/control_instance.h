@@ -49,6 +49,11 @@ public:
                QWidget* widget) override;
 
     /*
+     *  On mouse press, open a 'jump to node' menu
+     */
+    void openContextMenu();
+
+    /*
      *  Handle mouse clicks by preparing to drag.
      */
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
@@ -62,11 +67,6 @@ public:
      *  On mouse drag, call the parent Control's drag_func
      */
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
-
-    /*
-     *  On mouse press, open a 'jump to node' menu
-     */
-    void contextMenuEvent(QGraphicsSceneContextMenuEvent* event) override;
 
     /*
      *  On hover enter and exit, set hover flag and call update

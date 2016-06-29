@@ -98,9 +98,8 @@ void ControlInstance::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     click_pos = event->pos();
 }
 
-void ControlInstance::contextMenuEvent(QGraphicsSceneContextMenuEvent* e)
+void ControlInstance::openContextMenu()
 {
-    Q_UNUSED(e);
     QString desc = control->getName();
 
     QScopedPointer<QMenu> menu(new QMenu());
