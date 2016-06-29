@@ -18,10 +18,12 @@ class ViewportView : public QGraphicsView, protected QOpenGLFunctions
 public:
     ViewportView(QWidget* parent, ViewportScene* scene);
 
+    enum MatrixParams { ROT=1, SCALE=2, MOVE=4 };
+
     /*
      *  Returns a generic matrix transform from the view
      */
-    QMatrix4x4 getMatrix() const;
+    QMatrix4x4 getMatrix(int params=ROT|SCALE|MOVE) const;
 
     /*
      *  Draw depth images in the background

@@ -85,10 +85,12 @@ void ControlInstance::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     QGraphicsObject::mouseMoveEvent(event);
 
     QMatrix4x4 mi = getMatrix().inverted();
+
     QVector3D p0 = mi * QVector3D(click_pos);
     QVector3D p1 = mi * QVector3D(event->pos());
 
-    QVector3D eye = (mi*QVector3D(0, 0, -1)).normalized();
+    QVector3D eye = -view->getMatrix(ViewportView::ROT).inverted()
+        .column(2).toVector3D().normalized();
 
     control->drag(p1 + eye * QVector3D::dotProduct(eye, control->pos() - p1),
                   p1 - p0);
