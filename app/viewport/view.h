@@ -46,7 +46,7 @@ public:
     /*
      *  On right-click release (if we didn't drag), open add menu
      */
-    void mouseReleaseEvent(QMouseEvent* event) override;
+    void contextMenuEvent(QContextMenuEvent* event) override;
 
     /*
      *  On mouse wheel, scroll
@@ -184,9 +184,6 @@ protected:
 
     /*  Mouse click coordinates in the world's coordinate frame  */
     QVector3D click_pos_world;
-
-    /*  Used to detect if we dragged with the mouse down or just clicked  */
-    bool dragged=false;
 
     /*  Used to lock the angle, preventing 3D rotation  */
     bool angle_locked=false;
