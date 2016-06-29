@@ -249,6 +249,7 @@ void ViewportView::mousePressEvent(QMouseEvent* event)
         {
             click_pos = event->pos();
         }
+        dragged = false;
     }
 }
 
@@ -273,23 +274,25 @@ void ViewportView::mouseMoveEvent(QMouseEvent* event)
             click_pos = event->pos();
             update();
         }
+        dragged = true;
     }
 
     // Redraw to update cursor position
     scene()->invalidate(QRect(), QGraphicsScene::ForegroundLayer);
 }
 
-void ViewportView::contextMenuEvent(QContextMenuEvent* event)
+void ViewportView::mouseReleaseEvent(QMouseEvent* event)
 {
-    auto is = items(event->pos());
-    if (is.size() > 1)
+    QGraphicsView::mouseReleaseEvent(event);
+
+    if (!event->isAccepted() && event->button() == Qt::RightButton && !dragged)
     {
-        openRaiseMenu(is);
-    }
-    else
-    {
-        QGraphicsView::contextMenuEvent(event);
-        if (!event->isAccepted())
+        auto is = items(event->pos());
+        if (is.size())
+        {
+            openRaiseMenu(is);
+        }
+        else
         {
             openAddMenu(true);
         }
@@ -361,7 +364,6 @@ void ViewportView::openAddMenu(bool view_commands)
 void ViewportView::openRaiseMenu(QList<QGraphicsItem*> items)
 {
     QScopedPointer<QMenu> m(new QMenu(this));
-    m->addSection("Raise item");
 
     int found = 0;
     for (auto i : items)
