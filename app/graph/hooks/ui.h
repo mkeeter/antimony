@@ -11,12 +11,12 @@ class NodeProxy;
 struct ScriptUIHooks
 {
     /*
-     *  If kwargs['key'] is a value, hash it and return that result
-     *  Otherwise, return a hash based on the line number
+     *  If kwargs['key'] is a value, hash it + type and return that result
+     *  Otherwise, return a hash based on the line number + type
      *
-     *  Throws HookException if the key has been seen already.
+     *  Throws HookException if the key has been seen already
      */
-    Py_hash_t getKey(boost::python::dict kwargs);
+    Py_hash_t getKey(boost::python::dict kwargs, std::string type);
 
     /*
      *  Returns a drag function from a kwargs dictionary

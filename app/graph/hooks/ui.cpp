@@ -271,17 +271,25 @@ QString ScriptUIHooks::getDatum(PyObject* obj)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Py_hash_t ScriptUIHooks::getKey(dict kwargs)
+Py_hash_t ScriptUIHooks::getKey(dict kwargs, std::string type)
 {
     Py_hash_t key = -1;
 
     if (kwargs.has_key("key"))
     {
-        key = PyObject_Hash(extract<object>(kwargs["key"])().ptr());
-        if (key == -1)
+        auto key_str = PyObject_Str(extract<object>(kwargs["key"])().ptr());
+        if (!key_str)
         {
-            throw AppHooks::Exception("Key must be hashable.");
+            throw AppHooks::Exception("Key must be convertable to a string.");
         }
+        Py_XDECREF(key_str);
+
+        auto prefix = PyUnicode_FromString(("__KEY__" + type).c_str());
+        auto target = PyUnicode_Concat(prefix, key_str);
+
+        key = PyObject_Hash(target);
+        Py_DECREF(prefix);
+        Py_DECREF(target);
 
         if (keys.contains(key))
         {
@@ -297,7 +305,7 @@ Py_hash_t ScriptUIHooks::getKey(dict kwargs)
         auto frame = PyObject_CallMethod(inspect_module, "currentframe", NULL);
         auto f_lineno = PyObject_GetAttrString(frame, "f_lineno");
         auto f_lineno_str = PyObject_Str(f_lineno);
-        auto prefix = PyUnicode_FromString("__LINE__");
+        auto prefix = PyUnicode_FromString(("__LINE__" + type).c_str());
         auto target = PyUnicode_Concat(prefix, f_lineno_str);
         key = PyObject_Hash(target);
         Q_ASSERT(!PyErr_Occurred());
@@ -329,7 +337,7 @@ object ScriptUIHooks::wireframe(tuple args, dict kwargs)
 
     // Find the instruction at which this callback happened
     // (used as a unique identifier for the Control).
-    Py_hash_t key = self.getKey(kwargs);
+    Py_hash_t key = self.getKey(kwargs, "wireframe");
 
     if (len(args) != 2)
     {
@@ -376,7 +384,7 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
 
     // Find the instruction at which this callback happened
     // (used as a unique identifier for the Control).
-    Py_hash_t key = self.getKey(kwargs);
+    Py_hash_t key = self.getKey(kwargs, "point");
 
     if (len(args) != 4 && len(args) != 3)
     {
