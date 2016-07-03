@@ -11,10 +11,12 @@ class NodeProxy;
 struct ScriptUIHooks
 {
     /*
-     *  Returns the line number at which this function was called.
-     *  Throws HookException if the line number has been seen already.
+     *  If kwargs['key'] is a value, hash it + type and return that result
+     *  Otherwise, return a hash based on the line number + type
+     *
+     *  Throws HookException if the key has been seen already
      */
-    long getInstruction();
+    Py_hash_t getKey(boost::python::dict kwargs, std::string type);
 
     /*
      *  Returns a drag function from a kwargs dictionary
@@ -44,8 +46,8 @@ struct ScriptUIHooks
      */
     QString getDatum(PyObject* obj);
 
-    /*  Set of instructions used to uniquely identify Controls  */
-    QSet<long> instructions;
+    /*  Set of keys used to uniquely identify Controls  */
+    QSet<Py_hash_t> keys;
 
     /*  Pointer to proxy node  */
     NodeProxy* proxy=nullptr;

@@ -35,15 +35,26 @@ ViewportView::ViewportView(QWidget* parent, ViewportScene* scene)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-QMatrix4x4 ViewportView::getMatrix() const
+QMatrix4x4 ViewportView::getMatrix(int params) const
 {
     QMatrix4x4 M;
 
     // Remember that these operations are applied in reverse order.
-    M.scale(scale, -scale, scale);
-    M.rotate(pitch * 180 / M_PI, QVector3D(1, 0, 0));
-    M.rotate(yaw  *  180 / M_PI, QVector3D(0, 0, 1));
-    M.translate(-center.x(), -center.y(), -center.z());
+    if (params & SCALE)
+    {
+        M.scale(scale, -scale, scale);
+    }
+
+    if (params & ROT)
+    {
+        M.rotate(pitch * 180 / M_PI, QVector3D(1, 0, 0));
+        M.rotate(yaw  *  180 / M_PI, QVector3D(0, 0, 1));
+    }
+
+    if (params & MOVE)
+    {
+        M.translate(-center.x(), -center.y(), -center.z());
+    }
 
     return M;
 }
@@ -77,6 +88,11 @@ void ViewportView::drawBackground(QPainter* painter, const QRectF& rect)
     QGraphicsView::drawBackground(painter, rect);
 
     painter->beginNativePainting();
+    if (!gl_initialized)
+    {
+        initializeOpenGLFunctions();
+        gl_initialized = true;
+    }
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -127,9 +143,7 @@ void ViewportView::drawCoords(QPainter* painter) const
     }
 
     // Get rotate-only transform matrix
-    QMatrix4x4 M;
-    M.rotate(pitch * 180 / M_PI, QVector3D(1, 0, 0));
-    M.rotate(yaw  *  180 / M_PI, QVector3D(0, 0, 1));
+    QMatrix4x4 M = getMatrix(ROT);
     const float threshold = 0.98;
 
     const auto a = M.inverted() * QVector3D(0, 0, 1);
@@ -281,14 +295,25 @@ void ViewportView::mouseReleaseEvent(QMouseEvent* event)
     if (event->button() == Qt::RightButton && !dragged)
     {
         auto is = items(event->pos());
-        if (is.size())
+        if (is.size() > 1)
         {
             openRaiseMenu(is);
+        }
+        else if (is.size())
+        {
+            if (auto c = dynamic_cast<ControlInstance*>(is.front()))
+            {
+                c->openContextMenu();
+            }
         }
         else
         {
             openAddMenu(true);
         }
+    }
+    else
+    {
+        QGraphicsView::mouseReleaseEvent(event);
     }
 }
 

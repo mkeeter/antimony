@@ -2,6 +2,7 @@
 
 #include <QGraphicsScene>
 #include <QGraphicsObject>
+#include <QMatrix4x4>
 #include <QPointer>
 
 class Control;
@@ -48,6 +49,11 @@ public:
                QWidget* widget) override;
 
     /*
+     *  On mouse press, open a 'jump to node' menu
+     */
+    void openContextMenu();
+
+    /*
      *  Handle mouse clicks by preparing to drag.
      */
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
@@ -63,26 +69,23 @@ public:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
 
     /*
-     *  On mouse press, open a 'jump to node' menu
-     */
-    void contextMenuEvent(QGraphicsSceneContextMenuEvent* event) override;
-
-    /*
      *  On hover enter and exit, set hover flag and call update
      */
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 
-    /*
-     *  On backspace or delete, pass a deletion request up to the proxy
-     */
-    void keyPressEvent(QKeyEvent* event) override;
-
 public slots:
     /*
      *  Indicate that the control should be redrawn
+     *  M is unused, present just for ease of connection.
      */
+    void onViewChanged(QMatrix4x4 M=QMatrix4x4());
     void redraw();
+
+    /*
+     *  Deletes the associated node
+     */
+    void onDeleteNode();
 
 signals:
     /*

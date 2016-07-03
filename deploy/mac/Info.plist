@@ -11,7 +11,7 @@
 	<key>CFBundleGetInfoString</key>
 	<string>It's CAD, Jim, but not as we know it.</string>
 	<key>CFBundleExecutable</key>
-	<string>antimony</string>
+	<string>Antimony</string>
 	<key>CFBundleIdentifier</key>
     <string>com.impraxical.antimony</string>
     <key>CFBundleVersion</key>

@@ -271,30 +271,62 @@ QString ScriptUIHooks::getDatum(PyObject* obj)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-long ScriptUIHooks::getInstruction()
+Py_hash_t ScriptUIHooks::getKey(dict kwargs, std::string type)
 {
-    // Get the current bytecode instruction
-    // (used to uniquely identify calls to this function)
-    auto inspect_module = PyImport_ImportModule("inspect");
-    auto frame = PyObject_CallMethod(inspect_module, "currentframe", NULL);
-    auto f_lineno = PyObject_GetAttrString(frame, "f_lineno");
-    long lineno = PyLong_AsLong(f_lineno);
-    Q_ASSERT(!PyErr_Occurred());
+    Py_hash_t key = -1;
 
-    // Clean up these objects immediately
-    for (auto o : {inspect_module, frame, f_lineno})
+    if (kwargs.has_key("key"))
     {
-        Py_DECREF(o);
+        auto key_str = PyObject_Str(extract<object>(kwargs["key"])().ptr());
+        if (!key_str)
+        {
+            throw AppHooks::Exception("Key must be convertable to a string.");
+        }
+        Py_XDECREF(key_str);
+
+        auto prefix = PyUnicode_FromString(("__KEY__" + type).c_str());
+        auto target = PyUnicode_Concat(prefix, key_str);
+
+        key = PyObject_Hash(target);
+        Py_DECREF(prefix);
+        Py_DECREF(target);
+
+        if (keys.contains(key))
+        {
+            throw AppHooks::Exception(
+                    "Collision with user-defined keys");
+        }
+    }
+    else
+    {
+        // Get the current line and hash it
+        // (used to uniquely identify calls to this function)
+        auto inspect_module = PyImport_ImportModule("inspect");
+        auto frame = PyObject_CallMethod(inspect_module, "currentframe", NULL);
+        auto f_lineno = PyObject_GetAttrString(frame, "f_lineno");
+        auto f_lineno_str = PyObject_Str(f_lineno);
+        auto prefix = PyUnicode_FromString(("__LINE__" + type).c_str());
+        auto target = PyUnicode_Concat(prefix, f_lineno_str);
+        key = PyObject_Hash(target);
+        Q_ASSERT(!PyErr_Occurred());
+
+        // Clean up PyObjects immediately
+        for (auto o : {inspect_module, frame, f_lineno,
+                       f_lineno_str, prefix, target})
+        {
+            Py_DECREF(o);
+        }
+
+        if (keys.contains(key))
+        {
+            throw AppHooks::Exception(
+                    "Cannot declare multiple UI elements on same line "
+                    "(without unique keys)");
+        }
     }
 
-    if (instructions.contains(lineno))
-    {
-        throw AppHooks::Exception(
-                "Cannot declare multiple UI elements on same line.");
-    }
-    instructions.insert(lineno);
-
-    return lineno;
+    keys.insert(key);
+    return key;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -305,7 +337,7 @@ object ScriptUIHooks::wireframe(tuple args, dict kwargs)
 
     // Find the instruction at which this callback happened
     // (used as a unique identifier for the Control).
-    long lineno = self.getInstruction();
+    Py_hash_t key = self.getKey(kwargs, "wireframe");
 
     if (len(args) != 2)
     {
@@ -319,12 +351,12 @@ object ScriptUIHooks::wireframe(tuple args, dict kwargs)
     }
 
     WireframeControl* w = dynamic_cast<WireframeControl*>(
-            self.proxy->getControl(lineno));
+            self.proxy->getControl(key));
 
     if (!w)
     {
         w = new WireframeControl(self.proxy);
-        self.proxy->registerControl(lineno, w);
+        self.proxy->registerControl(key, w);
     }
 
     PyObject* drag_func = self.getDragFunction(kwargs);
@@ -352,7 +384,7 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
 
     // Find the instruction at which this callback happened
     // (used as a unique identifier for the Control).
-    long lineno = self.getInstruction();
+    Py_hash_t key = self.getKey(kwargs, "point");
 
     if (len(args) != 4 && len(args) != 3)
     {
@@ -386,11 +418,11 @@ object ScriptUIHooks::point(tuple args, dict kwargs)
     }
 
     PointControl* p = dynamic_cast<PointControl*>(
-            self.proxy->getControl(lineno));
+            self.proxy->getControl(key));
     if (!p)
     {
         p = new PointControl(self.proxy);
-        self.proxy->registerControl(lineno, p);
+        self.proxy->registerControl(key, p);
     }
 
     const float r = getFloat(p->r, kwargs, "r");

@@ -2,8 +2,6 @@
 #include "canvas/scene.h"
 #include "canvas/canvas_view.h"
 
-#include "ui_base_window.h"
-
 CanvasWindow::CanvasWindow(CanvasView* view)
     : BaseWindow("Graph")
 {

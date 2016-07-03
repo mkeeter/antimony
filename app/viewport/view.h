@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QVector3D>
+#include <QtGui/QOpenGLFunctions>
 #include <QGraphicsView>
 
 #include "viewport/gl.h"
@@ -11,16 +12,18 @@ class Node;
 class BaseDatumProxy;
 class ViewportScene;
 
-class ViewportView : public QGraphicsView
+class ViewportView : public QGraphicsView, protected QOpenGLFunctions
 {
     Q_OBJECT
 public:
     ViewportView(QWidget* parent, ViewportScene* scene);
 
+    enum MatrixParams { ROT=1, SCALE=2, MOVE=4 };
+
     /*
      *  Returns a generic matrix transform from the view
      */
-    QMatrix4x4 getMatrix() const;
+    QMatrix4x4 getMatrix(int params=ROT|SCALE|MOVE) const;
 
     /*
      *  Draw depth images in the background
@@ -195,4 +198,7 @@ protected:
 
     /*  Pointer to raised ControlInstance  */
     QGraphicsItem* raised=nullptr;
+
+    /*  Records whether initializeOpenGLFunctions has been called */
+    bool gl_initialized=false;
 };

@@ -48,31 +48,30 @@ void App::makeDefaultWindows()
 
 QString App::bundledNodePath() const
 {
-    auto path = applicationDirPath().split("/");
 
 #if defined Q_OS_MAC
-    // On Mac, the 'nodes' folder should be either in
-    // Antimony.app/Contents/Resources/nodes (when deployed)
-    // or Antimony.app/../sb/nodes (when running from the build directory)
+    // On Mac, the 'nodes' folder must be at
+    // Antimony.app/Contents/Resources/nodes
+    auto path = applicationDirPath().split("/");
     path.removeLast(); // Trim the MacOS folder from the path
-
-    // When deployed, the nodes folder is in Resources/sb
-    if (QDir(path.join("/") + "/Resources/nodes").exists())
+    return path.join("/") + "/Resources/nodes";
+#elif defined Q_OS_LINUX
+    // If we're running Antimony from the build folder, use sb/nodes
+    auto path = applicationDirPath() + "/sb/nodes";
+    if (QDir(path).exists())
     {
-        path << "Resources" << "nodes";
+        return path;
     }
-    // Otherwise, assume it's at the same level as antimony.app
+    // Otherwise, assume nodes have been installed into
+    // /usr/local/share/antimony/nodes
     else
     {
-        for (int i=0; i < 2; ++i)
-            path.removeLast();
-        path << "sb" << "nodes";
+        return "/usr/local/share/antimony/nodes";
     }
 #else
-    path << "sb" << "nodes";
+#error "Unknown OS!"
 #endif
 
-    return path.join("/");
 }
 
 QString App::userNodePath() const
