@@ -9,6 +9,7 @@ mark_as_advanced(LEMON_EXECUTABLE)
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/v2syntax.lemon.hpp
            ${CMAKE_CURRENT_BINARY_DIR}/v2syntax.lemon.cpp
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/tree/v2syntax.y
     COMMAND ${LEMON_EXECUTABLE} -q -c -s ${CMAKE_CURRENT_SOURCE_DIR}/src/tree/v2syntax.y
     COMMAND mv ${CMAKE_CURRENT_SOURCE_DIR}/src/tree/v2syntax.c ${CMAKE_CURRENT_BINARY_DIR}/v2syntax.lemon.cpp
     COMMAND mv ${CMAKE_CURRENT_SOURCE_DIR}/src/tree/v2syntax.h ${CMAKE_CURRENT_BINARY_DIR}/v2syntax.lemon.hpp)
@@ -19,6 +20,7 @@ mark_as_advanced(FLEX_EXECUTABLE)
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/v2syntax.yy.hpp
            ${CMAKE_CURRENT_BINARY_DIR}/v2syntax.yy.cpp
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/tree/v2syntax.l
     COMMAND ${FLEX_EXECUTABLE} --outfile=${CMAKE_CURRENT_BINARY_DIR}/v2syntax.yy.cpp
                                --header-file=${CMAKE_CURRENT_BINARY_DIR}/v2syntax.yy.hpp
                                ${CMAKE_CURRENT_SOURCE_DIR}/src/tree/v2syntax.l)
