@@ -8,7 +8,7 @@ void save_stl(float* verts, unsigned count, const char* filename)
     FILE* stl = fopen(filename, "wb");
 
     // 80-character header
-    fprintf(stl, "This is a binary STL file made in kokopelli    \n(github.com/mkeeter/kokopelli)\n\n");
+    fprintf(stl, "This is a binary STL file made in Antimony      \n(github.com/mkeeter/antimony)\n\n");
 
     int tris = count / 9;
     for (unsigned i=0; i < sizeof(float); ++i) {
