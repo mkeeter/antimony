@@ -80,8 +80,6 @@ QStringList App::nodePaths() const
         }
     }
 
-    qDebug() << "All node paths:" << paths;
-    qDebug() << "Filtered node paths:" << existing_paths;
     return existing_paths.toList();
 }
 
