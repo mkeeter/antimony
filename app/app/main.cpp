@@ -3,6 +3,7 @@
 #include <QDebug>
 
 #include <QCommandLineParser>
+#include <QStandardPaths>
 #include <QMainWindow>
 #include <QCoreApplication>
 #include <QSurfaceFormat>
@@ -47,10 +48,14 @@ int main(int argc, char *argv[])
         path << "Resources";
         fab::postInit({path.join("/").toStdString()});
 #elif defined Q_OS_LINUX
-        QCoreApplication::applicationDirPath() + "/sb";
-        fab::postInit(
-            {(QCoreApplication::applicationDirPath() + "/sb").toStdString(),
-             "/usr/local/share/antimony"});
+        std::vector<std::string> fab_paths =
+            {(QCoreApplication::applicationDirPath() + "/sb").toStdString()};
+        for (auto p : QStandardPaths::standardLocations(
+                QStandardPaths::AppDataLocation))
+        {
+            fab_paths.push_back(p.toStdString());
+        }
+        fab::postInit(fab_paths);
 #else
 #error "Unknown OS!"
 #endif
