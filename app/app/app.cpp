@@ -46,40 +46,43 @@ void App::makeDefaultWindows()
     newViewportWindow();
 }
 
-QString App::bundledNodePath() const
+QStringList App::nodePaths() const
 {
-
+    QStringList paths;
 #if defined Q_OS_MAC
     // On Mac, the 'nodes' folder must be at
     // Antimony.app/Contents/Resources/nodes
     auto path = applicationDirPath().split("/");
     path.removeLast(); // Trim the MacOS folder from the path
-    return path.join("/") + "/Resources/nodes";
+    paths << path.join("/") + "/Resources/nodes";
 #elif defined Q_OS_LINUX
     // If we're running Antimony from the build folder, use sb/nodes
-    auto path = applicationDirPath() + "/sb/nodes";
-    if (QDir(path).exists())
-    {
-        return path;
-    }
-    // Otherwise, assume nodes have been installed into
-    // /usr/local/share/antimony/nodes
-    else
-    {
-        return "/usr/local/share/antimony/nodes";
-    }
+    paths << applicationDirPath() + "/sb/nodes";
 #else
 #error "Unknown OS!"
 #endif
 
-}
+    for (auto p : QStandardPaths::standardLocations(
+            QStandardPaths::AppDataLocation))
+    {
+        paths << p + "/nodes";
+    }
 
-QString App::userNodePath() const
-{
-    auto path = QStandardPaths::writableLocation(
-            QStandardPaths::AppDataLocation) + "/nodes";
-    QDir(path).mkpath(".");
-    return path;
+    // Filter paths to canonical forms, keeping only the paths that actually
+    // exist as real folders
+    QSet<QString> existing_paths;
+    for (auto p : paths)
+    {
+        auto d = QDir(p);
+        if (d.exists())
+        {
+            existing_paths.insert(d.canonicalPath());
+        }
+    }
+
+    qDebug() << "All node paths:" << paths;
+    qDebug() << "Filtered node paths:" << existing_paths;
+    return existing_paths.toList();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
