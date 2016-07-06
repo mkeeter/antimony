@@ -140,7 +140,7 @@ else()
             ${CMAKE_CURRENT_BINARY_DIR}/sb/fab)
 
     install(TARGETS antimony
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+            DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
     install(DIRECTORY ../py/nodes
             DESTINATION ${CMAKE_INSTALL_PREFIX}/share/antimony)
     install(DIRECTORY ../py/fab
