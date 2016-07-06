@@ -48,8 +48,10 @@ int main(int argc, char *argv[])
         path << "Resources";
         fab::postInit({path.join("/").toStdString()});
 #elif defined Q_OS_LINUX
+        auto dir = QCoreApplication::applicationDirPath();
         std::vector<std::string> fab_paths =
-            {(QCoreApplication::applicationDirPath() + "/sb").toStdString()};
+            {(dir + "/sb").toStdString(),
+             (dir + "/../share/antimony/").toStdString()};
         for (auto p : QStandardPaths::standardLocations(
                 QStandardPaths::AppDataLocation))
         {
