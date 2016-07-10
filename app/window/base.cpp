@@ -141,7 +141,7 @@ bool BaseWindow::askClose()
     if(window_count <= 1 && !App::instance()->isUndoStackClean())
     {
         auto res = QMessageBox::question(
-                this, "APP_NAME", "There are unsaved changes!\n"
+                this, "Antimony", "There are unsaved changes!\n"
                                   "Do you still want to close this window?\n",
                 QMessageBox::No | QMessageBox::Yes, QMessageBox::Yes);
 
