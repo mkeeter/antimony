@@ -50,20 +50,17 @@ static void addNodeToMenu(QMenu* menu, QStringList category, QString name,
 static void populateFromFiles(QMenu* menu, Graph* g,
                               std::function<void(Node*)> callback)
 {
-    QDirIterator bitr(App::instance()->bundledNodePath(),
-                      QDirIterator::Subdirectories);
-    QDirIterator uitr(App::instance()->userNodePath(),
-                      QDirIterator::Subdirectories);
     QList<QRegExp> title_regexs= {QRegExp(".*title\\('+([^']+)'+\\).*"),
                                   QRegExp(".*title\\(\"+([^\"]+)\"+\\).*")};
 
     // Extract all of valid filenames into a QStringList.
     QStringList node_filenames;
-    for (auto itr : {&bitr, &uitr})
+    for (auto path : App::instance()->nodePaths())
     {
-        while (itr->hasNext())
+        QDirIterator itr(path, QDirIterator::Subdirectories);
+        while (itr.hasNext())
         {
-            auto n = itr->next();
+            auto n = itr.next();
             if (n.endsWith(".node"))
                 node_filenames.append(n);
         }
