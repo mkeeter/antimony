@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.1)
 project(Antimony)
 set(CMAKE_BUILD_TYPE RELEASE)
 
