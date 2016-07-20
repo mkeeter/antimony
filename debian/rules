@@ -2,22 +2,10 @@
 # -*- makefile -*-
 
 # Uncomment this to turn on verbose mode.
-#export DH_VERBOSE=1
+export DH_VERBOSE=1
 
 %:
-	dh $@
-
-override_dh_auto_configure:
-	mkdir -p build
-	awk 'BEGIN { inLicense = 0; } /^## License/ { inLicense = 1; next;} { if(inLicense) print $0; }' README.md > COPYING
-	sed -e 's|/usr/local|/usr|g' -i app/CMakeLists.txt
-	cd build && cmake -GNinja ..
-
-override_dh_auto_build:
-	cd build && ninja ./app/antimony && ninja ./app/antimony
-
-override_dh_auto_install:
-	cd build && DESTDIR=../debian/antimony ninja install
+	dh $@ --buildsystem=cmake
 
 override_dh_strip:
 	dh_strip --dbg-package=antimony-dbg

@@ -140,11 +140,11 @@ else()
             ${CMAKE_CURRENT_BINARY_DIR}/sb/fab)
 
     install(TARGETS antimony
-            DESTINATION /usr/local/bin)
+            DESTINATION /usr/bin)
     install(DIRECTORY ../py/nodes
-            DESTINATION /usr/local/share/antimony)
+            DESTINATION /usr/share/antimony)
     install(DIRECTORY ../py/fab
-            DESTINATION /usr/local/share/antimony)
+            DESTINATION /usr/share/antimony)
 endif()
 
 target_link_libraries(${ANTIMONY_APP}

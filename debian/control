@@ -13,7 +13,10 @@ Build-Depends: debhelper (>= 8.0.0),
  flex,
  qt5-default,
  ninja-build,
- cmake
+ cmake,
+ desktop-file-utils,
+ libpng-dev,
+ zlib1g-dev
 Standards-Version: 3.9.4
 
 Package: antimony

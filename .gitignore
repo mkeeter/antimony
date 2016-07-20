@@ -10,5 +10,6 @@
 .tags
 .ycm_extra_conf.py
 /COPYING
+/obj-x86_64-linux-gnu
 build
 build-*
