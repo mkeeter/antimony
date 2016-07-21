@@ -4,7 +4,7 @@ Priority: optional
 Homepage: https://github.com/mkeeter/antimony
 Vcs-Git: https://github.com/mkeeter/antimony
 Maintainer: Peter Felecan <peter@felecan.org>
-Build-Depends: debhelper (>= 8.0.0),
+Build-Depends: debhelper (>= 9),
  libpng-dev,
  python3-dev,
  libboost-all-dev,
@@ -23,7 +23,7 @@ Package: antimony
 Section: graphics
 Priority: optional
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${python3:Depends}, ${shlibs:Depends}, ${misc:Depends}
 Description: Computer-aided design CAD tool
  Antimony is a computer-aided design (CAD) tool from a
  parallel universe in which CAD software evolved

@@ -5,7 +5,7 @@
 export DH_VERBOSE=1
 
 %:
-	dh $@ --buildsystem=cmake
+	dh $@ --with python3 --buildsystem=cmake
 
 override_dh_strip:
 	dh_strip --dbg-package=antimony-dbg
