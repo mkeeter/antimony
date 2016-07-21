@@ -9,7 +9,6 @@
 .qmake.stash
 .tags
 .ycm_extra_conf.py
-/antimony_0.9.2.orig.tar.xz
-/obj-x86_64-linux-gnu
+/obj-*-linux-gnu
 build
 build-*
