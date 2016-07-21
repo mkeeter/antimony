@@ -11,13 +11,12 @@ Build-Depends: debhelper (>= 9),
  libgl1-mesa-dev,
  lemon,
  flex,
- qt5-default,
- ninja-build,
+ qtbase5-dev,
  cmake,
  desktop-file-utils,
  libpng-dev,
  zlib1g-dev
-Standards-Version: 3.9.4
+Standards-Version: 3.9.8
 
 Package: antimony
 Section: graphics
@@ -46,6 +45,7 @@ Tag: interface::graphical,
 
 Package: antimony-dbg
 Section: debug
+Priority: extra
 Architecture: any
 Depends: antimony (= ${binary:Version}), ${misc:Depends}
 Description: Computer-aided design CAD tool
