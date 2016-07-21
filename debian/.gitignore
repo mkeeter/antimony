@@ -8,4 +8,5 @@
 /antimony.prerm.debhelper
 /antimony.substvars
 /debhelper-build-stamp
+/files
 /tmp
