@@ -144,7 +144,7 @@ else()
     install(DIRECTORY ../py/nodes
             DESTINATION /usr/local/share/antimony)
     install(DIRECTORY ../py/fab
-            DESTINATION /usr/share/local/antimony)
+            DESTINATION /usr/local/share/antimony)
 endif()
 
 target_link_libraries(${ANTIMONY_APP}
