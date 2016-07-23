@@ -9,6 +9,7 @@
 .qmake.stash
 .tags
 .ycm_extra_conf.py
+/debian
 /obj-*-linux-gnu
 build
 build-*
