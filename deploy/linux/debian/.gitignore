@@ -1,0 +1,12 @@
+/.debhelper
+/antimony
+/antimony-dbg
+/antimony-dbg.debhelper.log
+/antimony-dbg.substvars
+/antimony.debhelper.log
+/antimony.postinst.debhelper
+/antimony.prerm.debhelper
+/antimony.substvars
+/debhelper-build-stamp
+/files
+/tmp
