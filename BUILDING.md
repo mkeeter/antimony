@@ -63,6 +63,39 @@ To put Antimony on your path, call `sudo ninja install`.  This does two things:
 - The `antimony` executable is copied to `/usr/local/bin`
 - Antimony's Python libraries are copied to `/usr/local/share/antimony`
 
+Debian packaging
+----------------
+
+Packaging for the Debian or flavors based on it can be done using the content of `deploy/linux/debian` directory.
+
+In the project's root directory create a symbolic link:
+
+```
+ln -s deploy/linux/debian debian
+```
+
+Build the package:
+
+```
+dpkg-buildpackage -us -uc
+```
+
+At the end of this you'll find the packages in the directory containing the project's root directory. For example:
+
+```
+antimony_0.9.2_amd64.changes
+antimony_0.9.2_amd64.deb
+antimony_0.9.2.dsc
+antimony_0.9.2.tar.xz
+antimony-dbg_0.9.2_amd64.deb
+```
+
+To install the package, as root or using sudo:
+
+```
+dpkg --install antimony_0.9.2_amd64.deb
+```
+
 ## Debugging
 ### `cannot find -lGL`
 If running `make` gives the `/usr/bin/ld: cannot find -lGL`, create a symlink to the `libGL` file:
