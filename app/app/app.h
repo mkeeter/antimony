@@ -31,8 +31,7 @@ public:
      *  Returns the path to the node directories
      *  (which varies depending on OS).
      */
-    QString bundledNodePath() const;
-    QString userNodePath() const;
+    QStringList nodePaths() const;
 
     /*
      *  Returns the top-level graph proxy object
