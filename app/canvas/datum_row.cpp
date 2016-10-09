@@ -40,6 +40,11 @@ DatumRow::DatumRow(Datum* d, InspectorFrame* parent)
     connect(this, &DatumRow::layoutChanged,
             parent, &InspectorFrame::redoLayout);
     editor = new DatumEditor(d, this);
+
+    connect(editor, &DatumEditor::tabPressed,
+            parent, &InspectorFrame::focusNext);
+    connect(editor, &DatumEditor::shiftTabPressed,
+            parent, &InspectorFrame::focusPrev);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

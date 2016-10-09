@@ -100,4 +100,6 @@ protected:
     DatumEditor* editor;
 
     int index;
+
+    friend class InspectorFrame;
 };
