@@ -4,9 +4,9 @@ import fab
 title('Set color (HSB)')
 
 input("shape", fab.types.Shape)
-input("hue", float)
-input("saturation", float)
-input("brightness", float)
+input("hue", float, 0)
+input("saturation", float, 1)
+input("brightness", float, 1)
 
 # copied from Java's HSBtoRGB
 # http://www.docjar.com/html/api/java/awt/Color.java.html
