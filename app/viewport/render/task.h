@@ -6,6 +6,7 @@
 #include <QObject>
 #include <QImage>
 #include <QMatrix4x4>
+#include <QVector2D>
 #include <QColor>
 
 #include "fab/types/transform.h"
@@ -19,7 +20,7 @@ class RenderTask : public QObject
 Q_OBJECT
 public:
     RenderTask(RenderInstance* parent, PyObject* s, QMatrix4x4 M,
-               int refinement=1);
+               QVector2D clip, int refinement=1);
     ~RenderTask();
 
     /*
@@ -42,13 +43,14 @@ protected:
     /*
      *  Prepare the shape and call render() for 2D or 3D objects
      */
-    void render2d(const Shape& s, const QMatrix4x4& matrix);
-    void render3d(const Shape& s, const QMatrix4x4& matrix);
+    void render2d(const Shape& s);
+    void render3d(const Shape& s);
 
     /*
      *  Renders a shape, storing results in depth and shaded
+     *  Returns screen-clipped bounds
      */
-    void render(Shape* shape, Bounds b, float scale);
+    Bounds render(Shape* shape, Bounds b, float scale);
 
     /*
      *  Converts the given matrix into a Transform
@@ -57,6 +59,7 @@ protected:
 
     PyObject* shape;
     QMatrix4x4 M;
+    QVector2D clip;
 
     QFuture<void> future;
     QFutureWatcher<void> watcher;

@@ -9,8 +9,8 @@
 #include "fab/tree/render.h"
 
 RenderTask::RenderTask(RenderInstance* parent, PyObject* s, QMatrix4x4 M,
-                       int refinement)
-    : shape(s), M(M), refinement(refinement)
+                       QVector2D clip, int refinement)
+    : shape(s), M(M), clip(clip), refinement(refinement)
 {
     Py_INCREF(shape);
 
@@ -34,7 +34,7 @@ void RenderTask::halt()
 RenderTask* RenderTask::getNext(RenderInstance* parent) const
 {
     return refinement > 1
-        ? new RenderTask(parent, shape, M, refinement - 1)
+        ? new RenderTask(parent, shape, M, clip, refinement - 1)
         : NULL;
 }
 
@@ -53,11 +53,11 @@ void RenderTask::async()
     {
         if (std::isinf(s.bounds.zmin) || std::isinf(s.bounds.zmax))
         {
-            render2d(s, M);
+            render2d(s);
         }
         else
         {
-            render3d(s, M);
+            render3d(s);
         }
     }
 
@@ -74,32 +74,32 @@ void RenderTask::async()
     render_time = timer.elapsed();
 }
 
-void RenderTask::render3d(const Shape& s, const QMatrix4x4& matrix)
+void RenderTask::render3d(const Shape& s)
 {
-    Transform T = getTransform(matrix);
+    Transform T = getTransform(M);
     Shape transformed = s.map(T);
 
-    render(&transformed, transformed.bounds, 1.0 / refinement);
+    Bounds b = render(&transformed, transformed.bounds, 1.0 / refinement);
 
     {   // Apply a transform-less mapping to the bounds
-        auto m = matrix;
+        auto m = M;
         m.setColumn(3, {0, 0, 0, m(3,3)});
         pos = m.inverted() * QVector3D(
-                (transformed.bounds.xmin + transformed.bounds.xmax)/2,
-                (transformed.bounds.ymin + transformed.bounds.ymax)/2,
-                (transformed.bounds.zmin + transformed.bounds.zmax)/2);
+                (b.xmin + b.xmax)/2,
+                (b.ymin + b.ymax)/2,
+                (b.zmin + b.zmax)/2);
     }
 
-    size = {transformed.bounds.xmax - transformed.bounds.xmin,
-            transformed.bounds.ymax - transformed.bounds.ymin,
-            transformed.bounds.zmax - transformed.bounds.zmin};
+    size = {b.xmax - b.xmin,
+            b.ymax - b.ymin,
+            b.zmax - b.zmin};
 
     flat = false;
 }
 
-void RenderTask::render2d(const Shape& s, const QMatrix4x4& matrix)
+void RenderTask::render2d(const Shape& s)
 {
-    QMatrix4x4 matrix_flat = matrix;
+    QMatrix4x4 matrix_flat = M;
     matrix_flat(0, 2) = 0;
     matrix_flat(1, 2) = 0;
     matrix_flat(2, 0) = 0;
@@ -114,14 +114,14 @@ void RenderTask::render2d(const Shape& s, const QMatrix4x4& matrix)
 
     // Render the flattened shape, but with bounds equivalent to the shape's
     // position in a 3D bounding box.
-    Bounds b3d = Bounds(s.bounds.xmin, s.bounds.ymin, 0,
-                        s.bounds.xmax, s.bounds.ymax, 0.0001).
-                 map(getTransform(matrix));
+    Bounds b3d_ = Bounds(s.bounds.xmin, s.bounds.ymin, 0,
+                         s.bounds.xmax, s.bounds.ymax, 0.0001).
+                 map(getTransform(M));
 
-    render(&transformed, b3d, 1.0 / refinement);
+    Bounds b3d = render(&transformed, b3d_, 1.0 / refinement);
 
     {   // Apply a transform-less mapping to the bounds
-        auto m = matrix;
+        auto m = M;
         m.setColumn(3, {0, 0, 0, m(3, 3)});
         pos = m.inverted() *
               QVector3D((b3d.xmin + b3d.xmax)/2,
@@ -134,9 +134,9 @@ void RenderTask::render2d(const Shape& s, const QMatrix4x4& matrix)
             b3d.zmax - b3d.zmin};
 
     // Apply a gradient to the depth-map based on tilt
-    if (matrix(1,2))
+    if (M(1,2))
     {
-        bool direction = matrix(2,2) > 0;
+        bool direction = M(2,2) > 0;
         for (int j=0; j < depth.height(); ++j)
         {
             for (int i=0; i < depth.width(); ++i)
@@ -156,8 +156,8 @@ void RenderTask::render2d(const Shape& s, const QMatrix4x4& matrix)
 
 
     {   // Set normals to a flat value (rather than derivatives)
-        float xy = sqrt(pow(matrix(0,2),2) + pow(matrix(1,2),2));
-        float z = fabs(matrix(2,2));
+        float xy = sqrt(pow(M(0,2),2) + pow(M(1,2),2));
+        float z = fabs(M(2,2));
         float len = sqrt(pow(xy, 2) + pow(z, 2));
         xy /= len;
         z /= len;
@@ -191,8 +191,20 @@ Transform RenderTask::getTransform(QMatrix4x4 m)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void RenderTask::render(Shape* shape, Bounds b, float scale)
+Bounds RenderTask::render(Shape* shape, Bounds b_, float scale)
 {
+    // Screen-space clipping:
+    // x and y are clipped to the window;
+    // z is clipped assuming a voxel depth of max(width, height)
+    const float xmin = -M(0,3) - clip.x() / 2;
+    const float xmax = -M(0,3) + clip.x() / 2;
+    const float ymin = -M(1,3) - clip.y() / 2;
+    const float ymax = -M(1,3) + clip.y() / 2;
+    const float zmin = -M(2,3) - fmax(clip.x(), clip.y()) / 2;
+    const float zmax = -M(2,3) + fmax(clip.x(), clip.y()) / 2;
+
+    Bounds b(fmax(xmin, b_.xmin), fmax(ymin, b_.ymin),  fmax(zmin, b_.zmin),
+             fmin(xmax, b_.xmax), fmin(ymax, b_.ymax),  fmin(zmax, b_.zmax));
     depth = QImage((b.xmax - b.xmin) * scale, (b.ymax - b.ymin) * scale,
                  QImage::Format_RGB32);
     shaded = QImage(depth.width(), depth.height(), depth.format());
@@ -215,12 +227,11 @@ void RenderTask::render(Shape* shape, Bounds b, float scale)
     Region r = (Region) {
             .imin=0, .jmin=0, .kmin=0,
             .ni=(uint32_t)depth.width(), .nj=(uint32_t)depth.height(),
-            .nk=uint32_t(fmax(1, (shape->bounds.zmax -
-                                  shape->bounds.zmin) * scale))
+            .nk=uint32_t(fmax(1, (b.zmax - b.zmin) * scale))
     };
 
-    build_arrays(&r, shape->bounds.xmin, shape->bounds.ymin, shape->bounds.zmin,
-                     shape->bounds.xmax, shape->bounds.ymax, shape->bounds.zmax);
+    build_arrays(&r, b.xmin, b.ymin, b.zmin,
+                     b.xmax, b.ymax, b.zmax);
     render16(shape->tree.get(), r, d16_rows, &halt_flag, nullptr);
     shaded8(shape->tree.get(), r, d16_rows, s8_rows, &halt_flag, nullptr);
 
@@ -247,4 +258,6 @@ void RenderTask::render(Shape* shape, Bounds b, float scale)
     delete [] s8_rows;
     delete [] d16;
     delete [] d16_rows;
+
+    return b;
 }

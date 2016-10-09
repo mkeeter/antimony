@@ -199,7 +199,7 @@ void ViewportView::drawForeground(QPainter* painter, const QRectF& rect)
 void ViewportView::update()
 {
     scene()->invalidate();
-    emit(changed(getMatrix()));
+    emit(changed(getMatrix(), geometry()));
 
     emit(centerChanged(center));
     emit(scaleChanged(scale));
@@ -226,7 +226,7 @@ void ViewportView::setScale(float s)
     // Update the view without calling ViewportView::update
     // (because that would lead to infinite recursion)
     scene()->invalidate();
-    emit(changed(getMatrix()));
+    emit(changed(getMatrix(), geometry()));
 }
 
 void ViewportView::setCenter(QVector3D c)
@@ -236,7 +236,7 @@ void ViewportView::setCenter(QVector3D c)
     // Update the view without calling ViewportView::update
     // (because that would lead to infinite recursion)
     scene()->invalidate();
-    emit(changed(getMatrix()));
+    emit(changed(getMatrix(), geometry()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

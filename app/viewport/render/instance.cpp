@@ -7,7 +7,9 @@
 
 RenderInstance::RenderInstance(
         BaseDatumProxy* parent, ViewportView* view, bool sub)
-    : QObject(), sub(sub), M(view->getMatrix()), image(this, view)
+    : QObject(), sub(sub), M(view->getMatrix()),
+      clip(view->geometry().width(), view->geometry().height()),
+      image(this, view)
 {
     connect(parent, &QObject::destroyed, this, &RenderInstance::makeOrphan);
     connect(view, &ViewportView::changed,
@@ -51,9 +53,10 @@ void RenderInstance::datumChanged(Datum* d)
     setPending();
 }
 
-void RenderInstance::viewChanged(QMatrix4x4 m)
+void RenderInstance::viewChanged(QMatrix4x4 m, QRect clip_)
 {
     M = m;
+    clip = {float(clip_.width()), float(clip_.height())};
     setPending();
 }
 
@@ -138,7 +141,7 @@ void RenderInstance::startNextRender()
     assert(orphan == false);
 
     Q_ASSERT(starting_refinement >= 1);
-    current.reset(new RenderTask(this, shape, M, starting_refinement));
+    current.reset(new RenderTask(this, shape, M, clip, starting_refinement));
 
     pending = false;
 }

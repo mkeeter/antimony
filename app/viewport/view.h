@@ -84,7 +84,10 @@ public:
     ViewportGL gl;
 
 signals:
-    void changed(QMatrix4x4 m);
+    /*
+     *  Emitted when the window matrix or clipping box changes
+     */
+    void changed(QMatrix4x4 m, QRect clip);
 
     /*
      *  Signal used to request that images adjust zmin and zmax based on
