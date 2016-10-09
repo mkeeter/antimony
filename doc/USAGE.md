@@ -33,6 +33,7 @@ If a code snippet is invalid, the text field's border will turn red.
 Hover over it with the mouse to see the Python traceback.
 
 Shift + left-click on a datum's text field and drag right or left to slide values up and down.
+Hold `alt` while doing so to adjust the value faster.
 
 Datums can be connected using the I/O ports on the right and left.
 Click and drag on the right-hand port to start a connection;
