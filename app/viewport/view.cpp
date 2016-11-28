@@ -475,3 +475,22 @@ void ViewportView::zoomTo(Node* n)
 
     a->start(QPropertyAnimation::DeleteWhenStopped);
 }
+
+void ViewportView::hideUI(bool b)
+{
+    ui_hidden = b;
+    for (auto i : scene()->items())
+    {
+        if (auto c = dynamic_cast<ControlInstance*>(i))
+        {
+            if (b)
+            {
+                c->hide();
+            }
+            else
+            {
+                c->show();
+            }
+        }
+    }
+}

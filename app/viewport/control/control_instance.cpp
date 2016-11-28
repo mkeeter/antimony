@@ -18,6 +18,11 @@ ControlInstance::ControlInstance(Control* c, ViewportView* v)
 
     connect(v, &ViewportView::changed, this, &ControlInstance::onViewChanged);
     v->scene()->addItem(this);
+
+    if (v->isUIhidden())
+    {
+        hide();
+    }
 }
 
 QMatrix4x4 ControlInstance::getMatrix() const

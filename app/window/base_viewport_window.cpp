@@ -11,7 +11,7 @@ BaseViewportWindow::BaseViewportWindow(QList<ViewportView*> views)
     ui->menuAdd->deleteLater();
     ui->menuReference->deleteLater();
 
-    // Make heightmap and shaded optiosn mutually exclusive
+    // Make heightmap and shaded options mutually exclusive
     QActionGroup* view_actions = new QActionGroup(this);
     view_actions->addAction(ui->actionShaded);
     view_actions->addAction(ui->actionHeightmap);
@@ -28,6 +28,8 @@ BaseViewportWindow::BaseViewportWindow(QList<ViewportView*> views)
                 [=]{ view->scene()->invalidate(); });
         connect(ui->actionHeightmap, &QAction::triggered,
                 [=]{ view->scene()->invalidate(); });
+        connect(ui->actionHideUI, &QAction::triggered,
+                [=](bool b){ view->hideUI(b); });
     }
 
     show();
