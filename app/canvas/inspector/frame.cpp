@@ -8,6 +8,7 @@
 
 #include "canvas/inspector/frame.h"
 #include "canvas/datum_row.h"
+#include "canvas/datum_editor.h"
 #include "canvas/inspector/title.h"
 #include "canvas/inspector/export.h"
 #include "canvas/scene.h"
@@ -43,6 +44,26 @@ QRectF InspectorFrame::tightBoundingRect() const
     }
     b.setBottom(b.bottom() + PADDING_ROWS);
     return b;
+}
+
+QList<DatumRow*> InspectorFrame::visibleRows() const
+{
+    QList<DatumRow*> rows;
+    for (auto c : childItems())
+        if (auto row = dynamic_cast<DatumRow*>(c))
+        {
+            if (show_hidden || !row->shouldBeHidden())
+            {
+                rows.append(row);
+            }
+        }
+
+    // Sort datums by row order
+    qSort(rows.begin(), rows.end(),
+          [](const DatumRow* a, const DatumRow* b)
+          { return a->getIndex() < b->getIndex(); });
+
+    return rows;
 }
 
 QRectF InspectorFrame::boundingRect() const
@@ -186,6 +207,44 @@ void InspectorFrame::setFocus(bool focus)
     {
         has_focus = focus;
         prepareGeometryChange();
+    }
+}
+
+void InspectorFrame::focusNext(DatumEditor* prev)
+{
+    bool next = false;
+
+    for (auto row : visibleRows())
+    {
+        if (prev == row->editor)
+        {
+            next = true;
+        }
+        else if (next && row->editor->isEnabled())
+        {
+            prev->clearFocus();
+            row->editor->setFocus();
+            return;
+        }
+    }
+}
+
+void InspectorFrame::focusPrev(DatumEditor* next)
+{
+    DatumRow* prev = NULL;
+
+    for (auto row : visibleRows())
+    {
+        if (next == row->editor)
+        {
+            if (prev)
+            {
+                prev->editor->setFocus();
+                next->clearFocus();
+            }
+            return;
+        }
+        prev = row;
     }
 }
 

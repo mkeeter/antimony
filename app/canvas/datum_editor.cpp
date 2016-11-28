@@ -203,16 +203,18 @@ void DatumEditor::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     {
         if (target->getType() == &PyFloat_Type)
         {
+            const double s = (event->modifiers() & Qt::AltModifier) ? 0.03 : 0.01;
             const double scale = fmax(
-                    0.01, fabs(PyFloat_AsDouble(target->currentValue()) * 0.01));
+                    s, fabs(PyFloat_AsDouble(target->currentValue()) * s));
             const double dx = (event->screenPos() - event->lastScreenPos()).x();
             dragFloat(scale * dx);
             return;
         }
         else if (target->getType() == &PyLong_Type)
         {
+            const double s = (event->modifiers() & Qt::AltModifier) ? 10 : 30;
             drag_accumulated += (event->screenPos() -
-                                 event->lastScreenPos()).x() / 30.;
+                                 event->lastScreenPos()).x() / s;
             int q = drag_accumulated;
             drag_accumulated -= q;
             dragInt(q);

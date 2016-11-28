@@ -37,7 +37,7 @@ public slots:
     /*
      *  Sets M to the current viewport transform matrix
      */
-    void viewChanged(QMatrix4x4 m);
+    void viewChanged(QMatrix4x4 m, QRect clip);
 
     /*
      *  When a render task finishes, load in its image and start the next
@@ -68,6 +68,9 @@ protected:
 
     /*  Current transform matrix  */
     QMatrix4x4 M;
+
+    /*  Window size (used for clipping) */
+    QVector2D clip;
 
     /*  Set to true if we should render again after the task finishes  */
     bool pending=false;

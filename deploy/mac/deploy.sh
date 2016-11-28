@@ -7,6 +7,7 @@ if [ $# -ne 1 ]; then
 fi
 
 RELEASE=`git describe --exact-match --tags || echo "($(git rev-parse --abbrev-ref HEAD))"`
+RELEASE=`echo $RELEASE|sed s:/:-:g`
 
 cd ../../build-$1
 ninja clean

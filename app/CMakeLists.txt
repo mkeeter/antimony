@@ -183,4 +183,5 @@ target_include_directories(${ANTIMONY_APP} SYSTEM PRIVATE
 ################################################################################
 
 set_property(TARGET ${ANTIMONY_APP} PROPERTY CXX_STANDARD 11)
+set_property(TARGET ${ANTIMONY_APP} PROPERTY C_STANDARD 99)
 

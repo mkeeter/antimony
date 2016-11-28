@@ -6,6 +6,8 @@ class Node;
 class InspectorTitle;
 class InspectorExportButton;
 class ExportWorker;
+class DatumEditor;
+class DatumRow;
 
 class InspectorFrame : public QGraphicsObject
 {
@@ -87,6 +89,12 @@ public slots:
      */
     void setFocus(bool focus);
 
+    /*
+     *  Skips to the next or previous datum editor
+     */
+    void focusNext(DatumEditor* d);
+    void focusPrev(DatumEditor* d);
+
 protected:
     /*
      *  On mouse move, fake the left button being held down.
@@ -109,6 +117,11 @@ protected:
      *  Returns the tight bounding rectangle (not including focus border)
      */
     QRectF tightBoundingRect() const;
+
+    /*
+     *  Returns an ordered list of visible DatumRows
+     */
+    QList<DatumRow*> visibleRows() const;
 
     static const float PADDING_ROWS;
 

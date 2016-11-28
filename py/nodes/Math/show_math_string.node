@@ -1,0 +1,6 @@
+import fab
+
+title('Get math string')
+
+input('shape', fab.types.Shape)
+output('string', shape.math)

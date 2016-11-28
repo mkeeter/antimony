@@ -1,0 +1,3 @@
+usr/bin/*
+usr/share/antimony/nodes/*
+usr/share/antimony/fab/* usr/lib/python3/dist-packages/fab

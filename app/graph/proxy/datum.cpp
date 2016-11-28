@@ -17,7 +17,6 @@ DatumProxy::DatumProxy(Datum* d, NodeProxy* parent)
       row(new DatumRow(d, parent->getInspector()))
 {
     d->installWatcher(this);
-    static_cast<GraphProxy*>(parent->parent())->viewportScene()->installDatum(this);
     connect(this, &QObject::destroyed, row, &QObject::deleteLater);
     connect(this, &QObject::destroyed,
             parent->getInspector(), &InspectorFrame::redoLayout,

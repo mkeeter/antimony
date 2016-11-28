@@ -1,0 +1,52 @@
+Source: antimony
+Section: graphics
+Priority: optional
+Homepage: https://github.com/mkeeter/antimony
+Vcs-Git: https://github.com/mkeeter/antimony
+Maintainer: Peter Felecan <peter@felecan.org>
+Build-Depends: debhelper (>= 9),
+ libpng-dev,
+ python3-dev,
+ libboost-all-dev,
+ libgl1-mesa-dev,
+ lemon,
+ flex,
+ qtbase5-dev,
+ cmake,
+ desktop-file-utils,
+ libpng-dev,
+ zlib1g-dev
+Standards-Version: 3.9.8
+
+Package: antimony
+Section: graphics
+Priority: optional
+Architecture: any
+Depends: ${python3:Depends}, ${shlibs:Depends}, ${misc:Depends}
+Description: Computer-aided design CAD tool
+ Antimony is a computer-aided design (CAD) tool from a
+ parallel universe in which CAD software evolved
+ from Lisp machines rather than drafting tables.
+ .
+ Antimony provides the Python3 Fab that is
+ a set of software tools for personal fabrication,
+ intended for use with machines common to fab labs.
+ For info about Fab visit kokompe.cba.mit.edu/.
+Tag: interface::graphical,
+ interface::x11,
+ role::program,
+ scope::application,
+ uitoolkit::qt,
+ use::editing,
+ use::learning,
+ x11::application
+ implemented-in::c++
+ implemented-in::python
+
+Package: antimony-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Depends: antimony (= ${binary:Version}), ${misc:Depends}
+Description: Computer-aided design CAD tool
+ This package contains the debugging symbols for Antimony.

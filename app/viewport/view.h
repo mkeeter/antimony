@@ -80,11 +80,19 @@ public:
      */
     void lockAngle(float y, float p);
 
+    /*
+     *  Checks to see if the UI is hidden
+     */
+    bool isUIhidden() const { return ui_hidden; }
+
     /*  Publically accessible handle to get shaders and VBO  */
     ViewportGL gl;
 
 signals:
-    void changed(QMatrix4x4 m);
+    /*
+     *  Emitted when the window matrix or clipping box changes
+     */
+    void changed(QMatrix4x4 m, QRect clip);
 
     /*
      *  Signal used to request that images adjust zmin and zmax based on
@@ -124,6 +132,11 @@ public slots:
      *  Starts an animation zooming to the given node
      */
     void zoomTo(Node* n);
+
+    /*
+     *  Shows UI elements
+     */
+    void hideUI(bool b);
 
 protected:
     /*
@@ -201,4 +214,7 @@ protected:
 
     /*  Records whether initializeOpenGLFunctions has been called */
     bool gl_initialized=false;
+
+    /*  Records whether the UI is hidden */
+    bool ui_hidden=false;
 };
