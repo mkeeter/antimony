@@ -59,6 +59,9 @@ QStringList App::nodePaths() const
     // If we're running Antimony from the build folder, use sb/nodes
     paths << applicationDirPath() + "/sb/nodes";
     paths << applicationDirPath() + "/../share/antimony/nodes";
+#elif defined Q_OS_WIN32
+    // Windows only supports running from the build directory
+    paths << applicationDirPath() + "/sb/nodes";
 #else
 #error "Unknown OS!"
 #endif
