@@ -10,7 +10,11 @@ set(CMAKE_CXX_FLAGS_DEBUG    "-O0")
 
 find_package(PythonLibs 3.3 REQUIRED)
 
-if (APPLE)
+if (WIN32)
+    add_definitions("-DBOOST_PYTHON_STATIC_LIB")
+endif()
+
+if (APPLE OR WIN32)
     find_package(Boost REQUIRED COMPONENTS python3)
 elseif (UNIX)
     foreach (PYTHON_NAME python3 python-py35 python-py34)

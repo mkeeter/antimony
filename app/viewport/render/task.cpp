@@ -242,14 +242,23 @@ Bounds RenderTask::render(Shape* shape, Bounds b_, float scale)
     {
         for (int i=0; i < depth.width(); ++i)
         {
-            uint8_t pix = d16_rows[j][i] >> 8;
+            uint16_t pix16 = d16_rows[j][i];
+            uint8_t pix8 = pix16 >> 8;
             uint8_t* norm = s8_rows[j][i];
-            if (pix)
+            if (pix8)
             {
                 depth.setPixel(i, j,
-                               pix | (pix << 8) | (pix << 16));
-                shaded.setPixel(i, j,
-                        norm[0] | (norm[1] << 8) | (norm[2] << 16));
+                               pix8 | (pix8 << 8) | (pix8 << 16));
+                if (pix16 < UINT16_MAX)
+                {
+                    shaded.setPixel(i, j,
+                            norm[0] | (norm[1] << 8) | (norm[2] << 16));
+                }
+                else
+                {
+                    shaded.setPixel(i, j,
+                            0 | (0 << 8) | (255 << 16));
+                }
             }
         }
     }

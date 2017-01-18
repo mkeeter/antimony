@@ -34,7 +34,7 @@ TEST_CASE("Link pruning on deletion")
     n->uninstall(x);
     REQUIRE(y->isValid() == true);
     REQUIRE(y->getLinks().size() == 0);
-    REQUIRE(y->currentValue() != NULL);
+    REQUIRE(y->currentValue() != nullptr);
     REQUIRE(PyFloat_AsDouble(y->currentValue()) == 1.0);
 
     delete g;
@@ -94,7 +94,7 @@ TEST_CASE("Link installation")
     REQUIRE(z->getText() == Datum::SIGIL_CONNECTION +
                             std::string("[__0.__0]"));
     REQUIRE(z->isValid() == true);
-    REQUIRE(z->currentValue() != NULL);
+    REQUIRE(z->currentValue() != nullptr);
     REQUIRE(PyFloat_AsDouble(z->currentValue()) == 2.0);
 
     REQUIRE(!z->acceptsLink(y));
@@ -115,7 +115,7 @@ TEST_CASE("Link installation across nodes")
     REQUIRE(ax->getText() == Datum::SIGIL_CONNECTION +
                              std::string("[__1.__0]"));
     REQUIRE(ax->isValid() == true);
-    REQUIRE(ax->currentValue() != NULL);
+    REQUIRE(ax->currentValue() != nullptr);
     REQUIRE(PyFloat_AsDouble(ax->currentValue()) == 2.0);
 
     REQUIRE(!bx->acceptsLink(ax));
@@ -140,7 +140,7 @@ TEST_CASE("Link installation with reducer")
     z->installLink(y);
 
     REQUIRE(z->isValid() == true);
-    REQUIRE(z->currentValue() != NULL);
+    REQUIRE(z->currentValue() != nullptr);
     REQUIRE(PyFloat_AsDouble(z->currentValue()) == 6.0);
 
     auto links = z->getLinks();
