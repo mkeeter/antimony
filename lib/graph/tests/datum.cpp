@@ -16,7 +16,7 @@ TEST_CASE("Datum evaluation")
     {
         auto d1 = new Datum("x", "1.0", &PyFloat_Type, n);
         REQUIRE(d1->isValid() == true);
-        REQUIRE(d1->currentValue() != NULL);
+        REQUIRE(d1->currentValue() != nullptr);
         REQUIRE(PyFloat_AsDouble(d1->currentValue()) == 1.0);
     }
 
@@ -47,7 +47,7 @@ TEST_CASE("Valid datum lookup")
     auto x = new Datum("x", "1.0", &PyFloat_Type, n);
     auto y = new Datum("y", "n.x", &PyFloat_Type, n);
     REQUIRE(y->isValid() == true);
-    REQUIRE(y->currentValue() != NULL);
+    REQUIRE(y->currentValue() != nullptr);
     REQUIRE(PyFloat_AsDouble(y->currentValue()) == 1.0);
 
     delete g;
@@ -86,12 +86,12 @@ TEST_CASE("Tracking changes")
 
     x->setText("2.0");
     REQUIRE(y->isValid() == true);
-    REQUIRE(y->currentValue() != NULL);
+    REQUIRE(y->currentValue() != nullptr);
     REQUIRE(PyFloat_AsDouble(y->currentValue()) == 2.0);
 
     x->setText("3.0");
     REQUIRE(y->isValid() == true);
-    REQUIRE(y->currentValue() != NULL);
+    REQUIRE(y->currentValue() != nullptr);
     REQUIRE(PyFloat_AsDouble(y->currentValue()) == 3.0);
     delete g;
 }
@@ -104,7 +104,7 @@ TEST_CASE("Name creation")
     auto x = new Datum("x", "1.0", &PyFloat_Type, n);
 
     REQUIRE(y->isValid() == true);
-    REQUIRE(y->currentValue() != NULL);
+    REQUIRE(y->currentValue() != nullptr);
     REQUIRE(PyFloat_AsDouble(y->currentValue()) == 1.0);
     delete g;
 }
@@ -139,7 +139,7 @@ TEST_CASE("UID lookup")
                             &PyFloat_Type, n);
         CAPTURE(y->getError());
         REQUIRE(y->isValid() == true);
-        REQUIRE(y->currentValue() != NULL);
+        REQUIRE(y->currentValue() != nullptr);
         REQUIRE(PyFloat_AsDouble(y->currentValue()) == 1.0);
     }
 
@@ -167,7 +167,7 @@ TEST_CASE("UID changes")
 
     CAPTURE(y->getError());
     REQUIRE(y->isValid() == true);
-    REQUIRE(y->currentValue() != NULL);
+    REQUIRE(y->currentValue() != nullptr);
     REQUIRE(PyFloat_AsDouble(y->currentValue()) == 2.0);
     delete g;
 }
@@ -193,7 +193,7 @@ TEST_CASE("Successful datum type conversion")
 
     CAPTURE(x->getError());
     REQUIRE(x->isValid() == true);
-    REQUIRE(x->currentValue() != NULL);
+    REQUIRE(x->currentValue() != nullptr);
     REQUIRE(PyFloat_AsDouble(x->currentValue()) == 2.0);
     delete g;
 }
@@ -210,7 +210,7 @@ TEST_CASE("Mutable node proxies")
     PyRun_String("this.x = 2.0", Py_file_input, d, d);
     REQUIRE(!PyErr_Occurred());
     REQUIRE(x->isValid() == true);
-    REQUIRE(x->currentValue() != NULL);
+    REQUIRE(x->currentValue() != nullptr);
     REQUIRE(PyFloat_AsDouble(x->currentValue()) == 2.0);
 
     PyRun_String("this.x = 3", Py_file_input, d, d);
@@ -220,7 +220,7 @@ TEST_CASE("Mutable node proxies")
         REQUIRE(false);
     }
     REQUIRE(x->isValid() == true);
-    REQUIRE(x->currentValue() != NULL);
+    REQUIRE(x->currentValue() != nullptr);
     REQUIRE(PyFloat_AsDouble(x->currentValue()) == 3.0);
 
     PyRun_String("this.x = 's'", Py_file_input, d, d);
@@ -249,7 +249,7 @@ TEST_CASE("Un-assignable mutable node proxies")
         REQUIRE(false);
     }
     REQUIRE(y->isValid() == true);
-    REQUIRE(y->currentValue() != NULL);
+    REQUIRE(y->currentValue() != nullptr);
     REQUIRE(PyFloat_AsDouble(y->currentValue()) == 1.0);
 
     Py_DECREF(d);
@@ -279,14 +279,14 @@ TEST_CASE("Looking using 'self'")
 
     // Sanity-checking of x datum
     REQUIRE(x->isValid() == true);
-    REQUIRE(x->currentValue() != NULL);
+    REQUIRE(x->currentValue() != nullptr);
     REQUIRE(PyFloat_AsDouble(x->currentValue()) == 123.0);
 
     SECTION("Use of 'self'")
     {
         CAPTURE(from_self->getError());
         REQUIRE(from_self->isValid() == true);
-        REQUIRE(from_self->currentValue() != NULL);
+        REQUIRE(from_self->currentValue() != nullptr);
         REQUIRE(PyFloat_AsDouble(from_self->currentValue()) == 123.0);
     }
 
