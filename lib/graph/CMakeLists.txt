@@ -19,8 +19,8 @@ target_include_directories(SbGraph SYSTEM PRIVATE
     ${Boost_INCLUDE_DIRS}
 )
 target_link_libraries(SbGraph
-    ${PYTHON_LIBRARY}
     ${Boost_LIBRARIES}
+    ${PYTHON_LIBRARY}
 )
 target_include_directories(SbGraph PUBLIC inc)
 
@@ -39,6 +39,7 @@ target_link_libraries(SbGraphTest SbGraph)
 
 target_include_directories(SbGraphTest SYSTEM PRIVATE
     ${PYTHON_INCLUDE_DIRS}
+    ${Boost_INCLUDE_DIRS}
     ../../vendor
 )
 

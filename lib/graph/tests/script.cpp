@@ -60,9 +60,9 @@ TEST_CASE("Script input")
     REQUIRE(n->getErrorLine() == -1);
 
     auto x = n->getDatum("x");
-    REQUIRE(x != NULL);
+    REQUIRE(x != nullptr);
     REQUIRE(x->isValid() == true);
-    REQUIRE(x->currentValue() != NULL);
+    REQUIRE(x->currentValue() != nullptr);
     REQUIRE(PyFloat_AsDouble(x->currentValue()) == 0.0);
     delete g;
 }
@@ -76,9 +76,9 @@ TEST_CASE("Script input with default argument")
     REQUIRE(n->getErrorLine() == -1);
 
     auto x = n->getDatum("x");
-    REQUIRE(x != NULL);
+    REQUIRE(x != nullptr);
     REQUIRE(x->isValid() == true);
-    REQUIRE(x->currentValue() != NULL);
+    REQUIRE(x->currentValue() != nullptr);
     REQUIRE(PyFloat_AsDouble(x->currentValue()) == 3.0);
     delete g;
 }
@@ -107,7 +107,7 @@ TEST_CASE("Datum pinning")
     REQUIRE(n->getErrorLine() == -1);
     REQUIRE(n->getDatum("x") == x);
     REQUIRE(x->isValid() == true);
-    REQUIRE(x->currentValue() != NULL);
+    REQUIRE(x->currentValue() != nullptr);
     REQUIRE(PyFloat_AsDouble(x->currentValue()) == 1.0);
     delete g;
 }
@@ -119,7 +119,7 @@ TEST_CASE("Datum preservation")
 
     n->setScript("input('x', float, 1.0)");
     auto x = n->getDatum("x");
-    REQUIRE(x != NULL);
+    REQUIRE(x != nullptr);
 
     n->setScript("input('x', float, 1.0)wargarble");
     auto x_ = n->getDatum("x");
@@ -157,7 +157,7 @@ TEST_CASE("Script re-evaluation on linked datum change")
 
     auto y = b->getDatum("y");
     REQUIRE(y->isValid() == true);
-    REQUIRE(y->currentValue() != NULL);
+    REQUIRE(y->currentValue() != nullptr);
     REQUIRE(PyFloat_AsDouble(y->currentValue()) == 3.0);
     delete g;
 }
@@ -172,9 +172,9 @@ TEST_CASE("Script output")
     REQUIRE(n->getErrorLine() == -1);
 
     auto x = n->getDatum("x");
-    REQUIRE(x != NULL);
+    REQUIRE(x != nullptr);
     REQUIRE(x->isValid() == true);
-    REQUIRE(x->currentValue() != NULL);
+    REQUIRE(x->currentValue() != nullptr);
     REQUIRE(PyFloat_AsDouble(x->currentValue()) == 1.0);
     delete g;
 }
@@ -195,10 +195,10 @@ TEST_CASE("Removing datum from script")
     auto g = new Graph();
     auto n = new ScriptNode("n", g);
     n->setScript("input('x', float, 1.0)");
-    REQUIRE(n->getDatum("x") != NULL);
+    REQUIRE(n->getDatum("x") != nullptr);
 
     n->setScript("");
-    REQUIRE(n->getDatum("x") == NULL);
+    REQUIRE(n->getDatum("x") == nullptr);
     delete g;
 }
 
@@ -225,7 +225,7 @@ TEST_CASE("Datum removal triggering update")
     REQUIRE(y->isValid() == true);
 
     n->setScript("input('y', float)");
-    REQUIRE(y != NULL);
+    REQUIRE(y != nullptr);
     REQUIRE(y->isValid() == false);
     CAPTURE(y->getError());
     REQUIRE(y->getError().find("Name 'x' is not defined")

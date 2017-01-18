@@ -4,7 +4,12 @@ find_package(FLEX REQUIRED)
 ################################################################################
 
 # Custom command to generate the parser sources with lemon
-find_program(LEMON_EXECUTABLE lemon DOC "path to the lemon executable")
+if(WIN32)
+    find_program(LEMON_EXECUTABLE lemon.exe DOC "path to the lemon executable")
+else()
+    find_program(LEMON_EXECUTABLE lemon DOC "path to the lemon executable")
+endif()
+
 mark_as_advanced(LEMON_EXECUTABLE)
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/v2syntax.lemon.hpp
@@ -15,7 +20,11 @@ add_custom_command(
     COMMAND mv ${CMAKE_CURRENT_SOURCE_DIR}/src/tree/v2syntax.h ${CMAKE_CURRENT_BINARY_DIR}/v2syntax.lemon.hpp)
 
 # Custom command to generate the lexer sources with flex
-find_program(FLEX_EXECUTABLE flex DOC "path to the flex executable")
+if(WIN32)
+    find_program(FLEX_EXECUTABLE flex.exe DOC "path to the flex executable")
+else()
+    find_program(FLEX_EXECUTABLE flex DOC "path to the flex executable")
+endif()
 mark_as_advanced(FLEX_EXECUTABLE)
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/v2syntax.yy.hpp
@@ -69,8 +78,8 @@ target_include_directories(SbFab PRIVATE
 )
 
 target_link_libraries(SbFab
-    ${PYTHON_LIBRARY}
     ${Boost_LIBRARIES}
+    ${PYTHON_LIBRARY}
     ${PNG_LIBRARIES}
 )
 target_include_directories(SbFab PUBLIC inc)
@@ -88,6 +97,7 @@ target_link_libraries(SbFabTest SbFab)
 
 target_include_directories(SbFabTest SYSTEM PRIVATE
     ../../vendor
+    ${Boost_INCLUDE_DIRS}
     ${PYTHON_INCLUDE_DIRS}
 )
 

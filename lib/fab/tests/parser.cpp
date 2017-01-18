@@ -12,7 +12,7 @@ TEST_CASE("Basic parsing")
     SECTION("Parsing 'X'")
     {
         t = parse("X");
-        REQUIRE(t != NULL);
+        REQUIRE(t != nullptr);
         REQUIRE(t->num_levels == 1);
         REQUIRE(t->num_constants == 0);
         free(t);
@@ -21,7 +21,7 @@ TEST_CASE("Basic parsing")
     SECTION("Parsing '+Xf1.0'")
     {
         t = parse("+Xf1.0");
-        REQUIRE(t != NULL);
+        REQUIRE(t != nullptr);
         REQUIRE(t->num_constants == 1);
         REQUIRE(t->num_levels == 2);
         free(t);
@@ -30,7 +30,7 @@ TEST_CASE("Basic parsing")
     SECTION("Duplicate pruning")
     {
         t = parse("*+Xf2.0+Yf2.0");
-        REQUIRE(t != NULL);
+        REQUIRE(t != nullptr);
         REQUIRE(t->num_constants == 1);
         REQUIRE(t->num_levels == 3);
         free(t);
@@ -39,21 +39,21 @@ TEST_CASE("Basic parsing")
     SECTION("Invalid parse")
     {
         t = parse("f");
-        REQUIRE(t == NULL);
+        REQUIRE(t == nullptr);
         free(t);
     }
 
     SECTION("Parsing an empty string")
     {
         t = parse("");
-        REQUIRE(t == NULL);
+        REQUIRE(t == nullptr);
         free(t);
     }
 
     SECTION("Incomplete expression")
     {
         t = parse("+X");
-        REQUIRE(t == NULL);
+        REQUIRE(t == nullptr);
         free(t);
     }
 
@@ -66,6 +66,6 @@ TEST_CASE("Basic parsing")
             s += "X";
 
         t = parse(s.c_str());
-        REQUIRE(t != NULL);
+        REQUIRE(t != nullptr);
     }
 }

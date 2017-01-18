@@ -58,6 +58,9 @@ int main(int argc, char *argv[])
             fab_paths.push_back(p.toStdString());
         }
         fab::postInit(fab_paths);
+#elif defined Q_OS_WIN32
+        auto dir = QCoreApplication::applicationDirPath();
+        fab::postInit({(dir + "/sb").toStdString()});
 #else
 #error "Unknown OS!"
 #endif
