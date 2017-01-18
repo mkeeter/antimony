@@ -110,3 +110,54 @@ desktop environment (e.g. `gnome-session-flashback`), run
 sudo apt-get remove appmenu-qt5
 ```
 to make it appear.
+
+--------------------------------------------------------------------------------
+
+Windows (experimental)
+----------------------
+
+Install [msys2-x86_84](http://msys2.github.io/)
+and open an "MSYS2 MinGW 64-bit" shell
+
+Run the following commands to install dependencies:
+```
+pacman -Syuu
+pacman -S git lemon flex mingw-w64-x86_64-python3 mingw-w64-x86_64-cmake mingw-w64-x86_64-qt5 mingw-w64-x86_64-toolchain
+```
+
+Sadly, we can't install Boost through `pacman` because of a
+[packaging bug](https://github.com/Alexpux/MINGW-packages/issues/2028).
+Instead, we'll build it by hand.
+
+Download the latest [version of Boost](http://www.boost.org/users/download/)
+and unzip it to your `mingw64` home directory
+(which will be of the form `/mingw64/home/$USERNAME`).
+
+Then build Boost:
+```
+cd ~/boost_1_63_0
+./bootstrap.sh
+./b2 include=/mingw64/include/python3.5m --with-python
+```
+
+Rename the generated library to something that `cmake` will find:
+```
+cd stage/lib
+mv libboost_python-mgw63-mt-1_63.a libboost_python3-mt.a
+```
+
+Then, run through the following steps to clone and build Antimony:
+```
+cd ~
+git clone https://github.com/mkeeter/antimony
+cd antimony
+mkdir build
+cd build
+BOOST_ROOT=~/boost_1_63_0/ BOOST_LIBRARYDIR=~/boost_1_63_0/stage/ cmake -G"MSYS Makefiles" ..
+make -j8
+```
+
+To invoke Antimony from the build folder, call
+```
+PYTHONHOME=/mingw64 ./app/antimony.exe
+```
