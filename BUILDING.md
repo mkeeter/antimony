@@ -131,7 +131,8 @@ Instead, we'll build it by hand.
 
 Download the latest [version of Boost](http://www.boost.org/users/download/)
 and unzip it to your `mingw64` home directory
-(which will be of the form `/mingw64/home/$USERNAME`).
+(which will be of the form `/mingw64/home/$USERNAME` in the MinGW64 shell, or
+equivalently `C:\msys64\home\$USERNAME` in the Windows file explorer).
 
 Then build Boost:
 ```
