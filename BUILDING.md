@@ -154,7 +154,7 @@ git clone https://github.com/mkeeter/antimony
 cd antimony
 mkdir build
 cd build
-BOOST_ROOT=~/boost_1_63_0/ BOOST_LIBRARYDIR=~/boost_1_63_0/stage/ cmake -G"MSYS Makefiles" ..
+BOOST_ROOT=~/boost_1_63_0/ BOOST_LIBRARYDIR=~/boost_1_63_0/stage/ /mingw64/bin/cmake -G"MSYS Makefiles" ..
 make -j8
 ```
 
