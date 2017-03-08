@@ -122,7 +122,7 @@ and open an "MSYS2 MinGW 64-bit" shell
 Run the following commands to install dependencies:
 ```
 pacman -Syuu
-pacman -S git lemon flex mingw-w64-x86_64-python3 mingw-w64-x86_64-cmake mingw-w64-x86_64-qt5 mingw-w64-x86_64-toolchain
+pacman -S git make lemon flex mingw-w64-x86_64-python3 mingw-w64-x86_64-cmake mingw-w64-x86_64-qt5 mingw-w64-x86_64-toolchain
 ```
 
 Sadly, we can't install Boost through `pacman` because of a
