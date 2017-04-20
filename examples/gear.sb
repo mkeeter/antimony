@@ -1,0 +1,336 @@
+{
+    "nodes": [
+        {
+            "datums": [
+            ],
+            "inspector": [
+                -460.31045624689165,
+                -439.1760388467365
+            ],
+            "name": "info",
+            "script": [
+                "from fab import shapes",
+                "",
+                "title('Design is in cm units!')",
+                ""
+            ],
+            "uid": 0
+        },
+        {
+            "datums": [
+                {
+                    "expr": "0.0",
+                    "name": "_x",
+                    "type": "float",
+                    "uid": 1
+                },
+                {
+                    "expr": "0.0",
+                    "name": "_y",
+                    "type": "float",
+                    "uid": 2
+                },
+                {
+                    "expr": "-0.3",
+                    "name": "zmin",
+                    "type": "float",
+                    "uid": 3
+                },
+                {
+                    "expr": "0.49",
+                    "name": "zmax",
+                    "type": "float",
+                    "uid": 4
+                },
+                {
+                    "expr": "\u0011[__9.__5]",
+                    "name": "input",
+                    "type": "_fabtypes.Shape",
+                    "uid": 5
+                },
+                {
+                    "expr": "\u0012fab.types.Shape('am__f1aiiiiiiiiim-Xf0-Yf0-Zf0m+*f1X*f0Y+*f-0X*f1Y_m-Xf0-Yf0-Zf0aa--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019m_-*f2f0Y_--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019nXm-Xf0-Yf0-Zf0m+*f0.766044X*f0.642788Y+*f-0.642788X*f0.766044Y_m-Xf0-Yf0-Zf0aa--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019m_-*f2f0Y_--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019nXm-Xf0-Yf0-Zf0m+*f0.173648X*f0.984808Y+*f-0.984808X*f0.173648Y_m-Xf0-Yf0-Zf0aa--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019m_-*f2f0Y_--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019nXm-Xf0-Yf0-Zf0m+*f-0.5X*f0.866025Y+*f-0.866025X*f-0.5Y_m-Xf0-Yf0-Zf0aa--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019m_-*f2f0Y_--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019nXm-Xf0-Yf0-Zf0m+*f-0.939693X*f0.34202Y+*f-0.34202X*f-0.939693Y_m-Xf0-Yf0-Zf0aa--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019m_-*f2f0Y_--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019nXm-Xf0-Yf0-Zf0m+*f-0.939693X*f-0.34202Y+*f0.34202X*f-0.939693Y_m-Xf0-Yf0-Zf0aa--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019m_-*f2f0Y_--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019nXm-Xf0-Yf0-Zf0m+*f-0.5X*f-0.866025Y+*f0.866025X*f-0.5Y_m-Xf0-Yf0-Zf0aa--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019m_-*f2f0Y_--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019nXm-Xf0-Yf0-Zf0m+*f0.173648X*f-0.984808Y+*f0.984808X*f0.173648Y_m-Xf0-Yf0-Zf0aa--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019m_-*f2f0Y_--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019nXm-Xf0-Yf0-Zf0m+*f0.766044X*f-0.642788Y+*f0.642788X*f0.766044Y_m-Xf0-Yf0-Zf0aa--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019m_-*f2f0Y_--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019nX-r+qXqYf1.11433-r+qXqYf1.83333a-f-0.3Z-Zf0.49',float('-1.833333'),float('-1.833333'),float('-0.300000'),float('1.833333'),float('1.833333'),float('0.490000'))",
+                    "name": "shape",
+                    "type": "_fabtypes.Shape",
+                    "uid": 6
+                }
+            ],
+            "inspector": [
+                -131.8879336782577,
+                -324.8575796107537
+            ],
+            "name": "e1",
+            "script": [
+                "import fab",
+                "",
+                "title('Extrude')",
+                "",
+                "input('_x', float)",
+                "input('_y', float)",
+                "input('zmin', float)",
+                "input('zmax', float)",
+                "",
+                "input('input', fab.types.Shape)",
+                "output('shape', fab.shapes.extrude_z(input, zmin, zmax))",
+                "",
+                "",
+                ""
+            ],
+            "uid": 8
+        },
+        {
+            "datums": [
+                {
+                    "expr": "1.5",
+                    "name": "R",
+                    "type": "float",
+                    "uid": 1
+                },
+                {
+                    "expr": "20.0",
+                    "name": "PA",
+                    "type": "float",
+                    "uid": 2
+                },
+                {
+                    "expr": "3.0",
+                    "name": "P",
+                    "type": "float",
+                    "uid": 3
+                },
+                {
+                    "expr": "\u00121.5",
+                    "name": "R_",
+                    "type": "float",
+                    "uid": 4
+                },
+                {
+                    "expr": "\u0012fab.types.Shape('aiiiiiiiiim-Xf0-Yf0-Zf0m+*f1X*f0Y+*f-0X*f1Y_m-Xf0-Yf0-Zf0aa--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019m_-*f2f0Y_--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019nXm-Xf0-Yf0-Zf0m+*f0.766044X*f0.642788Y+*f-0.642788X*f0.766044Y_m-Xf0-Yf0-Zf0aa--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019m_-*f2f0Y_--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019nXm-Xf0-Yf0-Zf0m+*f0.173648X*f0.984808Y+*f-0.984808X*f0.173648Y_m-Xf0-Yf0-Zf0aa--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019m_-*f2f0Y_--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019nXm-Xf0-Yf0-Zf0m+*f-0.5X*f0.866025Y+*f-0.866025X*f-0.5Y_m-Xf0-Yf0-Zf0aa--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019m_-*f2f0Y_--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019nXm-Xf0-Yf0-Zf0m+*f-0.939693X*f0.34202Y+*f-0.34202X*f-0.939693Y_m-Xf0-Yf0-Zf0aa--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019m_-*f2f0Y_--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019nXm-Xf0-Yf0-Zf0m+*f-0.939693X*f-0.34202Y+*f0.34202X*f-0.939693Y_m-Xf0-Yf0-Zf0aa--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019m_-*f2f0Y_--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019nXm-Xf0-Yf0-Zf0m+*f-0.5X*f-0.866025Y+*f0.866025X*f-0.5Y_m-Xf0-Yf0-Zf0aa--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019m_-*f2f0Y_--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019nXm-Xf0-Yf0-Zf0m+*f0.173648X*f-0.984808Y+*f0.984808X*f0.173648Y_m-Xf0-Yf0-Zf0aa--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019m_-*f2f0Y_--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019nXm-Xf0-Yf0-Zf0m+*f0.766044X*f-0.642788Y+*f0.642788X*f0.766044Y_m-Xf0-Yf0-Zf0aa--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019m_-*f2f0Y_--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019nX-r+qXqYf1.11433-r+qXqYf1.83333',float('-1.833333'),float('-1.833333'),float('-inf'),float('1.833333'),float('1.833333'),float('inf'))",
+                    "name": "gear",
+                    "type": "_fabtypes.Shape",
+                    "uid": 5
+                }
+            ],
+            "inspector": [
+                -467.19412710817846,
+                -325.7493507710929
+            ],
+            "name": "g1",
+            "script": [
+                "from math import cos, radians, sqrt, atan2, sin, pi",
+                "from functools import reduce",
+                "import operator",
+                "",
+                "import fab",
+                "from fab.shapes import *",
+                "",
+                "title('gear (2D)')",
+                "",
+                "input('R', float)  # pitch radius",
+                "input('PA', float) # pressure angle",
+                "input('P', float)  # diametral pitch",
+                "",
+                "# Round to the nearest number of teeth",
+                "N = int(R*P*2 + 0.5)",
+                "output('R_', N/P/2)",
+                "",
+                "RB = R*cos(radians(PA))   # base circle radius",
+                "a = 1/P     # addendum",
+                "d = 1.157/P # dedendum",
+                "RO = R+a    # outer radius",
+                "RR = R-d    # root radius",
+                "",
+                "# MathTree expressions for r and r**2",
+                "r_2 = '+qXqY'",
+                "r = 'r%s' % r_2",
+                "",
+                "# See note (1) for derivation of tooth rotation",
+                "t = sqrt(R**2/RB**2 -1)",
+                "rot = atan2(sin(t)-t*cos(t), cos(t)+t*sin(t)) + pi/2/N",
+                "",
+                "# See note (2) for derivation of involute curve",
+                "# sqrt(r_2 - RB**2) - RB*(atan(Y/X) + acos(RB/r)) - RB*rot",
+                "tooth = fab.types.Shape(",
+                "\t'--r-%sf%g*f%g+T/YXC/f%g%sf%g' %",
+                "\t\t(r_2, RB**2, RB, RB, r, RB*rot), -R, -R, R, R)",
+                "       ",
+                "",
+                "tooth &= reflect_y(tooth)",
+                "",
+                "# If we have an odd number of teeth, then we can't take",
+                "# advantage of bilateral tooth symmetry.",
+                "if N % 2:",
+                "    tooth &= fab.types.Shape('nX')",
+                "    teeth = reduce(operator.or_, [rotate(tooth, i*360./N)",
+                "                                  for i in range(N)])",
+                "else:",
+                "    teeth = reduce(operator.or_, [rotate(tooth, i*360./N)",
+                "                                  for i in range(N//2)])",
+                "",
+                "",
+                "teeth |= circle(0, 0, RR)",
+                "teeth &= circle(0, 0, RO)",
+                "",
+                "output('gear', teeth)",
+                "",
+                "",
+                "################################################################################",
+                "",
+                "\"\"\"",
+                "Notes:",
+                "",
+                "(1)",
+                "We want to find the angle such that the involute curve",
+                "intersects a circle of radius R, where the involute is being",
+                "unwound from a circle of radius RB (and RB < R)",
+                "",
+                "The involute has coordinates",
+                "    x, y = RB*(cos(t)+t*sin(t)), RB*(sin(t)-t*cos(t))",
+                "where t is a parameter.",
+                "",
+                "Solving x**2 + y**2 = R**2 gives",
+                "    t = sqrt(R**2/RB**2 -1)",
+                "which we can plug back in to find x(t) and y(t).",
+                "",
+                "We take atan2(y(t), x(t)) to find the angle, then add another",
+                "(2*pi)/(4*N) so that we can mirror the tooth about the x axis.",
+                "",
+                "",
+                "(2)",
+                "[Clever math & explanation by Peter Fedak, HMC 2013]",
+                "",
+                "Assuming that restricting to x and y greater than",
+                "R is not interesting/challenging, an expression",
+                "separating one side of a portion of a circle involute",
+                "from another is ",
+                "",
+                "R(atan(y/x) + acos( R/sqrt(x^2+y^2) )) - sqrt(x^2+y^2-R^2)",
+                "",
+                "which is 0 on the curve and negative for points to the northeast.",
+                "This assumes the involute starts at (1,0), if you want to rotate it,",
+                "or deal with a different turn of the involute, subtract R*rotation",
+                "angle.",
+                "",
+                "For points P=(x,y) in the first quadrant, atan(y/x) accurately gives",
+                "the angle between the x-axis and the ray from O=(0,0) to P. Assuming",
+                "we are \"unwinding\" the involute counterclockwise, the place where the",
+                "\"string\" meets the circle, Q, will be the more-counterclockwise",
+                "tangent from P to the circle. Then O,P,Q is a right triangle, and the",
+                "length of the string, PQ, is sqrt(x^2+y^2-R^2) (right angle between",
+                "the tangent and the radius OQ). ",
+                "",
+                "The angle of OQ from the x-axis is, again restricted to P in the first",
+                "quadrant, the sum of the angle of OP from the x-axis and one of the",
+                "angles in teh triangle. the cosine of the relevant angle is",
+                "R/sqrt(x^2+y^2), and as this angle will always be smaller than a right",
+                "angle, can by given by the inverse cosine of this ratio directly. The",
+                "condition for a point to lie on the involute is for the length of the",
+                "\"string\" to be equal to the amount unwound. The amount unwound is the",
+                "angle from OQ to the x-axis times R, which is the first term in the",
+                "expression. The length of the string is the expression after the minus",
+                "sign. Thus the involute is where this F=0, whereas if the point is too",
+                "close to the origin, the expression will be positive. ",
+                "\"\"\"",
+                "",
+                ""
+            ],
+            "uid": 9
+        },
+        {
+            "datums": [
+                {
+                    "expr": "-0.4",
+                    "name": "z_lower",
+                    "type": "float",
+                    "uid": 1
+                },
+                {
+                    "expr": "\u0011[__8.__4]",
+                    "name": "zmax",
+                    "type": "float",
+                    "uid": 2
+                },
+                {
+                    "expr": "0.35",
+                    "name": "r_shaft",
+                    "type": "float",
+                    "uid": 3
+                },
+                {
+                    "expr": "0.24",
+                    "name": "r_flat",
+                    "type": "float",
+                    "uid": 4
+                },
+                {
+                    "expr": "\u0012fab.types.Shape('aam__f1-r+qXqYf0.6125a-f-1.68Z-Zf0.245naaam__f1-r+qXqYf0.35a-f-1.68Z-Zf0-Xf0.24-f-0.24X',float('-0.612500'),float('-0.612500'),float('-1.680000'),float('0.612500'),float('0.612500'),float('0.245000'))",
+                    "name": "out",
+                    "type": "_fabtypes.Shape",
+                    "uid": 5
+                }
+            ],
+            "inspector": [
+                191.815272387312,
+                -405.0158963435443
+            ],
+            "name": "a4",
+            "script": [
+                "import fab",
+                "from fab.shapes import cylinder",
+                "",
+                "title('Motor coupling')",
+                "input('z_lower', float)",
+                "input('zmax', float)",
+                "input('r_shaft', float)",
+                "input('r_flat', float)",
+                "",
+                "zmin = z_lower -(1.5 + 12.2 - 0.9)/10",
+                "cut = cylinder(0, 0, zmin, 0, r_shaft)",
+                "cut &= fab.types.Shape('-Xf%g' % r_flat)",
+                "cut &= fab.types.Shape('-f%gX' % -r_flat)",
+                "",
+                "output('out', cylinder(0, 0, zmin, zmax/2, r_shaft*1.75) & ~cut)",
+                "",
+                "",
+                ""
+            ],
+            "uid": 10
+        },
+        {
+            "datums": [
+                {
+                    "expr": "\u0011[__10.__5,__8.__6]",
+                    "name": "shape",
+                    "type": "_fabtypes.Shape",
+                    "uid": 1
+                },
+                {
+                    "expr": "\u0012fab.types.Shape('iaam__f1-r+qXqYf0.6125a-f-1.68Z-Zf0.245naaam__f1-r+qXqYf0.35a-f-1.68Z-Zf0-Xf0.24-f-0.24Xam__f1aiiiiiiiiim-Xf0-Yf0-Zf0m+*f1X*f0Y+*f-0X*f1Y_m-Xf0-Yf0-Zf0aa--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019m_-*f2f0Y_--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019nXm-Xf0-Yf0-Zf0m+*f0.766044X*f0.642788Y+*f-0.642788X*f0.766044Y_m-Xf0-Yf0-Zf0aa--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019m_-*f2f0Y_--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019nXm-Xf0-Yf0-Zf0m+*f0.173648X*f0.984808Y+*f-0.984808X*f0.173648Y_m-Xf0-Yf0-Zf0aa--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019m_-*f2f0Y_--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019nXm-Xf0-Yf0-Zf0m+*f-0.5X*f0.866025Y+*f-0.866025X*f-0.5Y_m-Xf0-Yf0-Zf0aa--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019m_-*f2f0Y_--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019nXm-Xf0-Yf0-Zf0m+*f-0.939693X*f0.34202Y+*f-0.34202X*f-0.939693Y_m-Xf0-Yf0-Zf0aa--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019m_-*f2f0Y_--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019nXm-Xf0-Yf0-Zf0m+*f-0.939693X*f-0.34202Y+*f0.34202X*f-0.939693Y_m-Xf0-Yf0-Zf0aa--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019m_-*f2f0Y_--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019nXm-Xf0-Yf0-Zf0m+*f-0.5X*f-0.866025Y+*f0.866025X*f-0.5Y_m-Xf0-Yf0-Zf0aa--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019m_-*f2f0Y_--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019nXm-Xf0-Yf0-Zf0m+*f0.173648X*f-0.984808Y+*f0.984808X*f0.173648Y_m-Xf0-Yf0-Zf0aa--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019m_-*f2f0Y_--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019nXm-Xf0-Yf0-Zf0m+*f0.766044X*f-0.642788Y+*f0.642788X*f0.766044Y_m-Xf0-Yf0-Zf0aa--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019m_-*f2f0Y_--r-+qXqYf1.9868*f1.40954+T/YXC/f1.40954r+qXqYf0.267019nX-r+qXqYf1.11433-r+qXqYf1.83333a-f-0.3Z-Zf0.49',float('-1.833333'),float('-1.833333'),float('-1.680000'),float('1.833333'),float('1.833333'),float('0.490000'))",
+                    "name": "out",
+                    "type": "_fabtypes.Shape",
+                    "uid": 2
+                }
+            ],
+            "inspector": [
+                529.8921167735775,
+                -196.04818167817297
+            ],
+            "name": "a3",
+            "script": [
+                "import fab",
+                "",
+                "title('Mesh (.stl)')",
+                "",
+                "input('shape', fab.types.Shape)",
+                "output('out', shape)",
+                "",
+                "sb.export.stl(shape)",
+                "",
+                ""
+            ],
+            "uid": 12
+        }
+    ],
+    "protocol": 6,
+    "type": "sb"
+}

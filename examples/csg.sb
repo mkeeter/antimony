@@ -1,0 +1,191 @@
+{
+    "nodes": [
+        {
+            "datums": [
+                {
+                    "expr": "0.0",
+                    "name": "x",
+                    "type": "float",
+                    "uid": 1
+                },
+                {
+                    "expr": "0.0",
+                    "name": "y",
+                    "type": "float",
+                    "uid": 2
+                },
+                {
+                    "expr": "-1",
+                    "name": "z0",
+                    "type": "float",
+                    "uid": 3
+                },
+                {
+                    "expr": "1",
+                    "name": "z1",
+                    "type": "float",
+                    "uid": 4
+                },
+                {
+                    "expr": "0.3",
+                    "name": "r",
+                    "type": "float",
+                    "uid": 5
+                },
+                {
+                    "expr": "\u0012fab.types.Shape('am__f1-r+qXqYf0.3a-f-1Z-Zf1',float('-0.300000'),float('-0.300000'),float('-1.000000'),float('0.300000'),float('0.300000'),float('1.000000'))",
+                    "name": "shape",
+                    "type": "_fabtypes.Shape",
+                    "uid": 6
+                }
+            ],
+            "inspector": [
+                -33.992780812294527,
+                1.7890937269628699
+            ],
+            "name": "a0",
+            "script": [
+                "import math",
+                "import fab",
+                "",
+                "title('Cylinder')",
+                "",
+                "input('x', float)",
+                "input('y', float)",
+                "input('z0', float)",
+                "input('z1', float)",
+                "input('r', float)",
+                "",
+                "output('shape', fab.shapes.cylinder(x, y, z0, z1, r))",
+                "",
+                "# UI",
+                "sb.ui.wireframe([(x, y, z0), (x, y, z1)])",
+                "sb.ui.wireframe([(x, y, z0), (x+r, y, z0)])",
+                "",
+                "sb.ui.wireframe([",
+                "    (math.cos(i/36. * 2*math.pi) * r + x,",
+                "     math.sin(i/36. * 2*math.pi) * r + y, z0)",
+                "    for i in range(36)], close=True)",
+                "",
+                "sb.ui.wireframe([",
+                "    (math.cos(i/36. * 2*math.pi) * r + x,",
+                "     math.sin(i/36. * 2*math.pi) * r + y, z1)",
+                "    for i in range(36)], close=True)",
+                "",
+                "sb.ui.point(x, y, z0)",
+                "sb.ui.point(x, y, z1)",
+                "sb.ui.point(x + r, y, z0, drag=(r, None, None))",
+                "",
+                ""
+            ],
+            "uid": 0
+        },
+        {
+            "datums": [
+                {
+                    "expr": "0.0",
+                    "name": "x",
+                    "type": "float",
+                    "uid": 1
+                },
+                {
+                    "expr": "0.0",
+                    "name": "y",
+                    "type": "float",
+                    "uid": 2
+                },
+                {
+                    "expr": "0.0",
+                    "name": "z",
+                    "type": "float",
+                    "uid": 3
+                },
+                {
+                    "expr": "1",
+                    "name": "r",
+                    "type": "float",
+                    "uid": 4
+                },
+                {
+                    "expr": "\u0012fab.types.Shape('-r++qXqYqZf1',float('-1.000000'),float('-1.000000'),float('-1.000000'),float('1.000000'),float('1.000000'),float('1.000000'))",
+                    "name": "shape",
+                    "type": "_fabtypes.Shape",
+                    "uid": 5
+                }
+            ],
+            "inspector": [
+                -35.781874539257402,
+                -203.95668487376719
+            ],
+            "name": "a1",
+            "script": [
+                "import math",
+                "import fab",
+                "",
+                "title('Sphere')",
+                "",
+                "input('x', float)",
+                "input('y', float)",
+                "input('z', float)",
+                "input('r', float)",
+                "",
+                "output('shape', fab.shapes.sphere(x, y, z, r))",
+                "",
+                "# UI",
+                "sb.ui.wireframe([",
+                "    (math.cos(i/36. * 2*math.pi) * r + x,",
+                "     math.sin(i/36. * 2*math.pi) * r + y, z)",
+                "    for i in range(36)], close=True)",
+                "sb.ui.wireframe([(x,y,z-r), (x,y,z+r)])",
+                "",
+                "sb.ui.point(x, y, z)",
+                "sb.ui.point(x, y, z + r, drag=(None, None, r))",
+                "sb.ui.point(x, y, z - r, drag=(None, None, r))",
+                "",
+                ""
+            ],
+            "uid": 1
+        },
+        {
+            "datums": [
+                {
+                    "expr": "\u0011[__1.__5]",
+                    "name": "a",
+                    "type": "_fabtypes.Shape",
+                    "uid": 1
+                },
+                {
+                    "expr": "\u0011[__0.__6]",
+                    "name": "b",
+                    "type": "_fabtypes.Shape",
+                    "uid": 2
+                },
+                {
+                    "expr": "\u0012fab.types.Shape('a-r++qXqYqZf1nam__f1-r+qXqYf0.3a-f-1Z-Zf1',float('-1.000000'),float('-1.000000'),float('-1.000000'),float('1.000000'),float('1.000000'),float('1.000000'))",
+                    "name": "shape",
+                    "type": "_fabtypes.Shape",
+                    "uid": 3
+                }
+            ],
+            "inspector": [
+                318.45868339939085,
+                -53.672811808886095
+            ],
+            "name": "a2",
+            "script": [
+                "import fab.types",
+                "",
+                "title('Difference')",
+                "input('a', fab.types.Shape)",
+                "input('b', fab.types.Shape)",
+                "",
+                "output('shape', a & ~b)",
+                "",
+                ""
+            ],
+            "uid": 2
+        }
+    ],
+    "protocol": 6,
+    "type": "sb"
+}
