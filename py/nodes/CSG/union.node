@@ -1,7 +1,13 @@
 import fab.types
+import functools
+import operator
 
 title('Union')
-input('a', fab.types.Shape)
-input('b', fab.types.Shape)
+input('count', int, 2)
+for i in range(count):
+    input('in_%d' % i, fab.types.Shape)
 
-output('shape', a | b)
+vars = locals()
+output('shape', functools.reduce(
+    operator.or_,
+    [vars["in_%d" % i] for i in range(count)]))
