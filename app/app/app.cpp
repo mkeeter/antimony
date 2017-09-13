@@ -91,11 +91,16 @@ QStringList App::nodePaths() const
 
 void App::onNew()
 {
-    graph->clear();
-    filename.clear();
-    undo_stack->clear();
+    if (undo_stack->isClean() || QMessageBox::question(
+                NULL, "Discard unsaved changes?",
+                "Discard unsaved changes?") == QMessageBox::Yes)
+    {
+        graph->clear();
+        filename.clear();
+        undo_stack->clear();
 
-    emit(filenameChanged(""));
+        emit(filenameChanged(""));
+    }
 }
 
 void App::onSave()
