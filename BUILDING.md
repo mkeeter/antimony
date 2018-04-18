@@ -30,8 +30,7 @@ cd antimony
 mkdir build
 cd build
 
-
-cmake -DCMAKE_PREFIX_PATH="/usr/local/Cellar/qt/5.10.1" -DPYTHON_LIBRARY="/usr/local/Cellar/python/3.6.5/Frameworks/Python.framework/Versions/3.6/lib/libpython3.6m.dylib" -DBOOSTROOT="/usr/local/Cellar/boost/1.67.0/" -DBOOST_LIBRARYDIR="/usr/local/Cellar/boost-python3/1.67.0/lib/" -GNinja ..
+cmake -DCMAKE_PREFIX_PATH="/usr/local/Cellar/qt/5.10.1" -DPYTHON_LIBRARY="/usr/local/Cellar/python/3.6.5/Frameworks/Python.framework/Versions/3.6/lib/libpython3.6.dylib" -DPYTHON_INCLUDE_DIR="/usr/local/Cellar/python/3.6.5/Frameworks/Python.framework/Versions/3.6/include/python3.6m/" -DBOOSTROOT="/usr/local/Cellar/boost/1.67.0/" -GNinja ..
 ninja
 
 open app/Antimony.app
