@@ -16,7 +16,9 @@ Tested on Mac OS X 10.9.4 with [homebrew](http://brew.sh/) already installed:
 ```
 brew install libpng
 brew install python3
-brew install --with-python3 boost-python
+brew install boost-python3
+ln -s /usr/local/Cellar/boost-python3/1.67.0/lib/* /usr/local/Cellar/boost/1.67.0/lib/
+ln -s /usr/local/Cellar/boost-python3/1.67.0/include/* /usr/local/Cellar/boost/1.67.0/include/
 brew install qt5
 brew install lemon
 brew install flex
@@ -29,7 +31,7 @@ mkdir build
 cd build
 
 
-cmake -DCMAKE_PREFIX_PATH=/usr/local/Cellar/qt5/5.6.1 -GNinja ..
+cmake -DCMAKE_PREFIX_PATH="/usr/local/Cellar/qt/5.10.1" -DPYTHON_LIBRARY="/usr/local/Cellar/python/3.6.5/Frameworks/Python.framework/Versions/3.6/lib/libpython3.6m.dylib" -DBOOSTROOT="/usr/local/Cellar/boost/1.67.0/" -DBOOST_LIBRARYDIR="/usr/local/Cellar/boost-python3/1.67.0/lib/" -GNinja ..
 ninja
 
 open app/Antimony.app
