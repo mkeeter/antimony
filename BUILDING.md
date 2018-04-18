@@ -16,7 +16,7 @@ Tested on Mac OS X 10.9.4 with [homebrew](http://brew.sh/) already installed:
 ```
 brew install libpng
 brew install python3
-brew install --with-python3 boost-python
+brew install boost-python3
 brew install qt5
 brew install lemon
 brew install flex
