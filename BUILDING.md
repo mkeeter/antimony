@@ -12,7 +12,7 @@ Requirements
 
 Mac OS X
 --------
-Tested on Mac OS X 10.9.4 with [homebrew](http://brew.sh/) already installed:
+Tested on Mac OS X 10.13.4 with [homebrew](http://brew.sh/) already installed:
 ```
 brew install libpng
 brew install python3
@@ -29,7 +29,7 @@ mkdir build
 cd build
 
 
-cmake -DCMAKE_PREFIX_PATH=/usr/local/Cellar/qt5/5.6.1 -GNinja ..
+cmake -DCMAKE_PREFIX_PATH=/usr/local/Cellar/qt/5.10.1 -GNinja ..
 ninja
 
 open app/Antimony.app
