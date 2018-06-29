@@ -47,7 +47,7 @@ std::pair<std::string, int> getPyError()
     error_traceback = "";
     for (int i=0; i < PyList_Size(lst); ++i)
     {
-        char* c = PyUnicode_AsUTF8(PyList_GetItem(lst, i));
+        const char* c = PyUnicode_AsUTF8(PyList_GetItem(lst, i));
         assert(!PyErr_Occurred());
         error_traceback += std::string(c);
     }
