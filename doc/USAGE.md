@@ -51,7 +51,7 @@ rotate with the right;
 zoom with the mouse wheel.
 The axis selector in the top right snaps the view to a particular axis.
 When looking along a main axis,
-the mouse pointer's coordinates are shown in the botton left.
+the mouse pointer's coordinates are shown in the bottom left.
 
 As in the graph window,
 nodes can be added from the *Add* menu or with Shift+A.
@@ -72,7 +72,7 @@ in the top left of the inspector.
 There are three panes in the editor window:
 - The top pane is the script
 - The middle pane is any output sent to `stdout` (e.g. with `print`)
-- The botton pane is any Python error that occured during execution
+- The bottom pane is any Python error that occurred during execution
 
 The lower two panes only appear when needed
 (i.e. when something was sent to `stdout`
