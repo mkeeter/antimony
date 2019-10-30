@@ -45,6 +45,8 @@ Tested on a clean Xubuntu 16.04 virtual machine:
 # Install dependencies
 sudo apt install git build-essential libpng-dev python3-dev libboost-all-dev  libgl1-mesa-dev lemon flex qt5-default ninja-build cmake
 
+(On some distros, you may need to install `libqt5opengl5` as well).
+
 # Clone the repo
 git clone https://github.com/mkeeter/antimony
 cd antimony
