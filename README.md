@@ -8,7 +8,8 @@ by way of [fabserver](http://kokompe.cba.mit.edu).
 For more details and screenshots, look at [this writeup](http://mattkeeter.com/projects/antimony).
 
 ## Try it
-*Antimony* is under active development.  It's at a beta level of stability:
+*Antimony* is in [long-term maintenance mode](https://github.com/mkeeter/antimony/issues/205#issuecomment-484271273).
+It's at a beta level of stability:
 solid, but not recommended for mission-critical use.
 
 To get started, there are two suggested options:
