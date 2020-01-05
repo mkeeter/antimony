@@ -34,6 +34,8 @@ void BaseWindow::connectActions(App* app)
             app, &App::onSave);
     connect(ui->actionSaveAs, &QAction::triggered,
             app, &App::onSaveAs);
+    connect(ui->actionToggleAutosave, &QAction::triggered,
+            app, &App::onToggleAutosave);
     connect(ui->actionNew, &QAction::triggered,
             app, &App::onNew);
     connect(ui->actionOpen, &QAction::triggered,

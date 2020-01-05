@@ -25,6 +25,10 @@ App::App(int& argc, char** argv)
 {
     connect(undo_stack, &QUndoStack::cleanChanged,
             this, &App::cleanChanged);
+
+    autosave_timer = new QTimer(this);
+    connect(autosave_timer, &QTimer::timeout,
+        this, &App::onAutosave);
 }
 
 App::~App()
@@ -117,6 +121,22 @@ void App::onSave()
     }
 
     undo_stack->setClean();
+}
+
+void App::onAutosave()
+{
+    if (filename.isEmpty())
+        return;
+    return onSave();
+}
+
+void App::onToggleAutosave(bool enabled)
+{
+    if (enabled) {
+      autosave_timer->start(autosave_interval);
+    } else {
+      autosave_timer->stop();
+    }
 }
 
 void App::onSaveAs()

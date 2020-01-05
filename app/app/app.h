@@ -4,6 +4,7 @@
 
 #include <QApplication>
 #include <QAction>
+#include <QTimer>
 
 class Graph;
 class GraphProxy;
@@ -87,6 +88,8 @@ public slots:
      */
     void onNew();
     void onSave();
+    void onAutosave();
+    void onToggleAutosave(bool);
     void onSaveAs();
     void onOpen();
     void onQuit();
@@ -126,4 +129,6 @@ protected:
     UndoStack* undo_stack;
 
     QString filename;
+    QTimer* autosave_timer;
+    int autosave_interval = 60000;
 };

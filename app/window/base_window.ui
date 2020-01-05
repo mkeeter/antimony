@@ -50,6 +50,7 @@
     <addaction name="separator"/>
     <addaction name="actionSave"/>
     <addaction name="actionSaveAs"/>
+    <addaction name="actionToggleAutosave"/>
     <addaction name="separator"/>
     <addaction name="actionCheckUpdate"/>
     <addaction name="separator"/>
@@ -126,6 +127,14 @@
   <action name="actionSaveAs">
    <property name="text">
     <string>Save As</string>
+   </property>
+  </action>
+  <action name="actionToggleAutosave">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Autosave</string>
    </property>
   </action>
   <action name="actionQuit">
