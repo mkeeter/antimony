@@ -175,7 +175,7 @@ add_definitions(-D'GITREV="${GITREV}${GITDIFF}"'
 ################################################################################
 
 target_include_directories(${ANTIMONY_APP} SYSTEM PRIVATE
-    ${Python_INCLUDE_DIR}
+    ${Python_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     ${AUTOGEN_TARGETS_FOLDER}
 )

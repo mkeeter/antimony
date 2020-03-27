@@ -15,7 +15,7 @@ add_library(SbGraph STATIC
 )
 
 target_include_directories(SbGraph SYSTEM PRIVATE
-    ${Python_INCLUDE_DIR}
+    ${Python_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
 )
 target_link_libraries(SbGraph
@@ -38,7 +38,7 @@ add_executable(SbGraphTest
 target_link_libraries(SbGraphTest SbGraph)
 
 target_include_directories(SbGraphTest SYSTEM PRIVATE
-    ${Python_INCLUDE_DIR}
+    ${Python_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     ../../vendor
 )
