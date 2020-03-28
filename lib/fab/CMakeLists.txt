@@ -67,7 +67,7 @@ add_library(SbFab STATIC
 )
 
 target_include_directories(SbFab SYSTEM PRIVATE
-    ${Python_INCLUDE_DIR}
+    ${Python_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     ${PNG_INCLUDE_DIR}
 )
@@ -98,7 +98,7 @@ target_link_libraries(SbFabTest SbFab)
 target_include_directories(SbFabTest SYSTEM PRIVATE
     ../../vendor
     ${Boost_INCLUDE_DIRS}
-    ${Python_INCLUDE_DIR}
+    ${Python_INCLUDE_DIRS}
 )
 
 ################################################################################
