@@ -1,6 +1,7 @@
 #include <Python.h>
 
 #include <QMatrix4x4>
+#include <QPainterPath>
 
 #include "viewport/control/wireframe.h"
 

@@ -2,6 +2,7 @@
 
 #include <QMatrix4x4>
 #include <QPainter>
+#include <QPainterPath>
 
 #include "viewport/control/point.h"
 
