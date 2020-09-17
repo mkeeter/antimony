@@ -1,0 +1,9 @@
+import fab
+title('multiply')
+
+input('in1',float)
+input('in2',float)
+
+title('multiply '+str(in2))
+y=in1*in2
+output('equals',y)
