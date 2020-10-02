@@ -1,6 +1,7 @@
 Requirements
 ------------
 - [Qt 5.4 or later](http://www.qt.io/)
+- [Homebrew](https://brew.sh/)
 - [Python 3](https://www.python.org/)
 - [Boost.Python](http://www.boost.org/doc/libs/1_57_0/libs/python/doc/index.html) (linked against Python 3)
 - [`libpng`](http://www.libpng.org/pub/png/libpng.html)
@@ -12,28 +13,52 @@ Requirements
 
 Mac OS X
 --------
-Tested on Mac OS X 10.13.4 with [homebrew](http://brew.sh/) already installed:
+
+Tested on Mac OS X 10.13.4 and Mac 10.15.6 (Catalina) with Python 3 and Homebrew installed:
+
+1. Install dependencies:
+
 ```
 brew install libpng
-brew install python3
 brew install boost-python3
 brew install qt5
 brew install lemon
 brew install flex
 brew install ninja
 brew install cmake
+```
 
+2. Clone Antimony
+
+```
 git clone https://github.com/mkeeter/antimony
 cd antimony
 mkdir build
+```
+
+3. Edit CMakeLists.txt to match your major/minor Python version.
+
+Change line 11 `find_package(Python 3.3 ...` to match your Python version. For example, using Python 3.8.5, you'll edit to be `3.8` (and leave off the `.5` part)
+
+4. Build the app
+
+Note: the `cmake` command must note the exact version of Qt that you installed.
+
+```
 cd build
-
-
-cmake -DCMAKE_PREFIX_PATH=/usr/local/Cellar/qt/5.10.1 -GNinja ..
+ls /usr/local/Cellar/qt
+# use the number shown there in the next command in place of "5.15.1"
+cmake -DCMAKE_PREFIX_PATH=/usr/local/Cellar/qt/5.15.1 -GNinja ..
 ninja
 
+```
+
+5. Done! Open the app
+
+```
 open app/Antimony.app
 ```
+
 
 --------------------------------------------------------------------------------
 
