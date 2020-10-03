@@ -36,11 +36,7 @@ cd antimony
 mkdir build
 ```
 
-3. Edit CMakeLists.txt to match your major/minor Python version.
-
-Change line 11 `find_package(Python 3.3 ...` to match your Python version. For example, using Python 3.8.5, you'll edit to be `3.8` (and leave off the `.5` part)
-
-4. Build the app
+3. Build the app
 
 Note: the `cmake` command must note the exact version of Qt that you installed.
 
@@ -53,7 +49,7 @@ ninja
 
 ```
 
-5. Done! Open the app
+4. Done! Open the app
 
 ```
 open app/Antimony.app
