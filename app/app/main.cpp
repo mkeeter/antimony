@@ -58,6 +58,17 @@ int main(int argc, char *argv[])
             fab_paths.push_back(p.toStdString());
         }
         fab::postInit(fab_paths);
+#elif defined Q_OS_OPENBSD
+        auto dir = QCoreApplication::applicationDirPath();
+        std::vector<std::string> fab_paths =
+            {(dir + "/sb").toStdString(),
+             (dir + "/../share/antimony/").toStdString()};
+        for (auto p : QStandardPaths::standardLocations(
+                QStandardPaths::AppDataLocation))
+        {
+            fab_paths.push_back(p.toStdString());
+        }
+        fab::postInit(fab_paths);	
 #elif defined Q_OS_WIN32
         auto dir = QCoreApplication::applicationDirPath();
         fab::postInit({(dir + "/sb").toStdString()});
