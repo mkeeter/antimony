@@ -59,10 +59,6 @@ QStringList App::nodePaths() const
     // If we're running Antimony from the build folder, use sb/nodes
     paths << applicationDirPath() + "/sb/nodes";
     paths << applicationDirPath() + "/../share/antimony/nodes";
-#elif defined Q_OS_OPENBSD
-    // If we're running Antimony from the build folder, use sb/nodes
-    paths << applicationDirPath() + "/sb/nodes";
-    paths << applicationDirPath() + "/../share/antimony/nodes";
 #elif defined Q_OS_WIN32
     // Windows only supports running from the build directory
     paths << applicationDirPath() + "/sb/nodes";
@@ -130,9 +126,6 @@ void App::onSaveAs()
     {
 #ifdef Q_OS_LINUX
         if (!f.endsWith(".sb"))
-            f += ".sb";
-#elif defined Q_OS_OPENBSD
-	if (!f.endsWith(".sb"))
             f += ".sb";
 #endif
         if (!QFileInfo(QFileInfo(f).path()).isWritable())
