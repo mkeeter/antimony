@@ -319,9 +319,9 @@ void ViewportView::mouseReleaseEvent(QMouseEvent* event)
 
 void ViewportView::wheelEvent(QWheelEvent* event)
 {
-    QVector3D a = sceneToWorld(mapToScene(event->pos()));
-    scale *= pow(1.001, -event->delta());
-    QVector3D b = sceneToWorld(mapToScene(event->pos()));
+    QVector3D a = sceneToWorld(mapToScene(event->position().toPoint()));
+    scale *= pow(1.001, -event->angleDelta().y());
+    QVector3D b = sceneToWorld(mapToScene(event->position().toPoint()));
     center += a - b;
     update();
 }

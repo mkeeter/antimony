@@ -2,6 +2,6 @@
 
 void CanvasInfo::unite(const CanvasInfo& other)
 {
-    inspector.unite(other.inspector);
-    subdatum.unite(other.subdatum);
+    inspector.insert(other.inspector);
+    subdatum.insert(other.subdatum);
 }

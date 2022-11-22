@@ -88,7 +88,7 @@ QStringList App::nodePaths() const
         }
     }
 
-    return existing_paths.toList();
+    return existing_paths.values();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
