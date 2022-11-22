@@ -40,7 +40,7 @@ RenderTask* RenderTask::getNext(RenderInstance* parent) const
 
 void RenderTask::async()
 {
-    QTime timer;
+    QElapsedTimer timer;
     timer.start();
 
     boost::python::extract<const Shape&> get_shape(shape);

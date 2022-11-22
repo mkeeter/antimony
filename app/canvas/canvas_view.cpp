@@ -89,10 +89,10 @@ void CanvasView::mouseMoveEvent(QMouseEvent* event)
 
 void CanvasView::wheelEvent(QWheelEvent* event)
 {
-    QPointF a = mapToScene(event->pos());
-    auto s = pow(1.001, -event->delta());
+    QPointF a = mapToScene(event->position().toPoint());
+    auto s = pow(1.001, -event->angleDelta().y());
     scale(s, s);
-    auto d = a - mapToScene(event->pos());
+    auto d = a - mapToScene(event->position().toPoint());
     setSceneRect(sceneRect().translated(d.x(), d.y()));
 }
 

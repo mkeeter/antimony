@@ -24,7 +24,7 @@ ScriptEditor::ScriptEditor(Script* script, QWidget* parent)
         QFont font;
         font.setFamily("Courier");
         QFontMetrics fm(font);
-        setTabStopWidth(fm.width("    "));
+        setTabStopDistance(fm.horizontalAdvance("    "));
         document()->setDefaultFont(font);
     }
 
