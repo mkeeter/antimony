@@ -5,9 +5,9 @@ find_package(FLEX REQUIRED)
 
 # Custom command to generate the parser sources with lemon
 if(WIN32)
-    find_program(LEMON_EXECUTABLE lemon.exe DOC "path to the lemon executable")
+    find_program(LEMON_EXECUTABLE lemon.exe DOC "path to the lemon executable" REQUIRED)
 else()
-    find_program(LEMON_EXECUTABLE lemon DOC "path to the lemon executable")
+    find_program(LEMON_EXECUTABLE lemon DOC "path to the lemon executable" REQUIRED)
 endif()
 
 mark_as_advanced(LEMON_EXECUTABLE)
